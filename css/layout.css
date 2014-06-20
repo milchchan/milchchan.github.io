@@ -1,25 +1,27 @@
-/* Global Styles */
-
 html,
 body {
   height: 100%;
   width: 100%;
-  font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: Montserrat, Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
 }
-
+small {
+    opacity: 0.5;
+}
+p {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 .vert-text {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
 }
-
 .vert-text h1 {
   padding: 0 0 50px 0;
   margin: 0;
   font-size: 4.5em;
   font-weight: 700;
 }
-
 .btn {
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 400;
@@ -39,13 +41,38 @@ body {
     color: #ffffff;
     background-color: #00a0e9;
 }
-
-small{
-    opacity: 0.5;
+.btn-primary {
+    border: 1px solid #000000;
+    color: #ffffff;
+    background-color: #000000;
 }
-
-/* Full Page Image Header Area */
-
+.btn-primary:hover,
+.btn-primary:focus {
+    border: 1px solid #00a0e9;
+    outline: 0;
+    color: #ffffff;
+    background-color: #00a0e9;
+}
+.list-inline > li.button {
+    padding-top: 10px;
+    padding: 10px;
+}
+.highlight {
+    text-transform: uppercase; 
+}
+.animatable {
+    color: #000000;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+    transform: scale(1);
+}
+.animatable:hover,
+.animatable:focus {
+    outline: 0;
+    color: #00a0e9;
+    transform: scale(1.1);
+}
 .header {
   display: table;
   height: 100%;
@@ -57,26 +84,24 @@ small{
   -o-background-size: cover;
   background-size: cover;
 }
-
-/* Intro */
-
-.intro {
+.normal {
   padding: 50px 0;
 }
-
-/* Services */
-
-.services {
-  background: #7fbbda;
+.normal-item {
+  margin-bottom: 25px;
+}
+.img-normal {
+  margin: 0 auto;
+}
+.highlights {
+  background: #00a0e9;
   padding: 50px 0;
   color: #ffffff;
 }
-
-.service-item {
+.highlight-item {
   margin-bottom: 15px;
 }
-
-i.service-icon {
+i.highlight-icon {
   border: 3px solid #ffffff;
   border-radius: 50%;
   display: inline-block;
@@ -87,9 +112,6 @@ i.service-icon {
   vertical-align: middle; 
   text-align: center;
 }
-
-/* Callout */
-
 .callout {
   color: #ffffff;
   display: table;
@@ -101,76 +123,41 @@ i.service-icon {
   -o-background-size: cover;
   background-size: cover;
 }
-
-/* Portfolio */
-
-.portfolio {
-  padding: 50px 0;
-}
-
-.portfolio-item {
-  margin-bottom: 25px;
-}
-
-.img-portfolio {
-  margin: 0 auto;
-}
-
-
-/* Call to Action */
-
 .call-to-action {
   color: #ffffff;
-  background: #0a5175;
+  background: #00a0e9;
   padding: 50px 0;
 }
-
 .call-to-action .btn {
   margin: 10px;
 }
-
-/* Map */
-
 .map {
   height: 500px;
 }
-
-/* Footer */
-
 footer {
   padding: 100px 0;
 }
-
 .top-scroll {
   margin-top: 50px;
 }
-
 .top-scroll a {
   text-decoration: none;
   color: inherit;
 }
-
 i.scroll {
-  color: #333333;
+  color: #000000;
 }
-
 i.scroll:hover {
-  color: #0a5175;
+  color: #00a0e9;
 }
-/* Responsive */
-
 @media (max-width: 768px) {
-	
   .header {
 	background: url(../images/Background.jpg) no-repeat center center scroll; 
   }
-
   .callout {
 	background: url(../images/Character.jpg) no-repeat center center scroll; 
   }
-
   .map {
 	height: 75%;
   }
-
 }
