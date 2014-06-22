@@ -123,6 +123,9 @@ i.highlight-icon {
   -o-background-size: cover;
   background-size: cover;
 }
+img.popupable {
+  padding: 25px 0;
+}
 .map {
   height: 500px;
 }
