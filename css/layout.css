@@ -73,6 +73,9 @@ p {
     color: #00a0e9;
     transform: scale(1.1);
 }
+img.popupable {
+  margin: 25px 0;
+}
 .header {
   display: table;
   height: 100%;
@@ -122,9 +125,6 @@ i.highlight-icon {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-}
-img.popupable {
-  padding: 25px 0;
 }
 .map {
   height: 500px;
