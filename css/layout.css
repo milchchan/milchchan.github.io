@@ -117,7 +117,7 @@ i.highlight-icon {
   display: table;
   height: 400px;
   width: 100%;
-  background: url(../images/Character.jpg) no-repeat center center fixed; 
+  background: url(../images/Alice.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -155,7 +155,7 @@ i.scroll:hover {
 	background: url(../images/Background.jpg) no-repeat center center scroll; 
   }
   .callout {
-	background: url(../images/Character.jpg) no-repeat center center scroll; 
+	background: url(../images/Alice.jpg) no-repeat center center scroll; 
   }
   .map {
 	height: 75%;
