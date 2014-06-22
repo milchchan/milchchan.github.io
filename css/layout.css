@@ -112,7 +112,7 @@ i.highlight-icon {
   vertical-align: middle; 
   text-align: center;
 }
-.callout {
+.preview {
   color: #ffffff;
   display: table;
   height: 400px;
@@ -122,14 +122,6 @@ i.highlight-icon {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-}
-.call-to-action {
-  color: #ffffff;
-  background: #00a0e9;
-  padding: 50px 0;
-}
-.call-to-action .btn {
-  margin: 10px;
 }
 .map {
   height: 500px;
@@ -154,7 +146,7 @@ i.scroll:hover {
   .header {
 	background: url(../images/Background.jpg) no-repeat center center scroll; 
   }
-  .callout {
+  .preview {
 	background: url(../images/Alice.jpg) no-repeat center center scroll; 
   }
   .map {
