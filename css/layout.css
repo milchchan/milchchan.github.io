@@ -42,16 +42,16 @@ p {
     background-color: #00a0e9;
 }
 .btn-primary {
-    border: 1px solid #000000;
+    border: 1px solid #00a0e9;
     color: #ffffff;
-    background-color: #000000;
+    background-color: #00a0e9;
 }
 .btn-primary:hover,
 .btn-primary:focus {
-    border: 1px solid #00a0e9;
+    border: 1px solid #ffffff;
     outline: 0;
-    color: #ffffff;
-    background-color: #00a0e9;
+    color: #000000;
+    background-color: #ffffff;
 }
 .list-inline > li.button {
     padding-top: 10px;
