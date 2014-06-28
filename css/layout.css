@@ -81,7 +81,7 @@ img.popupable {
   height: 100%;
   width: 100%;
   position: relative;
-  background: url(../images/Background.jpg) no-repeat center center fixed; 
+  background: url(../images/Background.jpg) no-repeat 50% 50% fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
