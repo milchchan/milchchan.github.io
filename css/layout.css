@@ -88,10 +88,6 @@ img.popupable {
   background-size: cover;
   animation: fadein 1s;
 }
-@keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
 .normal {
   padding: 50px 0;
 }
@@ -130,6 +126,7 @@ i.highlight-icon {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  animation: fadein 1s;
 }
 .map {
   height: 500px;
@@ -149,6 +146,10 @@ i.scroll {
 }
 i.scroll:hover {
   color: #00a0e9;
+}
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 @media (max-width: 768px) {
   .header {
