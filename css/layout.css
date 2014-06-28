@@ -86,7 +86,7 @@ img.popupable {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  animation: fadein 1s;
+  animation: fadein 1s ease-out;
 }
 .normal {
   padding: 50px 0;
@@ -126,7 +126,7 @@ i.highlight-icon {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  animation: fadein 1s;
+  animation: fadein 1s ease-out;
 }
 .map {
   height: 500px;
