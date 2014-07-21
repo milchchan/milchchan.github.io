@@ -256,11 +256,13 @@
                     return Math.floor(Math.random() * (max - min + 1)) + min;
                 }
                 
+                var length = 0;
+                
                 for (var i in array) {
-                    idLength++;
+                    length++;
                 }
 
-                var a = new Array(idLength);
+                var a = new Array(length);
                 var n = 0;
 
                 for (var i in array) {
