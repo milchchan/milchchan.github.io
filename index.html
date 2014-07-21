@@ -326,7 +326,7 @@
                                                 return Math.floor(Math.random() * (max - min + 1)) + min;
                                             }
                                             
-                                            $('div.blind').delay(random(0, 500)).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', 'swing', function () {
+                                            $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', 'swing', function () {
                                                 $(this).remove();
                                             });
                                             
