@@ -330,11 +330,11 @@
                                             $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'slow', 'easeInSine', function () {
                                                 $(this).remove();
                                             });
-                                            
-                                            setTimeout(onTick, 5000);
                                         }));
                                 })
                                 .appendTo(parent);
+                                
+                            setTimeout(onTick, 5000);
                         }, 5000);
                     });
                 });
