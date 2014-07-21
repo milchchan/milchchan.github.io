@@ -104,7 +104,6 @@ div.blind {
   height: 100%;
   top: 0;
   left: 0;
-  transform: translate(0%, 0%);
   background: #00a0e9;
 }
 .normal {
