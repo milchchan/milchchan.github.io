@@ -96,9 +96,8 @@ div.background {
   left: 0;
 }
 img.background {
-  position: absolute; 
   min-height: 100%;
-  min-width: 1024px;
+  min-width: 1920px;
   width: 100%;
   height: auto;
   position: fixed;
