@@ -77,7 +77,7 @@ img.popupable {
   margin: 25px 0;
 }
 .header {
-  /*display: table;*/
+  display: table;
   height: 100%;
   width: 100%;
   position: relative;
@@ -90,7 +90,6 @@ img.popupable {
 }
 div.background {
   z-index: -1;
-  position: absolute; 
 }
 img.background {
   min-height: 100%;
