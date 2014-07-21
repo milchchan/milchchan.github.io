@@ -26,7 +26,7 @@
 <body>
     <div id="top" class="header">
         <div class="background">
-            <img class="background" src="../images/Background.jpg" width="1920px" height="1080px" alt="Background" />
+            <img class="background" width="1920px" height="1080px" alt="Background" />
             <div class="blind"></div>
         </div>
         <div class="vert-text">
@@ -233,6 +233,8 @@
     <script src="js/jquery-1.10.2.js"></script>
     <script src="js/bootstrap.js"></script>
     <script>
+        var queue = new Array();
+        
         $(function () {
             $('a[href*=#]:not([href=#])').click(function () {
                 if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
@@ -247,6 +249,28 @@
                         return false;
                     }
                 }
+            });
+            
+            queue.push('../images/Background.jpg');
+            
+            var url = queue.shift();
+            
+            
+            
+            $('img.background')
+                .attr('src', url)
+                .bind('load', function () {
+                    var u = queue.shift();
+                    
+                    queue.push(u);
+                
+                    $(this).delay(5000).attr('src', u);
+                    
+                    var blind = $('div.blind');
+                    
+                    blind.animate({ 'top': -blind.height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                       
+                    });
             });
         });
     </script>
