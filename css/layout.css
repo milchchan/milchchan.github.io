@@ -101,10 +101,9 @@ img.background {
   min-width: 1920px;*/
   width: 100%;
   height: auto;
-  /*height: auto;
   position: fixed;
   top: 0;
-  left: 0;*/
+  left: 0;
 }
 /*@media screen and (max-width: 1920px) {
   img.background {
