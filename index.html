@@ -259,6 +259,7 @@
             
             $('img.background')
                 .attr('src', url)
+                .css('opacity', '1')
                 .bind('load', function () {
                     $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
                         var parent = $(this).parent();
