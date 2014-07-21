@@ -93,7 +93,7 @@ img.background {
   min-width: 1920px;
   width: 100%;
   height: auto;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
 }
