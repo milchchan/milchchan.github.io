@@ -92,6 +92,7 @@ div.background {
   overflow: hidden;
 }
 img.background {
+  z-index: -3;
   height: 100%;
   width: auto;
   position: absolute;
@@ -100,6 +101,7 @@ img.background {
   transform: translate(-50%, 0%);
 }
 div.blind {
+  z-index: -2;
   width: 100%;
   height: 100%;
   top: 0;
