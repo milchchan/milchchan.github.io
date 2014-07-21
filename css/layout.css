@@ -94,9 +94,9 @@ img.background {
   height: 100%;
   width: auto;
   position: absolute;
-  top: 0;
+  /*top: 0;
   left: 50%;
-  transform:translate(-50%, 0%);
+  transform: translate(-50%, 0%);*/
 }
 div.blind {
   width: 100%;
