@@ -90,6 +90,7 @@ img.popupable {
 }
 div.background {
   z-index: -1;
+  position: absolute;
 }
 img.background {
   min-height: 100%;
