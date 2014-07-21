@@ -329,11 +329,11 @@
                                             $('div.blind').delay(random(0, 500)).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', 'swing', function () {
                                                 $(this).remove();
                                             });
+                                            
+                                            setTimeout(onTick, 5000);
                                         }));
                                 })
                                 .appendTo(parent);
-                                
-                            setTimeout(onTick, 5000);
                         }, 5000);
                     });
                 });
