@@ -270,7 +270,7 @@
                                 .attr('class', 'blind')
                                 .css('margin-top', parent.height() + 'px')
                                 .css('opacity', '0')
-                                .appendTo(parent)
+                                
                                 .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', function () {
                                     /*var u = queue.shift();
                                 
@@ -288,7 +288,8 @@
                                                 $(this).remove();
                                             });
                                         }));*/
-                                });
+                                })
+                                .appendTo(parent);
                                 
                             setTimeout(onTick, 5000);
                         }, 5000);
