@@ -94,6 +94,7 @@ div.background {
   left: -50%; 
   width: 200%; 
   height: 200%;
+  overflow: hidden;
 }
 img.background {
   position: absolute; 
