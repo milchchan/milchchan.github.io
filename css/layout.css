@@ -77,7 +77,6 @@ img.popupable {
   margin: 25px 0;
 }
 .header {
-  display: table;
   height: 100%;
   width: 100%;
   position: relative;
@@ -86,7 +85,6 @@ img.popupable {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;*/
-  animation: fadein 1s ease-out;
 }
 div.background {
   z-index: -1;
