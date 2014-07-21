@@ -89,7 +89,7 @@ img.popupable {
 }
 div.background {
   z-index: -1;
-  position: relative; 
+  position: absolute; 
   top: -50%; 
   left: -50%; 
   width: 200%; 
