@@ -97,14 +97,14 @@ div.background {
   overflow: hidden;
 }
 img.background {
-  width: 100%;
-  height: auto;
-  /*position: fixed;*/
+  position: absolute; 
   top: 0; 
   left: 0; 
   right: 0; 
   bottom: 0; 
   margin: auto; 
+  min-width: 50%;
+  min-height: 50%;
 }
 @media screen and (max-width: 1920px) {
   img.background {
