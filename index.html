@@ -26,7 +26,8 @@
 <body>
     <div id="top" class="header">
         <div class="background">
-            <img class="background" src="../images/Background.jpg" alt="Background" />
+            <img class="background" alt="Background" />
+            <div class="blind"></div>
         </div>
         <div class="vert-text">
             <h1><span class="highlight">Apricot</span> <small>for Windows or iOS</small></h1>
@@ -255,7 +256,7 @@
             var url = queue.shift();
             
             queue.push(url);
-            /*
+            
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
@@ -264,10 +265,10 @@
                     queue.push(u);
                     
                     $(this).delay(5000).attr('src', u);
-                    $('div.blind').animate({ 'top': $(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                    $('div.blind').animate({ 'top': $(this).parent().height() + 'px', 'opacity' : '1' }, 'normal', function () {
                        $(this).css('transform', 'translate(0%, 100%)').css('opacity', '1');
                     });
-            });*/
+            });
         });
     </script>
 </body>
