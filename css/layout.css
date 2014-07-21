@@ -100,6 +100,7 @@ img.background {
   /*min-height: 100%;
   min-width: 1920px;*/
   width: 100%;
+  bottom: 0;
   /*height: auto;
   position: fixed;
   top: 0;
