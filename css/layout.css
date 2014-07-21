@@ -100,8 +100,11 @@ img.background {
   width: 100%;
   height: auto;
   /*position: fixed;*/
-  top: 0;
-  left: 0;
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  margin: auto; 
 }
 @media screen and (max-width: 1920px) {
   img.background {
