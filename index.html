@@ -260,7 +260,7 @@
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
-                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, '5000', function () {
+                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
                         var parent = $(this).parent();
                         
                         $(this).remove();
@@ -271,8 +271,7 @@
                                 .css('margin-top', parent.height() + 'px')
                                 .css('opacity', '0')
                                 .appendTo(parent)
-                                .delay(1000)
-                                .animate({ 'margin-top': '0px', 'opacity' : '1' }, '5000', function () {
+                                .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', function () {
                                     var u = queue.shift();
                                 
                                     queue.push(u);
@@ -284,13 +283,13 @@
                                         .attr('src', u)
                                         .attr('alt', 'Background')
                                         .bind('load', function () {
-                                            $('div.blind').animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, '5000', function () {
+                                            $('div.blind').animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', function () {
                                                 $(this).remove();
                                             });
                                         }));
                                 });
                                 
-                             setTimeout(onTick, 5000);
+                            setTimeout(onTick, 5000);
                         }, 5000);
                     });
                 });
