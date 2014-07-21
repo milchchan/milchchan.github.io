@@ -264,10 +264,8 @@
                     
                     queue.push(u);
                     
-                    alert($(this).parent().height());
-                
                     $(this).delay(5000).attr('src', u);
-                    $('div.blind').animate({ 'top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                    $('div.blind').animate({ 'top': $(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
                        
                     });
             });
