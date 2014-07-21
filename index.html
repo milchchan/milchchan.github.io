@@ -273,6 +273,7 @@
                     .css('margin-top', background.height() + 'px')
                     .css('opacity', '0')
                     .appendTo(background)
+                    .delay(1000)
                     .animate({ 'margin-top': '0px', 'opacity' : '0' }, 'normal', function () {
                         var u = queue.shift();
                     
@@ -285,7 +286,7 @@
                             .attr('src', u)
                             .attr('alt', 'Background')
                             .bind('load', function () {
-                                $('div.blind').delay(1000).animate({ 'margin-top': -background.height() + 'px', 'opacity' : '1' }, 'normal', function () {
+                                $('div.blind').animate({ 'margin-top': -background.height() + 'px', 'opacity' : '1' }, 'normal', function () {
                                     $(this).remove();
                                 });
                             }));
