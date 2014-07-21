@@ -265,10 +265,7 @@
                     queue.push(u);
                 
                     $(this).delay(5000).attr('src', u);
-                    
-                    var blind = $('div.blind');
-                    
-                    blind.animate({ 'top': -blind.height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                    $('div.blind').animate({ 'top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
                        
                     });
             });
