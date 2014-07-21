@@ -99,8 +99,8 @@ img.background {
   /*min-height: 100%;*/
   /*max-width: 100%;*/
   width: 100%;
-  /*height: auto;*/
-  position: absolute;
+  /*height: auto;
+  position: absolute;*/
   top: 0;
   left: 0;
 }
