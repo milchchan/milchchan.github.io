@@ -260,7 +260,7 @@
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
-                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '1' }, 'normal', function () {
+                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
                        $(this).remove();
                     });
                 });
@@ -273,7 +273,7 @@
                     .css('margin-top', background.height() + 'px')
                     .css('opacity', '0')
                     .appendTo(background)
-                    .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', function () {
+                    .animate({ 'margin-top': '0px', 'opacity' : '0' }, 'normal', function () {
                         var u = queue.shift();
                     
                         queue.push(u);
@@ -283,6 +283,7 @@
                         background.prepend($('<img />')
                             .attr('class', 'background')
                             .attr('src', u)
+                            .attr('alt', 'Background')
                             .bind('load', function () {
                                 $('div.blind').animate({ 'margin-top': -background.height() + 'px', 'opacity' : '1' }, 'normal', function () {
                                     $(this).remove();
