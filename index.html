@@ -266,9 +266,13 @@
                     
                     $(this).delay(5000).attr('src', u);
                     $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '1' }, 'normal', function () {
-                       $(this).css('transform', 'translate(0%, 100%)').css('opacity', '1');
+                       $(this).css('transform', 'translate(0%, 0%)').css('opacity', '1');
                     });
             });
+            
+            setTimeout(function onTick() {
+                
+            }, 5000);
         });
     </script>
 </body>
