@@ -105,6 +105,7 @@ img.background {
   margin: auto; 
   min-width: 50%;
   min-height: 50%;
+  overflow: hidden;
 }
 .normal {
   padding: 50px 0;
