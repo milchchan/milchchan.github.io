@@ -276,6 +276,7 @@
                                 
                                     queue.push(u);
                                 
+                                    $('img.background').unbind('load');
                                     $('img.background').remove();
                                     
                                     parent.prepend($('<img />')
