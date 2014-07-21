@@ -231,6 +231,7 @@
         </div>
     </footer>
     <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.js"></script>
     <script>
         var queue = new Array();
@@ -298,7 +299,7 @@
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
-                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', 'swing', function () {
+                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', 'easeInSine', function () {
                         var parent = $(this).parent();
                         
                         $(this).remove();
@@ -309,7 +310,7 @@
                                 .css('margin-top', parent.height() + 'px')
                                 .css('opacity', '0')
                                 
-                                .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', 'swing', function () {
+                                .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', 'easeOutSine', function () {
                                     var u = queue.shift();
                                 
                                     queue.push(u);
@@ -326,7 +327,7 @@
                                                 return Math.floor(Math.random() * (max - min + 1)) + min;
                                             }
                                             
-                                            $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', 'swing', function () {
+                                            $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', 'easeInSine', function () {
                                                 $(this).remove();
                                             });
                                             
