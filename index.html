@@ -284,7 +284,11 @@
                                         .attr('src', u)
                                         .attr('alt', 'Background')
                                         .bind('load', function () {
-                                            $('div.blind').delay(500).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                                            function random(min, max) {
+                                                return Math.floor(Math.random() * (max - min + 1)) + min;
+                                            }
+                                            
+                                            $('div.blind').delay(random(0, 500)).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', function () {
                                                 $(this).remove();
                                             });
                                         }));
