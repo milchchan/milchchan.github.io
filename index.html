@@ -261,39 +261,39 @@
                 .attr('src', url)
                 .bind('load', function () {
                     $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
-                       $(this).remove();
+                        $(this).remove();
+                       
+                        setTimeout(function onTick() {
+                            var background = $('div.background');
+                        
+                            $('<div />')
+                                .attr('class', 'blind')
+                                .css('margin-top', background.height() + 'px')
+                                .css('opacity', '0')
+                                .appendTo(background)
+                                .delay(1000)
+                                .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', function () {
+                                    var u = queue.shift();
+                                
+                                    queue.push(u);
+                                
+                                    $('img.background').remove();
+                                    
+                                    background.prepend($('<img />')
+                                        .attr('class', 'background')
+                                        .attr('src', u)
+                                        .attr('alt', 'Background')
+                                        .bind('load', function () {
+                                            $('div.blind').animate({ 'margin-top': -background.height() + 'px', 'opacity' : '1' }, 'normal', function () {
+                                                $(this).remove();
+                                            });
+                                        }));
+                                });
+                                
+                             setTimeout(onTick, 5000);
+                        }, 5000);
                     });
                 });
-            
-            setTimeout(function onTick() {
-                var background = $('div.background');
-                
-                $('<div />')
-                    .attr('class', 'blind')
-                    .css('margin-top', background.height() + 'px')
-                    .css('opacity', '0')
-                    .appendTo(background)
-                    .delay(1000)
-                    .animate({ 'margin-top': '0px', 'opacity' : '0' }, 'normal', function () {
-                        var u = queue.shift();
-                    
-                        queue.push(u);
-                    
-                        $('img.background').remove();
-                        
-                        background.prepend($('<img />')
-                            .attr('class', 'background')
-                            .attr('src', u)
-                            .attr('alt', 'Background')
-                            .bind('load', function () {
-                                $('div.blind').animate({ 'margin-top': -background.height() + 'px', 'opacity' : '1' }, 'normal', function () {
-                                    $(this).remove();
-                                });
-                            }));
-                    });
-                    
-                 setTimeout(onTick, 5000);
-            }, 5000);
         });
     </script>
 </body>
