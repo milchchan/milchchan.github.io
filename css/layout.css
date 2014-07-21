@@ -81,12 +81,27 @@ img.popupable {
   height: 100%;
   width: 100%;
   position: relative;
-  background: url(../images/Background.jpg) no-repeat 50% 50% fixed; 
+  /*background: url(../images/Background.jpg) no-repeat 50% 50% fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover;
+  background-size: cover;*/
   animation: fadein 1s ease-out;
+}
+img.background {
+  min-height: 100%;
+  min-width: 1024px;
+  width: 100%;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+@media screen and (max-width: 1024px) {
+  img.background {
+    left: 50%;
+    margin-left: -512px;
+  }
 }
 .normal {
   padding: 50px 0;
