@@ -265,14 +265,14 @@
                         
                         $(this).remove();
                        
-                        function onTick() {
+                        setTimeout(function onTick() {
                             $('<div />')
                                 .attr('class', 'blind')
                                 .css('margin-top', parent.height() + 'px')
                                 .css('opacity', '0')
                                 .appendTo(parent)
                                 .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', function () {
-                                    var u = queue.shift();
+                                    /*var u = queue.shift();
                                 
                                     queue.push(u);
                                 
@@ -287,15 +287,11 @@
                                             $('div.blind').animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', function () {
                                                 $(this).remove();
                                             });
-                                        }));
-                                        
-                                    
+                                        }));*/
                                 });
                                 
                             setTimeout(onTick, 5000);
-                        }
-                        
-                        setTimeout(onTick(), 5000);
+                        }, 5000);
                     });
                 });
         });
