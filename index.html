@@ -260,7 +260,7 @@
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
-                    $('div.blind').delay(1000).animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
                         var parent = $(this).parent();
                         
                         $(this).remove();
@@ -284,7 +284,7 @@
                                         .attr('src', u)
                                         .attr('alt', 'Background')
                                         .bind('load', function () {
-                                            $('div.blind').animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                                            $('div.blind').delay(1000).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', function () {
                                                 $(this).remove();
                                             });
                                         }));
