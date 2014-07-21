@@ -256,7 +256,7 @@
             var url = queue.shift();
             
             queue.push(url);
-            
+            /*
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
@@ -272,7 +272,7 @@
                                 .css('opacity', '0')
                                 
                                 .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', function () {
-                                    /*var u = queue.shift();
+                                    var u = queue.shift();
                                 
                                     queue.push(u);
                                 
@@ -287,14 +287,14 @@
                                             $('div.blind').animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'normal', function () {
                                                 $(this).remove();
                                             });
-                                        }));*/
+                                        }));
                                 })
                                 .appendTo(parent);
                                 
                             setTimeout(onTick, 5000);
                         }, 5000);
                     });
-                });
+                });*/
         });
     </script>
 </body>
