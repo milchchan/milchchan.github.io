@@ -251,7 +251,41 @@
                 }
             });
             
+            function shuffle(array) {
+                function random(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+                
+                for (var i in array) {
+                    idLength++;
+                }
+
+                var a = new Array(idLength);
+                var n = 0;
+
+                for (var i in array) {
+                    a[n] = array[i];
+                    n++;
+                }
+                
+                while (n > 1)
+                {
+                    var k = random(0, n);
+
+                    n--;
+
+                    var temp = a[n];
+
+                    a[n] = a[k];
+                    a[k] = temp;
+                }
+
+                return a;
+            }
+            
             queue.push('../images/Background.jpg');
+            
+            queue = shuffle(queue);
             
             var url = queue.shift();
             
