@@ -81,7 +81,6 @@ img.popupable {
   height: 100%;
   width: 100%;
   position: relative;
-  overflow: hidden;
   /*background: url(../images/Background.jpg) no-repeat 50% 50% fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -91,22 +90,27 @@ img.popupable {
 div.background {
   z-index: -1;
   position: absolute;
-}
-img.background {
-  min-height: 100%;
-  min-width: 1920px;
   width: 100%;
-  height: auto;
-  position: fixed;
+  height: 100%;
   top: 0;
   left: 0;
+  overflow: hidden;
 }
-@media screen and (max-width: 1920px) {
+img.background {
+  /*min-height: 100%;
+  min-width: 1920px;*/
+  width: 100%;
+  /*height: auto;
+  position: fixed;
+  top: 0;
+  left: 0;*/
+}
+/*@media screen and (max-width: 1920px) {
   img.background {
     left: 50%;
     margin-left: -960px;
   }
-}
+}*/
 .normal {
   padding: 50px 0;
 }
