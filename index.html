@@ -260,31 +260,31 @@
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
-                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, '5000', function () {
+                        var parent = $(this).parent();
+                        
                         $(this).remove();
                        
                         setTimeout(function onTick() {
-                            var background = $('div.background');
-                        
                             $('<div />')
                                 .attr('class', 'blind')
-                                .css('margin-top', background.height() + 'px')
-                                .css('opacity', '1')
-                                .appendTo(background)
+                                .css('margin-top', parent.height() + 'px')
+                                .css('opacity', '0')
+                                .appendTo(parent)
                                 .delay(1000)
-                                .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'normal', function () {
+                                .animate({ 'margin-top': '0px', 'opacity' : '1' }, '5000', function () {
                                     var u = queue.shift();
                                 
                                     queue.push(u);
                                 
                                     $('img.background').remove();
                                     
-                                    background.prepend($('<img />')
+                                    parent.prepend($('<img />')
                                         .attr('class', 'background')
                                         .attr('src', u)
                                         .attr('alt', 'Background')
                                         .bind('load', function () {
-                                            $('div.blind').animate({ 'margin-top': -background.height() + 'px', 'opacity' : '0' }, 'normal', function () {
+                                            $('div.blind').animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, '5000', function () {
                                                 $(this).remove();
                                             });
                                         }));
