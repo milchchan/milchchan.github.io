@@ -257,18 +257,6 @@
             
             queue.push(url);
             
-            $('img.background')
-                .attr('src', url)
-                .bind('load', function () {
-                    var u = queue.shift();
-                    
-                    queue.push(u);
-                    
-                    $(this).delay(5000).attr('src', u);
-                    $('div.blind').animate({ 'top': $(this).parent().height() + 'px', 'opacity' : '0' }, 'normal', function () {
-                       $(this).css('transform', 'translate(0%, 100%)').css('opacity', '1');
-                    });
-            });
         });
     </script>
 </body>
