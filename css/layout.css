@@ -108,6 +108,7 @@ div.blind {
   height: 100%;
   top: 0;
   left: 0;
+  margin-top: 0%;
   background: #00a0e9;
 }
 .normal {
