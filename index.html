@@ -313,32 +313,33 @@
                         $(this).remove();
                        
                         setTimeout(function onTick() {
-                            $('<div />')
+                            var div = $('<div />')
                                 .attr('class', 'blind')
                                 .css('margin-top', '100%')
-                                .animate({ 'margin-top': '0%' }, 'slow', 'easeOutSine', function () {
-                                    var u = queue.shift();
-                                
-                                    queue.push(u);
-                                
-                                    $('img.background').unbind('load');
-                                    $('img.background').remove();
-                                    
-                                    parent.prepend($('<img />')
-                                        .attr('class', 'background')
-                                        .attr('src', u)
-                                        .attr('alt', 'Background')
-                                        .bind('load', function () {
-                                            function random(min, max) {
-                                                return Math.floor(Math.random() * (max - min + 1)) + min;
-                                            }
-                                            
-                                            $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 'slow', 'easeInSine', function () {
-                                                $(this).remove();
-                                            });
-                                        }));
-                                })
                                 .appendTo(parent);
+                                
+                            div.animate({ 'margin-top': '0%' }, 'slow', 'easeOutSine', function () {
+                                var u = queue.shift();
+                            
+                                queue.push(u);
+                            
+                                $('img.background').unbind('load');
+                                $('img.background').remove();
+                                
+                                parent.prepend($('<img />')
+                                    .attr('class', 'background')
+                                    .attr('src', u)
+                                    .attr('alt', 'Background')
+                                    .bind('load', function () {
+                                        function random(min, max) {
+                                            return Math.floor(Math.random() * (max - min + 1)) + min;
+                                        }
+                                        
+                                        $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 'slow', 'easeInSine', function () {
+                                            $(this).remove();
+                                        });
+                                    }));
+                            });
                             
                             setTimeout(onTick, 5000);
                         }, 5000);
