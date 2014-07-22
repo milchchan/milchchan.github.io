@@ -335,7 +335,10 @@
                                                 return Math.floor(Math.random() * (max - min + 1)) + min;
                                             }
                                             
-                                            $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, 'slow', 'easeInSine', function () {
+                                            var t = random(500, 1000);
+                                            
+                                            $('div.blind').delay(t).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, '1000', 'easeInSine');
+                                            $('div.blind').delay(t + 500).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, '500', 'easeInSine', function () {
                                                 $(this).remove();
                                             });
                                         }));
