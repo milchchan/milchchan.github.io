@@ -99,6 +99,7 @@ img.background {
   top: 0;
   left: 50%;
   -webkit-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
 }
 div.blind {
