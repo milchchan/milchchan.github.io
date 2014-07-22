@@ -307,43 +307,45 @@
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
-                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px', 'opacity' : '0' }, 'slow', 'easeInSine', function () {
+                    $('div.blind').animate({ 'margin-top': -$(this).parent().height() + 'px' }, '1000', 'easeInSine');
+                    $('div.blind').delay(500).animate({ 'opacity' : '0' }, '500', 'easeInSine', function () {
                         var parent = $(this).parent();
                         
                         $(this).remove();
                        
                         setTimeout(function onTick() {
-                            $('<div />')
+                            var div = $('<div />')
                                 .attr('class', 'blind')
                                 .css('margin-top', parent.height() + 'px')
                                 .css('opacity', '0')
-                                
-                                .animate({ 'margin-top': '0px', 'opacity' : '1' }, 'slow', 'easeOutSine', function () {
-                                    var u = queue.shift();
-                                
-                                    queue.push(u);
-                                
-                                    $('img.background').unbind('load');
-                                    $('img.background').remove();
-                                    
-                                    parent.prepend($('<img />')
-                                        .attr('class', 'background')
-                                        .attr('src', u)
-                                        .attr('alt', 'Background')
-                                        .bind('load', function () {
-                                            function random(min, max) {
-                                                return Math.floor(Math.random() * (max - min + 1)) + min;
-                                            }
-                                            
-                                            var t = random(500, 1000);
-                                            
-                                            $('div.blind').delay(t).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, '1000', 'easeInSine');
-                                            $('div.blind').delay(t + 500).animate({ 'margin-top': -parent.height() + 'px', 'opacity' : '0' }, '500', 'easeInSine', function () {
-                                                $(this).remove();
-                                            });
-                                        }));
-                                })
                                 .appendTo(parent);
+                            
+                            div.animate({ 'margin-top': '0px' }, '1000', 'easeOutSine');
+                            div.delay(500).animate({ 'opacity' : '1' }, '500', 'easeOutSine', function () {
+                                var u = queue.shift();
+                            
+                                queue.push(u);
+                            
+                                $('img.background').unbind('load');
+                                $('img.background').remove();
+                                
+                                parent.prepend($('<img />')
+                                    .attr('class', 'background')
+                                    .attr('src', u)
+                                    .attr('alt', 'Background')
+                                    .bind('load', function () {
+                                        function random(min, max) {
+                                            return Math.floor(Math.random() * (max - min + 1)) + min;
+                                        }
+                                        
+                                        var t = random(500, 1000);
+                                        
+                                        $('div.blind').delay(t).animate({ 'margin-top': -parent.height() + 'px' }, '1000', 'easeInSine');
+                                        $('div.blind').delay(t + 500).animate({ 'opacity' : '0' }, '500', 'easeInSine', function () {
+                                            $(this).remove();
+                                        });
+                                    }));
+                            });
                                 
                             setTimeout(onTick, 5000);
                         }, 5000);
