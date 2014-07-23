@@ -76,24 +76,25 @@ p {
 img.popupable {
   margin: 25px 0;
 }
-.social {
+.annotation {
   z-index: 1;
   position: absolute;
-  top: 0;
-  right: 0;
-  padding: 10px 0px 10px 0px;
-}
-.social > div.left {
-  float: left;
-  position: relative;
+  bottom: 0;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
-  border-width: 0px;
-  line-height: 0px;
-  width: 100px;
+  width: 100%;
+  text-align: left;
 }
-.social > div.right {
+.social {
   float: right;
+  margin: 0px 0px 0px 0px;
+  padding: 10px 0px 10px 0px;
+  border-width: 0px;
+  text-align: left;
+  vertical-align: baseline;
+}
+.social > div {
+  float: left;
   position: relative;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
