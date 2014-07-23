@@ -84,6 +84,7 @@ img.popupable {
   padding: 10px 0px 10px 0px;
 }
 .social > div {
+  clear: left;
   float: left;
   position: relative;
   margin: 0px 0px 0px 0px;
