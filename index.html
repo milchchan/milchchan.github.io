@@ -337,6 +337,7 @@
                         var parent = $(this).parent();
                         
                         $(this).remove();
+                        $('img.background').animate({ 'margin-top': '-10%' }, 'slow');
                        
                         setTimeout(function onTick() {
                             var div = $('<div />')
@@ -350,7 +351,7 @@
                                 queue.push(u);
                             
                                 $('img.background').unbind('load');
-                                $('img.background').remove();
+                                $('img.background').stop().remove();
                                 
                                 parent.prepend($('<img />')
                                     .attr('class', 'background')
@@ -361,6 +362,7 @@
                                             return Math.floor(Math.random() * (max - min + 1)) + min;
                                         }
                                         
+                                        $(this).animate({ 'margin-top': '-10%' }, 'slow');
                                         $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 'slow', 'easeInSine', function () {
                                             $(this).remove();
                                         });
