@@ -337,7 +337,7 @@
                         var parent = $(this).parent();
                         
                         $(this).remove();
-                        $('img.background').animate({ 'margin-top': '-10%' }, 'slow');
+                        $('img.background').animate({ 'margin-top': '-5%' }, 'slow');
                        
                         setTimeout(function onTick() {
                             var div = $('<div />')
@@ -362,7 +362,7 @@
                                             return Math.floor(Math.random() * (max - min + 1)) + min;
                                         }
                                         
-                                        $(this).animate({ 'margin-top': '-10%' }, 'slow');
+                                        $(this).animate({ 'margin-top': '-5%' }, 'slow');
                                         $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 'slow', 'easeInSine', function () {
                                             $(this).remove();
                                         });
