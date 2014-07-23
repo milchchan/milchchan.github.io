@@ -77,10 +77,11 @@ img.popupable {
   margin: 25px 0;
 }
 .social {
+  position: absolute;
   z-index: 1;
   top: 0;
   right: 0;
-  padding: 8px;
+  padding: 10px;
 }
 .header {
   display: table;
