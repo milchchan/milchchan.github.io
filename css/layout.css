@@ -110,8 +110,6 @@ div.background {
 }
 img.background {
   z-index: -3;
-  width: auto;
-  height: auto;
   min-width: 100%;
   min-height: 100%;
   position: absolute;
