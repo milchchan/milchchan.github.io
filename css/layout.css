@@ -110,14 +110,20 @@ div.background {
 }
 img.background {
   z-index: -3;
-  min-width: 100%;
-  min-height: 100%;
+  width: auto;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 50%;
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
+}
+@media screen and (max-width: 1920px) {
+  img.background {
+    min-width: 100%;
+    min-height: 100%;
+  }
 }
 div.blind {
   z-index: -2;
