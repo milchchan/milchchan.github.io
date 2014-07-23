@@ -94,6 +94,7 @@ img.popupable {
   width: 125px;
 }
 .social > div.right {
+  clear: both;
   float: right;
   position: relative;
   margin: 0px 0px 0px 0px;
