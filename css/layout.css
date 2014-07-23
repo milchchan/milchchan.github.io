@@ -82,10 +82,8 @@ img.popupable {
   top: 0;
   right: 0;
   padding: 10px 0px 10px 0px;
-  width: 100%;
 }
 .social > div.left {
-  clear: both;
   float: left;
   position: relative;
   margin: 0px 0px 0px 0px;
@@ -95,7 +93,6 @@ img.popupable {
   width: 100px;
 }
 .social > div.right {
-  clear: right;
   float: right;
   position: relative;
   margin: 0px 0px 0px 0px;
