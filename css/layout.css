@@ -112,6 +112,8 @@ img.background {
   z-index: -3;
   height: 100%;
   width: auto;
+  min-width: 100%;
+  min-height: 100%;
   position: absolute;
   top: 0;
   left: 50%;
