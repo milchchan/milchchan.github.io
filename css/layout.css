@@ -76,6 +76,11 @@ p {
 img.popupable {
   margin: 25px 0;
 }
+.social {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
 .header {
   display: table;
   height: 100%;
