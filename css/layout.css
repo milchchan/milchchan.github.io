@@ -2,7 +2,7 @@ html,
 body {
   height: 100%;
   width: 100%;
-  font-family: 'Roboto', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
+  font-family: 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
 }
 small {
     opacity: 0.5;
@@ -23,7 +23,7 @@ p {
   font-weight: 700;
 }
 .btn {
-    font-family: 'Roboto', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
