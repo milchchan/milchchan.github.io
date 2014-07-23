@@ -82,14 +82,14 @@ img.popupable {
   right: 0;
   bottom: 0;
   margin: 0px 0px 0px 0px;
-  padding: 10px 0px 10px 0px;
+  padding: 0px 0px 0px 0px;
   text-align: left;
 }
 .annotations > div {
   float: left;
   position: relative;
   margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 10px;
+  padding: 10px 0px 10px 10px;
   border-width: 0px;
   line-height: 0px;
 }
