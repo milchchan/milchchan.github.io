@@ -78,7 +78,6 @@ img.popupable {
 }
 .social {
   position: absolute;
-  z-index: 1;
   top: 0;
   right: 0;
   padding: 10px 0px 10px 0px;
