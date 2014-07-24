@@ -333,7 +333,7 @@
             $('img.background')
                 .attr('src', url)
                 .bind('load', function () {
-                    $('div.blind').animate({ 'margin-top': '-100%' }, 'slow', 'easeInSine', function () {
+                    $('div.blind').animate({ 'margin-top': '-100%' }, 'slow', 'easeInOutExpo', function () {
                         var parent = $(this).parent();
                         
                         $(this).remove();
@@ -344,7 +344,7 @@
                                 .css('margin-top', '100%')
                                 .appendTo(parent);
                                 
-                            div.animate({ 'margin-top': '0%' }, 'slow', 'easeOutSine', function () {
+                            div.animate({ 'margin-top': '0%' }, 'slow', 'easeInOutExpo', function () {
                                 var u = queue.shift();
                             
                                 queue.push(u);
@@ -361,7 +361,7 @@
                                             return Math.floor(Math.random() * (max - min + 1)) + min;
                                         }
                                         
-                                        $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 'slow', 'easeInSine', function () {
+                                        $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 'slow', 'easeInOutExpo', function () {
                                             $(this).remove();
                                         });
                                     }));
