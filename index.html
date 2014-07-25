@@ -357,7 +357,7 @@
                         .css('animation-timing-function', 'linear')
                         .css('animation-delay', (0.1 * $('img.background').length) + 's')
                         .css('animation-iteration-count', 'infinite')
-                        .css('animation-fill-mode', 'forwards')
+                        .css('animation-fill-mode', q.length == 0 ? 'none' : 'forwards')
                         .bind('load', onLoad1));
                     
                     return;
