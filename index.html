@@ -357,9 +357,9 @@
                 }
                 
                 $('img.background').each(function (index, element) {
-                    $(this)
+                    element
                         .css('visibility', 'hidden')
-                        .css('animation', 'loop 0.1s linear' + 0.5 + 0.1 * index + 's infinite');
+                        .css('animation', 'loop 0.1s linear' + (0.5 + 0.1 * index) + 's infinite');
                 });
                 $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                     var parent = $(this).parent();
@@ -402,9 +402,9 @@
                                     }
                                     
                                     $('img.background').each(function (index, element) {
-                                        $(this)
+                                        element
                                             .css('visibility', 'hidden')
-                                            .css('animation', 'loop 0.1s linear' + 0.5 + 0.1 * index + 's infinite');
+                                            .css('animation', 'loop 0.1s linear' + (0.5 + 0.1 * index) + 's infinite');
                                     });
                                     $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                         $(this).remove();
