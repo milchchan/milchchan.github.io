@@ -120,8 +120,10 @@ img.background {
   transform: translateX(-50%);
 }
 @keyframes loop {
-    0% { transform: translateY(0%); }
-    100% { transform: translateY(-1000%); }
+    0% { visibility: visible; }
+    10% { visibility: visible; }
+    20% { visibility: hidden; }
+    100% { visibility: hidden; }
 }
 div.blind {
   z-index: -2;
