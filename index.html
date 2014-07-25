@@ -372,11 +372,9 @@
                     });
                     
                     setTimeout(function onTick() {
-                        var div = $('<div />')
-                            .attr('class', 'blind')
-                            .css('margin-top', '100%')
-                            .appendTo(parent);
-                            
+                        var blind = $('div.blind')
+                        var div = blind.length == 0 ? $('<div />').attr('class', 'blind').css('margin-top', '100%').appendTo(parent) : blind;
+                        
                         div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
                             var array = queue.shift();
                         
