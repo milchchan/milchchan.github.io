@@ -366,12 +366,8 @@
                     $('img.background').each(function (index, element) {
                         $(this)
                             .css('visibility', 'hidden')
-                            .css('animation-name', 'loop')
                             .css('animation-duration', '0.1s')
-                            .css('animation-timing-function', 'linear')
-                            .css('animation-delay', (0.5 * index) + 's')
-                            .css('animation-iteration-count', 'infinite')
-                            .css('animation-fill-mode', 'forwards');
+                            .css('animation-delay', (0.5 * index) + 's');
                     });
                     
                     setTimeout(function onTick() {
