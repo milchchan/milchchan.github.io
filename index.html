@@ -432,10 +432,11 @@
                     }, 5000);
                 });
             }
-            
+            var a = q.shift();
+            alert(a);
             $('div.background').prepend($('<img />')
                 .attr('class', 'background')
-                .attr('src', q.shift())
+                .attr('src', a)
                 .attr('alt', 'Background')
                 .css('animation-name', 'loop')
                 .css('animation-duration', 0.1 + 's')
