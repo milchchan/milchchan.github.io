@@ -350,12 +350,11 @@
                 .attr('src', q.shift())
                 .bind('load', function () {
                     
-                    if (q.length > 0)
-                    {
+                    /*if (q.length > 0) {
                         
                         
                         return;
-                    }
+                    }*/
                     
                     $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                         var parent = $(this).parent();
