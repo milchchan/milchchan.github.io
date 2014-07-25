@@ -347,7 +347,7 @@
             
             function onLoad1() {
                 if (q.length > 0) {
-                    $(this).before($('<img />')
+                    $(this).after($('<img />')
                         .attr('class', 'background')
                         .attr('src', q.shift())
                         .attr('alt', 'Background')
@@ -356,20 +356,16 @@
                     return;
                 }
                 
+                $('img.background').each(function (index, element) {
+                    $(this)
+                        .css('visibility', 'hidden')
+                        .css('animation', 'animation: loop 0.1s linear' + 0.5 + 0.1 * index + 's infinite');
+                });
                 $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                     var parent = $(this).parent();
                     
                     $(this).remove();
                     
-                    var images = $('img.background');
-                    var length = images.length;
-                    var begin = 0.5;
-                    
-                    images.each(function (index, element) {
-                        $(this)
-                            .css('visibility', 'hidden')
-                            .css('animation', 'animation: loop 0.1s linear' + begin + 0.1 * index + 's infinite');
-                    });
                     
                     setTimeout(function onTick() {
                         if ($('div.blind').length == 0) {
@@ -390,19 +386,9 @@
                                 $('img.background').unbind('load');
                                 $('img.background').remove();
                                 
-                                var images = $('img.background');
-                                var length = images.length;
-                                var begin = 0.5;
-                                
-                                images.each(function (index, element) {
-                                    $(this)
-                                        .css('visibility', 'hidden')
-                                        .css('animation', 'animation: loop 0.1s linear' + begin + 0.1 * index + 's infinite');
-                                });
-                                
                                 function onLoad2() {
                                     if (q.length > 0) {
-                                        $(this).before($('<img />')
+                                        $(this).after($('<img />')
                                             .attr('class', 'background')
                                             .attr('src', q.shift())
                                             .attr('alt', 'Background')
@@ -415,6 +401,11 @@
                                         return Math.floor(Math.random() * (max - min + 1)) + min;
                                     }
                                     
+                                    $('img.background').each(function (index, element) {
+                                        $(this)
+                                            .css('visibility', 'hidden')
+                                            .css('animation', 'animation: loop 0.1s linear' + 0.5 + 0.1 * index + 's infinite');
+                                    });
                                     $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                         $(this).remove();
                                     });
