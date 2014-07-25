@@ -118,6 +118,27 @@ img.background {
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
+  -webkit-animation-name: loop;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-timing-function: steps(10);
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-fill-mode: forwards;
+  -webkit-animation-play-state: paused;
+  -webkit-animation-play-state: paused;
+  -o-animation-name: loop;
+  -o-animation-duration: 1s;
+  -o-animation-timing-function: steps(10);
+  -o-animation-iteration-count: infinite;
+  -o-animation-fill-mode: forwards;
+  -o-animation-play-state: paused;
+  -o-animation-play-state: paused;
+  -o-animation-play-state: paused;
+  animation-name: loop;
+  animation-duration: 1s;
+  animation-timing-function: steps(10);
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+  animation-play-state: paused;
 }
 @keyframes loop {
     0% { visibility: visible; }
