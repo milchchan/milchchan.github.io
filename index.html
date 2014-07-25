@@ -358,7 +358,11 @@
                 
                 $('img.background').each(function (index, element) {
                     $(this)
-                        .css('animation', 'loop 0.1s linear' + (0.5 + 0.1 * index) + 's infinite normal');
+                        .css('animation-name', 'loop')
+                        .css('animation-duration', 0.1 + 's')
+                        .css('animation-timing-function', 'linear')
+                        .css('animation-delay', (0.5 + 0.1 * index) + 's')
+                        .css('animation-iteration-count', 'infinite');
                 });
                 $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                     var parent = $(this).parent();
@@ -402,11 +406,11 @@
                                     
                                     $('img.background').each(function (index, element) {
                                         $(this)
-                                            .css('-webkit-animation', 'loop 0.1s linear' + (0.5 + 0.1 * index) + 's infinite normal');
-                                            .css('-moz-animation', 'loop 0.1s linear' + (0.5 + 0.1 * index) + 's infinite normal');
-                                            .css('-ms-animation', 'loop 0.1s linear' + (0.5 + 0.1 * index) + 's infinite normal');
-                                            .css('-o-animation', 'loop 0.1s linear' + (0.5 + 0.1 * index) + 's infinite normal');
-                                            .css('animation', 'loop 0.1s linear' + (0.5 + 0.1 * index) + 's infinite normal');
+                                            .css('animation-name', 'loop')
+                                            .css('animation-duration', 0.1 + 's')
+                                            .css('animation-timing-function', 'linear')
+                                            .css('animation-delay', (0.5 + 0.1 * index) + 's')
+                                            .css('animation-iteration-count', 'infinite');
                                     });
                                     $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                         $(this).remove();
