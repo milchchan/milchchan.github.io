@@ -118,6 +118,10 @@ img.background {
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
+  -moz-animation-name: loop;
+  -moz-animation-timing-function: linear;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-fill-mode: forwards;
   animation-name: loop;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
