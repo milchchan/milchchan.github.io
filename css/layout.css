@@ -118,6 +118,10 @@ img.background {
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
+  animation-name: loop;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
 }
 @keyframes loop {
     0% { visibility: visible; }
