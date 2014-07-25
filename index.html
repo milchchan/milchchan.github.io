@@ -414,7 +414,7 @@
                                             .css('animation-timing-function', 'linear')
                                             .css('animation-delay', (0.5 + 0.1 * index) + 's')
                                             .css('animation-iteration-count', 'infinite')
-                                            .css('animation-fill-mode', 'forwards');
+                                            .css('animation-fill-mode', 'none');
                                     });
                                     $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                         $(this).remove();
