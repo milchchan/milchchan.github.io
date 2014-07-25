@@ -372,61 +372,59 @@
                     });
                     
                     setTimeout(function onTick() {
-                        if ($('div.blind').length == 0) {
-                            var div = $('<div />')
-                                .attr('class', 'blind')
-                                .css('margin-top', '100%')
-                                .appendTo(parent);
-                                
-                            div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
-                                var array = queue.shift();
+                        var div = $('<div />')
+                            .attr('class', 'blind')
+                            .css('margin-top', '100%')
+                            .appendTo(parent);
                             
-                                queue.push(array);
-                                
-                                for (var i in array) {
-                                    q.push(array[i]);
+                        div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
+                            var array = queue.shift();
+                        
+                            queue.push(array);
+                            
+                            for (var i in array) {
+                                q.push(array[i]);
+                            }
+                        
+                            $('img.background').unbind('load');
+                            $('img.background').remove();
+                            
+                            function onLoad2() {
+                                if (q.length > 0) {
+                                    $(this).after($('<img />')
+                                        .attr('class', 'background')
+                                        .attr('src', q.shift())
+                                        .attr('alt', 'Background')
+                                        .bind('load', onLoad2));
+                                    
+                                    return;
                                 }
-                            
-                                $('img.background').unbind('load');
-                                $('img.background').remove();
                                 
-                                function onLoad2() {
-                                    if (q.length > 0) {
-                                        $(this).after($('<img />')
-                                            .attr('class', 'background')
-                                            .attr('src', q.shift())
-                                            .attr('alt', 'Background')
-                                            .bind('load', onLoad2));
-                                        
-                                        return;
-                                    }
-                                    
-                                    function random(min, max) {
-                                        return Math.floor(Math.random() * (max - min + 1)) + min;
-                                    }
-                                    
-                                    $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
-                                        $(this).remove();
-                                        $('img.background').each(function (index, element) {
-                                            $(this)
-                                                .css('visibility', 'hidden')
-                                                .css('-webkit-animation-delay', 0.1 * index + 's')
-                                                .css('-webkit-animation-play-state', 'running')
-                                                .css('-o-animation-delay', 0.1 * index + 's')
-                                                .css('-o-animation-play-state', 'running')
-                                                .css('animation-delay', 0.1 * index + 's')
-                                                .css('animation-play-state', 'running');
-                                        });
+                                function random(min, max) {
+                                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                                }
+                                
+                                $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
+                                    $(this).remove();
+                                    $('img.background').each(function (index, element) {
+                                        $(this)
+                                            .css('visibility', 'hidden')
+                                            .css('-webkit-animation-delay', 0.1 * index + 's')
+                                            .css('-webkit-animation-play-state', 'running')
+                                            .css('-o-animation-delay', 0.1 * index + 's')
+                                            .css('-o-animation-play-state', 'running')
+                                            .css('animation-delay', 0.1 * index + 's')
+                                            .css('animation-play-state', 'running');
                                     });
-                                }
-                                
-                                parent.prepend($('<img />')
-                                    .attr('class', 'background')
-                                    .attr('src', q.shift())
-                                    .attr('alt', 'Background')
-                                    .bind('load', onLoad2));
-                            });
-                        }
+                                });
+                            }
+                            
+                            parent.prepend($('<img />')
+                                .attr('class', 'background')
+                                .attr('src', q.shift())
+                                .attr('alt', 'Background')
+                                .bind('load', onLoad2));
+                        });
                         
                         setTimeout(onTick, 5000);
                     }, 5000);
