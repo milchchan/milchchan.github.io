@@ -330,11 +330,11 @@
                 return a;
             }
             
-            queue.push(['../images/Background1.jpg']);
-            queue.push(['../images/Background2.jpg']);
-            queue.push(['../images/Background3.jpg']);
+            queue.push(new Array('../images/Background1.jpg'));
+            queue.push(new Array('../images/Background2.jpg'));
+            queue.push(new Array('../images/Background3.jpg'));
             
-            //queue = shuffle(queue);
+            queue = shuffle(queue);
             
             var urls = queue.shift();
             
