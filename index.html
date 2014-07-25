@@ -384,6 +384,16 @@
                                 .attr('src', q.shift())
                                 .attr('alt', 'Background')
                                 .bind('load', function () {
+                                    if (q.length > 0) {
+                                        $(this).parent().prepend($('<img />')
+                                            .attr('class', 'background')
+                                            .attr('src', q.shift())
+                                            .attr('alt', 'Background')
+                                            .bind('load', onLoad));
+                                        
+                                        return;
+                                    }
+                                    
                                     function random(min, max) {
                                         return Math.floor(Math.random() * (max - min + 1)) + min;
                                     }
