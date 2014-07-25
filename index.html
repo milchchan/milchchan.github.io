@@ -350,14 +350,14 @@
                     $(this).after($('<img />')
                         .attr('class', 'background')
                         .attr('src', q.shift())
-                        .attr('alt', 'Background')
+                        .attr('alt', 'Background')/*
                         .css('visibility', 'hidden')
                         .css('animation-name', 'loop')
                         .css('animation-duration', 0.1 + 's')
                         .css('animation-timing-function', 'linear')
                         .css('animation-delay', (0.5 + 0.1 * ($('img.background').length - 1)) + 's')
                         .css('animation-iteration-count', 'infinite')
-                        .css('animation-fill-mode', 'forwards')
+                        .css('animation-fill-mode', 'forwards')*/
                         .bind('load', onLoad1));
                     
                     return;
