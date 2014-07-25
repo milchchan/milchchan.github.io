@@ -342,22 +342,19 @@
             
             var q = new Array();
             
-            for (var url in urls) {
-                q.push(url);
-                
-                alert(url);
+            for (var i in urls) {
+                q.push(urls[i]);
             }
             
             $('img.background')
                 .attr('src', q.shift())
                 .bind('load', function () {
                     
-                    /*if (q.length > 0) {
+                    if (q.length > 0) {
                         
                         
                         return;
-                    }*/
-                    alert("ok");
+                    }
                     
                     $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                         var parent = $(this).parent();
@@ -375,8 +372,8 @@
                             
                                 queue.push(array);
                                 
-                                for (var u in array) {
-                                    q.push(u);
+                                for (var i in array) {
+                                    q.push(array[i]);
                                 }
                             
                                 $('img.background').unbind('load');
