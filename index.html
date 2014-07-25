@@ -347,7 +347,7 @@
             
             function onLoad() {
                 if (q.length > 0) {
-                    $(this).parent().prepend($('<img />')
+                    $(this).before($('<img />')
                         .attr('class', 'background')
                         .attr('src', q.shift())
                         .attr('alt', 'Background')
@@ -385,7 +385,7 @@
                                 .attr('alt', 'Background')
                                 .bind('load', function () {
                                     if (q.length > 0) {
-                                        $(this).parent().prepend($('<img />')
+                                        $(this).before($('<img />')
                                             .attr('class', 'background')
                                             .attr('src', q.shift())
                                             .attr('alt', 'Background')
