@@ -330,19 +330,31 @@
                 return a;
             }
             
-            queue.push('../images/Background1.jpg');
-            queue.push('../images/Background2.jpg');
-            queue.push('../images/Background3.jpg');
+            queue.push(['../images/Background1.jpg']);
+            queue.push(['../images/Background2.jpg']);
+            queue.push(['../images/Background3.jpg']);
             
             queue = shuffle(queue);
             
-            var url = queue.shift();
+            var urls = queue.shift();
             
-            queue.push(url);
+            queue.push(urls);
+            
+            var q = new Array();
+            
+            
             
             $('img.background')
-                .attr('src', url)
+                .attr('src', q.shift())
                 .bind('load', function () {
+                    
+                    if (q.length > 0)
+                    {
+                        
+                        
+                        return;
+                    }
+                    
                     $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                         var parent = $(this).parent();
                         
@@ -355,16 +367,20 @@
                                 .appendTo(parent);
                                 
                             div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
-                                var u = queue.shift();
+                                var array = queue.shift();
                             
-                                queue.push(u);
+                                queue.push(array);
+                                
+                                for (var u in array) {
+                                    q.push(u);
+                                 }
                             
                                 $('img.background').unbind('load');
                                 $('img.background').remove();
                                 
                                 parent.prepend($('<img />')
                                     .attr('class', 'background')
-                                    .attr('src', u)
+                                    .attr('src', q.shift())
                                     .attr('alt', 'Background')
                                     .bind('load', function () {
                                         function random(min, max) {
