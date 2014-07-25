@@ -118,6 +118,12 @@ img.background {
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
+  -webkit-animation-name: loop;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-timing-function: steps(10);
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-fill-mode: forwards;
+  -webkit-animation-play-state: paused;
   -o-animation-name: loop;
   -o-animation-duration: 1s;
   -o-animation-timing-function: steps(10);
@@ -130,6 +136,16 @@ img.background {
   animation-iteration-count: infinite;
   animation-fill-mode: forwards;
   animation-play-state: paused;
+}
+@-webkit-keyframes loop {
+    0% { visibility: visible; }
+    10% { visibility: hidden; }
+    100% { visibility: hidden; }
+}
+@-o-keyframes loop {
+    0% { visibility: visible; }
+    10% { visibility: hidden; }
+    100% { visibility: hidden; }
 }
 @keyframes loop {
     0% { visibility: visible; }
