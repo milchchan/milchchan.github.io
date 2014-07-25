@@ -342,7 +342,9 @@
             
             var q = new Array();
             
-            
+            for (var url in urls) {
+                q.push(url);
+            }
             
             $('img.background')
                 .attr('src', q.shift())
@@ -373,7 +375,7 @@
                                 
                                 for (var u in array) {
                                     q.push(u);
-                                 }
+                                }
                             
                                 $('img.background').unbind('load');
                                 $('img.background').remove();
