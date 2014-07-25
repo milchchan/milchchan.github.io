@@ -122,16 +122,13 @@ img.background {
   -webkit-animation-duration: 1s;
   -webkit-animation-timing-function: steps(10);
   -webkit-animation-iteration-count: infinite;
-  -webkit-animation-fill-mode: forwards;
-  -webkit-animation-play-state: paused;
+  -webkit-animation-fill-mode: none;
   -webkit-animation-play-state: paused;
   -o-animation-name: loop;
   -o-animation-duration: 1s;
   -o-animation-timing-function: steps(10);
   -o-animation-iteration-count: infinite;
   -o-animation-fill-mode: forwards;
-  -o-animation-play-state: paused;
-  -o-animation-play-state: paused;
   -o-animation-play-state: paused;
   animation-name: loop;
   animation-duration: 1s;
