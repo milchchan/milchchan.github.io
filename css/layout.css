@@ -139,7 +139,8 @@ img.background {
 }
 @-webkit-keyframes loop {
     0% { visibility: visible; }
-    10% { visibility: hidden; }
+    10% { visibility: visible; }
+    20% { visibility: hidden; }
     100% { visibility: hidden; }
 }
 @-o-keyframes loop {
