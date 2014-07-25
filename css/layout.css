@@ -118,12 +118,6 @@ img.background {
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
-  -webkit-animation-name: loop;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-timing-function: steps(10);
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-fill-mode: none;
-  -webkit-animation-play-state: paused;
   -o-animation-name: loop;
   -o-animation-duration: 1s;
   -o-animation-timing-function: steps(10);
