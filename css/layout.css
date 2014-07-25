@@ -119,6 +119,10 @@ img.background {
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
 }
+@keyframes loop {
+    0% { visibility: visible; }
+    100% { visibility: hidden;  }
+}
 div.blind {
   z-index: -2;
   width: 100%;
