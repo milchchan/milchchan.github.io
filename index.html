@@ -351,6 +351,13 @@
                         .attr('class', 'background')
                         .attr('src', q.shift())
                         .attr('alt', 'Background')
+                        .css('visibility', 'hidden')
+                        .css('animation-name', 'loop')
+                        .css('animation-duration', 0.1 + 's')
+                        .css('animation-timing-function', 'linear')
+                        .css('animation-delay', (0.5 + 0.1 * index) + 's')
+                        .css('animation-iteration-count', 'infinite')
+                        .css('animation-fill-mode', 'forwards')
                         .bind('load', onLoad1));
                     
                     return;
@@ -405,14 +412,8 @@
                                     }
                                     
                                     $('img.background').each(function (index, element) {
-                                        $(this)
-                                            .css('visibility', 'hidden')
-                                            .css('animation-name', 'loop')
-                                            .css('animation-duration', 0.1 + 's')
-                                            .css('animation-timing-function', 'linear')
-                                            .css('animation-delay', (0.5 + 0.1 * index) + 's')
-                                            .css('animation-iteration-count', 'infinite')
-                                            .css('animation-fill-mode', 'none');
+                                        //$(this)
+                                            
                                     });
                                     $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                         $(this).remove();
@@ -436,6 +437,12 @@
                 .attr('class', 'background')
                 .attr('src', q.shift())
                 .attr('alt', 'Background')
+                .css('animation-name', 'loop')
+                .css('animation-duration', 0.1 + 's')
+                .css('animation-timing-function', 'linear')
+                .css('animation-delay', (0.5 + 0.1 * index) + 's')
+                .css('animation-iteration-count', 'infinite')
+                .css('animation-fill-mode', 'forwards')
                 .bind('load', onLoad1));
         });
     </script>
