@@ -356,22 +356,23 @@
                     return;
                 }
                 
-                var duration = 0.5 * $('img.background').length;
-                
-                $('img.background').each(function (index, element) {
-                    $(this)
-                        .css('visibility', 'hidden')
-                        .css('animation-name', 'loop')
-                        .css('animation-duration', duration + 's')
-                        .css('animation-timing-function', 'linear')
-                        .css('animation-delay', (0.5 * index) + 's')
-                        .css('animation-iteration-count', 'infinite')
-                        .css('animation-fill-mode', 'forwards');
-                });
                 $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                     var parent = $(this).parent();
                     
                     $(this).remove();
+                    
+                    var duration = 0.5 * $('img.background').length;
+                    
+                    $('img.background').each(function (index, element) {
+                        $(this)
+                            .css('visibility', 'hidden')
+                            .css('animation-name', 'loop')
+                            .css('animation-duration', duration + 's')
+                            .css('animation-timing-function', 'linear')
+                            .css('animation-delay', (0.5 * index) + 's')
+                            .css('animation-iteration-count', 'infinite')
+                            .css('animation-fill-mode', 'forwards');
+                    });
                     
                     setTimeout(function onTick() {
                         if ($('div.blind').length == 0) {
