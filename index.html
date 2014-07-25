@@ -329,9 +329,9 @@
                 return a;
             }
             
-            queue.push(new Array('../images/Background1.jpg'));
-            queue.push(new Array('../images/Background2.jpg'));
-            queue.push(new Array('../images/Background3.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg'));
             
             queue = shuffle(queue);
             
@@ -361,6 +361,16 @@
                     
                     $(this).remove();
                     
+                    var images = $('img.background');
+                    var length = images.length;
+                    var begin = 0.5;
+                    
+                    images.each(function (index, element) {
+                        $(this)
+                            .css('visibility', 'hidden')
+                            .css('animation', 'animation: loop 0.1s linear' + begin + 0.1 * index + 's infinite');
+                    });
+                    
                     setTimeout(function onTick() {
                         if ($('div.blind').length == 0) {
                             var div = $('<div />')
@@ -379,6 +389,16 @@
                             
                                 $('img.background').unbind('load');
                                 $('img.background').remove();
+                                
+                                var images = $('img.background');
+                                var length = images.length;
+                                var begin = 0.5;
+                                
+                                images.each(function (index, element) {
+                                    $(this)
+                                        .css('visibility', 'hidden')
+                                        .css('animation', 'animation: loop 0.1s linear' + begin + 0.1 * index + 's infinite');
+                                });
                                 
                                 function onLoad2() {
                                     if (q.length > 0) {
