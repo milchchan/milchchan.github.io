@@ -363,12 +363,8 @@
                     $('img.background').each(function (index, element) {
                         $(this)
                             .css('visibility', 'hidden')
-                            .css('animation-name', 'loop')
-                            .css('animation-duration', '1s')
-                            .css('animation-timing-function', 'steps(10)')
                             .css('animation-delay', 0.1 * index + 's')
-                            .css('animation-iteration-count', 'infinite')
-                            .css('animation-fill-mode', 'forwards')
+                            .css('animation-play-state', 'running');
                     });
                     
                     setTimeout(function onTick() {
@@ -410,12 +406,8 @@
                                         $('img.background').each(function (index, element) {
                                             $(this)
                                                 .css('visibility', 'hidden')
-                                                .css('animation-name', 'loop')
-                                                .css('animation-duration', '1s')
-                                                .css('animation-timing-function', 'steps(10)')
                                                 .css('animation-delay', 0.1 * index + 's')
-                                                .css('animation-iteration-count', 'infinite')
-                                                .css('animation-fill-mode', 'forwards')
+                                                .css('animation-play-state', 'running');
                                         });
                                     });
                                 }
