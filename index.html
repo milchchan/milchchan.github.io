@@ -351,6 +351,7 @@
                         .attr('class', 'background')
                         .attr('src', q.shift())
                         .attr('alt', 'Background')
+                        .css('top', $('img.background').length * 100 + '%');
                         .css('animation-name', 'loop')
                         .css('animation-duration', 'steps(10)')
                         .css('animation-timing-function', 'linear')
