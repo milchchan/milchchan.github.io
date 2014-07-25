@@ -351,14 +351,9 @@
                         .attr('class', 'background')
                         .attr('src', q.shift())
                         .attr('alt', 'Background')
-                        .css('visibility', 'hidden')
+                        //.css('visibility', 'hidden')
                         //.css('top', $('img.background').length * 100 + '%')
-                        .css('animation-name', 'loop')
-                        .css('animation-duration', '1s')
-                        .css('animation-timing-function', 'steps(10)')
-                        .css('animation-delay', (0.1 * $('img.background').length) + 's')
-                        .css('animation-iteration-count', 'infinite')
-                        .css('animation-fill-mode', q.length == 0 ? 'none' : 'forwards')
+                        
                         .bind('load', onLoad1));
                     
                     return;
@@ -368,15 +363,19 @@
                     var parent = $(this).parent();
                     
                     $(this).remove();
-                    /*
+                    
                     var duration = 0.5 * $('img.background').length;
                     
                     $('img.background').each(function (index, element) {
                         $(this)
                             .css('visibility', 'hidden')
-                            .css('animation-duration', '0.1s')
-                            .css('animation-delay', (0.5 * index) + 's');
-                    });*/
+                            .css('animation-name', 'loop')
+                            .css('animation-duration', '1s')
+                            .css('animation-timing-function', 'steps(10)')
+                            .css('animation-delay', 0.1 * index + 's')
+                            .css('animation-iteration-count', 'infinite')
+                            .css('animation-fill-mode', 'forwards')
+                    });
                     
                     setTimeout(function onTick() {
                         if ($('div.blind').length == 0) {
@@ -438,12 +437,6 @@
                 .attr('class', 'background')
                 .attr('src', q.shift())
                 .attr('alt', 'Background')
-                .css('animation-name', 'loop')
-                .css('animation-duration', '1s')
-                .css('animation-timing-function', 'steps(10)')
-                .css('animation-delay', '0s')
-                .css('animation-iteration-count', 'infinite')
-                .css('animation-fill-mode', 'forwards')
                 .bind('load', onLoad1));
         });
     </script>
