@@ -360,7 +360,7 @@
                     $(this)
                         .css('visibility', 'hidden')
                         .css('animation-name', 'loop')
-                        .css('animation-duration', 0.1 + 's')
+                        .css('animation-duration', '0.1s')
                         .css('animation-timing-function', 'linear')
                         .css('animation-delay', (0.5 + 0.1 * index) + 's')
                         .css('animation-iteration-count', 'infinite')
@@ -370,7 +370,6 @@
                     var parent = $(this).parent();
                     
                     $(this).remove();
-                    
                     
                     setTimeout(function onTick() {
                         if ($('div.blind').length == 0) {
