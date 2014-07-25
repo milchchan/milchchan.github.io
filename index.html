@@ -358,6 +358,7 @@
                 
                 $('img.background').each(function (index, element) {
                     $(this)
+                        .css('visibility', 'hidden')
                         .css('animation-name', 'loop')
                         .css('animation-duration', 0.1 + 's')
                         .css('animation-timing-function', 'linear')
