@@ -345,13 +345,13 @@
                 q.push(urls[i]);
             }
             
-            function onLoad() {
+            function onLoad1() {
                 if (q.length > 0) {
                     $(this).before($('<img />')
                         .attr('class', 'background')
                         .attr('src', q.shift())
                         .attr('alt', 'Background')
-                        .bind('load', onLoad));
+                        .bind('load', onLoad1));
                     
                     return;
                 }
@@ -362,34 +362,31 @@
                     $(this).remove();
                     
                     setTimeout(function onTick() {
-                        var div = $('<div />')
-                            .attr('class', 'blind')
-                            .css('margin-top', '100%')
-                            .appendTo(parent);
+                        if ($('div.blind').length == 0) {
+                            var div = $('<div />')
+                                .attr('class', 'blind')
+                                .css('margin-top', '100%')
+                                .appendTo(parent);
+                                
+                            div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
+                                var array = queue.shift();
                             
-                        div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
-                            var array = queue.shift();
-                        
-                            queue.push(array);
+                                queue.push(array);
+                                
+                                for (var i in array) {
+                                    q.push(array[i]);
+                                }
                             
-                            for (var i in array) {
-                                q.push(array[i]);
-                            }
-                        
-                            $('img.background').unbind('load');
-                            $('img.background').remove();
-                            
-                            parent.prepend($('<img />')
-                                .attr('class', 'background')
-                                .attr('src', q.shift())
-                                .attr('alt', 'Background')
-                                .bind('load', function () {
+                                $('img.background').unbind('load');
+                                $('img.background').remove();
+                                
+                                function onLoad2() {
                                     if (q.length > 0) {
                                         $(this).before($('<img />')
                                             .attr('class', 'background')
                                             .attr('src', q.shift())
                                             .attr('alt', 'Background')
-                                            .bind('load', onLoad));
+                                            .bind('load', onLoad2));
                                         
                                         return;
                                     }
@@ -401,8 +398,15 @@
                                     $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                         $(this).remove();
                                     });
-                                }));
-                        });
+                                }
+                                
+                                parent.prepend($('<img />')
+                                    .attr('class', 'background')
+                                    .attr('src', q.shift())
+                                    .attr('alt', 'Background')
+                                    .bind('load', onLoad2));
+                            });
+                        }
                         
                         setTimeout(onTick, 5000);
                     }, 5000);
@@ -413,7 +417,7 @@
                 .attr('class', 'background')
                 .attr('src', q.shift())
                 .attr('alt', 'Background')
-                .bind('load', onLoad));
+                .bind('load', onLoad1));
         });
     </script>
 </body>
