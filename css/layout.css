@@ -115,14 +115,13 @@ img.background {
   position: absolute;
   top: 0;
   left: 50%;
-  -webkit-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-  transform: translateX(-50%);
+  -webkit-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  transform: translate(-50%, 0%);
 }
 @keyframes loop {
     0% { visibility: visible; }
     10% { visibility: hidden; }
-    20% { visibility: hidden; }
     100% { visibility: hidden; }
 }
 div.blind {
