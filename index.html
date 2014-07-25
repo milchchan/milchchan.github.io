@@ -356,7 +356,7 @@
                     return;
                 }
                 
-                var duration = 0.1 * $('img.background').length;
+                var duration = 0.5 * $('img.background').length;
                 
                 $('img.background').each(function (index, element) {
                     $(this)
@@ -364,7 +364,7 @@
                         .css('animation-name', 'loop')
                         .css('animation-duration', duration + 's')
                         .css('animation-timing-function', 'linear')
-                        .css('animation-delay', (0.5 + 0.1 * index) + 's')
+                        .css('animation-delay', (0.5 * index) + 's')
                         .css('animation-iteration-count', 'infinite')
                         .css('animation-fill-mode', 'forwards');
                 });
