@@ -37,7 +37,6 @@
             <div class="fb-like" data-href="http://apricot.moe/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div><div><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://apricot.moe/" data-via="kawatan" data-lang="en" data-related="anywhereTheJavascriptAPI">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
         </div>
         <div class="background">
-            <img class="background" alt="Background" />
             <div class="blind"></div>
         </div>
         <div class="vert-text">
@@ -346,58 +345,65 @@
                 q.push(urls[i]);
             }
             
-            $('img.background')
-                .attr('src', q.shift())
-                .bind('load', function () {
+            function onLoad() {
+                if (q.length > 0) {
+                    $(this).parent().prepend($('<img />')
+                        .attr('class', 'background')
+                        .attr('src', q.shift())
+                        .attr('alt', 'Background')
+                        .bind('load', onLoad));
                     
-                    if (q.length > 0) {
-                        
-                        
-                        return;
-                    }
+                    return;
+                }
+                
+                $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
+                    var parent = $(this).parent();
                     
-                    $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
-                        var parent = $(this).parent();
+                    $(this).remove();
+                    
+                    setTimeout(function onTick() {
+                        var div = $('<div />')
+                            .attr('class', 'blind')
+                            .css('margin-top', '100%')
+                            .appendTo(parent);
+                            
+                        div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
+                            var array = queue.shift();
                         
-                        $(this).remove();
+                            queue.push(array);
+                            
+                            for (var i in array) {
+                                q.push(array[i]);
+                            }
                         
-                        setTimeout(function onTick() {
-                            var div = $('<div />')
-                                .attr('class', 'blind')
-                                .css('margin-top', '100%')
-                                .appendTo(parent);
-                                
-                            div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
-                                var array = queue.shift();
+                            $('img.background').unbind('load');
+                            $('img.background').remove();
                             
-                                queue.push(array);
-                                
-                                for (var i in array) {
-                                    q.push(array[i]);
-                                }
-                            
-                                $('img.background').unbind('load');
-                                $('img.background').remove();
-                                
-                                parent.prepend($('<img />')
-                                    .attr('class', 'background')
-                                    .attr('src', q.shift())
-                                    .attr('alt', 'Background')
-                                    .bind('load', function () {
-                                        function random(min, max) {
-                                            return Math.floor(Math.random() * (max - min + 1)) + min;
-                                        }
-                                        
-                                        $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
-                                            $(this).remove();
-                                        });
-                                    }));
-                            });
-                            
-                            setTimeout(onTick, 5000);
-                        }, 5000);
-                    });
+                            parent.prepend($('<img />')
+                                .attr('class', 'background')
+                                .attr('src', q.shift())
+                                .attr('alt', 'Background')
+                                .bind('load', function () {
+                                    function random(min, max) {
+                                        return Math.floor(Math.random() * (max - min + 1)) + min;
+                                    }
+                                    
+                                    $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
+                                        $(this).remove();
+                                    });
+                                }));
+                        });
+                        
+                        setTimeout(onTick, 5000);
+                    }, 5000);
                 });
+            }
+            
+            $('div.background').prepend($('<img />')
+                .attr('class', 'background')
+                .attr('src', q.shift())
+                .attr('alt', 'Background')
+                .bind('load', onLoad));
         });
     </script>
 </body>
