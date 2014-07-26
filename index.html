@@ -329,9 +329,9 @@
                 return a;
             }
             
-            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
-            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
-            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background2.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background2.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background2.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
             
             queue = shuffle(queue);
             
@@ -364,8 +364,8 @@
                         $(this)
                             .css('visibility', 'hidden')
                             .css('animation-name', 'loop')
-                            .css('animation-duration', '1s')
-                            .css('animation-timing-function', 'steps(10)')
+                            .css('animation-duration', '2s')
+                            .css('animation-timing-function', 'steps(20)')
                             .css('animation-delay', 0.1 * index + 's')
                             .css('animation-iteration-count', 'infinite')
                             .css('animation-fill-mode', 'forwards')
@@ -408,8 +408,9 @@
                                     $('img.background').each(function (index, element) {
                                         $(this)
                                             .css('visibility', 'hidden')
-                                            .css('animation-duration', '1s')
-                                            .css('animation-timing-function', 'steps(10)')
+                                            .css('animation-name', 'loop')
+                                            .css('animation-duration', '2s')
+                                            .css('animation-timing-function', 'steps(20)')
                                             .css('animation-delay', 0.1 * index + 's')
                                             .css('animation-iteration-count', 'infinite')
                                             .css('animation-fill-mode', 'forwards')
@@ -425,7 +426,7 @@
                                 .bind('load', onLoad2));
                         });
                         
-                        //setTimeout(onTick, 5000);
+                        setTimeout(onTick, 5000);
                     }, 5000);
                 });
             }
