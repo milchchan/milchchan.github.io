@@ -140,7 +140,7 @@ img.background {
   animation-fill-mode: forwards;
   animation-play-state: paused;*/
 }
-/*@-webkit-keyframes loop {
+@-webkit-keyframes loop {
     0% { visibility: visible; }
     10% { visibility: visible; }
     20% { visibility: hidden; }
@@ -151,7 +151,7 @@ img.background {
     10% { visibility: visible; }
     20% { visibility: hidden; }
     100% { visibility: hidden; }
-}*/
+}
 @keyframes loop {
     0% { visibility: visible; }
     10% { visibility: visible; }
