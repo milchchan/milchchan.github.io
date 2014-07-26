@@ -355,7 +355,21 @@
                     
                     return;
                 }
-                
+                $('img.background').each(function (index, element) {
+                        $(this)
+                            .css('visibility', 'hidden')
+                            .css('-webkit-animation-delay', 0.1 * index + 's')
+                            .css('-webkit-animation-play-state', 'running')
+                            .css('-o-animation-delay', 0.1 * index + 's')
+                            .css('-o-animation-play-state', 'running')
+                            .css('animation-name', 'loop')
+                            .css('animation-duration', '1s')
+                            .css('animation-timing-function', 'steps(10)')
+                            .css('animation-iteration-count', 'infinite')
+                            .css('animation-fill-mode', 'forwards')
+                            .css('animation-delay', 0.1 * index + 's')
+                            .css('animation-play-state', 'running');
+                    });
                 $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                     var parent = $(this).parent();
                     
