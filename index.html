@@ -329,9 +329,9 @@
                 return a;
             }
             
-            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background2.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
-            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background2.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
-            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background2.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
+            queue.push(new Array('../images/Background1.jpg', '../images/Background2.jpg', '../images/Background3.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg', '../images/Background1.jpg'));
             
             queue = shuffle(queue);
             
@@ -363,6 +363,10 @@
                     $('img.background').each(function (index, element) {
                         $(this)
                             .css('visibility', 'hidden')
+                            .css('-webkit-animation-delay', 0.1 * index + 's')
+                            .css('-webkit-animation-play-state', 'running')
+                            .css('-o-animation-delay', 0.1 * index + 's')
+                            .css('-o-animation-play-state', 'running')
                             .css('animation-delay', 0.1 * index + 's')
                             .css('animation-play-state', 'running');
                     });
@@ -403,6 +407,10 @@
                                     $('img.background').each(function (index, element) {
                                         $(this)
                                             .css('visibility', 'hidden')
+                                            .css('-webkit-animation-delay', 0.1 * index + 's')
+                                            .css('-webkit-animation-play-state', 'running')
+                                            .css('-o-animation-delay', 0.1 * index + 's')
+                                            .css('-o-animation-play-state', 'running')
                                             .css('animation-delay', 0.1 * index + 's')
                                             .css('animation-play-state', 'running');
                                     });
@@ -430,4 +438,3 @@
     </script>
 </body>
 </html>
-
