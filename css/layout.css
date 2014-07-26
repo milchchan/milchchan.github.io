@@ -133,12 +133,12 @@ img.background {
   -o-animation-iteration-count: infinite;
   -o-animation-fill-mode: forwards;
   -o-animation-play-state: paused;*/
-  animation-name: loop;
+  /*animation-name: loop;
   animation-duration: 1s;
   animation-timing-function: steps(10);
   animation-iteration-count: infinite;
   animation-fill-mode: forwards;
-  animation-play-state: paused;
+  animation-play-state: paused;*/
 }
 /*@-webkit-keyframes loop {
     0% { visibility: visible; }
