@@ -121,7 +121,7 @@ img.background {
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
-  -webkit-animation-name: loop;
+  /*-webkit-animation-name: loop;
   -webkit-animation-duration: 1s;
   -webkit-animation-timing-function: steps(10);
   -webkit-animation-iteration-count: infinite;
@@ -132,7 +132,7 @@ img.background {
   -o-animation-timing-function: steps(10);
   -o-animation-iteration-count: infinite;
   -o-animation-fill-mode: forwards;
-  -o-animation-play-state: paused;
+  -o-animation-play-state: paused;*/
   animation-name: loop;
   animation-duration: 1s;
   animation-timing-function: steps(10);
@@ -140,7 +140,7 @@ img.background {
   animation-fill-mode: forwards;
   animation-play-state: paused;
 }
-@-webkit-keyframes loop {
+/*@-webkit-keyframes loop {
     0% { visibility: visible; }
     10% { visibility: visible; }
     20% { visibility: hidden; }
@@ -151,7 +151,7 @@ img.background {
     10% { visibility: visible; }
     20% { visibility: hidden; }
     100% { visibility: hidden; }
-}
+}*/
 @keyframes loop {
     0% { visibility: visible; }
     10% { visibility: visible; }
