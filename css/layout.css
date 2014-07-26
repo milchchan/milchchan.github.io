@@ -154,9 +154,9 @@ img.background {
 }
 @keyframes loop {
     0% { visibility: visible; }
-    10% { visibility: hidden; }
-    20% { visibility: hidden; }
-    100% { visibility: hidden; }
+    10% { visibility: visible; }
+    20% { visibility: visible; }
+    100% { visibility: visible; }
 }
 div.blind {
   z-index: -2;
