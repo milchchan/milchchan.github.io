@@ -355,7 +355,12 @@
                     
                     return;
                 }
-                $('img.background').each(function (index, element) {
+                
+                $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
+                    var parent = $(this).parent();
+                    
+                    $(this).remove();
+                    $('img.background').each(function (index, element) {
                         $(this)
                             .css('visibility', 'hidden')
                             .css('-webkit-animation-delay', 0.1 * index + 's')
@@ -370,11 +375,6 @@
                             .css('animation-delay', 0.1 * index + 's')
                             .css('animation-play-state', 'running');
                     });
-                $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
-                    var parent = $(this).parent();
-                    
-                    $(this).remove();
-                    
                     
                     setTimeout(function onTick() {
                         var blind = $('div.blind')
@@ -429,7 +429,7 @@
                                 .bind('load', onLoad2));
                         });
                         
-                        setTimeout(onTick, 5000);
+                        //setTimeout(onTick, 5000);
                     }, 5000);
                 });
             }
