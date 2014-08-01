@@ -182,7 +182,7 @@ i.highlight-icon {
   display: table;
   height: 400px;
   width: 100%;
-  background: url(../images/Alice.jpg) no-repeat center center fixed; 
+  background: url(../images/Alicja.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -213,11 +213,8 @@ i.scroll:hover {
     to   { opacity: 1; }
 }
 @media (max-width: 768px) {
-  .header {
-	background: url(../images/Background.jpg) no-repeat center center scroll; 
-  }
   .preview {
-	background: url(../images/Alice.jpg) no-repeat center center scroll; 
+	background: url(../images/Alicja.jpg) no-repeat center center scroll; 
   }
   .map {
 	height: 75%;
