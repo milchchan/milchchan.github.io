@@ -14,6 +14,30 @@ p {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+td a:link
+{
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: underline;
+}
+td a:visited
+{
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: underline;
+}
+td a:hover
+{
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: underline;
+}
+td a:active
+{
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: underline;
+}
 .vert-text {
   display: table-cell;
   vertical-align: middle;
