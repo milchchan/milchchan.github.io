@@ -407,7 +407,8 @@
             $('.popupable').fancybox({
                 openEffect : 'elastic',
                 closeEffect : 'elastic',
-                padding : 0
+                padding : 0,
+                helpers : { title : { type : 'inside' }, overlay : null }
             });
             
             function shuffle(array) {
