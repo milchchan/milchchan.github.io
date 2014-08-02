@@ -404,7 +404,11 @@
                 }
             });
             
-            $('.popupable').fancybox();
+            $('.popupable').fancybox({
+                openEffect : 'elastic',
+                closeEffect : 'elastic',
+                padding : 0
+            });
             
             function shuffle(array) {
                 function random(min, max) {
