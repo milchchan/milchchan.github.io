@@ -94,6 +94,11 @@
                 <div class="col-md-2 col-md-offset-2 text-center">
                     <div class="highlight-item">
                         <a data-toggle="lightbox" href="#screenLightbox1"><img class="img-normal img-rounded img-responsive animatable" src="images/Screenshot01.png" alt="スクリーンショット" /></a>
+                        <div id="screenLightbox1" class="lightbox hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class='lightbox-content'>
+                                <img src="images/Screenshot01.png">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-2 text-center">
@@ -402,7 +407,7 @@
                 }
             });
             
-            $('[data-toggle="lightbox"]').on('click', function(e){
+            /*$('[data-toggle="lightbox"]').on('click', function(e){
                 target = $(this).attr('href');
             
                 if (!$(target).length) {
@@ -418,7 +423,7 @@
                         '</div>'
                     );
                 }
-            });
+            });*/
             
             function shuffle(array) {
                 function random(min, max) {
