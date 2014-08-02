@@ -19,7 +19,6 @@
     <title>Apricot</title>
     <link rel="shortcut icon" href="http://apricot.moe/favicon.ico" />
     <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-lightbox.min" rel="stylesheet">
     <link href="css/layout.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
@@ -374,7 +373,6 @@
     <script src="js/jquery-1.10.2.js"></script>
     <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.js"></script>
-    <script src="js/bootstrap-lightbox.min.js"></script>
     <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -401,24 +399,6 @@
                     }
                 }
             });
-            
-            /*$('[data-toggle="lightbox"]').on('click', function(e){
-                target = $(this).attr('href');
-            
-                if (!$(target).length) {
-                    src = $(this).children('img').attr('src');
-            
-                    $('body').prepend(
-                        '<div id="' + target.slice(1) + '" class="lightbox fade"  tabindex="-1" role="dialog" aria-hidden="true">' +
-                            '<div class="lightbox-dialog">' +
-                                '<div class="lightbox-content">' +
-                                '<img src="' + src + '" width="100%"/>' +
-                                '</div>' +
-                            '</div>' +
-                        '</div>'
-                    );
-                }
-            });*/
             
             function shuffle(array) {
                 function random(min, max) {
