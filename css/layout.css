@@ -49,6 +49,9 @@ td a:active
   font-size: 4.5em;
   font-weight: 700;
 }
+.container {
+  padding: 0px 0px 10px 0px;
+}
 .row {
   padding: 0px 0px 15px 0px;
 }
