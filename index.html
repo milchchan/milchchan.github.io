@@ -93,44 +93,44 @@
             <div class="row">
                 <div class="col-md-2 col-md-offset-2 text-center">
                     <div class="highlight-item">
-                        <a href="images/Screenshot01.png" data-lightbox="screenshot1"><img class="img-rounded img-responsive" src="images/Screenshot01.png" alt="スクリーンショット" /></a>
+                        <a href="images/Screenshot01.png" data-lightbox="screenshot1"><img class="img-rounded img-responsive selectable" src="images/Screenshot01.png" alt="スクリーンショット" /></a>
                     </div>
                 </div>
                 <div class="col-md-2 text-center">
                     <div class="highlight-item">
-                        <a href="images/Screenshot02.png" data-lightbox="screenshot2"><img class="img-rounded img-responsive" src="images/Screenshot02.png" alt="スクリーンショット" /></a>
+                        <a href="images/Screenshot02.png" data-lightbox="screenshot2"><img class="img-rounded img-responsive selectable" src="images/Screenshot02.png" alt="スクリーンショット" /></a>
                     </div>
                 </div>
                 <div class="col-md-2 text-center">
                     <div class="highlight-item">
-                        <a href="images/Screenshot03.png" data-lightbox="screenshot3"><img class="img-rounded img-responsive" src="images/Screenshot03.png" alt="スクリーンショット" /></a>
+                        <a href="images/Screenshot03.png" data-lightbox="screenshot3"><img class="img-rounded img-responsive selectable" src="images/Screenshot03.png" alt="スクリーンショット" /></a>
                     </div>
                 </div>
                 <div class="col-md-2 text-center">
                     <div class="highlight-item">
-                        <a href="images/Screenshot04.png" data-lightbox="screenshot4"><img class="img-rounded img-responsive" src="images/Screenshot04.png" alt="スクリーンショット" /></a>
+                        <a href="images/Screenshot04.png" data-lightbox="screenshot4"><img class="img-rounded img-responsive selectable" src="images/Screenshot04.png" alt="スクリーンショット" /></a>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-2 col-md-offset-2 text-center">
                     <div class="highlight-item">
-                        <a href="images/Screenshot05.png" data-lightbox="screenshot5"><img class="img-rounded img-responsive" src="images/Screenshot05.png" alt="スクリーンショット" /></a>
+                        <a href="images/Screenshot05.png" data-lightbox="screenshot5"><img class="img-rounded img-responsive selectable" src="images/Screenshot05.png" alt="スクリーンショット" /></a>
                     </div>
                 </div>
                 <div class="col-md-2 text-center">
                     <div class="highlight-item">
-                        <a href="images/Screenshot06.png" data-lightbox="screenshot6"><img class="img-rounded img-responsive" src="images/Screenshot06.png" alt="スクリーンショット" /></a>
+                        <a href="images/Screenshot06.png" data-lightbox="screenshot6"><img class="img-rounded img-responsive selectable" src="images/Screenshot06.png" alt="スクリーンショット" /></a>
                     </div>
                 </div>
                 <div class="col-md-2 text-center">
                     <div class="highlight-item">
-                        <a href="images/Screenshot07.png" data-lightbox="screenshot7"><img class="img-rounded img-responsive" src="images/Screenshot07.png" alt="スクリーンショット" /></a>
+                        <a href="images/Screenshot07.png" data-lightbox="screenshot7"><img class="img-rounded img-responsive selectable" src="images/Screenshot07.png" alt="スクリーンショット" /></a>
                     </div>
                 </div>
                 <div class="col-md-2 text-center">
                     <div class="highlight-item">
-                        <a href="images/Screenshot08.png" data-lightbox="screenshot8"><img class="img-rounded img-responsive" src="images/Screenshot08.png" alt="スクリーンショット" /></a>
+                        <a href="images/Screenshot08.png" data-lightbox="screenshot8"><img class="img-rounded img-responsive selectable" src="images/Screenshot08.png" alt="スクリーンショット" /></a>
                     </div>
                 </div>
             </div>
@@ -438,6 +438,14 @@
                         return false;
                     }
                 }
+            });
+            
+            $('.selectable').hover(
+                function() {
+                    $(this).stop().animate({'opacity': '0.5'}, 'normal');
+                },
+                function() {
+                    $(this).stop().animate({'opacity': '1'}, 'normal');
             });
             
             function shuffle(array) {
