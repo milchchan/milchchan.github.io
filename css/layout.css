@@ -14,29 +14,33 @@ p {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+table.information {
+  margin: 0px 0px 0px 0px;
+  padding: 15px 0px 15px 0px;
+}
 td a:link
 {
-	color: #ffffff;
-	font-weight: bold;
-	text-decoration: underline;
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
 }
 td a:visited
 {
-	color: #ffffff;
-	font-weight: bold;
-	text-decoration: underline;
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
 }
 td a:hover
 {
-	color: #ffffff;
-	font-weight: bold;
-	text-decoration: underline;
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
 }
 td a:active
 {
-	color: #ffffff;
-	font-weight: bold;
-	text-decoration: underline;
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
 }
 .vert-text {
   display: table-cell;
