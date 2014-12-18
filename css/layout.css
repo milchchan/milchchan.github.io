@@ -107,6 +107,15 @@ td a:active
 img.popupable {
   margin: 0px 0px 0px 0px;
 }
+.menu {
+  z-index: 2;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 0px 0px 0px 0px;
+  padding: 10px 10px 0px 10px;
+  text-align: left;
+}
 .annotations {
   z-index: 1;
   position: absolute;
