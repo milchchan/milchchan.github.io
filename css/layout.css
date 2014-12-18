@@ -72,14 +72,14 @@ td a:active
     color: #ffffff;
     background-color: #00a0e9;
 }
-.btn-menu {
+.btn-flyout {
     border: 1px solid #000000;
     color: #ffffff;
     background-color: #000000;
     opacity: 1.0;
 }
-.btn-menu:hover,
-.btn-menu:focus {
+.btn-flyout:hover,
+.btn-flyout:focus {
     border: 1px solid #000000;
     outline: 0;
     color: #ffffff;
@@ -121,7 +121,7 @@ td a:active
 img.popupable {
   margin: 0px 0px 0px 0px;
 }
-#menu {
+#flyout {
   z-index: 2;
   position: fixed;
   right: 0;
