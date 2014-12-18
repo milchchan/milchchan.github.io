@@ -107,7 +107,7 @@ td a:active
 img.popupable {
   margin: 0px 0px 0px 0px;
 }
-.menu {
+#menu {
   z-index: 2;
   position: absolute;
   right: 0;
