@@ -86,6 +86,20 @@ td a:active
     background-color: #000000;
     opacity: 0.5;
 }
+.btn-flyout-highlight {
+    border: 1px solid #e74a31;
+    color: #ffffff;
+    background-color: #e74a31;
+    opacity: 1.0;
+}
+.btn-flyout-highlight:hover,
+.btn-flyout-highlight:focus {
+    border: 1px solid #e74a31;
+    outline: 0;
+    color: #ffffff;
+    background-color: #e74a31;
+    opacity: 0.5;
+}
 .btn-primary {
     border: 1px solid #ffffff;
     color: #000000;
