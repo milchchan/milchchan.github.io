@@ -72,6 +72,20 @@ td a:active
     color: #ffffff;
     background-color: #00a0e9;
 }
+.btn-menu {
+    border: 1px solid #000000;
+    color: #ffffff;
+    background-color: #000000;
+    opacity: 1.0;
+}
+.btn-menu:hover,
+.btn-menu:focus {
+    border: 1px solid #000000;
+    outline: 0;
+    color: #ffffff;
+    background-color: #000000;
+    opacity: 0.5;
+}
 .btn-primary {
     border: 1px solid #ffffff;
     color: #000000;
