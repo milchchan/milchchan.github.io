@@ -132,6 +132,17 @@ td a:active
     color: #ffc547;
     transform: scale(1.1);
 }
+.animatable-highlight {
+    color: #ffffff;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+}
+.animatable-highlight:hover,
+.animatable-highlight:focus {
+    outline: 0;
+    color: #ffc547;
+}
 img.popupable {
   margin: 0px 0px 0px 0px;
 }
