@@ -67,10 +67,10 @@ td a:active
 }
 .btn-default:hover,
 .btn-default:focus {
-    border: 1px solid #00a0e9;
+    border: 1px solid #ffc547;
     outline: 0;
     color: #ffffff;
-    background-color: #00a0e9;
+    background-color: #ffc547;
 }
 .btn-flyout {
     border: 1px solid #000000;
@@ -107,10 +107,10 @@ td a:active
 }
 .btn-primary:hover,
 .btn-primary:focus {
-    border: 1px solid #00a0e9;
+    border: 1px solid #ffc547;
     outline: 0;
     color: #ffffff;
-    background-color: #00a0e9;
+    background-color: #ffc547;
 }
 .list-inline > li.button {
     padding-top: 10px;
@@ -129,7 +129,7 @@ td a:active
 .animatable:hover,
 .animatable:focus {
     outline: 0;
-    color: #00a0e9;
+    color: #ffc547;
     transform: scale(1.1);
 }
 img.popupable {
@@ -271,7 +271,7 @@ i.scroll {
   color: #000000;
 }
 i.scroll:hover {
-  color: #00a0e9;
+  color: #ffc547;
 }
 @keyframes fadein {
     from { opacity: 0; }
