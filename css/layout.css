@@ -212,7 +212,7 @@ div.blind {
   top: 0;
   left: 0;
   margin-top: 0%;
-  background: #00a0e9;
+  background: #ffa6bb;
 }
 .normal {
   padding: 50px 0;
@@ -224,7 +224,7 @@ div.blind {
   margin: 0 auto;
 }
 .highlight {
-  background: #00a0e9;
+  background: #ffa6bb;
   padding: 50px 0;
   color: #ffffff;
 }
