@@ -24,9 +24,9 @@ p {
 }
 hr {
     border-width: 3px 0 0 0;
-    width: 25%;
+    width: 10%;
 }
-.highlight > hr {
+.highlight hr {
     border-width: 3px 0 0 0;
     border-color: #ffffff;
     width: 25%;
