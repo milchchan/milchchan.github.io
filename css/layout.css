@@ -6,8 +6,6 @@ body {
 }
 .header h1 {
   color: rgba(0, 0, 0, 0.75);
-  font-family: 'Gotham Rounded', 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
-  font-weight: bold;
 }
 small {
     opacity: 0.5;
