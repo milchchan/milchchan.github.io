@@ -22,6 +22,9 @@ p {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+hr {
+    height: 3;
+}
 table.information {
   margin: 25px 0px 25px 0px;
   padding: 25px 0px 25px 0px;
