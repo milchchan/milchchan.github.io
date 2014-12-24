@@ -2,11 +2,11 @@ html,
 body {
   height: 100%;
   width: 100%;
-  font-family: "Gotham Rounded", 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
+  font-family: 'Gotham Rounded', 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
 }
 .header h1 {
   color: rgba(0, 0, 0, 0.75);
-  font-family: "Gotham Rounded", 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
+  font-family: 'Gotham Rounded', 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
   font-weight: bold;
 }
 small {
@@ -56,7 +56,7 @@ td a:active
   font-weight: 700;
 }
 .btn {
-    font-family: "Gotham Rounded", 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Gotham Rounded', 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
