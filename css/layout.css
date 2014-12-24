@@ -73,9 +73,6 @@ td a:active
 .text-center h2 {
   font-weight: bold;
 }
-.preview h2 {
-  font-weight: bold;
-}
 .btn {
     font-family: "Gotham Rounded", 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
@@ -277,7 +274,7 @@ i.highlight-icon {
   text-align: center;
 }
 .preview {
-  color: #000000;
+  color: rgba(0, 0, 0, 0.75);
   display: table;
   height: 400px;
   width: 100%;
