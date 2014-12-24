@@ -286,12 +286,12 @@ i.scroll:hover {
 }
 @font-face {
   font-family: "Gotham Rounded";
-  src: url('http://www.apricotan.net/fonts/GothamRnd-Book.woff') format('woff');
+  src: url('/fonts/GothamRnd-Book.woff') format('woff');
   font-weight: normal;
 }
 @font-face {
   font-family: "Gotham Rounded";
-  src: url('http://www.apricotan.net/fonts/GothamRnd-Bold.woff') format('woff');
+  src: url('/fonts/GothamRnd-Bold.woff') format('woff');
   font-weight: bold;
 }
 @keyframes fadein {
