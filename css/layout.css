@@ -137,10 +137,9 @@ td a:active
     background-color: #ffc547;
 }
 .btn-preview-highlight {
-    border: 1px solid #e74a31;
+    border: 1px solid #000000;
     color: #ffffff;
-    background-color: #e74a31;
-    opacity: 1.0;
+    background-color: #000000;
 }
 .btn-preview-highlight:hover,
 .btn-preview-highlight:focus {
@@ -148,7 +147,6 @@ td a:active
     outline: 0;
     color: #ffffff;
     background-color: #e74a31;
-    opacity: 0.5;
 }
 .list-inline > li.button {
     padding-top: 10px;
