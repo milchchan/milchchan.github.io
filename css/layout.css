@@ -2,7 +2,7 @@ html,
 body {
   height: 100%;
   width: 100%;
-  font-family: 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
+  font-family: "Gotham Rounded", 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
 }
 .header h1 {
   color: rgba(0, 0, 0, 0.75);
@@ -54,7 +54,7 @@ td a:active
   font-weight: 700;
 }
 .btn {
-    font-family: 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Gotham Rounded", 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
@@ -283,6 +283,11 @@ i.scroll {
 }
 i.scroll:hover {
   color: #ffc547;
+}
+@font-face {
+  font-family: "Gotham Rounded";
+  src: url('http://www.apricotan.net/fonts/fonts/GothamRnd-Bold.woff') format('woff');
+  font-weight: bold;
 }
 @keyframes fadein {
     from { opacity: 0; }
