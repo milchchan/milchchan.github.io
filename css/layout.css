@@ -23,7 +23,8 @@ p {
     padding-bottom: 10px;
 }
 hr {
-    height: 3;
+    border-width: 3px 0 0 0;
+    width: 10%;
 }
 table.information {
   margin: 25px 0px 25px 0px;
