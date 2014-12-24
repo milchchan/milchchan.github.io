@@ -5,15 +5,15 @@ body {
   font-family: "Gotham Rounded", 'Montserrat', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
 }
 .header h1 {
-  color: rgba(255, 255, 255, 1);
-  text-shadow: -0.06em 0 rgba(255, 0, 0, 0.75), 0.06em 0 rgba(0, 255, 255, 0.75);
+  text-shadow: none;
+  color: rgba(0, 0, 0, 1);
   -webkit-transition: all .3s ease-in-out;
   -moz-transition: all .3s ease-in-out;
   transition: all .3s ease-in-out;
 }
 .header h1:hover,
 .header h1:focus {
-  text-shadow: none;
+  text-shadow: -0.06em 0 rgba(255, 0, 0, 0.75), 0.06em 0 rgba(0, 255, 255, 0.75);
 }
 small {
     opacity: 0.5;
