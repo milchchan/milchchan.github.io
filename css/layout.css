@@ -23,11 +23,11 @@ p {
     padding-bottom: 10px;
 }
 hr {
-    border-width: 3px 0 0 0;
+    border-width: 4px 0 0 0;
     width: 10%;
 }
 .highlight hr {
-    border-width: 3px 0 0 0;
+    border-width: 4px 0 0 0;
     border-color: #ffffff;
     width: 25%;
 }
