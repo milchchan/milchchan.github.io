@@ -136,6 +136,20 @@ td a:active
     color: #ffffff;
     background-color: #ffc547;
 }
+.btn-preview-highlight {
+    border: 1px solid #e74a31;
+    color: #ffffff;
+    background-color: #e74a31;
+    opacity: 1.0;
+}
+.btn-preview-highlight:hover,
+.btn-preview-highlight:focus {
+    border: 1px solid #e74a31;
+    outline: 0;
+    color: #ffffff;
+    background-color: #e74a31;
+    opacity: 0.5;
+}
 .list-inline > li.button {
     padding-top: 10px;
     padding: 10px;
