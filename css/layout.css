@@ -10,10 +10,12 @@ body {
   -webkit-transition: all .3s ease-in-out;
   -moz-transition: all .3s ease-in-out;
   transition: all .3s ease-in-out;
+  transform: scale(1);
 }
 .header h1:hover,
 .header h1:focus {
   text-shadow: none;
+  transform: scale(1.1);
 }
 small {
     opacity: 0.5;
