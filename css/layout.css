@@ -53,6 +53,9 @@ td a:active
   font-size: 4.5em;
   font-weight: bold;
 }
+.text-center h2 {
+  font-weight: bold;
+}
 .btn {
     font-family: "Gotham Rounded", 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
