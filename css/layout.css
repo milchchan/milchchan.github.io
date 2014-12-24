@@ -22,6 +22,10 @@ p {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+p {
+    padding-top: 50px;
+    padding-bottom: 10px;
+}
 hr {
     border-width: 4px 0 0 0;
     border-color: #000000;
