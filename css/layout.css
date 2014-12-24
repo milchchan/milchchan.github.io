@@ -6,6 +6,16 @@ body {
 }
 .header h1 {
   text-shadow: -0.06em 0 rgba(255, 0, 0, 0.75), 0.06em 0 rgba(0, 255, 255, 0.75);
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+  transform: scale(1);
+}
+.animatable:hover,
+.animatable:focus {
+  outline: 0;
+  text-shadow: 0em 0 rgba(0, 0, 0, 0.75), 0em 0 rgba(0, 0, 0, 0.75);
+  transform: scale(1.1);
 }
 small {
     opacity: 0.5;
