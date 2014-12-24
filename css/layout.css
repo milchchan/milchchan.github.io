@@ -22,7 +22,7 @@ p {
     padding-top: 10px;
     padding-bottom: 10px;
 }
-p {
+p.legal {
     padding-top: 50px;
     padding-bottom: 10px;
 }
