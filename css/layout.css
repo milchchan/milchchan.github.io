@@ -22,6 +22,10 @@ p {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+p.intro-text {
+    padding-top: 0px;
+    padding-bottom: 10px;
+}
 table.information {
   margin: 25px 0px 25px 0px;
   padding: 25px 0px 25px 0px;
