@@ -11,8 +11,8 @@ body {
   transition: all .3s ease-in-out;
   transform: scale(1);
 }
-.animatable:hover,
-.animatable:focus {
+.header h1:hover,
+.header h1:focus {
   outline: 0;
   text-shadow: 0em 0 rgba(0, 0, 0, 0.75), 0em 0 rgba(0, 0, 0, 0.75);
   transform: scale(1.1);
