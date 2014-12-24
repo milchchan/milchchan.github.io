@@ -26,7 +26,7 @@ hr {
     border-width: 3px 0 0 0;
     width: 25%;
 }
-highlight > hr {
+.highlight > hr {
     border-width: 3px 0 0 0;
     border-color: #ffffff;
     width: 25%;
