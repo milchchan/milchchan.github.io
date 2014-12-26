@@ -16,10 +16,10 @@ body {
   text-shadow: -0.06em 0 rgba(255, 0, 0, 0.75), 0.06em 0 rgba(0, 255, 255, 0.75);
 }
 .preview h2 {
-  color: #000000;
+  color: rgba(0, 0, 0, 0.75);
 }
 .preview h5 {
-  color: #000000;
+  color: rgba(0, 0, 0, 0.75);
 }
 small {
     opacity: 0.5;
