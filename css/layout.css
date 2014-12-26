@@ -342,16 +342,7 @@ i.scroll:hover {
 }
 @media (max-width: 768px) {
   .preview {
-	color: rgba(0, 0, 0, 0.75);
-	display: table;
-	height: 400px;
-	width: 100%;
-	background: url(../images/Alicja.jpg) no-repeat center center fixed; 
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-	animation: fadein 1s ease-out;
+	background: radial-gradient(circle farthest-corner at center, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 100%) no-repeat center center scroll, url(../images/Alicja.jpg) no-repeat center center fixed; 
   }
   .map {
 	height: 75%;
