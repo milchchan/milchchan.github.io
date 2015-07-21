@@ -344,7 +344,6 @@ i.scroll:hover {
   color: #ffc547;
 }
 li.connection {
-  position: absolute;
   width: 32px;
   height: 32px;
   border-radius: 16px;
@@ -352,7 +351,6 @@ li.connection {
   line-height: 0px;
 }
 .connection a {
-  position: absolute;
   left: 8px;
   top: 8px;
   width: 16px;
