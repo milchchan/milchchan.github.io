@@ -350,7 +350,7 @@ li.connection {
   background-color: #000000;
   line-height: 0px;
 }
-li.connection a {
+li.connection > a {
   margin-left: 8px;
   margin-top: 8px;
   width: 16px;
