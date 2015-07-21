@@ -344,8 +344,8 @@ i.scroll:hover {
   color: #ffc547;
 }
 li.connection {
-  clear: both;
-  position: absolute;
+  float: left;
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 16px;
