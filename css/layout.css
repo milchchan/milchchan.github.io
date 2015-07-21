@@ -312,8 +312,10 @@ footer {
   padding: 0px 0;
 }
 .top-scroll {
-  margin-top: -50%;
-
+  margin-top: -24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
 }
 .top-scroll a {
   text-decoration: none;
