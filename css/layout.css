@@ -42,7 +42,8 @@ footer ul.resources {
     list-style-type: none;
 }
 ul.resources > li {
-    line-height: 2.5em;
+    font-size: 0.75em;
+    line-height: 1.5em;
 }
 hr {
     border-width: 4px 0 0 0;
