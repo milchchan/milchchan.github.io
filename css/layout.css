@@ -322,16 +322,14 @@ footer {
   line-height: 0px;
 }
 .top-scroll a {
+  left: 12px;
+  top: 12px;
   width: 24px;
   height: 24px;
   text-decoration: none;
   font-size: 24px;
   line-height: 24px;
   color: inherit;
-}
-.top-scroll a > i {
-  left: 50%;
-  top: 50%;
 }
 i.scroll {
   color: #000000;
