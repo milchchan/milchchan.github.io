@@ -329,6 +329,10 @@ footer {
   line-height: 24px;
   color: inherit;
 }
+.top-scroll a > i {
+  left: 50%;
+  top: 50%;
+}
 i.scroll {
   color: #000000;
 }
