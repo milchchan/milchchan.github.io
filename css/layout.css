@@ -38,7 +38,7 @@ footer ul {
 }
 footer ul.resources {
     margin: 0 0 0 1em;
-    padding: 0;
+    padding-right: 0;
     list-style-type: none;
 }
 hr {
