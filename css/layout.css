@@ -339,6 +339,24 @@ i.scroll {
 i.scroll:hover {
   color: #ffc547;
 }
+.connection {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #000000;
+  line-height: 0px;
+}
+.connection a {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 16px;
+  height: 16px;
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 16px;
+  color: inherit;
+}
 @font-face {
   font-family: "Gotham Rounded";
   src: url('../fonts/GothamRnd-Book.woff') format('woff');
