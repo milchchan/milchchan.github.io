@@ -76,6 +76,30 @@ td a:active
   font-weight: bold;
   text-decoration: underline;
 }
+a:link
+{
+	color: #000000;
+	font-weight: bold;
+	text-decoration: none;
+}
+a:visited
+{
+	color: #000000;
+	font-weight: bold;
+	text-decoration: none;
+}
+a:hover
+{
+	color: #e74a31;
+	font-weight: bold;
+	text-decoration: underline;
+}
+a:active
+{
+	color: #000000;
+	font-weight: bold;
+	text-decoration: underline;
+}
 .vert-text {
   display: table-cell;
   vertical-align: middle;
