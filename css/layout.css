@@ -41,6 +41,9 @@ footer ul.resources {
     padding-left: 0;
     list-style-type: none;
 }
+ul.resources > li {
+    line-height: 1.5em;
+}
 hr {
     border-width: 4px 0 0 0;
     border-color: #000000;
@@ -81,25 +84,25 @@ td a:active
 footer a:link
 {
 	color: #000000;
-	font-weight: bold;
+	font-weight: normal;
 	text-decoration: none;
 }
 footer a:visited
 {
 	color: #000000;
-	font-weight: bold;
+	font-weight: normal;
 	text-decoration: none;
 }
 footer a:hover
 {
 	color: #ffc547;
-	font-weight: bold;
+	font-weight: normal;
 	text-decoration: underline;
 }
 footer a:active
 {
 	color: #ffc547;
-	font-weight: bold;
+	font-weight: normal;
 	text-decoration: underline;
 }
 .vert-text {
