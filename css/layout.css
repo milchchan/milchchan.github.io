@@ -36,6 +36,9 @@ footer ul {
     padding-top: 50px;
     padding-bottom: 10px;
 }
+footer ul.resource {
+    list-style-type: none;
+}
 hr {
     border-width: 4px 0 0 0;
     border-color: #000000;
