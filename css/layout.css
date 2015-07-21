@@ -323,8 +323,8 @@ footer {
 }
 .top-scroll a {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 25%;
+  top: 25%;
   width: 24px;
   height: 24px;
   text-decoration: none;
