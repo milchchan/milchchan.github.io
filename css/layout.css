@@ -368,8 +368,10 @@ footer {
   padding: 0px 0;
 }
 .top-scroll {
+  z-index: 1;
   position: absolute;
   left: 50%;
+  margin-top: -24px;
   margin-left: -24px;
   width: 48px;
   height: 48px;
