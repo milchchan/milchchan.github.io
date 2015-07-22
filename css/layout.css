@@ -30,7 +30,7 @@ p {
 }
 p.legal {
     padding-top: 50px;
-    padding-bottom: 50px;
+    padding-bottom: 25px;
     font-size: 0.75em;
     line-height: 1.0em;
 }
