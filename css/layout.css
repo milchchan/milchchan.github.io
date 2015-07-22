@@ -31,7 +31,8 @@ p {
 p.legal {
     padding-top: 50px;
     padding-bottom: 10px;
-    font-size: 1.0em;
+    font-size: 0.75em;
+    font-weight: bold;
     line-height: 1.0em;
 }
 footer p {
@@ -48,7 +49,7 @@ footer ul.resources {
     list-style-type: none;
 }
 ul.resources > li {
-    font-size: 1.0em;
+    font-size: 0.75em;
     line-height: 1.5em;
 }
 hr {
@@ -91,25 +92,25 @@ td a:active
 footer a:link
 {
 	color: #000000;
-	font-weight: normal;
+	font-weight: bold;
 	text-decoration: none;
 }
 footer a:visited
 {
 	color: #000000;
-	font-weight: normal;
+	font-weight: bold;
 	text-decoration: none;
 }
 footer a:hover
 {
 	color: #ffc547;
-	font-weight: normal;
+	font-weight: bold;
 	text-decoration: underline;
 }
 footer a:active
 {
 	color: #ffc547;
-	font-weight: normal;
+	font-weight: bold;
 	text-decoration: underline;
 }
 .vert-text {
