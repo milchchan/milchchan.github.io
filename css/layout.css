@@ -31,8 +31,7 @@ p {
 p.legal {
     padding-top: 50px;
     padding-bottom: 10px;
-    font-size: 1.0em;
-    font-weight: bold;
+    font-size: 0.75em;
     line-height: 1.0em;
 }
 footer p {
@@ -92,25 +91,25 @@ td a:active
 footer a:link
 {
 	color: #000000;
-	font-weight: bold;
+	font-weight: normal;
 	text-decoration: none;
 }
 footer a:visited
 {
 	color: #000000;
-	font-weight: bold;
+	font-weight: normal;
 	text-decoration: none;
 }
 footer a:hover
 {
 	color: #ffc547;
-	font-weight: bold;
+	font-weight: normal;
 	text-decoration: underline;
 }
 footer a:active
 {
 	color: #ffc547;
-	font-weight: bold;
+	font-weight: normal;
 	text-decoration: underline;
 }
 .vert-text {
