@@ -226,6 +226,17 @@ footer a:active
     outline: 0;
     color: #ffc547;
 }
+footer .animatable-highlight {
+    background-color: #000000;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+}
+footer .animatable-highlight:hover,
+footer .animatable-highlight:focus {
+    outline: 0;
+    background-color: #ffc547;
+}
 img.popupable {
   margin: 0px 0px 0px 0px;
 }
