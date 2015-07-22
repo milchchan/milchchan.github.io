@@ -370,7 +370,7 @@ footer {
 .top-scroll {
   position: absolute;
   left: 50%;
-  margin-top: -24px;
+  top: -24px;
   margin-left: -24px;
   width: 48px;
   height: 48px;
@@ -378,7 +378,7 @@ footer {
   background-color: #ffffff;
   line-height: 0px;
 }
-.top-scroll a {
+.top-scroll > a {
   position: absolute;
   left: 12px;
   top: 12px;
