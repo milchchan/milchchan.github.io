@@ -29,13 +29,13 @@ p {
     padding-bottom: 10px;
 }
 p.legal {
-    padding-top: 50px;
+    padding-top: 25px;
     padding-bottom: 25px;
     font-size: 1.0em;
     line-height: 1.0em;
 }
 footer p {
-    padding-top: 25px;
+    padding-top: 50px;
     padding-bottom: 10px;
 }
 footer ul {
@@ -63,7 +63,7 @@ hr {
 footer hr {
     text-align: left;
     margin-left: 0;
-    padding-top: 50px;
+    margin-top: 50px;
 }
 table.information {
   margin: 25px 0px 25px 0px;
