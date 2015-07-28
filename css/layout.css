@@ -61,10 +61,11 @@ hr {
     border-color: #ffffff;
 }
 footer hr {
-    border-width: 2px 0 0 0;
+    border-width: 4px 0 0 0;
     text-align: left;
     margin-left: 0;
     margin-top: 50px;
+    width: 25px;
 }
 table.information {
   margin: 25px 0px 25px 0px;
