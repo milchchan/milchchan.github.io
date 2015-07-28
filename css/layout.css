@@ -62,6 +62,7 @@ hr {
 }
 footer hr {
     text-align: left;
+    margin-left: 0;
 }
 table.information {
   margin: 25px 0px 25px 0px;
