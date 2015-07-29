@@ -403,7 +403,7 @@ i.scroll {
 i.scroll:hover {
   color: #ffc547;
 }
-li.connection {
+li.connection span {
   float: left;
   position: relative;
   margin-right: 8px;
@@ -413,7 +413,7 @@ li.connection {
   background-color: #000000;
   line-height: 0px;
 }
-li.connection > a {
+li.connection i {
   position: absolute;
   left: 8px;
   top: 8px;
