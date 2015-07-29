@@ -404,13 +404,15 @@ i.scroll:hover {
   color: #ffc547;
 }
 li.connection {
-  float: left;
-  position: relative;
   margin: 0px 8px 0px 0px;
   padding: 0px 0px 0px 0px;
+  width: 32px;
+  height: 32px;
   line-height: 0px;
 }
 li.connection span {
+  float: left;
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 16px;
