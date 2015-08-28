@@ -34,7 +34,7 @@ p.legal {
     font-size: 1.0em;
     line-height: 1.0em;
 }
-footer div {
+footer div.resources {
     padding-top: 50px;
     padding-bottom: 10px;
 }
