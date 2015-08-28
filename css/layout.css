@@ -34,15 +34,7 @@ p.legal {
     font-size: 1.0em;
     line-height: 1.0em;
 }
-footer div.resources {
-    padding-top: 50px;
-    padding-bottom: 10px;
-}
-footer p {
-    padding-top: 50px;
-    padding-bottom: 10px;
-}
-footer ul {
+footer div.col-md-2 {
     padding-top: 50px;
     padding-bottom: 10px;
 }
