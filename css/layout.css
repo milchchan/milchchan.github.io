@@ -40,7 +40,11 @@ footer div.col-md-2 {
 }
 footer div.col-md-4 {
     padding-top: 50px;
-    padding-bottom: 10px;
+    padding-bottom: 0px;
+}
+div.row div.section {
+    padding-top: 0px;
+    padding-bottom: 25px;	
 }
 footer ul.resources {
     margin: 0;
