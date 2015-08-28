@@ -212,6 +212,10 @@ footer a:active
     padding-top: 10px;
     padding: 10px;
 }
+footer .list-inline {
+    padding-top: 10px;
+    padding: 0px;
+}
 .accent {
     text-transform: uppercase; 
 }
