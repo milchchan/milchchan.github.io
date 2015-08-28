@@ -33,6 +33,7 @@ p.legal {
     padding-bottom: 25px;
     font-size: 1.0em;
     line-height: 1.0em;
+    text-transform: uppercase; 
 }
 footer div.col-md-2 {
     padding-top: 50px;
