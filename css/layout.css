@@ -15,6 +15,9 @@ body {
 .header h1:focus {
   text-shadow: -0.06em 0 rgba(255, 0, 0, 0.75), 0.06em 0 rgba(0, 255, 255, 0.75);
 }
+h3 {
+  font-weight: bold;	
+}
 .header h5 {
   margin: 0px;
   padding-top: 10px;
