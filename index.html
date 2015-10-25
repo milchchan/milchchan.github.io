@@ -452,13 +452,13 @@
             var messageDictionary = {};
             
             $('.typing').each(function (index, element) {
-                messageDictionary[element] = { 'targetText':$(element).text(), 'index':0, 'currentText':'' };
+                messageDictionary[$(element)] = { 'targetText':$(element).text(), 'index':0, 'currentText':'' };
                 $(element).text('');
             });
             
             setTimeout(function onTick() {
                 for (key in messageDictionary) {
-                    $(key).text('hoge');
+                    key.text('hoge');
                 }
                 
                 setTimeout(onTick, 16);
