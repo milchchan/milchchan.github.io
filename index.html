@@ -449,7 +449,7 @@
                 .attr('alt', 'Background')
                 .bind('load', onLoad1));
                 
-            messageDictionary = {};
+            var messageDictionary = {};
             
             $('.typing').each(function (index, element) {
                 messageDictionary[element] = [ 'text':element.val(), 'index':0, current:'' ];
