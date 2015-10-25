@@ -458,7 +458,7 @@
             
             setTimeout(function onTick() {
                 for (key in messageDictionary) {
-                    
+                    $(key).text(key.text);
                 }
                 
                 setTimeout(onTick, 16);
