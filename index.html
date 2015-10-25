@@ -452,16 +452,18 @@
             var messageDictionary = {};
             
             $('.typing').each(function (index, element) {
-                messageDictionary[index] = { element:element, 'text':$(element).text(), 'index':0, 'current':'' };
+                messageDictionary[index] = { element:element, 'text':$(element).text(), 'index':0, 'buffer':'' };
                 $(element).text('');
             });
             
             setTimeout(function onTick() {
-                for (key in messageDictionary) {
-                    $(messageDictionary[key].element).text(messageDictionary[key].text);
+                if (Object.keys(hash_table).length > 0) {
+                    for (key in messageDictionary) {
+                        $(messageDictionary[key].element).text(messageDictionary[key].text);
+                    }
+                } else {
+                    setTimeout(onTick, 16);
                 }
-                
-                setTimeout(onTick, 16);
             }, 16);
             
             setTimeout(function onTick() {
