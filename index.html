@@ -448,6 +448,28 @@
                 .attr('src', q.shift())
                 .attr('alt', 'Background')
                 .bind('load', onLoad1));
+                
+            messageDictionary = {};
+            
+            $('.typing'.)each(function (index, element) {
+                messageDictionary[element] = [ element.val(), 0, "" ];
+            });
+            
+            setTimeout(function onTick() {
+                for (key in messageDictionary) {
+                    
+                }
+                
+                setTimeout(onTick, 16);
+            }, 16);
+            
+            setTimeout(function onTick() {
+                for (key in messageDictionary) {
+                    
+                }
+                
+                setTimeout(onTick, 20);
+            }, 20);
         });
     </script>
 </body>
