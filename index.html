@@ -452,8 +452,8 @@
             var messageDictionary = {};
             
             $('.typing').each(function (index, element) {
-                messageDictionary[element] = { 'text':element.text(), 'index':0, 'current':'' };
-                element.text('');
+                messageDictionary[element] = { 'text':$(this).text(), 'index':0, 'current':'' };
+                $(this).text('');
             });
             
             setTimeout(function onTick() {
