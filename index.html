@@ -464,7 +464,7 @@
                     var buffer = messageDictionary[key].buffer;
                     
                     if (text.length == buffer.length) {
-                        $(messageDictionary[key].element).text(buffer);
+                        $(messageDictionary[key].element).text(text);
                         keyArray.push(key);
                     } else {
                         function random(min, max) {
