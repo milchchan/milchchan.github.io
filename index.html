@@ -493,31 +493,20 @@
                         }
                         
                         if (randomBuffer.length > buffer.length) {
-                            console.log(key);
-                            console.log(randomMessageLength);
-                            console.log(buffer.length);
-                            console.log(randomBuffer.length);
-                            console.log(randomBuffer.substring(buffer.length, randomBuffer.length));
-                            
                             $(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
                         } else {
                             $(messageDictionary[key].element).text(buffer);
                         }
-                        
-                        //$(messageDictionary[key].element).text(buffer);
-                        
-                        
                     }
                 }
                 
                 for (key in keyArray) {
-                    //delete messageDictionary[key];
+                    delete messageDictionary[key];
                 }
                 
                 if (Object.keys(messageDictionary).length > 0) {
-                    //
+                    setTimeout(onTick, 16);
                 }
-                setTimeout(onTick, 16);
             }, 16);
             
             setTimeout(function onTick() {
