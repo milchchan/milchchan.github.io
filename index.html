@@ -476,7 +476,7 @@
                         var randomBuffer = "";
                         
                         for (var i = 0; i < text.length; i++) {
-                            if (typeof text.charAt(i) !== "undefined" && charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) == null) {
+                            if (charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) == null) {
                                 charArray.push(text.charAt(i));
                             }
                         }
@@ -485,6 +485,7 @@
                             if (charArray.length > 0) {
                                 var index = ~~random(0, charArray.length);
                                 console.log(index);
+                                console.log(charArray.length);
                                 console.log(charArray[index]);
                                 randomBuffer += charArray[index];
                             }
