@@ -500,13 +500,7 @@
                     }
                 }
                 
-                for (key in keyArray) {
-                    //delete messageDictionary[key];
-                    console.log(key);
-                    console.log("removed");
-                }
-                
-                if (Object.keys(messageDictionary).length > 0) {
+                if (Object.keys(messageDictionary).length != keyArray.length) {
                     setTimeout(onTick, 16);
                 }
             }, 16);
