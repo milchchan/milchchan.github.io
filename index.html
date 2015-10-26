@@ -477,7 +477,7 @@
                             var randomBuffer = "";
                             
                             for (var i = 0; i < text.length; i++) {
-                                if (charArray.indexOf(text.charAt(i)) == -1/* && text.charAt(i).match(/\s/) != null*/) {
+                                if (charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) != null) {
                                     charArray.push(text.charAt(i));
                                 }
                             }
@@ -503,8 +503,8 @@
                     
                     for (key in keyArray) {
                         delete messageDictionary[key];
-                        console.log("remove");
-                        console.log(key);
+                        //console.log("remove");
+                        //console.log(key);
                     }
                     
                     
