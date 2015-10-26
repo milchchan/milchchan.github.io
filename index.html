@@ -453,7 +453,7 @@
             
             $('.typing').each(function (index, element) {
                 messageDictionary[index] = { element:element, 'text':$(element).text(), 'count':0, 'buffer':'' };
-                $(element).text('');
+                $(element).text('').css('visibility', 'visible');
             });
             
             setTimeout(function onTick() {
