@@ -582,6 +582,8 @@
 
                 if (isComplete) {
                     if (isTyping) {
+                        isTyping = false;
+
                         for (key in messageDictionary) {
                             messageDictionary[key].reverse = true;
                         }
@@ -593,6 +595,8 @@
                         }, 5000);
                     } else {
                         var d = messageQueue.shift();
+
+                        isTyping = true;
 
                         messageQueue.push(d);
 
