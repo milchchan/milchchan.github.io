@@ -513,9 +513,26 @@
                     var randomMessageLength = messageDictionary[key].count;
                     var buffer = messageDictionary[key].buffer;
                     
-                    
-                    
-                    
+                    if (buffer.length < text.length) {
+                        var index = buffer.length;
+                        
+                        if (index < text.length) {
+                            var width = Math.floor(text.length / 2);
+                            var length = text.length;
+                            //var start = text.lastIndexOf(index);
+                            
+                            if (randomMessageLength >= width) {
+                                buffer += text.charAt(index);
+                                messageDictionary[key].buffer = buffer;
+                            }
+                            
+                            if (randomMessageLength < length) {
+                                messageDictionary[key].count += 1;
+                            }
+                        }
+                        
+                        stopRequired = false;
+                    }
                 }
                 
                 if (!stopRequired) {
