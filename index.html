@@ -452,7 +452,7 @@
             var messageDictionary = {};
             
             $('.typing').each(function (index, element) {
-                messageDictionary[index] = { element:element, 'text':$(element).text(), 'index':0, 'buffer':'' };
+                messageDictionary[index] = { element:element, 'text':$(element).text(), 'count':0, 'buffer':'' };
                 $(element).text('');
             });
             
