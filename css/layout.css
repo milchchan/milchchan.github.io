@@ -11,10 +11,10 @@ body {
   -moz-transition: all .3s ease-in-out;
   transition: all .3s ease-in-out;
 }
-.header h1:hover,
+/*.header h1:hover,
 .header h1:focus {
   text-shadow: -0.06em 0 rgba(255, 0, 0, 0.75), 0.06em 0 rgba(0, 255, 255, 0.75);
-}
+}*/
 h3 {
   font-weight: bold;	
 }
