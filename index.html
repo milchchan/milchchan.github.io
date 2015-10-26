@@ -550,11 +550,18 @@
                 
                 setTimeout(onRender, 32);
             }
+
+            var messageQueue = new Array();
+            var dictionary = {};
             
             $('.typing').each(function (index, element) {
-                messageDictionary[index] = { element:element, 'text':$(element).text(), 'reverse':false, 'count':0, 'buffer':'' };
+                messageDictionary[index] = { element: element, 'text': $(element).text(), 'reverse': false, 'count': 0, 'buffer': '' };
+                dictionary[index] = $(element).text();
                 $(element).text('').css('visibility', 'visible');
             });
+
+            messageQueue.push({ 0:'Hello, world!', 1:'Foo Bar Baz' });
+            messageQueue.push(dictionary);
 
             setTimeout(onRender, 32);
             setTimeout(onType, 64);
@@ -574,25 +581,32 @@
                 }
 
                 if (isComplete) {
-                    var delay;
-
                     if (isTyping) {
-                        isTyping = false;
-                        delay = 3000;
+                        for (key in messageDictionary) {
+                            messageDictionary[key].reverse = true;
+                        }
+
+                        setTimeout(function () {
+                            setTimeout(onRender, 32);
+                            setTimeout(onType, 64);
+                            setTimeout(onTick, 1000);
+                        }, 5000);
                     } else {
-                        isTyping = true;
-                        delay = 500;
-                    }
+                        var d = messageQueue.shift();
 
-                    for (key in messageDictionary) {
-                        messageDictionary[key].reverse = !isTyping;
-                    }
+                        messageQueue.push(d);
 
-                    setTimeout(function () {
-                        setTimeout(onRender, 32);
-                        setTimeout(onType, 64);
-                        setTimeout(onTick, 1000);
-                    }, delay);
+                        for (key in messageDictionary) {
+                            messageDictionary[key].text = d[key];
+                            messageDictionary[key].reverse = false;
+                        }
+
+                        setTimeout(function () {
+                            setTimeout(onRender, 32);
+                            setTimeout(onType, 64);
+                            setTimeout(onTick, 1000);
+                        }, 500);
+                    }
                 } else {
                     setTimeout(onTick, 1000);
                 }
