@@ -502,6 +502,8 @@
                 
                 for (key in keyArray) {
                     delete messageDictionary[key];
+                    console.log(key);
+                    console.log("removed");
                 }
                 
                 if (Object.keys(messageDictionary).length > 0) {
