@@ -583,11 +583,11 @@
                 if (isComplete) {
                     if (isTyping) {
                         isTyping = false;
-
+    
                         for (key in messageDictionary) {
                             messageDictionary[key].reverse = true;
                         }
-
+    
                         setTimeout(function () {
                             setTimeout(onRender, 32);
                             setTimeout(onType, 64);
@@ -595,16 +595,16 @@
                         }, 5000);
                     } else {
                         var d = messageQueue.shift();
-
+    
                         isTyping = true;
-
+    
                         messageQueue.push(d);
-
+    
                         for (key in messageDictionary) {
                             messageDictionary[key].text = d[key];
                             messageDictionary[key].reverse = false;
                         }
-
+    
                         setTimeout(function () {
                             setTimeout(onRender, 32);
                             setTimeout(onType, 64);
