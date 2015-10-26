@@ -483,11 +483,7 @@
                         
                         for (var i = 0; i < randomMessageLength; i++) {
                             if (charArray.length > 0) {
-                                var index = ~~random(0, charArray.length - 1);
-                                console.log(index);
-                                console.log(charArray.length);
-                                console.log(charArray[index]);
-                                randomBuffer += charArray[index];
+                                randomBuffer += charArray[~~random(0, charArray.length - 1)];
                             }
                         }
                         
@@ -501,10 +497,8 @@
                 
                 if (Object.keys(messageDictionary).length != keyArray.length) {
                     setTimeout(onTick, 16);
-                } else {
-                    console.log("comp");
                 }
-            }, 16);
+            }, 32);
             
             setTimeout(function onTick() {
                 var stopRequired = true;
@@ -538,7 +532,7 @@
                 if (!stopRequired) {
                     setTimeout(onTick, 20);
                 }
-            }, 20);
+            }, 15);
         });
     </script>
 </body>
