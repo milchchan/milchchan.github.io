@@ -280,7 +280,9 @@
   ga('create', 'UA-313424-1', 'auto');
   ga('send', 'pageview');
 
-        var queue = new Array();
+        var imageQueue = new Array();
+        var messageDictionary = {};
+        var isTyping = false;
 
         $(function () {
             $('a[href*=#]:not([href=#])').click(function () {
@@ -340,16 +342,16 @@
                 return a;
             }
             
-            queue.push(new Array('/images/Background-Milch1.jpg', '/images/Background-Milch2.jpg', '/images/Background-Milch3.jpg', '/images/Background-Milch2.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg'));
-            queue.push(new Array('/images/Background-Milch4.jpg', '/images/Background-Milch5.jpg', '/images/Background-Milch6.jpg', '/images/Background-Milch5.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg'));
-            queue.push(new Array('/images/Background-Milch7.jpg', '/images/Background-Milch8.jpg', '/images/Background-Milch9.jpg', '/images/Background-Milch8.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg'));
-            queue.push(new Array('/images/Background-Milch10.jpg', '/images/Background-Milch11.jpg', '/images/Background-Milch12.jpg', '/images/Background-Milch11.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg'));
+            imageQueue.push(new Array('/images/Background-Milch1.jpg', '/images/Background-Milch2.jpg', '/images/Background-Milch3.jpg', '/images/Background-Milch2.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg'));
+            imageQueue.push(new Array('/images/Background-Milch4.jpg', '/images/Background-Milch5.jpg', '/images/Background-Milch6.jpg', '/images/Background-Milch5.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg'));
+            imageQueue.push(new Array('/images/Background-Milch7.jpg', '/images/Background-Milch8.jpg', '/images/Background-Milch9.jpg', '/images/Background-Milch8.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg'));
+            imageQueue.push(new Array('/images/Background-Milch10.jpg', '/images/Background-Milch11.jpg', '/images/Background-Milch12.jpg', '/images/Background-Milch11.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg'));
             
-            queue = shuffle(queue);
+            imageQueue = shuffle(imageQueue);
             
-            var urls = queue.shift();
+            var urls = imageQueue.shift();
             
-            queue.push(urls);
+            imageQueue.push(urls);
             
             var q = new Array();
             
@@ -389,9 +391,9 @@
                         var div = blind.length == 0 ? $('<div />').attr('class', 'blind').css('margin-top', '100%').appendTo(parent) : blind;
                         
                         div.animate({ 'margin-top': '0%' }, 1000, 'easeOutExpo', function () {
-                            var array = queue.shift();
+                            var array = imageQueue.shift();
                         
-                            queue.push(array);
+                            imageQueue.push(array);
                             
                             for (var i in array) {
                                 q.push(array[i]);
@@ -448,23 +450,67 @@
                 .attr('src', q.shift())
                 .attr('alt', 'Background')
                 .bind('load', onLoad1));
+
+            function onType() {
+                var stopRequired = true;
                 
-            var messageDictionary = {};
-            
-            $('.typing').each(function (index, element) {
-                messageDictionary[index] = { element:element, 'text':$(element).text(), 'count':0, 'buffer':'' };
-                $(element).text('');
-                
-                setTimeout(function onTick() {
-                    for (key in messageDictionary) {
-                        $(messageDictionary[key].element).css('visibility', 'visible');
+                for (key in messageDictionary) {
+                    if ($(messageDictionary[key].element).css('visibility') == 'visible') {
+                        if (messageDictionary[key].reverse) {
+                            var index = messageDictionary[key].count - 1;
+                            var text = messageDictionary[key].text;
+
+                            if (index < text.length) {
+                                var buffer = messageDictionary[key].buffer;
+                                var width = Math.floor(text.length / 2);
+
+                                if (buffer.length <= width) {
+                                    messageDictionary[key].count -= 1;
+                                }
+
+                                if (buffer.length > 0) {
+                                    messageDictionary[key].buffer = buffer.substring(buffer.length - 2, buffer.length-1);
+                                }
+                            }
+
+                            stopRequired = false;
+                        } else {
+                            var text = messageDictionary[key].text;
+                            var randomMessageLength = messageDictionary[key].count;
+                            var buffer = messageDictionary[key].buffer;
+                        
+                            if (buffer.length < text.length) {
+                                var index = buffer.length;
+                            
+                                if (index < text.length) {
+                                    var width = Math.floor(text.length / 2);
+                                    var length = text.length;
+                                
+                                    if (randomMessageLength >= width) {
+                                        buffer += text.charAt(index);
+                                        messageDictionary[key].buffer = buffer;
+                                    }
+                                
+                                    if (randomMessageLength < length) {
+                                        messageDictionary[key].count += 1;
+                                    }
+                                }
+                            
+                                stopRequired = false;
+                            }
+                        }
                     }
-                }, 500);
-            });
-            
-            setTimeout(function onTick() {
-                var keyArray = new Array();
+                    else {
+                        stopRequired = false;
+                    }
+                }
                 
+                if (!stopRequired) {
+                    setTimeout(onType, 64);
+                }
+            }
+
+            function onRender() {
                 for (key in messageDictionary) {
                     if ($(messageDictionary[key].element).css('visibility') == 'visible') {
                         var text = messageDictionary[key].text;
@@ -472,7 +518,6 @@
                         
                         if (text.length == buffer.length) {
                             $(messageDictionary[key].element).text(buffer);
-                            keyArray.push(key);
                         } else {
                             function random(min, max) {
                                 return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -480,7 +525,7 @@
                             
                             var randomMessageLength = messageDictionary[key].count;
                             var charArray = new Array();
-                            var randomBuffer = "";
+                            var randomBuffer = '';
                             
                             for (var i = 0; i < text.length; i++) {
                                 if (charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) == null) {
@@ -503,49 +548,55 @@
                     }
                 }
                 
-                if (Object.keys(messageDictionary).length != keyArray.length) {
-                    setTimeout(onTick, 16);
-                }
-            }, 32);
+                setTimeout(onRender, 32);
+            }
             
+            $('.typing').each(function (index, element) {
+                messageDictionary[index] = { element:element, 'text':$(element).text(), 'reverse':false, 'count':0, 'buffer':'' };
+                $(element).text('').css('visibility', 'visible');
+            });
+
+            setTimeout(onRender, 32);
+            setTimeout(onType, 64);
             setTimeout(function onTick() {
-                var stopRequired = true;
-                
+                var isComplete = true;
+
                 for (key in messageDictionary) {
-                    if ($(messageDictionary[key].element).css('visibility') == 'visible') {
-                        var text = messageDictionary[key].text;
-                        var randomMessageLength = messageDictionary[key].count;
-                        var buffer = messageDictionary[key].buffer;
-                        
-                        if (buffer.length < text.length) {
-                            var index = buffer.length;
-                            
-                            if (index < text.length) {
-                                var width = Math.floor(text.length / 2);
-                                var length = text.length;
-                                
-                                if (randomMessageLength >= width) {
-                                    buffer += text.charAt(index);
-                                    messageDictionary[key].buffer = buffer;
-                                }
-                                
-                                if (randomMessageLength < length) {
-                                    messageDictionary[key].count += 1;
-                                }
-                            }
-                            
-                            stopRequired = false;
+                    if (messageDictionary[key].reverse) {
+                        if ($(messageDictionary[key].element).text().length != 0) {
+                            isComplete = false;
+                        }
+                    } else {
+                        if ($(messageDictionary[key].element).text() != messageDictionary[key].text) {
+                            isComplete = false;
                         }
                     }
-                    else {
-                        stopRequired = false;
+                }
+
+                if (isComplete) {
+                    var delay;
+
+                    if (isTyping) {
+                        isTyping = false;
+                        delay = 3000;
+                    } else {
+                        isTyping = true;
+                        delay = 500;
                     }
+
+                    for (key in messageDictionary) {
+                        messageDictionary[key].reverse = !isTyping;
+                    }
+
+                    setTimeout(function () {
+                        setTimeout(onRender, 32);
+                        setTimeout(onType, 64);
+                        setTimeout(onTick, 1000);
+                    }, delay);
+                } else {
+                    setTimeout(onTick, 1000);
                 }
-                
-                if (!stopRequired) {
-                    setTimeout(onTick, 20);
-                }
-            }, 15);
+            }, 1000);
         });
     </script>
 </body>
