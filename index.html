@@ -327,7 +327,7 @@
                 
                 while (n > 1)
                 {
-                    var k = random(0, n);
+                    var k = ~~random(0, n);
 
                     n--;
 
@@ -483,12 +483,12 @@
                         
                         for (var i = 0; i < randomMessageLength; i++) {
                             if (charArray.length > 0) {
-                                var item = charArray[0];
+                                //var item = charArray[0];
                                 
-                                console.log(item);
+                                //console.log(item);
                                 
-                                randomBuffer += item;
-                                //randomBuffer += charArray[random(0, charArray.length)];
+                                //randomBuffer += item;
+                                randomBuffer += charArray[~~random(0, charArray.length)];
                             }
                         }
                         
