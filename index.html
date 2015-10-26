@@ -527,9 +527,11 @@
                             if (randomMessageLength < length) {
                                 messageDictionary[key].count += 1;
                             }
+                            
+                            console.log(buffer);
                         }
                         
-                        console.log("ok1");
+                        
                         
                         stopRequired = false;
                     }
@@ -538,10 +540,6 @@
                 if (!stopRequired) {
                     setTimeout(onTick, 20);
                     
-                }
-                else
-                {
-                    console.log("ok");
                 }
             }, 20);
         });
