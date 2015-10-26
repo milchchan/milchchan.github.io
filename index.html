@@ -488,12 +488,12 @@
                         }
                         
                         if (randomBuffer.length > buffer.length) {
-                            //$(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
+                            $(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
                         } else {
-                            //$(messageDictionary[key].element).text(buffer);
+                            $(messageDictionary[key].element).text(buffer);
                         }
                         
-                        $(messageDictionary[key].element).text(buffer);
+                        //$(messageDictionary[key].element).text(buffer);
                         
                         console.log(key);
                         console.log(messageDictionary[key].buffer);
