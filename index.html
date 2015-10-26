@@ -493,6 +493,11 @@
                             } else {
                                 $(messageDictionary[key].element).text(buffer);
                             }
+                            
+                            
+                            
+                            console.log(key);
+                            console.log(messageDictionary[key].buffer);
                         }
                     }
                     
@@ -527,13 +532,7 @@
                             if (randomMessageLength < length) {
                                 messageDictionary[key].count += 1;
                             }
-                            
-                            console.log(key);
-                            console.log(messageDictionary[key].count);
-                            console.log(messageDictionary[key].buffer);
                         }
-                        
-                        
                         
                         stopRequired = false;
                     }
@@ -541,10 +540,6 @@
                 
                 if (!stopRequired) {
                     setTimeout(onTick, 20);
-                    
-                }
-                else {
-                    console.log("ok");
                 }
             }, 20);
         });
