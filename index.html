@@ -453,44 +453,46 @@
             
             $('.typing').each(function (index, element) {
                 messageDictionary[index] = { element:element, 'text':$(element).text(), 'count':0, 'buffer':'' };
-                $(element).text('').css('visibility', 'visible');
+                $(element).text('').delay(500).css('visibility', 'visible');
             });
             
             setTimeout(function onTick() {
                 var keyArray = new Array();
                 
                 for (key in messageDictionary) {
-                    var text = messageDictionary[key].text;
-                    var buffer = messageDictionary[key].buffer;
-                    
-                    if (text.length == buffer.length) {
-                        $(messageDictionary[key].element).text(buffer);
-                        keyArray.push(key);
-                    } else {
-                        function random(min, max) {
-                            return Math.floor(Math.random() * (max - min + 1)) + min;
-                        }
+                    if ($(messageDictionary[key].element).is(':visible')) {
+                        var text = messageDictionary[key].text;
+                        var buffer = messageDictionary[key].buffer;
                         
-                        var randomMessageLength = messageDictionary[key].count;
-                        var charArray = new Array();
-                        var randomBuffer = "";
-                        
-                        for (var i = 0; i < text.length; i++) {
-                            if (charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) == null) {
-                                charArray.push(text.charAt(i));
-                            }
-                        }
-                        
-                        for (var i = 0; i < randomMessageLength; i++) {
-                            if (charArray.length > 0) {
-                                randomBuffer += charArray[~~random(0, charArray.length - 1)];
-                            }
-                        }
-                        
-                        if (randomBuffer.length > buffer.length) {
-                            $(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
-                        } else {
+                        if (text.length == buffer.length) {
                             $(messageDictionary[key].element).text(buffer);
+                            keyArray.push(key);
+                        } else {
+                            function random(min, max) {
+                                return Math.floor(Math.random() * (max - min + 1)) + min;
+                            }
+                            
+                            var randomMessageLength = messageDictionary[key].count;
+                            var charArray = new Array();
+                            var randomBuffer = "";
+                            
+                            for (var i = 0; i < text.length; i++) {
+                                if (charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) == null) {
+                                    charArray.push(text.charAt(i));
+                                }
+                            }
+                            
+                            for (var i = 0; i < randomMessageLength; i++) {
+                                if (charArray.length > 0) {
+                                    randomBuffer += charArray[~~random(0, charArray.length - 1)];
+                                }
+                            }
+                            
+                            if (randomBuffer.length > buffer.length) {
+                                $(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
+                            } else {
+                                $(messageDictionary[key].element).text(buffer);
+                            }
                         }
                     }
                 }
@@ -504,28 +506,30 @@
                 var stopRequired = true;
                 
                 for (key in messageDictionary) {
-                    var text = messageDictionary[key].text;
-                    var randomMessageLength = messageDictionary[key].count;
-                    var buffer = messageDictionary[key].buffer;
-                    
-                    if (buffer.length < text.length) {
-                        var index = buffer.length;
+                    if ($(messageDictionary[key].element).is(':visible')) {
+                        var text = messageDictionary[key].text;
+                        var randomMessageLength = messageDictionary[key].count;
+                        var buffer = messageDictionary[key].buffer;
                         
-                        if (index < text.length) {
-                            var width = Math.floor(text.length / 2);
-                            var length = text.length;
+                        if (buffer.length < text.length) {
+                            var index = buffer.length;
                             
-                            if (randomMessageLength >= width) {
-                                buffer += text.charAt(index);
-                                messageDictionary[key].buffer = buffer;
+                            if (index < text.length) {
+                                var width = Math.floor(text.length / 2);
+                                var length = text.length;
+                                
+                                if (randomMessageLength >= width) {
+                                    buffer += text.charAt(index);
+                                    messageDictionary[key].buffer = buffer;
+                                }
+                                
+                                if (randomMessageLength < length) {
+                                    messageDictionary[key].count += 1;
+                                }
                             }
                             
-                            if (randomMessageLength < length) {
-                                messageDictionary[key].count += 1;
-                            }
+                            stopRequired = false;
                         }
-                        
-                        stopRequired = false;
                     }
                 }
                 
