@@ -488,7 +488,9 @@
                                 //console.log(item);
                                 
                                 //randomBuffer += item;
-                                randomBuffer += charArray[~~random(0, charArray.length)];
+                                var index = ~~random(0, charArray.length);
+                                console.log(index);
+                                randomBuffer += charArray[index];
                             }
                         }
                         
