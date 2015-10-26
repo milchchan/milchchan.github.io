@@ -503,6 +503,8 @@
                     
                     for (key in keyArray) {
                         delete messageDictionary[key];
+                        console.log("remove");
+                        console.log(key);
                     }
                 } else {
                     setTimeout(onTick, 16);
