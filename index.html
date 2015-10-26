@@ -458,8 +458,46 @@
             
             setTimeout(function onTick() {
                 if (Object.keys(hash_table).length > 0) {
+                    var keyArray = new Array();
+                    
                     for (key in messageDictionary) {
-                        $(messageDictionary[key].element).text(messageDictionary[key].text);
+                        var text = messageDictionary[key].text;
+                        var buffer = messageDictionary[key].buffer;
+                        
+                        if (text.length == buffer.length) {
+                            text = buffer;
+                            keyArray.push(key);
+                        } else {
+                            function random(min, max) {
+                                return Math.floor(Math.random() * (max - min + 1)) + min;
+                            }
+                            
+                            var randomMessageLength = messageDictionary[key].count;
+                            var charArray = new Array();
+                            var randomBuffer = "";
+                            
+                            for (var i = 0; i < text.length; i++) {
+                                if (charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) != null) {
+                                    charArray.push(text.charAt(i));
+                                }
+                            }
+                            
+                            for (var i = 0; i < randomMessageLength; i++) {
+                                if (charArray.length > 0) {
+                                    randomBuffer += charArray[random(0, i)];
+                                }
+                            }
+                            
+                            if (randomBuffer.length > buffer.length) {
+                                $(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
+                            } else {
+                                $(messageDictionary[key].element).text(buffer);
+                            }
+                        }
+                    }
+                    
+                    for (key in keyArray) {
+                        delete messageDictionary[key];
                     }
                 } else {
                     setTimeout(onTick, 16);
@@ -467,11 +505,22 @@
             }, 16);
             
             setTimeout(function onTick() {
+                var stopRequired = true;
+                
                 for (key in messageDictionary) {
                     //$(messageDictionary[key].element).text(messageDictionary[key].text);
+                    var text = messageDictionary[key].text;
+                    var randomMessageLength = messageDictionary[key].count;
+                    var buffer = messageDictionary[key].buffer;
+                    
+                    
+                    
+                    
                 }
                 
-                setTimeout(onTick, 20);
+                if (!stopRequired) {
+                    setTimeout(onTick, 20);
+                }
             }, 20);
         });
     </script>
