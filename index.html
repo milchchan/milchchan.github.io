@@ -453,7 +453,13 @@
             
             $('.typing').each(function (index, element) {
                 messageDictionary[index] = { element:element, 'text':$(element).text(), 'count':0, 'buffer':'' };
-                $(element).text('').delay(5000).css('visibility', 'visible');
+                $(element).text('');
+                
+                setTimeout(function onTick() {
+                    for (key in messageDictionary) {
+                        $(messageDictionary[key].element).css('visibility', 'visible');
+                    }
+                }, 5000);
             });
             
             setTimeout(function onTick() {
