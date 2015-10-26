@@ -457,62 +457,56 @@
             });
             
             setTimeout(function onTick() {
-                if (Object.keys(messageDictionary).length > 0) {
-                    var keyArray = new Array();
+                var keyArray = new Array();
+                
+                for (key in messageDictionary) {
+                    var text = messageDictionary[key].text;
+                    var buffer = messageDictionary[key].buffer;
                     
-                    for (key in messageDictionary) {
-                        var text = messageDictionary[key].text;
-                        var buffer = messageDictionary[key].buffer;
-                        
-                        if (text.length == buffer.length) {
-                            text = buffer;
-                            keyArray.push(key);
-                        } else {
-                            function random(min, max) {
-                                return Math.floor(Math.random() * (max - min + 1)) + min;
-                            }
-                            
-                            var randomMessageLength = messageDictionary[key].count;
-                            var charArray = new Array();
-                            var randomBuffer = "";
-                            
-                            for (var i = 0; i < text.length; i++) {
-                                if (charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) != null) {
-                                    charArray.push(text.charAt(i));
-                                }
-                            }
-                            
-                            for (var i = 0; i < randomMessageLength; i++) {
-                                if (charArray.length > 0) {
-                                    randomBuffer += charArray[random(0, charArray.length)];
-                                }
-                            }
-                            
-                            if (randomBuffer.length > buffer.length) {
-                                $(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
-                            } else {
-                                $(messageDictionary[key].element).text(buffer);
-                            }
-                            
-                            
-                            
-                            console.log(key);
-                            console.log(messageDictionary[key].buffer);
+                    if (text.length == buffer.length) {
+                        $(messageDictionary[key].element).text(buffer);
+                        keyArray.push(key);
+                    } else {
+                        function random(min, max) {
+                            return Math.floor(Math.random() * (max - min + 1)) + min;
                         }
+                        
+                        var randomMessageLength = messageDictionary[key].count;
+                        var charArray = new Array();
+                        var randomBuffer = "";
+                        
+                        for (var i = 0; i < text.length; i++) {
+                            if (charArray.indexOf(text.charAt(i)) == -1 && text.charAt(i).match(/\s/) != null) {
+                                charArray.push(text.charAt(i));
+                            }
+                        }
+                        
+                        for (var i = 0; i < randomMessageLength; i++) {
+                            if (charArray.length > 0) {
+                                randomBuffer += charArray[random(0, charArray.length)];
+                            }
+                        }
+                        
+                        if (randomBuffer.length > buffer.length) {
+                            $(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
+                        } else {
+                            $(messageDictionary[key].element).text(buffer);
+                        }
+                        
+                        
+                        
+                        console.log(key);
+                        console.log(messageDictionary[key].buffer);
                     }
-                    
-                    for (key in keyArray) {
-                        //delete messageDictionary[key];
-                        //console.log("remove");
-                        //console.log(key);
-                    }
-                    
-                    
-                } else {
-                    //setTimeout(onTick, 16);
                 }
                 
-                setTimeout(onTick, 16);
+                for (key in keyArray) {
+                    delete messageDictionary[key];
+                }
+                
+                if (Object.keys(messageDictionary).length > 0) {
+                    setTimeout(onTick, 16);
+                }
             }, 16);
             
             setTimeout(function onTick() {
