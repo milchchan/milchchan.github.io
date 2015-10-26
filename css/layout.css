@@ -229,6 +229,9 @@ footer a:active
 .accent {
     text-transform: uppercase; 
 }
+.typing {
+    visibility: hidden;
+}
 .animatable {
     color: #000000;
     -webkit-transition: all .3s ease-in-out;
