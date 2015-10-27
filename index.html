@@ -569,7 +569,7 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = $(element3).text();
-                            $(element3).height($(element3).height()).text('').css('visibility', 'visible');
+                            $(element3).text('').css('visibility', 'visible');/*.height($(element3).height())*/
                         });
 
                         messageQueue.push(dictionary);
