@@ -617,7 +617,7 @@
                         setTimeout(function () {
                             setTimeout(onRender, 33);
                             setTimeout(onType, 100);
-                            setTimeout(onUpdate, 250);
+                            setTimeout(onUpdate, 100);
                         }, 5000);
                     } else {
                         var d = messageQueue.shift();
@@ -633,12 +633,12 @@
 
                         setTimeout(onRender, 33);
                         setTimeout(onType, 100);
-                        setTimeout(onUpdate, 250);
+                        setTimeout(onUpdate, 100);
                     }
                 } else {
-                    setTimeout(onUpdate, 250);
+                    setTimeout(onUpdate, 100);
                 }
-            }, 250);
+            }, 100);
         });
     </script>
 </body>
