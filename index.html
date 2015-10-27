@@ -570,6 +570,7 @@
                         $(element2).find('.typing').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = $(element3).text();
+                            $(element3).parent().height($(element3).parent().height())
                             $(element3).text('').css('visibility', 'visible');
                         });
 
