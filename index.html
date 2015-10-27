@@ -591,7 +591,7 @@
 
             setTimeout(onRender, 33);
             setTimeout(onType, 100);
-            setTimeout(function onTick() {
+            setTimeout(function onUpdate() {
                 var isComplete = true;
 
                 for (key in messageDictionary) {
@@ -617,7 +617,7 @@
                         setTimeout(function () {
                             setTimeout(onRender, 33);
                             setTimeout(onType, 100);
-                            setTimeout(onTick, 250);
+                            setTimeout(onUpdate, 250);
                         }, 5000);
                     } else {
                         var d = messageQueue.shift();
@@ -633,10 +633,10 @@
 
                         setTimeout(onRender, 33);
                         setTimeout(onType, 100);
-                        setTimeout(onTick, 250);
+                        setTimeout(onUpdate, 250);
                     }
                 } else {
-                    setTimeout(onTick, 250);
+                    setTimeout(onUpdate, 250);
                 }
             }, 250);
         });
