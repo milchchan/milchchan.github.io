@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="魔法少女ミルヒちゃん">
     <meta property="og:title" content="魔法少女ミルヒちゃん" />
-    <meta property="og:description" content="教えた言葉でかわいいキャラクターが気ままにおしゃべりするWindows/iOSアプリ「Apricot」" />
+    <meta property="og:description" content="魔法少女ミルヒちゃん" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="http://milchchan.com/" />
     <meta property="og:image" content="http://milchchan.com/images/Milch.png" />
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:site" content="@kawatan" />
     <meta property="twitter:title" content="魔法少女ミルヒちゃん" />
-    <meta property="twitter:description" content="教えた言葉でかわいいキャラクターが気ままにおしゃべりするWindows/iOSアプリ「Apricot」" />
+    <meta property="twitter:description" content="魔法少女ミルヒちゃん" />
     <meta property="twitter:image" content="http://milchchan.com/images/Milch.png" />
     <meta property="twitter:url" content="http://milchchan.com/" />
     <title>MILCHCHAN.COM</title>
@@ -40,12 +40,12 @@
         </div>
         <div class="vert-text typing">
             <div>
-                <h1><span class="accent typing">Magical Milch Chan</span></h1>
-                <h5><span class="accent typing">milchchan.com</span></h5>
+                <h1 class="accent typing">Magical Milch Chan</h1>
+                <h5 class="accent typing">milchchan.com</h5>
             </div>
             <div>
-                <h1><span class="accent typing">魔法少女ミルヒちゃん</span></h1>
-                <h5><span class="accent typing">milchchan.com</span></h5>
+                <h1 class="accent typing">魔法少女ミルヒちゃん</h1>
+                <h5 class="accent typing">milchchan.com</h5>
             </div>
         </div>
     </div>
@@ -562,15 +562,14 @@
             $('div.typing').each(function (index1, element1) {
                 var max = 0;
 
-                $(element1).children().each(function (index2, element2) {
+                $(element1).children('div').each(function (index2, element2) {
                     var dictionary = {};
 
                     if (index2 == 0) {
                         $(element2).find('.typing').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = $(element3).text();
-                            $(element3).parent().height($(element3).parent().height())
-                            $(element3).text('').css('visibility', 'visible');
+                            $(element3).height($(element3).height()).text('').css('visibility', 'visible');
                         });
 
                         messageQueue.push(dictionary);
