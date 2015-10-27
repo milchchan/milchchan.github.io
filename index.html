@@ -575,7 +575,7 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = $(element3).text();
-                            $(element3).text('').css('visibility', 'visible');/*.height($(element3).height())*/
+                            $(element3).text('').css('visibility', 'visible');
                         });
 
                         messageQueue.push(dictionary);
@@ -587,6 +587,12 @@
                 });
 
                 offset += max;
+            });
+            
+            $(window).resize(function () {
+                for (key in messageDictionary) {
+                    $(messageDictionary[key].element).height($(messageDictionary[key].element).height());
+                }
             });
 
             setTimeout(onRender, 33);
