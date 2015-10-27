@@ -293,6 +293,7 @@ img.popupable {
   bottom: 0;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
+  height: 100%;
   text-align: left;
   line-height: 0px;
 }
@@ -300,7 +301,7 @@ img.popupable {
   z-index: 2;
   float: left;
   position: relative;
-  margin: 10px 10px 0px 0px;
+  margin: 10px 10px 10px 0px;
   padding: 0px 0px 0px 0px;
   border-width: 0px;
   line-height: 0px;
