@@ -511,7 +511,7 @@
                 }
                 
                 if (!stopRequired) {
-                    setTimeout(onType, 64);
+                    setTimeout(onType, 50);
                 }
             }
 
@@ -553,7 +553,7 @@
                     }
                 }
                 
-                setTimeout(onRender, 32);
+                setTimeout(onRender, 15);
             }
 
             var messageQueue = new Array();
@@ -589,8 +589,8 @@
                 offset += max;
             });
 
-            setTimeout(onRender, 32);
-            setTimeout(onType, 64);
+            setTimeout(onRender, 15);
+            setTimeout(onType, 50);
             setTimeout(function onTick() {
                 var isComplete = true;
 
@@ -615,8 +615,8 @@
                         }
 
                         setTimeout(function () {
-                            setTimeout(onRender, 32);
-                            setTimeout(onType, 64);
+                            setTimeout(onRender, 15);
+                            setTimeout(onType, 50);
                             setTimeout(onTick, 1000);
                         }, 5000);
                     } else {
@@ -631,11 +631,9 @@
                             messageDictionary[key].reverse = false;
                         }
 
-                        setTimeout(function () {
-                            setTimeout(onRender, 32);
-                            setTimeout(onType, 64);
-                            setTimeout(onTick, 1000);
-                        }, 500);
+                        setTimeout(onRender, 15);
+                        setTimeout(onType, 50);
+                        setTimeout(onTick, 1000);
                     }
                 } else {
                     setTimeout(onTick, 1000);
