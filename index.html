@@ -35,14 +35,14 @@
         <div class="background">
             <div class="blind"></div>
         </div>
-        <div class="vert-text typing">
+        <div class="vert-text type">
             <div>
-                <h1 class="accent typing">Magical Milch Chan</h1>
-                <h5 class="accent typing">milchchan.com</h5>
+                <h1 class="accent type">Magical Milch Chan</h1>
+                <h5 class="accent type">milchchan.com</h5>
             </div>
             <div>
-                <h1 class="accent typing">魔法少女ミルヒちゃん</h1>
-                <h5 class="accent typing">milchchan.com</h5>
+                <h1 class="accent type">魔法少女ミルヒちゃん</h1>
+                <h5 class="accent type">milchchan.com</h5>
             </div>
         </div>
         <div class="annotations">
@@ -559,14 +559,14 @@
             var messageQueue = new Array();
             var offset = 0;
             
-            $('div.typing').each(function (index1, element1) {
+            $('div.type').each(function (index1, element1) {
                 var max = 0;
 
                 $(element1).children('div').each(function (index2, element2) {
                     var dictionary = {};
 
                     if (index2 == 0) {
-                        $(element2).find('.typing').each(function (index3, element3) {
+                        $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = $(element3).text();
                             $(element3).height($(element3).height()).text('').css('visibility', 'visible');
@@ -574,7 +574,7 @@
 
                         messageQueue.push(dictionary);
                     } else {
-                        $(element2).find('.typing').each(function (index3, element3) {
+                        $(element2).find('.type').each(function (index3, element3) {
                             dictionary[offset + index3] = $(element3).text();
                         });
 
