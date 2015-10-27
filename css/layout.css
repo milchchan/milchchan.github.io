@@ -229,8 +229,16 @@ footer a:active
 .accent {
     text-transform: uppercase; 
 }
-.typing {
+.typing .typing {
     visibility: hidden;
+}
+.typing div:nth-child(n+2) {
+    display: none;
+    margin: 0px;
+    padding: 0px;
+    border-width: 0px;
+    line-height: 0px;
+    background-color: red;
 }
 .animatable {
     color: #000000;
