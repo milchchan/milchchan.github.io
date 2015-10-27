@@ -287,7 +287,7 @@ img.popupable {
   text-align: left;
 }
 .annotations {
-  z-index: -1;
+  z-index: 2;
   position: absolute;
   right: 0;
   bottom: 0;
@@ -297,10 +297,10 @@ img.popupable {
   line-height: 0px;
 }
 .annotations > div {
-  z-index: -1;
+  z-index: 2;
   float: left;
   position: relative;
-  margin: 10px 10px 10px 0px;
+  margin: 10px 10px 0px 0px;
   padding: 0px 0px 0px 0px;
   border-width: 0px;
   line-height: 0px;
