@@ -38,11 +38,11 @@
         <div class="vert-text type">
             <div>
                 <h1 class="accent type">Magical Milch Chan</h1>
-                <h5 class="accent type">milchchan.com</h5>
+                <!--<h5 class="accent type">milchchan.com</h5>-->
             </div>
             <div>
                 <h1 class="accent type">魔法少女ミルヒちゃん</h1>
-                <h5 class="accent type">milchchan.com</h5>
+                <!--<h5 class="accent type">milchchan.com</h5>-->
             </div>
         </div>
         <div class="annotations">
@@ -565,7 +565,13 @@
                 $(element1).children('div').each(function (index2, element2) {
                     var dictionary = {};
 
-                    if (index2 == 0) {
+                    if (index2 > 0) {
+                        $(element2).find('.type').each(function (index3, element3) {
+                            dictionary[offset + index3] = $(element3).text();
+                        });
+
+                        messageQueue.splice(messageQueue.length - 1, 0, dictionary);
+                    } else {
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = $(element3).text();
@@ -573,12 +579,6 @@
                         });
 
                         messageQueue.push(dictionary);
-                    } else {
-                        $(element2).find('.type').each(function (index3, element3) {
-                            dictionary[offset + index3] = $(element3).text();
-                        });
-
-                        messageQueue.splice(messageQueue.length - 1, 0, dictionary);
                     }
 
                     if (Object.keys(dictionary).length > max) {
