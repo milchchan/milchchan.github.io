@@ -39,9 +39,15 @@
         <div class="background">
             <div class="blind"></div>
         </div>
-        <div class="vert-text">
-            <h1><span class="accent typing">Magical Milch Chan</span></h1>
-            <h5><span class="accent typing">milchchan.com</span></h5>
+        <div class="vert-text typing">
+            <div>
+                <h1><span class="accent typing">Magical Milch Chan</span></h1>
+                <h5><span class="accent typing">milchchan.com</span></h5>
+            </div>
+            <div>
+                <h1><span class="accent typing">魔法少女ミルヒちゃん</span></h1>
+                <h5><span class="accent typing">milchchan.com</span></h5>
+            </div>
         </div>
     </div>
     <div id="about" class="highlight">
@@ -552,16 +558,37 @@
             }
 
             var messageQueue = new Array();
-            var dictionary = {};
+            var offset = 0;
             
-            $('.typing').each(function (index, element) {
-                messageDictionary[index] = { element: element, 'text': $(element).text(), 'reverse': false, 'count': 0, 'buffer': '' };
-                dictionary[index] = $(element).text();
-                $(element).text('').css('visibility', 'visible');
-            });
+            $('div.typing').each(function (index1, element1) {
+                var max = 0;
 
-            messageQueue.push({ 0:'魔法少女ミルヒちゃん', 1:'milchchan.com' });
-            messageQueue.push(dictionary);
+                $(element1).children().each(function (index2, element2) {
+                    var dictionary = {};
+
+                    if (index2 == 0) {
+                        $(element2).find('.typing').each(function (index3, element3) {
+                            messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
+                            dictionary[offset + index3] = $(element3).text();
+                            $(element3).text('').css('visibility', 'visible');
+                        });
+
+                        messageQueue.push(dictionary);
+                    } else {
+                        $(element2).find('.typing').each(function (index3, element3) {
+                            dictionary[offset + index3] = $(element3).text();
+                        });
+
+                        messageQueue.splice(messageQueue.length - 1, 0, dictionary);
+                    }
+
+                    if (Object.keys(dictionary).length > max) {
+                        max = Object.keys(dictionary).length;
+                    }
+                });
+
+                offset += max;
+            });
 
             setTimeout(onRender, 32);
             setTimeout(onType, 64);
@@ -570,7 +597,7 @@
 
                 for (key in messageDictionary) {
                     if (messageDictionary[key].reverse) {
-                        if ($(messageDictionary[key].element).text().length != 0) {
+                        if ($(messageDictionary[key].element).text().length > 0) {
                             isComplete = false;
                         }
                     } else {
@@ -583,11 +610,11 @@
                 if (isComplete) {
                     if (isTyping) {
                         isTyping = false;
-    
+
                         for (key in messageDictionary) {
                             messageDictionary[key].reverse = true;
                         }
-    
+
                         setTimeout(function () {
                             setTimeout(onRender, 32);
                             setTimeout(onType, 64);
@@ -595,16 +622,16 @@
                         }, 5000);
                     } else {
                         var d = messageQueue.shift();
-    
+
                         isTyping = true;
-    
+
                         messageQueue.push(d);
-    
+
                         for (key in messageDictionary) {
                             messageDictionary[key].text = d[key];
                             messageDictionary[key].reverse = false;
                         }
-    
+
                         setTimeout(function () {
                             setTimeout(onRender, 32);
                             setTimeout(onType, 64);
