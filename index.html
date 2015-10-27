@@ -38,11 +38,11 @@
         <div class="vert-text type">
             <div>
                 <h1 class="accent type">Magical Milch Chan</h1>
-                <!--<h5 class="accent type">milchchan.com</h5>-->
+                <h5 class="accent type">milchchan.com</h5>
             </div>
             <div>
                 <h1 class="accent type">milchchan.com</h1>
-                <!--<h5 class="accent type">milchchan.com</h5>-->
+                <h5 class="accent type">milchchan.com</h5>
             </div>
         </div>
         <div class="annotations">
@@ -575,7 +575,7 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = $(element3).text();
-                            $(element3).text('').css('visibility', 'visible');
+                            $(element3).height($(element3).height()).text('').css('visibility', 'visible');
                         });
 
                         messageQueue.push(dictionary);
