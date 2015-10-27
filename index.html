@@ -553,7 +553,7 @@
                     }
                 }
                 
-                setTimeout(onRender, 15);
+                setTimeout(onRender, 33);
             }
 
             var messageQueue = new Array();
@@ -589,7 +589,7 @@
                 offset += max;
             });
 
-            setTimeout(onRender, 15);
+            setTimeout(onRender, 33);
             setTimeout(onType, 50);
             setTimeout(function onTick() {
                 var isComplete = true;
@@ -615,7 +615,7 @@
                         }
 
                         setTimeout(function () {
-                            setTimeout(onRender, 15);
+                            setTimeout(onRender, 33);
                             setTimeout(onType, 50);
                             setTimeout(onTick, 1000);
                         }, 5000);
@@ -631,7 +631,7 @@
                             messageDictionary[key].reverse = false;
                         }
 
-                        setTimeout(onRender, 15);
+                        setTimeout(onRender, 33);
                         setTimeout(onType, 50);
                         setTimeout(onTick, 1000);
                     }
