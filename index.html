@@ -575,7 +575,7 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = $(element3).text();
-                            $(element3).css('height', ($(element3).height() + 'px').text('').css('visibility', 'visible');
+                            $(element3).css('height', $(element3).height() + 'px').text('').css('visibility', 'visible');
                         });
 
                         messageQueue.push(dictionary);
@@ -591,7 +591,7 @@
             
             $(window).resize(function () {
                 for (key in messageDictionary) {
-                    $(messageDictionary[key].element).css('height', $(messageDictionary[key].element + 'px').height());
+                    $(messageDictionary[key].element).css('height', $(messageDictionary[key].element).height() + 'px');
                 }
             });
 
