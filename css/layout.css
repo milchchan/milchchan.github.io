@@ -294,13 +294,14 @@ img.popupable {
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
   text-align: left;
+  line-height: 0px;
 }
 .annotations > div {
   z-index: 2;
   float: left;
   position: relative;
-  margin: 0px 0px 0px 0px;
-  padding: 10px 10px 10px 0px;
+  margin: 10px 10px 10px 0px;
+  padding: 0px 0px 0px 0px;
   border-width: 0px;
   line-height: 0px;
 }
