@@ -522,7 +522,7 @@
                         var buffer = messageDictionary[key].buffer;
                         
                         if (text.length == buffer.length) {
-                            $(messageDictionary[key].element).text(buffer);
+                            messageDictionary[key].element.textContent = buffer;
                         } else {
                             function random(min, max) {
                                 return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -545,9 +545,9 @@
                             }
                             
                             if (randomBuffer.length > buffer.length) {
-                                $(messageDictionary[key].element).text(buffer + randomBuffer.substring(buffer.length, randomBuffer.length));
+                                messageDictionary[key].element.textContent = buffer + randomBuffer.substring(buffer.length, randomBuffer.length);
                             } else {
-                                $(messageDictionary[key].element).text(buffer);
+                                messageDictionary[key].element.textContent = buffer;
                             }
                         }
                     }
@@ -567,15 +567,16 @@
 
                     if (index2 > 0) {
                         $(element2).find('.type').each(function (index3, element3) {
-                            dictionary[offset + index3] = $(element3).text();
+                            dictionary[offset + index3] = element3.textContent;
                         });
 
                         messageQueue.splice(messageQueue.length - 1, 0, dictionary);
                     } else {
                         $(element2).find('.type').each(function (index3, element3) {
-                            messageDictionary[offset + index3] = { element: element3, 'text': $(element3).text(), 'reverse': false, 'count': 0, 'buffer': '' };
-                            dictionary[offset + index3] = $(element3).text();
-                            $(element3).text('').css('visibility', 'visible');
+                            messageDictionary[offset + index3] = { element: element3, 'text': element3.textContent, 'reverse': false, 'count': 0, 'buffer': '' };
+                            dictionary[offset + index3] = element3.textContent;
+                            element3.textContent = '';
+                            $(element3).css('visibility', 'visible');
                         });
 
                         messageQueue.push(dictionary);
@@ -596,11 +597,11 @@
 
                 for (key in messageDictionary) {
                     if (messageDictionary[key].reverse) {
-                        if ($(messageDictionary[key].element).text().length > 0) {
+                        if (messageDictionary[key].element.textContent.length > 0) {
                             isComplete = false;
                         }
                     } else {
-                        if ($(messageDictionary[key].element).text() != messageDictionary[key].text) {
+                        if (messageDictionary[key].element.element3 != messageDictionary[key].text) {
                             isComplete = false;
                         }
                     }
