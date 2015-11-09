@@ -231,6 +231,7 @@ footer a:active
 }
 div.type .type {
     visibility: hidden;
+    text-align: center;
 }
 .type div:nth-child(n+2) {
     display: none;
