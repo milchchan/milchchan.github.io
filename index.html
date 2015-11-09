@@ -522,7 +522,7 @@
                         var buffer = messageDictionary[key].buffer;
                         
                         if (text.length == buffer.length) {
-                            messageDictionary[key].element.textContent = buffer;
+                            messageDictionary[key].element.textContent = messageDictionary[key].element.previousSibling.textContent = buffer;
                         } else {
                             function random(min, max) {
                                 return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -545,9 +545,9 @@
                             }
                             
                             if (randomBuffer.length > buffer.length) {
-                                messageDictionary[key].element.textContent = buffer + randomBuffer.substring(buffer.length, randomBuffer.length);
+                                messageDictionary[key].element.textContent = messageDictionary[key].element.previousSibling.textContent = buffer + randomBuffer.substring(buffer.length, randomBuffer.length);
                             } else {
-                                messageDictionary[key].element.textContent = buffer;
+                                messageDictionary[key].element.textContent = messageDictionary[key].element.previousSibling.textContent = buffer;
                             }
                         }
                     }
@@ -555,12 +555,6 @@
                 
                 setTimeout(onRender, 33);
             }
-            
-            $(window).resize(function() {
-                for (key in messageDictionary) {
-                    $(messageDictionary[key].element).parent().width(document.body.clientWidth);
-                }
-            });
 
             var messageQueue = new Array();
             var offset = 0;
@@ -582,6 +576,7 @@
                             messageDictionary[offset + index3] = { element: element3, 'text': element3.textContent, 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = element3.textContent;
                             $(element3).parent().width(document.body.clientWidth);
+                            $(element3).before($(element3).clone().css('z-index', '-1'));
                             element3.textContent = '';
                             $(element3).css('visibility', 'visible');
                         });
