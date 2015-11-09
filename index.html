@@ -460,7 +460,7 @@
                 for (key in messageDictionary) {
                     var element = $(messageDictionary[key].element).prev();
                     
-                    $(messageDictionary[key].element).width(element.width()).height(element.height());
+                    //$(messageDictionary[key].element).width(element.width()).height(element.height());
                 }
             });
 
@@ -583,9 +583,10 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': element3.textContent, 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = element3.textContent;
+                            //.width($(element3).width()).height($(element3).height())
                             $(element3).before($(element3).clone().css('z-index', '-1'));
                             element3.textContent = '';
-                            $(element3).width($(element3).width()).height($(element3).height()).css('visibility', 'visible');
+                            $(element3).css('visibility', 'visible');
                         });
 
                         messageQueue.push(dictionary);
