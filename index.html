@@ -588,7 +588,7 @@
                                 
                             }));*/
                             element3.textContent = '';
-                            $(element3).parent().width(document.body.clientWidth).css('overflow', 'hidden');
+                            $(element3).parent().width(document.body.clientWidth- $(element3).parent().outerWidth({margin: true}) + $(element3).parent().width()).css('overflow', 'hidden');
                             $(element3).css('visibility', 'visible');
                         });
 
