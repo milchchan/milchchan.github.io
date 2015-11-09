@@ -231,6 +231,7 @@ footer a:active
 }
 div.type .type {
     visibility: hidden;
+    word-wrap: break-word;
 }
 .type div:nth-child(n+2) {
     display: none;
