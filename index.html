@@ -457,8 +457,12 @@
                 .bind('load', onLoad1));
             
             $(window).resize(function() {
+                $('div.type').each(function (index, element) {
+                    $(element).width(document.body.clientWidth - $(element).outerWidth({margin: true}) + $(element).width()).css('overflow', 'hidden');
+                
+                });
                 for (key in messageDictionary) {
-                    $(messageDictionary[key].element).width(document.body.clientWidth - $(messageDictionary[key].element).outerWidth({margin: true}) + $(messageDictionary[key].element).width());
+                    //$(messageDictionary[key].element).width(document.body.clientWidth - $(messageDictionary[key].element).outerWidth({margin: true}) + $(messageDictionary[key].element).width());
                     //$(messageDictionary[key].element).prev();
                 }
             });
@@ -599,7 +603,7 @@
                         max = Object.keys(dictionary).length;
                     }
                 });
-                $(element1).width(document.body.clientWidth - $(element1).outerWidth({margin: true}) + $(element1).width()).css('overflow', 'hidden');
+                $(element1).width(document.body.clientWidth - $(element1).outerWidth({margin: true}) + $(element1).width() - 50).css('overflow', 'hidden');
                 
                 offset += max;
             });
