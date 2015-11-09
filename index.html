@@ -577,7 +577,7 @@
                             dictionary[offset + index3] = element3.textContent;
                             //$(element3).parent().width($(element3).width()).height($(element3).height())
                             $(element3).before($(element3).clone().css('display', 'none').bind('resize', function() {
-                                $(this).parent().width($(this).width()).height($(this).height());
+                                //$(this).parent().width($(this).width()).height($(this).height());
                             }));
                             element3.textContent = '';
                             $(element3).css('visibility', 'visible');
