@@ -458,7 +458,7 @@
             
             $(window).resize(function() {
                 for (key in messageDictionary) {
-                    $(messageDictionary[key].element).prev().resize();
+                    //$(messageDictionary[key].element).prev();
                 }
             });
             
@@ -583,7 +583,7 @@
                             dictionary[offset + index3] = element3.textContent;
                             //$(element3).width(document.body.clientWidth - $(element3).outerWidth({margin: true}) + $(element3).width());//.height($(window).height())
                             $(element3).before($(element3).clone().css('display', 'none').bind('resize', function() {
-                                $(this).next().width($(this).width()).height($(this).height());
+                                //$(this).next().width($(this).width()).height($(this).height());
                                 
                             }));
                             element3.textContent = '';
