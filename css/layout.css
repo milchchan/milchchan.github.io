@@ -231,7 +231,6 @@ footer a:active
 }
 div.type .type {
     visibility: hidden;
-    overflow: hidden;
 }
 .type div:nth-child(n+2) {
     display: none;
