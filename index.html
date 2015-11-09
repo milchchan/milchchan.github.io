@@ -460,13 +460,8 @@
             
             $(window).resize(function() {
                 $('div.type').each(function (index, element) {
-                    $(element).width(document.body.clientWidth - $(element).outerWidth({margin: true}) + $(element).width()).css('overflow', 'hidden');
-                
+                    $(element).width(document.body.clientWidth / 2);
                 });
-                for (key in messageDictionary) {
-                    //$(messageDictionary[key].element).width(document.body.clientWidth - $(messageDictionary[key].element).outerWidth({margin: true}) + $(messageDictionary[key].element).width());
-                    //$(messageDictionary[key].element).prev();
-                }
             });
             
             function onType() {
@@ -575,7 +570,7 @@
             $('div.type').each(function (index1, element1) {
                 var max = 0;
 
-                $(element1).children('div').each(function (index2, element2) {
+                $(element1).width(document.body.clientWidth / 2).css('margin-left', 'auto').css('margin-right', 'auto').css('overflow', 'hidden').children('div').each(function (index2, element2) {
                     var dictionary = {};
 
                     if (index2 > 0) {
@@ -605,7 +600,6 @@
                         max = Object.keys(dictionary).length;
                     }
                 });
-                $(element1).width(document.body.clientWidth / 2).css('margin-left', 'auto').css('margin-right', 'auto').css('overflow', 'hidden');
                 // - $(element1).outerWidth({margin: true}) + $(element1).width() - 50).css('overflow', 'hidden');
                 
                 offset += max;
