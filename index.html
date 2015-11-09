@@ -582,10 +582,10 @@
                             messageDictionary[offset + index3] = { element: element3, 'text': element3.textContent, 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = element3.textContent;
                             //$(element3).width(document.body.clientWidth - $(element3).outerWidth({margin: true}) + $(element3).width());//.height($(window).height())
-                            $(element3).before($(element3).clone().css('display', 'none').bind('resize', function() {
-                                //$(this).next().width($(this).width()).height($(this).height());
+                            /*$(element3).before($(element3).clone().css('display', 'none').bind('resize', function() {
+                                $(this).next().width($(this).width()).height($(this).height());
                                 
-                            }));
+                            }));*/
                             element3.textContent = '';
                             $(element3).parent().css('overflow', 'hidden');
                             $(element3).css('visibility', 'visible');
@@ -640,7 +640,7 @@
                         messageQueue.push(d);
 
                         for (key in messageDictionary) {
-                            messageDictionary[key].element.previousSibling.textContent = messageDictionary[key].text = d[key];
+                            /*messageDictionary[key].element.previousSibling.textContent = */messageDictionary[key].text = d[key];
                             messageDictionary[key].reverse = false;
                         }
 
