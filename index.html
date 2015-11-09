@@ -458,7 +458,7 @@
             
             $(window).resize(function() {
                 for (key in messageDictionary) {
-                    $(messageDictionary[key].element).resize();
+                    $(messageDictionary[key].element).prev().resize();
                 }
             });
             
