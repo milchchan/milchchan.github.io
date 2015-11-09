@@ -603,7 +603,7 @@
                         max = Object.keys(dictionary).length;
                     }
                 });
-                $(element1).width(document.body.clientWidth - $(element1).outerWidth({margin: true}) + $(element1).width() - 50).css('overflow', 'hidden');
+                $(element1).width(document.body.clientWidth / 2);// - $(element1).outerWidth({margin: true}) + $(element1).width() - 50).css('overflow', 'hidden');
                 
                 offset += max;
             });
