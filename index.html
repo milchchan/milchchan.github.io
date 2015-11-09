@@ -583,8 +583,9 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': element3.textContent, 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = element3.textContent;
-                            //.width($(element3).width()).height($(element3).height())
-                            $(element3).before($(element3).clone().css('z-index', '-1'));
+                            $(element3).width($(element3).width()).height($(element3).height()).before($(element3).clone().css('z-index', '-1').bind('resize', function() {
+                                $(this).next().width($(this).width()).height($(this).height());
+                            }));
                             element3.textContent = '';
                             $(element3).css('visibility', 'visible');
                         });
