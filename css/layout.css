@@ -229,6 +229,10 @@ footer a:active
 .accent {
     text-transform: uppercase; 
 }
+div.type {
+    width: 100%;
+    overflow: hidden;
+}
 div.type .type {
     visibility: hidden;
 }
