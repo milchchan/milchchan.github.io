@@ -458,7 +458,7 @@
             
             $(window).resize(function() {
                 for (key in messageDictionary) {
-                    $(messageDictionary[key].element).width($(window).width());//.prev().resize();
+                    $(messageDictionary[key].element).width(document.body.clientWidth);//.prev().resize();
                 }
             });
             
@@ -581,7 +581,7 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': element3.textContent, 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = element3.textContent;
-                            $(element3).width($(window).width());//.height($(window).height())
+                            $(element3).width(document.body.clientWidth);//.height($(window).height())
                             $(element3).before($(element3).clone().css('z-index', '-1').css('display', 'none').bind('resize', function() {
                                 //$(this).next().width($(this).width()).height($(this).height());
                                 
