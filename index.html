@@ -458,6 +458,7 @@
             
             $(window).resize(function() {
                 for (key in messageDictionary) {
+                    $(messageDictionary[key].element).width(document.body.clientWidth - $(messageDictionary[key].element).outerWidth({margin: true}) + $(messageDictionary[key].element).width());
                     //$(messageDictionary[key].element).prev();
                 }
             });
@@ -581,13 +582,13 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': element3.textContent, 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = element3.textContent;
-                            //$(element3).width(document.body.clientWidth - $(element3).outerWidth({margin: true}) + $(element3).width());//.height($(window).height())
+                            $(element3).width(document.body.clientWidth - $(element3).outerWidth({margin: true}) + $(element3).width());//.height($(window).height())
                             /*$(element3).before($(element3).clone().css('display', 'none').bind('resize', function() {
                                 $(this).next().width($(this).width()).height($(this).height());
                                 
                             }));*/
                             element3.textContent = '';
-                            $(element3).parent().css('width', '100%').css('overflow', 'hidden');
+                            //$(element3).parent().css('width', '100%').css('overflow', 'hidden');
                             $(element3).css('visibility', 'visible');
                         });
 
