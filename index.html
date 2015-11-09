@@ -522,7 +522,7 @@
                         var buffer = messageDictionary[key].buffer;
                         
                         if (text.length == buffer.length) {
-                            messageDictionary[key].element.textContent = messageDictionary[key].element.previousSibling.textContent = buffer;
+                            messageDictionary[key].element.textContent = buffer;
                         } else {
                             function random(min, max) {
                                 return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -545,9 +545,9 @@
                             }
                             
                             if (randomBuffer.length > buffer.length) {
-                                messageDictionary[key].element.textContent = messageDictionary[key].element.previousSibling.textContent = buffer + randomBuffer.substring(buffer.length, randomBuffer.length);
+                                messageDictionary[key].element.textContent = buffer + randomBuffer.substring(buffer.length, randomBuffer.length);
                             } else {
-                                messageDictionary[key].element.textContent = messageDictionary[key].element.previousSibling.textContent = buffer;
+                                messageDictionary[key].element.textContent = buffer;
                             }
                         }
                     }
@@ -632,7 +632,7 @@
                         messageQueue.push(d);
 
                         for (key in messageDictionary) {
-                            messageDictionary[key].text = d[key];
+                            messageDictionary[key].element.previousSibling.textContent = messageDictionary[key].text = d[key];
                             messageDictionary[key].reverse = false;
                         }
 
