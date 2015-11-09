@@ -311,6 +311,7 @@ img.popupable {
   height: 100%;
   width: 100%;
   position: relative;
+  overflow: hidden;
 }
 div.background {
   z-index: -1;
