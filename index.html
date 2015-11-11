@@ -636,6 +636,7 @@
                         messageQueue.push(d);
 
                         for (key in messageDictionary) {
+                            messageDictionary[key].text = d[key];
                             messageDictionary[key].reverse = false;
                         }
 
