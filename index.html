@@ -3,16 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="まほうしょじょミルヒちゃんのウェブページ">
+    <meta name="description" content="まほうしょじょミルヒちゃんのウェブページだよぉー">
     <meta property="og:title" content="魔法少女ミルヒちゃん" />
-    <meta property="og:description" content="まほうしょじょミルヒちゃんのウェブページ" />
+    <meta property="og:description" content="まほうしょじょミルヒちゃんのウェブページだよぉー" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="http://milchchan.com/" />
     <meta property="og:image" content="http://milchchan.com/images/Milch.png" />
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:site" content="@kawatan" />
     <meta property="twitter:title" content="魔法少女ミルヒちゃん" />
-    <meta property="twitter:description" content="まほうしょじょミルヒちゃんのウェブページ" />
+    <meta property="twitter:description" content="まほうしょじょミルヒちゃんのウェブページだよぉー" />
     <meta property="twitter:image" content="http://milchchan.com/images/Milch.png" />
     <meta property="twitter:url" content="http://milchchan.com/" />
     <title>MILCHCHAN.COM</title>
@@ -583,13 +583,7 @@
                         $(element2).find('.type').each(function (index3, element3) {
                             messageDictionary[offset + index3] = { element: element3, 'text': element3.textContent, 'reverse': false, 'count': 0, 'buffer': '' };
                             dictionary[offset + index3] = element3.textContent;
-                            //$(element3).width(document.body.clientWidth - $(element3).outerWidth({margin: true}) + $(element3).width());//.height($(window).height())
-                            /*$(element3).before($(element3).clone().css('display', 'none').bind('resize', function() {
-                                $(this).next().width($(this).width()).height($(this).height());
-                                
-                            }));*/
                             element3.textContent = '';
-                            //$(element3).parent().width(document.body.clientWidth- $(element3).parent().outerWidth({margin: true}) + $(element3).parent().width()).css('overflow', 'hidden');
                             $(element3).css('visibility', 'visible');
                         });
 
@@ -642,7 +636,6 @@
                         messageQueue.push(d);
 
                         for (key in messageDictionary) {
-                            /*messageDictionary[key].element.previousSibling.textContent = */messageDictionary[key].text = d[key];
                             messageDictionary[key].reverse = false;
                         }
 
