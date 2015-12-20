@@ -333,7 +333,7 @@ img.background {
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
 }
-img.background-sride {
+img.background-slide {
   z-index: -3;
   float: left;
   width: 100%;
@@ -363,15 +363,15 @@ img.background-sride {
     10% { visibility: hidden; }
     100% { visibility: hidden; }
 }
-@-webkit-keyframes loop-sride {
+@-webkit-keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
 	100% { transform: translate(-50%, -400%); }
 }
-@-o-keyframes loop-sride {
+@-o-keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
 	100% { transform: translate(-50%, -400%); }
 }
-@keyframes loop-sride {
+@keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
 	100% { transform: translate(-50%, -400%); }
 }
