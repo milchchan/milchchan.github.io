@@ -333,6 +333,18 @@ img.background {
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
 }
+img.background-sride {
+  z-index: -3;
+  float: left;
+  width: 100%;
+  height: auto;
+  position: relative;
+  top: 0;
+  left: 50%;
+  -webkit-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  transform: translate(-50%, 0%);
+}
 @-webkit-keyframes loop {
     0% { visibility: visible; }
     5% { visibility: visible; }
@@ -350,6 +362,18 @@ img.background {
     5% { visibility: visible; }
     10% { visibility: hidden; }
     100% { visibility: hidden; }
+}
+@-webkit-keyframes loop-sride {
+    0% { transform: translate(-50%, 0%); }
+	100% { transform: translate(-50%, -400%); }
+}
+@-o-keyframes loop-sride {
+    0% { transform: translate(-50%, 0%); }
+	100% { transform: translate(-50%, -400%); }
+}
+@keyframes loop-sride {
+    0% { transform: translate(-50%, 0%); }
+	100% { transform: translate(-50%, -400%); }
 }
 div.blind {
   z-index: -2;
