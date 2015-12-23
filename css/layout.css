@@ -330,6 +330,7 @@ img.background {
   position: absolute;
   top: 0;
   left: 50%;
+  overflow: hidden;
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
@@ -343,6 +344,7 @@ img.background-slide {
   top: 0;
   bottom: 0;
   left: 50%;
+  overflow: hidden;
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
