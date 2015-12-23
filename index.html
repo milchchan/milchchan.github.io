@@ -424,8 +424,8 @@
                          }
                      });
                      
-                    if ($(element).outerWidth() > min) { 
-                        $(element).css('transform', 'scale(' + $(element).outerWidth() / min + ')');
+                    if (window.innerWidth > min) { 
+                        $(element).css('transform', 'scale(' + window.innerWidth / min + ')');
                     } else {
                         $(element).css('transform', 'scale(1)');
                     }
