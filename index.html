@@ -542,9 +542,13 @@
                      });
                      
                     if (window.innerWidth > min) { 
-                        $(element).css('transform', 'scale(' + window.innerWidth / min + ')');
+                        $(element)
+                            .css('width', min / window.innerWidth * 100 + '%')
+                            .css('transform', 'scale(' + window.innerWidth / min + ')');
                     } else {
-                        $(element).css('transform', 'scale(1)');
+                        $(element)
+                            .css('width', '100%')
+                            .css('transform', 'scale(1)');
                     }
                 });
             });
