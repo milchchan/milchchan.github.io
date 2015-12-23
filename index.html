@@ -415,6 +415,22 @@
                     return;
                 }
                 
+                $('div.background').each(function (index, element) {
+                    var min = Number.MAX_VALUE;
+                    
+                     $(element).children().each(function (index, element) {
+                         if ($(element).width() < min) {
+                             min = $(element).width()
+                         }
+                     });
+                     
+                    if (document.body.clientWidth > min) { 
+                        $(element).css('transform', 'scale(' + document.body.clientWidth / min + ')');
+                    } else {
+                        $(element).css('transform', 'scale(1)');
+                    }
+                });
+                
                 $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                     var parent = $(this).parent();
                     
@@ -469,6 +485,22 @@
                                 function random(min, max) {
                                     return Math.floor(Math.random() * (max - min + 1)) + min;
                                 }
+                                
+                                $('div.background').each(function (index, element) {
+                                    var min = Number.MAX_VALUE;
+                                    
+                                     $(element).children().each(function (index, element) {
+                                         if ($(element).width() < min) {
+                                             min = $(element).width()
+                                         }
+                                     });
+                                     
+                                    if (document.body.clientWidth > min) { 
+                                        $(element).css('transform', 'scale(' + document.body.clientWidth / min + ')');
+                                    } else {
+                                        $(element).css('transform', 'scale(1)');
+                                    }
+                                });
                                 
                                 $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                     $(this).remove();
