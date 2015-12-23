@@ -336,7 +336,7 @@ img.background {
 img.background-slide {
   z-index: -3;
   float: left;
-  width: 100%;
+  width: auto;
   height: 100%;
   position: relative;
   top: 0;
