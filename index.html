@@ -516,11 +516,11 @@
                 $('div.type').each(function (index, element) {
                     $(element).width(document.body.clientWidth * 75 / 100);
                 });
-                $('img.background-slide').each(function (index, element) {
-                    if (document.body.clientWidth > $(element).height()) { 
-                        $(element).css('width', document.body.clientWidth / $(element).height() * 100 + '%');
+                $('div.background').each(function (index, element) {
+                    if (document.body.clientWidth > 1280) { 
+                        $(element).css('transform', 'scale(' + document.body.clientWidth / 1280 + ')');
                     } else {
-                        $(element).css('width', 'auto');
+                        $(element).css('transform', 'scale(1)');
                     }
                 });
             });
