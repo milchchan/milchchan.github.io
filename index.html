@@ -415,7 +415,7 @@
                     return;
                 }
                 
-                $('div.background').each(function (index, element) {
+                /*$('div.background').each(function (index, element) {
                     var min = Number.MAX_VALUE;
                     
                      $(element).children().each(function (index, element) {
@@ -429,7 +429,7 @@
                     } else {
                         $(element).css('transform', 'scale(1)');
                     }
-                });
+                });*/
                 
                 $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                     var parent = $(this).parent();
