@@ -486,22 +486,6 @@
                                     return Math.floor(Math.random() * (max - min + 1)) + min;
                                 }
                                 
-                                $('div.background').each(function (index, element) {
-                                    var min = Number.MAX_VALUE;
-                                    
-                                     $(element).children().each(function (index, element) {
-                                         if ($(element).width() < min) {
-                                             min = $(element).width();
-                                         }
-                                     });
-                                     
-                                    if (document.body.clientWidth > min) { 
-                                        $(element).css('transform', 'scale(' + document.body.clientWidth / min + ')');
-                                    } else {
-                                        $(element).css('transform', 'scale(1)');
-                                    }
-                                });
-                                
                                 $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                     $(this).remove();
                                     $('img.background').each(function (index, element) {
@@ -551,9 +535,9 @@
                 $('div.background').each(function (index, element) {
                     var min = Number.MAX_VALUE;
                     
-                     $(element).children().each(function (index, element) {
-                         if ($(element).width() < min) {
-                             min = $(element).width();
+                     $(element).children().each(function (index, e) {
+                         if ($(e).width() < min) {
+                             min = $(e).width();
                          }
                      });
                      
