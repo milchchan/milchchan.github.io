@@ -337,9 +337,10 @@ img.background-slide {
   z-index: -3;
   float: left;
   width: 100vw;
-  height: 100vh;
+  height: auto;
   position: relative;
   top: 0;
+  bottom: 0;
   left: 50%;
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
