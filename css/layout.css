@@ -378,15 +378,15 @@ img.background-slide {
 }
 @-webkit-keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-	100% { transform: translate(-50%, -400%); }
+	100% { transform: translate(-50%, -200%); }
 }
 @-o-keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-	100% { transform: translate(-50%, -400%); }
+	100% { transform: translate(-50%, -200%); }
 }
 @keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-	100% { transform: translate(-50%, -400%); }
+	100% { transform: translate(-50%, -200%); }
 }
 div.blind {
   z-index: -2;
