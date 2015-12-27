@@ -7,7 +7,7 @@ body {
 .header h1 {
   color: rgba(255, 255, 255, 1);
   /*text-shadow: none;*/
-  text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000;
+  text-shadow: -1px -1px rgba(255, 255, 255, 0.75), 1px -1px rgba(255, 255, 255, 0.75), -1px 1px rgba(255, 255, 255, 0.75), 1px 1px rgba(255, 255, 255, 0.75);
   /*-webkit-transition: all .3s ease-in-out;
   -moz-transition: all .3s ease-in-out;
   transition: all .3s ease-in-out;*/
