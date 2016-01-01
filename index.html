@@ -391,10 +391,15 @@
                 cache: true,
                 url: "images.json",
             }).done(function(data) {
-                $.each(data, function (i, value) {
+                /*$.each(data, function (i, value) {
                     imageQueue.push(value);
-                });
+                });*/
                 
+                imageQueue.push(new Array('/images/Background-Milch1.jpg', '/images/Background-Milch2.jpg', '/images/Background-Milch3.jpg', '/images/Background-Milch2.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg', '/images/Background-Milch1.jpg'));
+                imageQueue.push(new Array('/images/Background-Milch4.jpg', '/images/Background-Milch5.jpg', '/images/Background-Milch6.jpg', '/images/Background-Milch5.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg'));
+                imageQueue.push(new Array('/images/Background-Milch7.jpg', '/images/Background-Milch8.jpg', '/images/Background-Milch9.jpg', '/images/Background-Milch8.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg'));
+                imageQueue.push(new Array('/images/Background-Milch10.jpg', '/images/Background-Milch11.jpg', '/images/Background-Milch12.jpg', '/images/Background-Milch11.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg'));
+            
                 imageQueue = shuffle(imageQueue);
                 
                 var urls = imageQueue.shift();
@@ -530,7 +535,7 @@
                                 }
                                 
                                 parent.prepend($('<img />')
-                                    .attr('class', 'background-slide')
+                                    .attr('class', 'background')
                                     .attr('src', q.shift())
                                     .attr('alt', 'Background')
                                     .bind('load', onLoad2));
@@ -542,7 +547,7 @@
                 }
                 
                 $('div.background').prepend($('<img />')
-                    .attr('class', 'background-slide')
+                    .attr('class', 'background')
                     .attr('src', q.shift())
                     .attr('alt', 'Background')
                     .bind('load', onLoad1));
