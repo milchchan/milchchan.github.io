@@ -415,7 +415,7 @@
                 function onLoad1() {
                     if (q.length > 0) {
                         $(this).after($('<img />')
-                            .attr('class', 'background-slide')
+                            .attr('class', 'background')
                             .attr('src', q.shift())
                             .attr('alt', 'Background')
                             .bind('load', onLoad1));
@@ -482,7 +482,7 @@
                                 function onLoad2() {
                                     if (q.length > 0) {
                                         $(this).after($('<img />')
-                                            .attr('class', 'background-slide')
+                                            .attr('class', 'background')
                                             .attr('src', q.shift())
                                             .attr('alt', 'Background')
                                             .bind('load', onLoad2));
