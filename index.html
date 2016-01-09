@@ -551,18 +551,18 @@
                     .attr('src', q.shift())
                     .attr('alt', 'Background')
                     .bind('load', onLoad1)
-                    .bind('onloadstart', function () {
+                    .bind('loadstart', function () {
                         $('<div />')
                             .attr('class', 'progress')
                             .css('width', '100%')
                             .appendTo($('div.background'));
                     })
-                    .bind('onprogress', function (e) {
+                    .bind('progress', function (e) {
                         if (e.lengthComputable) {
                             //progressBar.value = e.loaded / e.total * 100;
                         }
                     })
-                    .bind('onloadend', function () {
+                    .bind('loadend', function () {
                         $('div.progress').remove();
                     }));
             });
