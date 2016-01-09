@@ -335,7 +335,7 @@ div.background {
 }
 div.progress {
   z-index: 0;
-  width: 100%;
+  width: 0%;
   height: 2px;
   position: absolute;
   top: 0;
