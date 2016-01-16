@@ -423,7 +423,7 @@
                         return;
                     }
                     
-                    $('div.blind').animate({ 'margin-top': '-100%', 'opacity': '0' }, 500, 'easeInExpo', function () {
+                    $('div.blind').animate({ 'margin-top': '-100%', 'opacity': '0' }, 5000, 'easeInExpo', function () {
                          $(this).remove();
                     });
                     
@@ -556,7 +556,7 @@
                     .css('margin-top', '-100%')
                     .css('opacity', '0')
                     .appendTo($('div.background'))
-                    .animate({'margin-top': '0%', 'opacity': '1' }, 500, 'easeOutExpo');
+                    .animate({'margin-top': '0%', 'opacity': '1' }, 5000, 'easeOutExpo');
                     
                 $('div.background').prepend($('<img />')
                     .attr('class', 'background')
