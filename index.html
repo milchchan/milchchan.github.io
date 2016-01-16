@@ -498,6 +498,10 @@
                                         return Math.floor(Math.random() * (max - min + 1)) + min;
                                     }
                                     
+                                    $('div.progress').animate({ 'margin-top': '-100%', 'opacity': '0.5' }, { 'duration': 500, 'easing': 'easeInExpo', 'complete': function() {
+                                        $(this).remove();
+                                    }});
+                                    
                                     $('div.background').each(function (index, element) {
                                         var min = Number.MAX_VALUE;
                                         
@@ -537,6 +541,14 @@
                                         });
                                     });
                                 }
+                                
+                                $('<div />')
+                                    .attr('class', 'progress')
+                                    .css('width', '100%')
+                                    .css('margin-top', '-100%')
+                                    .css('opacity', '0')
+                                    .appendTo($('div.frame'))
+                                    .animate({'margin-top': '0%', 'opacity': '1' }, 500, 'easeOutExpo');
                                 
                                 parent.prepend($('<img />')
                                     .attr('class', 'background')
