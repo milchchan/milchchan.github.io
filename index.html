@@ -423,8 +423,8 @@
                         return;
                     }
                     
-                    $('div.progress').animate({'margin-top': '-100%', 'opacity': '0' }, 5000, 'easeInExpo', function () {
-                         $(this).remove();
+                    $('div.progress').animate({'margin-top': '-100%', 'opacity': '0' }, { 'duration': 500, 'easing': 'easeInExpo', 'complete': function( {
+                        $(this).remove();
                     });
                     
                     $('div.background').each(function (index, element) {
