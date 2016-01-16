@@ -344,6 +344,31 @@ div.progress {
   background-color: #ffffff;
   background-image: url(../images/Progress.png);
   background-repeat: repeat;
+  -webkit-animation: progress 1s infinite;
+  -moz-animation: progress 1s infinite;
+  -ms-animation: progress 1s infinite;
+  -o-animation: progress 1s infinite;
+  animation: progress 1s infinite;
+}
+@-webkit-keyframes progress {
+    0% { transform: translate(0%, 0%); }
+    100% { transform: translate(-100%, 0%); }
+}
+@-moz-keyframes progress {
+    0% { transform: translate(0%, 0%); }
+    100% { transform: translate(-100%, 0%); }
+}
+@-ms-keyframes progress {
+    0% { transform: translate(0%, 0%); }
+    100% { transform: translate(-100%, 0%); }
+}
+@-o-keyframes progress {
+    0% { transform: translate(0%, 0%); }
+    100% { transform: translate(-100%, 0%); }
+}
+@keyframes progress {
+    0% { transform: translate(0%, 0%); }
+    100% { transform: translate(-100%, 0%); }
 }
 img.background {
   z-index: -3;
@@ -391,15 +416,15 @@ img.background-slide {
 }
 @-webkit-keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-	100% { transform: translate(-50%, -200%); }
+    100% { transform: translate(-50%, -200%); }
 }
 @-o-keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-	100% { transform: translate(-50%, -200%); }
+    100% { transform: translate(-50%, -200%); }
 }
 @keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-	100% { transform: translate(-50%, -200%); }
+    100% { transform: translate(-50%, -200%); }
 }
 div.blind {
   z-index: -2;
