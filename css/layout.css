@@ -344,11 +344,11 @@ div.progress {
   background-color: #ffffff;
   background-image: url(../images/Progress.png);
   background-repeat: repeat;
-  -webkit-animation: progress 1s infinite;
-  -moz-animation: progress 1s infinite;
-  -ms-animation: progress 1s infinite;
-  -o-animation: progress 1s infinite;
-  animation: progress 1s infinite;
+  -webkit-animation: progress 3s infinite;
+  -moz-animation: progress 3s infinite;
+  -ms-animation: progress 3s infinite;
+  -o-animation: progress 3s infinite;
+  animation: progress 3s infinite;
 }
 @-webkit-keyframes progress {
     0% { background-position: 0% 0%; }
