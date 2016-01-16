@@ -549,9 +549,13 @@
                 }
                 
                 $('<div />')
-                            .attr('class', 'progress')
-                            .css('width', '100%')
-                            .appendTo($('div.background'));
+                    .attr('class', 'progress')
+                    .css('width', '100%')
+                    .css('opacity', '0')
+                    .appendTo($('div.background'))
+                    .animate({
+                        'opacity': '1'
+                    }, 'fast');
                     
                 $('div.background').prepend($('<img />')
                     .attr('class', 'background')
