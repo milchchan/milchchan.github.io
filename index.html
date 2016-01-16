@@ -423,6 +423,8 @@
                         return;
                     }
                     
+                    $('div.progress').remove();
+                    
                     $('div.background').each(function (index, element) {
                         var min = Number.MAX_VALUE;
                         
@@ -545,26 +547,17 @@
                         }, 10000);
                     });
                 }
+                
+                $('<div />')
+                            .attr('class', 'progress')
+                            .css('width', '100%')
+                            .appendTo($('div.background'));
                     
                 $('div.background').prepend($('<img />')
                     .attr('class', 'background')
                     .attr('src', q.shift())
                     .attr('alt', 'Background')
-                    .bind('load', onLoad1)
-                    .bind('loadstart', function () {
-                        $('<div />')
-                            .attr('class', 'progress')
-                            .css('width', '100%')
-                            .appendTo($('div.background'));
-                    })
-                    .bind('progress', function (e) {
-                        if (e.lengthComputable) {
-                            //progressBar.value = e.loaded / e.total * 100;
-                        }
-                    })
-                    .bind('loadend', function () {
-                        $('div.progress').remove();
-                    }));
+                    .bind('load', onLoad1));
             });
             
             $(window).resize(function() {
