@@ -554,9 +554,9 @@
                     .attr('class', 'progress')
                     .css('width', '100%')
                     .css('margin-top', '-100%')
-                    .css('opacity', '0')
-                    .appendTo($('div.background'));
+                    .css('opacity', '0');
                     
+                d.appendTo($('div.background'));
                 d.animate({'margin-top': '0%', 'opacity': '1' }, 5000, 'easeOutExpo');
                     
                 $('div.background').prepend($('<img />')
