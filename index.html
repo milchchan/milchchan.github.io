@@ -423,7 +423,9 @@
                         return;
                     }
                     
-                    $('div.progress').remove();
+                    $('div.blind').animate({ 'margin-top': '-100%', 'opacity': '0' }, 500, 'easeInExpo', function () {
+                         $(this).remove();
+                    });
                     
                     $('div.background').each(function (index, element) {
                         var min = Number.MAX_VALUE;
@@ -551,11 +553,10 @@
                 $('<div />')
                     .attr('class', 'progress')
                     .css('width', '100%')
+                    .css('margin-top', '-100%')
                     .css('opacity', '0')
                     .appendTo($('div.background'))
-                    .animate({
-                        'opacity': '1'
-                    }, 'fast');
+                    .animate({'margin-top': '0%', 'opacity': '1' }, 500, 'easeOutExpo');
                     
                 $('div.background').prepend($('<img />')
                     .attr('class', 'background')
