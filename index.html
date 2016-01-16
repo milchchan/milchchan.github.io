@@ -443,7 +443,7 @@
                         }
                     });
                     
-                    $('div.blind').animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
+                    $('div.blind').stop().animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                         var parent = $(this).parent();
                         
                         $(this).remove();
@@ -498,7 +498,7 @@
                                         return Math.floor(Math.random() * (max - min + 1)) + min;
                                     }
                                     
-                                    $('div.progress').animate({ 'margin-top': '-100%', 'opacity': '0.5' }, { 'duration': 500, 'easing': 'easeInExpo', 'complete': function() {
+                                    $('div.progress').stop().animate({ 'margin-top': '-100%', 'opacity': '0.5' }, { 'duration': 500, 'easing': 'easeInExpo', 'complete': function() {
                                         $(this).remove();
                                     }});
                                     
@@ -548,7 +548,7 @@
                                     .css('margin-top', '-100%')
                                     .css('opacity', '0')
                                     .appendTo($('div.frame'))
-                                    .animate({'margin-top': '0%', 'opacity': '1' }, 500, 'easeOutExpo');
+                                    .animate({'margin-top': '0%', 'opacity': '1' }, { 'duration': 500, 'delay': 1000, 'easing': 'easeOutExpo'});
                                 
                                 parent.prepend($('<img />')
                                     .attr('class', 'background')
