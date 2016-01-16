@@ -559,3 +559,23 @@ li.connection i {
 	height: 75%;
   }
 }
+@media screen and (-webkit-min-device-pixel-ratio:2),
+                  (min-resolution: 2dppx) {
+  div.progress {
+    z-index: 0;
+    width: 0%;
+    height: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background-color: #ffffff;
+    background-image: url(../images/Progress.png);
+    background-repeat: repeat;
+    -webkit-animation: progress 5s linear 0s infinite;
+    -moz-animation: progress 5s linear 0s infinite;
+    -ms-animation: progress 5s linear 0s infinite;
+    -o-animation: progress 5s linear 0s infinite;
+    animation: progress 5s linear 0s infinite;
+  }
+}
