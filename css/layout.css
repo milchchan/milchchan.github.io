@@ -351,24 +351,24 @@ div.progress {
   animation: progress 1s infinite;
 }
 @-webkit-keyframes progress {
-    0% { transform: translate(0%, 0%); }
-    100% { transform: translate(-100%, 0%); }
+    0% { background-position: 0% 0%; }
+    100% { background-position: -100% 0%; }
 }
 @-moz-keyframes progress {
-    0% { transform: translate(0%, 0%); }
-    100% { transform: translate(-100%, 0%); }
+    0% { background-position: 0% 0%; }
+    100% { background-position: -100% 0%; }
 }
 @-ms-keyframes progress {
-    0% { transform: translate(0%, 0%); }
-    100% { transform: translate(-100%, 0%); }
+    0% { background-position: 0% 0%; }
+    100% { background-position: -100% 0%; }
 }
 @-o-keyframes progress {
-    0% { transform: translate(0%, 0%); }
-    100% { transform: translate(-100%, 0%); }
+    0% { background-position: 0% 0%; }
+    100% { background-position: -100% 0%; }
 }
 @keyframes progress {
-    0% { transform: translate(0%, 0%); }
-    100% { transform: translate(-100%, 0%); }
+    0% { background-position: 0% 0%; }
+    100% { background-position: -100% 0%; }
 }
 img.background {
   z-index: -3;
