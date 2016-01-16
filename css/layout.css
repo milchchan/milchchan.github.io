@@ -342,6 +342,8 @@ div.progress {
   left: 0;
   overflow: hidden;
   background-color: #ffffff;
+  background-image: url(../images/Progress.png);
+  background-repeat: repeat;
 }
 img.background {
   z-index: -3;
