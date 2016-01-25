@@ -66,6 +66,9 @@ ul.resources > li {
     font-size: 1.0em;
     line-height: 2.0em;
 }
+li.button {
+    border-radius: 50%;
+}
 hr {
     border-width: 4px 0 0 0;
     border-color: #000000;
