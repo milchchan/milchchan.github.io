@@ -151,7 +151,6 @@ footer a:active
 .btn {
     font-family: "Gotham Rounded", 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
-    border-radius: 50px;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
     transition: all .3s ease-in-out;
