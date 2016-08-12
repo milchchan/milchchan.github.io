@@ -323,7 +323,6 @@
                 </div>
             </div>
         </div>
->>>>>>> origin/master
     </footer>
     <script src="js/jquery-3.1.0.min.js"></script> 
     <script src="js/jquery.easing.1.3.js"></script>
@@ -428,7 +427,8 @@
                 }
                 
                 function onLoad1() {
-                    $(this).css('background-image', 'url(' + $(this).attr('src') + ')').unbind('load').attr('src', 'images/blank.gif');
+                    //$(this).css('background-image', 'url(' + $(this).attr('src') + ')').unbind('load').attr('src', 'images/blank.gif');
+                    $(this).unbind('load');
 
                     if (q.length > 0) {
                         $(this).after($('<img />')
@@ -485,7 +485,8 @@
                                 $('img.background-slide').remove();
                                 
                                 function onLoad2() {
-                                    $(this).css('background-image', 'url(' + $(this).attr('src') + ')').unbind('load').attr('src', 'images/blank.gif');
+                                    //$(this).css('background-image', 'url(' + $(this).attr('src') + ')').unbind('load').attr('src', 'images/blank.gif');
+                                    $(this).unbind('load');
 
                                     if (q.length > 0) {
                                         $(this).after($('<img />')
