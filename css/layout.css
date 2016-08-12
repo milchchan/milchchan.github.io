@@ -326,7 +326,7 @@ div.frame {
 }
 div.background {
   z-index: -1;
-  background-color: #9ae0ea;
+  /*background-color: #9ae0ea;*/
   width: 100%;
   height: 100%;
   position: absolute;
