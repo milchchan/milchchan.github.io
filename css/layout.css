@@ -7,7 +7,8 @@ body {
 .header h1 {
   color: rgba(255, 255, 255, 1);
   /*text-shadow: none;*/
-  text-shadow: -1px -1px rgba(255, 166, 187, 1), 1px -1px rgba(255, 166, 187, 1), -1px 1px rgba(255, 166, 187, 1), 1px 1px rgba(255, 166, 187, 1);
+  text-shadow: -1px -1px rgba(154, 224, 234, 1), 1px -1px rgba(154, 224, 234, 1), -1px 1px rgba(154, 224, 234, 1), 1px 1px rgba(154, 224, 234, 1);
+  /*text-shadow: -1px -1px rgba(255, 197, 71, 1), 1px -1px rgba(255, 197, 71, 1), -1px 1px rgba(255, 197, 71, 1), 1px 1px rgba(255, 197, 71, 1);*/
   /*-webkit-transition: all .3s ease-in-out;
   -moz-transition: all .3s ease-in-out;
   transition: all .3s ease-in-out;*/
@@ -433,7 +434,7 @@ div.blind {
   top: 0;
   left: 0;
   margin-top: 0%;
-  background: #ffa6bb;
+  background: #9ae0ea;
 }
 .normal {
   padding: 50px 0;
@@ -445,7 +446,7 @@ div.blind {
   margin: 0 auto;
 }
 .highlight {
-  background: #ffa6bb;
+  background: #9ae0ea;
   padding: 50px 0;
   color: #ffffff;
 }
