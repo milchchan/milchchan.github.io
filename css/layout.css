@@ -326,6 +326,7 @@ div.frame {
 }
 div.background {
   z-index: -1;
+  background-color: #9ae0ea;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -382,20 +383,27 @@ img.background {
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
+  background-repeat: no-repeat;
+  background-position-x: center;
+  background-position-y: center;
+  background-attachment: fixed;
+  background-size: cover;
 }
 img.background-slide {
   z-index: -3;
+  clear: both;
   float: left;
-  width: auto;
+  width: 100%;
   height: 100%;
   position: relative;
   top: 0;
   bottom: 0;
   left: 50%;
-  overflow: hidden;
+  animation-timing-function: ease-out;
   -webkit-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
+  background-size: cover;
 }
 @-webkit-keyframes loop {
     0% { visibility: visible; }
@@ -417,15 +425,15 @@ img.background-slide {
 }
 @-webkit-keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-    100% { transform: translate(-50%, -200%); }
+    100% { transform: translate(-50%, -300%); }
 }
 @-o-keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-    100% { transform: translate(-50%, -200%); }
+    100% { transform: translate(-50%, -300%); }
 }
 @keyframes loop-slide {
     0% { transform: translate(-50%, 0%); }
-    100% { transform: translate(-50%, -200%); }
+    100% { transform: translate(-50%, -300%); }
 }
 div.blind {
   z-index: -2;

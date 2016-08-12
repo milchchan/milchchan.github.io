@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="utf-8">
@@ -40,7 +40,7 @@
         <div class="vert-text">
             <div class="type">
                 <div>
-                    <h1 class="accent type">Magical Milch Chan</h1>
+                    <h1 class="accent type">Magical Milchchan</h1>
                     <!--<h5 class="accent type">milchchan.com</h5>-->
                 </div>
                 <div>
@@ -65,7 +65,7 @@
             <div class="row">
                 <div class="col-md-8 col-md-offset-2 text-center">
                     <h3 class="accent">2016/8/14</h3>
-                    <p class="lead">コミックマーケット90(3日目西e-37a)に参加します！ラバーストラップなどがでる予定ですのでよろしくお願いします！既刊の漫画も持っていきます！</p>
+                    <p class="lead">コミックマーケット90(3日目西e-37a)に参加します。新しくつくったミルヒちゃんのラバーストラップと既刊の漫画も持っていきますのでよろしくお願いします！</p>
                 </div>
             </div>
             <div class="row">
@@ -88,7 +88,7 @@
                 <div class="col-md-8 col-md-offset-2 text-center">
                     <h3 class="accent">Milch</h3>
                     <h6 class="accent">ミルヒ</h6>
-                    <p class="lead">明るくて真面目な女の子。メルクちゃんに無理やり恥ずかしい魔法少女の衣装を着せられて、魔法のようにもいろんな問題を解決するネット上の番組に出演することになったりと、いつも振り回されっぱなし。</p>
+                    <p class="lead">明るくて元気で真面目な女の子。メルクちゃんに無理やり恥ずかしい魔法少女の衣装を着せられて、魔法のように知識で問題を解決していくネット上の番組にでることになったりと、いつも振り回されっぱなし。</p>
                 </div>
             </div>
             <div class="row">
@@ -324,7 +324,7 @@
             </div>
         </div>
     </footer>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
+    <script src="js/jquery-3.1.0.min.js"></script> 
     <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/lightbox.min.js"></script>
     <script src="js/bootstrap.js"></script>
@@ -342,7 +342,7 @@
         var isTyping = true;
 
         $(function () {
-            $('a[href*=#]:not([href=#])').click(function () {
+            /*$('a[href*=#]:not([href=#])').click(function () {
                 if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
                     var target = $(this.hash);
 
@@ -355,7 +355,7 @@
                         return false;
                     }
                 }
-            });
+            });*/
             
             $('.selectable').hover(
                 function() {
@@ -413,7 +413,7 @@
                 imageQueue.push(new Array('/images/Background-Milch4.jpg', '/images/Background-Milch5.jpg', '/images/Background-Milch6.jpg', '/images/Background-Milch5.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg', '/images/Background-Milch4.jpg'));
                 imageQueue.push(new Array('/images/Background-Milch7.jpg', '/images/Background-Milch8.jpg', '/images/Background-Milch9.jpg', '/images/Background-Milch8.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg', '/images/Background-Milch7.jpg'));
                 imageQueue.push(new Array('/images/Background-Milch10.jpg', '/images/Background-Milch11.jpg', '/images/Background-Milch12.jpg', '/images/Background-Milch11.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg', '/images/Background-Milch10.jpg'));
-            
+
                 imageQueue = shuffle(imageQueue);
                 
                 var urls = imageQueue.shift();
@@ -427,6 +427,8 @@
                 }
                 
                 function onLoad1() {
+                    $(this).css('background-image', 'url(' + $(this).attr('src') + ')').unbind('load').attr('src', 'images/blank.gif');
+
                     if (q.length > 0) {
                         $(this).after($('<img />')
                             .attr('class', 'background')
@@ -440,22 +442,6 @@
                     $('div.progress').animate({ 'margin-top': '-100%', 'opacity': '0.5' }, { 'duration': 500, 'easing': 'easeInExpo', 'complete': function() {
                         $(this).remove();
                     }});
-                    
-                    $('div.background').each(function (index, element) {
-                        var min = Number.MAX_VALUE;
-                        
-                         $(element).children().each(function (index, e) {
-                             if ($(e).width() < min) {
-                                 min = $(e).width();
-                             }
-                         });
-                         
-                        if (window.innerWidth > min) { 
-                            $(element).css('transform', 'scale(' + window.innerWidth / min + ')');
-                        } else {
-                            $(element).css('transform', 'scale(1)');
-                        }
-                    });
                     
                     $('div.blind').stop().animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                         var parent = $(this).parent();
@@ -475,8 +461,8 @@
                         $('img.background-slide').each(function (index, element) {
                             $(this)
                                 .css('animation-name', 'loop-slide')
-                                .css('animation-duration', '5s')
-                                .css('animation-iteration-count', 'infinite')
+                                .css('animation-duration', '10s')
+                                .css('animation-iteration-count', '1')
                                 .css('animation-fill-mode', 'forwards')
                                 .css('animation-play-state', 'running');
                         });
@@ -494,10 +480,12 @@
                                     q.push(array[i]);
                                 }
                             
-                                $('img.background').unbind('load');
                                 $('img.background').remove();
+                                $('img.background-slide').remove();
                                 
                                 function onLoad2() {
+                                    $(this).css('background-image', 'url(' + $(this).attr('src') + ')').unbind('load').attr('src', 'images/blank.gif');
+
                                     if (q.length > 0) {
                                         $(this).after($('<img />')
                                             .attr('class', 'background')
@@ -516,22 +504,6 @@
                                         $(this).remove();
                                     }});
                                     
-                                    $('div.background').each(function (index, element) {
-                                        var min = Number.MAX_VALUE;
-                                        
-                                         $(element).children().each(function (index, e) {
-                                             if ($(e).width() < min) {
-                                                 min = $(e).width();
-                                             }
-                                         });
-                                         
-                                        if (window.innerWidth > min) { 
-                                            $(element).css('transform', 'scale(' + window.innerWidth / min + ')');
-                                        } else {
-                                            $(element).css('transform', 'scale(1)');
-                                        }
-                                    });
-                                    
                                     $('div.blind').delay(random(500, 1000)).animate({ 'margin-top': '-100%' }, 1000, 'easeInExpo', function () {
                                         $(this).remove();
                                         $('img.background').each(function (index, element) {
@@ -548,8 +520,8 @@
                                         $('img.background-slide').each(function (index, element) {
                                             $(this)
                                                 .css('animation-name', 'loop-slide')
-                                                .css('animation-duration', '5s')
-                                                .css('animation-iteration-count', 'infinite')
+                                                .css('animation-duration', '10s')
+                                                .css('animation-iteration-count', '1')
                                                 .css('animation-fill-mode', 'forwards')
                                                 .css('animation-play-state', 'running');
                                         });
@@ -571,8 +543,8 @@
                                     .bind('load', onLoad2));
                             });
                             
-                            setTimeout(onTick, 10000);
-                        }, 10000);
+                            setTimeout(onTick, 15000);
+                        }, 15000);
                     });
                 }
                 
@@ -594,21 +566,6 @@
             $(window).resize(function() {
                 $('div.type').each(function (index, element) {
                     $(element).width(document.body.clientWidth * 75 / 100);
-                });
-                $('div.background').each(function (index, element) {
-                    var min = Number.MAX_VALUE;
-                    
-                     $(element).children().each(function (index, e) {
-                         if ($(e).width() < min) {
-                             min = $(e).width();
-                         }
-                     });
-                     
-                    if (window.innerWidth > min) { 
-                        $(element).css('transform', 'scale(' + window.innerWidth / min + ')');
-                    } else {
-                        $(element).css('transform', 'scale(1)');
-                    }
                 });
             });
             
