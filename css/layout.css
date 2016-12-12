@@ -442,7 +442,7 @@ div.blind {
   top: 0;
   left: 0;
   margin-top: 0%;
-  background: #6cd5e2;
+  background: #acddf7; /*#6cd5e2;*/
 }
 .normal {
   padding: 50px 0;
@@ -454,7 +454,7 @@ div.blind {
   margin: 0 auto;
 }
 .highlight {
-  background: #6cd5e2;
+  background: #acddf7;
   padding: 50px 0;
   color: #ffffff;
 }
