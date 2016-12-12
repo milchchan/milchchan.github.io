@@ -125,13 +125,13 @@ footer a:visited
 }
 footer a:hover
 {
-	color: #ffc547;
+	color: #fffac6;
 	font-weight: bold;
 	text-decoration: underline;
 }
 footer a:active
 {
-	color: #ffc547;
+	color: #fffac6;
 	font-weight: bold;
 	text-decoration: underline;
 }
@@ -163,10 +163,10 @@ footer a:active
 }
 .btn-default:hover,
 .btn-default:focus {
-    border: 1px solid #ffc547;
+    border: 1px solid #fffac6;
     outline: 0;
     color: #ffffff;
-    background-color: #ffc547;
+    background-color: #fffac6;
 }
 .btn-flyout {
     border: 1px solid #000000;
@@ -203,10 +203,10 @@ footer a:active
 }
 .btn-primary:hover,
 .btn-primary:focus {
-    border: 1px solid #ffc547;
+    border: 1px solid #fffac6;
     outline: 0;
     color: #ffffff;
-    background-color: #ffc547;
+    background-color: #fffac6;
 }
 .btn-preview-highlight {
     border: 1px solid #000000;
@@ -251,7 +251,7 @@ div.type .type {
 .animatable:hover,
 .animatable:focus {
     outline: 0;
-    color: #ffc547;
+    color: #fffac6;
 }
 .animatable-highlight {
     color: #ffffff;
@@ -262,7 +262,7 @@ div.type .type {
 .animatable-highlight:hover,
 .animatable-highlight:focus {
     outline: 0;
-    color: #ffc547;
+    color: #fffac6;
 }
 footer .animatable-highlight {
     color: #ffffff;
@@ -275,7 +275,7 @@ footer .animatable-highlight:hover,
 footer .animatable-highlight:focus {
     outline: 0;
     color: #ffffff;
-    background-color: #ffc547;
+    background-color: #fffac6;
 }
 img.popupable {
   margin: 0px 0px 0px 0px;
@@ -517,7 +517,7 @@ i.scroll {
   color: #000000;
 }
 i.scroll:hover {
-  color: #ffc547;
+  color: #fffac6;
 }
 li.connection {
   margin: 0px 8px 0px 0px;
