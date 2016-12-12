@@ -458,6 +458,11 @@ div.blind {
   padding: 50px 0;
   color: #ffffff;
 }
+div#logo {
+  background: #acddf7;
+  padding: 100px 0 50px 0;
+  color: #ffffff;
+}
 .highlight-item {
   margin-bottom: 15px;
 }
