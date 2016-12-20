@@ -407,20 +407,20 @@ img.background-slide {
 }
 @-webkit-keyframes loop {
     0% { visibility: visible; }
-    2.5% { visibility: visible; }
-    10% { visibility: hidden; }
+    1% { visibility: visible; }
+    2% { visibility: hidden; }
     100% { visibility: hidden; }
 }
 @-o-keyframes loop {
     0% { visibility: visible; }
-    2.5% { visibility: visible; }
-    10% { visibility: hidden; }
+    1% { visibility: visible; }
+    2% { visibility: hidden; }
     100% { visibility: hidden; }
 }
 @keyframes loop {
     0% { visibility: visible; }
-    2.5% { visibility: visible; }
-    10% { visibility: hidden; }
+    1% { visibility: visible; }
+    2% { visibility: hidden; }
     100% { visibility: hidden; }
 }
 @-webkit-keyframes loop-slide {
