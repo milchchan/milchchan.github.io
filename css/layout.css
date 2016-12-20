@@ -5,10 +5,10 @@ body {
   font-family: "Gotham Rounded", 'Noto Sans Japanese', 'Open Sans', Segoe UI, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro W3", "メイリオ", sans-serif;
 }
 .header h1 {
-  color: rgba(172, 221, 247, 1);
+  color: rgba(255, 255, 255, 1);
   /*color: rgba(255, 250, 198, 1);
   text-shadow: none;*/
-  text-shadow: -1px -1px rgba(255, 250, 198, 1), 1px -1px rgba(255, 250, 198, 1), -1px 1px rgba(255, 250, 198, 1), 1px 1px rgba(255, 250, 198, 1);
+  text-shadow: -1px -1px rgba(172, 221, 247, 1), 1px -1px rgba(172, 221, 247, 1), -1px 1px rgba(172, 221, 247, 1), 1px 1px rgba(172, 221, 247, 1);
   
   /*text-shadow: -1px -1px rgba(255, 197, 71, 1), 1px -1px rgba(255, 197, 71, 1), -1px 1px rgba(255, 197, 71, 1), 1px 1px rgba(255, 197, 71, 1);*/
   /*-webkit-transition: all .3s ease-in-out;
