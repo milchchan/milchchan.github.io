@@ -8,7 +8,7 @@ body {
   color: rgba(255, 255, 255, 1);
   /*color: rgba(255, 250, 198, 1);
   text-shadow: none;*/
-  text-shadow: -1px -1px rgba(172, 221, 247, 1), 1px -1px rgba(172, 221, 247, 1), -1px 1px rgba(172, 221, 247, 1), 1px 1px rgba(172, 221, 247, 1);
+  text-shadow: -1px -1px rgba(48, 192, 245, 1), 1px -1px rgba(48, 192, 245, 1), -1px 1px rgba(48, 192, 245, 1), 1px 1px rgba(48, 192, 245, 1);
   
   /*text-shadow: -1px -1px rgba(255, 197, 71, 1), 1px -1px rgba(255, 197, 71, 1), -1px 1px rgba(255, 197, 71, 1), 1px 1px rgba(255, 197, 71, 1);*/
   /*-webkit-transition: all .3s ease-in-out;
@@ -127,13 +127,13 @@ footer a:visited
 }
 footer a:hover
 {
-	color: #fffac6;
+	color: #ffc547;
 	font-weight: bold;
 	text-decoration: underline;
 }
 footer a:active
 {
-	color: #fffac6;
+	color: #ffc547;
 	font-weight: bold;
 	text-decoration: underline;
 }
@@ -165,10 +165,10 @@ footer a:active
 }
 .btn-default:hover,
 .btn-default:focus {
-    border: 1px solid #fffac6;
+    border: 1px solid #ffc547;
     outline: 0;
     color: #000000;
-    background-color: #fffac6;
+    background-color: #ffc547;
 }
 .btn-flyout {
     border: 1px solid #000000;
@@ -205,10 +205,10 @@ footer a:active
 }
 .btn-primary:hover,
 .btn-primary:focus {
-    border: 1px solid #fffac6;
+    border: 1px solid #ffc547;
     outline: 0;
     color: #000000;
-    background-color: #fffac6;
+    background-color: #ffc547;
 }
 .btn-preview-highlight {
     border: 1px solid #000000;
@@ -253,7 +253,7 @@ div.type .type {
 .animatable:hover,
 .animatable:focus {
     outline: 0;
-    color: #fffac6;
+    color: #ffc547;
 }
 .animatable-highlight {
     color: #ffffff;
@@ -264,7 +264,7 @@ div.type .type {
 .animatable-highlight:hover,
 .animatable-highlight:focus {
     outline: 0;
-    color: #fffac6;
+    color: #ffc547;
 }
 footer .animatable-highlight {
     color: #ffffff;
@@ -277,7 +277,7 @@ footer .animatable-highlight:hover,
 footer .animatable-highlight:focus {
     outline: 0;
     color: #ffffff;
-    background-color: #fffac6;
+    background-color: #ffc547;
 }
 img.popupable {
   margin: 0px 0px 0px 0px;
@@ -444,7 +444,7 @@ div.blind {
   top: 0;
   left: 0;
   margin-top: 0%;
-  background: #acddf7; /*#6cd5e2;*/
+  background: #30c0f5; /*#6cd5e2;*/
 }
 .normal {
   padding: 50px 0;
@@ -456,12 +456,12 @@ div.blind {
   margin: 0 auto;
 }
 .highlight {
-  background: #acddf7;
+  background: #30c0f5;
   padding: 50px 0;
   color: #ffffff;
 }
 div#logo {
-  background: #acddf7;
+  background: #30c0f5;
   padding: 100px 0 50px 0;
   color: #ffffff;
 }
@@ -524,7 +524,7 @@ i.scroll {
   color: #000000;
 }
 i.scroll:hover {
-  color: #fffac6;
+  color: #ffc547;
 }
 li.connection {
   margin: 0px 8px 0px 0px;
