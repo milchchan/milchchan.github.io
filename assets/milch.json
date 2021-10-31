@@ -347,6 +347,30 @@
                     "speed": 50,
                     "duration": 5,
                     "text": [
+                        ["名前"],
+                        "は",
+                        "コスプレ",
+                        "が",
+                        "趣味",
+                        "なん",
+                        "だ",
+                        "よ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
                         "メルクちゃん",
                         "は",
                         "コスプレ",
