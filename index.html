@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="description" content="すれちがった人とおすすめのモノを交換">
-    <meta name="theme-color" content="#64dafe">
+    <meta name="theme-color" content="#00A1DE">
     <meta property="og:title" content="Wonderland">
     <meta property="og:description" content="ミルヒちゃんもいっしょに魔法少女しようね！">
     <meta property="og:type" content="website">
@@ -47,7 +47,17 @@
         :root {
             --background-color: rgba(255, 255, 255, 0.75);
             --foreground-color: #000000;
-            --accent-color: #00eeff;
+            /*--base-color: #cba9e1;
+            --main-color: #ffa6bb;
+            --accent-color: #5bcbe1;*/
+            /*--main-color: #6772E5;
+            --accent-color: #8898aa;*/
+            /*--main-color: #00eeff;
+            --accent-color: #ffee00;*/
+            --main-color: #b56ed8;
+            /*--accent-color: #ff4c90;*/
+            --accent-color: #ff86b5;
+            /*ffe598*/
         }
 
         @media (prefers-color-scheme: dark) {
@@ -133,7 +143,7 @@
 
         label.checkbox input[type=checkbox]:checked+.custom:before,
         label.checkbox input[type=radio]:checked+.custom:before {
-            color: #00eeff;
+            color: var(--accent-color);
         }
 
         a .scrollable,
@@ -276,7 +286,7 @@
 
         .is-danger {
             background-color: transparent !important;
-            color: #e26971 !important;
+            color: #ff4c90 !important;
         }
 
         .is-superellips {
@@ -331,7 +341,7 @@
             top: 0;
             left: 0;
             overflow: hidden;
-            background: #ffc547 url('/images/Stripes.png') 50% 50% repeat;
+            background: var(--main-color) url('/images/Stripes.png') 50% 50% repeat;
             background-size: 20px 20px;
             animation: progress 0.5s linear 0s infinite;
         }
@@ -545,11 +555,11 @@
             border: 0px solid rgba(255, 255, 255, 0.5);
             border-radius: 290486px;
             padding: 16px;
-            background: var(--accent-color) !important;
+            background: var(--main-color) !important;
             background-clip: padding-box;
             box-shadow: none;
             height: initial;
-            color: #ffffff !important;
+            color: var(--accent-color) !important;
         }
 
         .center>.level {
@@ -618,7 +628,7 @@
             font-family: "Alata", sans-serif;
             font-size: 4rem !important;
             line-height: 4rem !important;
-            color: #00eeff;
+            color: var(--main-color);
             transition: .5s;
         }
 
@@ -700,7 +710,7 @@
                 -10px -10px 30px #ffffff;*/
             box-shadow: none;
             height: initial;
-            color: #000000 !important;
+            color: var(--accent-color) !important;
         }
 
         .left button>span,
@@ -801,7 +811,7 @@
             font-size: 1.25rem;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 1.25rem;
-            color: var(--foreground-color);
+            color: var(--main-color);
             transition: .5s;
             transform: rotate(0.03deg);
         }
@@ -811,7 +821,7 @@
             font-size: 0.75rem;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 0.75rem;
-            color: var(--foreground-color);
+            color: var(--main-color);
             transition: .5s;
             transform: rotate(0.03deg);
         }
@@ -831,7 +841,7 @@
             padding: 0;
             width: 32px;
             height: 4px;
-            background-color: var(--foreground-color);
+            background-color: var(--main-color);
             text-align: center !important;
             transition: .5s;
         }
@@ -847,7 +857,6 @@
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.image>button {
             margin: 0;
             border: 0px solid transparent;
-            border-radius: 290486px;
             padding: 0;
             background: transparent;
         }
@@ -860,11 +869,12 @@
             padding: 16px 32px 16px 32px;
             border: 0px solid rgba(255, 255, 255, 0.5);
             border-radius: 500px 500px 500px 500px;
-            background: #ffffff;
+            background: var(--main-color);
             background-clip: padding-box;
             height: fit-content;
             line-height: calc(0.75rem * 1.5);
             backface-visibility: hidden;
+            color: #ffffff;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content span.wrap {
@@ -879,6 +889,11 @@
             transform: rotate(0.03deg);
             line-height: 0.75rem !important;
             height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon,
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon {
+            color: var(--accent-color);
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon:first-child+div,
@@ -899,7 +914,22 @@
             height: calc(0.75rem * 1.5);
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item button {
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:first-of-type button {
+            margin: 0px;
+            border: 0px solid rgba(255, 255, 255, 0.5);
+            border-radius: 290486px;
+            padding: 16px;
+            background: var(--main-color);
+            background-clip: padding-box;
+            /*background: #f5f5f5;
+            background: linear-gradient(145deg, #ffffff, #dddddd);
+            box-shadow: 10px 10px 30px #d0d0d0,
+                -10px -10px 30px #ffffff;*/
+            height: initial;
+            color: #ffffff;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:last-of-type:not(first-of-type) button {
             margin: 0px;
             border: 0px solid rgba(255, 255, 255, 0.5);
             border-radius: 290486px;
@@ -920,6 +950,7 @@
             padding: 24px;
             background: #ffffff;
             background-clip: padding-box;
+            color: var(--accent-color);
         }
 
         #container {
@@ -994,6 +1025,7 @@
             line-height: 0.75rem !important;
             height: calc(0.75rem * 1.5);
             white-space: nowrap;
+            color: var(--accent-color);
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox .clip {
@@ -1200,11 +1232,12 @@
             box-shadow: none;
             backface-visibility: hidden;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            color: var(--accent-color);
             transform: rotate(0.03deg);
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input::placeholder {
-            color: rgba(0, 0, 0, 0.25);
+            color: rgba(255, 134, 181, 0.25);
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             transform: rotate(0.03deg);
         }
@@ -1216,6 +1249,7 @@
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) span {
+            color: rgba(255, 134, 181, 0.25);
             font-family: 'Hind', 'Josefin Sans', sans-serif;
         }
 
@@ -1687,7 +1721,7 @@
                     <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
                         <path
                             d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z"
-                            style="fill:rgba(0,238,255, 0.5);" />
+                            style="fill:rgba(255,238,0,0.5);" />
                     </g>
                 </svg>
             </button>
@@ -1986,7 +2020,7 @@
                                                                             v-bind:data-attribute="column.name" @change="check"
                                                                             v-model="column.value">
                                                                         <span class="custom"></span>
-                                                                        <span class="wrap is-size-7 has-text-weight-bold has-text-black">
+                                                                        <span class="wrap is-size-7 has-text-weight-bold">
                                                                             <div class="clip">
                                                                                 <div class="scrollable">
                                                                                     <div>{{ column.name }}</div>
@@ -2034,12 +2068,12 @@
                                                 <p class="image is-64x64 is-superellips">
                                                     <picture class="image is-64x64" style="pointer-events: none;"
                                                         v-if="'image' in mode && mode.image !== null">
-                                                        <img class="is-rounded" v-bind:src="mode.image" width="64"
+                                                        <img v-bind:src="mode.image" width="64"
                                                             height="64" alt="Avatar">
                                                     </picture>
                                                     <picture class="image is-64x64" style="pointer-events: none;"
                                                         v-else-if="'user' in mode && 'image' in mode.user && mode.user.image !== null">
-                                                        <img class="is-rounded" v-bind:src="mode.user.image" width="64"
+                                                        <img v-bind:src="mode.user.image" width="64"
                                                             height="64" alt="Avatar">
                                                     </picture>
                                                     <picture class="image is-64x64" style="pointer-events: none;"
@@ -2076,7 +2110,7 @@
                                                                 <span class="icon">
                                                                     <i class="fas fa-star"></i>
                                                                 </span>
-                                                                <span class="wrap has-text-weight-bold has-text-black"
+                                                                <span class="wrap has-text-weight-bold"
                                                                     v-if="'user' in mode && user.uid !== mode.user.id">
                                                                     <div class="clip">
                                                                         <div class="scrollable">
@@ -2085,7 +2119,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </span>
-                                                                <span class="wrap has-text-weight-bold has-text-black"
+                                                                <span class="wrap has-text-weight-bold"
                                                                     v-else>
                                                                     <div class="clip">
                                                                         <div class="scrollable">
@@ -2105,7 +2139,7 @@
                                                         <div class="content">
                                                             <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
                                                                 target="_blank"><span
-                                                                    class="icon is-small has-text-black"><i
+                                                                    class="icon is-small"><i
                                                                         class="fas fa-search"></i></span></a>
                                                         </div>
                                                     </div>
@@ -2142,7 +2176,7 @@
                                                                                 <i class="fas fa-star"></i>
                                                                             </span>
                                                                             <span
-                                                                                class="wrap has-text-weight-bold has-text-black">
+                                                                                class="wrap has-text-weight-bold">
                                                                                 <div class="clip">
                                                                                     <div class="scrollable">
                                                                                         <div>{{ word.name }}を教える</div>
@@ -2161,7 +2195,7 @@
                                                                     <div class="content">
                                                                         <a v-bind:href="encodeURI('https://google.com/search?q=' + word.name)"
                                                                             target="_blank"><span
-                                                                                class="icon is-small has-text-black"><i
+                                                                                class="icon is-small"><i
                                                                                     class="fas fa-search"></i></span></a>
                                                                     </div>
                                                                 </div>
@@ -2215,7 +2249,7 @@
                                                         <span class="icon">
                                                             <i class="fab fa-google"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>Googleでサインイン</div>
@@ -2237,7 +2271,7 @@
                                                         <span class="icon">
                                                             <i class="fab fa-facebook"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>Facebookでサインイン</div>
@@ -2259,7 +2293,7 @@
                                                         <span class="icon">
                                                             <i class="fab fa-twitter"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>Twitterでサインイン</div>
@@ -2481,7 +2515,7 @@
                                                             <picture class="image is-64x64"
                                                                 style="pointer-events: none;"
                                                                 v-if="'photoURL' in user && user.photoURL !== null">
-                                                                <img class="is-rounded" v-bind:src="user.photoURL"
+                                                                <img v-bind:src="user.photoURL"
                                                                     width="64" height="64" alt="Avatar">
                                                             </picture>
                                                             <picture class="image is-64x64"
@@ -2502,50 +2536,13 @@
                                             <div class="media-content">
                                                 <div class="content has-text-centered">
                                                     <h1 class="is-uppercase has-text-weight-bold">
-                                                        Milchchan</h1>
+                                                        Wonderland</h1>
                                                     <h2 class="has-text-weight-bold">
                                                         milchchan.com</h2>
                                                 </div>
                                             </div>
                                         </article>
                                     </div>
-                                    <!--
-                                    <div class="level-item">
-                                        <article class="media">
-                                            <div class="media-content">
-                                                <div class="content">
-                                                    <button class="button is-rounded is-size-7" type="button"
-                                                        @click="mode = 'sign-in'" v-if="user === null">
-                                                        <span class="icon">
-                                                            <i class="fas fa-star"></i>
-                                                        </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
-                                                            <div class="clip">
-                                                                <div class="scrollable">
-                                                                    <div>足跡を残す</div>
-                                                                    <div>足跡を残す/div>
-                                                                </div>
-                                                            </div>
-                                                        </span>
-                                                    </button>
-                                                    <button class="button is-rounded is-size-7" type="button"
-                                                        @click="share(); isRevealed = false; mode = null;" v-else>
-                                                        <span class="icon">
-                                                            <i class="fas fa-star"></i>
-                                                        </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
-                                                            <div class="clip">
-                                                                <div class="scrollable">
-                                                                    <div>足跡を残す</div>
-                                                                    <div>足跡を残す</div>
-                                                                </div>
-                                                            </div>
-                                                        </span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>-->
                                     <div class="level-item">
                                         <article class="media">
                                             <div class="media-content">
@@ -2555,7 +2552,7 @@
                                                         <span class="icon">
                                                             <i class="fas fa-star"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>ここで言葉を教える</div>
@@ -2569,7 +2566,7 @@
                                                         <span class="icon">
                                                             <i class="fas fa-star"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>ここで言葉を教える</div>
@@ -2591,7 +2588,7 @@
                                                         <span class="icon">
                                                             <i class="fas fa-star"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>教えた言葉</div>
@@ -2605,7 +2602,7 @@
                                                         <span class="icon">
                                                             <i class="fas fa-star"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>教えた言葉</div>
@@ -2627,7 +2624,7 @@
                                                         <span class="icon">
                                                             <i class="fas fa-star"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>お話してもらう</div>
@@ -2641,7 +2638,7 @@
                                                         <span class="icon">
                                                             <i class="fas fa-star"></i>
                                                         </span>
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>お話してもらう</div>
@@ -2650,42 +2647,6 @@
                                                             </div>
                                                         </span>
                                                     </button>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>
-                                    <div class="level-item" v-if="isDebug">
-                                        <article class="media">
-                                            <div class="media-content">
-                                                <div class="content">
-                                                    <div class="file button is-rounded is-size-7 has-text-weight-bold">
-                                                        <label class="file-label">
-                                                            <input class="file-input" type="button"
-                                                                @click="mode = 'sign-in'" v-if="user === null">
-                                                            <input class="file-input" type="file" name="upload"
-                                                                accept="image/png, image/jpeg" multiple
-                                                                v-bind:disabled="isUploading" @change="upload" v-else>
-                                                            <span class="file-cta_">
-                                                                <transition name="fade" mode="out-in">
-                                                                    <span class="icon" v-if="isUploading"
-                                                                        key="uploading">
-                                                                        <i class="fas fa-spinner updating"></i>
-                                                                    </span>
-                                                                    <span class="icon" v-else key="ready">
-                                                                        <i class="fas fa-star"></i>
-                                                                    </span>
-                                                                </transition>
-                                                                <span class="file-label wrap">
-                                                                    <div class="clip">
-                                                                        <div class="scrollable">
-                                                                            <div>背景をアップロード</div>
-                                                                            <div>背景をアップロード</div>
-                                                                        </div>
-                                                                    </div>
-                                                                </span>
-                                                            </span>
-                                                        </label>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </article>
@@ -2705,7 +2666,7 @@
                                                 <div class="content">
                                                     <button class="button is-rounded is-size-7" type="button"
                                                         @click="mode = 'about'">
-                                                        <span class="wrap has-text-weight-bold has-text-black">
+                                                        <span class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>このアプリについて</div>
@@ -2850,23 +2811,23 @@
                                                 <div class="level is-mobile">
                                                     <div class="level-item">
                                                         <a href="https://twitter.com/milchchan" target="_blank"><span
-                                                                class="icon is-small has-text-black"><i
+                                                                class="icon is-small"><i
                                                                     class="fab fa-twitter"></i></span></a>
                                                     </div>
                                                     <div class="level-item">
                                                         <a href="https://instagram.com/milchchan" target="_blank"><span
-                                                                class="icon is-small has-text-black"><i
+                                                                class="icon is-small"><i
                                                                     class="fab fa-instagram"></i></span></a>
                                                     </div>
                                                     <div class="level-item">
                                                         <a href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
                                                             target="_blank"><span
-                                                                class="icon is-small has-text-black"><i
+                                                                class="icon is-small"><i
                                                                     class="fab fa-youtube"></i></span></a>
                                                     </div>
                                                     <div class="level-item">
                                                         <a href="https://github.com/milchchan" target="_blank"><span
-                                                                class="icon is-small has-text-black"><i
+                                                                class="icon is-small"><i
                                                                     class="fab fa-github"></i></span></a>
                                                     </div>
                                                 </div>
@@ -2939,7 +2900,7 @@
                                                 ref="text" v-cloak>
                                         </div>
                                         <div class="control">
-                                            <span class="is-size-7 has-text-weight-bold has-text-grey" v-cloak>
+                                            <span class="is-size-7 has-text-weight-bold" v-cloak>
                                                 {{ maxInputLength - animatedInputLength }}
                                             </span>
                                         </div>
