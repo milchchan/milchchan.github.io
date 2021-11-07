@@ -980,11 +980,11 @@
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media {
             margin: 0;
-            padding: 16px 0px 16px 0px;
+            padding: 0;
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media:first-child {
-            padding: 16px 0px 0px 0px;
+            padding: 16px 0px 16px 0px;
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .content {
@@ -1120,12 +1120,12 @@
         #popup .columns>.column>.control:last-child .level:nth-last-of-type(1) {
             display: block;
             margin: 0;
-            padding: 0px 16px 16px 16px;
+            padding: 0px 32px 32px 32px;
         }
 
         #popup .columns>.column>.control:last-child .level:nth-last-of-type(2) {
             margin: 0;
-            padding: 16px 16px 16px 16px;
+            padding: 16px 32px 16px 32px;
         }
 
         #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
@@ -1220,7 +1220,7 @@
 
         #input .navbar-item:first-of-type .control:first-child .level:last-of-type {
             display: block;
-            margin: 0px 16px 16px 16px;
+            margin: 0px 32px 16px 32px;
             padding: 0;
         }
 
@@ -1284,11 +1284,12 @@
 
         #input>.columns:last-of-type {
             margin: 0;
-            padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px) !important;
-            background: #00eeff;
+            padding: 0 env(safe-area-inset-right, 0px) 16px env(safe-area-inset-left, 0px) !important;
+            background: transparent;
             min-height: fit-content;
-            font-size: 0.75rem !important;
-            line-height: 0.75rem !important;
+            font-size: 0rem !important;
+            line-height: 0 !important;
+            pointer-events: none;
         }
 
         #input>.columns:last-of-type>.column>.control {
@@ -3015,6 +3016,7 @@
                     </div>
                 </div>
             </div>
+            <div class="navbar-item is-expanded columns is-desktop" ref="blank"></div>
         </nav>
         <audio preload="auto" ref="alert">
             <source src="/sounds/float_001.mp3" type="audio/mpeg" />
