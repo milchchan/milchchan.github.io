@@ -356,7 +356,7 @@
             background: var(--background-color);
             -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
-            
+
         }
 
         .overlay::after {
@@ -516,7 +516,7 @@
             margin: 0;
             width: 100%;
             overflow: hidden;
-        }        
+        }
 
         #app>.wrap {
             position: fixed;
@@ -760,7 +760,7 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;            
+            height: 100%;
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
@@ -1726,7 +1726,8 @@
             <div id="map" ref="map">
                 <button class="button is-rounded is-size-7" type="button" @click="isLearning = true;">
                     <svg width="18" height="18" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                        xmlns:serif="http://www.serif.com/"
                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                         <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
                             <path
@@ -1856,12 +1857,18 @@
                             <div class="level-item has-text-centered">
                                 <nav class="level">
                                     <div class="level-item">
-                                        <button class="button is-white" type="button" @click="locate"
-                                            v-cloak>
-                                            <span class="icon is-small" style="pointer-events: none;">
-                                                <i class="fas fa-location-arrow"></i>
-                                            </span>
-                                        </button>
+                                        <transition name="fade" mode="out-in">
+                                            <button class="button" type="button" v-bind:disabled="isLocating" @click="locate" v-if="isLocating" key="processing" v-cloak>
+                                                <span class="icon is-small" style="pointer-events: none;">
+                                                    <i class="fas fa-spinner updating"></i>
+                                                </span>
+                                            </button>
+                                            <button class="button" type="button" @click="locate" v-else key="ready" v-cloak>
+                                                <span class="icon is-small" style="pointer-events: none;">
+                                                    <i class="fas fa-location-arrow"></i>
+                                                </span>
+                                            </button>
+                                        </transition>
                                     </div>
                                 </nav>
                             </div>
@@ -1874,8 +1881,8 @@
                             v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
                             v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart"
                             v-on:after-leave="animationEnd" v-on:leave-cancelled="animationEnd" v-cloak>
-                            <nav class="level notification-list-item"
-                                v-for="notification in notifications" v-bind:key="notification.id">
+                            <nav class="level notification-list-item" v-for="notification in notifications"
+                                v-bind:key="notification.id">
                                 <div class="notification is-info is-light" v-cloak>
                                     <article class="media" v-cloak>
                                         <figure class="media-left" v-if="notification.image" v-cloak>
@@ -1886,8 +1893,7 @@
                                             </span>
                                         </figure>
                                         <div class="media-content" v-cloak>
-                                            <div class="content has-text-left"
-                                                v-if="notification.accent">
+                                            <div class="content has-text-left" v-if="notification.accent">
                                                 <span class="is-size-7 has-text-weight-bold"
                                                     v-bind:style="{ color: notification.accent instanceof Object ? (isDarkMode ? notification.accent.dark : notification.accent.light) : notification.accent }"
                                                     v-cloak>
@@ -1910,36 +1916,29 @@
         </div>
         <div class="left" v-cloak>
             <transition name="fade" mode="out-in">
-                <button class="button" type="button" @click="isOverlayed = false"
-                    v-if="isOverlayed" key="close">
+                <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed" key="close">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="word = null" v-else-if="word"
-                    key="cancel">
+                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button"
-                    @click="isRevealed = !isRevealed; mode = null;"
-                    v-else-if="user === null || mode === null || mode === 'sign-in'"
-                    key="humberger">
+                <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
+                    v-else-if="user === null || mode === null || mode === 'sign-in'" key="humberger">
                     <span class="icon is-small">
                         <i class="fas fa-bars"></i>
                     </span>
                 </button>
-                <button class="button" type="button"
-                    @click="isRevealed = false; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && 'words' in mode === false"
-                    key="close">
+                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                    v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="mode = null" v-else
-                    key="back">
+                <button class="button" type="button" @click="mode = null" v-else key="back">
                     <span class="icon is-small">
                         <i class="fas fa-arrow-left"></i>
                     </span>
@@ -1967,14 +1966,13 @@
                     </button>
                 </transition>-->
                     <transition name="fade" mode="out-in">
-                        <button class="button" type="button"
-                            @click="isMuted = false" v-if="isMuted" key="disabled" v-cloak>
+                        <button class="button" type="button" @click="isMuted = false" v-if="isMuted" key="disabled"
+                            v-cloak>
                             <span class="icon is-small" style="pointer-events: none;">
                                 <i class="fas fa-volume-mute"></i>
                             </span>
                         </button>
-                        <button class="button" type="button"
-                            @click="isMuted = true" v-else key="enabled" v-cloak>
+                        <button class="button" type="button" @click="isMuted = true" v-else key="enabled" v-cloak>
                             <span class="icon is-small" style="pointer-events: none;">
                                 <i class="fas fa-volume-up"></i>
                             </span>
@@ -1982,8 +1980,8 @@
                     </transition>
                 </div>
                 <div class="level-item" v-else key="sync">
-                    <button class="button" type="button"
-                        v-bind:disabled="isLoading || isHangingOn || isSubmitting" @click="refresh" v-cloak>
+                    <button class="button" type="button" v-bind:disabled="isLoading || isHangingOn || isSubmitting"
+                        @click="refresh" v-cloak>
                         <span class="icon is-small">
                             <i class="fas fa-sync"
                                 v-bind:class="{ loading: isLoading || isHangingOn || isSubmitting }"></i>
@@ -1994,7 +1992,8 @@
         </div>
         <transition name="reveal">
             <div id="menu" v-if="isRevealed && !isOverlayed || word" ref="menu">
-                <div class="columns is-centered" v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
+                <div class="columns is-centered"
+                    v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
                     <div class="column is-half is-mobile">
                         <div class="control" v-cloak>
                             <transition name="fade" mode="out-in" v-on:before-leave="$refs.menu.scroll(0, 0)">
@@ -2004,14 +2003,17 @@
                                             <article class="media" v-cloak>
                                                 <figure class="media-left">
                                                     <p class="image is-64x64">
-                                                        <img class="is-rounded" v-bind:src="character.image" v-bind:alt="character.name"
-                                                            v-cloak>
+                                                        <img class="is-rounded" v-bind:src="character.image"
+                                                            v-bind:alt="character.name" v-cloak>
                                                     </p>
                                                 </figure>
                                                 <div class="media-content">
                                                     <div class="content has-text-left">
-                                                        <div class="balloon" v-bind:style="{ backgroundColor: character.accent }" v-cloak>
-                                                            <p class="is-size-7 has-text-weight-bold has-text-white" v-cloak>
+                                                        <div class="balloon"
+                                                            v-bind:style="{ backgroundColor: character.accent }"
+                                                            v-cloak>
+                                                            <p class="is-size-7 has-text-weight-bold has-text-white"
+                                                                v-cloak>
                                                                 {{ word.name }}
                                                             </p>
                                                         </div>
@@ -2021,17 +2023,19 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <div class="columns is-mobile is-gapless" v-for="row in arrange(word.attributes, 2)"
-                                                            v-cloak>
-                                                            <div class="column is-half" v-for="column in row" v-bind:key="column.name"
-                                                                v-cloak>
+                                                        <div class="columns is-mobile is-gapless"
+                                                            v-for="row in arrange(word.attributes, 2)" v-cloak>
+                                                            <div class="column is-half" v-for="column in row"
+                                                                v-bind:key="column.name" v-cloak>
                                                                 <div class="field">
                                                                     <label class="checkbox">
-                                                                        <input type="checkbox" v-bind:data-word="word.name"
-                                                                            v-bind:data-attribute="column.name" @change="check"
-                                                                            v-model="column.value">
+                                                                        <input type="checkbox"
+                                                                            v-bind:data-word="word.name"
+                                                                            v-bind:data-attribute="column.name"
+                                                                            @change="check" v-model="column.value">
                                                                         <span class="custom"></span>
-                                                                        <span class="wrap is-size-7 has-text-weight-bold">
+                                                                        <span
+                                                                            class="wrap is-size-7 has-text-weight-bold">
                                                                             <div class="clip">
                                                                                 <div class="scrollable">
                                                                                     <div>{{ column.name }}</div>
@@ -2057,8 +2061,8 @@
                                                                     </button>
                                                                 </div>
                                                                 <div class="level-item">
-                                                                    <button class="button is-white" type="button" @click="word = null"
-                                                                        v-cloak>
+                                                                    <button class="button is-white" type="button"
+                                                                        @click="word = null" v-cloak>
                                                                         <span class="icon is-small is-danger">
                                                                             <i class="fas fa-times"></i>
                                                                         </span>
@@ -2079,13 +2083,13 @@
                                                 <p class="image is-64x64 is-superellips">
                                                     <picture class="image is-64x64" style="pointer-events: none;"
                                                         v-if="'image' in mode && mode.image !== null">
-                                                        <img v-bind:src="mode.image" width="64"
-                                                            height="64" alt="Avatar">
+                                                        <img v-bind:src="mode.image" width="64" height="64"
+                                                            alt="Avatar">
                                                     </picture>
                                                     <picture class="image is-64x64" style="pointer-events: none;"
                                                         v-else-if="'user' in mode && 'image' in mode.user && mode.user.image !== null">
-                                                        <img v-bind:src="mode.user.image" width="64"
-                                                            height="64" alt="Avatar">
+                                                        <img v-bind:src="mode.user.image" width="64" height="64"
+                                                            alt="Avatar">
                                                     </picture>
                                                     <picture class="image is-64x64" style="pointer-events: none;"
                                                         v-else>
@@ -2130,8 +2134,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </span>
-                                                                <span class="wrap has-text-weight-bold"
-                                                                    v-else>
+                                                                <span class="wrap has-text-weight-bold" v-else>
                                                                     <div class="clip">
                                                                         <div class="scrollable">
                                                                             <div>{{ mode.name }}を教える</div>
@@ -2149,8 +2152,7 @@
                                                     <div class="media-content">
                                                         <div class="content">
                                                             <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
-                                                                target="_blank"><span
-                                                                    class="icon is-small"><i
+                                                                target="_blank"><span class="icon is-small"><i
                                                                         class="fas fa-search"></i></span></a>
                                                         </div>
                                                     </div>
@@ -2186,8 +2188,7 @@
                                                                             <span class="icon">
                                                                                 <i class="fas fa-star"></i>
                                                                             </span>
-                                                                            <span
-                                                                                class="wrap has-text-weight-bold">
+                                                                            <span class="wrap has-text-weight-bold">
                                                                                 <div class="clip">
                                                                                     <div class="scrollable">
                                                                                         <div>{{ word.name }}を教える</div>
@@ -2220,8 +2221,10 @@
                                                             <article class="media">
                                                                 <div class="media-content">
                                                                     <div class="content">
-                                                                        <button class="button is-white" type="button" v-bind:disabled="mode.indexes.length === 0"
-                                                                            @click="previous(mode.indexes.shift().name)" v-cloak>
+                                                                        <button class="button is-white" type="button"
+                                                                            v-bind:disabled="mode.indexes.length === 0"
+                                                                            @click="previous(mode.indexes.shift().name)"
+                                                                            v-cloak>
                                                                             <span class="icon is-small">
                                                                                 <i class="fas fa-chevron-left"></i>
                                                                             </span>
@@ -2234,7 +2237,8 @@
                                                             <article class="media">
                                                                 <div class="media-content">
                                                                     <div class="content">
-                                                                        <button class="button is-white" type="button" v-bind:disabled="mode.next === null"
+                                                                        <button class="button is-white" type="button"
+                                                                            v-bind:disabled="mode.next === null"
                                                                             @click="next(mode.next.name)" v-cloak>
                                                                             <span class="icon is-small">
                                                                                 <i class="fas fa-chevron-right"></i>
@@ -2526,8 +2530,8 @@
                                                             <picture class="image is-64x64"
                                                                 style="pointer-events: none;"
                                                                 v-if="'photoURL' in user && user.photoURL !== null">
-                                                                <img v-bind:src="user.photoURL"
-                                                                    width="64" height="64" alt="Avatar">
+                                                                <img v-bind:src="user.photoURL" width="64" height="64"
+                                                                    alt="Avatar">
                                                             </picture>
                                                             <picture class="image is-64x64"
                                                                 style="pointer-events: none;" v-else>
@@ -2609,7 +2613,8 @@
                                                         </span>
                                                     </button>
                                                     <button class="button is-rounded is-size-7" type="button"
-                                                        @click="mode = { words: null, next: null, indexes: [] }; next(mode.next);" v-else>
+                                                        @click="mode = { words: null, next: null, indexes: [] }; next(mode.next);"
+                                                        v-else>
                                                         <span class="icon">
                                                             <i class="fas fa-star"></i>
                                                         </span>
@@ -2832,8 +2837,7 @@
                                                     </div>
                                                     <div class="level-item">
                                                         <a href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
-                                                            target="_blank"><span
-                                                                class="icon is-small"><i
+                                                            target="_blank"><span class="icon is-small"><i
                                                                     class="fab fa-youtube"></i></span></a>
                                                     </div>
                                                     <div class="level-item">
