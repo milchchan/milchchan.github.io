@@ -302,6 +302,7 @@
         }
 
         .logo {
+            pointer-events: none;
             z-index: 1;
             position: absolute;
             display: flex;
@@ -312,6 +313,7 @@
             padding: 0;
             width: 100%;
             min-height: 100%;
+            touch-action: none;
         }
 
         .logo svg {
@@ -534,6 +536,13 @@
             bottom: 0;
             margin: 0;
             padding: 0px 0px 16px 0px;
+        }
+
+        .sidebar>.level>.level-item:last-child:not(:first-child) .image>button {
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 0;
+            background: transparent;
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:first-child {
@@ -1949,14 +1958,28 @@
                     <article class="media">
                         <figure class="media-content">
                             <p class="image is-48x48 is-superellips">
-                                <picture class="image is-48x48" style="pointer-events: none;"
-                                    v-if="user !== null && 'image' in user && user.image !== null" key="user.image">
-                                    <img v-bind:src="user.image" width="48" height="48" alt="Avatar">
-                                </picture>
-                                <picture class="image is-48x48" style="pointer-events: none;" v-else key="default">
-                                    <source srcset="/images/Merku.png" media="(prefers-color-scheme: dark)">
-                                    <img src="/images/Milch.png" width="48" height="48" alt="Logo">
-                                </picture>
+                                <transition name="fade" mode="out-in">
+                                    <button class="button image is-48x48 is-superellips" type="button"
+                                        @click="mode = 'sign-in'" v-if="user === null" key="default" v-cloak>
+                                        <picture class="image is-48x48" style="pointer-events: none;">
+                                            <source srcset="/images/Merku.png" media="(prefers-color-scheme: dark)">
+                                            <img src="/images/Milch.png" width="64" height="64" alt="Logo">
+                                        </picture>
+                                    </button>
+                                    <button class="button image is-48x48 is-superellips" type="button"
+                                        @click="activate()" v-else key="user" v-cloak>
+                                        <picture class="image is-48x48" style="pointer-events: none;"
+                                            v-if="'photoURL' in user && user.photoURL !== null" key="user.photoURL">
+                                            <img class="is-rounded" v-bind:src="user.photoURL" width="64" height="64"
+                                                alt="Avatar">
+                                        </picture>
+                                        <picture class="image is-48x48" style="pointer-events: none;" v-else
+                                            key="default">
+                                            <source srcset="/images/Merku.png" media="(prefers-color-scheme: dark)">
+                                            <img src="/images/Milch.png" width="64" height="64" alt="Logo">
+                                        </picture>
+                                    </button>
+                                </transition>
                             </p>
                         </figure>
                     </article>
