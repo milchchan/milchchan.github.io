@@ -440,8 +440,7 @@
         }
 
         .background {
-            z-index: 1;
-            position: fixed;
+            position: absolute;
             width: 100%;
             min-height: 100%;
             background-color: transparent;
@@ -451,10 +450,9 @@
         }
 
         .background:first-child::after {
-            z-index: 1;
             pointer-events: none;
             display: block;
-            position: fixed;
+            position: absolute;
             left: 0;
             top: 0;
             width: 100%;
@@ -466,10 +464,10 @@
 
         .background>div {
             display: block;
-            position: fixed;
+            position: absolute;
             background-color: transparent;
             overflow: hidden;
-            background-attachment: fixed;
+            background-attachment: scroll;
             background-position: 50% 25%;
             background-size: cover;
             background-repeat: no-repeat;
