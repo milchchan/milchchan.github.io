@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
   <meta name="theme-color" content="#f6f3f1">
   <title>404</title>
   <link rel="icon" type="image/png" href="favicon.png">
@@ -53,21 +54,6 @@
       overflow: hidden;
     }
 
-    body::before {
-      z-index: 0;
-      display: block;
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      min-height: 100%;
-      background: url('/images/404.png') 50% 50% no-repeat;
-      background-size: cover;
-      content: "";
-      transform-origin: 50% 50%;
-      animation: load 0.5s ease-out;
-    }
-
     h1 {
       z-index: 1;
       margin: 0;
@@ -79,7 +65,46 @@
       line-height: 50vmin;
     }
 
-    #message {     
+    .wrap {
+      position: absolute;
+      margin: 0;
+      padding: 16px;
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .frame {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 100% !important;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .frame::before {
+      z-index: 0;
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      min-height: 100%;
+      overflow: hidden;
+      background: url('/images/404.png') 50% 50% no-repeat;
+      background-attachment: scroll;
+      background-size: cover;
+      content: "";
+      transform-origin: 50% 50%;
+      animation: load 0.5s ease-out;
+    }
+
+    #message {
       z-index: 0;
       position: absolute;
       display: flex;
@@ -94,11 +119,11 @@
       background: var(--background-color);
       -webkit-backdrop-filter: blur(8px);
       backdrop-filter: blur(8px);
-    }   
+    }
 
     #message::before {
       z-index: 0;
-      position: fixed;
+      position: absolute;
       margin: 0;
       padding: 0;
       width: 100%;
@@ -161,7 +186,7 @@
         background: url('/images/Overlay@2x.png') repeat;
         background-size: 2px 2px;
       }
-      
+
       #message::after {
         background: var(--background-image-2x) 50% 50% repeat;
         background-size: 100px 100px;
@@ -174,7 +199,7 @@
         background: url('/images/Overlay@3x.png') repeat;
         background-size: 2px 2px;
       }
-      
+
       #message::after {
         background: var(--background-image-3x) 50% 50% repeat;
         background-size: 100px 100px;
@@ -184,8 +209,12 @@
 </head>
 
 <body>
-  <div id="message">
-    <h1>404</h1>
+  <div class="wrap">
+    <div class="frame">
+      <div id="message">
+        <h1>404</h1>
+      </div>
+    </div>
   </div>
 </body>
 
