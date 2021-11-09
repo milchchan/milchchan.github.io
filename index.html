@@ -240,14 +240,14 @@
         }
 
         .tags {
-            margin: 0;
+            margin: 0 !important;
             padding: 0;
             align-items: flex-start;
             justify-content: center !important;
         }
 
         .tags>.control {
-            margin: 0px 0px 0px 0px;
+            margin: 0 !important;
             padding: 8px 8px 8px 8px;
         }
 
@@ -449,6 +449,7 @@
             background-position: 50% 50%;
             background-size: contain;
             background-repeat: no-repeat;
+            overflow: hidden;
         }
 
         .background:first-child::after {
@@ -462,19 +463,20 @@
             background: url('/images/Overlay.png') repeat;
             background-size: 2px 2px;
             content: "";
+            overflow: hidden;
         }
 
         .background>div {
             display: block;
             position: absolute;
             background-color: transparent;
-            overflow: hidden;
             background-attachment: scroll;
             background-position: 50% 25%;
             background-size: cover;
             background-repeat: no-repeat;
             width: 100%;
             min-height: 100%;
+            overflow: hidden;
         }
 
         .background>div::before {
@@ -495,7 +497,6 @@
         }
 
         .sidebar {
-            z-index: 0;
             position: relative;
             padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 16px);
             width: fit-content;
@@ -609,7 +610,6 @@
         }
 
         .container {
-            z-index: 0;
             position: relative;
             padding: 0;
             width: 100%;
@@ -669,7 +669,6 @@
         }
 
         #app>.container>.wrap {
-            z-index: 0;
             position: absolute;
             padding: 16px;
             width: 100%;
@@ -882,18 +881,8 @@
             height: 1.0rem !important;
         }
 
+        #menu,
         .hud {
-            z-index: 1;
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            min-height: 100%;
-            overflow: hidden;
-        }
-
-        #menu {
             z-index: 1;
             position: absolute;
             display: flex;
@@ -907,7 +896,8 @@
             overflow-y: auto;
         }
 
-        #menu>.columns {
+        #menu>.columns,
+        .hud>.columns {
             display: flex;
             top: 0;
             margin: 0;
@@ -920,7 +910,8 @@
             overflow-y: auto;
         }
 
-        #menu>.columns>.column {
+        #menu>.columns>.column,
+        .hud>.columns>.column {
             flex: none;
             margin: auto !important;
             overflow-x: hidden;
@@ -931,6 +922,11 @@
         #menu>.columns>.column>.control {
             margin: 0;
             padding: 0px 16px 0px 16px;
+        }
+
+        .hud>.columns>.column>.field {
+            margin: 0;
+            padding: 16px 32px 16px 32px;
         }
 
         #menu>.columns>.column>.control>.level:first-child {
@@ -2082,22 +2078,28 @@
             </transition>
             <transition name="fade">
                 <div class="hud" v-if="isOverlayed">
-                    <transition-group name="tagcloud-list" class="tags are-medium field is-grouped is-grouped-multiline"
-                        tag="div" v-cloak>
-                        <div class="control tagcloud-list-item" v-for="tag in tags" v-bind:key="tag.index">
-                            <div class="tags has-addons" v-cloak>
-                                <button class="button tag is-rounded is-size-7 has-text-weight-bold" type="button"
-                                    v-bind:style="{ color: 'rgba(0, 0, 0, ' + (0.25 + 0.75 * tag.score) + ')' }"
-                                    @click="learn({ name: tag.name })" v-cloak>
-                                    <div class="clip">
-                                        <div class="scrollable">
-                                            <div>{{ tag.name }}</div>
-                                            <div>{{ tag.name }}</div>
-                                        </div>
-                                </button>
-                            </div>
+                    <div class="columns is-centered"
+                        v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
+                        <div class="column is-half is-mobile ">
+                            <transition-group name="tagcloud-list"
+                                class="tags are-medium field is-grouped is-grouped-multiline" tag="div">
+                                <div class="control tagcloud-list-item" v-for="tag in tags" v-bind:key="tag.index">
+                                    <div class="tags has-addons" v-cloak>
+                                        <button class="button tag is-rounded is-size-7 has-text-weight-bold"
+                                            type="button"
+                                            v-bind:style="{ color: 'rgba(0, 0, 0, ' + (0.25 + 0.75 * tag.score) + ')' }"
+                                            @click="learn(tag.name); isRevealed = false;">
+                                            <div class="clip">
+                                                <div class="scrollable">
+                                                    <div>{{ tag.name }}</div>
+                                                    <div>{{ tag.name }}</div>
+                                                </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </transition-group>
                         </div>
-                    </transition-group>
+                    </div>
                 </div>
             </transition>
             <transition name="reveal">
