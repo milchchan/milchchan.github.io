@@ -58,12 +58,18 @@
             /*--accent-color: #ff4c90;*/
             --accent-color: #ff86b5;
             /*ffe598*/
+            --background-image: url('/images/Background-Light.png');
+            --background-image-2x: url('/images/Background-Light@2x.png');
+            --background-image-3x: url('/images/Background-Light@3x.png');
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
                 --background-color: rgba(0, 0, 0, 0.75);
                 --foreground-color: #ffffff;
+                --background-image: url('/images/Background-Dark.png');
+                --background-image-2x: url('/images/Background-Dark@2x.png');
+                --background-image-3x: url('/images/Background-Dark@3x.png');
             }
         }
 
@@ -359,7 +365,7 @@
             top: 0;
             left: 0;
             overflow: hidden;
-            background: rgb(255,238,0) url('/images/Stripes.png') 50% 50% repeat;
+            background: rgb(255, 238, 0) url('/images/Stripes.png') 50% 50% repeat;
             background-size: 20px 20px;
             animation: progress 0.5s linear 0s infinite;
         }
@@ -375,7 +381,6 @@
             background: var(--background-color);
             -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
-
         }
 
         .overlay::after {
@@ -385,8 +390,9 @@
             left: 0;
             width: 100%;
             min-height: 100%;
+            transform: translate3d(0, 0%, 0);
             overflow: hidden;
-            background: url('/images/Background.png') 50% 50% repeat;
+            background: var(--background-image) 50% 50% repeat;
             animation: fade 0.5s ease-out, loop 10s linear infinite;
             transform: translate3d(0, 0%, 0);
             content: "";
@@ -1799,12 +1805,12 @@
         @media screen and (-webkit-min-device-pixel-ratio:2),
         (min-resolution: 2dppx) {
             .overlay::after {
-                background: url('/images/Background@2x.png') 50% 50% repeat;
+                background: var(--background-image-2x) 50% 50% repeat;
                 background-size: 100px 100px;
             }
 
             .progress>.bar {
-                background: rgb(255,238,0) url('/images/Stripes@2x.png') 50% 50% repeat;
+                background: rgb(255, 238, 0) url('/images/Stripes@2x.png') 50% 50% repeat;
                 background-size: 20px 20px;
             }
 
@@ -1827,12 +1833,12 @@
         @media screen and (-webkit-min-device-pixel-ratio:3),
         (min-resolution: 3dppx) {
             .overlay::after {
-                background: url('/images/Background@3x.png') 50% 50% repeat;
+                background: var(--background-image-3x) 50% 50% repeat;
                 background-size: 100px 100px;
             }
 
             .progress>.bar {
-                background: rgb(255,238,0) url('/images/Stripes@3x.png') 50% 50% repeat;
+                background: rgb(255, 238, 0) url('/images/Stripes@3x.png') 50% 50% repeat;
                 background-size: 20px 20px;
             }
 
@@ -1989,18 +1995,21 @@
         <div class="container">
             <div class="wrap">
                 <div id="map" ref="map">
-                    <button class="button is-rounded is-size-7" type="button" @click="isLearning = true;">
-                        <svg width="18" height="18" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-                            xmlns:serif="http://www.serif.com/"
-                            style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                            <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
-                                <path
-                                    d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z"
-                                    style="fill:rgba(255,238,0,0.5);" />
-                            </g>
-                        </svg>
-                    </button>
+                    <transition name="fade">
+                        <button class="button is-rounded is-size-7" type="button" @click="isLearning = true;"
+                            v-if="user !== null" v-cloak>
+                            <svg width="18" height="18" viewBox="0 0 18 18" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                xml:space="preserve" xmlns:serif="http://www.serif.com/"
+                                style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                                <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
+                                    <path
+                                        d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z"
+                                        style="fill:rgba(255,238,0,0.5);" />
+                                </g>
+                            </svg>
+                        </button>
+                    </transition>
                     <transition name="fade">
                         <div class="progress" v-if="progress !== null" v-cloak>
                             <div class="bar" v-bind:style="{width: String(100.0 * progress) + '%'}"></div>
