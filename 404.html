@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#d8d8d8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
+  <meta name="theme-color" content="#f6f3f1">
   <title>404</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="touch-icon-iphone.png">
@@ -14,12 +14,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
   <style media="screen">
     :root {
-      --text-color: #000000;
+      --background-color: rgba(255, 255, 255, 0.75);
+      --foreground-color: #000000;
+      --background-image: url('/images/Background-Light.png');
+      --background-image-2x: url('/images/Background-Light@2x.png');
+      --background-image-3x: url('/images/Background-Light@3x.png');
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --text-color: #ffffff;
+        --background-color: rgba(0, 0, 0, 0.75);
+        --foreground-color: #ffffff;
+        --background-image: url('/images/Background-Dark.png');
+        --background-image-2x: url('/images/Background-Dark@2x.png');
+        --background-image-3x: url('/images/Background-Dark@3x.png');
       }
     }
 
@@ -32,7 +40,7 @@
       overflow-x: hidden;
       overflow-y: auto;
       scroll-behavior: smooth;
-      background: #f1f1f1;
+      background: #f6f3f1;
     }
 
     body {
@@ -43,10 +51,6 @@
       min-height: 100vh;
       min-height: -webkit-fill-available;
       overflow: hidden;
-      background: url('/images/Background.png') 50% 50% repeat;
-      background-size: 100px 100px;
-      animation: fade 0.5s ease-out, loop 10s linear infinite;
-      transition: .5s;
     }
 
     body::before {
@@ -65,28 +69,58 @@
     }
 
     h1 {
+      z-index: 1;
       margin: 0;
       padding: 0;
-      color: var(--text-color);
+      color: var(--foreground-color);
       font-family: 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
       font-size: 50vmin;
       font-weight: bold;
       line-height: 50vmin;
     }
 
-    #message {
-      z-index: 1;
-      position: fixed;
+    #message {     
+      z-index: 0;
+      position: absolute;
       display: flex;
+      top: 0;
+      left: 0;
+      width: 100%;
+      min-height: 100%;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
+      background: var(--background-color);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }   
+
+    #message::before {
+      z-index: 0;
+      position: fixed;
       margin: 0;
       padding: 0;
       width: 100%;
       min-height: 100%;
       background: url('/images/Overlay.png') repeat;
       background-size: 2px 2px;
+      content: "";
+    }
+
+    #message::after {
+      z-index: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      min-height: 100%;
+      transform: translate3d(0, 0%, 0);
+      overflow: hidden;
+      background: var(--background-image) 50% 50% repeat;
+      animation: fade 0.5s ease-out, loop 10s linear infinite;
+      transform: translate3d(0, 0%, 0);
+      content: "";
     }
 
     @keyframes fade {
@@ -123,27 +157,27 @@
 
     @media screen and (-webkit-min-device-pixel-ratio:2),
     (min-resolution: 2dppx) {
-      body {
-        background: url('/images/Background-Light@2x.png') 50% 50% repeat;
-        background-size: 100px 100px;
-      }
-
-      #message {
+      #message::before {
         background: url('/images/Overlay@2x.png') repeat;
         background-size: 2px 2px;
+      }
+      
+      #message::after {
+        background: var(--background-image-2x) 50% 50% repeat;
+        background-size: 100px 100px;
       }
     }
 
     @media screen and (-webkit-min-device-pixel-ratio:3),
     (min-resolution: 3dppx) {
-      body {
-        background: url('/images/Background-Light@3x.png') 50% 50% repeat;
-        background-size: 100px 100px;
-      }
-
-      #message {
+      #message::before {
         background: url('/images/Overlay@3x.png') repeat;
         background-size: 2px 2px;
+      }
+      
+      #message::after {
+        background: var(--background-image-3x) 50% 50% repeat;
+        background-size: 100px 100px;
       }
     }
   </style>
