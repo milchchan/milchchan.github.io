@@ -1269,18 +1269,75 @@
             padding: 0;
         }
 
-        #popup .columns>.column>.control:last-child .level:nth-last-of-type(1) {
+        #popup .columns>.column>.control:last-child>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) {
             display: block;
             margin: 0;
-            padding: 0px 32px 32px 32px;
+            padding: 0px 32px 16px 32px;
+            width: 100%;
         }
 
-        #popup .columns>.column>.control:last-child .level:nth-last-of-type(2) {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2) {
             margin: 0;
             padding: 16px 32px 16px 32px;
+            width: 100%;
         }
 
-        #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            width: 100%
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item:first-child {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item:last-child:not(:first-child) {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item button {
+            margin: 0px;
+            border: 0px solid rgba(255, 255, 255, 0.5);
+            border-radius: 290486px;
+            padding: 16px;
+            background: transparent !important;
+            background-clip: padding-box;
+            box-shadow: none;
+            height: initial;
+            color: #ffffff !important;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item button>span {
+            margin: 0 !important;
+            width: 1.0rem !important;
+            height: 1.0rem !important;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1292,38 +1349,39 @@
                 -10px -10px 30px #ffffff;*/
         }
 
-        #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media .media-left {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media .media-left {
             margin: 0px 8px 0px 0px !important;
             padding: 0;
         }
 
-        #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media .media-content .content {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media .media-content .content {
             transform: rotate(0.03deg);
         }
 
-        #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media .media-content .content span {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media .media-content .content span {
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 1.25rem;
         }
 
-        #popup .columns>.column>.control:last-child .level:nth-last-of-type(1) .media {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) .media {
             margin: 0;
-            padding: 0px 16px 16px 16px;
+            padding: 0px 16px 0px 16px;
         }
 
-        #popup .columns>.column>.control:last-child .level:nth-last-of-type(1) .media .media-content {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) .media .media-content {
             overflow: hidden;
             transform: rotate(0.03deg);
         }
 
-        #popup .columns>.column>.control:last-child .level:nth-last-of-type(1) .media span {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) .media span {
             display: inline-block;
             font-size: 1.0rem;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 2.0rem;
+            vertical-align: middle;
         }
 
-        #popup .columns>.column>.control:last-child .level:nth-last-of-type(1) .media span.break {
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) .media span.break {
             display: block;
             margin: 0;
         }
@@ -3045,36 +3103,52 @@
                 <nav id="popup" class="navbar is-fixed-bottom" v-if="isPopup" v-cloak>
                     <div class=" navbar-item is-expanded columns is-desktop">
                         <div class="column is-half has-content-centered is-mobile">
-                            <div class="control">
-                                <nav class="level is-mobile" v-if="character !== null">
-                                    <article class="media" v-bind:style="{ backgroundColor: character.accent }">
-                                        <figure class="media-left">
-                                            <span class="image is-24x24">
-                                                <img class="is-rounded" v-bind:src="character.image"
-                                                    v-bind:alt="character.name" v-cloak>
-                                            </span>
-                                        </figure>
-                                        <div class="media-content">
-                                            <div class="content has-text-left">
-                                                <span class="is-size-7 has-text-weight-bold has-text-white" v-cloak>
-                                                    {{ character.name }}
-                                                </span>
+                            <div class="control" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
+                                <nav class="level is-mobile">
+                                    <div class="level-item">
+                                        <nav class="level is-mobile" v-if="character !== null">
+                                            <div class="level-item">
+                                                <article class="media"
+                                                    v-bind:style="{ backgroundColor: character.accent }">
+                                                    <figure class="media-left">
+                                                        <span class="image is-24x24">
+                                                            <img class="is-rounded" v-bind:src="character.image"
+                                                                v-bind:alt="character.name" v-cloak>
+                                                        </span>
+                                                    </figure>
+                                                    <div class="media-content">
+                                                        <div class="content has-text-left">
+                                                            <span class="is-size-7 has-text-weight-bold has-text-white"
+                                                                v-cloak>
+                                                                {{ character.name }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </article>
                                             </div>
-                                        </div>
-                                    </article>
-                                </nav>
-                                <nav class="level" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
-                                    <article class="media">
-                                        <div class="media-content"
-                                            v-bind:style="{ height: animatedPopupTextHeight + 'px' }">
-                                            <div class="content has-text-left" ref="popupText">
-                                                <span class="has-text-weight-bold has-text-white"
-                                                    v-bind:class="{ break: character.value == '\n' }"
-                                                    v-for="character in text" v-bind:key="character.key" v-cloak>{{
-                                                    character.value }}</span>
+                                            <div class="level-item">
+                                                <button class="button" type="button" @click="isPopup = false" v-cloak>
+                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                        <i class="fas fa-times"></i>
+                                                    </span>
+                                                </button>
                                             </div>
-                                        </div>
-                                    </article>
+                                        </nav>
+                                    </div>
+                                    <div class="level-item">
+                                        <article class="media">
+                                            <div class="media-content"
+                                                v-bind:style="{ height: animatedPopupTextHeight + 'px' }">
+                                                <div class="content has-text-left" ref="popupText">
+                                                    <span class="has-text-weight-bold has-text-white"
+                                                        v-bind:class="{ break: character.value == '\n' }"
+                                                        v-for="character in text" v-bind:key="character.key"
+                                                        v-cloak>{{
+                                                        character.value }}</span>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </div>
                                 </nav>
                             </div>
                         </div>
