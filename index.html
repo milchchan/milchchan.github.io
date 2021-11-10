@@ -316,7 +316,7 @@
             justify-content: center;
             align-items: center;
             margin: 0;
-            padding: 0;
+            padding: 32px;
             width: 100%;
             min-height: 100%;
             touch-action: none;
@@ -336,6 +336,34 @@
             stroke-dasharray: 250;
             stroke-dashoffset: 250;
             animation: draw 1s linear forwards, startup 0.5s ease-out 1s forwards;
+        }
+
+        .sunrise {
+            pointer-events: none;
+            z-index: 1;
+            position: absolute;
+            display: flex;
+            margin: 0;
+            padding: 16px;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sunrise>svg {
+            position: relative;
+            object-fit: cover;
+            width: 100%;
+            min-height: 100%;
+            height: 100%;
+            animation: loading 30s linear infinite;
+        }
+
+        .sunrise>svg>radialGradient>stop {
+            stop-color: rgb(255, 238, 0) !important;
         }
 
         .progress {
@@ -624,11 +652,22 @@
             height: 100%;
         }
 
+        .frame {
+            z-index: 0;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 100% !important;
+            height: 100%;
+            overflow: hidden;
+        }
+
         #map {
             z-index: 0;
-            position: relative !important;
+            position: absolute !important;
             display: flex;
-            border-radius: 16px;
             padding: 0;
             width: 100%;
             height: 100%;
@@ -1130,11 +1169,12 @@
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media {
             margin: 0;
-            padding: 0;
+            border: 0px solid transparent;
+            padding: 0px 16px 0px 16px;
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media:first-child {
-            padding: 16px 0px 16px 0px;
+            padding: 16px;
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .content {
@@ -1224,10 +1264,6 @@
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .level:nth-last-of-type(1) .level-item button span {
             margin: 0;
-        }
-
-        #menu>.columns>.column>.control>.level:first-child .columns .column .media {
-            border: 0px solid transparent;
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media:nth-of-type(1) .media-left {
@@ -2054,25 +2090,41 @@
         </div>
         <div class="container">
             <div class="wrap">
-                <div id="map" ref="map">
-                    <transition name="fade">
-                        <button class="button is-rounded is-size-7" type="button" @click="isLearning = true;"
-                            v-if="user !== null" v-cloak>
-                            <svg width="18" height="18" viewBox="0 0 18 18" version="1.1"
-                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                xml:space="preserve" xmlns:serif="http://www.serif.com/"
-                                style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                                <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
-                                    <path
-                                        d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z"
-                                        style="fill:rgba(255,238,0,0.5);" />
-                                </g>
-                            </svg>
-                        </button>
-                    </transition>
+                <div class="frame">
+                    <div id="map" ref="map">
+                        <transition name="fade">
+                            <button class="button is-rounded is-size-7" type="button" @click="isLearning = true;"
+                                v-if="user !== null" v-cloak>
+                                <svg width="18" height="18" viewBox="0 0 18 18" version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    xml:space="preserve" xmlns:serif="http://www.serif.com/"
+                                    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                                    <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
+                                        <path
+                                            d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z"
+                                            style="fill:rgba(255,238,0,0.5);" />
+                                    </g>
+                                </svg>
+                            </button>
+                        </transition>
+                    </div>
                     <transition name="fade">
                         <div class="progress" v-if="progress !== null" v-cloak>
                             <div class="bar" v-bind:style="{width: String(100.0 * progress) + '%'}"></div>
+                        </div>
+                    </transition>
+                    <transition name="fade">
+                        <div class="sunrise" v-show="isStared" v-cloak>
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                                x="0px" y="0px" width="100%" height="100%" viewBox="0 0 586.016 575.146"
+                                enable-background="new 0 0 586.016 575.146" xml:space="preserve" ref="sunrise" v-cloak>
+                                <radialGradient id="SVGID_2_" cx="293" cy="287.6" r="288.2" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0" style="stop-color:#FFFFFF;stop-opacity:0.15" />
+                                    <stop offset="1" style="stop-color:#FFFFFF;stop-opacity:0" />
+                                </radialGradient>
+                                <path fill="url(#SVGID_2_)"
+                                    d="M293.008 575.76c-23.217 0-46.367-2.793-68.81-8.301l67.293-274.207c0.449 0.1 0.9 0.2 1.5 0.163h0.131l-0.255 0.001l1.498 282.341L293.008 575.76z M372.771 564.54L294.715 293.2c0.382-0.11 0.75-0.271 1.125-0.488l142.083 243.989C417.438 548.6 395.5 558 372.8 564.54z M150.205 537.919c-20.462-11.686-39.478-25.885-56.518-42.205l195.293-203.91c0.386 0.4 0.8 0.7 1.2 0.934L150.205 537.919z M500.295 487.783L297.229 291.611c0.366-0.378 0.678-0.789 0.926-1.22l244.596 141.038C530.976 451.9 516.7 470.8 500.3 487.783z M44.495 433.539c-12.01-20.426-21.468-42.299-28.109-65.014l270.997-79.242c0.115 0.4 0.3 0.8 0.5 1.146L44.495 433.539z M572.599 357.575l-273.918-68.467c0.114-0.453 0.169-0.956 0.169-1.536l282.303-4.933c0.028 1.6 0 3.3 0 4.933C581.194 311.2 578.3 334.8 572.6 357.575z M4.832 289.944c-0.006-0.728-0.009-1.456-0.01-2.184v-0.188c0-22.805 2.696-45.556 8.012-67.622l274.491 66.13c-0.101 0.419-0.152 0.881-0.157 1.41l0 0.207L4.832 289.944z M298.62 285.817c-0.115-0.384-0.286-0.768-0.509-1.138l242.161-145.177c12.184 20.3 21.8 42.1 28.7 64.773L298.62 285.817z M287.832 284.806L42.058 145.833c11.598-20.512 25.718-39.589 41.968-56.699l204.732 194.431C288.39 284 288.1 284.4 287.8 284.806z M296.992 283.302c-0.386-0.364-0.803-0.672-1.237-0.916L433.681 36.022c20.564 11.5 39.7 25.6 56.9 41.734L296.992 283.302z M290.135 282.458L145.986 39.684c20.375-12.098 42.209-21.649 64.895-28.388l80.396 270.657C290.891 282.1 290.5 282.2 290.1 282.458z M294.483 281.884c-0.436-0.103-0.918-0.153-1.475-0.153l-0.12 0L289.386-0.591 c23.547-0.299 47.2 2.3 70 7.704L294.483 281.884z" />
+                            </svg>
                         </div>
                     </transition>
                 </div>
@@ -2170,7 +2222,16 @@
                         </div>
                     </div>
                 </div>
-            </transition>
+            </transition>            
+            <div class="character">
+                <article class="media">
+                    <figure class="media-content" @click="activate()">
+                        <picture class="image is-128x128">
+                            <img class="has-ratio" src="/images/Milchchan.png" alt="Character">
+                        </picture>
+                    </figure>
+                </article>
+            </div>
             <transition name="reveal">
                 <div id="menu" v-if="isRevealed && !isOverlayed || word" ref="menu">
                     <div class="columns is-centered"
@@ -3086,17 +3147,6 @@
                     </div>
                 </div>
             </div>
-            <transition name="fade">
-                <div class="character" v-if="isPopup">
-                    <article class="media">
-                        <figure class="media-content">
-                            <picture class="image is-128x128">
-                                <img class="has-ratio" src="/images/Milchchan.png" alt="Character">
-                            </picture>
-                        </figure>
-                    </article>
-                </div>
-            </transition>
             <transition name="popup" v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
                 v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart" v-on:after-leave="animationEnd"
                 v-on:leave-cancelled="animationEnd">
@@ -3187,7 +3237,6 @@
                                             </div>
                                             <div class="control">
                                                 <button class="button is-rounded is-danger" type="button"
-                                                    v-bind:class="{ 'is-static': word !== null }"
                                                     v-bind:disabled="user === null"
                                                     @click="$refs.text.blur(); isLearning = false;"><span
                                                         class="icon is-small" v-cloak>
