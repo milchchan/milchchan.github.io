@@ -428,20 +428,30 @@
             content: "";
         }
 
-        .character {
+        #character {
             z-index: 1;
             position: absolute;
-            left: 50%;
+            display: flex;
+            left: 0%;
             bottom: 0;
             margin: 0;
             padding: 0;
             width: fit-content;
             height: fit-content;
-            display: flex;
+            background: transparent;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transform: translate(-50%, 0%);
+            transform: translate(0%, 0%);
+        }
+
+        #character>canvas {
+            position: absolute;
+            display: block;
+            background-color: transparent;
+            /*image-rendering: -moz-crisp-edges;
+            image-rendering: pixelated;*/
+            image-rendering: optimizeQuality;
         }
 
         .ticker-wrap {
@@ -800,6 +810,9 @@
         .center>.level>.level-item>.control>.level>.level-item:not(:last-child) {
             pointer-events: none;
             margin: 0px 0px 8px 0px;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .center>.level>.level-item>.control>.level>.level-item>.level {
@@ -2214,15 +2227,11 @@
                     </div>
                 </div>
             </transition>
-            <div class="character">
-                <article class="media">
-                    <figure class="media-content" @click="activate()">
-                        <picture class="image is-128x128">
-                            <img class="has-ratio" src="/images/Milchchan.png" alt="Character">
-                        </picture>
-                    </figure>
-                </article>
-            </div>
+            <transition name="fade">
+                <div id="character" oncontextmenu="return false;" v-bind:style="{ width: wrapperWidth + 'px', height: wrapperHeight + 'px' }" @click="activate()" v-show="character !== null">
+                    <canvas v-bind:width="canvasWidth" v-bind:height="canvasHeight" v-bind:style="{ width: wrapperWidth + 'px', height: wrapperHeight + 'px' }" ref="canvas"></canvas>
+                </div>
+            </transition>
             <transition name="reveal">
                 <div id="menu" v-if="isRevealed && !isOverlayed || word" ref="menu">
                     <div class="columns is-centered"
@@ -2571,7 +2580,8 @@
                                                 <figure class="media-content">
                                                     <p class="image is-64x64">
                                                         <button class="button image is-64x64 is-superellips"
-                                                            type="button" @click="isRevealed = false; isOverlayed = true; mode = null;">
+                                                            type="button"
+                                                            @click="isRevealed = false; isOverlayed = true; mode = null;">
                                                             <picture class="image is-64x64">
                                                                 <source srcset="/images/Merku-Headshot2.png"
                                                                     media="(prefers-color-scheme: dark)">
@@ -3412,7 +3422,7 @@
      https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-analytics-compat.js"></script>
     <!--<script src="https://unpkg.com/vue@next"></script>-->
-    <script src="https://unpkg.com/vue@3.0.11/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/vue@3.2.21/dist/vue.global.prod.js"></script>
     <script src="js/moment-with-locales.js"></script>
     <!--<script src="/js/particles.js"></script>-->
     <script src="js/tiny-segmenter.js"></script>
