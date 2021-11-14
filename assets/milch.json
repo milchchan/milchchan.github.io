@@ -2,6 +2,8 @@
     "name": "ミルヒ",
     "accent": "#ffa6bb",
     "image": "/images/Milch.png",
+    "width": 218,
+    "height": 320,
     "model": "models/Milch.vrm",
     "sequences": [
         {
@@ -15,6 +17,23 @@
                         {
                             "type": "Animation",
                             "name": "jump"
+                        },
+                        {
+                            "type": "Animation",
+                            "frames": [
+                                {
+                                    "iterations": 1,
+                                    "images": [
+                                        {
+                                            "x": 16,
+                                            "y": 0,
+                                            "width": 202,
+                                            "height": 320,
+                                            "source": "/images/Milchchan.png"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "type": "Message",
@@ -48,6 +67,23 @@
                             "name": "jump"
                         },
                         {
+                            "type": "Animation",
+                            "frames": [
+                                {
+                                    "iterations": 1,
+                                    "images": [
+                                        {
+                                            "x": 16,
+                                            "y": 0,
+                                            "width": 202,
+                                            "height": 320,
+                                            "source": "/images/Milchchan.png"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
                             "type": "Message",
                             "speed": 50,
                             "duration": 5,
@@ -63,7 +99,7 @@
                     "type": "Sequence",
                     "name": "IsSorrow",
                     "state": "False"
-                }                
+                }
             ]
         },
         {
@@ -84,7 +120,6 @@
                     "type": "Sequence",
                     "name": "IsSorrow"
                 }
-                
             ]
         },
         {
@@ -347,7 +382,9 @@
                     "speed": 50,
                     "duration": 5,
                     "text": [
-                        ["名前"],
+                        [
+                            "名前"
+                        ],
                         "は",
                         "コスプレ",
                         "が",
