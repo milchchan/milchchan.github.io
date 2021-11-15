@@ -806,7 +806,7 @@
             justify-content: flex-start;
         }
 
-        .center>.level>.level-item>.control>.level>.level-item:not(:last-child) {
+        .center>.level>.level-item>.control>.level>.level-item:first-child:not(:last-child) {
             pointer-events: none;
             margin: 0px 0px 8px 0px;
             touch-action: none;
@@ -858,15 +858,17 @@
             padding: 0;
             justify-content: center;
             align-items: flex-start;
-            overflow: hidden;
         }
 
         .center>.level>.level-item:nth-last-of-type(1)>div {
+            pointer-events: none;
             display: flex;
             margin: 0;
             padding: 16px 0px 0px 0px;
-            overflow: hidden;
             justify-content: center;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .center>.level>.level-item:nth-last-of-type(1)>div .control {
@@ -1416,6 +1418,7 @@
         }
 
         #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media {
+            pointer-events: none;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1425,6 +1428,9 @@
             background-size: 20px 20px;
             /*box-shadow: 10px 10px 30px #d0d0d0,
                 -10px -10px 30px #ffffff;*/
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media .media-left {
@@ -2064,6 +2070,22 @@
                                     </span>
                                 </button>
                             </transition>
+                        </div>
+                        <div class="level-item">
+                            <button class="button" type="button" v-bind:disabled="user === null"
+                                @click="discover(); isRevealed = false;">
+                                <div class="icon is-large">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>言葉を探す</div>
+                                            <div>言葉を探す</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
                         </div>
                         <div class="level-item">
                             <button class="button" type="button" v-bind:disabled="user === null"
@@ -2827,6 +2849,29 @@
                                                             Wonderland</h1>
                                                         <h2 class="has-text-weight-bold">
                                                             milchchan.com</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            v-bind:disabled="user === null"
+                                                            @click="discover(); isRevealed = false;">
+                                                            <span class="icon">
+                                                                <i class="fas fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>言葉を探す</div>
+                                                                        <div>言葉を探す</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </article>
