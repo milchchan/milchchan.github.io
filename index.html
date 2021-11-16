@@ -1187,7 +1187,7 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:last-of-type:not(first-of-type) button {
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item:last-child:not(:first-child)>.level>.level-item button {
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
@@ -2463,47 +2463,51 @@
                                         <div class="level-item" v-if="'name' in mode && 'attributes' in mode" v-cloak>
                                             <div class="level is-mobile">
                                                 <div class="level-item">
-                                                    <article class="media">
-                                                        <div class="media-content">
-                                                            <div class="content">
-                                                                <button class="button is-rounded is-size-7"
-                                                                    type="button"
-                                                                    @click="learn({ name: mode.name, attributes: mode.attributes, user: mode.user }); isRevealed = false; mode = null;">
-                                                                    <span class="icon">
-                                                                        <i class="fas fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold"
-                                                                        v-if="'user' in mode && user.uid !== mode.user.id">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>{{ mode.name }}を教えて貰う</div>
-                                                                                <div>{{ mode.name }}を教えて貰う</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold" v-else>
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>{{ mode.name }}を教える</div>
-                                                                                <div>{{ mode.name }}を教える</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </button>
-                                                            </div>
+                                                    <div class="level">
+                                                        <div class="level-item">
+                                                            <article class="media">
+                                                                <div class="media-content">
+                                                                    <div class="content">
+                                                                        <button class="button is-rounded is-size-7"
+                                                                            type="button"
+                                                                            @click="learn({ name: mode.name, attributes: mode.attributes, user: mode.user }); isRevealed = false; mode = null;">
+                                                                            <span class="icon">
+                                                                                <i class="fas fa-star"></i>
+                                                                            </span>
+                                                                            <span class="wrap has-text-weight-bold"
+                                                                                v-if="'user' in mode && user.uid !== mode.user.id">
+                                                                                <div class="clip">
+                                                                                    <div class="scrollable">
+                                                                                        <div>{{ mode.name }}を教えて貰う</div>
+                                                                                        <div>{{ mode.name }}を教えて貰う</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </span>
+                                                                            <span class="wrap has-text-weight-bold" v-else>
+                                                                                <div class="clip">
+                                                                                    <div class="scrollable">
+                                                                                        <div>{{ mode.name }}を教える</div>
+                                                                                        <div>{{ mode.name }}を教える</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
                                                         </div>
-                                                    </article>
-                                                </div>
-                                                <div class="level-item">
-                                                    <article class="media">
-                                                        <div class="media-content">
-                                                            <div class="content">
-                                                                <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
-                                                                    target="_blank"><span class="icon is-small"><i
-                                                                            class="fas fa-search"></i></span></a>
-                                                            </div>
+                                                        <div class="level-item">
+                                                            <article class="media">
+                                                                <div class="media-content">
+                                                                    <div class="content">
+                                                                        <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
+                                                                            target="_blank"><span class="icon is-small"><i
+                                                                                    class="fas fa-search"></i></span></a>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
                                                         </div>
-                                                    </article>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -2604,6 +2608,19 @@
                                                     </div>
                                                 </div>
                                             </transition>
+                                        </div>
+                                        <div class="level-item" v-if="'user' in mode && 'link' in mode.user">
+                                            <div class="level">
+                                                <div class="level-item">
+                                                    <div class="level is-mobile">
+                                                        <div class="level-item">
+                                                            <a v-bind:href="mode.user.link"
+                                                                target="_blank"><span class="icon is-small"><i
+                                                                        class="fab fa-twitter"></i></span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </nav>
                                     <nav class="level" v-else-if="user === null || mode === 'sign-in'" key="sign-in">
