@@ -432,7 +432,7 @@
             z-index: 1;
             position: absolute;
             display: flex;
-            left: 0%;
+            left: 16px;
             bottom: 0;
             margin: 0;
             padding: 0;
@@ -444,7 +444,25 @@
             align-items: center;
         }
 
-        #character>canvas {
+        #alternative {
+            z-index: 1;
+            position: absolute;
+            display: flex;
+            left: auto;
+            right: 16px;
+            bottom: 0;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            background: transparent;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #character>canvas,
+        #alternative>canvas {
             position: absolute;
             display: block;
             background-color: transparent;
@@ -1703,6 +1721,23 @@
             transform: translate3d(0%, 0, 0);
         }
 
+        .alternative-enter-active,
+        .alternative-leave-active {
+            transition: all .5s ease;
+        }
+
+        .alternative-enter-from,
+        .alternative-leave-to {
+            opacity: 0;
+            transform: translate3d(25%, 0, 0);
+        }
+
+        .alternative-enter-to,
+        .alternative-leave-from {
+            opacity: 1;
+            transform: translate3d(0%, 0, 0);
+        }
+
         .reveal-enter-active,
         .reveal-leave-active {
             transition: all .5s ease;
@@ -2072,8 +2107,22 @@
                             </transition>
                         </div>
                         <div class="level-item">
+                            <button class="button" type="button" v-bind:disabled="isDiscovering" @click="discover"
+                                v-if="isDiscovering" key="discovering" v-cloak>
+                                <div class="icon is-large" style="pointer-events: none;">
+                                    <i class="fas fa-spinner updating"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>言葉を探す</div>
+                                            <div>言葉を探す</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
                             <button class="button" type="button" v-bind:disabled="user === null"
-                                @click="discover(); isRevealed = false;">
+                                @click="discover(); isRevealed = false;" v-else key="default">
                                 <div class="icon is-large">
                                     <i class="fas fa-star"></i>
                                 </div>
@@ -2266,8 +2315,21 @@
                 </div>
             </transition>
             <transition name="slide">
-                <div id="character" oncontextmenu="return false;" v-bind:style="{ width: wrapperWidth + 'px', height: wrapperHeight + 'px' }" @click="activate()" v-show="character !== null">
-                    <canvas v-bind:width="canvasWidth" v-bind:height="canvasHeight" v-bind:style="{ width: wrapperWidth + 'px', height: wrapperHeight + 'px' }" ref="canvas"></canvas>
+                <div id="character" oncontextmenu="return false;"
+                    v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }" @click="activate()"
+                    v-show="character !== null">
+                    <canvas v-bind:width="canvasSize.deviceWidth" v-bind:height="canvasSize.deviceHeight"
+                        v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                        ref="canvas"></canvas>
+                </div>
+            </transition>
+            <transition name="alternative">
+                <div id="alternative" oncontextmenu="return false;"
+                    v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                    v-show="alternative !== null">
+                    <canvas v-bind:width="canvasSize.alternative.deviceWidth" v-bind:height="canvasSize.alternative.deviceHeight"
+                        v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                        ref="alternative"></canvas>
                 </div>
             </transition>
             <transition name="reveal">
@@ -3218,21 +3280,39 @@
                             <div class="control" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
                                 <nav class="level is-mobile">
                                     <div class="level-item">
-                                        <nav class="level is-mobile" v-if="character !== null">
-                                            <div class="level-item">
+                                        <nav class="level is-mobile" v-if="message.character !== null">
+                                            <div class="level-item" v-if="'accent' in message.character" key="custom">
                                                 <article class="media"
-                                                    v-bind:style="{ backgroundColor: character.accent }">
+                                                    v-bind:style="{ backgroundColor: message.character.accent }">
                                                     <figure class="media-left">
                                                         <span class="image is-24x24">
                                                             <img class="is-rounded" v-bind:src="character.image"
-                                                                v-bind:alt="character.name" v-cloak>
+                                                                v-bind:alt="message.character.name" v-cloak>
                                                         </span>
                                                     </figure>
                                                     <div class="media-content">
                                                         <div class="content has-text-left">
                                                             <span class="is-size-7 has-text-weight-bold has-text-white"
                                                                 v-cloak>
-                                                                {{ character.name }}
+                                                                {{ message.character.name }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </article>
+                                            </div>
+                                            <div class="level-item" v-else key="default">
+                                                <article class="media">
+                                                    <figure class="media-left">
+                                                        <span class="image is-24x24">
+                                                            <img class="is-rounded" v-bind:src="character.image"
+                                                                v-bind:alt="message.character.name" v-cloak>
+                                                        </span>
+                                                    </figure>
+                                                    <div class="media-content">
+                                                        <div class="content has-text-left">
+                                                            <span class="is-size-7 has-text-weight-bold has-text-white"
+                                                                v-cloak>
+                                                                {{ message.character.name }}
                                                             </span>
                                                         </div>
                                                     </div>
