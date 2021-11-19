@@ -365,7 +365,7 @@
         }
 
         .sunrise>svg>radialGradient>stop {
-            stop-color: rgb(255, 238, 0) !important;
+            stop-color: rgb(134, 134, 123) !important;
         }
 
         .progress {
@@ -639,6 +639,8 @@
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) div.wrap {
+            display: flex;
+            margin: 0;
             height: calc(0.75rem * 1.5);
         }
 
@@ -870,6 +872,7 @@
             transition: .5s;
         }
 
+        .center>.level>.level-item:nth-last-of-type(2),
         .center>.level>.level-item:nth-last-of-type(1) {
             display: flex;
             margin: 0;
@@ -878,27 +881,32 @@
             align-items: flex-start;
         }
 
-        .center>.level>.level-item:nth-last-of-type(1)>div {
-            pointer-events: none;
+        .center>.level>.level-item:nth-last-of-type(2) .wrap>.control,
+        .center>.level>.level-item:nth-last-of-type(2) .control,
+        .center>.level>.level-item:nth-last-of-type(1) .wrap>.control,
+        .center>.level>.level-item:nth-last-of-type(1) .control {
             display: flex;
             margin: 0;
-            padding: 16px 0px 0px 0px;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
             justify-content: center;
-            touch-action: none;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
-        .center>.level>.level-item:nth-last-of-type(1)>div .control {
+        .center>.level>.level-item:nth-last-of-type(2) .control>.level,
+        .center>.level>.level-item:nth-last-of-type(1) .control>.level {
             display: flex;
             margin: -8px 0px -8px 0px;
-            padding: 0;
+            padding: 16px 0px 0px 0px;
+            width: fit-content;
+            height: fit-content;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            justify-content: flex-start;
         }
 
-        .center>.level>.level-item:nth-last-of-type(1)>div .control .level {
+        .center>.level>.level-item:nth-last-of-type(2) .control>.level>.level-item,
+        .center>.level>.level-item:nth-last-of-type(1) .control>.level>.level-item {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -906,13 +914,28 @@
             padding: 0;
         }
 
-        .center>.level>.level-item:nth-last-of-type(1)>div .notification {
+        .center>.level>.level-item:nth-last-of-type(2) .notification {
             background-color: transparent;
             margin: 0;
             padding: 0;
         }
 
-        .center>.level>.level-item:nth-last-of-type(1)>div .notification .media {
+        .center>.level>.level-item:nth-last-of-type(1) .media {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            padding: 12px 24px 12px 24px;
+            background: rgba(255, 238, 0, 0.75) !important;
+            background-clip: padding-box;
+            color: #ffffff;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(2) .media {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -927,17 +950,85 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
-        .center>.level>.level-item:nth-last-of-type(1)>div .notification .media .media-left {
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-left,
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-left {
+            display: flex;
             margin: 0px 8px 0px 0px !important;
+            flex-direction: row;
         }
 
-        .center>.level>.level-item:nth-last-of-type(1)>div .notification .media .media-content .content {
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-left>span:first-child:not(:last-child),
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-left>span:first-child:not(:last-child) {
+            margin: 0 !important;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-left>span:not(:first-child),
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-left>span:not(:first-child) {
+            margin: 0px 0px 0px 8px !important;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-content .content,
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-content .content {
             transform: rotate(0.03deg);
         }
 
-        .center>.level>.level-item:nth-last-of-type(1)>div .notification .media .media-content span {
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-content span,
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-content span {
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 1.25rem;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button,
+        .center>.level>.level-item:nth-last-of-type(1) .button {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 16px 32px 16px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: fit-content;
+            line-height: calc(0.75rem * 1.5);
+            backface-visibility: hidden;
+            color: rgb(255, 238, 0) !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) span.wrap {
+            display: flex;
+            margin: 0;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button .clip .scrollable div,
+        .center>.level>.level-item:nth-last-of-type(1) .button .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button .icon,
+        .center>.level>.level-item:nth-last-of-type(1) .button .icon {
+            color: rgb(255, 238, 0);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button>:not(.wrap),
+        .center>.level>.level-item:nth-last-of-type(1) .button>:not(.wrap) {
+            margin: 0px 8px 0px 0px !important;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button .clip,
+        .center>.level>.level-item:nth-last-of-type(1) .button .clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:first-child>button {
@@ -973,7 +1064,7 @@
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:first-child>button>span,
         .left button>span,
-        .center button>span,
+        .center>.level>.level-item:first-child button>span,
         .right button>span {
             margin: 0 !important;
             width: 1.0rem !important;
@@ -1137,6 +1228,8 @@
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content span.wrap {
+            display: flex;
+            margin: 0;
             height: calc(0.75rem * 1.5);
         }
 
@@ -1155,9 +1248,9 @@
             color: var(--accent-color);
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon:first-child+div,
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon:first-child+div {
-            margin: 0px 8px 0px 0px;
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button>:not(:first-of-type),
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button>:not(:first-of-type) {
+            margin: 0px 0px 0px 8px;
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon:last-child:not(:first-child),
@@ -1350,6 +1443,71 @@
             display: flex;
             align-items: center;
             justify-content: start;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content>.content>button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px 32px 16px 32px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            color: rgb(255, 238, 0);
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content>.content>button>.icon {
+            color: rgb(255, 238, 0);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item .media>.media-content>.content .badge {
+            padding: 4px 8px 4px 8px !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgb(255, 238, 0);
+            color: #ffffff;
+            font-size: 0.75rem;
+            line-height: 0.75rem !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item .media>.wrap {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content {
+            position: relative;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>span.icon {
+            color: rgb(255, 238, 0);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.badge {
+            position: absolute;
+            left: auto;
+            top: 0;
+            right: 0;
+            bottom: auto;
+            margin: 0;
+            padding: 4px 8px 4px 8px !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgb(255, 238, 0);
+            color: #ffffff;
+            font-size: 0.75rem;
+            line-height: 0.75rem !important;
+            width: fit-content;
+            height: fit-content;
         }
 
         #popup {
@@ -2093,8 +2251,20 @@
                                         <i class="fas fa-bars"></i>
                                     </span>
                                 </button>
+                                <button class="button" type="button" @click="mode = mode.users"
+                                    v-else-if="typeof(mode) === 'object' && 'users' in mode === true" key="users">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </span>
+                                </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close">
+                                    v-else-if="typeof(mode) === 'object' && 'words' in mode" key="close">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2154,7 +2324,7 @@
                         </div>
                         <div class="level-item">
                             <button class="button" type="button" v-bind:disabled="user === null"
-                                @click="mode = { words: null, next: null, indexes: [] }; next(mode.next); isRevealed = true;">
+                                @click="mode = { words: null, next: null, indexes: [], user: { id: user.uid, name: user.displayName, image: user.photoURL } }; next(user.uid, mode.next); isRevealed = true;">
                                 <div class="icon is-large">
                                     <i class="fas fa-star"></i>
                                 </div>
@@ -2203,7 +2373,7 @@
                                         <picture class="image is-48x48" style="pointer-events: none;"
                                             v-if="'photoURL' in user && user.photoURL !== null" key="user.photoURL">
                                             <img class="is-rounded" v-bind:src="user.photoURL" width="64" height="64"
-                                                alt="Avatar">
+                                                v-bind:alt="user.displayName">
                                         </picture>
                                         <picture class="image is-48x48" style="pointer-events: none;" v-else
                                             key="default">
@@ -2260,6 +2430,25 @@
                     </transition>
                 </div>
             </div>
+            <transition name="slide">
+                <div id="character" oncontextmenu="return false;"
+                    v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                    @click="activate()" v-show="character !== null">
+                    <canvas v-bind:width="canvasSize.deviceWidth" v-bind:height="canvasSize.deviceHeight"
+                        v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                        ref="canvas"></canvas>
+                </div>
+            </transition>
+            <transition name="alternative">
+                <div id="alternative" oncontextmenu="return false;"
+                    v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                    v-show="alternative !== null">
+                    <canvas v-bind:width="canvasSize.alternative.deviceWidth"
+                        v-bind:height="canvasSize.alternative.deviceHeight"
+                        v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                        ref="alternative"></canvas>
+                </div>
+            </transition>
             <transition name="fade">
                 <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
             </transition>
@@ -2312,24 +2501,6 @@
                             </transition-group>
                         </div>
                     </div>
-                </div>
-            </transition>
-            <transition name="slide">
-                <div id="character" oncontextmenu="return false;"
-                    v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }" @click="activate()"
-                    v-show="character !== null">
-                    <canvas v-bind:width="canvasSize.deviceWidth" v-bind:height="canvasSize.deviceHeight"
-                        v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
-                        ref="canvas"></canvas>
-                </div>
-            </transition>
-            <transition name="alternative">
-                <div id="alternative" oncontextmenu="return false;"
-                    v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
-                    v-show="alternative !== null">
-                    <canvas v-bind:width="canvasSize.alternative.deviceWidth" v-bind:height="canvasSize.alternative.deviceHeight"
-                        v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
-                        ref="alternative"></canvas>
                 </div>
             </transition>
             <transition name="reveal">
@@ -2418,6 +2589,140 @@
                                             </div>
                                         </div>
                                     </nav>
+                                    <nav class="level" v-else-if="mode instanceof Array" key="users">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <figure class="media-content"
+                                                    v-if="mode.length > 0 && user.uid === mode[0].id">
+                                                    <span class="icon">
+                                                        <i class="fas fa-crown"></i>
+                                                    </span>
+                                                </figure>
+                                                <figure class="media-content">
+                                                    <p class="image is-64x64 is-superellips">
+                                                        <picture class="image is-64x64" style="pointer-events: none;"
+                                                            v-if="'photoURL' in user && 'displayName' in user && user.photoURL !== null"
+                                                            v-bind:key="user.photoURL">
+                                                            <img v-bind:src="user.photoURL" width="64" height="64"
+                                                                v-bind:alt="user.displayName">
+                                                        </picture>
+                                                        <picture class="image is-64x64" style="pointer-events: none;"
+                                                            v-else key="default">
+                                                            <source srcset="/images/Merku.png"
+                                                                media="(prefers-color-scheme: dark)">
+                                                            <img src="/images/Milch.png" width="64" height="64"
+                                                                alt="Logo">
+                                                        </picture>
+                                                    </p>
+                                                    <span class="badge"
+                                                        v-text="mode.reduce((previousValue, currentValue) => currentValue.id === user.uid ? previousValue + currentValue.count : previousValue, 0)"></span>
+                                                </figure>
+
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            リーダーボード</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            Leaderboard</h3>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <transition name="fade" mode="out-in">
+                                                <div class="level" v-if="isUpdating" key="loading">
+                                                    <div class="level-item">
+                                                        <article class="media">
+                                                            <div class="media-content">
+                                                                <div class="content">
+                                                                    <span class="icon is-small">
+                                                                        <i class="fas fa-spinner updating"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                </div>
+                                                <div class="level is-mobile" v-else key="loaded">
+                                                    <div class="level-item" v-for="(user, index) in take(mode, 10)"
+                                                        v-bind:key="user">
+                                                        <article class="media">
+                                                            <div class="media-content">
+                                                                <div class="content">
+                                                                    <button class="button is-rounded is-size-7"
+                                                                        type="button"
+                                                                        @click="mode = { words: null, next: null, indexes: [], user: { id: user.id, name: user.name, image: user.image }, users: mode }; next(user.id, mode.next);">
+                                                                        <span class="icon" v-if="index === 0">
+                                                                            <i class="fas fa-crown"></i>
+                                                                        </span>
+                                                                        <span
+                                                                            class="badge is-size-7 has-text-weight-bold"
+                                                                            v-if="'count' in user">{{ user.count
+                                                                            }}</span>
+                                                                        <span class="image is-24x24" v-if="user.image">
+                                                                            <img class="is-rounded"
+                                                                                v-bind:src="user.image"
+                                                                                v-bind:alt="user.name" v-cloak>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>{{ user.name }}</div>
+                                                                                    <div>{{ user.name }}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                    <div class="level-item" v-if="'next' in mode && 'indexes' in mode">
+                                                        <div class="level is-mobile">
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <button class="button is-white"
+                                                                                type="button"
+                                                                                v-bind:disabled="mode.indexes.length === 0"
+                                                                                @click="previous(mode.user.id, mode.indexes.shift().name)"
+                                                                                v-cloak>
+                                                                                <span class="icon is-small">
+                                                                                    <i class="fas fa-chevron-left"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <button class="button is-white"
+                                                                                type="button"
+                                                                                v-bind:disabled="mode.next === null"
+                                                                                @click="next(mode.user.id, mode.next.name)"
+                                                                                v-cloak>
+                                                                                <span class="icon is-small">
+                                                                                    <i class="fas fa-chevron-right"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </transition>
+                                        </div>
+                                    </nav>
                                     <nav class="level" v-else-if="mode !== null && typeof(mode) === 'object'"
                                         key="popup">
                                         <div class="level-item">
@@ -2434,7 +2739,7 @@
                                                             v-else-if="'user' in mode && 'image' in mode.user && mode.user.image !== null"
                                                             key="mode.user.image">
                                                             <img v-bind:src="mode.user.image" width="64" height="64"
-                                                                alt="Avatar">
+                                                                v-bind:alt="mode.user.name">
                                                         </picture>
                                                         <picture class="image is-64x64" style="pointer-events: none;"
                                                             v-else key="default">
@@ -2483,7 +2788,8 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </span>
-                                                                            <span class="wrap has-text-weight-bold" v-else>
+                                                                            <span class="wrap has-text-weight-bold"
+                                                                                v-else>
                                                                                 <div class="clip">
                                                                                     <div class="scrollable">
                                                                                         <div>{{ mode.name }}を教える</div>
@@ -2501,7 +2807,8 @@
                                                                 <div class="media-content">
                                                                     <div class="content">
                                                                         <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
-                                                                            target="_blank"><span class="icon is-small"><i
+                                                                            target="_blank"><span
+                                                                                class="icon is-small"><i
                                                                                     class="fas fa-search"></i></span></a>
                                                                     </div>
                                                                 </div>
@@ -2578,7 +2885,7 @@
                                                                             <button class="button is-white"
                                                                                 type="button"
                                                                                 v-bind:disabled="mode.indexes.length === 0"
-                                                                                @click="previous(mode.indexes.shift().name)"
+                                                                                @click="previous(mode.user.id, mode.indexes.shift().name)"
                                                                                 v-cloak>
                                                                                 <span class="icon is-small">
                                                                                     <i class="fas fa-chevron-left"></i>
@@ -2595,7 +2902,8 @@
                                                                             <button class="button is-white"
                                                                                 type="button"
                                                                                 v-bind:disabled="mode.next === null"
-                                                                                @click="next(mode.next.name)" v-cloak>
+                                                                                @click="next(mode.user.id, mode.next.name)"
+                                                                                v-cloak>
                                                                                 <span class="icon is-small">
                                                                                     <i class="fas fa-chevron-right"></i>
                                                                                 </span>
@@ -2614,8 +2922,8 @@
                                                 <div class="level-item">
                                                     <div class="level is-mobile">
                                                         <div class="level-item">
-                                                            <a v-bind:href="mode.user.link"
-                                                                target="_blank"><span class="icon is-small"><i
+                                                            <a v-bind:href="mode.user.link" target="_blank"><span
+                                                                    class="icon is-small"><i
                                                                         class="fab fa-twitter"></i></span></a>
                                                         </div>
                                                     </div>
@@ -2905,7 +3213,7 @@
                                                                     v-if="'photoURL' in user && user.photoURL !== null"
                                                                     key="avatar">
                                                                     <img v-bind:src="user.photoURL" width="64"
-                                                                        height="64" alt="Avatar">
+                                                                        height="64" v-bind:alt="user.displayName">
                                                                 </picture>
                                                                 <picture class="image is-64x64"
                                                                     style="pointer-events: none;" v-else key="default">
@@ -2984,7 +3292,7 @@
                                                     <div class="content">
                                                         <button class="button is-rounded is-size-7" type="button"
                                                             v-bind:disabled="user === null"
-                                                            @click="mode = { words: null, next: null, indexes: [] }; next(mode.next);">
+                                                            @click="mode = { words: null, next: null, indexes: [], user: { id: user.uid, name: user.displayName, image: user.photoURL } }; next(user.uid, mode.next);">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
                                                             </span>
@@ -3220,10 +3528,10 @@
                             <nav class="level">
                                 <div class="level-item has-text-centered">
                                     <div class="field is-grouped is-vcentered">
-                                        <picture class="icon is-small">
+                                        <picture class="icon is-small" v-cloak>
                                             <img src="/images/Star.svg" width="32" height="32" alt="Star">
                                         </picture>
-                                        <span class="is-size-1 is-uppercase">{{ animatedStars }}</span>
+                                        <span class="is-size-1 is-uppercase" v-cloak>{{ animatedStars }}</span>
                                     </div>
                                 </div>
                                 <div class="level-item has-text-centered">
@@ -3249,43 +3557,81 @@
                             </nav>
                         </div>
                     </div>
-                    <div class="level-item" v-cloak>
-                        <div ref="notifications">
-                            <transition-group name="notification-list" class="control" tag="div"
-                                v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
-                                v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart"
-                                v-on:after-leave="animationEnd" v-on:leave-cancelled="animationEnd" v-cloak>
-                                <nav class="level notification-list-item" v-for="notification in notifications"
-                                    v-bind:key="notification.id">
-                                    <div class="notification is-info is-light" v-cloak>
-                                        <article class="media" v-cloak>
-                                            <figure class="media-left" v-if="notification.image" v-cloak>
-                                                <span class="image is-24x24">
-                                                    <img class="is-rounded"
-                                                        v-bind:src="notification.image instanceof Object ? (isDarkMode ? notification.image.dark : notification.image.light) : notification.image"
-                                                        alt="Avatar" v-cloak>
-                                                </span>
-                                            </figure>
-                                            <div class="media-content" v-cloak>
-                                                <div class="content has-text-left" v-if="notification.accent">
-                                                    <span class="is-size-7 has-text-weight-bold"
-                                                        v-bind:style="{ color: notification.accent instanceof Object ? (isDarkMode ? notification.accent.dark : notification.accent.light) : notification.accent }"
-                                                        v-cloak>
-                                                        {{ notification.text }}
+                    <div class="level-item" v-bind:style="{ height: animatedNotificationHeight + 'px' }" v-cloak>
+                        <div class="wrap" ref="notifications">
+                            <div class="control">
+                                <transition-group name="notification-list" class="level" tag="div"
+                                    v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
+                                    v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart"
+                                    v-on:after-leave="animationEnd" v-on:leave-cancelled="animationEnd" v-cloak>
+                                    <nav class="level-item notification-list-item" v-for="notification in notifications"
+                                        v-bind:key="notification.id">
+                                        <div class="notification is-info is-light" v-cloak>
+                                            <article class="media" v-cloak>
+                                                <figure class="media-left" v-if="notification.image" v-cloak>
+                                                    <span class="image is-24x24">
+                                                        <img class="is-rounded"
+                                                            v-bind:src="notification.image instanceof Object ? (isDarkMode ? notification.image.dark : notification.image.light) : notification.image"
+                                                            alt="Avatar" v-cloak>
                                                     </span>
+                                                </figure>
+                                                <div class="media-content" v-cloak>
+                                                    <div class="content has-text-left" v-if="notification.accent">
+                                                        <span class="is-size-7 has-text-weight-bold"
+                                                            v-bind:style="{ color: notification.accent instanceof Object ? (isDarkMode ? notification.accent.dark : notification.accent.light) : notification.accent }"
+                                                            v-cloak>
+                                                            {{ notification.text }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="content has-text-left" v-else>
+                                                        <span class="is-size-7 has-text-weight-bold" v-cloak>
+                                                            {{ notification.text }}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <div class="content has-text-left" v-else>
-                                                    <span class="is-size-7 has-text-weight-bold" v-cloak>
-                                                        {{ notification.text }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>
-                                </nav>
-                            </transition-group>
+                                            </article>
+                                        </div>
+                                    </nav>
+                                </transition-group>
+                            </div>
                         </div>
                     </div>
+                    <transition name="fade">
+                        <div class="level-item" v-bind:style="{ height: animatedLeaderboardHeight + 'px' }"
+                            v-show="!isRevealed">
+                            <div class="wrap" ref="leaderboard" v-cloak>
+                                <transition name="fade">
+                                    <div class="control">
+                                        <transition-group name="notification-list" class="level" tag="div">
+                                            <nav class="level-item notification-list-item"
+                                                v-for="(user, index) in take(leaderboard, 1)" v-bind:key="user.id">
+                                                <div class="leaderboard" v-cloak>
+                                                    <button class="button" type="button" v-bind:disabled="isDiscovering"
+                                                        @click="isRevealed = true; mode = leaderboard;" v-cloak>
+                                                        <span class="icon is-small" v-if="index === 0">
+                                                            <i class="fas fa-crown"></i>
+                                                        </span>
+                                                        <span class="image is-24x24" v-if="user.image">
+                                                            <img class="is-rounded" v-bind:src="user.image"
+                                                                v-bind:alt="user.name" v-cloak>
+                                                        </span>
+                                                        <span class="wrap is-size-7 has-text-weight-bold">
+                                                            <div class="clip">
+                                                                <div class="scrollable">
+                                                                    <div>{{ user.name }}</div>
+                                                                    <div>{{ user.name }}</div>
+                                                                </div>
+                                                            </div>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </nav>
+                                        </transition-group>
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </transition>
                 </div>
             </div>
             <transition name="popup" v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
@@ -3297,13 +3643,14 @@
                             <div class="control" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
                                 <nav class="level is-mobile">
                                     <div class="level-item">
-                                        <nav class="level is-mobile" v-if="message.character !== null">
+                                        <nav class="level is-mobile"
+                                            v-if="message !== null && 'character' in message && message.character !== null">
                                             <div class="level-item" v-if="'accent' in message.character" key="custom">
                                                 <article class="media"
                                                     v-bind:style="{ backgroundColor: message.character.accent }">
-                                                    <figure class="media-left">
+                                                    <figure class="media-left" v-if="'image' in message.character">
                                                         <span class="image is-24x24">
-                                                            <img class="is-rounded" v-bind:src="character.image"
+                                                            <img class="is-rounded" v-bind:src="message.character.image"
                                                                 v-bind:alt="message.character.name" v-cloak>
                                                         </span>
                                                     </figure>
@@ -3319,9 +3666,9 @@
                                             </div>
                                             <div class="level-item" v-else key="default">
                                                 <article class="media">
-                                                    <figure class="media-left">
+                                                    <figure class="media-left" v-if="'image' in message.character">
                                                         <span class="image is-24x24">
-                                                            <img class="is-rounded" v-bind:src="character.image"
+                                                            <img class="is-rounded" v-bind:src="message.character.image"
                                                                 v-bind:alt="message.character.name" v-cloak>
                                                         </span>
                                                     </figure>
@@ -3503,8 +3850,20 @@
                         <i class="fas fa-bars"></i>
                     </span>
                 </button>
+                <button class="button" type="button" @click="mode = mode.users"
+                    v-else-if="typeof(mode) === 'object' && 'users' in mode" key="users">
+                    <span class="icon is-small">
+                        <i class="fas fa-arrow-left"></i>
+                    </span>
+                </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
                     v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
