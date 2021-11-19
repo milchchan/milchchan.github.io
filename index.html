@@ -3602,7 +3602,10 @@
                             <div class="wrap" ref="leaderboard" v-cloak>
                                 <transition name="fade">
                                     <div class="control">
-                                        <transition-group name="notification-list" class="level" tag="div">
+                                        <transition-group name="notification-list" class="level" tag="div"
+                                            v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
+                                            v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart"
+                                            v-on:after-leave="animationEnd" v-on:leave-cancelled="animationEnd">
                                             <nav class="level-item notification-list-item"
                                                 v-for="(user, index) in take(leaderboard, 1)" v-bind:key="user.id">
                                                 <div class="leaderboard" v-cloak>
