@@ -130,7 +130,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "みんなに教わった言葉だよ"
+                    "text": "みんなに教わった言葉だよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -146,7 +146,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "みんなに教わった言葉がまだないよ"
+                    "text": "みんなに教わった言葉がまだないよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -161,7 +161,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "{0}って何かな？"
+                    "text": "{0}って何かなぁ？"
                 },
                 {
                     "type": "Sequence",
@@ -176,7 +176,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "{0}を覚えたよ！"
+                    "text": "{0}を覚えたよぉ！"
                 },
                 {
                     "type": "Sequence",
@@ -326,7 +326,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "ミルヒ、お友達少ないからお友達になってくれると嬉しいなぁ"
+                    "text": "ミルヒちゃんといっしょにアフタヌーンティーしたいよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -341,97 +341,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "メルクちゃんはちょっと変わっているけど大切なお友達だよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "メルクちゃんがまた怪しげなこと企んでるよ・・・"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "メルクちゃんといっしょにアフタヌーンティーしたよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "お金がないけどiPhoneが欲しいなぁ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "お鼻を触っているとムズムズするよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "メルクちゃんといっしょに原宿に行ってクレープを食べたよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "この前、メルクちゃんが学校のロッカーの中からミルヒを覗いてたよ...ちょっと怖かったよ..."
+                    "text": "ミルヒちゃんといっしょに原宿に行ってクレープを食べたよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -447,16 +357,14 @@
                     "speed": 50,
                     "duration": 5,
                     "text": [
-                        [
-                            "名前"
-                        ],
+                        "メルク",
                         "は",
                         "コスプレ",
                         "が",
                         "趣味",
                         "なん",
                         "だ",
-                        "よ"
+                        "よぉ"
                     ]
                 },
                 {
@@ -472,16 +380,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": [
-                        "メルクちゃん",
-                        "は",
-                        "コスプレ",
-                        "が",
-                        "趣味",
-                        "なん",
-                        "だ",
-                        "よ"
-                    ]
+                    "text": "愚者は己を賢いと思っているけど、賢者は己が愚かなことを知っているよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -496,16 +395,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": [
-                        "メルクちゃん",
-                        "は",
-                        "アフタヌーンティー",
-                        "が",
-                        "好き",
-                        "なん",
-                        "だっ",
-                        "て"
-                    ]
+                    "text": "能力の低い人物が自らの容姿や発言や行動などについて、実際よりも高い評価を行ってしまうよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -520,24 +410,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": [
-                        "この",
-                        "前",
-                        "、",
-                        "メルクちゃん",
-                        "と",
-                        "渋谷",
-                        "に",
-                        "行っ",
-                        "て",
-                        "パフェ",
-                        "を",
-                        "食べ",
-                        "て",
-                        "き",
-                        "た",
-                        "よ"
-                    ]
+                    "text": "あらゆる経験の快苦の記憶は、ほぼ完全にピーク時と終了時の快苦の度合いで決まるよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -552,16 +425,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": [
-                        "メルクちゃん",
-                        "は",
-                        "ケーキ",
-                        "が",
-                        "好物",
-                        "なん",
-                        "だっ",
-                        "て"
-                    ]
+                    "text": "十分に発達した科学は、魔法と区別がつかないよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -576,16 +440,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": [
-                        "メルクちゃん",
-                        "が",
-                        "レモネード",
-                        "を",
-                        "飲み",
-                        "たいん",
-                        "だっ",
-                        "て"
-                    ]
+                    "text": "未来を予想する最良の方法は、未来を創りだすことだよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -600,7 +455,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "愚者は己を賢いと思っているけど、賢者は己が愚かなことを知っているよ"
+                    "text": "言語はウィルスだよぉ！"
                 },
                 {
                     "type": "Sequence",
@@ -615,7 +470,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "能力の低い人物が自らの容姿や発言や行動などについて、実際よりも高い評価を行ってしまうよ"
+                    "text": "奴隷は、奴隷の境遇に慣れ過ぎると、驚いた事に自分の足を繋いでいる鎖の自慢をお互いに始めるよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -630,7 +485,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "あらゆる経験の快苦の記憶は、ほぼ完全にピーク時と終了時の快苦の度合いで決まるよ"
+                    "text": "リーダーシップとは、生産的流れから間抜けを取り除く自然の摂理だよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -645,7 +500,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "十分に発達した科学は、魔法と区別がつかないよ"
+                    "text": "外部で起こっている変化が内部の変化よりも早くなったら、もう終わりの日は近いよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -660,7 +515,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "未来を予想する最良の方法は、未来を創りだすことだよ"
+                    "text": "今までと同じ考えや行動を繰り返して、異なる結果を期待するのは凶器だよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -675,7 +530,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "言語はウィルスだよ！"
+                    "text": "何かを始めるためには、しゃべるのをやめて行動し始めなければならないよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -690,7 +545,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "奴隷は、奴隷の境遇に慣れ過ぎると、驚いた事に自分の足を繋いでいる鎖の自慢をお互いに始めるよ"
+                    "text": "多くの人は、見たいと欲する現実しか見ていないよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -705,97 +560,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "リーダーシップとは、生産的流れから間抜けを取り除く自然の摂理だよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "外部で起こっている変化が内部の変化よりも早くなったら、もう終わりの日は近いよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "今までと同じ考えや行動を繰り返して、異なる結果を期待するのは凶器だよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "何かを始めるためには、しゃべるのをやめて行動し始めなければならないよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "多くの人は、見たいと欲する現実しか見ていないよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "女の人は恋をすると綺麗になるってメルクちゃんが言ってたよ！恋ってすごいね！"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "眠れないときは羊を数えるといいってメルクちゃんが言ってたよ"
+                    "text": "眠れないときは羊を数えるといいってメルクちゃんが言ってたよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -825,7 +590,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "夜、寂しくなったらミルヒを呼んでね"
+                    "text": "話は通じないが弾は通じるよぉ"
                 },
                 {
                     "type": "Sequence",
@@ -840,22 +605,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "話は通じないが弾は通じるってメルクちゃんが言ってたよ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "やはり暴力...！！暴力は全てを解決する...！！ってメルクちゃんが言ってたよ"
+                    "text": "やはり暴力...！！暴力は全てを解決するよぉ...！！"
                 },
                 {
                     "type": "Sequence",
