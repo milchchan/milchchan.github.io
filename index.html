@@ -878,7 +878,14 @@
             margin: 0;
             padding: 0;
             justify-content: center;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(2) {
             align-items: flex-start;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) {
+            align-items: flex-end;
         }
 
         .center>.level>.level-item:nth-last-of-type(2) .wrap>.control,
@@ -1274,7 +1281,7 @@
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
-            padding: 16px;
+            padding: 16px 32px 16px 32px;
             background: rgba(181, 110, 216, 0.75) !important;
             background-clip: padding-box;
             height: initial;
@@ -1759,9 +1766,10 @@
 
         #input>.columns:last-of-type {
             margin: 0;
-            padding: 0px 0px env(safe-area-inset-bottom, 16px) 0px !important;
-            background: transparent;
+            padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px !important;
+            height: 16px;
             min-height: fit-content;
+            background: transparent;
             font-size: 0rem !important;
             line-height: 0 !important;
             pointer-events: none;
