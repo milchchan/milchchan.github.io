@@ -2570,7 +2570,7 @@
                                                                 <nav class="level is-mobile">
                                                                     <div class="level-item">
                                                                         <button class="button is-white" type="button"
-                                                                            @click="share('user' in word ? { name: word.name, attributes: word.attributes, user: word.user } : { name: word.name, attributes: word.attributes }); word = null;"
+                                                                            @click="share(word); word = null;"
                                                                             v-cloak>
                                                                             <span class="icon is-small is-primary">
                                                                                 <i class="fas fa-check"></i>
