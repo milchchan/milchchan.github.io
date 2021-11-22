@@ -860,8 +860,9 @@
             justify-content: flex-start;
         }
 
-        .center>.level>.level-item>.control>.level>.level-item .field picture.icon {
+        .center>.level>.level-item>.control>.level>.level-item.level-item:not(:last-child) .field .icon {
             margin: 0px 4px 0px 0px;
+            color: var(--main-color);
         }
 
         .center>.level>.level-item>.control>.level>.level-item:nth-child(1) .field span:last-child {
@@ -998,7 +999,7 @@
             display: flex;
             align-items: center;
             margin: 0;
-            padding: 16px 32px 16px 32px;
+            padding: 12px 24px 12px 24px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 500px 500px 500px 500px;
             background: rgba(255, 255, 255, 0.75) !important;
@@ -2297,6 +2298,36 @@
                             </transition>
                         </div>
                         <div class="level-item">
+                            <button class="button" type="button" v-bind:disabled="isLocating" @click="discover"
+                                v-if="isLocating" key="processing" v-cloak>
+                                <div class="icon is-large" style="pointer-events: none;">
+                                    <i class="fas fa-spinner updating"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>現在地に移動</div>
+                                            <div>現在地に移動</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+                            <button class="button" type="button" v-bind:disabled="user === null"
+                                @click="locate(); isRevealed = false;" v-else key="default">
+                                <div class="icon is-large">
+                                    <i class="fas fa-location-arrow"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>現在地に移動</div>
+                                            <div>現在地に移動</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="level-item">
                             <button class="button" type="button" v-bind:disabled="isDiscovering" @click="discover"
                                 v-if="isDiscovering" key="discovering" v-cloak>
                                 <div class="icon is-large" style="pointer-events: none;">
@@ -3264,6 +3295,29 @@
                                                     <div class="content">
                                                         <button class="button is-rounded is-size-7" type="button"
                                                             v-bind:disabled="user === null"
+                                                            @click="locate(); isRevealed = false;">
+                                                            <span class="icon">
+                                                                <i class="fas fa-location-arrow"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>現在地に移動</div>
+                                                                        <div>現在地に移動</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            v-bind:disabled="user === null"
                                                             @click="discover(); isRevealed = false;">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
@@ -3554,6 +3608,9 @@
                                 </div>
                                 <div class="level-item has-text-centered">
                                     <div class="field is-grouped is-vcentered">
+                                        <span class="icon is-small" style="pointer-events: none;" v-cloak>
+                                            <i class="fas fa-walking"></i>
+                                        </span>
                                         <span class="is-size-4 is-uppercase has-text-weight-bold" v-cloak>{{ animatedSteps }}</span>
                                     </div>
                                 </div>
@@ -3561,16 +3618,15 @@
                                     <nav class="level">
                                         <div class="level-item">
                                             <transition name="fade" mode="out-in">
-                                                <button class="button" type="button" v-bind:disabled="isLocating"
-                                                    @click="locate" v-if="isLocating" key="processing" v-cloak>
+                                                <button class="button" type="button" @click="startPedometer" v-if="deviceMotion === null" key="processing" v-cloak>
                                                     <span class="icon is-small" style="pointer-events: none;">
-                                                        <i class="fas fa-spinner updating"></i>
+                                                        <i class="fas fa-walking"></i>
                                                     </span>
                                                 </button>
-                                                <button class="button" type="button" @click="locate" v-else key="ready"
+                                                <button class="button" type="button" @click="stopPedometer" v-else key="ready"
                                                     v-cloak>
                                                     <span class="icon is-small" style="pointer-events: none;">
-                                                        <i class="fas fa-location-arrow"></i>
+                                                        <i class="fas fa-stop"></i>
                                                     </span>
                                                 </button>
                                             </transition>
