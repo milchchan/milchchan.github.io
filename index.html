@@ -5,20 +5,20 @@
     <meta charset="utf-8" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui" />
-    <meta name="description" content="milchchan.com">
-    <meta name="theme-color" content="#f5f5f5">
-    <meta property="og:title" content="ミルヒちゃんねる">
-    <meta property="og:description" content="milchchan.com">
+    <meta name="description" content="すれちがった人とおすすめのモノを交換">
+    <meta name="theme-color" content="#f6f3f1">
+    <meta property="og:title" content="Wonderland">
+    <meta property="og:description" content="ミルヒちゃんもいっしょに魔法少女しようね！">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://milchchan.com/">
     <meta property="og:image" content="https://milchchan.com/images/Milch.png">
     <meta property="twitter:card" content="summary">
     <meta property="twitter:site" content="@milchchan">
-    <meta property="twitter:title" content="ミルヒちゃんねる">
-    <meta property="twitter:description" content="milchchan.com">
+    <meta property="twitter:title" content="Wonderland">
+    <meta property="twitter:description" content="ミルヒちゃんもいっしょに魔法少女しようね！">
     <meta property="twitter:image" content="https://milchchan.com/images/Milch.png">
     <meta property="twitter:url" content="https://milchchan.com/">
-    <title>ミルヒちゃんねる</title>
+    <title>Wonderland</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="touch-icon-iphone.png">
@@ -34,6 +34,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Ropa+Sans&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&display=swap" rel="stylesheet">
+    <script type="text/javascript"
+        src="https://www.bing.com/api/maps/mapcontrol?key=AqtU8nXtdnRHFfPmWICfOHBtcPzPOoJueZtb2D_Rkbsx6dyuhx_xaH7G-hfB2Ylb"></script>
     <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css" type="text/css"
         media="screen" />
@@ -45,7 +47,17 @@
         :root {
             --background-color: rgba(255, 255, 255, 0.75);
             --foreground-color: #000000;
-            --accent-color: #00eeff;
+            /*--base-color: #cba9e1;
+            --main-color: #ffa6bb;
+            --accent-color: #5bcbe1;*/
+            /*--main-color: #6772E5;
+            --accent-color: #8898aa;*/
+            /*--main-color: #00eeff;
+            --accent-color: #ffee00;*/
+            --main-color: #b56ed8;
+            /*--accent-color: #ff4c90;*/
+            --accent-color: #ff86b5;
+            /*ffe598*/
             --background-image: url('/images/Background-Light.png');
             --background-image-2x: url('/images/Background-Light@2x.png');
             --background-image-3x: url('/images/Background-Light@3x.png');
@@ -70,7 +82,8 @@
             overflow-x: hidden;
             overflow-y: auto;
             scroll-behavior: smooth;
-            background: #f5f5f5;
+            /*background: #f5f5f7;*/
+            background: #f6f3f1;
             transition: .5s;
             overscroll-behavior-x: none;
             overscroll-behavior-y: none;
@@ -84,7 +97,7 @@
             min-height: 100vh;
             min-height: -webkit-fill-available;
             overflow: hidden;
-            background: transparent;
+            background-size: 100px 100px;
         }
 
         h1,
@@ -280,11 +293,11 @@
 
         .is-danger {
             background-color: transparent !important;
-            color: #e26971 !important;
+            color: #ff4c90 !important;
         }
 
         .is-superellips {
-            transform: rotate(-19deg);
+            transform: rotate(-19deg) !important;
         }
 
         .is-superellips>picture {
@@ -352,7 +365,7 @@
         }
 
         .sunrise>svg>radialGradient>stop {
-            stop-color: rgb(255, 238, 0) !important;
+            stop-color: rgb(134, 134, 123) !important;
         }
 
         .progress {
@@ -382,7 +395,7 @@
             top: 0;
             left: 0;
             overflow: hidden;
-            background: #ffc547 url('/images/Stripes.png') 50% 50% repeat;
+            background: #ffee00 url('/images/Stripes.png') 50% 50% repeat;
             background-size: 20px 20px;
             animation: progress 0.5s linear 0s infinite;
         }
@@ -413,6 +426,49 @@
             animation: fade 0.5s ease-out, loop 10s linear infinite;
             transform: translate3d(0, 0%, 0);
             content: "";
+        }
+
+        #character {
+            z-index: 1;
+            position: absolute;
+            display: flex;
+            left: 16px;
+            bottom: 0;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            background: transparent;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #alternative {
+            z-index: 1;
+            position: absolute;
+            display: flex;
+            left: auto;
+            right: 16px;
+            bottom: 0;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            background: transparent;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #character>canvas,
+        #alternative>canvas {
+            position: absolute;
+            display: block;
+            background-color: transparent;
+            /*image-rendering: -moz-crisp-edges;
+            image-rendering: pixelated;*/
+            image-rendering: optimizeQuality;
         }
 
         .ticker-wrap {
@@ -488,7 +544,7 @@
 
         .background>div::before {
             display: block;
-            position: absolute;
+            position: fixed;
             left: 0;
             top: 0;
             width: 100%;
@@ -497,7 +553,7 @@
         }
 
         .background>img {
-            position: absolute;
+            position: fixed;
             object-fit: cover;
             width: 100%;
             height: 100%;
@@ -639,36 +695,39 @@
             overflow: hidden;
         }
 
-        #three {
-            z-index: 1;
-            position: absolute;
+        #map {
+            z-index: 0;
+            position: absolute !important;
+            display: flex;
             padding: 0;
             width: 100%;
             height: 100%;
-            min-height: 100%;
             overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        #three>canvas {
-            position: relative;
-            display: block;
-            overflow: hidden;
-            outline: none;
-            width: 100%;
-            height: 100%;
-            min-height: 100%;
+        #map>button {
+            z-index: 1;
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 16px;
+            background: transparent;
+            width: fit-content;
+            height: fit-content;
         }
 
         .blind {
             z-index: 1;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             min-height: 100%;
             transform: translate3d(0, 0%, 0);
             overflow: hidden;
-            background: var(--accent-color);
+            background: #00eeff;
             /*background: #00eeff url('/images/Background.png') 50% 50% repeat;
             animation: progress 0.5s linear 0s infinite;*/
         }
@@ -711,8 +770,8 @@
             position: absolute;
             left: 0;
             top: 0;
-            margin: 0;
-            padding: calc(env(safe-area-inset-top, 0px) + 32px) 0px 0px calc(env(safe-area-inset-left, 0px) + 32px);
+            margin: 16px 0px 0px 0px;
+            padding: calc(env(safe-area-inset-top, 0px) + 16px) 0px 0px calc(env(safe-area-inset-left, 0px) + 32px);
             touch-action: none;
         }
 
@@ -721,21 +780,23 @@
             position: absolute;
             right: 0;
             top: 0;
-            margin: 0;
-            padding: calc(env(safe-area-inset-top, 0px) + 32px) calc(env(safe-area-inset-right, 0px) + 32px) 0px 0px;
+            margin: 16px 0px 0px 0px;
+            padding: calc(env(safe-area-inset-top, 0px) + 16px) calc(env(safe-area-inset-right, 0px) + 32px) 0px 0px;
             touch-action: none;
         }
 
         .center button {
             margin: 0px;
-            border: 0px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 16px;
-            background: transparent !important;
+            background: rgba(181, 110, 216, 0.75) !important;
             background-clip: padding-box;
-            box-shadow: none;
             height: initial;
             color: var(--accent-color) !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
         .center>.level {
@@ -765,7 +826,7 @@
             justify-content: flex-start;
         }
 
-        .center>.level>.level-item>.control>.level>.level-item:first-child {
+        .center>.level>.level-item>.control>.level>.level-item:not(:last-child) {
             pointer-events: none;
             margin: 0px 0px 8px 0px;
             touch-action: none;
@@ -803,22 +864,40 @@
             margin: 0px 4px 0px 0px;
         }
 
-        .center>.level>.level-item>.control>.level>.level-item .field span:last-child {
+        .center>.level>.level-item>.control>.level>.level-item:nth-child(1) .field span:last-child {
             font-family: "Alata", sans-serif;
             font-size: 4rem !important;
             line-height: 4rem !important;
-            color: var(--accent-color);
+            color: var(--main-color);
             transition: .5s;
         }
 
+        .center>.level>.level-item>.control>.level>.level-item:nth-child(2) .field span:last-child {
+            font-family: "Alata", sans-serif;
+            font-size: 1.5rem !important;
+            line-height: 1.5rem !important;
+            color: var(--main-color);
+            transition: .5s;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(2),
         .center>.level>.level-item:nth-last-of-type(1) {
             display: flex;
             margin: 0;
             padding: 0;
             justify-content: center;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(2) {
             align-items: flex-start;
         }
 
+        .center>.level>.level-item:nth-last-of-type(1) {
+            align-items: flex-end;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(2) .wrap>.control,
+        .center>.level>.level-item:nth-last-of-type(2) .control,
         .center>.level>.level-item:nth-last-of-type(1) .wrap>.control,
         .center>.level>.level-item:nth-last-of-type(1) .control {
             display: flex;
@@ -829,6 +908,7 @@
             justify-content: center;
         }
 
+        .center>.level>.level-item:nth-last-of-type(2) .control>.level,
         .center>.level>.level-item:nth-last-of-type(1) .control>.level {
             display: flex;
             margin: -8px 0px -8px 0px;
@@ -840,6 +920,7 @@
             align-items: center;
         }
 
+        .center>.level>.level-item:nth-last-of-type(2) .control>.level>.level-item,
         .center>.level>.level-item:nth-last-of-type(1) .control>.level>.level-item {
             display: flex;
             align-items: center;
@@ -848,13 +929,28 @@
             padding: 0;
         }
 
-        .center>.level>.level-item:nth-last-of-type(1) .notification {
+        .center>.level>.level-item:nth-last-of-type(2) .notification {
             background-color: transparent;
             margin: 0;
             padding: 0;
         }
 
         .center>.level>.level-item:nth-last-of-type(1) .media {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            padding: 12px 24px 12px 24px;
+            background: rgba(255, 238, 0, 0.75) !important;
+            background-clip: padding-box;
+            color: #ffffff;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(2) .media {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -869,36 +965,98 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-left,
         .center>.level>.level-item:nth-last-of-type(1) .media .media-left {
             display: flex;
             margin: 0px 8px 0px 0px !important;
             flex-direction: row;
         }
 
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-left>span:first-child:not(:last-child),
         .center>.level>.level-item:nth-last-of-type(1) .media .media-left>span:first-child:not(:last-child) {
             margin: 0 !important;
         }
 
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-left>span:not(:first-child),
         .center>.level>.level-item:nth-last-of-type(1) .media .media-left>span:not(:first-child) {
             margin: 0px 0px 0px 8px !important;
         }
 
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-content .content,
         .center>.level>.level-item:nth-last-of-type(1) .media .media-content .content {
             transform: rotate(0.03deg);
         }
 
+        .center>.level>.level-item:nth-last-of-type(2) .media .media-content span,
         .center>.level>.level-item:nth-last-of-type(1) .media .media-content span {
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 1.25rem;
         }
 
+        .center>.level>.level-item:nth-last-of-type(1) button,
+        .center>.level>.level-item:nth-last-of-type(1) .button {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 16px 32px 16px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: fit-content;
+            line-height: calc(0.75rem * 1.5);
+            backface-visibility: hidden;
+            color: rgb(255, 238, 0) !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) span.wrap {
+            display: flex;
+            margin: 0;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button .clip .scrollable div,
+        .center>.level>.level-item:nth-last-of-type(1) .button .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button .icon,
+        .center>.level>.level-item:nth-last-of-type(1) .button .icon {
+            color: rgb(255, 238, 0);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button>:not(.wrap),
+        .center>.level>.level-item:nth-last-of-type(1) .button>:not(.wrap) {
+            margin: 0px 8px 0px 0px !important;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) button .clip,
+        .center>.level>.level-item:nth-last-of-type(1) .button .clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
+        }
+
         .sidebar>.level>.level-item:first-child>.level>.level-item:first-child>button {
             margin: 0px;
-            border: 0px solid transparent;
+            border: 0px solid rgba(255, 255, 255, 0.5);
             border-radius: 290486px;
             padding: 16px;
             background: #ffffff !important;
             background-clip: padding-box;
+            /*background: #f5f5f5;
+            background: linear-gradient(145deg, #ffffff, #dddddd);
+            box-shadow: 10px 10px 30px #d0d0d0,
+                -10px -10px 30px #ffffff;*/
             box-shadow: none;
             height: initial;
             color: var(--accent-color) !important;
@@ -921,7 +1079,7 @@
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:first-child>button>span,
         .left button>span,
-        .center button>span,
+        .center>.level>.level-item:first-child button>span,
         .right button>span {
             margin: 0 !important;
             width: 1.0rem !important;
@@ -1015,7 +1173,7 @@
             font-size: 1.25rem;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 1.25rem;
-            color: var(--foreground-color);
+            color: var(--main-color);
             transition: .5s;
             transform: rotate(0.03deg);
         }
@@ -1025,7 +1183,7 @@
             font-size: 0.75rem;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 0.75rem;
-            color: var(--accent-color);
+            color: var(--main-color);
             transition: .5s;
             transform: rotate(0.03deg);
         }
@@ -1049,7 +1207,7 @@
             padding: 0;
             width: 32px;
             height: 4px;
-            background-color: var(--accent-color);
+            background-color: var(--main-color);
             text-align: center !important;
             transition: .5s;
         }
@@ -1075,21 +1233,17 @@
             align-items: center;
             margin: 0;
             padding: 16px 32px 16px 32px;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 500px 500px 500px 500px;
-            background: rgba(255, 255, 255, 0.75) !important;
+            background: rgba(181, 110, 216, 0.75);
             background-clip: padding-box;
             height: fit-content;
             line-height: calc(0.75rem * 1.5);
             backface-visibility: hidden;
-            color: #000000;
+            color: #ffffff;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-        }
-
-        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary {
-            background: rgba(0, 238, 255, 0.75) !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content span.wrap {
@@ -1113,13 +1267,9 @@
             color: var(--accent-color);
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button.is-primary .icon {
-            color: #ffffff !important;
-        }
-
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon:first-child+div,
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon:first-child+div {
-            margin: 0px 8px 0px 0px;
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button>:not(:first-of-type),
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button>:not(:first-of-type) {
+            margin: 0px 0px 0px 8px;
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon:last-child:not(:first-child),
@@ -1139,8 +1289,8 @@
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
-            padding: 16px;
-            background: rgba(0, 238, 255, 0.75) !important;
+            padding: 16px 32px 16px 32px;
+            background: rgba(181, 110, 216, 0.75) !important;
             background-clip: padding-box;
             height: initial;
             color: #ffffff;
@@ -1171,9 +1321,9 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 24px;
-            background: rgba(255, 255, 255, 0.75) !important;
+            background: rgba(255, 134, 181, 0.75) !important;
             background-clip: padding-box;
-            color: var(--accent-color);
+            color: #ffffff;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -1248,7 +1398,7 @@
             line-height: 0.75rem !important;
             height: calc(0.75rem * 1.5);
             white-space: nowrap;
-            color: #000000;
+            color: var(--accent-color);
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox .clip {
@@ -1312,6 +1462,71 @@
             display: flex;
             align-items: center;
             justify-content: start;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content>.content>button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px 32px 16px 32px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            color: rgb(255, 238, 0);
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content>.content>button>.icon {
+            color: rgb(255, 238, 0);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item .media>.media-content>.content .badge {
+            padding: 4px 8px 4px 8px !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgb(255, 238, 0);
+            color: #ffffff;
+            font-size: 0.75rem;
+            line-height: 0.75rem !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item .media>.wrap {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content {
+            position: relative;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>span.icon {
+            color: rgb(255, 238, 0);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.badge {
+            position: absolute;
+            left: auto;
+            top: 0;
+            right: 0;
+            bottom: auto;
+            margin: 0;
+            padding: 4px 8px 4px 8px !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgb(255, 238, 0);
+            color: #ffffff;
+            font-size: 0.75rem;
+            line-height: 0.75rem !important;
+            width: fit-content;
+            height: fit-content;
         }
 
         #popup {
@@ -1451,7 +1666,7 @@
         }
 
         #input {
-            z-index: 1 !important;
+            z-index: 1;
             position: absolute;
             display: flex;
             flex-direction: column;
@@ -1516,12 +1731,12 @@
             box-shadow: none;
             backface-visibility: hidden;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-            color: #000000;
+            color: var(--accent-color);
             transform: rotate(0.03deg);
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input::placeholder {
-            color: rgba(0, 0, 0, 0.25);
+            color: rgba(255, 134, 181, 0.25);
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             transform: rotate(0.03deg);
         }
@@ -1533,7 +1748,7 @@
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) span {
-            color: rgba(0, 0, 0, 0.25);
+            color: rgba(255, 134, 181, 0.25);
             font-family: 'Hind', 'Josefin Sans', sans-serif;
         }
 
@@ -1568,19 +1783,7 @@
             pointer-events: none;
         }
 
-        .container>.wrap>.frame .columns:last-of-type {
-            position: absolute;
-            bottom: 0;
-            margin: 0;
-            padding: 0 !important;
-            width: 100%;
-            min-height: fit-content;
-            background: var(--accent-color);
-            font-size: 0.75rem !important;
-            line-height: 0.75rem !important;
-        }
-
-        .container>.wrap>.frame .columns:last-of-type>.column>.control {
+        #input>.columns:last-of-type>.column>.control {
             pointer-events: none;
             margin: 0;
             margin: 4px 16px 4px 16px;
@@ -1589,12 +1792,12 @@
             line-height: 0.75rem !important;
         }
 
-        .container>.wrap>.frame .columns:last-of-type>.column>.control .level:first-child .level-item {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item {
             display: flex;
             justify-content: center;
         }
 
-        .container>.wrap>.frame .clip {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip {
             margin: 0;
             border: 0px solid var(--foreground-color);
             padding: 0px;
@@ -1604,7 +1807,7 @@
             width: 100%;
         }
 
-        .container>.wrap>.frame .ticker-wrap {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .ticker-wrap {
             display: flex;
             margin: 0;
             width: 100%;
@@ -1612,13 +1815,13 @@
             mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
         }
 
-        .container>.wrap>.frame .clip .ticker-wrap .ticker {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip .ticker-wrap .ticker {
             transform: translate3d(0%, 0, 0);
             animation: ticker 30s linear 0s infinite;
             animation-play-state: paused;
         }
 
-        .container>.wrap>.frame .clip .ticker-wrap .ticker .item {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip .ticker-wrap .ticker .item {
             padding: 0px 8px;
             color: #ffffff;
             height: max(16px, 0.75rem);
@@ -1626,31 +1829,31 @@
             line-height: 1.0rem !important;
         }
 
-        .container>.wrap>.frame .clip .ticker-wrap .ticker .media {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip .ticker-wrap .ticker .media {
             margin: 0px -8px 0px -8px;
             height: max(16px, 0.75rem);
         }
 
-        .container>.wrap>.frame .clip .ticker-wrap .ticker .media .media-left {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip .ticker-wrap .ticker .media .media-left {
             margin: 0px 8px 0px 8px !important;
         }
 
-        .container>.wrap>.frame .clip .ticker-wrap .ticker .media picture img {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip .ticker-wrap .ticker .media picture img {
             width: 16px;
             height: 16px;
         }
 
-        .container>.wrap>.frame .clip .ticker-wrap .ticker .media .media-content {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip .ticker-wrap .ticker .media .media-content {
             margin: 0px 8px 0px 8px;
         }
 
-        .container>.wrap>.frame .clip .ticker-wrap .ticker .media .media-content .content {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip .ticker-wrap .ticker .media .media-content .content {
             display: flex;
             align-content: center;
             transform: rotate(0.03deg);
         }
 
-        .container>.wrap>.frame .clip .ticker-wrap .ticker .media .media-content .content span {
+        #input>.columns:last-of-type>.column>.control .level:first-child .level-item .field .clip .ticker-wrap .ticker .media .media-content .content span {
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             height: min(16px, 0.8rem) !important;
             vertical-align: middle;
@@ -1677,6 +1880,40 @@
         .fade-enter-from,
         .fade-leave-to {
             opacity: 0;
+        }
+
+        .slide-enter-active,
+        .slide-leave-active {
+            transition: all .5s ease;
+        }
+
+        .slide-enter-from,
+        .slide-leave-to {
+            opacity: 0;
+            transform: translate3d(-25%, 0, 0);
+        }
+
+        .slide-enter-to,
+        .slide-leave-from {
+            opacity: 1;
+            transform: translate3d(0%, 0, 0);
+        }
+
+        .alternative-enter-active,
+        .alternative-leave-active {
+            transition: all .5s ease;
+        }
+
+        .alternative-enter-from,
+        .alternative-leave-to {
+            opacity: 0;
+            transform: translate3d(25%, 0, 0);
+        }
+
+        .alternative-enter-to,
+        .alternative-leave-from {
+            opacity: 1;
+            transform: translate3d(0%, 0, 0);
         }
 
         .reveal-enter-active,
@@ -1947,7 +2184,7 @@
             }
 
             .progress>.bar {
-                background: #ffc547 url('/images/Stripes@2x.png') 50% 50% repeat;
+                background: rgb(255, 238, 0) url('/images/Stripes@2x.png') 50% 50% repeat;
                 background-size: 20px 20px;
             }
 
@@ -1975,7 +2212,7 @@
             }
 
             .progress>.bar {
-                background: #ffc547 url('/images/Stripes@3x.png') 50% 50% repeat;
+                background: rgb(255, 238, 0) url('/images/Stripes@3x.png') 50% 50% repeat;
                 background-size: 20px 20px;
             }
 
@@ -2017,27 +2254,42 @@
                     <div class="level">
                         <div class="level-item">
                             <transition name="fade" mode="out-in">
-                                <button class="button is-white" type="button" @click="isOverlayed = false"
-                                    v-if="isOverlayed" key="close">
+                                <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed"
+                                    key="close">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button is-white" type="button"
-                                    @click="isRevealed = !isRevealed; mode = null;"
-                                    v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
+                                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
+                                    v-else-if="user === null || mode === null || mode === 'sign-in'" key="humberger">
                                     <span class="icon is-small">
                                         <i class="fas fa-bars"></i>
                                     </span>
                                 </button>
-                                <button class="button is-white" type="button"
-                                    @click="isRevealed = !isRevealed; mode = null;" v-else-if="mode === 'about'"
-                                    key="dismiss">
+                                <button class="button" type="button" @click="mode = mode.users"
+                                    v-else-if="typeof(mode) === 'object' && 'users' in mode === true" key="users">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                                    v-else-if="typeof(mode) === 'object' && 'words' in mode" key="close">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button is-white" type="button" @click="mode = null" v-else key="back">
+                                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="mode = null" v-else key="back">
                                     <span class="icon is-small">
                                         <i class="fas fa-arrow-left"></i>
                                     </span>
@@ -2045,50 +2297,82 @@
                             </transition>
                         </div>
                         <div class="level-item">
-                            <button class="button" type="button" @click="mode = 'about'; isRevealed = true;">
+                            <button class="button" type="button" v-bind:disabled="isDiscovering" @click="discover"
+                                v-if="isDiscovering" key="discovering" v-cloak>
+                                <div class="icon is-large" style="pointer-events: none;">
+                                    <i class="fas fa-spinner updating"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>言葉を探す</div>
+                                            <div>言葉を探す</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+                            <button class="button" type="button" v-bind:disabled="user === null"
+                                @click="discover(); isRevealed = false;" v-else key="default">
                                 <div class="icon is-large">
                                     <i class="fas fa-star"></i>
                                 </div>
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>ミルヒちゃんねるについて</div>
-                                            <div>ミルヒちゃんねるについて</div>
+                                            <div>言葉を探す</div>
+                                            <div>言葉を探す</div>
                                         </div>
                                     </div>
                                 </div>
                             </button>
                         </div>
                         <div class="level-item">
-                            <a class="button" href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q" target="_blank">
-                                <div class="icon">
-                                    <i class="fab fa-windows"></i>
+                            <button class="button" type="button" v-bind:disabled="user === null"
+                                @click="isRevealed = false; isLearning = true;">
+                                <div class="icon is-large">
+                                    <i class="fas fa-star"></i>
                                 </div>
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>Apricot</div>
-                                            <div>Apricot</div>
+                                            <div>ここで言葉を教える</div>
+                                            <div>ここで言葉を教える</div>
                                         </div>
                                     </div>
                                 </div>
-                            </a>
+                            </button>
                         </div>
                         <div class="level-item">
-                            <a class="button is-rounded" href="https://apps.apple.com/jp/app/id1130755997"
-                                target="_blank">
-                                <div class="icon">
-                                    <i class="fab fa-apple"></i>
+                            <button class="button" type="button" v-bind:disabled="user === null"
+                                @click="mode = { words: null, next: null, indexes: [], user: { id: user.uid, name: user.displayName, image: user.photoURL } }; next(user.uid, mode.next); isRevealed = true;">
+                                <div class="icon is-large">
+                                    <i class="fas fa-star"></i>
                                 </div>
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>Wonderland</div>
-                                            <div>Wonderland</div>
+                                            <div>教えた言葉</div>
+                                            <div>教えた言葉</div>
                                         </div>
                                     </div>
                                 </div>
-                            </a>
+                            </button>
+                        </div>
+                        <div class="level-item">
+                            <button class="button" type="button" v-bind:disabled="user === null"
+                                @click="activate(); isRevealed = false; mode = null;">
+                                <div class="icon is-large">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>お話してもらう</div>
+                                            <div>お話してもらう</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2098,8 +2382,7 @@
                             <p class="image is-48x48">
                                 <transition name="fade" mode="out-in">
                                     <button class="button image is-48x48 is-superellips" type="button"
-                                        @click="mode = 'sign-in'; isRevealed = true;" v-if="user === null" key="default"
-                                        v-cloak>
+                                        @click="mode = 'sign-in'" v-if="user === null" key="default" v-cloak>
                                         <picture class="image is-48x48" style="pointer-events: none;">
                                             <source srcset="/images/Merku.png" media="(prefers-color-scheme: dark)">
                                             <img src="/images/Milch.png" width="64" height="64" alt="Logo">
@@ -2125,23 +2408,29 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container" ref="container">
             <div class="wrap">
                 <div class="frame">
-                    <div class="background">
-                        <div v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }"
-                            v-for="image in backgroundImages" v-bind:key="image" v-cloak></div>
-                        <img v-bind:src="image.url" @load="load(image.url)" @error="error(image.url)"
-                            v-for="image in preloadImages" v-bind:key="image.url" alt="Background" v-cloak>
+                    <div id="map" ref="map">
+                        <transition name="fade">
+                            <button class="button is-rounded is-size-7" type="button" @click="isLearning = true;"
+                                v-if="user !== null" v-cloak>
+                                <svg width="18" height="18" viewBox="0 0 18 18" version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    xml:space="preserve" xmlns:serif="http://www.serif.com/"
+                                    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                                    <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
+                                        <path
+                                            d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z"
+                                            style="fill:rgba(255,238,0,0.5);" />
+                                    </g>
+                                </svg>
+                            </button>
+                        </transition>
                     </div>
-                    <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
-                        v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
-                        v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
-                        <div class="blind" v-if="isBlinded" v-cloak></div>
-                    </transition>
                     <transition name="fade">
                         <div class="progress" v-if="progress !== null" v-cloak>
-                            <div class="bar" v-bind:style="{ width: String(100.0 * progress) + '%' }"></div>
+                            <div class="bar" v-bind:style="{width: String(100.0 * progress) + '%'}"></div>
                         </div>
                     </transition>
                     <transition name="fade">
@@ -2159,141 +2448,54 @@
                             </svg>
                         </div>
                     </transition>
-                    <div class="columns is-desktop" ref="ticker">
-                        <div class="column is-full is-mobile has-content-centered">
-                            <div class="control has-text-centered">
-                                <nav class="level">
-                                    <div class="level-item has-text-centered">
-                                        <div class="field">
-                                            <div class="clip" v-bind:style="{ width: animatedTickerWidth + 'px' }"
-                                                v-cloak>
-                                                <div class="ticker-wrap">
-                                                    <transition-group name="ticker-item-list" class="ticker" tag="div"
-                                                        v-bind:style="{ animationPlayState: words.length > 0 ? 'running' : 'paused' }"
-                                                        v-on:enter-cancelled="tickerUpdated"
-                                                        v-on:after-leave="tickerUpdated"
-                                                        v-on:leave-cancelled="tickerUpdated">
-                                                        <div class="item ticker-item-list-item"
-                                                            v-for="word in take(words, 10)" v-bind:key="word.name">
-                                                            <article class="media" v-cloak>
-                                                                <figure class="media-left" v-if="word.image">
-                                                                    <picture class="image has-ratio is-16x16"
-                                                                        v-if="word.image instanceof Object">
-                                                                        <source v-bind:srcset="word.image.dark"
-                                                                            media="(prefers-color-scheme: dark)">
-                                                                        <img class="is-rounded"
-                                                                            v-bind:src="word.image.light" width="16"
-                                                                            height="16" v-bind:alt="word.name">
-                                                                    </picture>
-                                                                    <picture class="image has-ratio is-16x16" v-else>
-                                                                        <img class="is-rounded" v-bind:src="word.image"
-                                                                            width="16" height="16"
-                                                                            v-bind:alt="word.name">
-                                                                    </picture>
-                                                                </figure>
-                                                                <div class="media-content" v-if="word.name">
-                                                                    <div class="content has-text-left">
-                                                                        <span class="has-text-weight-bold">{{ word.name
-                                                                            }}</span>
-                                                                    </div>
-                                                                </div>
-                                                            </article>
-                                                        </div>
-                                                        <div class="item ticker-item-list-item"
-                                                            v-for="word in take(words, 10)"
-                                                            v-bind:key="word.name + '-alt'">
-                                                            <article class="media" v-cloak>
-                                                                <figure class="media-left" v-if="word.image">
-                                                                    <picture class="image has-ratio is-16x16"
-                                                                        v-if="word.image instanceof Object">
-                                                                        <source v-bind:srcset="word.image.dark"
-                                                                            media="(prefers-color-scheme: dark)">
-                                                                        <img class="is-rounded"
-                                                                            v-bind:src="word.image.light" width="16"
-                                                                            height="16" v-bind:alt="word.name">
-                                                                    </picture>
-                                                                    <picture class="image has-ratio is-16x16" v-else>
-                                                                        <img class="is-rounded" v-bind:src="word.image"
-                                                                            width="16" height="16"
-                                                                            v-bind:alt="word.name">
-                                                                    </picture>
-                                                                </figure>
-                                                                <div class="media-content" v-if="word.name">
-                                                                    <div class="content has-text-left">
-                                                                        <span class="has-text-weight-bold">{{ word.name
-                                                                            }}</span>
-                                                                    </div>
-                                                                </div>
-                                                            </article>
-                                                        </div>
-                                                    </transition-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <div id="three" ref="three"></div>
-            <transition name="fade">
-                <div class="logo" v-if="progress !== null">
-                    <svg viewBox="0 0 1100.2 141.3" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-                        xmlns:serif="http://www.serif.com/"
-                        style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" v-cloak>
-                        <g transform="matrix(2.66573,0,0,2.66573,1045.2,23.4789)" v-cloak>
-                            <path
-                                d="M0,38.429C-3.95,34.613 -7.767,30.997 -11.517,27.047C-11.717,26.646 -12.319,27.248 -12.119,27.716L-8.303,33.609C-9.307,38.229 -13.658,41.71 -18.681,41.71C-24.572,41.71 -29.393,37.023 -29.393,30.997L-29.393,4.617C-29.393,-1.208 -24.572,-6.094 -18.681,-6.094C-15.466,-6.094 -12.521,-4.354 -10.512,-2.345L0.401,8.367C0.603,8.769 1.205,8.367 1.004,7.966L-2.946,2.207C-1.941,-2.345 2.41,-6.094 7.365,-6.094C13.324,-6.094 18.145,-1.208 18.145,4.617L18.145,30.997C18.145,41.308 6.025,44.523 0,38.429"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                        <g transform="matrix(2.66573,0,0,2.66573,771.205,35.9663)" v-cloak>
-                            <path
-                                d="M0,26.313L0,24.037C0,23.233 -0.669,22.564 -1.473,22.564C-2.276,22.564 -2.946,23.233 -2.946,24.037L-2.946,26.313C-2.946,32.338 -7.633,36.959 -13.591,36.959C-19.417,36.959 -24.237,32.338 -24.237,26.313L-24.237,-0.067C-24.237,-6.025 -19.417,-10.646 -13.591,-10.646C-7.633,-10.646 -2.946,-6.025 -2.946,-0.067L-2.946,2.344C-2.946,3.081 -2.276,3.75 -1.473,3.75C-0.669,3.75 0,3.081 0,2.344L0,-0.067C0,-5.892 4.821,-10.646 10.78,-10.646C16.604,-10.646 21.425,-5.892 21.425,-0.067L21.425,26.313C21.425,32.206 16.604,36.959 10.78,36.959C4.821,36.959 0,32.206 0,26.313"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                        <g transform="matrix(2.66573,0,0,2.66573,667.51,134.31)" v-cloak>
-                            <path
-                                d="M0,-47.604C6.227,-47.604 11.315,-42.248 11.315,-36.221C11.315,-29.928 6.227,-24.907 0,-24.907C-3.348,-24.907 -5.959,-26.446 -7.968,-26.446C-9.373,-26.446 -10.579,-25.241 -10.579,-23.835C-10.579,-22.497 -9.373,-21.424 -7.968,-21.424C-5.959,-21.424 -3.348,-22.965 0,-22.965C6.227,-22.965 11.315,-17.608 11.315,-11.315C11.315,-5.29 6.227,0 0,0L-9.709,0C-22.563,0 -33.075,-11.18 -33.075,-23.835C-33.075,-37.092 -22.43,-47.403 -9.373,-47.604L0,-47.604Z"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                        <g transform="matrix(2.66573,0,0,2.66573,514.653,35.9663)" v-cloak>
-                            <path
-                                d="M0,26.313L0,24.037C0,23.233 -0.669,22.564 -1.473,22.564C-2.276,22.564 -2.945,23.233 -2.945,24.037L-2.945,26.313C-2.945,32.338 -7.633,36.959 -13.592,36.959C-19.416,36.959 -24.237,32.338 -24.237,26.313L-24.237,-0.067C-24.237,-6.025 -19.416,-10.646 -13.592,-10.646C-7.633,-10.646 -2.945,-6.025 -2.945,-0.067L-2.945,2.344C-2.945,3.081 -2.276,3.75 -1.473,3.75C-0.669,3.75 0,3.081 0,2.344L0,-0.067C0,-5.892 4.82,-10.646 10.779,-10.646C16.603,-10.646 21.424,-5.892 21.424,-0.067L21.424,26.313C21.424,32.206 16.603,36.959 10.779,36.959C4.82,36.959 0,32.206 0,26.313"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                        <g transform="matrix(2.66573,0,0,2.66573,411.402,134.31)" v-cloak>
-                            <path
-                                d="M0,-47.604C6.227,-47.604 11.315,-42.248 11.315,-36.221C11.315,-29.928 6.227,-24.907 0,-24.907C-3.348,-24.907 -5.958,-26.446 -7.967,-26.446C-9.374,-26.446 -10.579,-25.241 -10.579,-23.835C-10.579,-22.497 -9.374,-21.424 -7.967,-21.424C-5.958,-21.424 -3.348,-22.965 0,-22.965C6.227,-22.965 11.315,-17.608 11.315,-11.315C11.315,-5.29 6.227,0 0,0L-9.708,0C-22.563,0 -33.075,-11.18 -33.075,-23.835C-33.075,-37.092 -22.43,-47.403 -9.374,-47.604L0,-47.604Z"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                        <g transform="matrix(2.66573,0,0,2.66573,230.74,36.1487)" v-cloak>
-                            <path
-                                d="M0,25.977L0,-0.203C0,-6.027 4.753,-10.847 10.646,-10.847C16.604,-10.847 21.358,-6.027 21.358,-0.203L21.224,15.399L23.568,15.399C37.494,15.399 37.494,36.824 23.568,36.824L10.846,36.824C4.62,36.824 -0.201,32.137 0,25.977"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                        <g transform="matrix(2.66573,0,0,2.66573,164.234,36.5043)" v-cloak>
-                            <path
-                                d="M0,25.91L0,-0.201C0,-6.027 4.687,-10.713 10.579,-10.713C16.671,-10.713 21.359,-6.027 21.359,-0.201L21.359,25.91C21.359,31.736 16.671,36.623 10.579,36.623C4.687,36.623 0,31.736 0,25.91"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                        <g transform="matrix(2.66573,0,0,2.66573,125.86,134.134)" v-cloak>
-                            <path
-                                d="M0,-47.337C-3.737,-47.337 -5.522,-46.208 -8.863,-42.581C-12.204,-38.956 -15.61,-34.627 -15.61,-34.627C-15.449,-34.316 -12.945,-29.959 -12.908,-29.445C-12.872,-28.931 -13.349,-29.243 -13.704,-29.556C-14.141,-29.94 -22.787,-39.785 -25.106,-42.625C-27.426,-45.465 -30.289,-47.337 -34.134,-47.337C-40.026,-47.337 -44.713,-42.65 -44.713,-36.825L-44.713,-10.713C-44.713,-4.888 -40.026,0 -34.134,0C-29.87,0 -26.31,-2.401 -24.551,-5.836C-25.025,-6.555 -28.111,-11.071 -28.365,-11.704C-28.576,-12.232 -28.304,-12.14 -28.164,-12.089C-28.096,-12.064 -27.791,-11.978 -25.543,-9.718C-24.95,-9.12 -23.718,-7.989 -23.716,-7.999C-21.889,-6.554 -19.505,-5.62 -16.966,-5.62C-14.326,-5.62 -12.005,-6.548 -10.215,-7.985C-10.213,-7.98 -5.942,-11.944 -5.77,-12.089C-5.597,-12.233 -5.291,-12.232 -5.568,-11.704C-5.885,-11.101 -8.91,-6.552 -9.386,-5.831C-7.637,-2.399 -4.121,0 0,0C6.093,0 10.78,-4.888 10.78,-10.713L10.78,-36.825C10.78,-42.65 6.093,-47.337 0,-47.337"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                        <g transform="matrix(2.66573,0,0,2.66573,916.786,78.8974)" v-cloak>
-                            <path
-                                d="M0,-6.241L-2.539,-3.766L-1.939,-0.272C-1.855,0.22 -2.058,0.716 -2.461,1.009C-2.689,1.175 -2.96,1.26 -3.231,1.26C-3.44,1.26 -3.649,1.209 -3.841,1.109L-6.979,-0.54L-10.117,1.109C-10.559,1.341 -11.093,1.303 -11.497,1.009C-11.9,0.716 -12.103,0.22 -12.019,-0.272L-11.419,-3.766L-13.958,-6.241C-14.315,-6.59 -14.443,-7.109 -14.289,-7.584C-14.135,-8.058 -13.725,-8.404 -13.231,-8.475L-9.724,-8.986L-8.154,-12.165C-7.934,-12.612 -7.478,-12.894 -6.979,-12.894C-6.48,-12.894 -6.024,-12.612 -5.804,-12.165L-4.235,-8.986L-0.727,-8.475C-0.233,-8.404 0.177,-8.058 0.331,-7.584C0.485,-7.109 0.356,-6.59 0,-6.241M-6.979,-27.096C-19.59,-27.096 -29.812,-16.874 -29.812,-4.264L-29.811,10.208C-29.811,16.234 -24.99,20.855 -19.165,20.855C-13.206,20.855 -8.52,16.234 -8.52,10.208L-8.52,7.932C-8.52,7.128 -7.85,6.459 -7.047,6.459C-6.242,6.459 -5.573,7.128 -5.573,7.932L-5.573,10.208C-5.573,16.101 -0.752,20.855 5.206,20.855C11.031,20.855 15.852,16.101 15.852,10.208L15.854,-4.264C15.854,-16.874 5.631,-27.096 -6.979,-27.096"
-                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
-                        </g>
-                    </svg>
+            <transition name="slide">
+                <div id="character" oncontextmenu="return false;"
+                    v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                    @click="activate()" v-show="character !== null">
+                    <canvas v-bind:width="canvasSize.deviceWidth" v-bind:height="canvasSize.deviceHeight"
+                        v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                        ref="canvas"></canvas>
+                </div>
+            </transition>
+            <transition name="alternative">
+                <div id="alternative" oncontextmenu="return false;"
+                    v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                    v-show="alternative !== null">
+                    <canvas v-bind:width="canvasSize.alternative.deviceWidth"
+                        v-bind:height="canvasSize.alternative.deviceHeight"
+                        v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                        ref="alternative"></canvas>
                 </div>
             </transition>
             <transition name="fade">
                 <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
+            </transition>
+            <div class="background is-hidden">
+                <div v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }" v-for="image in backgroundImages"
+                    v-bind:key="image" v-cloak></div>
+                <img v-bind:src="image.url" @load="load(image.url)" @error="error(image.url)"
+                    v-for="image in preloadImages" v-bind:key="image.url" alt="Background" v-cloak>
+            </div>
+            <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
+                v-on:enter-cancelled="isHangingOn = false" v-on:before-leave v-on:after-leave="isHangingOn = false"
+                v-on:leave-cancelled="isHangingOn = false">
+                <div class="blind" v-if="isBlinded" v-cloak></div>
+            </transition>
+            <transition name="fade">
+                <div class="logo" v-if="progress !== null">
+                    <svg viewBox="0 0 1266 130" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                        xmlns:serif="http://www.serif.com/"
+                        style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" v-cloak>
+                        <g transform="matrix(3.39503,0,0,3.39503,728.554,68.5575)" v-cloak>
+                            <path
+                                d="M0,-1.181C-0.47,-1.189 -0.915,-1.181 -1.381,-1.461C-1.644,-1.619 -1.804,-1.904 -1.804,-2.21L-1.804,-5.225C-1.804,-5.532 -1.644,-5.816 -1.381,-5.974C-1.065,-6.164 -0.655,-6.359 0,-6.359C1.532,-6.359 2.485,-5.338 2.485,-3.718C2.485,-2.13 1.157,-1.16 0,-1.181M11.261,0.389C11.056,0.054 11.326,-0.421 11.648,-0.187C12.688,0.634 13.655,1.61 14.701,2.391C15.951,0.298 16.399,-2.175 16.399,-4.656C16.399,-12.762 9.841,-19.32 1.735,-19.32L-9.829,-19.32C-14.425,-19.32 -18.194,-15.704 -18.194,-11.161L-18.194,9.078C-18.194,13.673 -14.425,17.442 -9.985,17.442C-5.493,17.442 -1.981,14.086 -1.724,9.749L2.716,15.014C5.504,18.784 11.08,18.215 14.023,15.274C16.967,12.331 17.38,7.993 15.056,4.689L11.261,0.389ZM-41.434,-19.402L-25.57,-19.396C-22.448,-19.396 -19.906,-16.771 -19.906,-13.544C-19.906,-10.318 -22.448,-7.693 -25.57,-7.693C-25.57,-7.693 -32.601,-7.702 -32.626,-7.702C-33.022,-7.702 -33.344,-7.381 -33.344,-6.986C-33.344,-6.589 -33.022,-6.268 -32.626,-6.268C-32.601,-6.268 -26.312,-6.274 -26.312,-6.274C-23.501,-6.274 -21.213,-3.91 -21.213,-1.005C-21.213,1.899 -23.501,4.263 -26.311,4.263C-26.311,4.263 -32.553,4.213 -32.626,4.213C-33.022,4.213 -33.344,4.534 -33.344,4.93C-33.344,5.325 -33.022,5.647 -32.626,5.647C-32.601,5.647 -25.57,5.635 -25.57,5.635C-22.448,5.635 -19.906,8.26 -19.906,11.487C-19.906,14.714 -22.448,17.34 -25.572,17.34L-41.425,17.329C-46.528,17.232 -50.854,13.11 -50.854,8.065L-50.854,-9.973C-50.854,-15.083 -46.541,-19.402 -41.434,-19.402M-165.988,-9.483C-166.708,-6.759 -171.428,8.903 -172.148,11.627C-173.319,16.055 -177.858,18.696 -182.286,17.526C-186.391,16.442 -189.206,12.467 -188.668,8.368L-187.297,3.297C-187.187,2.932 -187.115,2.694 -187.37,2.676C-187.571,2.663 -187.656,2.892 -187.684,2.944C-187.684,2.944 -191.335,11.24 -192.885,13.737C-193.956,15.544 -195.805,16.948 -197.996,17.526C-202.424,18.696 -206.963,16.055 -208.134,11.627C-208.853,8.903 -213.381,-6.759 -214.101,-9.483C-215.271,-13.911 -212.631,-18.451 -208.201,-19.62C-204.575,-20.579 -200.781,-18.883 -198.917,-15.841L-200.98,-9.619C-200.996,-9.561 -201.023,-9.173 -200.728,-9.122C-200.441,-9.073 -200.272,-9.372 -200.249,-9.425L-197.072,-15.999C-195.236,-18.874 -191.651,-20.567 -188.176,-19.648C-185.105,-18.837 -182.92,-16.358 -182.333,-13.441C-182.297,-13.261 -182.266,-13.079 -182.243,-12.897C-182.148,-13.252 -182.074,-13.533 -182.025,-13.721C-180.854,-18.151 -176.315,-20.791 -171.887,-19.62C-167.458,-18.451 -164.816,-13.911 -165.988,-9.483M-146.702,1.768C-148.282,1.768 -149.563,0.486 -149.563,-1.094C-149.563,-2.673 -148.282,-3.954 -146.702,-3.954C-145.122,-3.954 -143.842,-2.673 -143.842,-1.094C-143.842,0.486 -145.122,1.768 -146.702,1.768M-146.754,-19.835C-156.977,-19.835 -165.496,-11.369 -165.496,-1.042C-165.496,9.336 -156.977,17.648 -146.754,17.648C-136.376,17.648 -127.909,9.336 -127.909,-1.042C-127.909,-11.369 -136.376,-19.835 -146.754,-19.835M107.545,14.912C104.499,11.969 101.557,9.181 98.664,6.134C98.51,5.825 98.045,6.29 98.199,6.651L101.144,11.194C100.368,14.757 97.013,17.442 93.141,17.442C88.597,17.442 84.88,13.827 84.88,9.181L84.88,-11.161C84.88,-15.654 88.597,-19.422 93.141,-19.422C95.618,-19.422 97.89,-18.079 99.439,-16.531L107.854,-8.271C108.01,-7.96 108.475,-8.271 108.319,-8.579L105.273,-13.021C106.049,-16.531 109.403,-19.422 113.225,-19.422C117.819,-19.422 121.537,-15.654 121.537,-11.161L121.537,9.181C121.537,17.131 112.192,19.61 107.545,14.912M-70.243,1.619L-71.327,1.619C-71.811,1.619 -72.203,1.227 -72.203,0.743L-72.203,-3.128C-72.203,-3.612 -71.811,-4.003 -71.327,-4.003L-70.243,-4.003C-68.623,-4.003 -67.354,-2.735 -67.354,-1.115C-67.354,0.444 -68.596,1.619 -70.243,1.619M-70.883,-19.422L-78.835,-19.422C-83.482,-19.422 -87.044,-15.654 -87.044,-11.161L-87.044,9.233C-87.044,13.724 -83.327,17.287 -78.68,17.287L-71.245,17.287C-61.074,17.287 -52.813,9.078 -52.813,-1.093C-52.813,-11.161 -60.816,-19.422 -70.883,-19.422M18.717,8.974L18.717,-11.213C18.717,-15.704 22.383,-19.422 26.927,-19.422C31.521,-19.422 35.188,-15.704 35.188,-11.213L35.084,0.817L36.891,0.817C47.63,0.817 47.63,17.339 36.891,17.339L27.082,17.339C22.279,17.339 18.563,13.724 18.717,8.974M64.861,1.524C63.281,1.524 62,0.243 62,-1.337C62,-2.916 63.281,-4.198 64.861,-4.198C66.441,-4.198 67.722,-2.916 67.722,-1.337C67.722,0.243 66.441,1.524 64.861,1.524M64.769,-19.559C55.068,-19.559 47.206,-11.697 47.206,-1.999L47.207,9.133C47.207,13.768 50.914,17.321 55.395,17.321C59.979,17.321 63.582,13.768 63.582,9.133L63.582,7.382C63.582,6.764 64.098,6.249 64.716,6.249C65.335,6.249 65.849,6.764 65.849,7.382L65.849,9.133C65.849,13.665 69.557,17.321 74.14,17.321C78.62,17.321 82.327,13.665 82.327,9.133L82.329,-1.999C82.329,-11.697 74.467,-19.559 64.769,-19.559M-103.356,14.912C-106.403,11.969 -109.346,9.181 -112.237,6.134C-112.392,5.825 -112.856,6.29 -112.702,6.651L-109.759,11.194C-110.533,14.757 -113.889,17.442 -117.762,17.442C-122.305,17.442 -126.022,13.827 -126.022,9.181L-126.022,-11.161C-126.022,-15.654 -122.305,-19.422 -117.762,-19.422C-115.283,-19.422 -113.011,-18.079 -111.463,-16.531L-103.046,-8.271C-102.892,-7.96 -102.428,-8.271 -102.583,-8.579L-105.628,-13.021C-104.854,-16.531 -101.498,-19.422 -97.677,-19.422C-93.083,-19.422 -89.365,-15.654 -89.365,-11.161L-89.365,9.181C-89.365,17.131 -98.71,19.61 -103.356,14.912M140.658,1.619L139.573,1.619C139.09,1.619 138.698,1.227 138.698,0.743L138.698,-3.128C138.698,-3.612 139.09,-4.003 139.573,-4.003L140.658,-4.003C142.278,-4.003 143.547,-2.735 143.547,-1.115C143.547,0.444 142.305,1.619 140.658,1.619M140.017,-19.422L132.065,-19.422C127.418,-19.422 123.856,-15.654 123.856,-11.161L123.856,9.233C123.856,13.724 127.574,17.287 132.221,17.287L139.655,17.287C149.826,17.287 158.088,9.078 158.088,-1.093C158.088,-11.161 150.084,-19.422 140.017,-19.422"
+                                style="fill-rule:nonzero;" />
+                        </g>
+                    </svg>
+                </div>
             </transition>
             <transition name="fade">
                 <div class="hud" v-if="isOverlayed">
@@ -2384,7 +2586,7 @@
                                                                 <nav class="level is-mobile">
                                                                     <div class="level-item">
                                                                         <button class="button is-white" type="button"
-                                                                            @click="share({ name: word.name, attributes: word.attributes }); word = null;"
+                                                                            @click="share(word); word = null;"
                                                                             v-cloak>
                                                                             <span class="icon is-small is-primary">
                                                                                 <i class="fas fa-check"></i>
@@ -2407,17 +2609,359 @@
                                             </div>
                                         </div>
                                     </nav>
-                                    <nav class="level" v-else-if="user === null && mode === 'sign-in'" key="sign-in">
+                                    <nav class="level" v-else-if="mode instanceof Array" key="users">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <figure class="media-content"
+                                                    v-if="mode.length > 0 && user.uid === mode[0].id">
+                                                    <span class="icon">
+                                                        <i class="fas fa-crown"></i>
+                                                    </span>
+                                                </figure>
+                                                <figure class="media-content">
+                                                    <p class="image is-64x64 is-superellips">
+                                                        <picture class="image is-64x64" style="pointer-events: none;"
+                                                            v-if="'photoURL' in user && 'displayName' in user && user.photoURL !== null"
+                                                            v-bind:key="user.photoURL">
+                                                            <img v-bind:src="user.photoURL" width="64" height="64"
+                                                                v-bind:alt="user.displayName">
+                                                        </picture>
+                                                        <picture class="image is-64x64" style="pointer-events: none;"
+                                                            v-else key="default">
+                                                            <source srcset="/images/Merku.png"
+                                                                media="(prefers-color-scheme: dark)">
+                                                            <img src="/images/Milch.png" width="64" height="64"
+                                                                alt="Logo">
+                                                        </picture>
+                                                    </p>
+                                                    <span class="badge"
+                                                        v-text="mode.reduce((previousValue, currentValue) => currentValue.id === user.uid ? previousValue + currentValue.count : previousValue, 0)"></span>
+                                                </figure>
+
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            リーダーボード</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            Leaderboard</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <transition name="fade" mode="out-in">
+                                                <div class="level" v-if="isUpdating" key="loading">
+                                                    <div class="level-item">
+                                                        <article class="media">
+                                                            <div class="media-content">
+                                                                <div class="content">
+                                                                    <span class="icon is-small">
+                                                                        <i class="fas fa-spinner updating"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                </div>
+                                                <div class="level is-mobile" v-else key="loaded">
+                                                    <div class="level-item" v-for="(user, index) in take(mode, 10)"
+                                                        v-bind:key="user">
+                                                        <article class="media">
+                                                            <div class="media-content">
+                                                                <div class="content">
+                                                                    <button class="button is-rounded is-size-7"
+                                                                        type="button"
+                                                                        @click="mode = { words: null, next: null, indexes: [], user: { id: user.id, name: user.name, image: user.image }, users: mode }; next(user.id, mode.next);">
+                                                                        <span class="icon" v-if="index === 0">
+                                                                            <i class="fas fa-crown"></i>
+                                                                        </span>
+                                                                        <span
+                                                                            class="badge is-size-7 has-text-weight-bold"
+                                                                            v-if="'count' in user">{{ user.count
+                                                                            }}</span>
+                                                                        <span class="image is-24x24" v-if="user.image">
+                                                                            <img class="is-rounded"
+                                                                                v-bind:src="user.image"
+                                                                                v-bind:alt="user.name" v-cloak>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>{{ user.name }}</div>
+                                                                                    <div>{{ user.name }}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                    <div class="level-item" v-if="'next' in mode && 'indexes' in mode">
+                                                        <div class="level is-mobile">
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <button class="button is-white"
+                                                                                type="button"
+                                                                                v-bind:disabled="mode.indexes.length === 0"
+                                                                                @click="previous(mode.user.id, mode.indexes.shift().name)"
+                                                                                v-cloak>
+                                                                                <span class="icon is-small">
+                                                                                    <i class="fas fa-chevron-left"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <button class="button is-white"
+                                                                                type="button"
+                                                                                v-bind:disabled="mode.next === null"
+                                                                                @click="next(mode.user.id, mode.next.name)"
+                                                                                v-cloak>
+                                                                                <span class="icon is-small">
+                                                                                    <i class="fas fa-chevron-right"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </transition>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="mode !== null && typeof(mode) === 'object'"
+                                        key="popup">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <figure class="media-content">
+                                                    <p class="image is-64x64 is-superellips">
+                                                        <picture class="image is-64x64" style="pointer-events: none;"
+                                                            v-if="'image' in mode && mode.image !== null"
+                                                            key="mode.image">
+                                                            <img v-bind:src="mode.image" width="64" height="64"
+                                                                alt="Avatar">
+                                                        </picture>
+                                                        <picture class="image is-64x64" style="pointer-events: none;"
+                                                            v-else-if="'user' in mode && 'image' in mode.user && mode.user.image !== null"
+                                                            key="mode.user.image">
+                                                            <img v-bind:src="mode.user.image" width="64" height="64"
+                                                                v-bind:alt="mode.user.name">
+                                                        </picture>
+                                                        <picture class="image is-64x64" style="pointer-events: none;"
+                                                            v-else key="default">
+                                                            <source srcset="/images/Merku.png"
+                                                                media="(prefers-color-scheme: dark)">
+                                                            <img src="/images/Milch.png" width="64" height="64"
+                                                                alt="Logo">
+                                                        </picture>
+                                                    </p>
+                                                </figure>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered"
+                                                            v-if="'user' in mode">
+                                                            {{ mode.user.name }}</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            言葉</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item" v-if="'name' in mode && 'attributes' in mode" v-cloak>
+                                            <div class="level is-mobile">
+                                                <div class="level-item">
+                                                    <div class="level">
+                                                        <div class="level-item">
+                                                            <article class="media">
+                                                                <div class="media-content">
+                                                                    <div class="content">
+                                                                        <button class="button is-rounded is-size-7"
+                                                                            type="button"
+                                                                            @click="learn({ name: mode.name, attributes: mode.attributes, user: mode.user }); isRevealed = false; mode = null;">
+                                                                            <span class="icon">
+                                                                                <i class="fas fa-star"></i>
+                                                                            </span>
+                                                                            <span class="wrap has-text-weight-bold"
+                                                                                v-if="'user' in mode && user.uid !== mode.user.id">
+                                                                                <div class="clip">
+                                                                                    <div class="scrollable">
+                                                                                        <div>{{ mode.name }}を教えて貰う</div>
+                                                                                        <div>{{ mode.name }}を教えて貰う</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </span>
+                                                                            <span class="wrap has-text-weight-bold"
+                                                                                v-else>
+                                                                                <div class="clip">
+                                                                                    <div class="scrollable">
+                                                                                        <div>{{ mode.name }}を教える</div>
+                                                                                        <div>{{ mode.name }}を教える</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <article class="media">
+                                                                <div class="media-content">
+                                                                    <div class="content">
+                                                                        <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
+                                                                            target="_blank"><span
+                                                                                class="icon is-small"><i
+                                                                                    class="fas fa-search"></i></span></a>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="level-item" v-if="'words' in mode" v-cloak>
+                                            <transition name="fade" mode="out-in">
+                                                <div class="level" v-if="mode.words === null" key="loading">
+                                                    <div class="level-item">
+                                                        <article class="media">
+                                                            <div class="media-content">
+                                                                <div class="content">
+                                                                    <span class="icon is-small">
+                                                                        <i class="fas fa-spinner updating"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                </div>
+                                                <div class="level is-mobile" v-else key="loaded">
+                                                    <div class="level-item" v-for="word in mode.words"
+                                                        v-bind:key="word">
+                                                        <div class="level">
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <button class="button is-rounded is-size-7"
+                                                                                type="button"
+                                                                                @click="learn(word); isRevealed = false; mode = null;">
+                                                                                <span class="icon">
+                                                                                    <i class="fas fa-star"></i>
+                                                                                </span>
+                                                                                <span class="wrap has-text-weight-bold">
+                                                                                    <div class="clip">
+                                                                                        <div class="scrollable">
+                                                                                            <div>{{ word.name }}を教える
+                                                                                            </div>
+                                                                                            <div>{{ word.name }}を教える
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <a v-bind:href="encodeURI('https://google.com/search?q=' + word.name)"
+                                                                                target="_blank"><span
+                                                                                    class="icon is-small"><i
+                                                                                        class="fas fa-search"></i></span></a>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="level-item" v-if="'next' in mode && 'indexes' in mode">
+                                                        <div class="level is-mobile">
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <button class="button is-white"
+                                                                                type="button"
+                                                                                v-bind:disabled="mode.indexes.length === 0"
+                                                                                @click="previous(mode.user.id, mode.indexes.shift().name)"
+                                                                                v-cloak>
+                                                                                <span class="icon is-small">
+                                                                                    <i class="fas fa-chevron-left"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <button class="button is-white"
+                                                                                type="button"
+                                                                                v-bind:disabled="mode.next === null"
+                                                                                @click="next(mode.user.id, mode.next.name)"
+                                                                                v-cloak>
+                                                                                <span class="icon is-small">
+                                                                                    <i class="fas fa-chevron-right"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </transition>
+                                        </div>
+                                        <div class="level-item" v-if="'user' in mode && 'link' in mode.user">
+                                            <div class="level">
+                                                <div class="level-item">
+                                                    <div class="level is-mobile">
+                                                        <div class="level-item">
+                                                            <a v-bind:href="mode.user.link" target="_blank"><span
+                                                                    class="icon is-small"><i
+                                                                        class="fab fa-twitter"></i></span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="user === null || mode === 'sign-in'" key="sign-in">
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
                                                         <button class="button is-rounded is-size-7" type="button"
-                                                            @click="signIn('google.com')">
+                                                            @click="signIn('google.com'); mode = null;">
                                                             <span class="icon">
                                                                 <i class="fab fa-google"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>Googleでサインイン</div>
@@ -2430,16 +2974,16 @@
                                                 </div>
                                             </article>
                                         </div>
-                                        <div class="level-item">
+                                        <!--<div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
                                                         <button class="button is-rounded is-size-7" type="button"
-                                                            @click="signIn('facebook.com')">
+                                                            @click="signIn('facebook.com'); mode = null;">
                                                             <span class="icon">
                                                                 <i class="fab fa-facebook"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>Facebookでサインイン</div>
@@ -2451,17 +2995,17 @@
                                                     </div>
                                                 </div>
                                             </article>
-                                        </div>
+                                        </div>-->
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
                                                         <button class="button is-rounded is-size-7" type="button"
-                                                            @click="signIn('twitter.com')">
+                                                            @click="signIn('twitter.com'); mode = null;">
                                                             <span class="icon">
                                                                 <i class="fab fa-twitter"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>Twitterでサインイン</div>
@@ -2684,13 +3228,13 @@
                                                                 v-cloak>
                                                                 <picture class="image is-64x64"
                                                                     style="pointer-events: none;"
-                                                                    v-if="'photoURL' in user && user.photoURL !== null">
-                                                                    <img class="is-rounded" v-bind:src="user.photoURL"
-                                                                        width="64" height="64"
-                                                                        v-bind:alt="user.displayName">
+                                                                    v-if="'photoURL' in user && user.photoURL !== null"
+                                                                    key="avatar">
+                                                                    <img v-bind:src="user.photoURL" width="64"
+                                                                        height="64" v-bind:alt="user.displayName">
                                                                 </picture>
                                                                 <picture class="image is-64x64"
-                                                                    style="pointer-events: none;" v-else>
+                                                                    style="pointer-events: none;" v-else key="default">
                                                                     <source srcset="/images/Merku.png"
                                                                         media="(prefers-color-scheme: dark)">
                                                                     <img src="/images/Milch.png" width="64" height="64"
@@ -2706,36 +3250,8 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content has-text-centered">
-                                                        <svg width="222px" height="32px" viewBox="0 0 222 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                                                            <g transform="matrix(0.670321,0,0,0.670321,0,1.27955e-14)">
-                                                                <g transform="matrix(1,0,0,1,297.583,47.7376)">
-                                                                    <path d="M0,-47.605C-5.959,-47.605 -10.78,-42.851 -10.78,-37.026L-10.78,-34.615C-10.78,-33.878 -11.449,-33.209 -12.253,-33.209C-13.057,-33.209 -13.728,-33.878 -13.728,-34.615L-13.728,-37.026C-13.728,-42.984 -18.413,-47.605 -24.371,-47.605C-30.197,-47.605 -35.018,-42.984 -35.018,-37.026L-35.018,-10.646C-35.018,-4.621 -30.197,0 -24.371,0C-18.413,0 -13.728,-4.621 -13.728,-10.646L-13.728,-12.922C-13.728,-13.726 -13.057,-14.395 -12.253,-14.395C-11.449,-14.395 -10.78,-13.726 -10.78,-12.922L-10.78,-10.646C-10.78,-4.753 -5.959,0 0,0C5.824,0 10.645,-4.753 10.645,-10.646L10.645,-37.026C10.645,-42.851 5.824,-47.605 0,-47.605M0,-45.305C4.602,-45.305 8.345,-41.591 8.345,-37.026L8.345,-10.646C8.345,-6.043 4.602,-2.299 0,-2.299C-4.676,-2.299 -8.48,-6.043 -8.48,-10.646L-8.48,-12.922C-8.48,-15.002 -10.173,-16.695 -12.253,-16.695C-14.334,-16.695 -16.026,-15.002 -16.026,-12.922L-16.026,-10.646C-16.026,-5.888 -19.614,-2.299 -24.371,-2.299C-29.052,-2.299 -32.718,-5.965 -32.718,-10.646L-32.718,-37.026C-32.718,-41.591 -28.974,-45.305 -24.371,-45.305C-19.692,-45.305 -16.026,-41.668 -16.026,-37.026L-16.026,-34.615C-16.026,-32.606 -14.299,-30.91 -12.253,-30.91C-10.208,-30.91 -8.48,-32.606 -8.48,-34.615L-8.48,-37.026C-8.48,-41.591 -4.676,-45.305 0,-45.305" style="fill-rule:nonzero;"/>
-                                                                </g>
-                                                                <g transform="matrix(1,0,0,1,247.903,47.6702)">
-                                                                    <path d="M0,-47.604L-9.373,-47.604C-22.43,-47.403 -33.075,-37.092 -33.075,-23.835C-33.075,-11.18 -22.563,0 -9.709,0L0,0C6.227,0 11.314,-5.29 11.314,-11.315C11.314,-17.608 6.227,-22.965 0,-22.965C-3.348,-22.965 -5.959,-21.424 -7.968,-21.424C-9.373,-21.424 -10.579,-22.497 -10.579,-23.835C-10.579,-25.241 -9.373,-26.446 -7.968,-26.446C-5.959,-26.446 -3.348,-24.907 0,-24.907C6.227,-24.907 11.314,-29.928 11.314,-36.221C11.314,-42.248 6.227,-47.604 0,-47.604M0,-45.304C4.803,-45.304 9.016,-41.06 9.016,-36.221C9.016,-31.25 4.971,-27.207 0,-27.207C-1.554,-27.207 -2.965,-27.625 -4.329,-28.028C-5.578,-28.397 -6.758,-28.746 -7.968,-28.746C-10.63,-28.746 -12.879,-26.498 -12.879,-23.835C-12.879,-21.238 -10.676,-19.125 -7.968,-19.125C-6.758,-19.125 -5.578,-19.473 -4.329,-19.843C-2.964,-20.248 -1.553,-20.666 0,-20.666C4.887,-20.666 9.016,-16.383 9.016,-11.315C9.016,-6.428 4.887,-2.299 0,-2.299L-9.709,-2.299C-21.128,-2.299 -30.775,-12.162 -30.775,-23.835C-30.775,-35.689 -21.358,-45.119 -9.373,-45.304L0,-45.304" style="fill-rule:nonzero;"/>
-                                                                </g>
-                                                                <g transform="matrix(1,0,0,1,190.562,10.7786)">
-                                                                    <path d="M0,26.313L0,24.037C0,23.233 -0.669,22.564 -1.473,22.564C-2.276,22.564 -2.945,23.233 -2.945,24.037L-2.945,26.313C-2.945,32.338 -7.633,36.959 -13.592,36.959C-19.416,36.959 -24.237,32.338 -24.237,26.313L-24.237,-0.067C-24.237,-6.025 -19.416,-10.646 -13.592,-10.646C-7.633,-10.646 -2.945,-6.025 -2.945,-0.067L-2.945,2.344C-2.945,3.081 -2.276,3.75 -1.473,3.75C-0.669,3.75 0,3.081 0,2.344L0,-0.067C0,-5.892 4.82,-10.646 10.779,-10.646C16.603,-10.646 21.424,-5.892 21.424,-0.067L21.424,26.313C21.424,32.206 16.603,36.959 10.779,36.959C4.82,36.959 0,32.206 0,26.313" style="fill-rule:nonzero;"/>
-                                                                </g>
-                                                                <g transform="matrix(1,0,0,1,151.829,47.6702)">
-                                                                    <path d="M0,-47.604C6.227,-47.604 11.315,-42.248 11.315,-36.221C11.315,-29.928 6.227,-24.907 0,-24.907C-3.348,-24.907 -5.958,-26.446 -7.967,-26.446C-9.374,-26.446 -10.579,-25.241 -10.579,-23.835C-10.579,-22.497 -9.374,-21.424 -7.967,-21.424C-5.958,-21.424 -3.348,-22.965 0,-22.965C6.227,-22.965 11.315,-17.608 11.315,-11.315C11.315,-5.29 6.227,0 0,0L-9.708,0C-22.563,0 -33.075,-11.18 -33.075,-23.835C-33.075,-37.092 -22.43,-47.403 -9.374,-47.604L0,-47.604Z" style="fill-rule:nonzero;"/>
-                                                                </g>
-                                                                <g transform="matrix(1,0,0,1,84.0568,10.847)">
-                                                                    <path d="M0,25.977L0,-0.203C0,-6.027 4.753,-10.847 10.646,-10.847C16.604,-10.847 21.358,-6.027 21.358,-0.203L21.224,15.399L23.568,15.399C37.494,15.399 37.494,36.824 23.568,36.824L10.846,36.824C4.62,36.824 -0.201,32.137 0,25.977" style="fill-rule:nonzero;"/>
-                                                                </g>
-                                                                <g transform="matrix(1,0,0,1,59.1085,10.9804)">
-                                                                    <path d="M0,25.91L0,-0.201C0,-6.028 4.687,-10.713 10.579,-10.713C16.671,-10.713 21.359,-6.028 21.359,-0.201L21.359,25.91C21.359,31.736 16.671,36.623 10.579,36.623C4.687,36.623 0,31.736 0,25.91" style="fill-rule:nonzero;"/>
-                                                                </g>
-                                                                <g transform="matrix(1,0,0,1,44.713,47.6044)">
-                                                                    <path d="M0,-47.337C-3.737,-47.337 -5.522,-46.208 -8.863,-42.581C-12.204,-38.956 -15.61,-34.627 -15.61,-34.627C-15.449,-34.316 -12.945,-29.959 -12.908,-29.445C-12.872,-28.931 -13.349,-29.243 -13.704,-29.556C-14.141,-29.94 -22.787,-39.785 -25.106,-42.625C-27.426,-45.465 -30.289,-47.337 -34.134,-47.337C-40.026,-47.337 -44.713,-42.649 -44.713,-36.825L-44.713,-10.713C-44.713,-4.888 -40.026,0 -34.134,0C-29.87,0 -26.31,-2.401 -24.551,-5.836C-25.025,-6.555 -28.111,-11.071 -28.365,-11.704C-28.576,-12.232 -28.304,-12.14 -28.164,-12.089C-28.096,-12.064 -27.791,-11.978 -25.543,-9.718C-24.95,-9.12 -23.718,-7.989 -23.716,-7.999C-21.889,-6.554 -19.505,-5.62 -16.966,-5.62C-14.326,-5.62 -12.005,-6.548 -10.215,-7.985C-10.213,-7.98 -5.942,-11.944 -5.77,-12.089C-5.597,-12.233 -5.291,-12.232 -5.568,-11.704C-5.885,-11.101 -8.91,-6.552 -9.386,-5.831C-7.637,-2.399 -4.121,0 0,0C6.093,0 10.78,-4.888 10.78,-10.713L10.78,-36.825C10.78,-42.649 6.093,-47.337 0,-47.337" style="fill-rule:nonzero;"/>
-                                                                </g>
-                                                                <g transform="matrix(1,0,0,1,317.532,31.2843)">
-                                                                    <path d="M0,14.154C-0.271,14.154 -0.541,14.069 -0.771,13.903C-1.173,13.61 -1.375,13.114 -1.291,12.622L-0.691,9.128L-3.23,6.653C-3.588,6.304 -3.716,5.785 -3.563,5.31C-3.407,4.836 -2.997,4.49 -2.504,4.419L1.004,3.908L2.573,0.729C2.794,0.282 3.25,0 3.749,0C4.247,0 4.703,0.282 4.924,0.729L6.492,3.908L10.001,4.419C10.494,4.49 10.904,4.836 11.059,5.31C11.213,5.785 11.084,6.304 10.728,6.653L8.188,9.128L8.788,12.622C8.872,13.114 8.67,13.61 8.267,13.903C8.038,14.069 7.768,14.154 7.496,14.154C7.287,14.154 7.078,14.103 6.887,14.003L3.749,12.354L0.61,14.003C0.419,14.103 0.209,14.154 0,14.154M-0.523,1.806L-2.833,2.142C-4.203,2.341 -5.32,3.282 -5.749,4.599C-6.177,5.916 -5.827,7.333 -4.836,8.3L-3.163,9.93L-3.559,12.235C-3.791,13.598 -3.24,14.951 -2.122,15.763C-1.501,16.216 -0.767,16.454 0,16.454C0.584,16.454 1.165,16.309 1.68,16.039L3.749,14.952L5.816,16.039C6.334,16.31 6.915,16.454 7.496,16.454C8.263,16.454 8.997,16.217 9.618,15.764C10.737,14.951 11.288,13.598 11.055,12.233L10.66,9.93L12.336,8.299C13.324,7.331 13.673,5.913 13.246,4.599C12.817,3.282 11.7,2.341 10.332,2.142L8.02,1.806L6.986,-0.288C6.374,-1.53 5.134,-2.3 3.749,-2.3C2.364,-2.3 1.123,-1.53 0.511,-0.289L-0.523,1.806" style="fill-rule:nonzero;"/>
-                                                                </g>
-                                                            </g>
-                                                        </svg>
-                                                        <!--<h1 class="is-uppercase has-text-weight-bold">
-                                                            ミルヒちゃんねる</h1>-->
+                                                        <h1 class="is-uppercase has-text-weight-bold">
+                                                            Wonderland</h1>
                                                         <h2 class="has-text-weight-bold">
                                                             milchchan.com</h2>
                                                     </div>
@@ -2746,32 +3262,17 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'sign-in'"
-                                                            v-if="user === null">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            v-bind:disabled="user === null"
+                                                            @click="discover(); isRevealed = false;">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
-                                                                        <div>言葉を教える</div>
-                                                                        <div>言葉を教える</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button"
-                                                            @click="isLearning = true; isRevealed = false;" v-else>
-                                                            <span class="icon">
-                                                                <i class="fas fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>言葉を教える</div>
-                                                                        <div>言葉を教える</div>
+                                                                        <div>言葉を探す</div>
+                                                                        <div>言葉を探す</div>
                                                                     </div>
                                                                 </div>
                                                             </span>
@@ -2780,40 +3281,71 @@
                                                 </div>
                                             </article>
                                         </div>
-                                        <div class="level-item" v-if="isDebug">
+                                        <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <div
-                                                            class="file button is-rounded is-size-7 has-text-weight-bold">
-                                                            <label class="file-label">
-                                                                <input class="file-input" type="button"
-                                                                    @click="mode = 'sign-in'" v-if="user === null">
-                                                                <input class="file-input" type="file" name="upload"
-                                                                    accept="image/png, image/jpeg" multiple
-                                                                    v-bind:disabled="isUploading" @change="upload"
-                                                                    v-else>
-                                                                <span class="file-cta_">
-                                                                    <transition name="fade" mode="out-in">
-                                                                        <span class="icon" v-if="isUploading"
-                                                                            key="uploading">
-                                                                            <i class="fas fa-spinner updating"></i>
-                                                                        </span>
-                                                                        <span class="icon" v-else key="ready">
-                                                                            <i class="fas fa-star"></i>
-                                                                        </span>
-                                                                    </transition>
-                                                                    <span class="file-label wrap">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>背景をアップロード</div>
-                                                                                <div>背景をアップロード</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </span>
-                                                            </label>
-                                                        </div>
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            v-bind:disabled="user === null"
+                                                            @click="isRevealed = false; isLearning = true;">
+                                                            <span class="icon">
+                                                                <i class="fas fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>ここで言葉を教える</div>
+                                                                        <div>ここで言葉を教える</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            v-bind:disabled="user === null"
+                                                            @click="mode = { words: null, next: null, indexes: [], user: { id: user.uid, name: user.displayName, image: user.photoURL } }; next(user.uid, mode.next);">
+                                                            <span class="icon">
+                                                                <i class="fas fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>教えた言葉</div>
+                                                                        <div>教えた言葉</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            v-bind:disabled="user === null"
+                                                            @click="activate(); isRevealed = false; mode = null;">
+                                                            <span class="icon">
+                                                                <i class="fas fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>お話してもらう</div>
+                                                                        <div>お話してもらう</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </article>
@@ -2833,11 +3365,11 @@
                                                     <div class="content">
                                                         <button class="button is-rounded is-size-7" type="button"
                                                             @click="mode = 'about'">
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
-                                                                        <div>ミルヒちゃんねるについて</div>
-                                                                        <div>ミルヒちゃんねるについて</div>
+                                                                        <div>このアプリについて</div>
+                                                                        <div>このアプリについて</div>
                                                                     </div>
                                                                 </div>
                                                             </span>
@@ -2849,6 +3381,7 @@
                                                 </div>
                                             </article>
                                         </div>
+                                        <!--
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
@@ -2963,32 +3496,7 @@
                                                 </div>
                                             </article>
                                         </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <a class="button is-rounded is-size-7"
-                                                            href="/clock/"
-                                                            target="_blank">
-                                                            <span class="icon">
-                                                                <i class="fas fa-globe"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>ミルヒちゃんクロック</div>
-                                                                        <div>ミルヒちゃんクロック</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                            <span class="icon">
-                                                                <i class="fas fa-external-link-alt"></i>
-                                                            </span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
+                                        -->
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
@@ -2997,7 +3505,7 @@
                                             </article>
                                         </div>
                                         <div class="level-item">
-                                            <div class="level is-mobile">
+                                            <div class="level">
                                                 <div class="level-item">
                                                     <div class="level is-mobile">
                                                         <div class="level-item">
@@ -3038,11 +3546,36 @@
                             <nav class="level">
                                 <div class="level-item has-text-centered">
                                     <div class="field is-grouped is-vcentered">
-                                        <picture class="icon is-small">
+                                        <picture class="icon is-small" v-cloak>
                                             <img src="/images/Star.svg" width="32" height="32" alt="Star">
                                         </picture>
-                                        <span class="is-size-1 is-uppercase">{{ animatedStars }}</span>
+                                        <span class="is-size-1 is-uppercase" v-cloak>{{ animatedStars }}</span>
                                     </div>
+                                </div>
+                                <div class="level-item has-text-centered">
+                                    <div class="field is-grouped is-vcentered">
+                                        <span class="is-size-4 is-uppercase has-text-weight-bold" v-cloak>{{ animatedSteps }}</span>
+                                    </div>
+                                </div>
+                                <div class="level-item has-text-centered">
+                                    <nav class="level">
+                                        <div class="level-item">
+                                            <transition name="fade" mode="out-in">
+                                                <button class="button" type="button" v-bind:disabled="isLocating"
+                                                    @click="locate" v-if="isLocating" key="processing" v-cloak>
+                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                        <i class="fas fa-spinner updating"></i>
+                                                    </span>
+                                                </button>
+                                                <button class="button" type="button" @click="locate" v-else key="ready"
+                                                    v-cloak>
+                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                        <i class="fas fa-location-arrow"></i>
+                                                    </span>
+                                                </button>
+                                            </transition>
+                                        </div>
+                                    </nav>
                                 </div>
                             </nav>
                         </div>
@@ -3086,6 +3619,45 @@
                             </div>
                         </div>
                     </div>
+                    <transition name="fade">
+                        <div class="level-item" v-bind:style="{ height: animatedLeaderboardHeight + 'px' }"
+                            v-show="!isRevealed">
+                            <div class="wrap" ref="leaderboard" v-cloak>
+                                <transition name="fade">
+                                    <div class="control">
+                                        <transition-group name="notification-list" class="level" tag="div"
+                                            v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
+                                            v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart"
+                                            v-on:after-leave="animationEnd" v-on:leave-cancelled="animationEnd">
+                                            <nav class="level-item notification-list-item"
+                                                v-for="(user, index) in take(leaderboard, 1)" v-bind:key="user.id">
+                                                <div class="leaderboard" v-cloak>
+                                                    <button class="button" type="button" v-bind:disabled="isDiscovering"
+                                                        @click="isRevealed = true; mode = leaderboard;" v-cloak>
+                                                        <span class="icon is-small" v-if="index === 0">
+                                                            <i class="fas fa-crown"></i>
+                                                        </span>
+                                                        <span class="image is-24x24" v-if="user.image">
+                                                            <img class="is-rounded" v-bind:src="user.image"
+                                                                v-bind:alt="user.name" v-cloak>
+                                                        </span>
+                                                        <span class="wrap is-size-7 has-text-weight-bold">
+                                                            <div class="clip">
+                                                                <div class="scrollable">
+                                                                    <div>{{ user.name }}</div>
+                                                                    <div>{{ user.name }}</div>
+                                                                </div>
+                                                            </div>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </nav>
+                                        </transition-group>
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </transition>
                 </div>
             </div>
             <transition name="popup" v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
@@ -3210,24 +3782,119 @@
                         </div>
                     </div>
                 </div>
+                <div class="navbar-item is-expanded columns is-desktop is-hidden" ref="ticker">
+                    <div class="column is-full is-mobile has-content-centered">
+                        <div class="control has-text-centered">
+                            <nav class="level">
+                                <div class="level-item has-text-centered">
+                                    <div class="field">
+                                        <div class="clip" v-bind:style="{ width: animatedTickerWidth + 'px' }" v-cloak>
+                                            <div class="ticker-wrap">
+                                                <transition-group name="ticker-item-list" class="ticker" tag="div"
+                                                    v-bind:style="{ animationPlayState: recentWords.length > 0 ? 'running' : 'paused' }"
+                                                    v-on:enter-cancelled="tickerUpdated"
+                                                    v-on:after-leave="tickerUpdated"
+                                                    v-on:leave-cancelled="tickerUpdated">
+                                                    <div class="item ticker-item-list-item"
+                                                        v-for="word in take(recentWords, 10)" v-bind:key="word.name">
+                                                        <article class="media" v-cloak>
+                                                            <figure class="media-left" v-if="word.image">
+                                                                <picture class="image has-ratio is-16x16"
+                                                                    v-if="word.image instanceof Object">
+                                                                    <source v-bind:srcset="word.image.dark"
+                                                                        media="(prefers-color-scheme: dark)">
+                                                                    <img class="is-rounded"
+                                                                        v-bind:src="word.image.light" width="16"
+                                                                        height="16" v-bind:alt="word.name">
+                                                                </picture>
+                                                                <picture class="image has-ratio is-16x16" v-else>
+                                                                    <img class="is-rounded" v-bind:src="word.image"
+                                                                        width="16" height="16" v-bind:alt="word.name">
+                                                                </picture>
+                                                            </figure>
+                                                            <div class="media-content" v-if="word.name">
+                                                                <div class="content has-text-left">
+                                                                    <span class="has-text-weight-bold">{{ word.name
+                                                                        }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                    <div class="item ticker-item-list-item"
+                                                        v-for="word in take(recentWords, 10)"
+                                                        v-bind:key="word.name + '-alt'">
+                                                        <article class="media" v-cloak>
+                                                            <figure class="media-left" v-if="word.image">
+                                                                <picture class="image has-ratio is-16x16"
+                                                                    v-if="word.image instanceof Object">
+                                                                    <source v-bind:srcset="word.image.dark"
+                                                                        media="(prefers-color-scheme: dark)">
+                                                                    <img class="is-rounded"
+                                                                        v-bind:src="word.image.light" width="16"
+                                                                        height="16" v-bind:alt="word.name">
+                                                                </picture>
+                                                                <picture class="image has-ratio is-16x16" v-else>
+                                                                    <img class="is-rounded" v-bind:src="word.image"
+                                                                        width="16" height="16" v-bind:alt="word.name">
+                                                                </picture>
+                                                            </figure>
+                                                            <div class="media-content" v-if="word.name">
+                                                                <div class="content has-text-left">
+                                                                    <span class="has-text-weight-bold">{{ word.name
+                                                                        }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                </transition-group>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
                 <div class="navbar-item is-expanded columns is-desktop" ref="blank"></div>
             </nav>
         </div>
         <div class="left is-hidden-tablet" v-cloak>
             <transition name="fade" mode="out-in">
-                <button class="button is-white" type="button" @click="isOverlayed = false" v-if="isOverlayed"
-                    key="close">
+                <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed" key="close">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button is-white" type="button" @click="isRevealed = !isRevealed; mode = null;"
-                    v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
+                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
+                    v-else-if="user === null || mode === null || mode === 'sign-in'" key="humberger">
                     <span class="icon is-small">
                         <i class="fas fa-bars"></i>
                     </span>
                 </button>
-                <button class="button is-white" type="button" @click="mode = null" v-else key="back">
+                <button class="button" type="button" @click="mode = mode.users"
+                    v-else-if="typeof(mode) === 'object' && 'users' in mode" key="users">
+                    <span class="icon is-small">
+                        <i class="fas fa-arrow-left"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                    v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="mode = null" v-else key="back">
                     <span class="icon is-small">
                         <i class="fas fa-arrow-left"></i>
                     </span>
@@ -3237,15 +3904,31 @@
         <div class="right" v-cloak>
             <transition name="fade" mode="out-in">
                 <div class="level-item" v-if="isRevealed" key="mute" v-cloak>
+                    <!--<transition name="fade" mode="out-in">
+                    <button class="button" type="button"
+                        v-bind:disabled="user === null" @click="isMuted = false"
+                        v-if="isMuted" key="off">
+                        <span class="icon is-small">
+                            <i class="fas fa-volume-mute"></i>
+                        </span>
+                    </button>
+                    <button class="button" type="button"
+                        v-bind:disabled="user === null" @click="isMuted = true" v-else
+                        key="on">
+                        <span class="icon is-small">
+                            <i class="fas fa-volume-off" v-if="user === null"></i>
+                            <i class="fas fa-volume-up" v-else></i>
+                        </span>
+                    </button>
+                </transition>-->
                     <transition name="fade" mode="out-in">
-                        <button class="button is-white" type="button" @click="isMuted = false" v-if="isMuted"
-                            key="disabled" v-cloak>
+                        <button class="button" type="button" @click="isMuted = false" v-if="isMuted" key="disabled"
+                            v-cloak>
                             <span class="icon is-small" style="pointer-events: none;">
                                 <i class="fas fa-volume-mute"></i>
                             </span>
                         </button>
-                        <button class="button is-white" type="button" @click="isMuted = true" v-else key="enabled"
-                            v-cloak>
+                        <button class="button" type="button" @click="isMuted = true" v-else key="enabled" v-cloak>
                             <span class="icon is-small" style="pointer-events: none;">
                                 <i class="fas fa-volume-up"></i>
                             </span>
@@ -3253,10 +3936,11 @@
                     </transition>
                 </div>
                 <div class="level-item" v-else key="sync">
-                    <button class="button is-white" type="button" v-bind:disabled="isLoading || isHangingOn"
+                    <button class="button" type="button" v-bind:disabled="isLoading || isHangingOn || isSubmitting"
                         @click="refresh" v-cloak>
                         <span class="icon is-small">
-                            <i class="fas fa-sync" v-bind:class="{ loading: isLoading }"></i>
+                            <i class="fas fa-sync"
+                                v-bind:class="{ loading: isLoading || isHangingOn || isSubmitting }"></i>
                         </span>
                     </button>
                 </div>
@@ -3283,6 +3967,7 @@
     <!--<script src="https://unpkg.com/vue@next"></script>-->
     <script src="https://unpkg.com/vue@3.2.21/dist/vue.global.prod.js"></script>
     <script src="js/moment-with-locales.js"></script>
+    <!--<script src="/js/particles.js"></script>-->
     <script src="js/tiny-segmenter.js"></script>
     <script src="js/index.js"></script>
 </body>
