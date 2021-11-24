@@ -873,7 +873,26 @@
             transition: .5s;
         }
 
-        .center>.level>.level-item>.control>.level>.level-item:nth-child(2) .field span:last-child {
+        .center>.level>.level-item>.control>.level>.level-item:nth-child(2) .progress {
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            width: 128px;
+            height: 10px;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item:nth-child(2) .progress>.bar {
+            position: relative;
+            border-radius: 290486px;
+            width: 128px;
+            height: 8px;
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item:nth-child(3) .field span:last-child {
             font-family: "Alata", sans-serif;
             font-size: 1.5rem !important;
             line-height: 1.5rem !important;
@@ -1169,8 +1188,15 @@
             padding: 8px 8px 8px 8px;
         }
 
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         #menu>.columns>.column>.control>.level:first-child h1 {
-            margin: 0px 0px 8px 0px;
+            margin: 0;
             font-size: 1.25rem;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 1.25rem;
@@ -1187,6 +1213,10 @@
             color: var(--main-color);
             transition: .5s;
             transform: rotate(0.03deg);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child h1+h2 {
+            margin: 8px 0px 0px 0px;
         }
 
         #menu>.columns>.column>.control>.level:first-child svg+h2 {
@@ -1371,10 +1401,133 @@
                 -20px -20px 60px #ffffff;*/
         }
 
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns:first-child {
+            padding: 0 !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns:not(:first-child) {
+            padding: 16px 0px 0px 0px !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item {
+            margin: 0;
+            padding: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.level {
+            display: flex;
+            margin: -8px 0px -8px 0px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.level>.level-item {
+            margin: 8px 0px 8px 0px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.level>.level-item>.level {
+            display: flex;
+            margin: -8px;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.level>.level-item>.level>.level-item {
+            margin: 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.level>.level-item>.level>.level-item>.level {
+            margin: -8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.level>.level-item>.level>.level-item>.level>.level-item {
+            margin: 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: var(--accent-color) !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item>button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button span.wrap {
+            display: flex;
+            margin: 0;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button .clip .scrollable div,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .button .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+            color: var(--accent-color)
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button .icon,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .button .icon {
+            color: var(--accent-color);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button>:not(:first-of-type),
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .button>:not(:first-of-type) {
+            margin: 0px 0px 0px 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button .icon:last-child:not(:first-child),
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .button .icon:last-child:not(:first-child) {
+            margin: 0px 0px 0px 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button .clip,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .button .clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .badge {
+            padding: 4px 8px 4px 8px !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgb(255, 238, 0);
+            color: #ffffff;
+            font-size: 0.75rem;
+            line-height: 0.75rem !important;
+        }
+
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox {
             display: flex;
             align-items: center;
-            margin: 16px 0px 0px 0px;
+            margin: 0;
             padding: 16px 32px 16px 32px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 500px 500px 500px 500px;
@@ -1443,11 +1596,6 @@
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media:nth-of-type(1) .media-left {
             margin: 0px 8px 0px 0px !important;
-            padding: 0;
-        }
-
-        #menu>.columns>.column>.control>.level:first-child .columns .column .media:nth-last-of-type(1) .media-content {
-            margin: -16px 0px 0px 0px;
             padding: 0;
         }
 
@@ -1742,18 +1890,18 @@
             transform: rotate(0.03deg);
         }
 
-        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) {
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) {
             display: flex;
             align-items: center;
             padding: 0px 8px 0px 8px;
         }
 
-        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) span {
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) span {
             color: rgba(255, 134, 181, 0.25);
             font-family: 'Hind', 'Josefin Sans', sans-serif;
         }
 
-        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) button {
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(4) button {
             border: 0px solid transparent;
             border-radius: 290486px;
             background-color: transparent;
@@ -2261,6 +2409,11 @@
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
+                                <button class="button" type="button" @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false" v-else-if="isLearning" key="abort">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
                                 <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
@@ -2280,6 +2433,12 @@
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
                                     v-else-if="typeof(mode) === 'object' && 'words' in mode" key="close">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === true" key="stats">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2400,6 +2559,22 @@
                                         <div class="scrollable">
                                             <div>お話してもらう</div>
                                             <div>お話してもらう</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="level-item">
+                            <button class="button" type="button" v-bind:disabled="user === null"
+                                @click="isRevealed = true; mode = { stats: stats };">
+                                <div class="icon is-large">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>アクティビティ</div>
+                                            <div>アクティビティ</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2555,13 +2730,75 @@
                 </div>
             </transition>
             <transition name="reveal">
-                <div id="menu" v-if="isRevealed && !isOverlayed || word" ref="menu">
+                <div id="menu" v-if="isRevealed && !isOverlayed || word || isLearning" ref="menu">
                     <div class="columns is-centered"
                         v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
                         <div class="column is-half is-mobile">
                             <div class="control" v-cloak>
                                 <transition name="fade" mode="out-in" v-on:before-leave="$refs.menu.scroll(0, 0)">
-                                    <nav class="level" v-if="word" key="learn">
+                                    <nav class="level" v-if="isLearning" key="input">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content"
+                                                        v-bind:style="{ paddingBottom: animatedInputHeight + 'px' }">
+                                                        <div class="level">
+                                                            <div class="level-item" v-for="row in chars" v-cloak>
+                                                                <div class="level is-mobile">
+                                                                    <div class="level-item" v-if="row.some(x => x.set.length > 1)">
+                                                                        <button class="button is-rounded is-size-7"
+                                                                            type="button" v-bind:disabled="row.every(x => x.index === 0)" @click="row.forEach(x => x.index = Math.max(x.index - 1, 0))">
+                                                                            <span class="icon">
+                                                                                <i class="fas fa-chevron-left"></i>
+                                                                            </span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="level-item">
+                                                                        <div class="level">
+                                                                            <div class="level-item"
+                                                                                v-for="column in row"
+                                                                                v-bind:key="column" v-cloak>
+                                                                                <button
+                                                                                    class="button is-rounded is-size-7"
+                                                                                    type="button" v-bind:disabled="column.count === 0"
+                                                                                    @click="input += column.set[column.index]; column.count--;">
+                                                                                    <span class="badge">
+                                                                                        {{ column.count }}
+                                                                                    </span>
+                                                                                    <span
+                                                                                        class="wrap has-text-weight-bold">
+                                                                                        <div class="clip">
+                                                                                            <div class="scrollable">
+                                                                                                <div>{{
+                                                                                                    column.set[column.index]
+                                                                                                    }}</div>
+                                                                                                <div>{{
+                                                                                                    column.set[column.index]
+                                                                                                    }}</div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="level-item" v-if="row.some(x => x.set.length > 1)">
+                                                                        <button class="button is-rounded is-size-7"
+                                                                            type="button" v-bind:disabled="row.every(x => x.index === x.set.length - 1)" @click="row.forEach(x => x.index = Math.min(x.index + 1, x.set.length - 1))">
+                                                                            <span class="icon">
+                                                                                <i class="fas fa-chevron-right"></i>
+                                                                            </span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="word" key="learn">
                                         <div class="columns is-desktop">
                                             <div class="column is-full has-content-centered">
                                                 <article class="media" v-cloak>
@@ -2617,8 +2854,7 @@
                                                                 <nav class="level is-mobile">
                                                                     <div class="level-item">
                                                                         <button class="button is-white" type="button"
-                                                                            @click="share(word); word = null;"
-                                                                            v-cloak>
+                                                                            @click="share(word); word = null;" v-cloak>
                                                                             <span class="icon is-small is-primary">
                                                                                 <i class="fas fa-check"></i>
                                                                             </span>
@@ -2671,7 +2907,7 @@
 
                                             </article>
                                         </div>
-                                        <div class="level-item">
+                                        <!--<div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
@@ -2682,7 +2918,7 @@
                                                     </div>
                                                 </div>
                                             </article>
-                                        </div>
+                                        </div>-->
                                         <div class="level-item">
                                             <transition name="fade" mode="out-in">
                                                 <div class="level" v-if="isUpdating" key="loading">
@@ -2793,6 +3029,12 @@
                                                                 v-bind:alt="mode.user.name">
                                                         </picture>
                                                         <picture class="image is-64x64" style="pointer-events: none;"
+                                                            v-else-if="'photoURL' in user && 'displayName' in user && user.photoURL !== null"
+                                                            v-bind:key="user.photoURL">
+                                                            <img v-bind:src="user.photoURL" width="64" height="64"
+                                                                v-bind:alt="user.displayName">
+                                                        </picture>
+                                                        <picture class="image is-64x64" style="pointer-events: none;"
                                                             v-else key="default">
                                                             <source srcset="/images/Merku.png"
                                                                 media="(prefers-color-scheme: dark)">
@@ -2803,18 +3045,51 @@
                                                 </figure>
                                             </article>
                                         </div>
-                                        <div class="level-item">
+                                        <div class="level-item" v-if="'user' in mode">
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <h1 class="has-text-weight-bold has-text-centered"
-                                                            v-if="'user' in mode">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
                                                             {{ mode.user.name }}</h1>
-                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
-                                                            言葉</h2>
+                                                        <!--<h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            言葉</h2>-->
                                                     </div>
                                                 </div>
                                             </article>
+                                        </div>
+                                        <div class="level-item" v-if="'stats' in mode" v-cloak>
+                                            <div class="level is-mobile">
+                                                <div class="level-item">
+                                                    <div class="level">
+                                                        <div class="level-item">
+                                                            <article class="media">
+                                                                <div class="media-content">
+                                                                    <div class="content">
+                                                                        <h2>平均</h2>
+                                                                        <p>{{ Math.floor((steps + range(new Date(), [-1, -2, -3, -4, -5, -6]).map(day => stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)).reduce((x, y) => x + y , 0)) / 7 * 100) / 100 }}歩</p>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="level-item" v-for="(day, index) in range(new Date(), [0, -1, -2, -3, -4, -5, -6])" v-bind:key="day">
+                                                    <div class="level">
+                                                        <div class="level-item">
+                                                            <article class="media">
+                                                                <div class="media-content">
+                                                                    <div class="content">
+                                                                        <h2 v-if="index === 0">今日</h2>
+                                                                        <h2 v-else-if="index === 1">昨日</h2>
+                                                                        <h2 v-else>{{ index }}日前</h2>
+                                                                        <p>{{ index === 0 ? steps : stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0) }}歩</p>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="level-item" v-if="'name' in mode && 'attributes' in mode" v-cloak>
                                             <div class="level is-mobile">
@@ -3408,6 +3683,29 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            v-bind:disabled="user === null"
+                                                            @click="mode = { stats: stats }">
+                                                            <span class="icon">
+                                                                <i class="fas fa-chart-bar"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>アクティビティ</div>
+                                                                        <div>アクティビティ</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
                                                         <h2 class="is-uppercase">About</h2>
                                                     </div>
                                                 </div>
@@ -3607,24 +3905,31 @@
                                     </div>
                                 </div>
                                 <div class="level-item has-text-centered">
+                                    <div class="progress" v-cloak>
+                                        <div class="bar" v-bind:style="{width: String(Math.floor(100.0 * (animatedSteps % 10) / 9)) + '%'}"></div>
+                                    </div>
+                                </div>
+                                <div class="level-item has-text-centered">
                                     <div class="field is-grouped is-vcentered">
                                         <span class="icon is-small" style="pointer-events: none;" v-cloak>
-                                            <i class="fas fa-walking"></i>
+                                            <i class="fas fa-burn"></i>
                                         </span>
-                                        <span class="is-size-4 is-uppercase has-text-weight-bold" v-cloak>{{ animatedSteps }}</span>
+                                        <span class="is-size-4 is-uppercase has-text-weight-bold" v-cloak>{{
+                                            Math.floor(animatedSteps / 10) }}</span>
                                     </div>
                                 </div>
                                 <div class="level-item has-text-centered">
                                     <nav class="level">
                                         <div class="level-item">
                                             <transition name="fade" mode="out-in">
-                                                <button class="button" type="button" @click="startPedometer" v-if="deviceMotion === null" key="processing" v-cloak>
+                                                <button class="button" type="button" @click="startPedometer"
+                                                    v-if="deviceMotion === null" key="processing" v-cloak>
                                                     <span class="icon is-small" style="pointer-events: none;">
-                                                        <i class="fas fa-walking"></i>
+                                                        <i class="fas fa-play"></i>
                                                     </span>
                                                 </button>
-                                                <button class="button" type="button" @click="stopPedometer" v-else key="ready"
-                                                    v-cloak>
+                                                <button class="button" type="button" @click="stopPedometer" v-else
+                                                    key="ready" v-cloak>
                                                     <span class="icon is-small" style="pointer-events: none;">
                                                         <i class="fas fa-stop"></i>
                                                     </span>
@@ -3677,7 +3982,7 @@
                     </div>
                     <transition name="fade">
                         <div class="level-item" v-bind:style="{ height: animatedLeaderboardHeight + 'px' }"
-                            v-show="!isRevealed">
+                            v-show="!isRevealed && !isLearning && word === null">
                             <div class="wrap" ref="leaderboard" v-cloak>
                                 <transition name="fade">
                                     <div class="control">
@@ -3793,20 +4098,30 @@
                 </nav>
             </transition>
             <nav id="input" class="navbar is-fixed-bottom" role="navigation">
-                <div class="navbar-item is-expanded columns is-desktop">
+                <div class="navbar-item is-expanded columns is-desktop" ref="input">
                     <div class="column is-half has-content-centered is-mobile">
                         <div class="control">
-                            <transition name="popup" v-on:after-enter="$refs.text.focus();"
-                                v-on:before-leave="/*$refs.text.blur();*/">
+                            <transition name="popup"
+                                v-on:after-enter="$refs.text.focus(); inputHeight = $refs.input.offsetHeight;"
+                                v-on:before-leave="/*$refs.text.blur();*/ inputHeight = $refs.input.offsetHeight;">
                                 <nav class="level" v-if="isLearning">
                                     <form onsubmit="return false;" v-cloak>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
-                                                <input class="input is-rounded" type="text"
+                                                <input class="input is-rounded" type="text" readonly="readonly"
                                                     v-bind:class="{ 'is-danger': inputHasError }"
                                                     v-bind:placeholder="isLearning ? '教える言葉' : '投稿するニュース'"
                                                     v-bind:disabled="word !== null" v-model="input" @input="change"
                                                     ref="text" v-cloak>
+                                            </div>
+                                            <div class="control">
+                                                <button class="button is-rounded is-primary" type="submit"
+                                                    v-bind:class="{ 'is-static': word !== null }"
+                                                    v-bind:disabled="user === null" @click="chars.forEach(x => x.forEach(y => y.count += y.set.includes(input.charAt(input.length - 1)) ? 1 : 0 )); input = input.slice( 0, -1);"><span
+                                                        class="icon is-small" v-cloak>
+                                                        <i class="fas fa-backspace"></i>
+                                                    </span>
+                                                </button>
                                             </div>
                                             <div class="control">
                                                 <span class="is-size-7 has-text-weight-bold" v-cloak>
@@ -3825,7 +4140,7 @@
                                             <div class="control">
                                                 <button class="button is-rounded is-danger" type="button"
                                                     v-bind:disabled="user === null"
-                                                    @click="$refs.text.blur(); isLearning = false;"><span
+                                                    @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; $refs.text.blur(); isLearning = false;"><span
                                                         class="icon is-small" v-cloak>
                                                         <i class="fas fa-times"></i>
                                                     </span>
@@ -3921,6 +4236,11 @@
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
+                <button class="button" type="button" @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false" v-else-if="isLearning" key="abort">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
                 <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
@@ -3940,6 +4260,12 @@
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
                     v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === false" key="stats">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
