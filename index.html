@@ -398,6 +398,11 @@
             background: #ffee00 url('/images/Stripes.png') 50% 50% repeat;
             background-size: 20px 20px;
             animation: progress 0.5s linear 0s infinite;
+            animation-play-state: paused;
+        }
+
+        .progress>.animating {
+            animation-play-state: running;
         }
 
         .overlay {
@@ -2409,7 +2414,9 @@
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button" type="button" @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false" v-else-if="isLearning" key="abort">
+                                <button class="button" type="button"
+                                    @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false"
+                                    v-else-if="isLearning" key="abort">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2636,7 +2643,7 @@
                     </div>
                     <transition name="fade">
                         <div class="progress" v-if="progress !== null" v-cloak>
-                            <div class="bar" v-bind:style="{width: String(100.0 * progress) + '%'}"></div>
+                            <div class="bar animating" v-bind:style="{width: String(100.0 * progress) + '%'}"></div>
                         </div>
                     </transition>
                     <transition name="fade">
@@ -2745,9 +2752,12 @@
                                                         <div class="level">
                                                             <div class="level-item" v-for="row in chars" v-cloak>
                                                                 <div class="level is-mobile">
-                                                                    <div class="level-item" v-if="row.some(x => x.set.length > 1)">
+                                                                    <div class="level-item"
+                                                                        v-if="row.some(x => x.set.length > 1)">
                                                                         <button class="button is-rounded is-size-7"
-                                                                            type="button" v-bind:disabled="row.every(x => x.index === 0)" @click="row.forEach(x => x.index = Math.max(x.index - 1, 0))">
+                                                                            type="button"
+                                                                            v-bind:disabled="row.every(x => x.index === 0)"
+                                                                            @click="row.forEach(x => x.index = Math.max(x.index - 1, 0))">
                                                                             <span class="icon">
                                                                                 <i class="fas fa-chevron-left"></i>
                                                                             </span>
@@ -2760,7 +2770,8 @@
                                                                                 v-bind:key="column" v-cloak>
                                                                                 <button
                                                                                     class="button is-rounded is-size-7"
-                                                                                    type="button" v-bind:disabled="column.count === 0"
+                                                                                    type="button"
+                                                                                    v-bind:disabled="column.count === 0"
                                                                                     @click="input += column.set[column.index]; column.count--;">
                                                                                     <span class="badge">
                                                                                         {{ column.count }}
@@ -2782,9 +2793,12 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="level-item" v-if="row.some(x => x.set.length > 1)">
+                                                                    <div class="level-item"
+                                                                        v-if="row.some(x => x.set.length > 1)">
                                                                         <button class="button is-rounded is-size-7"
-                                                                            type="button" v-bind:disabled="row.every(x => x.index === x.set.length - 1)" @click="row.forEach(x => x.index = Math.min(x.index + 1, x.set.length - 1))">
+                                                                            type="button"
+                                                                            v-bind:disabled="row.every(x => x.index === x.set.length - 1)"
+                                                                            @click="row.forEach(x => x.index = Math.min(x.index + 1, x.set.length - 1))">
                                                                             <span class="icon">
                                                                                 <i class="fas fa-chevron-right"></i>
                                                                             </span>
@@ -2888,7 +2902,7 @@
                                                 <figure class="media-content">
                                                     <p class="image is-64x64 is-superellips">
                                                         <picture class="image is-64x64" style="pointer-events: none;"
-                                                            v-if="'photoURL' in user && 'displayName' in user && user.photoURL !== null"
+                                                            v-if="'photoURL' in user && user.photoURL !== null"
                                                             v-bind:key="user.photoURL">
                                                             <img v-bind:src="user.photoURL" width="64" height="64"
                                                                 v-bind:alt="user.displayName">
@@ -2905,6 +2919,16 @@
                                                         v-text="mode.reduce((previousValue, currentValue) => currentValue.id === user.uid ? previousValue + currentValue.count : previousValue, 0)"></span>
                                                 </figure>
 
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            {{ user.displayName }}</h1>
+                                                    </div>
+                                                </div>
                                             </article>
                                         </div>
                                         <!--<div class="level-item">
@@ -3029,7 +3053,7 @@
                                                                 v-bind:alt="mode.user.name">
                                                         </picture>
                                                         <picture class="image is-64x64" style="pointer-events: none;"
-                                                            v-else-if="'photoURL' in user && 'displayName' in user && user.photoURL !== null"
+                                                            v-else-if="'photoURL' in user && user.photoURL !== null"
                                                             v-bind:key="user.photoURL">
                                                             <img v-bind:src="user.photoURL" width="64" height="64"
                                                                 v-bind:alt="user.displayName">
@@ -3045,12 +3069,15 @@
                                                 </figure>
                                             </article>
                                         </div>
-                                        <div class="level-item" v-if="'user' in mode">
+                                        <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                        <h1 class="has-text-weight-bold has-text-centered"
+                                                            v-if="'user' in mode">
                                                             {{ mode.user.name }}</h1>
+                                                        <h1 class="has-text-weight-bold has-text-centered" v-else>
+                                                            {{ user.displayName }}</h1>
                                                         <!--<h2 class="has-text-weight-bold is-uppercase has-text-centered">
                                                             言葉</h2>-->
                                                     </div>
@@ -3066,14 +3093,18 @@
                                                                 <div class="media-content">
                                                                     <div class="content">
                                                                         <h2>平均</h2>
-                                                                        <p>{{ Math.floor((steps + range(new Date(), [-1, -2, -3, -4, -5, -6]).map(day => stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)).reduce((x, y) => x + y , 0)) / 7 * 100) / 100 }}歩</p>
+                                                                        <p
+                                                                            v-text="Math.floor((steps + range(new Date(), [-1, -2, -3, -4, -5, -6]).map(day => stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)).reduce((x, y) => x + y , 0)) / 7 * 100) / 100 + '歩'">
+                                                                        </p>
                                                                     </div>
                                                                 </div>
                                                             </article>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="level-item" v-for="(day, index) in range(new Date(), [0, -1, -2, -3, -4, -5, -6])" v-bind:key="day">
+                                                <div class="level-item"
+                                                    v-for="(day, index) in range(new Date(), [0, -1, -2, -3, -4, -5, -6])"
+                                                    v-bind:key="day">
                                                     <div class="level">
                                                         <div class="level-item">
                                                             <article class="media">
@@ -3082,7 +3113,9 @@
                                                                         <h2 v-if="index === 0">今日</h2>
                                                                         <h2 v-else-if="index === 1">昨日</h2>
                                                                         <h2 v-else>{{ index }}日前</h2>
-                                                                        <p>{{ index === 0 ? steps : stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0) }}歩</p>
+                                                                        <p
+                                                                            v-text="index === 0 ? steps + '歩' : stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0) + '歩'">
+                                                                        </p>
                                                                     </div>
                                                                 </div>
                                                             </article>
@@ -3906,7 +3939,8 @@
                                 </div>
                                 <div class="level-item has-text-centered">
                                     <div class="progress" v-cloak>
-                                        <div class="bar" v-bind:style="{width: String(Math.floor(100.0 * (animatedSteps % 10) / 9)) + '%'}"></div>
+                                        <div class="bar" v-bind:class="{ 'animating': deviceMotion !== null }" v-bind:style="{width: String(Math.floor(100.0 * (animatedSteps % 10) / 9)) + '%'}">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="level-item has-text-centered">
@@ -4117,7 +4151,8 @@
                                             <div class="control">
                                                 <button class="button is-rounded is-primary" type="submit"
                                                     v-bind:class="{ 'is-static': word !== null }"
-                                                    v-bind:disabled="user === null" @click="chars.forEach(x => x.forEach(y => y.count += y.set.includes(input.charAt(input.length - 1)) ? 1 : 0 )); input = input.slice( 0, -1);"><span
+                                                    v-bind:disabled="user === null"
+                                                    @click="chars.forEach(x => x.forEach(y => y.count += y.set.includes(input.charAt(input.length - 1)) ? 1 : 0 )); input = input.slice( 0, -1);"><span
                                                         class="icon is-small" v-cloak>
                                                         <i class="fas fa-backspace"></i>
                                                     </span>
@@ -4236,7 +4271,9 @@
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false" v-else-if="isLearning" key="abort">
+                <button class="button" type="button"
+                    @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false"
+                    v-else-if="isLearning" key="abort">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
