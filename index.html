@@ -37,7 +37,7 @@
     <script type="text/javascript"
         src="https://www.bing.com/api/maps/mapcontrol?key=AqtU8nXtdnRHFfPmWICfOHBtcPzPOoJueZtb2D_Rkbsx6dyuhx_xaH7G-hfB2Ylb"></script>
     <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css" type="text/css"
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" type="text/css"
         media="screen" />
     <style>
         [v-cloak] {
@@ -3945,9 +3945,6 @@
                                 </div>
                                 <div class="level-item has-text-centered">
                                     <div class="field is-grouped is-vcentered">
-                                        <span class="icon is-small" style="pointer-events: none;" v-cloak>
-                                            <i class="fas fa-burn"></i>
-                                        </span>
                                         <span class="is-size-4 is-uppercase has-text-weight-bold" v-cloak>{{
                                             Math.floor(animatedSteps / 10) }}</span>
                                     </div>
@@ -4060,7 +4057,7 @@
                 v-on:leave-cancelled="animationEnd">
                 <nav id="popup" class="navbar is-fixed-bottom" v-if="isPopup" v-cloak>
                     <div class=" navbar-item is-expanded columns is-desktop">
-                        <div class="column is-half has-content-centered is-mobile">
+                        <div class="column is-half-desktop has-content-centered">
                             <div class="control" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
                                 <nav class="level is-mobile">
                                     <div class="level-item">
