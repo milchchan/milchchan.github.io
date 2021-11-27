@@ -185,6 +185,21 @@
             ]
         },
         {
+            "name": "Capture",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "「{0}」を見つけたよ！"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
             "name": "Discover",
             "state": ".",
             "sequence": [
@@ -192,7 +207,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "{0}を見つけたよ！"
+                    "text": "「{0}」を見つけたよ！"
                 },
                 {
                     "type": "Sequence",
@@ -352,6 +367,26 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "人名"
+                        ],
+                        "といっしょにアフタヌーンティーしたよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "お金がないけどiPhoneが欲しいなぁ"
                 },
                 {
@@ -382,6 +417,26 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "部位"
+                        ],
+                        "を触っているとムズムズするよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "メルクちゃんといっしょに原宿に行ってクレープを食べたよ"
                 },
                 {
@@ -397,7 +452,80 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "といっしょに",
+                        [
+                            "場所"
+                        ],
+                        "に行ってクレープを食べたよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "この前、メルクちゃんが学校のロッカーの中からミルヒを覗いてたよ...ちょっと怖かったよ..."
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "この前、",
+                        [
+                            "名前"
+                        ],
+                        "が",
+                        [
+                            "場所"
+                        ],
+                        "のロッカーの中からミルヒを覗いてたよ...ちょっと怖かったよ..."
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "メルクちゃん",
+                        "は",
+                        "コスプレ",
+                        "が",
+                        "趣味",
+                        "なん",
+                        "だ",
+                        "よ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -439,9 +567,13 @@
                     "speed": 50,
                     "duration": 5,
                     "text": [
-                        "メルクちゃん",
+                        [
+                            "名前"
+                        ],
                         "は",
-                        "コスプレ",
+                        [
+                            "する事"
+                        ],
                         "が",
                         "趣味",
                         "なん",
@@ -466,6 +598,34 @@
                         "メルクちゃん",
                         "は",
                         "アフタヌーンティー",
+                        "が",
+                        "好き",
+                        "なん",
+                        "だっ",
+                        "て"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "は",
+                        [
+                            "する事"
+                        ],
                         "が",
                         "好き",
                         "なん",
@@ -519,9 +679,75 @@
                     "speed": 50,
                     "duration": 5,
                     "text": [
+                        "この",
+                        "前",
+                        "、",
+                        [
+                            "名前"
+                        ],
+                        "と",
+                        [
+                            "場所"
+                        ],
+                        "に",
+                        "行っ",
+                        "て",
+                        [
+                            "食べ物"
+                        ],
+                        "を",
+                        "食べ",
+                        "て",
+                        "き",
+                        "た",
+                        "よ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
                         "メルクちゃん",
                         "は",
                         "ケーキ",
+                        "が",
+                        "好物",
+                        "なん",
+                        "だっ",
+                        "て"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "は",
+                        [
+                            "食べ物"
+                        ],
                         "が",
                         "好物",
                         "なん",
@@ -566,7 +792,61 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "が",
+                        [
+                            "飲み物"
+                        ],
+                        "を",
+                        "飲み",
+                        "たいん",
+                        "だっ",
+                        "て"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "愚者は己を賢いと思っているけど、賢者は己が愚かなことを知っているよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前",
+                            "組織"
+                        ],
+                        "は己を賢いと思っているけど、",
+                        [
+                            "組織",
+                            "名前"
+                        ],
+                        "は己が愚かなことを知っているよ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -596,7 +876,48 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "が自らの容姿や発言や行動などについて、実際よりも高い評価を行ってしまうよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "あらゆる経験の快苦の記憶は、ほぼ完全にピーク時と終了時の快苦の度合いで決まるよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "あらゆる",
+                        [
+                            "する事"
+                        ],
+                        "の快苦の記憶は、ほぼ完全にピーク時と終了時の快苦の度合いで決まるよ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -626,7 +947,54 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "十分に発達した",
+                        [
+                            "使う物"
+                        ],
+                        "は、魔法と区別がつかないよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "未来を予想する最良の方法は、未来を創りだすことだよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "する事",
+                            "使う物"
+                        ],
+                        "を予想する最良の方法は、",
+                        [
+                            "する事",
+                            "使う物"
+                        ],
+                        "を創りだすことだよ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -671,7 +1039,52 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "は、",
+                        [
+                            "名前"
+                        ],
+                        "の境遇に慣れ過ぎると、驚いた事に自分の足を繋いでいる鎖の自慢をお互いに始めるよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "リーダーシップとは、生産的流れから間抜けを取り除く自然の摂理だよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "リーダーシップとは、生産的流れから",
+                        [
+                            "名前"
+                        ],
+                        "を取り除く自然の摂理だよ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -701,7 +1114,49 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "外部で起こっている変化が",
+                        [
+                            "所属"
+                        ],
+                        "の変化よりも早くなったら、もう終わりの日は近いよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "今までと同じ考えや行動を繰り返して、異なる結果を期待するのは凶器だよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "今までと同じ考えや",
+                        [
+                            "する事"
+                        ],
+                        "を繰り返して、異なる結果を期待するのは凶器だよ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -731,7 +1186,49 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "何かを始めるためには、",
+                        [
+                            "する事"
+                        ],
+                        "をやめて行動し始めなければならないよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "多くの人は、見たいと欲する現実しか見ていないよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前",
+                            "所属"
+                        ],
+                        "は、見たいと欲する現実しか見ていないよ"
+                    ]
                 },
                 {
                     "type": "Sequence",
