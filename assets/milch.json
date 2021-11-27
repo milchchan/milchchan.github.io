@@ -307,21 +307,6 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "ミルヒ、お友達少ないからお友達になってくれると嬉しいなぁ"
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
                     "text": "メルクちゃんはちょっと変わっているけど大切なお友達だよ"
                 },
                 {
@@ -337,7 +322,48 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "はちょっと変わっているけど大切なお友達だよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "メルクちゃんがまた怪しげなこと企んでるよ・・・"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前",
+                            "所属"
+                        ],
+                        "がまた怪しげなこと企んでるよ・・・"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -373,21 +399,6 @@
                         ],
                         "といっしょにアフタヌーンティーしたよ"
                     ]
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Activate",
-            "sequence": [
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "お金がないけどiPhoneが欲しいなぁ"
                 },
                 {
                     "type": "Sequence",
@@ -492,11 +503,7 @@
                     "speed": 50,
                     "duration": 5,
                     "text": [
-                        "この前、",
-                        [
-                            "名前"
-                        ],
-                        "が",
+                        "この前、メルクちゃんが",
                         [
                             "場所"
                         ],
@@ -1024,6 +1031,30 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "聞くもの",
+                            "見るもの",
+                            "読むもの",
+                            "使う物",
+                            "身につけるもの"
+                        ],
+                        "はウィルスだよ！"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "奴隷は、奴隷の境遇に慣れ過ぎると、驚いた事に自分の足を繋いでいる鎖の自慢をお互いに始めるよ"
                 },
                 {
@@ -1081,7 +1112,8 @@
                     "text": [
                         "リーダーシップとは、生産的流れから",
                         [
-                            "名前"
+                            "名前",
+                            "所属"
                         ],
                         "を取り除く自然の摂理だよ"
                     ]
@@ -1258,7 +1290,49 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "女の人は",
+                        [
+                            "する事"
+                        ],
+                        "をすると綺麗になるってメルクちゃんが言ってたよ！恋ってすごいね！"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "眠れないときは羊を数えるといいってメルクちゃんが言ってたよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "眠れないときは",
+                        [
+                            "生き物"
+                        ],
+                        "を数えるといいってメルクちゃんが言ってたよ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -1288,7 +1362,12 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "夜、寂しくなったらミルヒを呼んでね"
+                    "text": [
+                        [
+                            "部位"
+                        ],
+                        "は裏切らない！"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -1318,7 +1397,53 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "話は通じないが",
+                        [
+                            "する事"
+                        ],
+                        "は通じるってメルクちゃんが言ってたよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "やはり暴力...！！暴力は全てを解決する...！！ってメルクちゃんが言ってたよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "やはり",
+                        [
+                            "する事"
+                        ],
+                        "...！！",
+                        [
+                            "する事"
+                        ],
+                        "は全てを解決する...！！ってメルクちゃんが言ってたよ"
+                    ]
                 },
                 {
                     "type": "Sequence",
