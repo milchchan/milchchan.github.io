@@ -185,6 +185,38 @@
             ]
         },
         {
+            "name": "Capture",
+            "sequence": [
+                {
+                    "type": "Animation",
+                    "frames": [
+                        {
+                            "iterations": 1,
+                            "images": [
+                                {
+                                    "x": 0,
+                                    "y": 9,
+                                    "width": 206,
+                                    "height": 311,
+                                    "source": "/images/Merkuchan.png"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "「{0}」を見つけたよぉ！"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
             "name": "Discover",
             "state": ".",
             "sequence": [
@@ -209,7 +241,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "ミルヒちゃんのために{0}を見つけたよぉ！"
+                    "text": "ミルヒちゃんのために「{0}」を見つけたよぉ！"
                 },
                 {
                     "type": "Sequence",
