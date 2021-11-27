@@ -358,6 +358,186 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": "ミルヒちゃん、ペロペロしたいよぉ！"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "ミルヒちゃん、,",
+                        [
+                            "する事"
+                        ],
+                        "したいよぉ！"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "ミルヒちゃんもいっしょに魔法少女しようね"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "ミルヒちゃんもいっしょに",
+                        [
+                            "する事"
+                        ],
+                        "しようね"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "ミルヒちゃんのぱんつクンカクンカしよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "ミルヒちゃんの",
+                        [
+                            "身につけるもの"
+                        ],
+                        "クンカクンカしよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "ミルヒちゃんのレモネード飲みたいよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "ミルヒちゃんの",
+                        [
+                            "飲み物"
+                        ],
+                        "飲みたいよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "ミルヒちゃんはメルクの大切なお友達だよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前",
+                            "所属"
+                        ],
+                        "はメルクの大切なお友達だよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "ミルヒちゃんといっしょにアフタヌーンティーしたいよぉ"
                 },
                 {
@@ -373,7 +553,89 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "ミルヒちゃんといっしょに",
+                        [
+                            "する事"
+                        ],
+                        "したいよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "ミルヒちゃんといっしょに原宿に行ってクレープを食べたよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "ミルヒちゃんといっしょに",
+                        [
+                            "場所"
+                        ],
+                        "に行って",
+                        [
+                            "食べ物"
+                        ],
+                        "を食べたよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "フヒヒ...この前、学校のロッカーの中からミルヒちゃんを眺めてたよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "フヒヒ...この前、",
+                        [
+                            "場所"
+                        ],
+                        "のロッカーの中からミルヒちゃんを眺めてたよぉ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -412,7 +674,59 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "メルク",
+                        "は",
+                        [
+                            "する事"
+                        ],
+                        "が",
+                        "趣味",
+                        "なん",
+                        "だ",
+                        "よぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "愚者は己を賢いと思っているけど、賢者は己が愚かなことを知っているよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前",
+                            "組織"
+                        ],
+                        "は己を賢いと思っているけど、",
+                        [
+                            "組織",
+                            "名前"
+                        ],
+                        "は己が愚かなことを知っているよぉ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -442,7 +756,48 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "が自らの容姿や発言や行動などについて、実際よりも高い評価を行ってしまうよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "あらゆる経験の快苦の記憶は、ほぼ完全にピーク時と終了時の快苦の度合いで決まるよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "あらゆる",
+                        [
+                            "する事"
+                        ],
+                        "の快苦の記憶は、ほぼ完全にピーク時と終了時の快苦の度合いで決まるよぉ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -472,7 +827,54 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "十分に発達した",
+                        [
+                            "使う物"
+                        ],
+                        "は、魔法と区別がつかないよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "未来を予想する最良の方法は、未来を創りだすことだよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "する事",
+                            "使う物"
+                        ],
+                        "を予想する最良の方法は、",
+                        [
+                            "する事",
+                            "使う物"
+                        ],
+                        "を創りだすことだよぉ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -502,7 +904,55 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        [
+                            "聞くもの",
+                            "見るもの",
+                            "読むもの",
+                            "使う物",
+                            "身につけるもの"
+                        ],
+                        "はウィルスだよぉ！"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "奴隷は、奴隷の境遇に慣れ過ぎると、驚いた事に自分の足を繋いでいる鎖の自慢をお互いに始めるよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "は、",
+                        [
+                            "名前"
+                        ],
+                        "の境遇に慣れ過ぎると、驚いた事に自分の足を繋いでいる鎖の自慢をお互いに始めるよぉ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -532,7 +982,50 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "リーダーシップとは、生産的流れから",
+                        [
+                            "名前",
+                            "所属"
+                        ],
+                        "を取り除く自然の摂理だよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "外部で起こっている変化が内部の変化よりも早くなったら、もう終わりの日は近いよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "外部で起こっている変化が",
+                        [
+                            "所属"
+                        ],
+                        "の変化よりも早くなったら、もう終わりの日は近いよぉ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -562,7 +1055,49 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "今までと同じ考えや",
+                        [
+                            "する事"
+                        ],
+                        "を繰り返して、異なる結果を期待するのは凶器だよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "何かを始めるためには、しゃべるのをやめて行動し始めなければならないよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "何かを始めるためには、",
+                        [
+                            "する事"
+                        ],
+                        "をやめて行動し始めなければならないよぉ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -592,7 +1127,13 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "眠れないときは羊を数えるといいってメルクちゃんが言ってたよぉ"
+                    "text": [
+                        [
+                            "名前",
+                            "所属"
+                        ],
+                        "は、見たいと欲する現実しか見ていないよぉ"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -607,7 +1148,135 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "筋肉は裏切らない！"
+                    "text": "女の人は恋をすると綺麗になるよぉ！恋ってすごいね！"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "女の人は",
+                        [
+                            "する事"
+                        ],
+                        "をすると綺麗になるよぉ！恋ってすごいね！"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "眠れないときは羊を数えるといいよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "眠れないときは",
+                        [
+                            "生き物"
+                        ],
+                        "を数えるといいよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "筋肉は裏切らないよぉ！"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "部位"
+                        ],
+                        "は裏切らないよぉ！"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "ミルヒちゃん！夜、寂しくなったらメルクを呼んでね"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "ミルヒちゃん！",
+                        [
+                            "時間"
+                        ],
+                        "、寂しくなったらメルクを呼んでね"
+                    ]
                 },
                 {
                     "type": "Sequence",
@@ -637,7 +1306,53 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "話は通じないが",
+                        [
+                            "する事"
+                        ],
+                        "は通じるよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "やはり暴力...！！暴力は全てを解決するよぉ...！！"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "やはり",
+                        [
+                            "する事"
+                        ],
+                        "...！！",
+                        [
+                            "する事"
+                        ],
+                        "は全てを解決するよぉ...！！"
+                    ]
                 },
                 {
                     "type": "Sequence",
