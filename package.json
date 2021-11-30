@@ -1,0 +1,22 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "Milchchan bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --open",
+    "build": "webpack --mode=production --config webpack.config.js",
+    "test": "mocha test/ --require babel-register --reporter spec"
+  },
+  "author": "milchchan.com",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "animejs": "^3.2.1",
+    "stats.js": "^0.17.0"
+  }
+}
