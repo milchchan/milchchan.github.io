@@ -14,7 +14,7 @@ module.exports = {
   mode: process.env.NODE_ENV || "development",
   entry: entry,
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "js"),
     filename: "[name].js",
     publicPath: '/js'
   },
@@ -27,12 +27,23 @@ module.exports = {
       }
     ]
   },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
+  },
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ]
   },
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: path.resolve(__dirname, "public"),
+    contentBase: path.resolve(__dirname, "./"),
     port: 8080
   },
 };
