@@ -1,14 +1,14 @@
 {
-  "name": "bot",
+  "name": "wonderland",
   "version": "1.0.0",
-  "description": "Milchchan bot",
+  "description": "milchchan.github.io",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --open",
     "build": "webpack --mode=production --config webpack.config.js",
     "test": "mocha test/ --require babel-register --reporter spec"
   },
-  "author": "milchchan.com",
+  "author": "milchchan",
   "license": "ISC",
   "devDependencies": {
     "webpack": "^4.43.0",
