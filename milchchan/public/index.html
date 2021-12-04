@@ -1471,11 +1471,6 @@
             padding: 0;
         }
 
-        #input>.columns>.column>.control:last-child .level .level-left .level-item:not(:first-of-type) {
-            margin: 0px 0px 0px 16px;
-            padding: 0;
-        }
-
         #input form .field {
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -1488,20 +1483,6 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
-        #input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(3) .level-left {
-            margin: 0px;
-            padding: 12px 24px 12px 24px;
-            border: 0px solid rgba(255, 255, 255, 0.5);
-            border-radius: 500px 500px 500px 500px;
-            background: #ffffff;
-            background-clip: padding-box;
-            /*background: rgba(0, 0, 0, 0.75);
-            background: #f5f5f5;
-            background: linear-gradient(145deg, #ffffff, #dddddd);
-            box-shadow: 10px 10px 30px #d0d0d0,
-                -10px -10px 30px #ffffff;*/
-        }
-
         #input .navbar-item:first-of-type .control:first-child .level:last-of-type {
             display: block;
             margin: 0px 32px 16px 32px;
@@ -1512,7 +1493,7 @@
             color: #ffffff;
         }
 
-        #input .navbar-item:first-of-type>div>.control:last-child {
+        #input .navbar-item:first-of-type .control {
             margin: 0;
             padding: 0;
         }
@@ -1527,6 +1508,8 @@
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             color: #000000;
             transform: rotate(0.03deg);
+            overflow-x: auto;
+            overflow-y: hidden;
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input::placeholder {
@@ -1535,35 +1518,24 @@
             transform: rotate(0.03deg);
         }
 
-        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) {
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) {
             display: flex;
             align-items: center;
             padding: 0px 8px 0px 8px;
         }
 
-        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) span {
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) span {
             color: rgba(0, 0, 0, 0.25);
             font-family: 'Hind', 'Josefin Sans', sans-serif;
         }
 
-        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) button {
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) button,
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(4) button {
+            margin: 0;
             border: 0px solid transparent;
-            border-radius: 290486px;
+            padding: 8px 16px 8px 16px;
             background-color: transparent;
-            /*color: #30c0f5;*/
-        }
-
-        #input>.columns:first-of-type>.column>.control:last-child>.level:nth-last-of-type(1)>.level-item:first-child button {
-            margin: 0px 0px 8px 0px;
-            border-radius: 290486px;
-            padding: 24px;
-            background: transparent;
-            background-clip: padding-box;
-            /*background: #f5f5f5;
-            background: linear-gradient(145deg, #ffffff, #dddddd);
-            box-shadow: 10px 10px 30px #d0d0d0,
-                -10px -10px 30px #ffffff;*/
-            height: initial;
+            color: var(--accent-color);
         }
 
         #input>.columns:last-of-type {
@@ -3186,6 +3158,16 @@
                                                     v-bind:placeholder="isLearning ? '教える言葉' : '投稿するニュース'"
                                                     v-bind:disabled="word !== null" v-model="input" @input="change"
                                                     ref="text" v-cloak>
+                                            </div>                                            
+                                            <div class="control">
+                                                <button class="button" type="button"
+                                                    v-bind:class="{ 'is-static': word !== null }"
+                                                    v-bind:disabled="user === null"
+                                                    @click="input = input.slice( 0, -1)"><span
+                                                        class="icon is-small" v-cloak>
+                                                        <i class="fas fa-backspace"></i>
+                                                    </span>
+                                                </button>
                                             </div>
                                             <div class="control">
                                                 <span class="is-size-7 has-text-weight-bold" v-cloak>
@@ -3201,7 +3183,7 @@
                                                     </span>
                                                 </button>
                                             </div>
-                                            <div class="control">
+                                            <!--<div class="control">
                                                 <button class="button is-rounded is-danger" type="button"
                                                     v-bind:disabled="user === null"
                                                     @click="$refs.text.blur(); isLearning = false;"><span
@@ -3209,7 +3191,7 @@
                                                         <i class="fas fa-times"></i>
                                                     </span>
                                                 </button>
-                                            </div>
+                                            </div>-->
                                         </div>
                                     </form>
                                 </nav>
