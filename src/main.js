@@ -80,6 +80,7 @@ window.addEventListener("load", (event) => {
                 isDiscovering: false,
                 isStared: false,
                 isLocked: false,
+                isEditing: false,
                 canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0, alternative: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 } },
                 cachedImages: {},
                 cachedSprites: [],
@@ -97,6 +98,7 @@ window.addEventListener("load", (event) => {
                 sequenceQueue: [],
                 progress: null,
                 user: null,
+                candidates: null,
                 input: "",
                 animatedInputLength: 0,
                 maxInputLength: 100,
@@ -369,7 +371,7 @@ window.addEventListener("load", (event) => {
 
                     for (const row of app.chars) {
                         for (const column of row) {
-                            if (column.count > 0) {
+                            if (column.count > 0 || !column.reserved) {
                                 fragments.push({ set: column.set, count: column.count, timestamp: column.timestamp, checksum: [...String(column.timestamp)].reduce((x, y) => x + y, 0) + [...String(column.count)].reduce((x, y) => x + y, 0) });
                             }
                         }
@@ -1185,7 +1187,14 @@ window.addEventListener("load", (event) => {
                 }*/
                 //}
             },
-            send: async function (event) {
+            backspace: function(event) {
+                if (!this.isEditing) {
+                    this.chars.forEach(x => x.forEach(y => y.count += y.set.includes(this.input.charAt(this.input.length - 1)) ? 1 : 0 ));
+                }
+                
+                this.input = this.input.slice( 0, -1);
+            },
+            send: async function (text) {
                 if (this.isDebug) {
                     if (this.input.length > 0) {
                         let keys = [];
@@ -1210,11 +1219,27 @@ window.addEventListener("load", (event) => {
 
                             this.isLearning = false;
                         } else if (this.input.length <= this.maxInputLength) {
-                            const location = this.map.getCenter();
+                            if (this.isEditing) {
+                                const result = this.chars.find(x => x.some(y => !y.reserved));
+                                const column = [];
+        
+                                column.push({ set: [this.input], index: 0, count: 0, timestamp: Math.floor(new Date() / 1000), reserved: false });
+        
+                                if (typeof result === "undefined") {
+                                    this.chars.splice(0, 0, column);
+                                } else {
+                                    result.push({ set: [this.input], index: 0, count: 0, timestamp: Math.floor(new Date() / 1000), reserved: false });
+                                }
+        
+                                this.input = "";
+                                this.isEditing = false;
+                            } else {
+                                const location = this.map.getCenter();
 
-                            this.learn({ name: this.input, location: { latitude: location.latitude, longitude: location.longitude } });
-                            this.input = "";
-                            this.isLearning = false;
+                                this.learn({ name: this.input, location: { latitude: location.latitude, longitude: location.longitude } });
+                                this.input = "";
+                                this.isLearning = false;
+                            }
                         }
                     } else {
                         for (const image of this.backgroundImages) {
@@ -1224,12 +1249,39 @@ window.addEventListener("load", (event) => {
                         }
                     }
                 } else if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
-                    const location = this.map.getCenter();
+                    if (this.isEditing) {
+                        let index = -1;
+                        const column = [];
 
-                    this.learn({ name: this.input, location: { latitude: location.latitude, longitude: location.longitude } });
-                    this.input = "";
-                    this.isLearning = false;
+                        for (let i = this.chars.length - 1; i >= 0; i--) {
+                            if (this.chars[i].some(x => !x.reserved)) {
+                                index = i;
+
+                                break;
+                            }
+                        }
+                        
+                        column.push({ set: [this.input], index: 0, count: 0, timestamp: Math.floor(new Date() / 1000), reserved: false });
+
+                        if (index >= 0) {
+                            this.chars.splice(index + 1, 0, column);
+                        } else {
+                            this.chars.splice(0, 0, column);
+                        }
+
+                        this.input = "";
+                        this.isEditing = false;
+                    } else {
+                        const location = this.map.getCenter();
+
+                        this.learn({ name: this.input, location: { latitude: location.latitude, longitude: location.longitude } });
+                        this.input = "";
+                        this.isLearning = false;
+                    }
                 } else {
+                    console.log(this.input.length);
+                    console.log(this.maxInputLength);
+                
                     this.shake(this.$refs.input);
                 }
             },
@@ -1747,7 +1799,7 @@ window.addEventListener("load", (event) => {
 
                 if ("words" in this.mode) {
                     const tempWords = [];
-                    
+
                     if (snapshot.exists()) {
                         const words = snapshot.val();
 
@@ -1759,8 +1811,8 @@ window.addEventListener("load", (event) => {
                             tempWords.push("user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } : { name: name, attributes: words[name].attributes });
                         }
 
-                        if (this.mode.words.length === limit + 1) {
-                            this.mode.next = this.mode.words.pop();
+                        if (tempWords.length === limit + 1) {
+                            this.mode.next = tempWords.pop();
                         } else {
                             this.mode.next = null;
                         }
@@ -3670,6 +3722,7 @@ window.addEventListener("load", (event) => {
                     if (response3.ok) {
                         const timestamp = Math.floor(new Date() / 1000);
                         const baseTime = new Date().getTime() - 24 * 60 * 60 * 1000;
+                        let index = 0;
 
                         for (const group of await response3.json()) {
                             const g = [];
@@ -3678,13 +3731,23 @@ window.addEventListener("load", (event) => {
                                 const result = fragments.find(x => set.some(y => x.set.includes(y)) && x.count > 0 && x.timestamp * 1000 > baseTime && x.checksum === [...String(x.timestamp)].reduce((x, y) => x + y, 0) + [...String(x.count)].reduce((x, y) => x + y, 0));
 
                                 if (typeof result === "undefined") {
-                                    g.push({ set: set, index: 0, count: 0, timestamp: timestamp });
+                                    g.push({ set: set, index: 0, count: 0, timestamp: timestamp, reserved: true });
                                 } else {
-                                    g.push({ set: set, index: 0, count: result.count, timestamp: result.timestamp });
+                                    g.push({ set: set, index: 0, count: result.count, timestamp: result.timestamp, reserved: true });
                                 }
                             }
 
                             this.chars.push(g);
+                        }
+
+                        for (const fragment of fragments) {
+                            if (!fragment.set.some(x => this.chars.some(y => y.some(z => z.set.includes(x))))) {
+                                const column = [];
+
+                                column.push({ set: fragment.set, index: 0, count: fragment.count, timestamp: fragment.timestamp, reserved: false });
+                                this.chars.splice(index, 0, column);
+                                index++;
+                            }
                         }
                     } else {
                         throw new Error(response3.statusText);
