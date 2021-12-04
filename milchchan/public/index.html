@@ -186,7 +186,7 @@
 
         .tags>.tag {
             margin: 0px;
-            padding: 12px 24px 12px 24px;
+            padding: 16px 32px 16px 32px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 500px 500px 500px 500px;
             background: rgba(255, 255, 255, 0.75) !important;
@@ -1229,6 +1229,10 @@
                 -20px -20px 60px #ffffff;*/
         }
 
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .has-text-left .balloon>p {
+            line-height: 1.25rem;
+        }
+
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox {
             display: flex;
             align-items: center;
@@ -2000,6 +2004,11 @@
                             <transition name="fade" mode="out-in">
                                 <button class="button is-white" type="button" @click="isOverlayed = false" v-if="isOverlayed"
                                     key="close">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -3206,6 +3215,11 @@
             <transition name="fade" mode="out-in">
                 <button class="button is-white" type="button" @click="isOverlayed = false" v-if="isOverlayed"
                     key="close">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
