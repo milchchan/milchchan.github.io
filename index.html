@@ -1249,7 +1249,9 @@
         }
 
         #menu>.columns>.column>.control>.level:first-child .button span.icon {
-            margin: 0;
+            margin: 0 !important;
+            width: 1.0rem !important;
+            height: 1.0rem !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child .button span.icon+span.wrap {
@@ -1466,18 +1468,17 @@
             color: var(--accent-color) !important;
         }
 
-        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item>button {
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item>.wrap>button {
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
-            padding: 16px;
+            padding: 16px 32px 16px 32px;
             background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
             height: initial;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button span.wrap {
@@ -1502,14 +1503,9 @@
             color: var(--accent-color);
         }
 
-        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button>:not(:first-of-type),
-        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .button>:not(:first-of-type) {
-            margin: 0px 0px 0px 8px;
-        }
-
-        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button .icon:last-child:not(:first-child),
-        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .button .icon:last-child:not(:first-child) {
-            margin: 0px 0px 0px 8px;
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button span:not(:first-child),
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .button span:not(:first-child) {
+            margin: 0px 0px 0px 8px !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item button .clip,
@@ -1826,14 +1822,123 @@
             flex-direction: column;
         }
 
-        #input>.columns>.column>.control:last-child .level .level-item {
+        #input>.columns>.column>.control:last-child>.level {
+            display: flex;
+            margin: -8px 0px -8px 0px;
+            padding: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item {
+            display: block;
+            margin: 8px 0px 8px 0px;
+            padding: 0;
+            width: 100%;
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item {
             margin: 0;
             padding: 0;
         }
 
-        #input>.columns>.column>.control:last-child .level .level-left .level-item:not(:first-of-type) {
-            margin: 0px 0px 0px 16px;
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item:first-child {
+            display: flex;
+            margin: 0;
             padding: 0;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item:last-child {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item:first-child>button,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item:last-child>button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: var(--accent-color) !important;
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item:first-child>button>span.icon,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item:last-child>button>span.icon {
+            margin: 0 !important;
+            width: 1.0rem !important;
+            height: 1.0rem !important;
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px 32px 16px 32px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button span.wrap {
+            display: flex;
+            margin: 0;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button .clip .scrollable div,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>.button .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+            color: var(--accent-color)
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button .icon,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>.button .icon {
+            color: var(--accent-color);
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button .icon:last-child:not(:first-child),
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>.button .icon:last-child:not(:first-child) {
+            margin: 0px 0px 0px 8px;
+        }
+
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button .clip,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>.button .clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
         }
 
         #input form .field {
@@ -1848,21 +1953,7 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
-        #input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(3) .level-left {
-            margin: 0px;
-            padding: 12px 24px 12px 24px;
-            border: 0px solid rgba(255, 255, 255, 0.5);
-            border-radius: 500px 500px 500px 500px;
-            background: #ffffff;
-            background-clip: padding-box;
-            /*background: rgba(0, 0, 0, 0.75);
-            background: #f5f5f5;
-            background: linear-gradient(145deg, #ffffff, #dddddd);
-            box-shadow: 10px 10px 30px #d0d0d0,
-                -10px -10px 30px #ffffff;*/
-        }
-
-        #input .navbar-item:first-of-type .control:first-child .level:last-of-type {
+        #input .navbar-item:first-of-type>.control:first-child>.level:last-of-type {
             display: block;
             margin: 0px 32px 16px 32px;
             padding: 0;
@@ -1872,9 +1963,14 @@
             color: #ffffff;
         }
 
-        #input .navbar-item:first-of-type>div>.control:last-child {
+        #input .navbar-item:first-of-type .control {
             margin: 0;
             padding: 0;
+        }
+
+        #input>.navbar-item:first-of-type>div>.control {
+            margin: 0;
+            padding: 0px 32px 16px 32px;
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input {
@@ -1908,24 +2004,13 @@
             font-family: 'Hind', 'Josefin Sans', sans-serif;
         }
 
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) button,
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(4) button {
+            margin: 0;
             border: 0px solid transparent;
-            border-radius: 290486px;
+            padding: 8px 16px 8px 16px;
             background-color: transparent;
-            /*color: #30c0f5;*/
-        }
-
-        #input>.columns:first-of-type>.column>.control:last-child>.level:nth-last-of-type(1)>.level-item:first-child button {
-            margin: 0px 0px 8px 0px;
-            border-radius: 290486px;
-            padding: 24px;
-            background: transparent;
-            background-clip: padding-box;
-            /*background: #f5f5f5;
-            background: linear-gradient(145deg, #ffffff, #dddddd);
-            box-shadow: 10px 10px 30px #d0d0d0,
-                -10px -10px 30px #ffffff;*/
-            height: initial;
+            color: var(--accent-color);
         }
 
         #input>.columns:last-of-type {
@@ -2752,9 +2837,34 @@
                                                     <div class="content"
                                                         v-bind:style="{ paddingBottom: animatedInputHeight + 'px' }">
                                                         <div class="level">
-                                                            <div class="level-item" v-for="row in chars" v-cloak>
+                                                            <div class="level-item">
                                                                 <div class="level is-mobile">
-                                                                    <div class="level-item"
+                                                                    <div class="level-item">
+                                                                        <transition name="fade" mode="out-in">
+                                                                            <button class="button is-white"
+                                                                                type="button"
+                                                                                @click="isEditing = false; maxInputLength = 100;"
+                                                                                v-if="isEditing" key="editing" v-cloak>
+                                                                                <span class="icon is-small">
+                                                                                    <i class="fas fa-check"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                            <button class="button is-white"
+                                                                                type="button"
+                                                                                @click="isEditing = true; maxInputLength = 1;"
+                                                                                v-else key="default" v-cloak>
+                                                                                <span class="icon is-small">
+                                                                                    <i class="fas fa-pen"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                        </transition>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="level-item" v-for="(row, index) in chars"
+                                                                v-cloak>
+                                                                <div class="level is-mobile">
+                                                                    <!--<div class="level-item"
                                                                         v-if="row.some(x => x.set.length > 1)">
                                                                         <button class="button is-rounded is-size-7"
                                                                             type="button"
@@ -2764,38 +2874,116 @@
                                                                                 <i class="fas fa-chevron-left"></i>
                                                                             </span>
                                                                         </button>
-                                                                    </div>
+                                                                    </div>-->
                                                                     <div class="level-item">
                                                                         <div class="level">
                                                                             <div class="level-item"
                                                                                 v-for="column in row"
                                                                                 v-bind:key="column" v-cloak>
-                                                                                <button
-                                                                                    class="button is-rounded is-size-7"
-                                                                                    type="button"
-                                                                                    v-bind:disabled="column.count === 0"
-                                                                                    @click="input += column.set[column.index]; column.count--;">
-                                                                                    <span class="badge">
-                                                                                        {{ column.count }}
-                                                                                    </span>
-                                                                                    <span
-                                                                                        class="wrap has-text-weight-bold">
-                                                                                        <div class="clip">
-                                                                                            <div class="scrollable">
-                                                                                                <div>{{
-                                                                                                    column.set[column.index]
-                                                                                                    }}</div>
-                                                                                                <div>{{
-                                                                                                    column.set[column.index]
-                                                                                                    }}</div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </span>
-                                                                                </button>
+                                                                                <transition name="fade" mode="out-in">
+                                                                                    <div class="wrap"
+                                                                                        v-if="isEditing && !column.reserved"
+                                                                                        key="editing">
+                                                                                        <button
+                                                                                            class="button is-rounded is-size-7"
+                                                                                            type="button"
+                                                                                            @click="chars.splice(index, 1)">
+                                                                                            <span class="badge">
+                                                                                                {{ column.count }}
+                                                                                            </span>
+                                                                                            <span
+                                                                                                class="icon is-small is-danger">
+                                                                                                <i
+                                                                                                    class="fas fa-trash"></i>
+                                                                                            </span>
+                                                                                            <span
+                                                                                                class="wrap has-text-weight-bold">
+                                                                                                <div class="clip">
+                                                                                                    <div
+                                                                                                        class="scrollable">
+                                                                                                        <div>{{
+                                                                                                            column.set[column.index]
+                                                                                                            }}</div>
+                                                                                                        <div>{{
+                                                                                                            column.set[column.index]
+                                                                                                            }}</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </span>
+                                                                                            <span class="icon"
+                                                                                                v-if="column.set.length > 1">
+                                                                                                <i
+                                                                                                    class="fas fa-chevron-down"></i>
+                                                                                            </span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    <div class="wrap" v-else-if="column.set.length > 1"
+                                                                                        key="candidates">
+                                                                                        <button
+                                                                                            class="button is-rounded is-size-7"
+                                                                                            type="button"
+                                                                                            v-bind:disabled="column.count === 0"
+                                                                                            @click="candidates === null || candidates !== column ? candidates = column : candidates = null">
+                                                                                            <span class="badge">
+                                                                                                {{ column.count }}
+                                                                                            </span>
+                                                                                            <span
+                                                                                                class="wrap has-text-weight-bold">
+                                                                                                <div class="clip">
+                                                                                                    <div
+                                                                                                        class="scrollable">
+                                                                                                        <div>{{
+                                                                                                            column.set[column.index]
+                                                                                                            }}</div>
+                                                                                                        <div>{{
+                                                                                                            column.set[column.index]
+                                                                                                            }}</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </span>
+                                                                                            <span class="icon"
+                                                                                                v-if="column.set.length > 1">
+                                                                                                <i
+                                                                                                    class="fas fa-chevron-down"></i>
+                                                                                            </span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    <div class="wrap" v-else
+                                                                                        key="default">
+                                                                                        <button
+                                                                                            class="button is-rounded is-size-7"
+                                                                                            type="button"
+                                                                                            v-bind:disabled="column.count === 0"
+                                                                                            @click="input += column.set[column.index]; column.count--;">
+                                                                                            <span class="badge">
+                                                                                                {{ column.count }}
+                                                                                            </span>
+                                                                                            <span
+                                                                                                class="wrap has-text-weight-bold">
+                                                                                                <div class="clip">
+                                                                                                    <div
+                                                                                                        class="scrollable">
+                                                                                                        <div>{{
+                                                                                                            column.set[column.index]
+                                                                                                            }}</div>
+                                                                                                        <div>{{
+                                                                                                            column.set[column.index]
+                                                                                                            }}</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </span>
+                                                                                            <span class="icon"
+                                                                                                v-if="column.set.length > 1">
+                                                                                                <i
+                                                                                                    class="fas fa-chevron-down"></i>
+                                                                                            </span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </transition>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="level-item"
+                                                                    <!--<div class="level-item"
                                                                         v-if="row.some(x => x.set.length > 1)">
                                                                         <button class="button is-rounded is-size-7"
                                                                             type="button"
@@ -2805,7 +2993,7 @@
                                                                                 <i class="fas fa-chevron-right"></i>
                                                                             </span>
                                                                         </button>
-                                                                    </div>
+                                                                    </div>-->
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -2878,7 +3066,7 @@
                                                                     </div>
                                                                     <div class="level-item">
                                                                         <button class="button is-white" type="button"
-                                                                            @click="word = null" v-cloak>
+                                                                            @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null" v-cloak>
                                                                             <span class="icon is-small is-danger">
                                                                                 <i class="fas fa-times"></i>
                                                                             </span>
@@ -3941,7 +4129,8 @@
                                 </div>
                                 <div class="level-item has-text-centered">
                                     <div class="progress" v-cloak>
-                                        <div class="bar" v-bind:class="{ 'animating': deviceMotion !== null }" v-bind:style="{width: String(Math.floor(100.0 * (animatedSteps % 10) / 9)) + '%'}">
+                                        <div class="bar" v-bind:class="{ 'animating': deviceMotion !== null }"
+                                            v-bind:style="{width: String(Math.floor(100.0 * (animatedSteps % 10) / 9)) + '%'}">
                                         </div>
                                     </div>
                                 </div>
@@ -4138,20 +4327,57 @@
                                 v-on:after-enter="$refs.text.focus(); inputHeight = $refs.input.offsetHeight;"
                                 v-on:before-leave="/*$refs.text.blur();*/ inputHeight = $refs.input.offsetHeight;">
                                 <nav class="level" v-if="isLearning">
-                                    <form onsubmit="return false;" v-cloak>
+                                    <transition name="fade">
+                                        <div class="level-item" v-if="candidates" v-cloak>
+                                            <div class="level">
+                                                <div class="level-item">
+                                                    <button class="button is-rounded is-size-7" type="button"
+                                                        v-bind:disabled="candidates.index === 0"
+                                                        @click="candidates.index--">
+                                                        <span class="icon">
+                                                            <i class="fas fa-chevron-left"></i>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                                <div class="level-item">
+                                                    <button class="button is-rounded is-size-7" type="button"
+                                                        v-bind:disabled="user === null"
+                                                        @click="input += candidates.set[candidates.index]; candidates.count--; candidates = null;">
+                                                        <span class="wrap has-text-weight-bold">
+                                                            <div class="clip">
+                                                                <div class="scrollable">
+                                                                    <div>{{ candidates.set[candidates.index] }}</div>
+                                                                    <div>{{ candidates.set[candidates.index] }}</div>
+                                                                </div>
+                                                            </div>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                                <div class="level-item">
+                                                    <button class="button is-rounded is-size-7" type="button"
+                                                        v-bind:disabled="candidates.index + 1 === candidates.set.length"
+                                                        @click="candidates.index++">
+                                                        <span class="icon">
+                                                            <i class="fas fa-chevron-right"></i>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </transition>
+                                    <form class="level-item" onsubmit="return false;" v-cloak>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
-                                                <input class="input is-rounded" type="text" readonly="readonly"
+                                                <input class="input is-rounded" type="text" v-bind:readonly="!isEditing"
                                                     v-bind:class="{ 'is-danger': inputHasError }"
-                                                    v-bind:placeholder="isLearning ? '教える言葉' : '投稿するニュース'"
+                                                    v-bind:placeholder="isEditing ? '言葉のかけら' : '教える言葉'"
                                                     v-bind:disabled="word !== null" v-model="input" @input="change"
                                                     ref="text" v-cloak>
                                             </div>
                                             <div class="control">
-                                                <button class="button is-rounded is-primary" type="submit"
+                                                <button class="button" type="button"
                                                     v-bind:class="{ 'is-static': word !== null }"
-                                                    v-bind:disabled="user === null"
-                                                    @click="chars.forEach(x => x.forEach(y => y.count += y.set.includes(input.charAt(input.length - 1)) ? 1 : 0 )); input = input.slice( 0, -1);"><span
+                                                    v-bind:disabled="user === null" @click="backspace"><span
                                                         class="icon is-small" v-cloak>
                                                         <i class="fas fa-backspace"></i>
                                                     </span>
@@ -4171,7 +4397,7 @@
                                                     </span>
                                                 </button>
                                             </div>
-                                            <div class="control">
+                                            <!--<div class="control">
                                                 <button class="button is-rounded is-danger" type="button"
                                                     v-bind:disabled="user === null"
                                                     @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; $refs.text.blur(); isLearning = false;"><span
@@ -4179,84 +4405,11 @@
                                                         <i class="fas fa-times"></i>
                                                     </span>
                                                 </button>
-                                            </div>
+                                            </div>-->
                                         </div>
                                     </form>
                                 </nav>
                             </transition>
-                        </div>
-                    </div>
-                </div>
-                <div class="navbar-item is-expanded columns is-desktop is-hidden" ref="ticker">
-                    <div class="column is-full is-mobile has-content-centered">
-                        <div class="control has-text-centered">
-                            <nav class="level">
-                                <div class="level-item has-text-centered">
-                                    <div class="field">
-                                        <div class="clip" v-bind:style="{ width: animatedTickerWidth + 'px' }" v-cloak>
-                                            <div class="ticker-wrap">
-                                                <transition-group name="ticker-item-list" class="ticker" tag="div"
-                                                    v-bind:style="{ animationPlayState: recentWords.length > 0 ? 'running' : 'paused' }"
-                                                    v-on:enter-cancelled="tickerUpdated"
-                                                    v-on:after-leave="tickerUpdated"
-                                                    v-on:leave-cancelled="tickerUpdated">
-                                                    <div class="item ticker-item-list-item"
-                                                        v-for="word in take(recentWords, 10)" v-bind:key="word.name">
-                                                        <article class="media" v-cloak>
-                                                            <figure class="media-left" v-if="word.image">
-                                                                <picture class="image has-ratio is-16x16"
-                                                                    v-if="word.image instanceof Object">
-                                                                    <source v-bind:srcset="word.image.dark"
-                                                                        media="(prefers-color-scheme: dark)">
-                                                                    <img class="is-rounded"
-                                                                        v-bind:src="word.image.light" width="16"
-                                                                        height="16" v-bind:alt="word.name">
-                                                                </picture>
-                                                                <picture class="image has-ratio is-16x16" v-else>
-                                                                    <img class="is-rounded" v-bind:src="word.image"
-                                                                        width="16" height="16" v-bind:alt="word.name">
-                                                                </picture>
-                                                            </figure>
-                                                            <div class="media-content" v-if="word.name">
-                                                                <div class="content has-text-left">
-                                                                    <span class="has-text-weight-bold">{{ word.name
-                                                                        }}</span>
-                                                                </div>
-                                                            </div>
-                                                        </article>
-                                                    </div>
-                                                    <div class="item ticker-item-list-item"
-                                                        v-for="word in take(recentWords, 10)"
-                                                        v-bind:key="word.name + '-alt'">
-                                                        <article class="media" v-cloak>
-                                                            <figure class="media-left" v-if="word.image">
-                                                                <picture class="image has-ratio is-16x16"
-                                                                    v-if="word.image instanceof Object">
-                                                                    <source v-bind:srcset="word.image.dark"
-                                                                        media="(prefers-color-scheme: dark)">
-                                                                    <img class="is-rounded"
-                                                                        v-bind:src="word.image.light" width="16"
-                                                                        height="16" v-bind:alt="word.name">
-                                                                </picture>
-                                                                <picture class="image has-ratio is-16x16" v-else>
-                                                                    <img class="is-rounded" v-bind:src="word.image"
-                                                                        width="16" height="16" v-bind:alt="word.name">
-                                                                </picture>
-                                                            </figure>
-                                                            <div class="media-content" v-if="word.name">
-                                                                <div class="content has-text-left">
-                                                                    <span class="has-text-weight-bold">{{ word.name
-                                                                        }}</span>
-                                                                </div>
-                                                            </div>
-                                                        </article>
-                                                    </div>
-                                                </transition-group>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </nav>
                         </div>
                     </div>
                 </div>
