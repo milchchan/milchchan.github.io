@@ -199,7 +199,7 @@
 
         .tags>.tag {
             margin: 0px;
-            padding: 12px 24px 12px 24px;
+            padding: 16px 32px 16px 32px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 500px 500px 500px 500px;
             background: rgba(255, 255, 255, 0.75) !important;
@@ -1305,8 +1305,8 @@
             color: var(--accent-color);
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button>:not(:first-of-type),
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button>:not(:first-of-type) {
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button span:not(:first-child),
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button span:not(:first-child) {
             margin: 0px 0px 0px 8px;
         }
 
@@ -1406,6 +1406,10 @@
             /*background: #f5f5f5;
             box-shadow: 20px 20px 60px #d0d0d0,
                 -20px -20px 60px #ffffff;*/
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .has-text-left .balloon>p {
+            line-height: 1.25rem;
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns:first-child {
@@ -2508,7 +2512,7 @@
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
+                                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="cancel">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2808,7 +2812,7 @@
                                     <div class="tags has-addons" v-cloak>
                                         <button class="button tag is-rounded is-size-7 has-text-weight-bold"
                                             type="button"
-                                            v-bind:style="{ color: 'rgba(0, 0, 0, ' + (0.25 + 0.75 * tag.score) + ')' }"
+                                            v-bind:style="{ color: 'rgba(255, 134, 181, ' + (0.25 + 0.75 * tag.score) + ')' }"
                                             @click="learn(tag.name); isRevealed = false;">
                                             <div class="clip">
                                                 <div class="scrollable">
@@ -4430,7 +4434,7 @@
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
+                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="cancel">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
