@@ -951,7 +951,7 @@ window.addEventListener("load", (event) => {
             },
             startPedometer: async function () {
                 const self = this;
-
+                
                 if (DeviceMotionEvent.requestPermission) {
                     const permissionState = await DeviceMotionEvent.requestPermission();
 
