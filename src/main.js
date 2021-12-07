@@ -2664,11 +2664,6 @@ window.addEventListener("load", (event) => {
                     window.scrollTo(0, document.body.scrollHeight);
                 }, 500);
             },
-            formatDate: function (event) {
-                moment.locale(window.navigator.language);
-
-                return moment(event).format("LT");
-            },
             animationStart: function (el) {
                 this.isAnimating = true;
             },
