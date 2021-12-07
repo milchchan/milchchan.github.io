@@ -1,19 +1,3 @@
-function _mergeNamespaces(n, m) {
-  m.forEach(function(e) {
-    e && typeof e !== "string" && !Array.isArray(e) && Object.keys(e).forEach(function(k) {
-      if (k !== "default" && !(k in n)) {
-        var d = Object.getOwnPropertyDescriptor(e, k);
-        Object.defineProperty(n, k, d.get ? d : {
-          enumerable: true,
-          get: function() {
-            return e[k];
-          }
-        });
-      }
-    });
-  });
-  return Object.freeze(n);
-}
 const p$1 = function polyfill() {
   const relList = document.createElement("link").relList;
   if (relList && relList.supports && relList.supports("modulepreload")) {
@@ -10898,7 +10882,7 @@ function compileToFunction(template, options) {
 }
 registerRuntimeCompiler(compileToFunction);
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-var stats_min$1 = { exports: {} };
+var stats_min = { exports: {} };
 (function(module, exports) {
   (function(f, e) {
     module.exports = e();
@@ -10971,13 +10955,7 @@ var stats_min$1 = { exports: {} };
     };
     return f;
   });
-})(stats_min$1);
-var stats_min = stats_min$1.exports;
-var Stats = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ _mergeNamespaces({
-  __proto__: null,
-  [Symbol.toStringTag]: "Module",
-  "default": stats_min
-}, [stats_min$1.exports]));
+})(stats_min);
 var defaultInstanceSettings = {
   update: null,
   begin: null,
@@ -12382,15 +12360,6 @@ const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
 const databaseRoot = "wonderland";
 let database = firebase.database();
 let storage = firebase.storage();
-const stats = new Stats();
-stats.domElement.style.position = "fixed";
-stats.domElement.style.top = "auto";
-stats.domElement.style.bottom = "0";
-stats.domElement.style.left = "auto";
-stats.domElement.style.right = "0";
-if (!debug) {
-  stats.domElement.classList.add("is-hidden");
-}
 let idleTime = 0;
 const blinkThreshold = 5;
 let activateTime = 0;
@@ -13141,19 +13110,19 @@ window.addEventListener("load", (event) => {
               if (d < 9.8) {
                 const nowDate = new Date();
                 const baseDate = nowDate.getTime() - 7 * 24 * 60 * 60 * 1e3;
-                const stats2 = [];
+                const stats = [];
                 self2.steps++;
                 self2.isStepping = false;
                 for (let days = self2.stats.length - 1; days > 0; days--) {
                   if (self2.stats[days].date.getTime() <= baseDate) {
                     self2.stats.splice(days, 1);
                   } else if (self2.stats[days].date.getFullYear() !== nowDate.getFullYear() && self2.stats[days].date.getMonth() !== nowDate.getMonth() && self2.stats[days].date.getDate() !== nowDate.getDate()) {
-                    stats2.push({ date: self2.stats[days].date.toISOString(), steps: self2.stats[days].steps });
+                    stats.push({ date: self2.stats[days].date.toISOString(), steps: self2.stats[days].steps });
                   }
                 }
-                stats2.unshift({ date: new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0).toISOString(), steps: self2.steps });
+                stats.unshift({ date: new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0).toISOString(), steps: self2.steps });
                 try {
-                  localStorage.setItem("stats", JSON.stringify(stats2));
+                  localStorage.setItem("stats", JSON.stringify(stats));
                 } catch (e) {
                   localStorage.removeItem("stats");
                 }
@@ -15177,7 +15146,6 @@ window.addEventListener("load", (event) => {
       } else {
         fragments = [];
       }
-      this.$refs.container.after(stats.domElement);
       this.insetTop = this.$refs.indicator.getBoundingClientRect().height;
       this.insetBottom = this.$refs.blank.getBoundingClientRect().height;
       this.map = new Microsoft.Maps.Map(this.$refs.map, {
