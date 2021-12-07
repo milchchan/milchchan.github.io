@@ -2745,6 +2745,24 @@ window.addEventListener("load", (event) => {
             reverse: function (collection) {
                 return [].concat(collection).reverse();
             },
+            standardDeviation: function(collection) {
+                let sum = 0.0;
+                let variance = 0.0;
+
+                for (const x of collection) {
+                    sum += x;
+                }
+
+                const average = sum / collection.length;
+
+                for (const x of collection) {
+                    variance += (x - average) * (x - average);
+                }
+
+                variance /= collection.length;
+
+                return Math.sqrt(variance);
+            },
             formatTime: function (time) {
                 const t = Math.floor(time);
                 const days = Math.floor(t / 86400);
