@@ -1195,60 +1195,7 @@ window.addEventListener("load", (event) => {
                 this.input = this.input.slice( 0, -1);
             },
             send: async function (text) {
-                if (this.isDebug) {
-                    if (this.input.length > 0) {
-                        let keys = [];
-                        let tags = [];
-
-                        for (const token of this.input.split(/\s/)) {
-                            if (this.backgroundImages.some((x) => x.id === token)) {
-                                keys.push(token);
-                            } else {
-                                tags.push(token);
-                            }
-                        }
-
-                        if (keys.length > 0 && tags.length > 0) {
-                            for (const key of keys) {
-                                database.ref(databaseRoot + "/images/" + key).transaction(function (image) {
-                                    image["tags"] = tags;
-
-                                    return image;
-                                });
-                            }
-
-                            this.isLearning = false;
-                        } else if (this.input.length <= this.maxInputLength) {
-                            if (this.isEditing) {
-                                const result = this.chars.find(x => x.some(y => !y.reserved));
-                                const column = [];
-        
-                                column.push({ set: [this.input], index: 0, count: 0, timestamp: Math.floor(new Date() / 1000), reserved: false });
-        
-                                if (typeof result === "undefined") {
-                                    this.chars.splice(0, 0, column);
-                                } else {
-                                    result.push({ set: [this.input], index: 0, count: 0, timestamp: Math.floor(new Date() / 1000), reserved: false });
-                                }
-        
-                                this.input = "";
-                                this.isEditing = false;
-                            } else {
-                                const location = this.map.getCenter();
-
-                                this.learn({ name: this.input, location: { latitude: location.latitude, longitude: location.longitude } });
-                                this.input = "";
-                                this.isLearning = false;
-                            }
-                        }
-                    } else {
-                        for (const image of this.backgroundImages) {
-                            this.input = image.id;
-
-                            break;
-                        }
-                    }
-                } else if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
+                if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
                     if (this.isEditing) {
                         let index = -1;
                         const column = [];
