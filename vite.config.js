@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   build: {
     minify: false,
-    outDir: "dist",
+    outDir: "docs",
     rollupOptions: {
       output: {
         entryFileNames: "[name].js",
