@@ -28,7 +28,7 @@ const milch = { name: "ミルヒちゃん", accent: "#ffa6bb", image: "/images/M
 const merku = { name: "メルクちゃん", accent: "#5bcbe1", image: "/images/Merku.png" };
 const stats = new Stats();
 
-/*stats.domElement.style.position = "fixed";
+stats.domElement.style.position = "fixed";
 stats.domElement.style.top = "auto";
 stats.domElement.style.bottom = "0";
 stats.domElement.style.left = "auto";
@@ -36,7 +36,7 @@ stats.domElement.style.right = "0";
 
 if (!debug) {
     stats.domElement.classList.add("is-hidden");
-}*/
+}
 
 let idleTime = 0.0;
 const blinkThreshold = 5.0;
@@ -63,7 +63,6 @@ window.addEventListener("load", (event) => {
     const app = createApp({
         data() {
             return {
-                isDebug: debug,
                 isDarkMode: false,
                 isMuted: true,
                 isLoading: false,
@@ -3168,6 +3167,8 @@ window.addEventListener("load", (event) => {
             animate: async function (timestamp) {
                 requestAnimationFrame(this.animate);
 
+                stats.begin();
+
                 if (this.character !== null) {
                     function _random(min, max) {
                         min = Math.ceil(min);
@@ -3493,6 +3494,8 @@ window.addEventListener("load", (event) => {
                         }
                     }
                 }
+
+                stats.end();
             },
             render: function (ctx, width, height, animation) {
                 const sprites = [];
@@ -3617,7 +3620,7 @@ window.addEventListener("load", (event) => {
                 fragments = [];
             }
 
-            //this.$refs.container.after(stats.domElement);
+            this.$refs.container.after(stats.domElement);
 
             this.insetTop = this.$refs.indicator.getBoundingClientRect().height;
             this.insetBottom = this.$refs.blank.getBoundingClientRect().height;
