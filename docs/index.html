@@ -3308,6 +3308,22 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="level-item">
+                                                    <div class="level">
+                                                        <div class="level-item">
+                                                            <article class="media">
+                                                                <div class="media-content">
+                                                                    <div class="content">
+                                                                        <h2>標準偏差</h2>
+                                                                        <p
+                                                                            v-text="Math.floor(standardDeviation([steps].concat(range(new Date(), [-1, -2, -3, -4, -5, -6]).map(day => stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)))) * 100) / 100">
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="level-item"
                                                     v-for="(day, index) in range(new Date(), [0, -1, -2, -3, -4, -5, -6])"
                                                     v-bind:key="day">
