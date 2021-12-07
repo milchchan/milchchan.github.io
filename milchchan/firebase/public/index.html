@@ -1,0 +1,3295 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui" />
+    <meta name="description" content="milchchan.com">
+    <meta name="theme-color" content="#f5f5f5">
+    <meta property="og:title" content="ミルヒちゃんねる">
+    <meta property="og:description" content="milchchan.com">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://milchchan.com/">
+    <meta property="og:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:site" content="@milchchan">
+    <meta property="twitter:title" content="ミルヒちゃんねる">
+    <meta property="twitter:description" content="milchchan.com">
+    <meta property="twitter:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:url" content="https://milchchan.com/">
+    <title>ミルヒちゃんねる</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ropa+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" type="text/css"
+        media="screen" />
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        :root {
+            --background-color: rgba(255, 255, 255, 0.75);
+            --foreground-color: #000000;
+            --accent-color: #00eeff;
+            --background-image: url('/images/Background-Light.png');
+            --background-image-2x: url('/images/Background-Light@2x.png');
+            --background-image-3x: url('/images/Background-Light@3x.png');
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: rgba(0, 0, 0, 0.75);
+                --foreground-color: #ffffff;
+                --background-image: url('/images/Background-Dark.png');
+                --background-image-2x: url('/images/Background-Dark@2x.png');
+                --background-image-3x: url('/images/Background-Dark@3x.png');
+            }
+        }
+
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            height: -webkit-fill-available;
+            overflow-x: hidden;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background: #f5f5f5;
+            transition: .5s;
+            overscroll-behavior-x: none;
+            overscroll-behavior-y: none;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        h1,
+        h2,
+        p,
+        span,
+        input,
+        button {
+            font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
+        }
+
+        figure {
+            margin: 0 !important;
+        }
+
+        input::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        label {
+            display: inline;
+            cursor: pointer;
+        }
+
+        a,
+        a:focus {
+            outline: none;
+        }
+
+        label.checkbox input[type=checkbox],
+        label.checkbox input[type=radio] {
+            display: none;
+        }
+
+        label.checkbox .custom {
+            position: relative;
+            margin: 0px 8px 0px 0px;
+            font-size: 1.0rem;
+        }
+
+        label.checkbox input[type=checkbox]+.custom:before,
+        label.checkbox input[type=radio]+.custom:before {
+            font-weight: 900;
+            font-family: "Font Awesome 5 Free";
+            content: '\f00c';
+            color: rgba(255, 255, 255, 0);
+        }
+
+        label.checkbox input[type=checkbox]:checked+.custom:before,
+        label.checkbox input[type=radio]:checked+.custom:before {
+            color: var(--accent-color);
+        }
+
+        a .scrollable,
+        button .scrollable,
+        label .scrollable {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, 0%, 0);
+            transition: .5s ease-in;
+        }
+
+        a .scrollable:hover,
+        button .scrollable:hover,
+        label .scrollable:hover {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, -50%, 0);
+            transition: .5s ease-out;
+        }
+
+        a .scrollable>div,
+        button .scrollable>div,
+        label .scrollable>div {
+            box-sizing: content-box;
+            vertical-align: middle;
+        }
+
+        .navbar {
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            min-height: fit-content !important;
+        }
+
+        .navbar-item {
+            padding: 0 !important;
+        }
+
+        .columns {
+            margin: 0 !important;
+        }
+
+        .columns>.column {
+            padding: 0 !important;
+        }
+
+        .tags>.tag {
+            margin: 0px;
+            padding: 16px 32px 16px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .file-input,
+        .file-cta {
+            background-color: transparent !important;
+            border: 0px solid transparent !important;
+            padding: 0;
+            height: initial;
+        }
+
+        .file-cta_ {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .is-primary,
+        .is-primary:active,
+        .is-primary:focus,
+        .is-primary:hover {
+            /*color: #fef6a5 !important;*/
+            background-color: transparent !important;
+            color: var(--accent-color) !important;
+            border: 0px solid transparent !important;
+            box-shadow: none !important;
+        }
+
+        .has-content-centered {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .columns .is-vcentered {
+            align-items: center;
+        }
+
+        .media-content {
+            overflow: initial !important;
+        }
+
+        .tags {
+            margin: 0 !important;
+            padding: 0;
+            align-items: flex-start;
+            justify-content: center !important;
+        }
+
+        .tags>.control {
+            margin: 0 !important;
+            padding: 8px 8px 8px 8px;
+        }
+
+        .tags button>.clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .level>.level-item>.tags {
+            margin: -8px;
+            padding: 0;
+        }
+
+        .media>.media-content>.wrap {
+            display: flex;
+            justify-content: flex-start;
+            overflow: hidden;
+        }
+
+        .media>.media-content>.wrap>picture {
+            margin-left: 0%;
+            width: auto;
+            height: auto;
+            animation: frame 1.33s steps(4) infinite;
+        }
+
+        .media>.media-content>.wrap>picture>img {
+            object-fit: none;
+            object-position: 0% 0%;
+            width: 100%;
+            height: 100%;
+        }
+
+        .is-danger {
+            background-color: transparent !important;
+            color: #e26971 !important;
+        }
+
+        .is-superellips {
+            transform: rotate(-19deg);
+        }
+
+        .is-superellips>picture {
+            border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
+            overflow: hidden;
+        }
+
+        .is-superellips>picture>img {
+            transform: rotate(19deg);
+        }
+
+        .logo {
+            pointer-events: none;
+            z-index: 1;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 32px;
+            width: 100%;
+            min-height: 100%;
+            touch-action: none;
+        }
+
+        .logo svg {
+            margin: 0;
+            padding: 0;
+            max-height: 10vmin;
+        }
+
+        .logo svg g path {
+            fill: var(--foreground-color);
+            fill-opacity: 0;
+            stroke: var(--foreground-color) !important;
+            stroke-width: 0.5 !important;
+            stroke-dasharray: 250;
+            stroke-dashoffset: 250;
+            animation: draw 1s linear forwards, startup 0.5s ease-out 1s forwards;
+        }
+
+        .sunrise {
+            pointer-events: none;
+            z-index: 1;
+            position: absolute;
+            display: flex;
+            margin: 0;
+            padding: 16px;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sunrise>svg {
+            position: relative;
+            object-fit: cover;
+            width: 100%;
+            min-height: 100%;
+            height: 100%;
+            animation: loading 30s linear infinite;
+        }
+
+        .sunrise>svg>radialGradient>stop {
+            stop-color: rgb(255, 238, 0) !important;
+        }
+
+        .progress {
+            z-index: 1;
+            pointer-events: none;
+            position: absolute;
+            margin: 0 !important;
+            border: 0px solid transparent;
+            padding: 0;
+            width: 100%;
+            height: fit-content;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            background: transparent;
+            touch-action: none;
+        }
+
+        .progress>.bar {
+            position: relative;
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 0;
+            border-radius: 0px;
+            width: 0%;
+            height: 2px;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            background: #ffc547 url('/images/Stripes.png') 50% 50% repeat;
+            background-size: 20px 20px;
+            animation: progress 0.5s linear 0s infinite;
+            animation-play-state: paused;
+        }
+
+        .progress>.animating {
+            animation-play-state: running;
+        }
+
+        .overlay {
+            z-index: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100%;
+            overflow: hidden;
+            background: var(--background-color);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+        }
+
+        .overlay::after {
+            z-index: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100%;
+            transform: translate3d(0, 0%, 0);
+            overflow: hidden;
+            background: var(--background-image) 50% 50% repeat;
+            animation: fade 0.5s ease-out, loop 10s linear infinite;
+            transform: translate3d(0, 0%, 0);
+            content: "";
+        }
+
+        .ticker-wrap {
+            padding: 0;
+            width: 100%;
+            overflow: hidden;
+            box-sizing: content-box;
+            background-color: transparent;
+        }
+
+        .ticker-wrap .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding: 0;
+            box-sizing: content-box;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            /*animation-name: ticker;*/
+            animation-duration: 30s;
+            animation-play-state: paused;
+        }
+
+        .ticker-wrap .ticker .item {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .ticker-wrap .ticker .item .media {
+            align-items: center;
+        }
+
+        .ticker-wrap .ticker .item .media .media-left {
+            margin: 0px 8px 0px 0px !important;
+        }
+
+        .background {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            background-color: transparent;
+            background-position: 50% 50%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        .background:first-child::after {
+            pointer-events: none;
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            min-height: 100%;
+            background: url('/images/Overlay.png') repeat;
+            background-size: 2px 2px;
+            content: "";
+            overflow: hidden;
+        }
+
+        .background>div {
+            display: block;
+            position: absolute;
+            background-color: transparent;
+            background-attachment: scroll;
+            background-position: 50% 25%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            width: 100%;
+            min-height: 100%;
+            overflow: hidden;
+        }
+
+        .background>div::before {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            min-height: 100%;
+            content: "";
+        }
+
+        .background>img {
+            position: absolute;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar {
+            position: relative;
+            padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 16px);
+            width: fit-content;
+            height: 100%;
+            background: #ffffff;
+        }
+
+        .sidebar>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .sidebar>.level>.level-item:first-child {
+            display: flex;
+            top: 0;
+            margin: 0;
+            padding: 32px 0px 16px 0px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .sidebar>.level>.level-item:last-child:not(:first-child) {
+            position: absolute;
+            bottom: 0;
+            margin: 0;
+            padding: 0px 0px 16px 0px;
+        }
+
+        .sidebar>.level>.level-item:last-child:not(:first-child) .image>button {
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 0;
+            background: transparent;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:first-child {
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) {
+            margin: 0;
+            padding: 32px 0px 0px 12px;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button,
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            border: 0px solid rgba(255, 255, 255, 0.5);
+            background: #ffffff;
+            background-clip: padding-box;
+            height: fit-content;
+            line-height: calc(0.75rem * 1.5);
+            backface-visibility: hidden;
+            color: #000000;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) div.wrap {
+            display: flex;
+            margin: 0;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .clip .scrollable div,
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .icon,
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button .icon {
+            margin: 0 !important;
+            color: var(--accent-color);
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .icon+.wrap,
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button .icon+.wrap {
+            margin: 16px 0px 0px 0px !important;
+            color: #000000;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .clip,
+        .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button .clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .container {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 100% !important;
+            height: 100%;
+        }
+
+        .frame {
+            z-index: 0;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 100% !important;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #three {
+            z-index: 1;
+            position: absolute;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            overflow: hidden;
+        }
+
+        #three>canvas {
+            position: relative;
+            display: block;
+            overflow: hidden;
+            outline: none;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+        }
+
+        .blind {
+            z-index: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100%;
+            transform: translate3d(0, 0%, 0);
+            overflow: hidden;
+            background: var(--accent-color);
+            /*background: #00eeff url('/images/Background.png') 50% 50% repeat;
+            animation: progress 0.5s linear 0s infinite;*/
+        }
+
+        #app {
+            position: absolute;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #app>.container>.wrap {
+            position: absolute;
+            margin: 0;
+            padding: 16px;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            overflow: hidden;
+        }
+
+        .center {
+            z-index: 1;
+            position: relative;
+            display: block;
+            margin: 0px auto 0px auto;
+            padding: env(safe-area-inset-top, 0px) 0px 0px 0px;
+            width: fit-content;
+            touch-action: none;
+        }
+
+        .left {
+            z-index: 1;
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin: 0;
+            padding: calc(env(safe-area-inset-top, 0px) + 32px) 0px 0px calc(env(safe-area-inset-left, 0px) + 32px);
+            touch-action: none;
+        }
+
+        .right {
+            z-index: 1;
+            position: absolute;
+            right: 0;
+            top: 0;
+            margin: 0;
+            padding: calc(env(safe-area-inset-top, 0px) + 32px) calc(env(safe-area-inset-right, 0px) + 32px) 0px 0px;
+            touch-action: none;
+        }
+
+        .center button {
+            margin: 0px;
+            border: 0px solid rgba(255, 255, 255, 0.5);
+            border-radius: 290486px;
+            padding: 16px;
+            background: transparent !important;
+            background-clip: padding-box;
+            box-shadow: none;
+            height: initial;
+            color: var(--accent-color) !important;
+        }
+
+        .center>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .center>.level>.level-item {
+            margin: 0;
+            padding: 0;
+        }
+
+        .center>.level>.level-item>.control {
+            margin: 0;
+            padding: 24px 0px 0px 0px;
+        }
+
+        .center>.level>.level-item>.control>.level {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item:first-child {
+            pointer-events: none;
+            margin: 0px 0px 8px 0px;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item>.level {
+            margin: 0px -8px 0px -8px;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item>.level>.level-item {
+            margin: 0px 8px 0px 8px;
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item>.level {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item .field {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item .field picture.icon {
+            margin: 0px 4px 0px 0px;
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item .field span:last-child {
+            font-family: "Alata", sans-serif;
+            font-size: 4rem !important;
+            line-height: 4rem !important;
+            color: var(--accent-color);
+            transition: .5s;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .wrap>.control,
+        .center>.level>.level-item:nth-last-of-type(1) .control {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            justify-content: center;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .control>.level {
+            display: flex;
+            margin: -8px 0px -8px 0px;
+            padding: 16px 0px 0px 0px;
+            width: fit-content;
+            height: fit-content;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .control>.level>.level-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px 0px 8px 0px;
+            padding: 0;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .notification {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .media {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            padding: 12px 24px 12px 24px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            color: #000000;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-left {
+            display: flex;
+            margin: 0px 8px 0px 0px !important;
+            flex-direction: row;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-left>span:first-child:not(:last-child) {
+            margin: 0 !important;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-left>span:not(:first-child) {
+            margin: 0px 0px 0px 8px !important;
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-content .content {
+            transform: rotate(0.03deg);
+        }
+
+        .center>.level>.level-item:nth-last-of-type(1) .media .media-content span {
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            line-height: 1.25rem;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:first-child>button {
+            margin: 0px;
+            border: 0px solid transparent;
+            border-radius: 290486px;
+            padding: 16px;
+            background: #ffffff !important;
+            background-clip: padding-box;
+            box-shadow: none;
+            height: initial;
+            color: var(--accent-color) !important;
+        }
+
+        .left button,
+        .right button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            background-clip: padding-box;
+            height: initial;
+            color: var(--accent-color) !important;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:first-child>button>span,
+        .left button>span,
+        .center button>span,
+        .right button>span {
+            margin: 0 !important;
+            width: 1.0rem !important;
+            height: 1.0rem !important;
+        }
+
+        #menu,
+        .hud {
+            z-index: 1;
+            position: absolute;
+            display: flex;
+            top: 0;
+            justify-content: center;
+            align-items: center;
+            padding: env(safe-area-inset-top, 0px) 0px 0px 0px;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        #menu>.columns,
+        .hud>.columns {
+            display: flex;
+            top: 0;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        #menu>.columns>.column,
+        .hud>.columns>.column {
+            flex: none;
+            margin: auto !important;
+            overflow-x: hidden;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        #menu>.columns>.column>.control {
+            margin: 0;
+            padding: 0px 16px 0px 16px;
+        }
+
+        .hud>.columns>.column>.field {
+            margin: 0;
+            padding: 16px 32px 16px 32px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item:nth-child(1) {
+            padding: 16px 16px 16px 16px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item {
+            margin: 0;
+            padding: 0px 16px 16px 16px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level {
+            margin: -8px -8px -8px -8px;
+            flex-direction: column;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item {
+            margin: 0;
+            padding: 8px 8px 8px 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level {
+            margin: -8px -8px -8px -8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item {
+            margin: 0;
+            padding: 8px 8px 8px 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            line-height: 1.25rem;
+            color: var(--foreground-color);
+            transition: .5s;
+            transform: rotate(0.03deg);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child h2 {
+            margin: 0;
+            font-size: 0.75rem;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            line-height: 0.75rem;
+            color: var(--accent-color);
+            transition: .5s;
+            transform: rotate(0.03deg);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child h1+h2 {
+            margin: 8px 0px 0px 0px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child svg+h2 {
+            margin: 8px 0px 0px 0px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child p {
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            font-size: 1.25rem;
+            line-height: 2.0rem;
+            color: var(--foreground-color);
+            transition: .5s;
+            transform: rotate(0.03deg);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child hr {
+            margin: 16px auto 16px auto;
+            border-width: 0;
+            padding: 0;
+            width: 32px;
+            height: 4px;
+            background-color: var(--accent-color);
+            text-align: center !important;
+            transition: .5s;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .button span.icon {
+            margin: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .button span.icon+span.wrap {
+            margin: 0px 0px 0px 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.image>button {
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 0;
+            background: transparent;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.button {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 16px 32px 16px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: fit-content;
+            line-height: calc(0.75rem * 1.5);
+            backface-visibility: hidden;
+            color: #000000;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary {
+            background: rgba(0, 238, 255, 0.75) !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content span.wrap {
+            display: flex;
+            margin: 0;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button .clip .scrollable div,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.button .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon,
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon {
+            color: var(--accent-color);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button.is-primary .icon {
+            color: #ffffff !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon:first-child+div,
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon:first-child+div {
+            margin: 0px 8px 0px 0px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button span:not(:first-child),
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button span:not(:first-child) {
+            margin: 0px 0px 0px 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .clip,
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:first-of-type button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px;
+            background: rgba(0, 238, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            color: #ffffff;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item:last-child:not(:first-child)>.level>.level-item button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            /*background: #f5f5f5;
+            background: linear-gradient(145deg, #ffffff, #dddddd);
+            box-shadow: 10px 10px 30px #d0d0d0,
+                -10px -10px 30px #ffffff;*/
+            height: initial;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item a .icon {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            color: var(--accent-color);
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns {
+            width: 100%;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column hr {
+            margin: 8px 0px 8px 0px;
+            padding: 0;
+            height: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media {
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 0px 16px 0px 16px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media:first-child {
+            padding: 16px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .content {
+            margin: 0;
+            padding: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content p {
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .has-text-left .balloon {
+            display: inline-block;
+            padding: 12px 24px 12px 24px;
+            border-radius: 500px 500px 500px 0px;
+            background: url('/images/Stripes.png') 50% 50% repeat;
+            background-size: 20px 20px;
+            /*background: #f5f5f5;
+            box-shadow: 20px 20px 60px #d0d0d0,
+                -20px -20px 60px #ffffff;*/
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .has-text-left .balloon>p {
+            line-height: 1.25rem;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox {
+            display: flex;
+            align-items: center;
+            margin: 16px 0px 0px 0px;
+            padding: 16px 32px 16px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: fit-content;
+            line-height: calc(0.75rem * 1.5);
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox span:last-of-type {
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+            white-space: nowrap;
+            color: #000000;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox .clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .level:nth-last-of-type(1)>.level-item {
+            margin: 16px 0px 16px 0px;
+            padding: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .level:nth-last-of-type(1)>.level-item>.level {
+            margin: -8px -8px -8px -8px;
+            padding: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .level:nth-last-of-type(1)>.level-item>.level>.level-item {
+            margin: 8px 8px 8px 8px;
+            padding: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .level:nth-last-of-type(1)>.level-item button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            height: initial;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .level:nth-last-of-type(1) .level-item button span {
+            margin: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media:nth-of-type(1) .media-left {
+            margin: 0px 8px 0px 0px !important;
+            padding: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media:nth-last-of-type(1) .media-content {
+            margin: -16px 0px 0px 0px;
+            padding: 0;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field {
+            margin: 0;
+            padding: 0px -8px 0px -8px;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+        }
+
+        #popup {
+            z-index: 1;
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));
+            /*backdrop-filter: blur(8px);*/
+        }
+
+        #popup .columns>.column>.control:last-child {
+            margin: 0;
+            padding: 0;
+        }
+
+        #popup .columns>.column>.control:last-child>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) {
+            display: block;
+            margin: 0;
+            padding: 0px 32px 16px 32px;
+            width: 100%;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2) {
+            margin: 0;
+            padding: 16px 32px 16px 32px;
+            width: 100%;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            width: 100%
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item:first-child {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item:last-child:not(:first-child) {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item button {
+            margin: 0px;
+            border: 0px solid rgba(255, 255, 255, 0.5);
+            border-radius: 290486px;
+            padding: 16px;
+            background: transparent !important;
+            background-clip: padding-box;
+            box-shadow: none;
+            height: initial;
+            color: #ffffff !important;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item button>span {
+            margin: 0 !important;
+            width: 1.0rem !important;
+            height: 1.0rem !important;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media {
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 500px 500px 500px 500px;
+            padding: 8px 16px 8px 16px;
+            background: url('/images/Stripes.png') 50% 50% repeat;
+            background-size: 20px 20px;
+            /*box-shadow: 10px 10px 30px #d0d0d0,
+                -10px -10px 30px #ffffff;*/
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media .media-left {
+            margin: 0px 8px 0px 0px !important;
+            padding: 0;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media .media-content .content {
+            transform: rotate(0.03deg);
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(2)>.level>.level-item .media .media-content .content span {
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            line-height: 1.25rem;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) .media {
+            margin: 0;
+            padding: 0px 16px 0px 16px;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) .media .media-content {
+            overflow: hidden;
+            transform: rotate(0.03deg);
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) .media span {
+            display: inline-block;
+            font-size: 1.0rem;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            line-height: 2.0rem;
+            vertical-align: middle;
+        }
+
+        #popup .columns>.column>.control:last-child>.level>.level-item:nth-last-of-type(1) .media span.break {
+            display: block;
+            margin: 0;
+        }
+
+        #input {
+            z-index: 1 !important;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #input>.columns>.column>.control:last-child .level .level-item {
+            margin: 0;
+            padding: 0;
+        }
+
+        #input form .field {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 500px 500px 500px 500px;
+            padding: 8px 16px 8px 16px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #input .navbar-item:first-of-type .control:first-child .level:last-of-type {
+            display: block;
+            margin: 0px 32px 16px 32px;
+            padding: 0;
+        }
+
+        #input .navbar-item:first-of-type .control:first-child .level .is-info {
+            color: #ffffff;
+        }
+
+        #input .navbar-item:first-of-type .control {
+            margin: 0;
+            padding: 0;
+        }
+
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input {
+            border: 0px solid transparent;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            background-color: transparent;
+            box-shadow: none;
+            backface-visibility: hidden;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            color: #000000;
+            transform: rotate(0.03deg);
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input::placeholder {
+            color: rgba(0, 0, 0, 0.25);
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+        }
+
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) {
+            display: flex;
+            align-items: center;
+            padding: 0px 8px 0px 8px;
+        }
+
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) span {
+            color: rgba(0, 0, 0, 0.25);
+            font-family: 'Hind', 'Josefin Sans', sans-serif;
+        }
+
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) button,
+        #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(4) button {
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 8px 16px 8px 16px;
+            background-color: transparent;
+            color: var(--accent-color);
+        }
+
+        #input>.columns:last-of-type {
+            margin: 0;
+            padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px !important;
+            height: 16px;
+            min-height: fit-content;
+            background: transparent;
+            font-size: 0rem !important;
+            line-height: 0 !important;
+            pointer-events: none;
+        }
+
+        .container>.wrap>.frame .columns:last-of-type {
+            position: absolute;
+            bottom: 0;
+            margin: 0;
+            padding: 0 !important;
+            width: 100%;
+            min-height: fit-content;
+            background: var(--accent-color);
+            font-size: 0.75rem !important;
+            line-height: 0.75rem !important;
+        }
+
+        .container>.wrap>.frame .columns:last-of-type>.column>.control {
+            pointer-events: none;
+            margin: 0;
+            margin: 4px 16px 4px 16px;
+            height: max(16px, 0.75rem);
+            font-size: 0.75rem !important;
+            line-height: 0.75rem !important;
+        }
+
+        .container>.wrap>.frame .columns:last-of-type>.column>.control .level:first-child .level-item {
+            display: flex;
+            justify-content: center;
+        }
+
+        .container>.wrap>.frame .clip {
+            margin: 0;
+            border: 0px solid var(--foreground-color);
+            padding: 0px;
+            background-color: transparent;
+            background-clip: padding-box;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .container>.wrap>.frame .ticker-wrap {
+            display: flex;
+            margin: 0;
+            width: 100%;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+        }
+
+        .container>.wrap>.frame .clip .ticker-wrap .ticker {
+            transform: translate3d(0%, 0, 0);
+            animation: ticker 30s linear 0s infinite;
+            animation-play-state: paused;
+        }
+
+        .container>.wrap>.frame .clip .ticker-wrap .ticker .item {
+            padding: 0px 8px;
+            color: #ffffff;
+            height: max(16px, 0.75rem);
+            font-size: 0.75rem !important;
+            line-height: 1.0rem !important;
+        }
+
+        .container>.wrap>.frame .clip .ticker-wrap .ticker .media {
+            margin: 0px -8px 0px -8px;
+            height: max(16px, 0.75rem);
+        }
+
+        .container>.wrap>.frame .clip .ticker-wrap .ticker .media .media-left {
+            margin: 0px 8px 0px 8px !important;
+        }
+
+        .container>.wrap>.frame .clip .ticker-wrap .ticker .media picture img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .container>.wrap>.frame .clip .ticker-wrap .ticker .media .media-content {
+            margin: 0px 8px 0px 8px;
+        }
+
+        .container>.wrap>.frame .clip .ticker-wrap .ticker .media .media-content .content {
+            display: flex;
+            align-content: center;
+            transform: rotate(0.03deg);
+        }
+
+        .container>.wrap>.frame .clip .ticker-wrap .ticker .media .media-content .content span {
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            height: min(16px, 0.8rem) !important;
+            vertical-align: middle;
+            overflow-y: hidden;
+        }
+
+        .navbar-item img {
+            max-height: none;
+        }
+
+        .loading {
+            animation: loading 1s linear infinite;
+        }
+
+        .updating {
+            animation: updating 1s linear infinite;
+        }
+
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: opacity 0.5s;
+        }
+
+        .fade-enter-from,
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        .reveal-enter-active,
+        .reveal-leave-active {
+            transition: all .5s ease;
+        }
+
+        .reveal-enter-from,
+        .reveal-leave-to {
+            opacity: 0;
+            transform: translate3d(0, -50%, 0);
+        }
+
+        .reveal-enter-to,
+        .reveal-leave-from {
+            opacity: 1;
+            transform: translate3d(0, 0%, 0);
+        }
+
+        .blind-enter-active,
+        .blind-leave-active {
+            transition: all .5s ease;
+        }
+
+        .blind-enter-from {
+            transform: translate3d(0, 100%, 0);
+        }
+
+        .blind-enter-to {
+            transform: translate3d(0, 0%, 0);
+        }
+
+        .blind-leave-from {
+            transform: translate3d(0, 0%, 0);
+        }
+
+        .blind-leave-to {
+            transform: translate3d(0, -100%, 0);
+        }
+
+        .message-list-enter-active,
+        .message-list-leave-active {
+            transition: all 0.5s ease;
+        }
+
+        .message-list-move {
+            transition: transform 0.5s ease;
+        }
+
+        .message-list-enter-from {
+            opacity: 0;
+            transform: translate3d(0%, 50%, 0);
+        }
+
+        .message-list-enter-to,
+        .message-list-leave-from {
+            opacity: 1;
+            transform: translate3d(0%, 0%, 0);
+        }
+
+        .message-list-leave-to {
+            opacity: 0;
+            transform: translate3d(0%, -50%, 0);
+        }
+
+        /*.notification-list-enter-active,
+        .notification-list-leave-active {
+            transition: all 0.5s ease;
+        }*/
+
+        .notification-list-item {
+            transition: all 0.5s ease;
+        }
+
+        .notification-list-enter-from {
+            opacity: 0;
+            transform: translate3d(0%, -50%, 0);
+        }
+
+        .notification-list-enter-to,
+        .notification-list-leave-from {
+            opacity: 1;
+            transform: translate3d(0%, 0%, 0);
+        }
+
+        .notification-list-leave-to {
+            opacity: 0;
+            transform: translate3d(0%, 0%, 0);
+        }
+
+        /*.notification-list-leave-active {
+            position: absolute;
+        }*/
+
+        .type-list-enter-active,
+        .type-list-leave-active {
+            transition: all 0s ease;
+        }
+
+        .type-list-move {
+            transition: transform 0s ease;
+        }
+
+        .type-list-enter-from,
+        .type-list-leave-to {
+            opacity: 0;
+            transform: translate3d(0%, 25%, 0);
+        }
+
+        .type-list-enter-to,
+        .type-list-leave-from {
+            opacity: 1;
+            transform: translate3d(0%, 0%, 0);
+        }
+
+        .popup-enter-active,
+        .popup-leave-active {
+            transition: all 0.5s ease;
+        }
+
+        .popup-enter-from {
+            opacity: 0;
+            transform: translate3d(0, 100%, 0);
+        }
+
+        .popup-enter-to {
+            opacity: 1;
+            transform: translate3d(0, 0%, 0);
+        }
+
+        .popup-leave-from {
+            opacity: 1;
+            transform: translate3d(0, 0%, 0);
+        }
+
+        .popup-leave-to {
+            opacity: 0;
+            transform: translate3d(0, 100%, 0);
+        }
+
+        /*.ticker-item-list-enter-active,
+        .ticker-item-list-leave-active {
+            transition: all 0.5s ease;
+        }*/
+
+        .ticker-item-list-item {
+            transition: all 0.5s ease;
+        }
+
+        /*.ticker-item-list-move {
+            transition: transform 0.5s ease;
+        }*/
+
+        .ticker-item-list-enter-from,
+        .ticker-item-list-leave-to {
+            opacity: 0;
+        }
+
+        .ticker-item-list-enter-to,
+        .ticker-item-list-leave-from {
+            opacity: 1;
+        }
+
+        .tagcloud-list-item {
+            display: inline-block;
+            transition: all 0.5s ease;
+        }
+
+        .tagcloud-list-enter-from,
+        .tagcloud-list-leave-to {
+            opacity: 0;
+        }
+
+        .tagcloud-list-enter-to,
+        .tagcloud-list-leave-from {
+            opacity: 1;
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes startup {
+            to {
+                fill-opacity: 1;
+                stroke-opacity: 0;
+            }
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes loop {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: -100px 0px;
+            }
+        }
+
+        @keyframes progress {
+            0% {
+                background-position: 0px 0px;
+            }
+
+            100% {
+                background-position: -20px 0px;
+            }
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translate3d(0%, 0, 0);
+                visibility: visible;
+            }
+
+            100% {
+                transform: translate3d(-50%, 0, 0);
+            }
+        }
+
+        @keyframes loading {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes updating {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(-360deg);
+            }
+        }
+
+        @keyframes frame {
+            0% {
+                margin-left: 0%
+            }
+
+            100% {
+                margin-left: -400%
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio:2),
+        (min-resolution: 2dppx) {
+            .overlay::after {
+                background: var(--background-image-2x) 50% 50% repeat;
+                background-size: 100px 100px;
+            }
+
+            .progress>.bar {
+                background: #ffc547 url('/images/Stripes@2x.png') 50% 50% repeat;
+                background-size: 20px 20px;
+            }
+
+            .background:first-child::after {
+                background: url('/images/Overlay@2x.png') repeat;
+                background-size: 2px 2px;
+            }
+
+            #container .columns .column .media .media-content .has-text-left .balloon {
+                background: url('/images/Stripes@2x.png') 50% 50% repeat;
+                background-size: 20px 20px;
+            }
+
+            #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
+                background: url('/images/Stripes@2x.png') 50% 50% repeat;
+                background-size: 20px 20px;
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio:3),
+        (min-resolution: 3dppx) {
+            .overlay::after {
+                background: var(--background-image-3x) 50% 50% repeat;
+                background-size: 100px 100px;
+            }
+
+            .progress>.bar {
+                background: #ffc547 url('/images/Stripes@3x.png') 50% 50% repeat;
+                background-size: 20px 20px;
+            }
+
+            .background:first-child::after {
+                background: url('/images/Overlay@3x.png') repeat;
+                background-size: 2px 2px;
+            }
+
+            #container .columns .column .media .media-content .has-text-left .balloon {
+                background: url('/images/Stripes@3x.png') 50% 50% repeat;
+                background-size: 20px 20px;
+            }
+
+            #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
+                background: url('/images/Stripes@3x.png') 50% 50% repeat;
+                background-size: 20px 20px;
+            }
+        }
+
+        @font-face {
+            font-family: "Gotham";
+            src: url('/fonts/Gotham-Book.woff') format('woff');
+            font-weight: normal;
+        }
+
+        @font-face {
+            font-family: "Gotham";
+            src: url('/fonts/Gotham-Bold.woff') format('woff');
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="sidebar is-hidden-mobile" v-cloak>
+            <div class="level">
+                <div class="level-item">
+                    <div class="level">
+                        <div class="level-item">
+                            <transition name="fade" mode="out-in">
+                                <button class="button is-white" type="button" @click="isOverlayed = false" v-if="isOverlayed"
+                                    key="close">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button is-white" type="button" @click="isRevealed = !isRevealed; mode = null;"
+                                    v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-bars"></i>
+                                    </span>
+                                </button>
+                                <button class="button is-white" type="button" @click="isRevealed = !isRevealed; mode = null;" v-else-if="mode === '_about'"
+                                    key="force">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button is-white" type="button" @click="mode = null" v-else key="back">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </span>
+                                </button>
+                            </transition>
+                        </div>
+                        <div class="level-item">
+                            <button class="button" type="button" @click="mode = '_about'; isRevealed = true;">
+                                <div class="icon is-large">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>ミルヒちゃんねるについて</div>
+                                            <div>ミルヒちゃんねるについて</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="level-item">
+                            <a class="button" href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q" target="_blank">
+                                <div class="icon">
+                                    <i class="fab fa-windows"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>Apricot</div>
+                                            <div>Apricot</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="level-item">
+                            <a class="button is-rounded" href="https://apps.apple.com/jp/app/id1130755997"
+                                target="_blank">
+                                <div class="icon">
+                                    <i class="fab fa-apple"></i>
+                                </div>
+                                <div class="wrap is-size-7 has-text-weight-bold">
+                                    <div class="clip">
+                                        <div class="scrollable">
+                                            <div>Wonderland</div>
+                                            <div>Wonderland</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <article class="media">
+                        <figure class="media-content">
+                            <p class="image is-48x48">
+                                <transition name="fade" mode="out-in">
+                                    <button class="button image is-48x48 is-superellips" type="button"
+                                        @click="mode = 'sign-in'; isRevealed = true;" v-if="user === null" key="default"
+                                        v-cloak>
+                                        <picture class="image is-48x48" style="pointer-events: none;">
+                                            <source srcset="/images/Merku.png" media="(prefers-color-scheme: dark)">
+                                            <img src="/images/Milch.png" width="64" height="64" alt="Logo">
+                                        </picture>
+                                    </button>
+                                    <button class="button image is-48x48 is-superellips" type="button"
+                                        @click="activate()" v-else key="user" v-cloak>
+                                        <picture class="image is-48x48" style="pointer-events: none;"
+                                            v-if="'photoURL' in user && user.photoURL !== null" key="user.photoURL">
+                                            <img class="is-rounded" v-bind:src="user.photoURL" width="64" height="64"
+                                                v-bind:alt="user.displayName">
+                                        </picture>
+                                        <picture class="image is-48x48" style="pointer-events: none;" v-else
+                                            key="default">
+                                            <source srcset="/images/Merku.png" media="(prefers-color-scheme: dark)">
+                                            <img src="/images/Milch.png" width="64" height="64" alt="Logo">
+                                        </picture>
+                                    </button>
+                                </transition>
+                            </p>
+                        </figure>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="wrap">
+                <div class="frame">
+                    <div class="background">
+                        <div v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }"
+                            v-for="image in backgroundImages" v-bind:key="image" v-cloak></div>
+                        <img v-bind:src="image.url" @load="load(image.url)" @error="error(image.url)"
+                            v-for="image in preloadImages" v-bind:key="image.url" alt="Background" v-cloak>
+                    </div>
+                    <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
+                        v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
+                        v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
+                        <div class="blind" v-if="isBlinded" v-cloak></div>
+                    </transition>
+                    <transition name="fade">
+                        <div class="progress" v-if="progress !== null" v-cloak>
+                            <div class="bar animating" v-bind:style="{ width: String(100.0 * progress) + '%' }"></div>
+                        </div>
+                    </transition>
+                    <transition name="fade">
+                        <div class="sunrise" v-show="isStared" v-cloak>
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                version="1.1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 586.016 575.146"
+                                enable-background="new 0 0 586.016 575.146" xml:space="preserve" ref="sunrise" v-cloak>
+                                <radialGradient id="SVGID_2_" cx="293" cy="287.6" r="288.2"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0" style="stop-color:#FFFFFF;stop-opacity:0.15" />
+                                    <stop offset="1" style="stop-color:#FFFFFF;stop-opacity:0" />
+                                </radialGradient>
+                                <path fill="url(#SVGID_2_)"
+                                    d="M293.008 575.76c-23.217 0-46.367-2.793-68.81-8.301l67.293-274.207c0.449 0.1 0.9 0.2 1.5 0.163h0.131l-0.255 0.001l1.498 282.341L293.008 575.76z M372.771 564.54L294.715 293.2c0.382-0.11 0.75-0.271 1.125-0.488l142.083 243.989C417.438 548.6 395.5 558 372.8 564.54z M150.205 537.919c-20.462-11.686-39.478-25.885-56.518-42.205l195.293-203.91c0.386 0.4 0.8 0.7 1.2 0.934L150.205 537.919z M500.295 487.783L297.229 291.611c0.366-0.378 0.678-0.789 0.926-1.22l244.596 141.038C530.976 451.9 516.7 470.8 500.3 487.783z M44.495 433.539c-12.01-20.426-21.468-42.299-28.109-65.014l270.997-79.242c0.115 0.4 0.3 0.8 0.5 1.146L44.495 433.539z M572.599 357.575l-273.918-68.467c0.114-0.453 0.169-0.956 0.169-1.536l282.303-4.933c0.028 1.6 0 3.3 0 4.933C581.194 311.2 578.3 334.8 572.6 357.575z M4.832 289.944c-0.006-0.728-0.009-1.456-0.01-2.184v-0.188c0-22.805 2.696-45.556 8.012-67.622l274.491 66.13c-0.101 0.419-0.152 0.881-0.157 1.41l0 0.207L4.832 289.944z M298.62 285.817c-0.115-0.384-0.286-0.768-0.509-1.138l242.161-145.177c12.184 20.3 21.8 42.1 28.7 64.773L298.62 285.817z M287.832 284.806L42.058 145.833c11.598-20.512 25.718-39.589 41.968-56.699l204.732 194.431C288.39 284 288.1 284.4 287.8 284.806z M296.992 283.302c-0.386-0.364-0.803-0.672-1.237-0.916L433.681 36.022c20.564 11.5 39.7 25.6 56.9 41.734L296.992 283.302z M290.135 282.458L145.986 39.684c20.375-12.098 42.209-21.649 64.895-28.388l80.396 270.657C290.891 282.1 290.5 282.2 290.1 282.458z M294.483 281.884c-0.436-0.103-0.918-0.153-1.475-0.153l-0.12 0L289.386-0.591 c23.547-0.299 47.2 2.3 70 7.704L294.483 281.884z" />
+                            </svg>
+                        </div>
+                    </transition>
+                    <div class="columns is-desktop" ref="ticker">
+                        <div class="column is-full is-mobile has-content-centered">
+                            <div class="control has-text-centered">
+                                <nav class="level">
+                                    <div class="level-item has-text-centered">
+                                        <div class="field">
+                                            <div class="clip" v-bind:style="{ width: animatedTickerWidth + 'px' }"
+                                                v-cloak>
+                                                <div class="ticker-wrap">
+                                                    <transition-group name="ticker-item-list" class="ticker" tag="div"
+                                                        v-bind:style="{ animationPlayState: words.length > 0 ? 'running' : 'paused' }"
+                                                        v-on:enter-cancelled="tickerUpdated"
+                                                        v-on:after-leave="tickerUpdated"
+                                                        v-on:leave-cancelled="tickerUpdated">
+                                                        <div class="item ticker-item-list-item"
+                                                            v-for="word in take(words, 10)" v-bind:key="word.name">
+                                                            <article class="media" v-cloak>
+                                                                <figure class="media-left" v-if="word.image">
+                                                                    <picture class="image has-ratio is-16x16"
+                                                                        v-if="word.image instanceof Object">
+                                                                        <source v-bind:srcset="word.image.dark"
+                                                                            media="(prefers-color-scheme: dark)">
+                                                                        <img class="is-rounded"
+                                                                            v-bind:src="word.image.light" width="16"
+                                                                            height="16" v-bind:alt="word.name">
+                                                                    </picture>
+                                                                    <picture class="image has-ratio is-16x16" v-else>
+                                                                        <img class="is-rounded" v-bind:src="word.image"
+                                                                            width="16" height="16"
+                                                                            v-bind:alt="word.name">
+                                                                    </picture>
+                                                                </figure>
+                                                                <div class="media-content" v-if="word.name">
+                                                                    <div class="content has-text-left">
+                                                                        <span class="has-text-weight-bold">{{ word.name
+                                                                            }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                                        <div class="item ticker-item-list-item"
+                                                            v-for="word in take(words, 10)"
+                                                            v-bind:key="word.name + '-alt'">
+                                                            <article class="media" v-cloak>
+                                                                <figure class="media-left" v-if="word.image">
+                                                                    <picture class="image has-ratio is-16x16"
+                                                                        v-if="word.image instanceof Object">
+                                                                        <source v-bind:srcset="word.image.dark"
+                                                                            media="(prefers-color-scheme: dark)">
+                                                                        <img class="is-rounded"
+                                                                            v-bind:src="word.image.light" width="16"
+                                                                            height="16" v-bind:alt="word.name">
+                                                                    </picture>
+                                                                    <picture class="image has-ratio is-16x16" v-else>
+                                                                        <img class="is-rounded" v-bind:src="word.image"
+                                                                            width="16" height="16"
+                                                                            v-bind:alt="word.name">
+                                                                    </picture>
+                                                                </figure>
+                                                                <div class="media-content" v-if="word.name">
+                                                                    <div class="content has-text-left">
+                                                                        <span class="has-text-weight-bold">{{ word.name
+                                                                            }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                                    </transition-group>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="three" ref="three"></div>
+            <transition name="fade">
+                <div class="logo" v-if="progress !== null">
+                    <svg viewBox="0 0 1100.2 141.3" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                        xmlns:serif="http://www.serif.com/"
+                        style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" v-cloak>
+                        <g transform="matrix(2.66573,0,0,2.66573,1045.2,23.4789)" v-cloak>
+                            <path
+                                d="M0,38.429C-3.95,34.613 -7.767,30.997 -11.517,27.047C-11.717,26.646 -12.319,27.248 -12.119,27.716L-8.303,33.609C-9.307,38.229 -13.658,41.71 -18.681,41.71C-24.572,41.71 -29.393,37.023 -29.393,30.997L-29.393,4.617C-29.393,-1.208 -24.572,-6.094 -18.681,-6.094C-15.466,-6.094 -12.521,-4.354 -10.512,-2.345L0.401,8.367C0.603,8.769 1.205,8.367 1.004,7.966L-2.946,2.207C-1.941,-2.345 2.41,-6.094 7.365,-6.094C13.324,-6.094 18.145,-1.208 18.145,4.617L18.145,30.997C18.145,41.308 6.025,44.523 0,38.429"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                        <g transform="matrix(2.66573,0,0,2.66573,771.205,35.9663)" v-cloak>
+                            <path
+                                d="M0,26.313L0,24.037C0,23.233 -0.669,22.564 -1.473,22.564C-2.276,22.564 -2.946,23.233 -2.946,24.037L-2.946,26.313C-2.946,32.338 -7.633,36.959 -13.591,36.959C-19.417,36.959 -24.237,32.338 -24.237,26.313L-24.237,-0.067C-24.237,-6.025 -19.417,-10.646 -13.591,-10.646C-7.633,-10.646 -2.946,-6.025 -2.946,-0.067L-2.946,2.344C-2.946,3.081 -2.276,3.75 -1.473,3.75C-0.669,3.75 0,3.081 0,2.344L0,-0.067C0,-5.892 4.821,-10.646 10.78,-10.646C16.604,-10.646 21.425,-5.892 21.425,-0.067L21.425,26.313C21.425,32.206 16.604,36.959 10.78,36.959C4.821,36.959 0,32.206 0,26.313"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                        <g transform="matrix(2.66573,0,0,2.66573,667.51,134.31)" v-cloak>
+                            <path
+                                d="M0,-47.604C6.227,-47.604 11.315,-42.248 11.315,-36.221C11.315,-29.928 6.227,-24.907 0,-24.907C-3.348,-24.907 -5.959,-26.446 -7.968,-26.446C-9.373,-26.446 -10.579,-25.241 -10.579,-23.835C-10.579,-22.497 -9.373,-21.424 -7.968,-21.424C-5.959,-21.424 -3.348,-22.965 0,-22.965C6.227,-22.965 11.315,-17.608 11.315,-11.315C11.315,-5.29 6.227,0 0,0L-9.709,0C-22.563,0 -33.075,-11.18 -33.075,-23.835C-33.075,-37.092 -22.43,-47.403 -9.373,-47.604L0,-47.604Z"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                        <g transform="matrix(2.66573,0,0,2.66573,514.653,35.9663)" v-cloak>
+                            <path
+                                d="M0,26.313L0,24.037C0,23.233 -0.669,22.564 -1.473,22.564C-2.276,22.564 -2.945,23.233 -2.945,24.037L-2.945,26.313C-2.945,32.338 -7.633,36.959 -13.592,36.959C-19.416,36.959 -24.237,32.338 -24.237,26.313L-24.237,-0.067C-24.237,-6.025 -19.416,-10.646 -13.592,-10.646C-7.633,-10.646 -2.945,-6.025 -2.945,-0.067L-2.945,2.344C-2.945,3.081 -2.276,3.75 -1.473,3.75C-0.669,3.75 0,3.081 0,2.344L0,-0.067C0,-5.892 4.82,-10.646 10.779,-10.646C16.603,-10.646 21.424,-5.892 21.424,-0.067L21.424,26.313C21.424,32.206 16.603,36.959 10.779,36.959C4.82,36.959 0,32.206 0,26.313"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                        <g transform="matrix(2.66573,0,0,2.66573,411.402,134.31)" v-cloak>
+                            <path
+                                d="M0,-47.604C6.227,-47.604 11.315,-42.248 11.315,-36.221C11.315,-29.928 6.227,-24.907 0,-24.907C-3.348,-24.907 -5.958,-26.446 -7.967,-26.446C-9.374,-26.446 -10.579,-25.241 -10.579,-23.835C-10.579,-22.497 -9.374,-21.424 -7.967,-21.424C-5.958,-21.424 -3.348,-22.965 0,-22.965C6.227,-22.965 11.315,-17.608 11.315,-11.315C11.315,-5.29 6.227,0 0,0L-9.708,0C-22.563,0 -33.075,-11.18 -33.075,-23.835C-33.075,-37.092 -22.43,-47.403 -9.374,-47.604L0,-47.604Z"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                        <g transform="matrix(2.66573,0,0,2.66573,230.74,36.1487)" v-cloak>
+                            <path
+                                d="M0,25.977L0,-0.203C0,-6.027 4.753,-10.847 10.646,-10.847C16.604,-10.847 21.358,-6.027 21.358,-0.203L21.224,15.399L23.568,15.399C37.494,15.399 37.494,36.824 23.568,36.824L10.846,36.824C4.62,36.824 -0.201,32.137 0,25.977"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                        <g transform="matrix(2.66573,0,0,2.66573,164.234,36.5043)" v-cloak>
+                            <path
+                                d="M0,25.91L0,-0.201C0,-6.027 4.687,-10.713 10.579,-10.713C16.671,-10.713 21.359,-6.027 21.359,-0.201L21.359,25.91C21.359,31.736 16.671,36.623 10.579,36.623C4.687,36.623 0,31.736 0,25.91"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                        <g transform="matrix(2.66573,0,0,2.66573,125.86,134.134)" v-cloak>
+                            <path
+                                d="M0,-47.337C-3.737,-47.337 -5.522,-46.208 -8.863,-42.581C-12.204,-38.956 -15.61,-34.627 -15.61,-34.627C-15.449,-34.316 -12.945,-29.959 -12.908,-29.445C-12.872,-28.931 -13.349,-29.243 -13.704,-29.556C-14.141,-29.94 -22.787,-39.785 -25.106,-42.625C-27.426,-45.465 -30.289,-47.337 -34.134,-47.337C-40.026,-47.337 -44.713,-42.65 -44.713,-36.825L-44.713,-10.713C-44.713,-4.888 -40.026,0 -34.134,0C-29.87,0 -26.31,-2.401 -24.551,-5.836C-25.025,-6.555 -28.111,-11.071 -28.365,-11.704C-28.576,-12.232 -28.304,-12.14 -28.164,-12.089C-28.096,-12.064 -27.791,-11.978 -25.543,-9.718C-24.95,-9.12 -23.718,-7.989 -23.716,-7.999C-21.889,-6.554 -19.505,-5.62 -16.966,-5.62C-14.326,-5.62 -12.005,-6.548 -10.215,-7.985C-10.213,-7.98 -5.942,-11.944 -5.77,-12.089C-5.597,-12.233 -5.291,-12.232 -5.568,-11.704C-5.885,-11.101 -8.91,-6.552 -9.386,-5.831C-7.637,-2.399 -4.121,0 0,0C6.093,0 10.78,-4.888 10.78,-10.713L10.78,-36.825C10.78,-42.65 6.093,-47.337 0,-47.337"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                        <g transform="matrix(2.66573,0,0,2.66573,916.786,78.8974)" v-cloak>
+                            <path
+                                d="M0,-6.241L-2.539,-3.766L-1.939,-0.272C-1.855,0.22 -2.058,0.716 -2.461,1.009C-2.689,1.175 -2.96,1.26 -3.231,1.26C-3.44,1.26 -3.649,1.209 -3.841,1.109L-6.979,-0.54L-10.117,1.109C-10.559,1.341 -11.093,1.303 -11.497,1.009C-11.9,0.716 -12.103,0.22 -12.019,-0.272L-11.419,-3.766L-13.958,-6.241C-14.315,-6.59 -14.443,-7.109 -14.289,-7.584C-14.135,-8.058 -13.725,-8.404 -13.231,-8.475L-9.724,-8.986L-8.154,-12.165C-7.934,-12.612 -7.478,-12.894 -6.979,-12.894C-6.48,-12.894 -6.024,-12.612 -5.804,-12.165L-4.235,-8.986L-0.727,-8.475C-0.233,-8.404 0.177,-8.058 0.331,-7.584C0.485,-7.109 0.356,-6.59 0,-6.241M-6.979,-27.096C-19.59,-27.096 -29.812,-16.874 -29.812,-4.264L-29.811,10.208C-29.811,16.234 -24.99,20.855 -19.165,20.855C-13.206,20.855 -8.52,16.234 -8.52,10.208L-8.52,7.932C-8.52,7.128 -7.85,6.459 -7.047,6.459C-6.242,6.459 -5.573,7.128 -5.573,7.932L-5.573,10.208C-5.573,16.101 -0.752,20.855 5.206,20.855C11.031,20.855 15.852,16.101 15.852,10.208L15.854,-4.264C15.854,-16.874 5.631,-27.096 -6.979,-27.096"
+                                style="fill-rule:nonzero;stroke:#00eeff;stroke-width:5px;" />
+                        </g>
+                    </svg>
+                </div>
+            </transition>
+            <transition name="fade">
+                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
+            </transition>
+            <transition name="fade">
+                <div class="hud" v-if="isOverlayed">
+                    <div class="columns is-centered"
+                        v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
+                        <div class="column is-half is-mobile ">
+                            <transition-group name="tagcloud-list"
+                                class="tags are-medium field is-grouped is-grouped-multiline" tag="div">
+                                <div class="control tagcloud-list-item" v-for="tag in tags" v-bind:key="tag.index">
+                                    <div class="tags has-addons" v-cloak>
+                                        <button class="button tag is-rounded is-size-7 has-text-weight-bold"
+                                            type="button"
+                                            v-bind:style="{ color: 'rgba(0, 0, 0, ' + (0.25 + 0.75 * tag.score) + ')' }"
+                                            @click="learn(tag.name); isRevealed = false;">
+                                            <div class="clip">
+                                                <div class="scrollable">
+                                                    <div>{{ tag.name }}</div>
+                                                    <div>{{ tag.name }}</div>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </transition-group>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+            <transition name="reveal">
+                <div id="menu" v-if="isRevealed && !isOverlayed || word" ref="menu">
+                    <div class="columns is-centered"
+                        v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
+                        <div class="column is-half is-mobile">
+                            <div class="control" v-cloak>
+                                <transition name="fade" mode="out-in" v-on:before-leave="$refs.menu.scroll(0, 0)">
+                                    <nav class="level" v-if="word" key="learn">
+                                        <div class="columns is-desktop">
+                                            <div class="column is-full has-content-centered">
+                                                <article class="media" v-cloak>
+                                                    <figure class="media-left">
+                                                        <p class="image is-64x64">
+                                                            <img class="is-rounded" v-bind:src="character.image"
+                                                                v-bind:alt="character.name" v-cloak>
+                                                        </p>
+                                                    </figure>
+                                                    <div class="media-content">
+                                                        <div class="content has-text-left">
+                                                            <div class="balloon"
+                                                                v-bind:style="{ backgroundColor: character.accent }"
+                                                                v-cloak>
+                                                                <p class="is-size-7 has-text-weight-bold has-text-white"
+                                                                    v-cloak>
+                                                                    {{ word.name }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </article>
+                                                <article class="media">
+                                                    <div class="media-content">
+                                                        <div class="content">
+                                                            <div class="columns is-mobile is-gapless"
+                                                                v-for="row in arrange(word.attributes, 2)" v-cloak>
+                                                                <div class="column is-half" v-for="column in row"
+                                                                    v-bind:key="column.name" v-cloak>
+                                                                    <div class="field">
+                                                                        <label class="checkbox">
+                                                                            <input type="checkbox"
+                                                                                v-bind:data-word="word.name"
+                                                                                v-bind:data-attribute="column.name"
+                                                                                @change="check" v-model="column.value">
+                                                                            <span class="custom"></span>
+                                                                            <span
+                                                                                class="wrap is-size-7 has-text-weight-bold">
+                                                                                <div class="clip">
+                                                                                    <div class="scrollable">
+                                                                                        <div>{{ column.name }}</div>
+                                                                                        <div>{{ column.name }}</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <nav class="level">
+                                                            <div class="level-item">
+                                                                <nav class="level is-mobile">
+                                                                    <div class="level-item">
+                                                                        <button class="button is-white" type="button"
+                                                                            @click="share({ name: word.name, attributes: word.attributes }); word = null;"
+                                                                            v-cloak>
+                                                                            <span class="icon is-small is-primary">
+                                                                                <i class="fas fa-check"></i>
+                                                                            </span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="level-item">
+                                                                        <button class="button is-white" type="button"
+                                                                            @click="word = null" v-cloak>
+                                                                            <span class="icon is-small is-danger">
+                                                                                <i class="fas fa-times"></i>
+                                                                            </span>
+                                                                        </button>
+                                                                    </div>
+                                                                </nav>
+                                                            </div>
+                                                        </nav>
+                                                    </div>
+                                                </article>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="user === null && mode === 'sign-in'" key="sign-in">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            @click="signIn('google.com')">
+                                                            <span class="icon">
+                                                                <i class="fab fa-google"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>Googleでサインイン</div>
+                                                                        <div>Googleでサインイン</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            @click="signIn('facebook.com')">
+                                                            <span class="icon">
+                                                                <i class="fab fa-facebook"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>Facebookでサインイン</div>
+                                                                        <div>Facebookでサインイン</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            @click="signIn('twitter.com')">
+                                                            <span class="icon">
+                                                                <i class="fab fa-twitter"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>Twitterでサインイン</div>
+                                                                        <div>Twitterでサインイン</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="mode == 'about' || mode == '_about'" key="about">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <figure class="media-content">
+                                                    <p class="image is-64x64">
+                                                        <button class="button image is-64x64 is-superellips"
+                                                            type="button"
+                                                            @click="isRevealed = false; isOverlayed = true; mode = null;">
+                                                            <picture class="image is-64x64">
+                                                                <source srcset="/images/Merku-Headshot2.png"
+                                                                    media="(prefers-color-scheme: dark)">
+                                                                <img src="/images/Merku-Headshot1.png" width="64"
+                                                                    height="64" alt="About">
+                                                            </picture>
+                                                        </button>
+                                                    </p>
+                                                </figure>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            ミルヒちゃんねるについて</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            About</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <p
+                                                            class="content is-size-6 has-text-weight-bold has-text-justified">
+                                                            メルクだよぉ！<br>
+                                                            大好きなお友達のミルヒちゃんといっしょに魔法少女してるよぉ。<br>
+                                                            ミルヒちゃんねるではミルヒちゃんといっしょにしている魔法少女の活動を記録していくよぉ。<br>
+                                                            それとミルヒちゃんに言葉を教えてあげてミルヒちゃんのお話を楽しめるよぉ！ミルヒちゃんは小学生なので知らない言葉がいっぱいあるから、みんなでいっぱい言葉を教えてあげてね！<br>
+                                                            フヒヒ、ミルヒちゃん、かわいいね。ミルヒちゃんもいっしょに魔法少女しようね。魔法少女の衣装を着せてあげるね。ミルヒちゃん、ペロペロしたいよぉ！
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <div class="columns is-mobile is-centered">
+                                                <div class="column is-half is-mobile">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <figure class="image is-fullwidth">
+                                                                    <picture class="image has-ratio">
+                                                                        <source
+                                                                            srcset="/images/MilchchanAndMerkuchan-Dark.png"
+                                                                            media="(prefers-color-scheme: dark)">
+                                                                        <img class="has-ratio"
+                                                                            src="/images/MilchchanAndMerkuchan-Light.png"
+                                                                            alt="Milch & Merku">
+                                                                    </picture>
+                                                                </figure>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="mode == 'milch'" key="milch">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <figure class="media-content">
+                                                    <div class="wrap image is-64x64">
+                                                        <picture class="image has-ratio">
+                                                            <source
+                                                                srcset="/images/PixelatedLuna-Transformed.png 1x, /images/PixelatedLuna-Transformed@2x.png 2x, /images/PixelatedLuna-Transformed@3x.png 3x"
+                                                                media="(prefers-color-scheme: dark)">
+                                                            <img src="/images/PixelatedMilch-Transformed.png"
+                                                                srcset="/images/PixelatedMilch-Transformed.png 1x, /images/PixelatedMilch-Transformed@2x.png 2x, /images/PixelatedMilch-Transformed@3x.png 3x"
+                                                                alt="Loading">
+                                                        </picture>
+                                                    </div>
+                                                </figure>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            ミルヒちゃん</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            Milch</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <p
+                                                            class="content is-size-6 has-text-weight-bold has-text-justified">
+                                                            明るくてまじめな小学5年生の女の子。お友達のメルクちゃんに無理やり恥ずかしい魔法少女の衣装を着せられてマジカルミルヒちゃんを爆誕させられた。なんだかんだでメルクちゃんといっしょに魔法少女をしたりと、メルクちゃんと仲良し。気づいたときにはぱんつがなくなっていて、穿いてないことが多い。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <div class="columns is-mobile is-centered">
+                                                <div class="column is-half is-mobile">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <figure class="image is-fullwidth">
+                                                                    <picture class="image has-ratio">
+                                                                        <source srcset="/images/Omr.png"
+                                                                            media="(prefers-color-scheme: dark)">
+                                                                        <img class="has-ratio"
+                                                                            src="/images/Milchchan.png" alt="Milch">
+                                                                    </picture>
+                                                                </figure>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="mode == 'merku'" key="merku">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <figure class="media-content">
+                                                    <div class="wrap image is-64x64">
+                                                        <picture class="image has-ratio">
+                                                            <img src="/images/PixelatedMerku-Transformed.png"
+                                                                srcset="/images/PixelatedMerku-Transformed.png 1x, /images/PixelatedMerku-Transformed@2x.png 2x, /images/PixelatedMerku-Transformed@3x.png 3x"
+                                                                alt="Loading">
+                                                        </picture>
+                                                    </div>
+                                                </figure>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            メルクちゃん</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            Merku</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <p
+                                                            class="content is-size-6 has-text-weight-bold has-text-justified">
+                                                            おっとりしていてお金持ちの小学5年生の女の子。でもお友達のミルヒちゃんが大好きすぎて暴走しがち。ミルヒちゃんに無理やりつくった魔法少女の衣装を着せていっしょに魔法少女を始めた。ミルヒちゃんのぱんつをコレクションしていて、衣装を着せてあげる時を狙っていることが少なくない。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <div class="columns is-mobile is-centered">
+                                                <div class="column is-half is-mobile">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <figure class="image is-fullwidth">
+                                                                    <img class="has-ratio" src="/images/Merkuchan.png"
+                                                                        alt="Merku">
+                                                                </figure>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else key="main">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <figure class="media-content">
+                                                    <p class="image is-64x64">
+                                                        <transition name="fade" mode="out-in">
+                                                            <button class="button image is-64x64 is-superellips"
+                                                                type="button" @click="mode = 'sign-in'"
+                                                                v-if="user === null" key="default" v-cloak>
+                                                                <picture class="image is-64x64"
+                                                                    style="pointer-events: none;">
+                                                                    <source srcset="/images/Merku.png"
+                                                                        media="(prefers-color-scheme: dark)">
+                                                                    <img src="/images/Milch.png" width="64" height="64"
+                                                                        alt="Logo">
+                                                                </picture>
+                                                            </button>
+                                                            <button class="button image is-64x64 is-superellips"
+                                                                type="button" @click="signOut()" v-else key="user"
+                                                                v-cloak>
+                                                                <picture class="image is-64x64"
+                                                                    style="pointer-events: none;"
+                                                                    v-if="'photoURL' in user && user.photoURL !== null">
+                                                                    <img class="is-rounded" v-bind:src="user.photoURL"
+                                                                        width="64" height="64"
+                                                                        v-bind:alt="user.displayName">
+                                                                </picture>
+                                                                <picture class="image is-64x64"
+                                                                    style="pointer-events: none;" v-else>
+                                                                    <source srcset="/images/Merku.png"
+                                                                        media="(prefers-color-scheme: dark)">
+                                                                    <img src="/images/Milch.png" width="64" height="64"
+                                                                        alt="Logo">
+                                                                </picture>
+                                                            </button>
+                                                        </transition>
+                                                    </p>
+                                                </figure>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content has-text-centered">
+                                                        <svg width="222px" height="32px" viewBox="0 0 222 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                                                            <g transform="matrix(0.670321,0,0,0.670321,0,1.27955e-14)">
+                                                                <g transform="matrix(1,0,0,1,297.583,47.7376)">
+                                                                    <path d="M0,-47.605C-5.959,-47.605 -10.78,-42.851 -10.78,-37.026L-10.78,-34.615C-10.78,-33.878 -11.449,-33.209 -12.253,-33.209C-13.057,-33.209 -13.728,-33.878 -13.728,-34.615L-13.728,-37.026C-13.728,-42.984 -18.413,-47.605 -24.371,-47.605C-30.197,-47.605 -35.018,-42.984 -35.018,-37.026L-35.018,-10.646C-35.018,-4.621 -30.197,0 -24.371,0C-18.413,0 -13.728,-4.621 -13.728,-10.646L-13.728,-12.922C-13.728,-13.726 -13.057,-14.395 -12.253,-14.395C-11.449,-14.395 -10.78,-13.726 -10.78,-12.922L-10.78,-10.646C-10.78,-4.753 -5.959,0 0,0C5.824,0 10.645,-4.753 10.645,-10.646L10.645,-37.026C10.645,-42.851 5.824,-47.605 0,-47.605M0,-45.305C4.602,-45.305 8.345,-41.591 8.345,-37.026L8.345,-10.646C8.345,-6.043 4.602,-2.299 0,-2.299C-4.676,-2.299 -8.48,-6.043 -8.48,-10.646L-8.48,-12.922C-8.48,-15.002 -10.173,-16.695 -12.253,-16.695C-14.334,-16.695 -16.026,-15.002 -16.026,-12.922L-16.026,-10.646C-16.026,-5.888 -19.614,-2.299 -24.371,-2.299C-29.052,-2.299 -32.718,-5.965 -32.718,-10.646L-32.718,-37.026C-32.718,-41.591 -28.974,-45.305 -24.371,-45.305C-19.692,-45.305 -16.026,-41.668 -16.026,-37.026L-16.026,-34.615C-16.026,-32.606 -14.299,-30.91 -12.253,-30.91C-10.208,-30.91 -8.48,-32.606 -8.48,-34.615L-8.48,-37.026C-8.48,-41.591 -4.676,-45.305 0,-45.305" style="fill-rule:nonzero;"/>
+                                                                </g>
+                                                                <g transform="matrix(1,0,0,1,247.903,47.6702)">
+                                                                    <path d="M0,-47.604L-9.373,-47.604C-22.43,-47.403 -33.075,-37.092 -33.075,-23.835C-33.075,-11.18 -22.563,0 -9.709,0L0,0C6.227,0 11.314,-5.29 11.314,-11.315C11.314,-17.608 6.227,-22.965 0,-22.965C-3.348,-22.965 -5.959,-21.424 -7.968,-21.424C-9.373,-21.424 -10.579,-22.497 -10.579,-23.835C-10.579,-25.241 -9.373,-26.446 -7.968,-26.446C-5.959,-26.446 -3.348,-24.907 0,-24.907C6.227,-24.907 11.314,-29.928 11.314,-36.221C11.314,-42.248 6.227,-47.604 0,-47.604M0,-45.304C4.803,-45.304 9.016,-41.06 9.016,-36.221C9.016,-31.25 4.971,-27.207 0,-27.207C-1.554,-27.207 -2.965,-27.625 -4.329,-28.028C-5.578,-28.397 -6.758,-28.746 -7.968,-28.746C-10.63,-28.746 -12.879,-26.498 -12.879,-23.835C-12.879,-21.238 -10.676,-19.125 -7.968,-19.125C-6.758,-19.125 -5.578,-19.473 -4.329,-19.843C-2.964,-20.248 -1.553,-20.666 0,-20.666C4.887,-20.666 9.016,-16.383 9.016,-11.315C9.016,-6.428 4.887,-2.299 0,-2.299L-9.709,-2.299C-21.128,-2.299 -30.775,-12.162 -30.775,-23.835C-30.775,-35.689 -21.358,-45.119 -9.373,-45.304L0,-45.304" style="fill-rule:nonzero;"/>
+                                                                </g>
+                                                                <g transform="matrix(1,0,0,1,190.562,10.7786)">
+                                                                    <path d="M0,26.313L0,24.037C0,23.233 -0.669,22.564 -1.473,22.564C-2.276,22.564 -2.945,23.233 -2.945,24.037L-2.945,26.313C-2.945,32.338 -7.633,36.959 -13.592,36.959C-19.416,36.959 -24.237,32.338 -24.237,26.313L-24.237,-0.067C-24.237,-6.025 -19.416,-10.646 -13.592,-10.646C-7.633,-10.646 -2.945,-6.025 -2.945,-0.067L-2.945,2.344C-2.945,3.081 -2.276,3.75 -1.473,3.75C-0.669,3.75 0,3.081 0,2.344L0,-0.067C0,-5.892 4.82,-10.646 10.779,-10.646C16.603,-10.646 21.424,-5.892 21.424,-0.067L21.424,26.313C21.424,32.206 16.603,36.959 10.779,36.959C4.82,36.959 0,32.206 0,26.313" style="fill-rule:nonzero;"/>
+                                                                </g>
+                                                                <g transform="matrix(1,0,0,1,151.829,47.6702)">
+                                                                    <path d="M0,-47.604C6.227,-47.604 11.315,-42.248 11.315,-36.221C11.315,-29.928 6.227,-24.907 0,-24.907C-3.348,-24.907 -5.958,-26.446 -7.967,-26.446C-9.374,-26.446 -10.579,-25.241 -10.579,-23.835C-10.579,-22.497 -9.374,-21.424 -7.967,-21.424C-5.958,-21.424 -3.348,-22.965 0,-22.965C6.227,-22.965 11.315,-17.608 11.315,-11.315C11.315,-5.29 6.227,0 0,0L-9.708,0C-22.563,0 -33.075,-11.18 -33.075,-23.835C-33.075,-37.092 -22.43,-47.403 -9.374,-47.604L0,-47.604Z" style="fill-rule:nonzero;"/>
+                                                                </g>
+                                                                <g transform="matrix(1,0,0,1,84.0568,10.847)">
+                                                                    <path d="M0,25.977L0,-0.203C0,-6.027 4.753,-10.847 10.646,-10.847C16.604,-10.847 21.358,-6.027 21.358,-0.203L21.224,15.399L23.568,15.399C37.494,15.399 37.494,36.824 23.568,36.824L10.846,36.824C4.62,36.824 -0.201,32.137 0,25.977" style="fill-rule:nonzero;"/>
+                                                                </g>
+                                                                <g transform="matrix(1,0,0,1,59.1085,10.9804)">
+                                                                    <path d="M0,25.91L0,-0.201C0,-6.028 4.687,-10.713 10.579,-10.713C16.671,-10.713 21.359,-6.028 21.359,-0.201L21.359,25.91C21.359,31.736 16.671,36.623 10.579,36.623C4.687,36.623 0,31.736 0,25.91" style="fill-rule:nonzero;"/>
+                                                                </g>
+                                                                <g transform="matrix(1,0,0,1,44.713,47.6044)">
+                                                                    <path d="M0,-47.337C-3.737,-47.337 -5.522,-46.208 -8.863,-42.581C-12.204,-38.956 -15.61,-34.627 -15.61,-34.627C-15.449,-34.316 -12.945,-29.959 -12.908,-29.445C-12.872,-28.931 -13.349,-29.243 -13.704,-29.556C-14.141,-29.94 -22.787,-39.785 -25.106,-42.625C-27.426,-45.465 -30.289,-47.337 -34.134,-47.337C-40.026,-47.337 -44.713,-42.649 -44.713,-36.825L-44.713,-10.713C-44.713,-4.888 -40.026,0 -34.134,0C-29.87,0 -26.31,-2.401 -24.551,-5.836C-25.025,-6.555 -28.111,-11.071 -28.365,-11.704C-28.576,-12.232 -28.304,-12.14 -28.164,-12.089C-28.096,-12.064 -27.791,-11.978 -25.543,-9.718C-24.95,-9.12 -23.718,-7.989 -23.716,-7.999C-21.889,-6.554 -19.505,-5.62 -16.966,-5.62C-14.326,-5.62 -12.005,-6.548 -10.215,-7.985C-10.213,-7.98 -5.942,-11.944 -5.77,-12.089C-5.597,-12.233 -5.291,-12.232 -5.568,-11.704C-5.885,-11.101 -8.91,-6.552 -9.386,-5.831C-7.637,-2.399 -4.121,0 0,0C6.093,0 10.78,-4.888 10.78,-10.713L10.78,-36.825C10.78,-42.649 6.093,-47.337 0,-47.337" style="fill-rule:nonzero;"/>
+                                                                </g>
+                                                                <g transform="matrix(1,0,0,1,317.532,31.2843)">
+                                                                    <path d="M0,14.154C-0.271,14.154 -0.541,14.069 -0.771,13.903C-1.173,13.61 -1.375,13.114 -1.291,12.622L-0.691,9.128L-3.23,6.653C-3.588,6.304 -3.716,5.785 -3.563,5.31C-3.407,4.836 -2.997,4.49 -2.504,4.419L1.004,3.908L2.573,0.729C2.794,0.282 3.25,0 3.749,0C4.247,0 4.703,0.282 4.924,0.729L6.492,3.908L10.001,4.419C10.494,4.49 10.904,4.836 11.059,5.31C11.213,5.785 11.084,6.304 10.728,6.653L8.188,9.128L8.788,12.622C8.872,13.114 8.67,13.61 8.267,13.903C8.038,14.069 7.768,14.154 7.496,14.154C7.287,14.154 7.078,14.103 6.887,14.003L3.749,12.354L0.61,14.003C0.419,14.103 0.209,14.154 0,14.154M-0.523,1.806L-2.833,2.142C-4.203,2.341 -5.32,3.282 -5.749,4.599C-6.177,5.916 -5.827,7.333 -4.836,8.3L-3.163,9.93L-3.559,12.235C-3.791,13.598 -3.24,14.951 -2.122,15.763C-1.501,16.216 -0.767,16.454 0,16.454C0.584,16.454 1.165,16.309 1.68,16.039L3.749,14.952L5.816,16.039C6.334,16.31 6.915,16.454 7.496,16.454C8.263,16.454 8.997,16.217 9.618,15.764C10.737,14.951 11.288,13.598 11.055,12.233L10.66,9.93L12.336,8.299C13.324,7.331 13.673,5.913 13.246,4.599C12.817,3.282 11.7,2.341 10.332,2.142L8.02,1.806L6.986,-0.288C6.374,-1.53 5.134,-2.3 3.749,-2.3C2.364,-2.3 1.123,-1.53 0.511,-0.289L-0.523,1.806" style="fill-rule:nonzero;"/>
+                                                                </g>
+                                                            </g>
+                                                        </svg>
+                                                        <!--<h1 class="is-uppercase has-text-weight-bold">
+                                                            ミルヒちゃんねる</h1>-->
+                                                        <h2 class="has-text-weight-bold">
+                                                            milchchan.com</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" @click="mode = 'sign-in'"
+                                                            v-if="user === null">
+                                                            <span class="icon">
+                                                                <i class="fas fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>言葉を教える</div>
+                                                                        <div>言葉を教える</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button"
+                                                            @click="isLearning = true; isRevealed = false;" v-else>
+                                                            <span class="icon">
+                                                                <i class="fas fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>言葉を教える</div>
+                                                                        <div>言葉を教える</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item" v-if="isDebug">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <div
+                                                            class="file button is-rounded is-size-7 has-text-weight-bold">
+                                                            <label class="file-label">
+                                                                <input class="file-input" type="button"
+                                                                    @click="mode = 'sign-in'" v-if="user === null">
+                                                                <input class="file-input" type="file" name="upload"
+                                                                    accept="image/png, image/jpeg" multiple
+                                                                    v-bind:disabled="isUploading" @change="upload"
+                                                                    v-else>
+                                                                <span class="file-cta_">
+                                                                    <transition name="fade" mode="out-in">
+                                                                        <span class="icon" v-if="isUploading"
+                                                                            key="uploading">
+                                                                            <i class="fas fa-spinner updating"></i>
+                                                                        </span>
+                                                                        <span class="icon" v-else key="ready">
+                                                                            <i class="fas fa-star"></i>
+                                                                        </span>
+                                                                    </transition>
+                                                                    <span class="file-label wrap">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>背景をアップロード</div>
+                                                                                <div>背景をアップロード</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h2 class="is-uppercase">About</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            @click="mode = 'about'">
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>ミルヒちゃんねるについて</div>
+                                                                        <div>ミルヒちゃんねるについて</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                            <span class="icon">
+                                                                <i class="fas fa-chevron-right"></i>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h2 class="is-uppercase">Characters</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            @click="mode = 'milch'">
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>ミルヒちゃん</div>
+                                                                        <div>ミルヒちゃん</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                            <span class="icon">
+                                                                <i class="fas fa-chevron-right"></i>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7" type="button"
+                                                            @click="mode = 'merku'">
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>メルクちゃん</div>
+                                                                        <div>メルクちゃん</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                            <span class="icon">
+                                                                <i class="fas fa-chevron-right"></i>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h2 class="is-uppercase">Apps</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <a class="button is-rounded is-size-7"
+                                                            href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q"
+                                                            target="_blank">
+                                                            <span class="icon">
+                                                                <i class="fab fa-windows"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>Apricot</div>
+                                                                        <div>Apricot</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                            <span class="icon">
+                                                                <i class="fas fa-external-link-alt"></i>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <a class="button is-rounded is-size-7"
+                                                            href="https://apps.apple.com/jp/app/id1130755997"
+                                                            target="_blank">
+                                                            <span class="icon">
+                                                                <i class="fab fa-apple"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>Wonderland</div>
+                                                                        <div>Wonderland</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                            <span class="icon">
+                                                                <i class="fas fa-external-link-alt"></i>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <a class="button is-rounded is-size-7"
+                                                            href="/clock/"
+                                                            target="_blank">
+                                                            <span class="icon">
+                                                                <i class="fas fa-globe"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>ミルヒちゃんクロック</div>
+                                                                        <div>ミルヒちゃんクロック</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                            <span class="icon">
+                                                                <i class="fas fa-external-link-alt"></i>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <hr>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <div class="level is-mobile">
+                                                <div class="level-item">
+                                                    <div class="level is-mobile">
+                                                        <div class="level-item">
+                                                            <a href="https://twitter.com/milchchan"
+                                                                target="_blank"><span class="icon is-small"><i
+                                                                        class="fab fa-twitter"></i></span></a>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <a href="https://instagram.com/milchchan"
+                                                                target="_blank"><span class="icon is-small"><i
+                                                                        class="fab fa-instagram"></i></span></a>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <a href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
+                                                                target="_blank"><span class="icon is-small"><i
+                                                                        class="fab fa-youtube"></i></span></a>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <a href="https://github.com/milchchan" target="_blank"><span
+                                                                    class="icon is-small"><i
+                                                                        class="fab fa-github"></i></span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                </transition>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+            <div class="center">
+                <div class="level">
+                    <div class="level-item" ref="indicator" v-cloak>
+                        <div class="control has-text-centered">
+                            <nav class="level">
+                                <div class="level-item has-text-centered">
+                                    <div class="field is-grouped is-vcentered">
+                                        <picture class="icon is-small">
+                                            <img src="/images/Star.svg" width="32" height="32" alt="Star">
+                                        </picture>
+                                        <span class="is-size-1 is-uppercase">{{ animatedStars }}</span>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="level-item" v-bind:style="{ height: animatedNotificationHeight + 'px' }" v-cloak>
+                        <div class="wrap" ref="notifications">
+                            <div class="control">
+                                <transition-group name="notification-list" class="level" tag="div"
+                                    v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
+                                    v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart"
+                                    v-on:after-leave="animationEnd" v-on:leave-cancelled="animationEnd" v-cloak>
+                                    <nav class="level-item notification-list-item" v-for="notification in notifications"
+                                        v-bind:key="notification.id">
+                                        <div class="notification is-info is-light" v-cloak>
+                                            <article class="media" v-cloak>
+                                                <figure class="media-left" v-if="notification.image" v-cloak>
+                                                    <span class="image is-24x24">
+                                                        <img class="is-rounded"
+                                                            v-bind:src="notification.image instanceof Object ? (isDarkMode ? notification.image.dark : notification.image.light) : notification.image"
+                                                            alt="Avatar" v-cloak>
+                                                    </span>
+                                                </figure>
+                                                <div class="media-content" v-cloak>
+                                                    <div class="content has-text-left" v-if="notification.accent">
+                                                        <span class="is-size-7 has-text-weight-bold"
+                                                            v-bind:style="{ color: notification.accent instanceof Object ? (isDarkMode ? notification.accent.dark : notification.accent.light) : notification.accent }"
+                                                            v-cloak>
+                                                            {{ notification.text }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="content has-text-left" v-else>
+                                                        <span class="is-size-7 has-text-weight-bold" v-cloak>
+                                                            {{ notification.text }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </nav>
+                                </transition-group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <transition name="popup" v-on:before-enter="animationStart" v-on:after-enter="animationEnd"
+                v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart" v-on:after-leave="animationEnd"
+                v-on:leave-cancelled="animationEnd">
+                <nav id="popup" class="navbar is-fixed-bottom" v-if="isPopup" v-cloak>
+                    <div class=" navbar-item is-expanded columns is-desktop">
+                        <div class="column is-half-desktop has-content-centered">
+                            <div class="control" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
+                                <nav class="level is-mobile">
+                                    <div class="level-item">
+                                        <nav class="level is-mobile"
+                                            v-if="message !== null && 'character' in message && message.character !== null">
+                                            <div class="level-item" v-if="'accent' in message.character" key="custom">
+                                                <article class="media"
+                                                    v-bind:style="{ backgroundColor: message.character.accent }">
+                                                    <figure class="media-left" v-if="'image' in message.character">
+                                                        <span class="image is-24x24">
+                                                            <img class="is-rounded" v-bind:src="message.character.image"
+                                                                v-bind:alt="message.character.name" v-cloak>
+                                                        </span>
+                                                    </figure>
+                                                    <div class="media-content">
+                                                        <div class="content has-text-left">
+                                                            <span class="is-size-7 has-text-weight-bold has-text-white"
+                                                                v-cloak>
+                                                                {{ message.character.name }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </article>
+                                            </div>
+                                            <div class="level-item" v-else key="default">
+                                                <article class="media">
+                                                    <figure class="media-left" v-if="'image' in message.character">
+                                                        <span class="image is-24x24">
+                                                            <img class="is-rounded" v-bind:src="message.character.image"
+                                                                v-bind:alt="message.character.name" v-cloak>
+                                                        </span>
+                                                    </figure>
+                                                    <div class="media-content">
+                                                        <div class="content has-text-left">
+                                                            <span class="is-size-7 has-text-weight-bold has-text-white"
+                                                                v-cloak>
+                                                                {{ message.character.name }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </article>
+                                            </div>
+                                            <div class="level-item">
+                                                <button class="button" type="button" @click="isPopup = false" v-cloak>
+                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                        <i class="fas fa-times"></i>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </nav>
+                                    </div>
+                                    <div class="level-item">
+                                        <article class="media">
+                                            <div class="media-content"
+                                                v-bind:style="{ height: animatedPopupTextHeight + 'px' }">
+                                                <div class="content has-text-left" ref="popupText">
+                                                    <span class="has-text-weight-bold has-text-white"
+                                                        v-bind:class="{ break: character.value == '\n' }"
+                                                        v-for="character in text" v-bind:key="character.key" v-cloak>{{
+                                                        character.value }}</span>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </transition>
+            <nav id="input" class="navbar is-fixed-bottom" role="navigation">
+                <div class="navbar-item is-expanded columns is-desktop" ref="input">
+                    <div class="column is-half has-content-centered is-mobile">
+                        <div class="control">
+                            <transition name="popup" v-on:after-enter="$refs.text.focus();"
+                                v-on:before-leave="/*$refs.text.blur();*/">
+                                <nav class="level" v-if="isLearning">
+                                    <form onsubmit="return false;" v-cloak>
+                                        <div class="field has-addons">
+                                            <div class="control is-expanded">
+                                                <input class="input is-rounded" type="text"
+                                                    v-bind:class="{ 'is-danger': inputHasError }"
+                                                    v-bind:placeholder="isLearning ? '教える言葉' : '投稿するニュース'"
+                                                    v-bind:disabled="word !== null" v-model="input" @input="change"
+                                                    ref="text" v-cloak>
+                                            </div>                                            
+                                            <div class="control">
+                                                <button class="button" type="button"
+                                                    v-bind:class="{ 'is-static': word !== null }"
+                                                    v-bind:disabled="user === null"
+                                                    @click="input = input.slice( 0, -1)"><span
+                                                        class="icon is-small" v-cloak>
+                                                        <i class="fas fa-backspace"></i>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div class="control">
+                                                <span class="is-size-7 has-text-weight-bold" v-cloak>
+                                                    {{ maxInputLength - animatedInputLength }}
+                                                </span>
+                                            </div>
+                                            <div class="control">
+                                                <button class="button is-rounded is-primary" type="submit"
+                                                    v-bind:class="{ 'is-static': word !== null }"
+                                                    v-bind:disabled="user === null" @click="send()"><span
+                                                        class="icon is-small" v-cloak>
+                                                        <i class="fas fa-arrow-right"></i>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <!--<div class="control">
+                                                <button class="button is-rounded is-danger" type="button"
+                                                    v-bind:disabled="user === null"
+                                                    @click="$refs.text.blur(); isLearning = false;"><span
+                                                        class="icon is-small" v-cloak>
+                                                        <i class="fas fa-times"></i>
+                                                    </span>
+                                                </button>
+                                            </div>-->
+                                        </div>
+                                    </form>
+                                </nav>
+                            </transition>
+                        </div>
+                    </div>
+                </div>
+                <div class="navbar-item is-expanded columns is-desktop" ref="blank"></div>
+            </nav>
+        </div>
+        <div class="left is-hidden-tablet" v-cloak>
+            <transition name="fade" mode="out-in">
+                <button class="button is-white" type="button" @click="isOverlayed = false" v-if="isOverlayed"
+                    key="close">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button is-white" type="button" @click="isRevealed = !isRevealed; mode = null;"
+                    v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
+                    <span class="icon is-small">
+                        <i class="fas fa-bars"></i>
+                    </span>
+                </button>
+                <button class="button is-white" type="button" @click="mode = null" v-else key="back">
+                    <span class="icon is-small">
+                        <i class="fas fa-arrow-left"></i>
+                    </span>
+                </button>
+            </transition>
+        </div>
+        <div class="right" v-cloak>
+            <transition name="fade" mode="out-in">
+                <div class="level-item" v-if="isRevealed" key="mute" v-cloak>
+                    <transition name="fade" mode="out-in">
+                        <button class="button is-white" type="button" @click="isMuted = false" v-if="isMuted"
+                            key="disabled" v-cloak>
+                            <span class="icon is-small" style="pointer-events: none;">
+                                <i class="fas fa-volume-mute"></i>
+                            </span>
+                        </button>
+                        <button class="button is-white" type="button" @click="isMuted = true" v-else key="enabled"
+                            v-cloak>
+                            <span class="icon is-small" style="pointer-events: none;">
+                                <i class="fas fa-volume-up"></i>
+                            </span>
+                        </button>
+                    </transition>
+                </div>
+                <div class="level-item" v-else key="sync">
+                    <button class="button is-white" type="button" v-bind:disabled="isLoading || isHangingOn"
+                        @click="refresh" v-cloak>
+                        <span class="icon is-small">
+                            <i class="fas fa-sync" v-bind:class="{ loading: isLoading }"></i>
+                        </span>
+                    </button>
+                </div>
+            </transition>
+        </div>
+        <audio preload="auto" ref="alert">
+            <source src="/sounds/float_001.mp3" type="audio/mpeg" />
+            <source src="/sounds/float_001.wav" type="audio/wav" />
+        </audio>
+        <audio preload="auto" ref="twinkle">
+            <source src="/sounds/plastic_up_hi.mp3" type="audio/mpeg" />
+            <source src="/sounds/plastic_up_hi.wav" type="audio/wav" />
+        </audio>
+        <audio preload="auto" ref="player"></audio>
+    </div>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-storage-compat.js"></script>
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-analytics-compat.js"></script>
+    <!--<script src="https://unpkg.com/vue@next"></script>-->
+    <script src="https://unpkg.com/vue@3.2.21/dist/vue.global.prod.js"></script>
+    <script src="js/moment-with-locales.js"></script>
+    <script src="js/tiny-segmenter.js"></script>
+    <script src="js/vendors.js"></script>
+    <script src="js/index.js"></script>
+</body>
+
+</html>
