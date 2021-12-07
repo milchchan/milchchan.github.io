@@ -1,3 +1,4 @@
+import { createApp } from 'vue/dist/vue.esm-bundler.js';
 import * as Stats from 'stats.js'
 import anime from 'animejs/lib/anime.es.js';
 
@@ -59,7 +60,7 @@ window.addEventListener("load", (event) => {
         });
     }
 
-    var app = Vue.createApp({
+    const app = createApp({
         data() {
             return {
                 isDebug: debug,
@@ -110,7 +111,6 @@ window.addEventListener("load", (event) => {
                 tags: [],
                 maxTags: 10,
                 scrollTimeoutID: undefined,
-                tickIntervalID: undefined,
                 stars: -1,
                 animatedStars: 0,
                 steps: 0,
@@ -1279,9 +1279,6 @@ window.addEventListener("load", (event) => {
                         this.isLearning = false;
                     }
                 } else {
-                    console.log(this.input.length);
-                    console.log(this.maxInputLength);
-                
                     this.shake(this.$refs.input);
                 }
             },
@@ -3008,7 +3005,7 @@ window.addEventListener("load", (event) => {
                 let flattenedSequence = [];
 
                 for (const s of sequences) {
-                    const tempState = state;
+                    let tempState = state;
 
                     if (state === null && s.name in this.states) {
                         tempState = this.states[s.name];
@@ -3951,16 +3948,6 @@ window.addEventListener("load", (event) => {
                 //    }
                 //});
             });
-        },
-        unmounted: function () {
-            if (typeof this.tickIntervalID === "number") {
-                clearInterval(this.tickIntervalID);
-            }
-
-            if (vrmModel !== null) {
-                scene.remove(vrmModel.scene);
-                vrmModel = null;
-            }
         }
     }).mount("#app");
 

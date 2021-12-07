@@ -1907,7 +1907,7 @@ var app = Vue.createApp({
             let flattenedSequence = [];
 
             for (const s of sequences) {
-                const tempState = state;
+                let tempState = state;
 
                 if (state === null && s.name in this.states) {
                     tempState = this.states[s.name];

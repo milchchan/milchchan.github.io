@@ -2500,19 +2500,19 @@
                         <div class="level-item">
                             <transition name="fade" mode="out-in">
                                 <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed"
-                                    key="close">
+                                    key="close1">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button"
                                     @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false"
-                                    v-else-if="isLearning" key="abort">
+                                    v-else-if="isLearning" key="close2">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="cancel">
+                                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="close3">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2530,19 +2530,19 @@
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && 'words' in mode" key="close">
+                                    v-else-if="typeof(mode) === 'object' && 'words' in mode" key="close4">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === true" key="stats">
+                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === true" key="close5">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close">
+                                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close6">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2819,6 +2819,7 @@
                                                     <div>{{ tag.name }}</div>
                                                     <div>{{ tag.name }}</div>
                                                 </div>
+                                            </div>
                                         </button>
                                     </div>
                                 </div>
@@ -4422,19 +4423,19 @@
         </div>
         <div class="left is-hidden-tablet" v-cloak>
             <transition name="fade" mode="out-in">
-                <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed" key="close">
+                <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed" key="close1">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
                 <button class="button" type="button"
                     @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false"
-                    v-else-if="isLearning" key="abort">
+                    v-else-if="isLearning" key="close2">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="cancel">
+                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="close3">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
@@ -4452,19 +4453,19 @@
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close">
+                    v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close4">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === false" key="stats">
+                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === false" key="close5">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close">
+                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close6">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
@@ -4540,12 +4541,11 @@
      https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-analytics-compat.js"></script>
     <!--<script src="https://unpkg.com/vue@next"></script>-->
-    <script src="https://unpkg.com/vue@3.2.21/dist/vue.global.prod.js"></script>
+    <!--<script src="https://unpkg.com/vue@3.2.21/dist/vue.global.prod.js"></script>-->
     <script src="js/moment-with-locales.js"></script>
     <!--<script src="/js/particles.js"></script>-->
     <script src="js/tiny-segmenter.js"></script>
-    <script src="js/vendors.js"></script>
-    <script src="js/index.js"></script>
+    <script type="module" src="/src/main.js"></script>
 </body>
 
 </html>

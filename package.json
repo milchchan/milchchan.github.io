@@ -1,22 +1,31 @@
 {
-  "name": "wonderland",
+  "name": "milchchan.com",
   "version": "1.0.0",
   "description": "milchchan.github.io",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --open",
-    "build": "webpack --mode=production --config webpack.config.js",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
     "test": "mocha test/ --require babel-register --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/milchchan/milchchan.github.io.git"
   },
   "author": "milchchan",
   "license": "ISC",
-  "devDependencies": {
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.3"
+  "bugs": {
+    "url": "https://github.com/milchchan/milchchan.github.io/issues"
   },
+  "homepage": "https://milchchan.com/",
   "dependencies": {
     "animejs": "^3.2.1",
-    "stats.js": "^0.17.0"
+    "stats.js": "^0.17.0",
+    "vue": "^3.2.16"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.9.3",
+    "vite": "^2.6.4"
   }
 }
