@@ -1,5 +1,5 @@
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
-import * as Stats from 'stats.js'
+import Stats from 'stats.js'
 import anime from 'animejs/lib/anime.es.js';
 
 // Your web app's Firebase configuration
@@ -26,7 +26,7 @@ let database = firebase.database();
 let storage = firebase.storage();
 const milch = { name: "ミルヒちゃん", accent: "#ffa6bb", image: "/images/Milch.png" };
 const merku = { name: "メルクちゃん", accent: "#5bcbe1", image: "/images/Merku.png" };
-//const stats = new Stats();
+const stats = new Stats();
 
 /*stats.domElement.style.position = "fixed";
 stats.domElement.style.top = "auto";
