@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    minify: false,
     outDir: "dist",
     rollupOptions: {
       output: {
