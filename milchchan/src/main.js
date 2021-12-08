@@ -3457,12 +3457,12 @@ window.addEventListener("load", event => {
                             }
                         }
 
+                        self.words.sort((x, y) => y.timestamp - x.timestamp);
+
                         if (self.words.length > 10) {
                             self.words.splice(10, self.words.length - 10);
                         }
-
-                        self.words.sort((x, y) => y.timestamp - x.timestamp);
-
+                        
                         for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), 10)) {
                             if (obj.type === "Message") {
                                 self.words.splice(0, 0, { name: obj.text, image: self.character.image });
