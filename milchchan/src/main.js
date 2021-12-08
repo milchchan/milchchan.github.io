@@ -17,12 +17,12 @@ import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
 import { VRM } from '@pixiv/three-vrm';
 import Stats from 'stats.js'
 import anime from 'animejs/lib/anime.es.js';
+import { TinySegmenter } from './tiny-segmenter.js';
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
 import { getDatabase, ref as databaseRef, query, orderByChild, limitToLast, startAt, get, push, runTransaction, onValue, off } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-//import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
@@ -38,7 +38,6 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const database = getDatabase(firebaseApp);
 const storage = getStorage(firebaseApp);
-//const analytics = getAnalytics();
 
 const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
 const databaseRoot = "bot";
