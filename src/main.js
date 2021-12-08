@@ -1,6 +1,7 @@
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
 import Stats from 'stats.js'
 import anime from 'animejs/lib/anime.es.js';
+import { TinySegmenter } from './tiny-segmenter.js';
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
