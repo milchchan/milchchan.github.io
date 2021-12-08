@@ -17,9 +17,14 @@ import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
 import { VRM } from '@pixiv/three-vrm';
 import Stats from 'stats.js'
 import anime from 'animejs/lib/anime.es.js';
+// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
+import { getDatabase, ref as databaseRef, query, orderByChild, limitToLast, push,runTransaction, onValue, off } from "firebase/database";
+import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+//import { getAnalytics } from "firebase/analytics";
 
-// Your web app's Firebase configuration
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
     authDomain: "milchchan.firebaseapp.com",
     databaseURL: "https://milchchan.firebaseio.com",
@@ -29,17 +34,15 @@ var firebaseConfig = {
     appId: "1:355698971889:web:e3653c5c31bd7289cd4550",
     measurementId: "G-3998FJYNWX"
 };
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-firebase.analytics();
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const database = getDatabase(firebaseApp);
+const storage = getStorage(firebaseApp);
+//const analytics = getAnalytics();
 
 const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
-//const channel = decodeURIComponent(window.location.hash.substring(1));
 const databaseRoot = "bot";
-//const databaseChannel = channel.length > 0 ? databaseRoot + '/channels/' + channel : databaseRoot;
 const databaseMessages = databaseRoot + "/feed";
-let database = firebase.database();
-let storage = firebase.storage();
 const milch = { name: "ミルヒちゃん", accent: "#ffa6bb", image: "/images/Milch.png" };
 const merku = { name: "メルクちゃん", accent: "#5bcbe1", image: "/images/Merku.png" };
 const renderer = new THREE.WebGLRenderer({
@@ -264,11 +267,11 @@ window.addEventListener("load", event => {
                     app.$nextTick(() => {
                         for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                             let width = 0;
-    
+
                             for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
                                 width += element.getBoundingClientRect().width;
                             }
-    
+
                             if (width > 0) {
                                 app.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                                 clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
@@ -281,7 +284,7 @@ window.addEventListener("load", event => {
             tickerWidth(newValue) {
                 const self = this;
                 const obj = { width: this.animatedTickerWidth };
-    
+
                 anime({
                     targets: obj,
                     width: newValue,
@@ -297,16 +300,16 @@ window.addEventListener("load", event => {
                 handler: () => {
                     app.$nextTick(() => {
                         const elements = document.body.querySelectorAll("#app>.background>div");
-    
+
                         if (elements.length > 1) {
                             const offset = elements.length - 1;
                             const frameRate = 15;
                             let index = 0;
                             let startTime = null;
-    
+
                             for (const element of elements) {
                                 const keyframes = [];
-    
+
                                 for (let i = 0; i < elements.length; i++) {
                                     if (i === index) {
                                         keyframes.push({ visibility: "visible" });
@@ -314,20 +317,20 @@ window.addEventListener("load", event => {
                                         keyframes.push({ visibility: "hidden" });
                                     }
                                 }
-    
+
                                 const animation = element.animate(keyframes, {
                                     fill: 'forwards',
                                     easing: 'steps(' + offset + ')',
                                     duration: 1000 / frameRate * elements.length,
                                     iterations: Infinity
                                 });
-    
+
                                 if (startTime === null) {
                                     startTime = animation.startTime;
                                 } else {
                                     animation.startTime = startTime;
                                 }
-    
+
                                 index++;
                             }
                         }
@@ -347,7 +350,7 @@ window.addEventListener("load", event => {
             },
             popupTextHeight(newValue) {
                 const obj = { height: this.animatedPopupTextHeight };
-    
+
                 anime({
                     targets: obj,
                     height: newValue,
@@ -369,7 +372,7 @@ window.addEventListener("load", event => {
             },
             notificationHeight(newValue) {
                 const obj = { height: this.animatedNotificationHeight };
-    
+
                 anime({
                     targets: obj,
                     height: newValue,
@@ -383,7 +386,7 @@ window.addEventListener("load", event => {
             },
             stars(newValue) {
                 const obj = { count: this.animatedStars };
-    
+
                 anime({
                     targets: obj,
                     count: newValue,
@@ -399,7 +402,7 @@ window.addEventListener("load", event => {
                 handler: () => {
                     app.$nextTick(() => {
                         const obj = { count: app.animatedInputLength };
-    
+
                         anime({
                             targets: obj,
                             count: app.input.length,
@@ -416,103 +419,109 @@ window.addEventListener("load", event => {
             }
         },
         methods: {
-            signIn: function (event) {
-                const self = this;
-    
-                if (event === firebase.auth.GoogleAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).then((result) => {
-                        /** @type {firebase.auth.OAuthCredential} */
-                        var credential = result.credential;
-    
+            signIn: async function (event) {
+                if (event === GoogleAuthProvider.PROVIDER_ID) {
+                    const provider = new GoogleAuthProvider();
+                        
+                    try {
+                        const result = await signInWithPopup(auth, provider);
+                        const credential = provider.credentialFromResult(auth, result);
+
                         for (const data of result.user.providerData) {
-                            firebase.auth().currentUser.updateProfile({
-                                displayName: data.displayName,
-                                photoURL: data.photoURL
-                            }).catch(function (error) {
-                                console.error(error.code, error.message);
-                            });
-    
+                            try {
+                                await updateProfile(this.user, {
+                                    displayName: data.displayName,
+                                    photoURL: data.photoURL
+                                });
+                            } catch (e) {
+                                console.error(e.code, e.message);
+                            }
+
                             break;
                         }
-    
+
                         try {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, idToken: credential.idToken }));
                         } catch (e) {
                             localStorage.removeItem("credential");
                         }
-                    }).catch((error) => {
+                    } catch (error) {
                         console.error(error.code, error.message);
-                    });
-                } else if (event === firebase.auth.FacebookAuthProvider.PROVIDER_ID) {
-                    const provider = new firebase.auth.FacebookAuthProvider();
-    
+                    }
+                } else if (event === FacebookAuthProvider.PROVIDER_ID) {
+                    const provider = new FacebookAuthProvider();
+
                     provider.addScope("public_profile");
-    
-                    firebase.auth().signInWithPopup(provider).then((result) => {
-                        /** @type {firebase.auth.OAuthCredential} */
-                        var credential = result.credential;
-    
+
+                    try {
+                        const result = await signInWithPopup(auth, provider);
+                        const credential = provider.credentialFromResult(auth, result);
+                    
                         for (const data of result.user.providerData) {
-                            firebase.auth().currentUser.updateProfile({
-                                displayName: data.displayName,
-                                photoURL: data.photoURL
-                            }).catch(function (error) {
-                                console.error(error.code, error.message);
-                            });
-    
+                            try {
+                                await updateProfile(this.user, {
+                                    displayName: data.displayName,
+                                    photoURL: data.photoURL
+                                });
+                            } catch (e) {
+                                console.error(e.code, e.message);
+                            }
+
                             break;
                         }
-    
+
                         try {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken }));
                         } catch (e) {
                             localStorage.removeItem("credential");
                         }
-                    }).catch((error) => {
+                    } catch (error) {
                         console.error(error.code, error.message);
-                    });
-                } else if (event === firebase.auth.TwitterAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithPopup(new firebase.auth.TwitterAuthProvider()).then((result) => {
-                        /** @type {firebase.auth.OAuthCredential} */
-                        var credential = result.credential;
-    
+                    }
+                } else if (event === TwitterAuthProvider.PROVIDER_ID) {
+                    const provider = new TwitterAuthProvider();
+                    
+                    try {
+                        const result = await signInWithPopup(auth, provider);
+                        const credential = provider.credentialFromResult(auth, result);
+                    
                         for (const data of result.user.providerData) {
                             const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
-    
-                            firebase.auth().currentUser.updateProfile({
-                                displayName: data.displayName,
-                                photoURL: photoUrl
-                            }).catch(function (error) {
-                                console.error(error.code, error.message);
-                            });
-    
+
+                            try {
+                                await updateProfile(this.user, {
+                                    displayName: data.displayName,
+                                    photoURL: photoUrl
+                                });
+                            } catch (e) {
+                                console.error(e.code, e.message);
+                            }
+
                             break;
                         }
-    
+                    
                         try {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, secret: credential.secret }));
                         } catch (e) {
                             localStorage.removeItem("credential");
                         }
-                    }).catch((error) => {
+                    } catch (error) {
                         console.error(error.code, error.message);
-                    });
+                    }
                 }
             },
-            signOut: function (event) {
-                firebase.auth().signOut().then(() => {
+            signOut: async function (event) {
+                try {
+                    await signOut(auth);
+
                     localStorage.removeItem("credential");
-    
+
                     if ("serviceWorker" in navigator && navigator.serviceWorker.controller !== null) {
                         navigator.serviceWorker.controller.postMessage({ command: "caches" });
                     }
-    
-                    /*firebase.auth().signInAnonymously().catch((error) => {
-                        console.error(error.code, error.message);
-                    });*/
-                }).catch((error) => {
+                } catch (error) {
                     console.error(error.code, error.message);
-                });
+                }
             },
             refresh: function (event) {
                 this.isBlinded = true;
@@ -523,7 +532,7 @@ window.addEventListener("load", event => {
                     if (this.input.length > 0) {
                         let keys = [];
                         let tags = [];
-    
+
                         for (const token of this.input.split(/\s/)) {
                             if (this.backgroundImages.some((x) => x.id === token)) {
                                 keys.push(token);
@@ -531,16 +540,16 @@ window.addEventListener("load", event => {
                                 tags.push(token);
                             }
                         }
-    
+
                         if (keys.length > 0 && tags.length > 0) {
                             for (const key of keys) {
-                                database.ref(databaseRoot + "/images/" + key).transaction(function (image) {
+                                runTransaction(databaseRef(database, databaseRoot + "/images/" + key), image => {
                                     image["tags"] = tags;
-    
+
                                     return image;
                                 });
                             }
-    
+
                             this.isLearning = false;
                         } else if (this.input.length <= this.maxInputLength) {
                             this.learn({ name: this.input });
@@ -550,7 +559,7 @@ window.addEventListener("load", event => {
                     } else {
                         for (const image of this.backgroundImages) {
                             this.input = image.id;
-    
+
                             break;
                         }
                     }
@@ -558,7 +567,7 @@ window.addEventListener("load", event => {
                     this.learn({ name: this.input });
                     this.input = "";
                     this.isLearning = false;
-    
+
                     /*
                     } else if (confirm(this.input)) {
                         function format(format) {
@@ -617,31 +626,31 @@ window.addEventListener("load", event => {
                             }
                         }
                     }*/
-    
+
                     return;
-    
+
                     const url = "https://api.milchchan.com/talk?text=" + text + "&threshold=1.0";
                     //let segmenter = new TinySegmenter();
                     let regex = new RegExp('[.#$\\[\\]]');
                     //let tokens = [];
-    
+
                     /*for (let token of segmenter.segment(text)) {
                         if (!regex.test(token)) {
                             tokens.push(token);
                         }
                     }*/
-    
+
                     this.input = "";
-    
+
                     if (!this.isMuted) {
                         document.body.querySelector("#alert").play();
                     }
-    
+
                     let completed = 0;
                     let learnedWords = [];
-    
+
                     database.ref(databaseMessages).push({ text: text, timestamp: Math.floor(new Date() / 1000), user: { id: app.user.uid, name: null, accent: null, image: null } });
-    
+
                     /*for (let token of tokens) {
                         database.ref(databaseRoot + "/dictionary/words/" + token).transaction(function (word) {
                             if (word === null) {
@@ -673,15 +682,15 @@ window.addEventListener("load", event => {
                             }
                         });
                     }*/
-    
+
                     window.setTimeout(async () => {
                         let ref = database.ref(databaseMessages).push();
-    
+
                         app.messages.push({ id: ref.key, text: null, timestamp: new Date(), user: { id: null, name: milch.name, accent: milch.accent, image: milch.image } });
-    
+
                         try {
                             app.isLoading = true;
-    
+
                             const response = await fetch(encodeURI(url), {
                                 mode: "cors",
                                 method: "GET",
@@ -689,10 +698,10 @@ window.addEventListener("load", event => {
                                     "Content-Type": "application/x-www-form-urlencoded"
                                 }
                             });
-    
+
                             if (response.ok) {
                                 const json = await response.json();
-    
+
                                 if (json.text.length > 0) {
                                     ref.set({ text: json.text, timestamp: Math.floor(new Date() / 1000), thread: ref.key, user: { id: null, name: milch.name, accent: milch.accent, image: milch.image } });
                                 }
@@ -700,17 +709,17 @@ window.addEventListener("load", event => {
                             else {
                                 throw new Error(response.statusText);
                             }
-    
+
                             app.isLoading = false;
                         }
                         catch (e) {
                             app.isLoading = false;
                             app.notify({ text: 'もう一度試してほしいよぉ', accent: merku.accent, image: merku.image });
-    
+
                             console.error(e.message);
                         }
-    
-    
+
+
                     }, random(500, 1000));
                 } else {
                     this.shake(this.$refs.input);
@@ -728,7 +737,7 @@ window.addEventListener("load", event => {
                     // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
                     // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
                     let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
-    
+
                     for (let i = 0, len = chars.length; i < len; i++) {
                         switch (chars[i]) {
                             case "x":
@@ -739,52 +748,51 @@ window.addEventListener("load", event => {
                                 break;
                         }
                     }
-    
+
                     return chars.join("");
                 }
-    
+
                 const self = this;
-                const storageRef = storage.ref();
                 const files = [];
                 const paths = [];
-    
+
                 for (const file of event.target.files) {
                     files.push(file);
                 }
-    
+
                 this.isUploading = true;
-    
+
                 for (const file of files.sort((x, y) => {
                     if (x.name > y.name) {
                         return 1;
                     } else if (x.name < y.name) {
                         return -1;
                     }
-    
+
                     return 0;
                 })) {
-                    const uploadTask = storageRef.child(`images/${generateUuid()}`).put(file);
-    
+                    const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file);
+
                     try {
                         await new Promise(function (resolve, reject) {
-                            uploadTask.on("state_changed", function (snapshot) {
+                            uploadTask.on("state_changed", (snapshot) => {
                                 self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + paths.length / files.length;
-                            }, function (error) {
+                            }, (error) => {
                                 reject(error);
-                            }, function () {
-                                resolve();
+                            }, () => {
+                                resolve(uploadTask.snapshot.ref);
                             });
                         });
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e);
                     }
-    
+
                     paths.push(uploadTask.snapshot.ref.fullPath);
                 }
-    
-                database.ref(databaseRoot + "/images").push({ paths: paths, timestamp: Math.floor(new Date() / 1000) });
-    
+
+                push(databaseRef(database, databaseRoot + "/images"), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
+
                 this.progress = null;
                 this.isUploading = false;
             },
@@ -798,92 +806,94 @@ window.addEventListener("load", event => {
             share: async function (word) {
                 const self = this;
                 const timestamp = Math.floor(new Date() / 1000);
-    
+
                 if (word.name in this.wordDictionary) {
                     delete this.wordDictionary[word.name];
                 }
-    
+
                 Object.keys(this.reverseWordDictionary).forEach((key) => {
                     if (this.reverseWordDictionary[key].words.some((x) => x === word.name)) {
                         delete this.reverseWordDictionary[key];
                     }
                 });
-    
+
                 this.isSubmitting = true;
+
+                try {
+                    const result = await runTransaction(databaseRef(database, databaseRoot + "/words/" + word.name), current => {
+                        if (current) {
+                            let updateRequired = false;
     
-                database.ref(databaseRoot + "/words/" + word.name).transaction(function (current) {
-                    if (current) {
-                        let updateRequired = false;
+                            for (const attribute of word.attributes) {
+                                if (attribute.name in current.attributes) {
+                                    if (current.attributes[attribute.name] > 0) {
+                                        if (!attribute.value) {
+                                            updateRequired = true;
     
-                        for (const attribute of word.attributes) {
-                            if (attribute.name in current.attributes) {
-                                if (current.attributes[attribute.name] > 0) {
-                                    if (!attribute.value) {
+                                            break;
+                                        }
+                                    } else if (attribute.value) {
                                         updateRequired = true;
     
                                         break;
                                     }
-                                } else if (attribute.value) {
+                                } else {
                                     updateRequired = true;
     
                                     break;
                                 }
-                            } else {
-                                updateRequired = true;
-    
-                                break;
                             }
-                        }
     
-                        if (updateRequired) {
-                            let deleteRequired = true;
-                            const c = { attributes: {} };
+                            if (updateRequired) {
+                                let deleteRequired = true;
+                                const c = { attributes: {} };
+    
+                                for (const attribute of word.attributes) {
+                                    if (attribute.value) {
+                                        if (attribute.name in current.attributes && current.attributes[attribute.name] > 0) {
+                                            c.attributes[attribute.name] = current.attributes[attribute.name];
+                                        } else {
+                                            c.attributes[attribute.name] = timestamp - 1;
+                                        }
+    
+                                        deleteRequired = false;
+                                    } else {
+                                        c.attributes[attribute.name] = 0;
+                                    }
+                                }
+    
+                                if (deleteRequired) {
+                                    return null;
+                                } else {
+                                    c["timestamp"] = timestamp;
+    
+                                    return c;
+                                }
+                            } else {
+                                return undefined;
+                            }
+                        } else {
+                            current = { attributes: {}, timestamp: timestamp };
     
                             for (const attribute of word.attributes) {
                                 if (attribute.value) {
-                                    if (attribute.name in current.attributes && current.attributes[attribute.name] > 0) {
-                                        c.attributes[attribute.name] = current.attributes[attribute.name];
-                                    } else {
-                                        c.attributes[attribute.name] = timestamp - 1;
-                                    }
-    
-                                    deleteRequired = false;
+                                    current.attributes[attribute.name] = timestamp;
                                 } else {
-                                    c.attributes[attribute.name] = 0;
+                                    current.attributes[attribute.name] = 0;
                                 }
                             }
-    
-                            if (deleteRequired) {
-                                return null;
-                            } else {
-                                c["timestamp"] = timestamp;
-    
-                                return c;
-                            }
-                        } else {
-                            return undefined;
                         }
-                    } else {
-                        current = { attributes: {}, timestamp: timestamp };
     
-                        for (const attribute of word.attributes) {
-                            if (attribute.value) {
-                                current.attributes[attribute.name] = timestamp;
-                            } else {
-                                current.attributes[attribute.name] = 0;
-                            }
-                        }
-                    }
+                        return current;
+                    });
     
-                    return current;
-                }, function (error, committed, snapshot) {
-                    if (committed) {
-                        if (snapshot.exists()) {
-                            const dictionary = snapshot.val();
+                    if (result.committed) {
+                        if (result.snapshot.exists()) {
+                            const dictionary = result.snapshot.val();
                             let timestamps = [];
     
                             for (const key in dictionary.attributes) {
-                                if (typeof dictionary.attributes[key] === "number" && dictionary.attributes[key] > 0 && self.attributes.includes(key)) {
+                                if (typeof dictionary.attributes[key] === "number" && dictionary.attributes[key] > 0 && this.attributes.includes(key)) {
                                     timestamps.push(dictionary.attributes[key]);
                                 }
                             }
@@ -895,28 +905,28 @@ window.addEventListener("load", event => {
                                     return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                                 }
     
-                                database.ref(databaseRoot + "/stars").transaction(function (count) {
+                                runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
                                     return (count || 0) + 1;
                                 });
     
-                                for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Learned"))) {
+                                for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learned"))) {
                                     if (obj.type === "Message") {
-                                        self.notify({ text: format(obj.text, word.name), accent: self.character.accent, image: self.character.image });
+                                        this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
                                     }
                                 }
     
-                                self.isStared = true;
+                                this.isStared = true;
     
                                 window.setTimeout(() => {
                                     self.isStared = false;
                                 }, 3000);
     
-                                if (!self.isMuted) {
-                                    self.$refs.twinkle.play();
+                                if (!this.isMuted) {
+                                    this.$refs.twinkle.play();
                                 }
                             }
                         } else {
-                            database.ref(databaseRoot + "/stars").transaction(function (count) {
+                            runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
                                 if (count) {
                                     return count - 1;
                                 }
@@ -925,27 +935,25 @@ window.addEventListener("load", event => {
                             });
                         }
     
-                        self.word = null;
-                    } else if (error) {
-                        self.notify({ text: error.message, accent: self.character.accent, image: self.character.image });
-                        console.error(error);
+                        this.word = null;
                     }
-    
-                    self.isSubmitting = false;
-                });
-    
-                return;
+                } catch(error) {
+                    this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
+                    console.error(error);
+                }
+
+                this.isSubmitting = false;
             },
             learn: async function (word) {
                 function format(format) {
                     var args = arguments;
-    
+
                     return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                 }
-    
+
                 const sequence = [];
                 const attributes = [];
-    
+
                 if ("attributes" in word) {
                     for (const attribute of this.attributes) {
                         if (attribute in word.attributes) {
@@ -958,10 +966,10 @@ window.addEventListener("load", event => {
                     }
                 } else {
                     const snapshot = await database.ref(databaseRoot + "/words/" + word.name).once("value");
-    
+
                     if (snapshot.exists()) {
                         const w = snapshot.val();
-    
+
                         for (const attribute of this.attributes) {
                             if (attribute in w.attributes) {
                                 if (w.attributes[attribute] > 0) {
@@ -977,9 +985,9 @@ window.addEventListener("load", event => {
                         }
                     }
                 }
-    
+
                 this.word = { name: word.name, attributes: attributes };
-    
+
                 for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learn"))) {
                     if (obj.type === "Message") {
                         sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: format(obj.text, word.name) });
@@ -987,14 +995,14 @@ window.addEventListener("load", event => {
                         sequence.push(obj);
                     }
                 }
-    
+
                 if (sequence.length > 0) {
                     this.sequenceQueue.push(sequence);
                 }
             },
             activate: async function (tokens = []) {
                 idleTime = activateTime = 0.0;
-    
+
                 if (!await this.talk(tokens)) {
                     this.talk();
                 }
@@ -1002,58 +1010,58 @@ window.addEventListener("load", event => {
             talk: async function (tokens = []) {
                 let sequences = this.character.sequences.filter((x) => x.name === "Activate");
                 let sequence = [];
-    
+
                 this.isLoading = true;
-    
+
                 if (tokens.length > 0) {
                     function _random(min, max) {
                         min = Math.ceil(min);
                         max = Math.floor(max);
-    
+
                         return Math.floor(Math.random() * (max - min)) + min;
                     }
-    
+
                     function shuffle(array) {
                         function _random(min, max) {
                             min = Math.ceil(min);
                             max = Math.floor(max);
-    
+
                             return Math.floor(Math.random() * (max - min)) + min;
                         }
-    
+
                         let a = [].concat(array);
                         let n = array.length;
-    
+
                         while (n > 1) {
                             const k = _random(0, n);
-    
+
                             n--;
-    
+
                             const temp = a[n];
-    
+
                             a[n] = a[k];
                             a[k] = temp;
                         }
-    
+
                         return a;
                     }
-    
+
                     const timestamp = Math.floor(new Date() / 1000);
                     const timeout = 60 * 60;
                     const tempStates = Object.assign({}, this.states);
                     const segmenter = new TinySegmenter();
                     const attributes = [];
                     const tokenSet = [];
-    
+
                     for (const token of tokens) {
                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                             const snapshot = await database.ref(databaseRoot + "/words/" + token).once("value");
-    
+
                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                             if (snapshot.exists()) {
                                 const word = snapshot.val();
-    
+
                                 for (let attribute in word.attributes) {
                                     if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                         this.wordDictionary[token].attributes.push(attribute);
@@ -1061,18 +1069,18 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
-    
+
                         for (const attribute of this.wordDictionary[token].attributes) {
                             if (!attributes.includes(attribute)) {
                                 attributes.push(attribute);
                             }
                         }
                     }
-    
+
                     for (const s of shuffle(sequences)) {
                         const preparedSequence = this.prepare([s]);
                         let isAborted = false;
-    
+
                         for (const o of preparedSequence) {
                             if (o.type == "Message") {
                                 for (const token of Array.isArray(o.text) ? o.text : segmenter.segment(o.text)) {
@@ -1080,45 +1088,45 @@ window.addEventListener("load", event => {
                                         for (const obj of preparedSequence) {
                                             if (obj.type == "Message") {
                                                 const temp = await this.generate(obj.text, tokens);
-    
+
                                                 if (temp === null) {
                                                     isAborted = true;
-    
+
                                                     break;
                                                 } else {
                                                     let text;
                                                     let cache;
-    
+
                                                     [text, cache] = temp;
-    
+
                                                     sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: text });
                                                 }
-    
+
                                             } else {
                                                 sequence.push(obj);
                                             }
                                         }
-    
+
                                         if (isAborted) {
                                             break;
                                         }
-    
+
                                         if (sequence.length > 0) {
                                             this.sequenceQueue.push(sequence);
                                         }
-    
+
                                         this.isLoading = false;
-    
+
                                         return true;
                                     } else if (token.length > 1 && !tokenSet.includes(token)) {
                                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                             const snapshot = await database.ref(databaseRoot + "/words/" + token).once("value");
-    
+
                                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                                             if (snapshot.exists()) {
                                                 const word = snapshot.val();
-    
+
                                                 for (const attribute in word.attributes) {
                                                     if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                                         this.wordDictionary[token].attributes.push(attribute);
@@ -1126,94 +1134,94 @@ window.addEventListener("load", event => {
                                                 }
                                             }
                                         }
-    
+
                                         for (const attribute of this.wordDictionary[token].attributes) {
                                             if (attributes.includes(attribute)) {
                                                 for (const obj of preparedSequence) {
                                                     if (obj.type == "Message") {
                                                         const temp = await this.generate(obj.text, tokens);
-    
+
                                                         if (temp === null) {
                                                             isAborted = true;
-    
+
                                                             break;
                                                         } else {
                                                             let text;
                                                             let cache;
-    
+
                                                             [text, cache] = temp;
-    
+
                                                             sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: text });
                                                         }
                                                     } else {
                                                         sequence.push(obj);
                                                     }
                                                 }
-    
+
                                                 if (isAborted) {
                                                     break;
                                                 }
-    
+
                                                 if (sequence.length > 0) {
                                                     this.sequenceQueue.push(sequence);
                                                 }
-    
+
                                                 this.isLoading = false;
-    
+
                                                 return true;
                                             }
                                         }
-    
+
                                         tokenSet.push(token);
                                     }
                                 }
                             }
-    
+
                             if (isAborted) {
                                 sequence.splice(0);
-    
+
                                 break;
                             }
                         }
-    
+
                         this.states = tempStates;
                     }
-    
+
                     this.isLoading = false;
-    
+
                     return false;
                 }
-    
+
                 for (const obj of this.prepare(sequences)) {
                     if (obj.type === "Message") {
                         const temp = await this.generate(obj.text);
-    
+
                         if (temp === null) {
                             this.isLoading = false;
-    
+
                             return false;
                         } else {
                             let text;
                             let cache;
-    
+
                             [text, cache] = temp;
-    
+
                             sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: text });
                         }
                     } else {
                         sequence.push(obj);
                     }
                 }
-    
+
                 if (sequence.length > 0) {
                     this.sequenceQueue.push(sequence);
                     this.isLoading = false;
-    
+
                     return true;
                 }
-    
+
                 this.isLoading = false;
-    
+
                 return false;
             },
             generate: async function (message, hints = []) {
@@ -1221,41 +1229,41 @@ window.addEventListener("load", event => {
                     const r = Math.random();
                     let sum = 0.0;
                     let index = 0;
-    
+
                     for (let probability of probabilities) {
                         if (sum <= r && r < sum + probability) {
                             break;
                         }
-    
+
                         sum += probability;
                         index++;
                     }
-    
+
                     return index;
                 }
-    
+
                 function softmax(x) {
                     let y = [];
                     let max = Number.MIN_VALUE;
                     let sum = 0.0;
-    
+
                     for (let i = 0; i < x.length; i++) {
                         if (x[i] > max) {
                             max = x[i];
                         }
                     }
-    
+
                     for (let i = 0; i < x.length; i++) {
                         sum += Math.exp(x[i] - max);
                     }
-    
+
                     for (let i = 0; i < x.length; i++) {
                         y.push(Math.exp(x[i] - max) / sum);
                     }
-    
+
                     return y;
                 }
-    
+
                 const timestamp = Math.floor(new Date() / 1000);
                 const timeout = 60 * 60;
                 let segmenter = new TinySegmenter();
@@ -1269,16 +1277,16 @@ window.addEventListener("load", event => {
                 const epsilon = Math.pow(10, -6);
                 const beamWidth = 10;
                 let sequences = [{ sequence: [], score: 1.0 }]
-    
+
                 for (const token of hints) {
                     if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                         const snapshot = await database.ref(databaseRoot + "/words/" + token).once("value");
-    
+
                         this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                         if (snapshot.exists()) {
                             const word = snapshot.val();
-    
+
                             for (const attribute in word.attributes) {
                                 if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                     this.wordDictionary[token].attributes.push(attribute);
@@ -1286,7 +1294,7 @@ window.addEventListener("load", event => {
                             }
                         }
                     }
-    
+
                     for (const attribute of this.wordDictionary[token].attributes) {
                         if (attribute in hintDictionary) {
                             hintDictionary[attribute].push(token);
@@ -1295,30 +1303,30 @@ window.addEventListener("load", event => {
                         }
                     }
                 }
-    
+
                 for (const token of tokens) {
                     if (!tokenSet.includes(token)) {
                         if (Array.isArray(token)) {
                             let terms = [];
                             let scores = [];
-    
+
                             for (const attribute of token) {
                                 if (attribute in hintDictionary) {
                                     for (const s of hintDictionary[attribute]) {
                                         if (!terms.includes(s)) {
                                             let isNew = true;
-    
+
                                             terms.push(s);
-    
+
                                             for (const tag of this.tags) {
                                                 if (s === tag.name) {
                                                     scores.push(tag.score);
                                                     isNew = false;
-    
+
                                                     break;
                                                 }
                                             }
-    
+
                                             if (isNew) {
                                                 scores.push(epsilon);
                                             }
@@ -1327,33 +1335,33 @@ window.addEventListener("load", event => {
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
                                         const snapshot = await database.ref(databaseRoot + "/words").orderByChild(`attributes/${attribute}`).limitToLast(100).startAt(1).once("value");
-    
+
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
-    
+
                                         if (snapshot.exists()) {
                                             const words = snapshot.val();
-    
+
                                             for (const word in words) {
                                                 this.reverseWordDictionary[attribute].words.push(word);
                                             }
                                         }
                                     }
-    
+
                                     for (const word of this.reverseWordDictionary[attribute].words) {
                                         if (tokens.includes(word) && !terms.includes(word)) {
                                             let isNew = true;
-    
+
                                             terms.push(word);
-    
+
                                             for (const tag of this.tags) {
                                                 if (word == tag.name) {
                                                     scores.push(tag.score);
                                                     isNew = false;
-    
+
                                                     break;
                                                 }
                                             }
-    
+
                                             if (isNew) {
                                                 scores.push(epsilon);
                                             }
@@ -1361,22 +1369,22 @@ window.addEventListener("load", event => {
                                     }
                                 }
                             }
-    
+
                             if (terms.length > 0 && scores.length > 0) {
                                 const probabilities = softmax(scores);
                                 let candidates = [];
-    
+
                                 for (let i = 0; i < sequences.length; i++) {
                                     for (let j = 0; j < probabilities.length; j++) {
                                         let sequence = [].concat(sequences[i].sequence);
-    
+
                                         sequence.push({ index: index, term: terms[j] });
                                         candidates.push({ sequence: sequence, score: sequences[i].score * probabilities[j] });
                                     }
                                 }
-    
+
                                 sequences.splice(0);
-    
+
                                 for (const candidate of this.take(candidates.sort((x, y) => y.score - x.score), beamWidth)) {
                                     sequences.push(candidate);
                                 }
@@ -1384,15 +1392,15 @@ window.addEventListener("load", event => {
                         } else if (!regex.test(token)) {
                             let terms = [];
                             let scores = [];
-    
+
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                 const snapshot = await database.ref(databaseRoot + "/words/" + token).once("value");
-    
+
                                 this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                                 if (snapshot.exists()) {
                                     const word = snapshot.val();
-    
+
                                     for (const attribute in word.attributes) {
                                         if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                             this.wordDictionary[token].attributes.push(attribute);
@@ -1400,24 +1408,24 @@ window.addEventListener("load", event => {
                                     }
                                 }
                             }
-    
+
                             for (const attribute of this.wordDictionary[token].attributes) {
                                 if (attribute in hintDictionary) {
                                     for (const key of hintDictionary[attribute]) {
                                         if (!terms.includes(key)) {
                                             let isNew = true;
-    
+
                                             terms.push(key);
-    
+
                                             for (const tag of this.tags) {
                                                 if (key === tag.name) {
                                                     scores.push(tag.score);
                                                     isNew = false;
-    
+
                                                     break;
                                                 }
                                             }
-    
+
                                             if (isNew) {
                                                 scores.push(epsilon);
                                             }
@@ -1426,33 +1434,33 @@ window.addEventListener("load", event => {
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
                                         const snapshot = await database.ref(databaseRoot + "/words").orderByChild(`attributes/${attribute}`).limitToLast(100).startAt(1).once("value");
-    
+
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
-    
+
                                         if (snapshot.exists()) {
                                             const words = snapshot.val();
-    
+
                                             for (let key in words) {
                                                 this.reverseWordDictionary[attribute].words.push(key);
                                             }
                                         }
                                     }
-    
+
                                     for (const word of this.reverseWordDictionary[attribute].words) {
                                         if (tokens.includes(word) && !terms.includes(word)) {
                                             let isNew = true;
-    
+
                                             terms.push(word);
-    
+
                                             for (const tag of this.tags) {
                                                 if (word == tag.name) {
                                                     scores.push(tag.score);
                                                     isNew = false;
-    
+
                                                     break;
                                                 }
                                             }
-    
+
                                             if (isNew) {
                                                 scores.push(epsilon);
                                             }
@@ -1460,39 +1468,39 @@ window.addEventListener("load", event => {
                                     }
                                 }
                             }
-    
+
                             if (terms.length > 0 && scores.length > 0) {
                                 const probabilities = softmax(scores);
                                 let candidates = [];
-    
+
                                 for (let i = 0; i < sequences.length; i++) {
                                     for (let j = 0; j < probabilities.length; j++) {
                                         let sequence = [].concat(sequences[i].sequence);
-    
+
                                         sequence.push({ index: index, term: terms[j] });
                                         candidates.push({ sequence: sequence, score: sequences[i].score * probabilities[j] });
                                     }
                                 }
-    
+
                                 sequences.splice(0);
-    
+
                                 for (const candidate of this.take(candidates.sort((x, y) => y.score - x.score), beamWidth)) {
                                     sequences.push(candidate);
                                 }
                             }
                         }
-    
+
                         tokenSet.push(token);
                     }
-    
+
                     index++;
                 }
-    
+
                 const s = sequences[choice(softmax(sequences.map(x => x.score)))];
-    
+
                 for (let i = 0; i < tokens.length; i++) {
                     const key = JSON.stringify(tokens[i]);
-    
+
                     if (key in cachDictionary) {
                         if (typeof cachDictionary[key] === "undefined") {
                             text += tokens[i];
@@ -1501,7 +1509,7 @@ window.addEventListener("load", event => {
                         }
                     } else {
                         let isNew = true;
-    
+
                         for (let j = 0; j < s.sequence.length; j++) {
                             if (s.sequence[j].index == i) {
                                 if (key == s.sequence[j].term) {
@@ -1511,36 +1519,36 @@ window.addEventListener("load", event => {
                                     text += s.sequence[j].term;
                                     isNew = false;
                                 }
-    
+
                                 break;
                             }
                         }
-    
+
                         if (isNew) {
                             if (Array.isArray(tokens[i])) {
                                 return null;
                             }
-    
+
                             text += tokens[i];
                         }
                     }
                 }
-    
+
                 return [text, cachDictionary];
             },
             notify: function (data, duration = 3000) {
                 const self = this;
-    
+
                 data["id"] = window.setTimeout((d) => {
                     for (let i = 0; i < self.notifications.length; i++) {
                         if (self.notifications[i].id === d.id) {
                             self.notifications.splice(i, 1);
-    
+
                             break;
                         }
                     }
                 }, duration, data);
-    
+
                 this.notifications.unshift(data);
             },
             blinded: async function () {
@@ -1549,53 +1557,53 @@ window.addEventListener("load", event => {
                         function _random(min, max) {
                             min = Math.ceil(min);
                             max = Math.floor(max);
-    
+
                             return Math.floor(Math.random() * (max - min)) + min;
                         }
-    
+
                         let a = [].concat(array);
                         let n = array.length;
-    
+
                         while (n > 1) {
                             const k = _random(0, n);
-    
+
                             n--;
-    
+
                             const temp = a[n];
-    
+
                             a[n] = a[k];
                             a[k] = temp;
                         }
-    
+
                         return a;
                     }
-    
+
                     for (const image of shuffle(this.recentImages)) {
                         this.backgroundImagesQueue.push(image);
                     }
                 }
-    
+
                 const image = this.backgroundImagesQueue.shift();
-    
+
                 this.preloadImages.splice(0);
                 this.backgroundImages.splice(0);
-    
+
                 for (const path of image.paths) {
                     try {
-                        this.preloadImages.push({ id: image.id, url: await storage.ref().child(path).getDownloadURL(), timestamp: image.timestamp });
+                        this.preloadImages.push({ id: image.id, url: await getDownloadURL(storageRef(storage, path)), timestamp: image.timestamp });
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e);
                     }
                 }
-    
+
                 if ("tags" in image) {
                     this.talk(image.tags.filter((x) => x.indexOf(this.character.name) === -1));
                 }
             },
             load: function (url) {
                 let isCompleted = true;
-    
+
                 for (let image of this.preloadImages) {
                     if (image.url == url) {
                         image["isLoaded"] = true;
@@ -1603,10 +1611,10 @@ window.addEventListener("load", event => {
                         isCompleted = false;
                     }
                 }
-    
+
                 if (isCompleted) {
                     let index = 0;
-    
+
                     for (const image of this.preloadImages) {
                         if (image.isLoaded) {
                             this.backgroundImages.push({
@@ -1615,18 +1623,18 @@ window.addEventListener("load", event => {
                                 url: image.url,
                                 timestamp: image.timestamp
                             });
-    
+
                             index++;
                         }
                     }
-    
+
                     this.preloadImages.splice(0);
                     this.isBlinded = false;
                 }
             },
             error: function (url) {
                 let isCompleted = true;
-    
+
                 for (let image of this.preloadImages) {
                     if (image.url == url) {
                         image["isLoaded"] = true;
@@ -1634,10 +1642,10 @@ window.addEventListener("load", event => {
                         isCompleted = false;
                     }
                 }
-    
+
                 if (isCompleted) {
                     let index = 0;
-    
+
                     for (const image of this.preloadImages) {
                         if (image.isLoaded) {
                             this.backgroundImages.push({
@@ -1646,18 +1654,18 @@ window.addEventListener("load", event => {
                                 url: image.url,
                                 timestamp: image.timestamp
                             });
-    
+
                             index++;
                         }
                     }
-    
+
                     this.preloadImages.splice(0);
                     this.isBlinded = false;
                 }
             },
             update: async function (data, max) {
                 this.isUpdating = true;
-    
+
                 try {
                     const results = await new Promise(resolve => {
                         const epsilon = Math.pow(10, -6);
@@ -1670,13 +1678,13 @@ window.addEventListener("load", event => {
                         let scoreDictionary = {};
                         let scores = [];
                         let maxScore = epsilon;
-    
+
                         for (const key in data) {
                             if ("tags" in data[key] && data[key].tags.length > 0) {
                                 let termSet = [];
-    
+
                                 documents.push({ tokens: data[key].tags, timestamp: data[key].timestamp });
-    
+
                                 for (const token of data[key].tags) {
                                     if (!termSet.includes(token)) {
                                         if (token in inverseDocumentFrequency) {
@@ -1684,36 +1692,36 @@ window.addEventListener("load", event => {
                                         } else {
                                             inverseDocumentFrequency[token] = 1.0;
                                         }
-    
+
                                         termSet.push(token);
                                     }
                                 }
                             }
                         }
-    
+
                         for (const key in inverseDocumentFrequency) {
                             inverseDocumentFrequency[key] = Math.log(documents.length / (inverseDocumentFrequency[key] + epsilon));
                         }
-    
+
                         for (const document of documents) {
                             if (document.timestamp * 1000 > baseTime) {
                                 filteredDocuments.push(document);
                             }
                         }
-    
+
                         if (filteredDocuments.length < limit) {
                             const min = Math.max(documents.length - limit, 0);
-    
+
                             filteredDocuments.splice(0);
-    
+
                             for (let i = documents.length - 1; i >= min; i--) {
                                 filteredDocuments.unshift(documents[i]);
                             }
                         }
-    
+
                         for (const document of filteredDocuments) {
                             let tf = {};
-    
+
                             for (const token of document.tokens) {
                                 if (token in tf) {
                                     tf[token] += 1.0;
@@ -1721,67 +1729,67 @@ window.addEventListener("load", event => {
                                     tf[token] = 1.0;
                                 }
                             }
-    
+
                             for (const key in tf) {
                                 tf[key] /= document.tokens.length;
-    
+
                                 if (!(key in scoreDictionary)) {
                                     scoreDictionary[key] = 0.0;
                                 }
                             }
-    
+
                             termFrequencies.push(tf);
                         }
-    
+
                         for (const key in scoreDictionary) {
                             for (const termFrequency of termFrequencies) {
                                 if (key in termFrequency) {
                                     const tfidf = termFrequency[key] * inverseDocumentFrequency[key];
-    
+
                                     if (tfidf > scoreDictionary[key]) {
                                         scoreDictionary[key] = tfidf;
                                     }
                                 }
                             }
                         }
-    
+
                         for (const key in scoreDictionary) {
                             if (key.length > 1 && key != "...") {
                                 scores.push({ term: key, value: scoreDictionary[key] });
                             }
                         }
-    
+
                         scores.sort((x, y) => y.value - x.value);
-    
+
                         if (scores.length > max) {
                             scores.splice(max);
                         }
-    
+
                         for (const score of scores) {
                             if (score.value > maxScore) {
                                 maxScore = score.value;
                             }
                         }
-    
+
                         for (const score of scores) {
                             score.value /= maxScore;
                         }
-    
+
                         scores.sort((x, y) => {
                             if (x.term > y.term) {
                                 return 1;
                             } else if (x.term < y.term) {
                                 return -1;
                             }
-    
+
                             return 0;
                         });
-    
+
                         resolve(scores);
                     });
-    
+
                     this.tags.splice(0);
-    
+
                     for (let i = 0; i < results.length; i++) {
                         this.tags.push({ index: i, name: results[i].term, score: results[i].value })
                     }
@@ -1789,7 +1797,7 @@ window.addEventListener("load", event => {
                     this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                     console.error(e);
                 }
-    
+
                 this.isUpdating = false;
             },
             shake: function (element) {
@@ -1823,14 +1831,14 @@ window.addEventListener("load", event => {
                 if (typeof this.scrollTimeoutID === "number") {
                     clearTimeout(this.scrollTimeoutID);
                 }
-    
+
                 this.scrollTimeoutID = setTimeout(function () {
                     window.scrollTo(0, document.body.scrollHeight);
                 }, 500);
             },
             formatDate: function (event) {
                 moment.locale(window.navigator.language);
-    
+
                 return moment(event).format("LT");
             },
             animationStart: function (el) {
@@ -1838,28 +1846,28 @@ window.addEventListener("load", event => {
             },
             animationEnd: function (el) {
                 const self = this;
-    
+
                 this.$nextTick(() => {
                     self.notificationHeight = self.$refs.notifications.getBoundingClientRect().height;
                 });
-    
+
                 if (!this.isPopup) {
                     this.message = null;
                 }
-    
+
                 this.isAnimating = false;
             },
             tickerUpdated: function (el) {
                 const self = this;
-    
+
                 this.$nextTick(() => {
                     for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                         let width = 0;
-    
+
                         for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
                             width += element.getBoundingClientRect().width;
                         }
-    
+
                         if (width > 0) {
                             self.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                             clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
@@ -1870,7 +1878,7 @@ window.addEventListener("load", event => {
             arrange: function (collection, limit) {
                 let rows = [];
                 let columns = [];
-    
+
                 for (const item of collection) {
                     if (columns.length < limit) {
                         columns.push(item);
@@ -1879,136 +1887,136 @@ window.addEventListener("load", event => {
                         columns = [item];
                     }
                 }
-    
+
                 rows.push(columns);
-    
+
                 return rows;
             },
             take: function (collection, count) {
                 if (collection.length > count) {
                     let temp = [].concat(collection);
-    
+
                     temp.splice(count);
-    
+
                     return temp;
                 }
-    
+
                 return collection;
             },
             prepare: function (sequences, state = null, selectedSequences = null) {
                 function _random(min, max) {
                     min = Math.ceil(min);
                     max = Math.floor(max);
-    
+
                     return Math.floor(Math.random() * (max - min)) + min;
                 }
-    
+
                 let choosedSequences = [];
                 let flattenedSequence = [];
-    
+
                 for (const s of sequences) {
                     let tempState = state;
-    
+
                     if (state === null && s.name in this.states) {
                         tempState = this.states[s.name];
                     }
-    
+
                     if (tempState !== null && "state" in s && s.state !== null) {
                         let regex = new RegExp(s.state);
-    
+
                         if (regex.test(tempState)) {
                             choosedSequences.push(s);
                         }
                     }
                 }
-    
+
                 if (choosedSequences.length === 0) {
                     for (const s of sequences) {
                         if ("state" in s === false || s.state === null) {
                             choosedSequences.push(s);
                         }
                     }
-    
+
                     state = null;
                 }
-    
+
                 if (choosedSequences.length > 0) {
                     let queue = [];
-    
+
                     for (const s of choosedSequences[_random(0, choosedSequences.length)].sequence) {
                         if (state !== null) {
                             this.states[s.name] = state;
                         }
-    
+
                         queue.push(s);
                     }
-    
+
                     while (queue.length > 0) {
                         const obj = queue.shift();
-    
+
                         if (obj.type == "Sequence") {
                             if ("sequence" in obj === false) {
                                 let tracedSequences = [];
                                 let callableSequences = [];
-    
+
                                 for (const s of selectedSequences === null ? this.character.sequences : selectedSequences) {
                                     let sequenceStack = this.getSequenceStack(s, obj);
-    
+
                                     if (sequenceStack.length > 0) {
                                         let stack = [];
-    
+
                                         do {
                                             let poppedSequence = sequenceStack.pop();
-    
+
                                             if (sequenceStack.length > 0) {
                                                 let tempStack = [];
-    
+
                                                 for (const o of sequenceStack[sequenceStack.length - 1].sequence) {
                                                     if (o.type == "Sequence") {
                                                         if ("sequence" in o) {
                                                             let isNew = true;
-    
+
                                                             for (const tempSequence of stack) {
                                                                 if (tempSequence === o) {
                                                                     isNew = false;
-    
+
                                                                     break;
                                                                 }
                                                             }
-    
+
                                                             if (isNew) {
                                                                 tempStack.push(o);
                                                             }
                                                         }
-    
+
                                                         if (o === poppedSequence) {
                                                             break;
                                                         }
                                                     }
                                                 }
-    
+
                                                 while (tempStack.length > 0) {
                                                     stack.push(tempStack.pop());
                                                 }
                                             }
-    
+
                                             if ("sequence" in poppedSequence) {
                                                 let isNew = true;
-    
+
                                                 for (const tempSequence of stack) {
                                                     if (tempSequence === poppedSequence) {
                                                         isNew = false;
-    
+
                                                         break;
                                                     }
                                                 }
-    
+
                                                 if (isNew) {
                                                     stack.push(poppedSequence);
                                                 }
                                             }
                                         } while (sequenceStack.length > 0);
-    
+
                                         while (stack.length > 0) {
                                             tracedSequences.push(stack.pop());
                                         }
@@ -2017,18 +2025,18 @@ window.addEventListener("load", event => {
                                         tracedSequences.push(s);
                                     }
                                 }
-    
+
                                 if ("state" in obj) {
                                     this.states[obj.name] = obj.state;
-    
+
                                     for (const s of tracedSequences) {
                                         if (s.name == obj.name) {
                                             let regex = new RegExp(s.state);
-    
+
                                             if (!regex.test(obj.state)) {
                                                 continue;
                                             }
-    
+
                                             callableSequences.push(s);
                                         }
                                     }
@@ -2039,22 +2047,22 @@ window.addEventListener("load", event => {
                                                 if (s.name in this.states === false) {
                                                     continue;
                                                 }
-    
+
                                                 let regex = new RegExp(s.state);
-    
+
                                                 if (!regex.test(this.states[s.name])) {
                                                     continue;
                                                 }
                                             }
-    
+
                                             callableSequences.push(s);
                                         }
                                     }
                                 }
-    
+
                                 if (callableSequences.length > 0) {
                                     let index = 0;
-    
+
                                     for (const o of callableSequences[_random(0, callableSequences.length)].sequence) {
                                         queue.splice(index, 0, o);
                                         index++;
@@ -2066,89 +2074,89 @@ window.addEventListener("load", event => {
                         }
                     }
                 }
-    
+
                 return flattenedSequence;
             },
             getSequenceStack: function (sourceSequence, targetSequence) {
                 let sequenceStack = [];
-    
+
                 sequenceStack.push(sourceSequence);
-    
+
                 if (sequenceStack[sequenceStack.length - 1] !== targetSequence) {
                     if ("sequence" in sourceSequence) {
                         for (const o of sourceSequence.sequence) {
                             if (o.type == "Sequence") {
                                 let stack = this.getSequenceStack(o, targetSequence);
-    
+
                                 if (stack.length > 0 && stack[stack.length - 1] === targetSequence) {
                                     let tempStack = [];
-    
+
                                     do {
                                         tempStack.push(stack.pop());
                                     } while (stack.length > 0);
-    
+
                                     do {
                                         sequenceStack.push(tempStack.pop());
                                     } while (tempStack.length > 0);
-    
+
                                     return sequenceStack;
                                 }
                             }
                         }
                     }
-    
+
                     sequenceStack.pop();
                 }
-    
+
                 return sequenceStack;
             },
             animate: function () {
                 requestAnimationFrame(this.animate);
-    
+
                 stats.begin();
-    
+
                 const deltaTime = clock.getDelta();
-    
+
                 if (renderer.domElement.width !== renderer.domElement.clientWidth || renderer.domElement.height !== renderer.domElement.clientHeight) {
                     const width = renderer.domElement.clientWidth;
                     const height = renderer.domElement.clientHeight;
-    
+
                     bloomPass.setSize(width, height);
                     fxaaShader.uniforms.resolution.value.set(1 / (width * window.devicePixelRatio), 1 / (height * window.devicePixelRatio));
-    
+
                     renderer.setPixelRatio(window.devicePixelRatio);
                     renderer.setSize(width, height, false);
-    
+
                     camera.aspect = width / height;
                     camera.updateProjectionMatrix();
-    
+
                     composer.setPixelRatio(window.devicePixelRatio);
                     composer.setSize(width, height);
                 }
-    
+
                 if (vrmModel) {
                     function _random(min, max) {
                         min = Math.ceil(min);
                         max = Math.floor(max);
-    
+
                         return Math.floor(Math.random() * (max - min)) + min;
                     }
-    
+
                     let isAnimating = false;
                     let isDeforming = false;
                     let animationData = null;
                     let updatedBlendShapeNames = [];
-    
+
                     if (lookAnimation === null) {
                         lookAnimation = { time: 0.0, duration: 0.5, base: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: lookAtTarget.position.x + _random(-1.0, 1.0) * 0.1, y: lookAtTarget.position.y + _random(-1.0, 1.0) * 0.1 } };
                     }
-    
+
                     lookAnimation.time += deltaTime;
-    
+
                     if (lookAnimation.time >= lookAnimation.duration) {
                         lookAtTarget.position.x = lookAnimation.target.x;
                         lookAtTarget.position.y = lookAnimation.target.y;
-    
+
                         if (lookAnimation.base) {
                             lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: lookAnimation.base.x, y: lookAnimation.base.y } };
                         } else {
@@ -2156,27 +2164,27 @@ window.addEventListener("load", event => {
                         }
                     } else {
                         const rate = lookAnimation.time / lookAnimation.duration;
-    
+
                         lookAtTarget.position.x = lookAnimation.source.x + (lookAnimation.target.x - lookAnimation.source.x) * rate;
                         lookAtTarget.position.y = lookAnimation.source.y + (lookAnimation.target.y - lookAnimation.source.y) * rate;
                     }
-    
+
                     let blinkOffset = Math.max(0, Math.min(-lookAtTarget.position.y, 1));
                     let blinkRequired = true;
-    
+
                     if (this.currentAnimations.length > 0 && animationIndex < this.currentAnimations.length) {
                         animationData = this.currentAnimations[animationIndex];
                         animationIndex += animationSkipFrames;
                         isAnimating = true;
                     }
-    
+
                     for (let i = this.blendShapeAnimations.length - 1; i >= 0; i--) {
                         let blendShapeAnimation = this.blendShapeAnimations[i];
-    
+
                         if (!updatedBlendShapeNames.includes(blendShapeAnimation.name)) {
                             if (blendShapeAnimation.time <= blendShapeAnimation.duration) {
                                 blendShapeAnimation.time += deltaTime;
-    
+
                                 if (blendShapeAnimation.time >= blendShapeAnimation.duration) {
                                     if (blendShapeAnimation.name == "blink") {
                                         vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, 0.1 * blinkOffset + (1 - 0.1) * Math.abs(Math.sin(blendShapeAnimation.end / 2 * Math.PI)));
@@ -2184,7 +2192,7 @@ window.addEventListener("load", event => {
                                     } else {
                                         vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.end / 2 * Math.PI)));
                                     }
-    
+
                                     this.blendShapeAnimations.splice(i, 1);
                                 } else if (blendShapeAnimation.name == "blink") {
                                     vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, 0.1 * blinkOffset + (1 - 0.1) * Math.abs(Math.sin((blendShapeAnimation.time / blendShapeAnimation.duration * (blendShapeAnimation.end - blendShapeAnimation.start) + blendShapeAnimation.start) / 2 * Math.PI)));
@@ -2192,33 +2200,33 @@ window.addEventListener("load", event => {
                                 } else {
                                     vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin((blendShapeAnimation.time / blendShapeAnimation.duration * (blendShapeAnimation.end - blendShapeAnimation.start) + blendShapeAnimation.start) / 2 * Math.PI)));
                                 }
-    
+
                                 isDeforming = true;
                             }
-    
+
                             updatedBlendShapeNames.push(blendShapeAnimation.name);
                         }
                     }
-    
+
                     if (blinkRequired) {
                         vrmModel.blendShapeProxy.setValue("blink", 0.1 * blinkOffset);
                     }
-    
+
                     if (this.sequenceQueue.length > 0 && Array.isArray(this.sequenceQueue[0])) {
                         idleTime = 0.0;
                     } else {
                         idleTime += deltaTime;
-    
+
                         if (!this.isLoading) {
                             activateTime += deltaTime;
                         }
-    
+
                         if (this.sequenceQueue.length == 0) {
                             if (activateTime >= activateThreshold) {
                                 if (this.recentImages.length > 0) {
                                     this.isBlinded = true;
                                 }
-    
+
                                 idleTime = activateTime = 0.0;
                             } else if (idleTime >= blinkThreshold || animationData === null) {
                                 this.sequenceQueue.push({ sequences: this.prepare(this.character.sequences.filter((x) => x.name === "Idle")) });
@@ -2226,26 +2234,26 @@ window.addEventListener("load", event => {
                             }
                         }
                     }
-    
+
                     if (this.sequenceQueue.length > 0) {
                         const sequence = Array.isArray(this.sequenceQueue[0]) ? this.sequenceQueue[0] : this.sequenceQueue[0].sequences;
-    
+
                         if (sequence.length > 0) {
                             if (sequence[0].type == "Animation") {
                                 if ("name" in sequence[0]) {
                                     if (sequence[0].name in this.animations) {
                                         let isDependency = false;
-    
+
                                         if ("dependencies" in sequence[0]) {
                                             for (const animation of this.currentAnimations) {
                                                 if (sequence[0].dependencies.includes(animation.name)) {
                                                     isDependency = true;
-    
+
                                                     break;
                                                 }
                                             }
                                         }
-    
+
                                         if (!isDependency || !isAnimating) {
                                             /*const skipFrames = 60 / 12;
                                             let animations = this.animations[suggestion.animation];
@@ -2262,62 +2270,62 @@ window.addEventListener("load", event => {
                                             for (let i = this.currentAnimations.length - 1; i >= 0; i--) {
                                                 this.currentAnimations.push(animations[offset + i]);
                                             }*/
-    
+
                                             this.currentAnimations.splice(0);
-    
+
                                             for (let animation of this.animations[sequence[0].name]) {
                                                 this.currentAnimations.push(animation);
                                             }
-    
+
                                             sequence.shift();
-    
+
                                             animationIndex = 0;
                                             animationData = this.currentAnimations[animationIndex];
                                             animationIndex += animationSkipFrames;
                                         }
                                     } else {
                                         let isDependency = false;
-    
+
                                         if ("dependencies" in sequence[0]) {
                                             for (const animation of this.blendShapeAnimations) {
                                                 if (sequence[0].dependencies.includes(animation.name)) {
                                                     isDependency = true;
-    
+
                                                     break;
                                                 }
                                             }
                                         }
-    
+
                                         if (!isDependency || !isDeforming) {
                                             let nameSet = [];
-    
+
                                             this.blendShapeAnimations.unshift({ name: sequence[0].name, time: 0.0, duration: sequence[0].duration, start: sequence[0].start, end: sequence[0].end });
                                             sequence.shift();
-    
+
                                             while (sequence.length > 0) {
                                                 isDependency = false;
-    
+
                                                 if ("dependencies" in sequence[0]) {
                                                     for (const animation of this.blendShapeAnimations) {
                                                         if (sequence[0].dependencies.includes(animation.name)) {
                                                             isDependency = true;
-    
+
                                                             break;
                                                         }
                                                     }
                                                 }
-    
+
                                                 if (isDependency || sequence[0].type != "Animation" || sequence[0].name in this.animations) {
                                                     break;
                                                 }
-    
+
                                                 this.blendShapeAnimations.unshift({ name: sequence[0].name, time: 0.0, duration: sequence[0].duration, start: sequence[0].start, end: sequence[0].end });
                                                 sequence.shift();
                                             }
-    
+
                                             for (let i = this.blendShapeAnimations.length - 1; i >= 0; i--) {
                                                 let blendShapeAnimation = this.blendShapeAnimations[i];
-    
+
                                                 if (!nameSet.includes(blendShapeAnimation.name)) {
                                                     vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.start / 2 * Math.PI)));
                                                     nameSet.push(blendShapeAnimation.name);
@@ -2325,7 +2333,7 @@ window.addEventListener("load", event => {
                                             }
                                         }
                                     }
-    
+
                                     /*if (lookAtTarget.position.x != 0.0 || lookAtTarget.position.y != 0.0) {
                                         lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
                                     }*/
@@ -2338,12 +2346,12 @@ window.addEventListener("load", event => {
                                 } else {
                                     this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: sequence[0].text };
                                 }
-    
+
                                 sequence.shift();
-    
+
                                 if (!this.isMuted) {
                                     const text = this.message.text;
-    
+
                                     new Promise(async resolve => {
                                         try {
                                             const response = await fetch("https://ai.milchchan.com/api/synthesize?text=" + encodeURIComponent(text), {
@@ -2353,10 +2361,10 @@ window.addEventListener("load", event => {
                                                     "Content-Type": "application/x-www-form-urlencoded"
                                                 }
                                             });
-    
+
                                             if (response.ok) {
                                                 this.$refs.player.src = URL.createObjectURL(await response.blob());
-    
+
                                                 if (this.message !== null && text === this.message.text) {
                                                     this.$refs.player.currentTime = 0;
                                                     this.$refs.player.play();
@@ -2368,7 +2376,7 @@ window.addEventListener("load", event => {
                                         } catch (e) {
                                             console.error(e);
                                         }
-    
+
                                         resolve();
                                     });
                                 }
@@ -2647,7 +2655,7 @@ window.addEventListener("load", event => {
                                 app.isComputing = false;
                             });
                         }*/
-    
+
                         /*if (animationData === null) {
                             if (app.sequenceQueue.length > 0) {
                                 idleTime = activateTime = 0.0;
@@ -2690,27 +2698,27 @@ window.addEventListener("load", event => {
                             activateTime += deltaTime;
                         }*/
                     }
-    
+
                     if (this.message !== null) {
                         if (this.message.type.reverse) {
                             if (this.message.type.count > 0) {
                                 this.message.type.elapsed += deltaTime * 2;
-    
+
                                 if (this.message.type.elapsed >= 1.0 / this.message.type.speed) {
                                     let index = this.message.type.count - 1;
-    
+
                                     if (index < this.message.text.length) {
                                         let width = Math.floor(this.message.text.length / 2);
-    
+
                                         if (this.message.type.buffer.length <= width && this.message.type.count > 0) {
                                             this.message.type.count -= 1;
                                         }
-    
+
                                         if (this.message.type.buffer.length > 0) {
                                             this.message.type.buffer = this.message.type.buffer.substring(0, this.message.type.buffer.length - 1);
                                         }
                                     }
-    
+
                                     this.message.type.elapsed = 0;
                                 }
                             } else {
@@ -2726,48 +2734,48 @@ window.addEventListener("load", event => {
                                     this.isPopup = true;
                                 }
                             }
-    
+
                             if (this.message.type.elapsed >= 1.0 / this.message.type.speed) {
                                 let index = this.message.type.buffer.length;
                                 let width = Math.floor(this.message.text.length / 2);
                                 let length = this.message.text.length;
-    
+
                                 if (this.message.type.count >= width) {
                                     this.message.type.buffer += this.message.text.charAt(index);
                                 }
-    
+
                                 if (this.message.type.count < length) {
                                     this.message.type.count += 1;
                                 }
-    
+
                                 this.message.type.elapsed = 0;
                             }
                         } else {
                             this.message.time += deltaTime;
-    
+
                             if (this.message.time >= this.message.duration) {
                                 this.message.type.reverse = true;
                             }
                         }
-    
+
                         if (this.message.text.length === this.message.type.buffer.length) {
                             const characters = this.message.text.split("");
-    
+
                             this.text.splice(0);
-    
+
                             for (let i = 0; i < characters.length; i++) {
                                 this.text.push({ key: i, value: characters[i] });
                             }
                         } else {
                             let charArray = new Array();
                             let randomBuffer = "";
-    
+
                             for (let i = 0; i < this.message.text.length; i++) {
                                 if (charArray.indexOf(this.message.text.charAt(i)) == -1 && this.message.text.charAt(i) != "\n" && this.message.text.charAt(i).match(/\s/) == null) {
                                     charArray.push(this.message.text.charAt(i));
                                 }
                             }
-    
+
                             if (charArray.length > 0) {
                                 for (let i = 0; i < this.message.type.count; i++) {
                                     if (this.message.text.charAt(i) == "\n") {
@@ -2777,27 +2785,27 @@ window.addEventListener("load", event => {
                                     }
                                 }
                             }
-    
+
                             if (randomBuffer.length > this.message.type.buffer.length) {
                                 const characters = (this.message.type.buffer + randomBuffer.substring(this.message.type.buffer.length, randomBuffer.length)).split("");
-    
+
                                 this.text.splice(0);
-    
+
                                 for (let i = 0; i < characters.length; i++) {
                                     this.text.push({ key: i, value: characters[i] });
                                 }
                             } else if (this.text.length !== this.message.type.buffer.length) {
                                 const characters = this.message.type.buffer.split("");
-    
+
                                 this.text.splice(0);
-    
+
                                 for (let i = 0; i < characters.length; i++) {
                                     this.text.push({ key: i, value: characters[i] });
                                 }
                             }
                         }
                     }
-    
+
                     if (animationData) {
                         for (let animation of animationData.animations) {
                             switch (animation.bone) {
@@ -3007,7 +3015,7 @@ window.addEventListener("load", event => {
                                 default:
                                     animation.bone = null;
                             }
-    
+
                             if (animation.bone && animation.rotation.length == 4) {
                                 try {
                                     vrmModel.humanoid.getBoneNode(animation.bone).position.set(animation.position[0], animation.position[1], -animation.position[2]);
@@ -3019,20 +3027,20 @@ window.addEventListener("load", event => {
                             }
                         }
                     }
-    
+
                     if (vrmSpringBones.length > 0) {
                         const mergedBoneAnimationDictionary = {};
                         let index = 0;
-    
+
                         if (draggableBone === null) {
                             if (draggingBones !== null) {
                                 draggingBones.time -= deltaTime;
-    
+
                                 if (draggingBones.time <= 0) {
                                     for (const key in draggingBones.bones) {
                                         mergedBoneAnimationDictionary[key] = { direction: draggingBones.bones[key].direction, force: draggingBones.bones[key].base };
                                     }
-    
+
                                     draggingBones = null;
                                 } else {
                                     for (const key in draggingBones.bones) {
@@ -3043,47 +3051,47 @@ window.addEventListener("load", event => {
                         } else if (draggingBones === null) {
                             let bonePosition = null;
                             let springBoneIndex = 0;
-    
+
                             for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                 for (const springBone of springBoneGroup) {
                                     if (springBoneIndex === draggableBone.index) {
                                         bonePosition = springBone.bone.getWorldPosition(new THREE.Vector3());
                                     }
-    
+
                                     springBoneIndex++;
                                 }
                             }
-    
+
                             if (bonePosition !== null) {
                                 const range = 0.25;
-    
+
                                 springBoneIndex = 0;
                                 draggingBones = { time: 0, duration: 0.5, center: bonePosition, bones: {} };
-    
+
                                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                     for (const springBone of springBoneGroup) {
                                         if (bonePosition.distanceTo(springBone.bone.getWorldPosition(new THREE.Vector3())) <= range) {
                                             draggingBones.bones[springBoneIndex] = { direction: new THREE.Vector3(draggableBone.direction.x, draggableBone.direction.y, 0), base: springBone.gravityPower - vrmSpringBones[springBoneIndex].gravityPower, source: 0, target: -Math.min(0.01 * draggableBone.distance * Math.cos(bonePosition.distanceTo(springBone.bone.getWorldPosition(new THREE.Vector3())) / range), 5) };
                                             mergedBoneAnimationDictionary[springBoneIndex] = { direction: draggingBones.bones[springBoneIndex].direction, force: draggingBones.bones[springBoneIndex].source };
                                         }
-    
+
                                         springBoneIndex++;
                                     }
                                 }
                             }
                         } else {
                             draggingBones.time += deltaTime;
-    
+
                             if (draggingBones.time >= draggingBones.duration) {
                                 const range = 0.25;
                                 let springBoneIndex = 0;
-    
+
                                 for (const key in draggingBones.bones) {
                                     mergedBoneAnimationDictionary[key] = { direction: draggingBones.bones[key].direction, force: draggingBones.bones[key].target };
                                 }
-    
+
                                 draggingBones.time = 0;
-    
+
                                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                     for (const springBone of springBoneGroup) {
                                         if (springBoneIndex in draggingBones.bones) {
@@ -3091,7 +3099,7 @@ window.addEventListener("load", event => {
                                             draggingBones.bones[springBoneIndex].source = draggingBones.bones[springBoneIndex].target;
                                             draggingBones.bones[springBoneIndex].target = -Math.min(0.01 * draggableBone.distance * Math.cos(draggingBones.center.distanceTo(springBone.bone.getWorldPosition(new THREE.Vector3())) / range), 5);
                                         }
-    
+
                                         springBoneIndex++;
                                     }
                                 }
@@ -3101,31 +3109,31 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
-    
+
                         if (randomWind === null) {
                             let springBoneIndex = 0;
-    
+
                             randomWind = { time: 0, duration: 1.0, direction: new THREE.Vector3(1, 0, 0), force: 0.01 * (Math.random() - 0.5), sources: {} };
-    
+
                             for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                 for (const springBone of springBoneGroup) {
                                     if (springBoneIndex in mergedBoneAnimationDictionary === false) {
                                         randomWind.sources[springBoneIndex] = springBone.gravityPower - vrmSpringBones[springBoneIndex].gravityPower;
                                     }
-    
+
                                     springBoneIndex++;
                                 }
                             }
                         } else {
                             randomWind.time += deltaTime;
-    
+
                             if (randomWind.time >= randomWind.duration) {
                                 for (const key in randomWind.sources) {
                                     if (key in mergedBoneAnimationDictionary === false) {
                                         mergedBoneAnimationDictionary[key] = { direction: randomWind.direction, force: randomWind.force };
                                     }
                                 }
-    
+
                                 randomWind = null;
                             } else {
                                 for (const key in randomWind.sources) {
@@ -3135,53 +3143,53 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
-    
+
                         for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                             for (const springBone of springBoneGroup) {
                                 if (index in mergedBoneAnimationDictionary) {
                                     const vector = new THREE.Vector3(vrmSpringBones[index].gravityDir.x + mergedBoneAnimationDictionary[index].direction.x, vrmSpringBones[index].gravityDir.y + mergedBoneAnimationDictionary[index].direction.y, vrmSpringBones[index].gravityDir.z + mergedBoneAnimationDictionary[index].direction.z);
-    
+
                                     springBone.gravityDir = vector.normalize();
                                     springBone.gravityPower = vrmSpringBones[index].gravityPower + mergedBoneAnimationDictionary[index].force;
                                 }
-    
+
                                 index++;
                             }
                         }
                     }
-    
+
                     vrmModel.update(deltaTime);
                     /*if (currentMixer) {
                         currentMixer.update(deltaTime);
                     }*/
                 }
-    
+
                 controls.update();
-    
+
                 //renderer.render(scene, camera);
                 composer.render(deltaTime);
-    
+
                 stats.end();
             }
         },
         updated: function () {
             //let container = this.$refs.container;
-    
+
             this.insetTop = this.$refs.indicator.getBoundingClientRect().height;
             this.insetBottom = this.$refs.blank.getBoundingClientRect().height;
-    
+
             //this.$refs.ticker.style.width = document.body.querySelector("#input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(1) form").getBoundingClientRect().width + 'px';
-    
+
             //document.body.querySelector("#heading>.columns>.column>.columns:first-child>.column>.columns:last-child .level:first-child .level-item .field .ticker").style.width = "100%";
             /*this.$refs.ticker.style.width = document.body.querySelector("#input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(1) form").getBoundingClientRect().width + 'px';
             */
             for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                 let width = 0;
-    
+
                 for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
                     width += element.getBoundingClientRect().width;
                 }
-    
+
                 if (width > 0) {
                     this.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                     clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
@@ -3193,32 +3201,32 @@ window.addEventListener("load", event => {
                 const r = Math.random();
                 let sum = 0.0;
                 let index = 0;
-    
+
                 for (let item of collection) {
                     const probability = func(item);
-    
+
                     if (sum <= r && r < sum + probability) {
                         break;
                     }
-    
+
                     sum += probability;
                     index++;
                 }
-    
+
                 return collection[index];
             }
-    
+
             const self = this;
             const characterStorageItem = localStorage.getItem("character");
             const credentialStorageItem = localStorage.getItem("credential");
             let credential = null;
             const characters = [{ path: "/assets/milch.json", probability: 0.9 }, { path: "/assets/merku.json", probability: 0.1 }];
             const loader = new GLTFLoader();
-    
+
             if (characterStorageItem) {
                 try {
                     const character = JSON.parse(characterStorageItem);
-    
+
                     if (character !== null) {
                         this.isMuted = character.mute;
                     }
@@ -3226,7 +3234,7 @@ window.addEventListener("load", event => {
                     localStorage.removeItem("character");
                 }
             }
-    
+
             if (credentialStorageItem) {
                 try {
                     credential = JSON.parse(credentialStorageItem);
@@ -3234,15 +3242,15 @@ window.addEventListener("load", event => {
                     localStorage.removeItem("credential");
                 }
             }
-    
+
             this.$refs.three.appendChild(renderer.domElement);
             this.$refs.three.after(stats.domElement);
-    
+
             this.animate();
-    
+
             this.insetTop = this.$refs.indicator.getBoundingClientRect().height;
             this.insetBottom = this.$refs.blank.getBoundingClientRect().height;
-    
+
             try {
                 const response = await fetch(choice(characters, (x) => x.probability).path, {
                     mode: "cors",
@@ -3251,7 +3259,7 @@ window.addEventListener("load", event => {
                         "Content-Type": "application/x-www-form-urlencoded"
                     }
                 });
-    
+
                 if (response.ok) {
                     this.character = await response.json();
                 }
@@ -3262,12 +3270,12 @@ window.addEventListener("load", event => {
                 this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                 console.error(e);
             }
-    
+
             this.sequenceQueue.push(this.prepare(this.character.sequences.filter((x) => x.name === "Start")));
-    
+
             loader.crossOrigin = "anonymous";
             loader.load(
-                await storage.ref().child(this.character.model).getDownloadURL(),
+                await getDownloadURL(storageRef(storage, this.character.model)),
                 (gltf) => {
                     VRM.from(gltf).then(async (vrm) => {
                         const urls = {
@@ -3282,7 +3290,7 @@ window.addEventListener("load", event => {
                             win: "/assets/animation-win.json"
                         };
                         let animationDictionary = {};
-    
+
                         try {
                             for (let key in urls) {
                                 const response3 = await fetch(encodeURI(urls[key]), {
@@ -3292,36 +3300,36 @@ window.addEventListener("load", event => {
                                         "Content-Type": "application/x-www-form-urlencoded"
                                     }
                                 });
-    
+
                                 if (response3.ok) {
                                     const json = await response3.json();
-    
+
                                     animationDictionary[key] = json.data;
                                 }
                                 else {
                                     throw new Error(response3.statusText);
                                 }
                             }
-    
+
                             self.animations = animationDictionary;
                             vrmModel = vrm;
-    
+
                             scene.add(vrm.scene);
-    
+
                             vrm.scene.rotation.y = Math.PI;
                             vrm.lookAt.target = lookAtTarget;
-    
+
                             vrmSpringBones.splice(0);
-    
+
                             for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                 for (const springBone of springBoneGroup) {
                                     vrmSpringBones.push({ gravityDir: springBone.gravityDir.clone(), gravityPower: springBone.gravityPower });
                                 }
                             }
-    
+
                             //vrm.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).rotation.y = Math.PI;
                             //currentMixer = prepareAnimation(vrm);
-    
+
                             self.progress = null;
                         } catch (e) {
                             self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
@@ -3332,69 +3340,75 @@ window.addEventListener("load", event => {
                 (progress) => self.progress = progress.loaded / progress.total,
                 (error) => console.error(error)
             );
-    
+
             if (credential !== null) {
-                if (credential.providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithCredential(firebase.auth.GoogleAuthProvider.credential(credential.idToken)).catch((error) => {
-                        console.error(error.code, error.message);
-                    });
+                if (credential.providerId === GoogleAuthProvider.PROVIDER_ID) {
+                    try {
+                        signInWithCredential(auth, GoogleAuthProvider.credential(credential.idToken));
+                    } catch (e) {
+                        self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e.code, e.message);
+                    }
                 } else if (credential.providerId === firebase.auth.FacebookAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithCredential(firebase.auth.FacebookAuthProvider.credential(credential.accessToken)).catch((error) => {
-                        console.error(error.code, error.message);
-                    });
+                    try {
+                        signInWithCredential(auth, FacebookAuthProvider.credential(credential.accessToken));
+                    } catch (e) {
+                        self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e.code, e.message);
+                    }
                 } else if (credential.providerId === firebase.auth.TwitterAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithCredential(firebase.auth.TwitterAuthProvider.credential(credential.accessToken, credential.secret)).catch((error) => {
-                        console.error(error.code, error.message);
-                    });
+                    try {
+                        signInWithCredential(auth, TwitterAuthProvider.credential(credential.accessToken, credential.secret));
+                    } catch (e) {
+                        self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e.code, e.message);
+                    }
                 }
             }
-    
-            /*firebase.auth().signInAnonymously().catch(function (error) {
-                self.notify({ text: error.message, accent: self.character.accent, image: self.character.image });
-                console.error(error.code, error.message);
-            });*/
-            firebase.auth().onAuthStateChanged(function (user) {
+
+            onAuthStateChanged(auth, user => {
+                // Check for user status
                 if (user) {
                     // User is signed in.
                     self.user = user;
-    
-                    database.ref(databaseMessages).limitToLast(100).on("value", snapshot => {
-                        if (snapshot.exists()) {
+
+                    onValue(query(databaseRef(database, databaseMessages), limitToLast(100)), snapshot => {
+                               if (snapshot.exists()) {
                             function format(format) {
                                 var args = arguments;
-    
+
                                 return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                             }
-    
+
                             const messageDictionary = snapshot.val();
                             let keys = Object.keys(messageDictionary);
                             let received = null;
                             let sequences = [];
                             let sequence = [];
-    
+
                             if (keys.length > app.maxMessages) {
                                 keys.splice(0, keys.length - app.maxMessages);
                             }
-    
+
                             app.feedQueue.splice(0);
-    
+
                             for (let key of keys) {
                                 const message = messageDictionary[key];
                                 const timestamp = message.timestamp * 1000;
                                 let index = -1;
-    
+
                                 for (let i = 0; i < app.messages.length; i++) {
                                     if (key === app.messages[i].id) {
                                         index = i;
-    
+
                                         break;
                                     }
                                 }
-    
+
                                 if (!message.user.accent) {
                                     message.user.accent = "#30c0f5";
                                 }
-    
+
                                 if (index >= 0) {
                                     //let j = -1;
                                     const data = { id: key, text: message.text, thread: message.thread, timestamp: new Date(timestamp), user: message.user };
@@ -3413,7 +3427,7 @@ window.addEventListener("load", event => {
                                     } else {
                                         app.messages[index] = data;
                                     }*/
-    
+
                                     app.messages[index] = data;
                                 }
                                 else {
@@ -3422,37 +3436,37 @@ window.addEventListener("load", event => {
                                             index = i;
                                         }
                                     }
-    
+
                                     app.messages.splice(index >= 0 ? index : app.messages.length, 0, { id: key, text: message.text, thread: message.thread, timestamp: new Date(timestamp), user: message.user });
-    
+
                                     if (app.messages.length > app.maxMessages) {
                                         app.messages.shift();
                                     }
-    
+
                                     if (app.user.uid !== message.user.id) {
                                         received = message.user;
                                     }
                                 }
-    
+
                                 app.feedQueue.unshift(message);
                             }
-    
+
                             for (let i = app.messages.length - 1; i >= 0; i--) {
                                 if (!(app.messages[i].id in messageDictionary)) {
                                     app.messages.splice(i, 1);
                                 }
                             }
-    
+
                             if (received) {
                                 if (!received.id && vrmModel) {
                                     //app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.Joy, time: 0.0, duration: 0.5, start: 0.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Joy, time: 0.0, duration: 1.0, start: 1.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Joy, time: 0.0, duration: 0.5, start: 1.0, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.A, time: 0.0, duration: 0.5, start: 0.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.A, time: 0.0, duration: 1.0, start: 1.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.A, time: 0.0, duration: 0.5, start: 1.0, end: 0.0 }]);
                                 }
-    
+
                                 //document.body.querySelector("#alert").play();
                             }
-    
+
                             //app.update(messageDictionary, app.maxTags);
-    
+
                             /*for (const sequence of app.character.sequences) {
                                 if (sequence.name == "Alert") {
                                     sequences.push(sequence);
@@ -3470,126 +3484,123 @@ window.addEventListener("load", event => {
                             if (sequence.length > 0) {
                                 app.sequenceQueue.push(sequence);
                             }*/
-    
+
                             app.feedQueue.push(app.feedQueue.shift());
                         }
                     });
                 } else {
                     // User is signed out.
-                    //database.ref(databaseRoot + "/images").off("value");
-                    //database.ref(databaseRoot + "/stars").off("value");
-                    //database.ref(databaseRoot + "/words").off("value");
-                    database.ref(databaseMessages).off("value");
-    
+                    off(databaseRef(datbase, databaseMessages));
+                    
                     self.user = null;
                     self.stars = 0;
                 }
-    
-                database.ref(databaseRoot + "/images").limitToLast(100).on("value", snapshot => {
-                    if (snapshot.exists()) {
-                        const images = snapshot.val();
-                        let isUpdated = false;
-    
+            });
+
+            onValue(query(databaseRef(database, databaseRoot + "/images"), limitToLast(100)), snapshot => {
+                if (snapshot.exists()) {
+                    const images = snapshot.val();
+                    let isUpdated = false;
+
+                    for (const key in images) {
+                        if (!self.recentImages.some(x => x.id === key && x.timestamp === images[key].timestamp)) {
+                            isUpdated = true;
+
+                            break;
+                        }
+                    }
+
+                    if (isUpdated) {
+                        self.recentImages.splice(0);
+
                         for (const key in images) {
-                            if (!self.recentImages.some(x => x.id === key && x.timestamp === images[key].timestamp)) {
-                                isUpdated = true;
-    
+                            images[key]["id"] = key;
+                            self.recentImages.push(images[key]);
+                        }
+
+                        self.update(self.recentImages, self.maxTags);
+                        self.isBlinded = true;
+                    }
+                }
+            });
+            onValue(databaseRef(database, databaseRoot + "/stars"), snapshot => {
+                const count = snapshot.val();
+
+                if (count === null) {
+                    self.stars = 0;
+                } else {
+                    self.stars = count;
+                }
+            });
+            onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)), snapshot => {
+                if (snapshot.exists()) {
+                    const words = snapshot.val();
+                    let tempWords = [];
+                    let index = 0;
+
+                    for (const word in words) {
+                        tempWords.push({ name: word, timestamp: words[word].timestamp });
+                    }
+
+                    for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), 10)) {
+                        if (obj.type === "Message") {
+                            self.words.splice(index, 0, { name: obj.text, image: self.character.image });
+                            index++;
+                        }
+                    }
+
+                    for (const word of tempWords.sort((x, y) => y.timestamp - x.timestamp)) {
+                        let removeIndex = -1;
+
+                        for (let i = 0; i < self.words.length; i++) {
+                            if (self.words[i].name == word.name) {
+                                removeIndex = i;
+
                                 break;
                             }
                         }
-    
-                        if (isUpdated) {
-                            self.recentImages.splice(0);
-    
-                            for (const key in images) {
-                                images[key]["id"] = key;
-                                self.recentImages.push(images[key]);
-                            }
-    
-                            self.update(self.recentImages, self.maxTags);
-                            self.isBlinded = true;
-                        }
-                    }
-                });
-                database.ref(databaseRoot + "/stars").on("value", snapshot => {
-                    const count = snapshot.val();
-    
-                    if (count === null) {
-                        self.stars = 0;
-                    } else {
-                        self.stars = count;
-                    }
-                });
-                database.ref(databaseRoot + "/words").orderByChild("timestamp").limitToLast(10).on("value", snapshot => {
-                    if (snapshot.exists()) {
-                        const words = snapshot.val();
-                        let tempWords = [];
-                        let index = 0;
-    
-                        for (const word in words) {
-                            tempWords.push({ name: word, timestamp: words[word].timestamp });
-                        }
-    
-                        for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), 10)) {
-                            if (obj.type === "Message") {
-                                self.words.splice(index, 0, { name: obj.text, image: self.character.image });
-                                index++;
-                            }
-                        }
-    
-                        for (const word of tempWords.sort((x, y) => y.timestamp - x.timestamp)) {
-                            let removeIndex = -1;
-    
-                            for (let i = 0; i < self.words.length; i++) {
-                                if (self.words[i].name == word.name) {
-                                    removeIndex = i;
-    
-                                    break;
-                                }
-                            }
-    
-                            if (removeIndex >= 0) {
-                                if (self.words[removeIndex].timestamp < word.timestamp) {
-                                    if (word.name in self.wordDictionary) {
-                                        delete self.wordDictionary[word.name];
-                                    }
-    
-                                    Object.keys(self.reverseWordDictionary).forEach((key) => {
-                                        if (self.reverseWordDictionary[key].words.some((x) => x === word.name)) {
-                                            delete self.reverseWordDictionary[key];
-                                        }
-                                    });
-                                }
-    
-                                self.words.splice(removeIndex, 1);
-                            } else {
+
+                        if (removeIndex >= 0) {
+                            if (self.words[removeIndex].timestamp < word.timestamp) {
                                 if (word.name in self.wordDictionary) {
                                     delete self.wordDictionary[word.name];
                                 }
-    
+
                                 Object.keys(self.reverseWordDictionary).forEach((key) => {
                                     if (self.reverseWordDictionary[key].words.some((x) => x === word.name)) {
                                         delete self.reverseWordDictionary[key];
                                     }
                                 });
                             }
-    
-                            self.words.splice(index, 0, word);
-                            index++;
+
+                            self.words.splice(removeIndex, 1);
+                        } else {
+                            if (word.name in self.wordDictionary) {
+                                delete self.wordDictionary[word.name];
+                            }
+
+                            Object.keys(self.reverseWordDictionary).forEach((key) => {
+                                if (self.reverseWordDictionary[key].words.some((x) => x === word.name)) {
+                                    delete self.reverseWordDictionary[key];
+                                }
+                            });
                         }
-    
-                        for (let i = self.words.length - 1; i >= index; i--) {
-                            self.words.splice(i, 1);
-                        }
+
+                        self.words.splice(index, 0, word);
+                        index++;
                     }
-                });
+
+                    for (let i = self.words.length - 1; i >= index; i--) {
+                        self.words.splice(i, 1);
+                    }
+                }
             });
         },
         unmounted: function () {
             if (typeof this.tickIntervalID === "number") {
                 clearInterval(this.tickIntervalID);
             }
-    
+
             if (vrmModel !== null) {
                 scene.remove(vrmModel.scene);
                 vrmModel = null;
@@ -3599,12 +3610,12 @@ window.addEventListener("load", event => {
 
     window.addEventListener("resize", event => {
         //let container = app.$refs.container;
-    
+
         app.insetTop = app.$refs.indicator.getBoundingClientRect().height;
         app.insetBottom = app.$refs.blank.getBoundingClientRect().height;
-    
+
         //app.$refs.ticker.style.width = document.body.querySelector("#input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(1) form").getBoundingClientRect().width + 'px';
-    
+
         /*const width = window.innerWidth;
         const height = window.outerHeight;
     
@@ -3619,15 +3630,15 @@ window.addEventListener("load", event => {
     
         composer.setPixelRatio(window.devicePixelRatio);
         composer.setSize(width, height);*/
-    
+
         app.$nextTick(() => {
             for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                 let width = 0;
-    
+
                 for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
                     width += element.getBoundingClientRect().width;
                 }
-    
+
                 if (width > 0) {
                     app.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                     clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
@@ -3641,18 +3652,18 @@ window.addEventListener("load", event => {
         const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
         const w = element.offsetWidth;
         const h = element.offsetHeight;
-    
+
         mouse.x = (x / w) * 2 - 1;
         mouse.y = -(y / h) * 2 + 1;
-    
+
         raycaster.setFromCamera(mouse, camera);
-    
+
         const intersects = raycaster.intersectObjects(scene.children, true);
-    
+
         for (let intersect of intersects) {
             if (intersect.object.name === "face") {
                 //app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.0, end: 2.0 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.0, end: 2.0 }]);
-    
+
                 break;
             } else if (intersect.object.name.indexOf("breast") >= 0) {
                 /*if (random(0, 1) === 0) {
@@ -3660,7 +3671,7 @@ window.addEventListener("load", event => {
                 } else {
                     app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 0.5, start: 0.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 3.0, start: 1.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 0.5, start: 1.0, end: 0.0 }]);
                 }*/
-    
+
                 break;
             }
         }
@@ -3671,12 +3682,12 @@ window.addEventListener("load", event => {
         const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
         const w = element.offsetWidth;
         const h = element.offsetHeight;
-    
+
         mouse.x = (x / w) * 2 - 1;
         mouse.y = -(y / h) * 2 + 1;
-    
+
         raycaster.setFromCamera(mouse, camera);
-    
+
         if (raycaster.intersectObjects(scene.children, true).length > 0) {
             app.activate();
         }
@@ -3698,38 +3709,38 @@ window.addEventListener("load", event => {
             const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
             const w = element.offsetWidth;
             const h = element.offsetHeight;
-    
+
             mouse.x = (x / w) * 2 - 1;
             mouse.y = -(y / h) * 2 + 1;
-    
+
             raycaster.setFromCamera(mouse, camera);
-    
+
             for (let intersect of raycaster.intersectObjects(scene.children, true)) {
                 if (intersect.distance < minDistance) {
                     bestIntersect = intersect;
                     minDistance = intersect.distance;
                 }
             }
-    
+
             if (bestIntersect !== null) {
                 let springBoneIndex = 0;
-    
+
                 draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
                 minDistance = Number.MAX_SAFE_INTEGER;
-    
+
                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                     for (const springBone of springBoneGroup) {
                         const distance = springBone.bone.getWorldPosition(new THREE.Vector3()).distanceTo(bestIntersect.point);
-    
+
                         if (distance < minDistance) {
                             draggableBone.index = springBoneIndex;
                             minDistance = distance;
                         }
-    
+
                         springBoneIndex++;
                     }
                 }
-    
+
                 if (app.character !== null) {
                     app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchStart"), bestIntersect.object.name));
                 }
@@ -3750,16 +3761,16 @@ window.addEventListener("load", event => {
         const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
         const w = element.offsetWidth;
         const h = element.offsetHeight;
-    
+
         mouse.x = (x / w) * 2 - 1;
         mouse.y = -(y / h) * 2 + 1;
-    
+
         if (!controls.enabled && event.button === 0) {
             lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
-    
+
             if (draggableBone !== null) {
                 const vector = new THREE.Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
-    
+
                 draggableBone.direction = vector.normalize();
                 draggableBone.distance = Math.sqrt((draggableBone.point.x - x) * (draggableBone.point.x - x) + (draggableBone.point.y - y) * (draggableBone.point.y - y));
             }
@@ -3768,7 +3779,7 @@ window.addEventListener("load", event => {
     window.addEventListener("mouseup", event => {
         if (!controls.enabled && event.button === 0) {
             draggableBone = null;
-    
+
             if (app.character !== null) {
                 app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
             }
@@ -3776,90 +3787,90 @@ window.addEventListener("load", event => {
     });
     window.addEventListener("touchstart", event => {
         event.stopPropagation();
-    
+
         const element = app.$refs.three;
         const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
         const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
         const w = element.offsetWidth;
         const h = element.offsetHeight;
-    
+
         mouse.x = (x / w) * 2 - 1;
         mouse.y = -(y / h) * 2 + 1;
-    
+
         raycaster.setFromCamera(mouse, camera);
-    
+
         if (tapCount == 0) {
             tapCount++;
-    
+
             setTimeout(() => {
                 tapCount = 0;
             }, 500);
-    
+
             let minDistance = Number.MAX_SAFE_INTEGER;
             let bestIntersect = null;
-    
+
             for (let intersect of raycaster.intersectObjects(scene.children, true)) {
                 if (intersect.distance < minDistance) {
                     bestIntersect = intersect;
                     minDistance = intersect.distance;
                 }
             }
-    
+
             if (bestIntersect !== null) {
                 let springBoneIndex = 0;
-    
+
                 draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
                 minDistance = Number.MAX_SAFE_INTEGER;
-    
+
                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                     for (const springBone of springBoneGroup) {
                         const distance = springBone.bone.getWorldPosition(new THREE.Vector3()).distanceTo(bestIntersect.point);
-    
+
                         if (distance < minDistance) {
                             draggableBone.index = springBoneIndex;
                             minDistance = distance;
                         }
-    
+
                         springBoneIndex++;
                     }
                 }
-    
+
                 if (app.character !== null) {
                     app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchStart"), bestIntersect.object.name));
                 }
             }
-    
+
             lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
         } else {
             if (raycaster.intersectObjects(scene.children, true).length > 0) {
                 app.activate();
             }
-    
+
             tapCount = 0;
         }
     });
     window.addEventListener("touchmove", event => {
         event.stopPropagation();
-    
+
         const element = app.$refs.three;
         const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
         const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
         const w = element.offsetWidth;
         const h = element.offsetHeight;
-    
+
         lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
     });
     window.addEventListener("touchend", event => {
         event.stopPropagation();
-    
+
         const element = app.$refs.three;
         const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
         const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
         const w = element.offsetWidth;
         const h = element.offsetHeight;
-    
+
         lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
-    
+
         if (app.character !== null) {
             app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
         }
@@ -3874,16 +3885,16 @@ window.addEventListener("load", event => {
     window.addEventListener("drop", (event) => {
         event.stopPropagation();
         event.preventDefault();
-    
+
         for (let file of event.dataTransfer.files) {
             const name = file.name.toLowerCase();
-    
+
             if (name.endsWith(".vrm")) {
                 let reader = new FileReader();
-    
+
                 reader.addEventListener("load", (e) => {
                     const loader = new GLTFLoader();
-    
+
                     loader.crossOrigin = "anonymous";
                     loader.load(
                         e.target.result,
@@ -3892,22 +3903,22 @@ window.addEventListener("load", event => {
                                 if (vrmModel !== null) {
                                     scene.remove(vrmModel.scene);
                                 }
-    
+
                                 vrmModel = vrm;
-    
+
                                 scene.add(vrm.scene);
-    
+
                                 vrm.scene.rotation.y = Math.PI;
                                 vrm.lookAt.target = lookAtTarget;
-    
+
                                 vrmSpringBones.splice(0);
-    
+
                                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                     for (const springBone of springBoneGroup) {
                                         vrmSpringBones.push({ gravityDir: springBone.gravityDir.clone(), gravityPower: springBone.gravityPower });
                                     }
                                 }
-    
+
                                 app.progress = null;
                             });
                         },
@@ -3918,24 +3929,24 @@ window.addEventListener("load", event => {
                 reader.readAsDataURL(file);
             } else if (name.endsWith(".json")) {
                 let reader = new FileReader();
-    
+
                 reader.addEventListener("load", (e) => {
                     try {
                         app.character = JSON.parse(e.target.result);
                     } catch (e) {
                         app.notify({ text: error.message, accent: app.character.accent, image: app.character.image });
                         console.error(e);
-    
+
                         return;
                     }
-    
+
                     app.sequenceQueue.splice(0);
                     app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "Start")));
                 });
                 reader.readAsText(file);
             }
         }
-    
+
     }, false);
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
         if (e.matches) {

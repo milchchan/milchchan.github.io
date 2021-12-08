@@ -23,6 +23,7 @@
     "@pixiv/three-vrm": "^0.6.6",
     "@types/three": "^0.131.0",
     "animejs": "^3.2.1",
+    "firebase": "^9.6.0",
     "stats.js": "^0.17.0",
     "three": "^0.132.2",
     "vue": "^3.2.23"
