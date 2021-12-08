@@ -2,9 +2,14 @@ import { createApp } from 'vue/dist/vue.esm-bundler.js';
 import Stats from 'stats.js'
 import anime from 'animejs/lib/anime.es.js';
 import { TinySegmenter } from './tiny-segmenter.js';
+// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
+import { getDatabase, ref as databaseRef, query, orderByKey, orderByChild, limitToFirst, limitToLast, startAt, endAt, get, push, runTransaction, onValue, off } from "firebase/database";
+import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { initializeAnalytics } from 'firebase/analytics';
 
-// Your web app's Firebase configuration
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
     authDomain: "milchchan.firebaseapp.com",
     databaseURL: "https://milchchan.firebaseio.com",
@@ -14,17 +19,15 @@ var firebaseConfig = {
     appId: "1:355698971889:web:e3653c5c31bd7289cd4550",
     measurementId: "G-3998FJYNWX"
 };
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-firebase.analytics();
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const database = getDatabase(firebaseApp);
+const storage = getStorage(firebaseApp);
+
+initializeAnalytics(firebaseApp);
 
 const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
-//const channel = decodeURIComponent(window.location.hash.substring(1));
 const databaseRoot = "wonderland";
-//const databaseChannel = channel.length > 0 ? databaseRoot + '/channels/' + channel : databaseRoot;
-const databaseMessages = databaseRoot + "/feed";
-let database = firebase.database();
-let storage = firebase.storage();
 const milch = { name: "ミルヒちゃん", accent: "#ffa6bb", image: "/images/Milch.png" };
 const merku = { name: "メルクちゃん", accent: "#5bcbe1", image: "/images/Merku.png" };
 const stats = new Stats();
@@ -387,98 +390,85 @@ window.addEventListener("load", (event) => {
             }
         },
         methods: {
-            signIn: function (event) {
-                if (event === firebase.auth.GoogleAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).then((result) => {
-                        /** @type {firebase.auth.OAuthCredential} */
-                        var credential = result.credential;
+            signIn: async function (event) {
+                if (event === GoogleAuthProvider.PROVIDER_ID) {
+                    const provider = new GoogleAuthProvider();
+
+                    try {
+                        const result = await signInWithPopup(auth, provider);
+                        const credential = provider.credentialFromResult(auth, result);
 
                         for (const data of result.user.providerData) {
-                            firebase.auth().currentUser.updateProfile({
-                                displayName: data.displayName,
-                                photoURL: data.photoURL
-                            }).catch(function (error) {
-                                console.error(error.code, error.message);
-                            });
+                            try {
+                                await updateProfile(this.user, {
+                                    displayName: data.displayName,
+                                    photoURL: data.photoURL
+                                });
+                            } catch (e) {
+                                console.error(e.code, e.message);
+                            }
 
                             break;
                         }
-
-                        database.ref(`${databaseRoot}/users/${result.user.uid}`).transaction(function (current) {
-                            if (current) {
-                                current["name"] = data.displayName;
-                                current["timestamp"] = timestamp;
-                            } else {
-                                current = { name: data.displayName, timestamp: timestamp };
-                            }
-
-                            return current;
-                        });
 
                         try {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, idToken: credential.idToken }));
                         } catch (e) {
                             localStorage.removeItem("credential");
                         }
-                    }).catch((error) => {
+                    } catch (error) {
                         console.error(error.code, error.message);
-                    });
-                } else if (event === firebase.auth.FacebookAuthProvider.PROVIDER_ID) {
-                    const provider = new firebase.auth.FacebookAuthProvider();
+                    }
+                } else if (event === FacebookAuthProvider.PROVIDER_ID) {
+                    const provider = new FacebookAuthProvider();
 
                     provider.addScope("public_profile");
 
-                    firebase.auth().signInWithPopup(provider).then((result) => {
-                        /** @type {firebase.auth.OAuthCredential} */
-                        var credential = result.credential;
+                    try {
+                        const result = await signInWithPopup(auth, provider);
+                        const credential = provider.credentialFromResult(auth, result);
 
                         for (const data of result.user.providerData) {
-                            firebase.auth().currentUser.updateProfile({
-                                displayName: data.displayName,
-                                photoURL: data.photoURL
-                            }).catch(function (error) {
-                                console.error(error.code, error.message);
-                            });
+                            try {
+                                await updateProfile(this.user, {
+                                    displayName: data.displayName,
+                                    photoURL: data.photoURL
+                                });
+                            } catch (e) {
+                                console.error(e.code, e.message);
+                            }
 
                             break;
                         }
-
-                        database.ref(`${databaseRoot}/users/${result.user.uid}`).transaction(function (current) {
-                            if (current) {
-                                current["name"] = data.displayName;
-                                current["timestamp"] = timestamp;
-                            } else {
-                                current = { name: data.displayName, timestamp: timestamp };
-                            }
-
-                            return current;
-                        });
 
                         try {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken }));
                         } catch (e) {
                             localStorage.removeItem("credential");
                         }
-                    }).catch((error) => {
+                    } catch (error) {
                         console.error(error.code, error.message);
-                    });
-                } else if (event === firebase.auth.TwitterAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithPopup(new firebase.auth.TwitterAuthProvider()).then((result) => {
-                        /** @type {firebase.auth.OAuthCredential} */
-                        var credential = result.credential;
-                        const timestamp = Math.floor(new Date() / 1000);
+                    }
+                } else if (event === TwitterAuthProvider.PROVIDER_ID) {
+                    const provider = new TwitterAuthProvider();
+
+                    try {
+                        const result = await signInWithPopup(auth, provider);
+                        const credential = provider.credentialFromResult(auth, result);
 
                         for (const data of result.user.providerData) {
                             const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
 
-                            firebase.auth().currentUser.updateProfile({
-                                displayName: data.displayName,
-                                photoURL: photoUrl
-                            }).catch(function (error) {
-                                console.error(error.code, error.message);
-                            });
+                            try {
+                                await updateProfile(this.user, {
+                                    displayName: data.displayName,
+                                    photoURL: photoUrl
+                                });
+                            } catch (e) {
+                                console.error(e.code, e.message);
+                            }
 
-                            database.ref(`${databaseRoot}/users/${result.user.uid}`).transaction(function (current) {
+                            runTransaction(databaseRef(database, `${databaseRoot}/users/${result.user.uid}`), current => {
                                 if (current) {
                                     current["name"] = data.displayName;
                                     current["link"] = `https://twitter.com/${result.additionalUserInfo.username}`;
@@ -498,25 +488,23 @@ window.addEventListener("load", (event) => {
                         } catch (e) {
                             localStorage.removeItem("credential");
                         }
-                    }).catch((error) => {
+                    } catch (error) {
                         console.error(error.code, error.message);
-                    });
+                    }
                 }
             },
-            signOut: function (event) {
-                firebase.auth().signOut().then(() => {
+            signOut: async function (event) {
+                try {
+                    await signOut(auth);
+
                     localStorage.removeItem("credential");
 
                     if ("serviceWorker" in navigator && navigator.serviceWorker.controller !== null) {
                         navigator.serviceWorker.controller.postMessage({ command: "caches" });
                     }
-
-                    /*firebase.auth().signInAnonymously().catch((error) => {
-                        console.error(error.code, error.message);
-                    });*/
-                }).catch((error) => {
+                } catch (error) {
                     console.error(error.code, error.message);
-                });
+                }
             },
             refresh: function (event) {
                 this.update(true);
@@ -896,7 +884,7 @@ window.addEventListener("load", (event) => {
                         continue;
                     }
 
-                    const snapshot = await database.ref(databaseRoot + "/tracks").orderByChild("key").limitToLast(50).startAt(geohash).endAt(geohash.padEnd(12, "z") + "\uf8ff").once('value');
+                    const snapshot = await get(query(databaseRef(database, databaseRoot + "/tracks"), orderByChild("key"), limitToLast(50), startAt(geohash), endAt(geohash.padEnd(12, "z") + "\uf8ff")));
 
                     tempCache[geohash] = { timestamp: timestamp, data: [] };
 
@@ -951,7 +939,7 @@ window.addEventListener("load", (event) => {
             },
             startPedometer: async function () {
                 const self = this;
-                
+
                 if (DeviceMotionEvent.requestPermission) {
                     const permissionState = await DeviceMotionEvent.requestPermission();
 
@@ -1187,12 +1175,12 @@ window.addEventListener("load", (event) => {
                 }*/
                 //}
             },
-            backspace: function(event) {
+            backspace: function (event) {
                 if (!this.isEditing) {
-                    this.chars.forEach(x => x.forEach(y => y.count += y.set.includes(this.input.charAt(this.input.length - 1)) ? 1 : 0 ));
+                    this.chars.forEach(x => x.forEach(y => y.count += y.set.includes(this.input.charAt(this.input.length - 1)) ? 1 : 0));
                 }
-                
-                this.input = this.input.slice( 0, -1);
+
+                this.input = this.input.slice(0, -1);
             },
             send: async function (text) {
                 if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
@@ -1207,7 +1195,7 @@ window.addEventListener("load", (event) => {
                                 break;
                             }
                         }
-                        
+
                         column.push({ set: [this.input], index: 0, count: 0, timestamp: Math.floor(new Date() / 1000), reserved: false });
 
                         if (index >= 0) {
@@ -1257,7 +1245,7 @@ window.addEventListener("load", (event) => {
                             };
 
                             if (user.image.startsWith("gs://")) {
-                                i.src = await storage.refFromURL(user.image).getDownloadURL();
+                                i.src = await getDownloadURL(storageRef(storage, user.image));
                             } else {
                                 i.crossOrigin = "Anonymous";
                                 i.src = user.image;
@@ -1378,16 +1366,16 @@ window.addEventListener("load", (event) => {
 
                     return 0;
                 })) {
-                    const uploadTask = storageRef.child(`images/${generateUuid()}`).put(file);
+                    const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file);
 
                     try {
                         await new Promise(function (resolve, reject) {
-                            uploadTask.on("state_changed", function (snapshot) {
+                            uploadTask.on("state_changed", (snapshot) => {
                                 self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + paths.length / files.length;
-                            }, function (error) {
+                            }, (error) => {
                                 reject(error);
-                            }, function () {
-                                resolve();
+                            }, () => {
+                                resolve(uploadTask.snapshot.ref);
                             });
                         });
                     } catch (e) {
@@ -1398,7 +1386,7 @@ window.addEventListener("load", (event) => {
                     paths.push(uploadTask.snapshot.ref.fullPath);
                 }
 
-                database.ref(databaseRoot + "/images").push({ paths: paths, timestamp: Math.floor(new Date() / 1000) });
+                push(databaseRef(database, databaseRoot + "/images"), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
 
                 this.progress = null;
                 this.isUploading = false;
@@ -1424,7 +1412,7 @@ window.addEventListener("load", (event) => {
                         }
                     }
                 } else {
-                    const snapshot = await database.ref(databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name).once("value");
+                    const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name));
 
                     if (snapshot.exists()) {
                         const w = snapshot.val();
@@ -1475,7 +1463,6 @@ window.addEventListener("load", (event) => {
                 }
             },
             share: async function (word) {
-                const self = this;
                 const location = "location" in word ? word.location : this.map.getCenter();
                 const geohash = this.encodeGeohash(location.latitude, location.longitude);
                 const user = { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
@@ -1494,90 +1481,92 @@ window.addEventListener("load", (event) => {
                 this.isSubmitting = true;
 
                 if (this.user.providerData[0].providerId === firebase.auth.TwitterAuthProvider.PROVIDER_ID) {
-                    const link = await database.ref(`${databaseRoot}/users/${this.user.uid}/link`).once("value");
+                    const link = await get(databaseRef(database, `${databaseRoot}/users/${this.user.uid}/link`));
 
                     if (link.exists()) {
                         user["link"] = link.val();
                     }
                 }
 
-                database.ref(databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name).transaction(function (current) {
-                    if (current) {
-                        let updateRequired = false;
+                try {
+                    const transactionResult = await runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name), current => {
+                        if (current) {
+                            let updateRequired = false;
 
-                        for (const attribute of word.attributes) {
-                            if (attribute.name in current.attributes) {
-                                if (current.attributes[attribute.name] > 0) {
-                                    if (!attribute.value) {
+                            for (const attribute of word.attributes) {
+                                if (attribute.name in current.attributes) {
+                                    if (current.attributes[attribute.name] > 0) {
+                                        if (!attribute.value) {
+                                            updateRequired = true;
+
+                                            break;
+                                        }
+                                    } else if (attribute.value) {
                                         updateRequired = true;
 
                                         break;
                                     }
-                                } else if (attribute.value) {
+                                } else {
                                     updateRequired = true;
 
                                     break;
                                 }
-                            } else {
-                                updateRequired = true;
-
-                                break;
                             }
-                        }
 
-                        if (updateRequired) {
-                            let deleteRequired = true;
-                            const c = { attributes: {} };
+                            if (updateRequired) {
+                                let deleteRequired = true;
+                                const c = { attributes: {} };
+
+                                for (const attribute of word.attributes) {
+                                    if (attribute.value) {
+                                        if (attribute.name in current.attributes && current.attributes[attribute.name] > 0) {
+                                            c.attributes[attribute.name] = current.attributes[attribute.name];
+                                        } else {
+                                            c.attributes[attribute.name] = timestamp - 1;
+                                        }
+
+                                        deleteRequired = false;
+                                    } else {
+                                        c.attributes[attribute.name] = 0;
+                                    }
+                                }
+
+                                if (deleteRequired) {
+                                    return null;
+                                } else {
+                                    c["timestamp"] = timestamp;
+
+                                    return c;
+                                }
+                            } else {
+                                return undefined;
+                            }
+                        } else {
+                            current = { attributes: {}, timestamp: timestamp };
 
                             for (const attribute of word.attributes) {
                                 if (attribute.value) {
-                                    if (attribute.name in current.attributes && current.attributes[attribute.name] > 0) {
-                                        c.attributes[attribute.name] = current.attributes[attribute.name];
-                                    } else {
-                                        c.attributes[attribute.name] = timestamp - 1;
-                                    }
-
-                                    deleteRequired = false;
+                                    current.attributes[attribute.name] = timestamp;
                                 } else {
-                                    c.attributes[attribute.name] = 0;
+                                    current.attributes[attribute.name] = 0;
                                 }
                             }
 
-                            if (deleteRequired) {
-                                return null;
-                            } else {
-                                c["timestamp"] = timestamp;
-
-                                return c;
-                            }
-                        } else {
-                            return undefined;
-                        }
-                    } else {
-                        current = { attributes: {}, timestamp: timestamp };
-
-                        for (const attribute of word.attributes) {
-                            if (attribute.value) {
-                                current.attributes[attribute.name] = timestamp;
-                            } else {
-                                current.attributes[attribute.name] = 0;
+                            if ("user" in word) {
+                                current["user"] = { id: word.user.id, name: word.user.name, image: word.user.image };
                             }
                         }
 
-                        if ("user" in word) {
-                            current["user"] = { id: word.user.id, name: word.user.name, image: word.user.image };
-                        }
-                    }
+                        return current;
+                    });
 
-                    return current;
-                }, async function (error, committed, snapshot) {
-                    if (committed) {
-                        if (snapshot.exists()) {
-                            const dictionary = snapshot.val();
+                    if (transactionResult.committed) {
+                        if (transactionResult.snapshot.exists()) {
+                            const dictionary = transactionResult.snapshot.val();
                             const timestamps = [];
 
                             for (const key in dictionary.attributes) {
-                                if (typeof dictionary.attributes[key] === "number" && dictionary.attributes[key] > 0 && self.attributes.includes(key)) {
+                                if (typeof dictionary.attributes[key] === "number" && dictionary.attributes[key] > 0 && this.attributes.includes(key)) {
                                     timestamps.push(dictionary.attributes[key]);
                                 }
                             }
@@ -1589,156 +1578,146 @@ window.addEventListener("load", (event) => {
                                     return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                                 }
 
-                                database.ref(databaseRoot + "/users/" + self.user.uid + "/dictionary/count").transaction(function (count) {
+                                const self = this;
+                
+                                runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/count"), count => {
                                     return (count || 0) + 1;
                                 });
 
-                                for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Learned"))) {
+                                for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learned"))) {
                                     if (obj.type === "Message") {
-                                        self.notify({ text: format(obj.text, word.name), accent: self.character.accent, image: self.character.image });
+                                        this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
                                     }
                                 }
 
-                                self.isStared = true;
+                                this.isStared = true;
 
                                 window.setTimeout(() => {
                                     self.isStared = false;
                                 }, 3000);
 
-                                if (!self.isMuted) {
-                                    self.$refs.twinkle.play();
+                                if (!this.isMuted) {
+                                    this.$refs.twinkle.play();
                                 }
                             }
 
-                            if ("user" in word === false || word.user.id === self.user.uid) {
-                                database.ref(databaseRoot + "/tracks/" + await self.digestMessage(`${self.user.uid}&${word.name}`)).transaction(function (current) {
-                                    const attributes = {};
-
-                                    if (current) {
-                                        current["key"] = `${geohash}${timestamp}`;
-                                        current["location"] = { latitude: location.latitude, longitude: location.longitude };
-                                        current["geohash"] = geohash;
-                                        current["timestamp"] = timestamp;
-                                    } else {
-                                        current = { key: `${geohash}${timestamp}`, name: word.name, location: { latitude: location.latitude, longitude: location.longitude }, geohash: geohash, user: user, timestamp: timestamp };
-                                    }
-
-                                    for (const key in dictionary.attributes) {
-                                        if (self.attributes.includes(key)) {
-                                            attributes[key] = dictionary.attributes[key];
+                            if ("user" in word === false || word.user.id === this.user.uid) {
+                                try {
+                                    const result = await runTransaction(databaseRef(database, databaseRoot + "/tracks/" + await this.digestMessage(`${this.user.uid}&${word.name}`)), current => {
+                                        const attributes = {};
+    
+                                        if (current) {
+                                            current["key"] = `${geohash}${timestamp}`;
+                                            current["location"] = { latitude: location.latitude, longitude: location.longitude };
+                                            current["geohash"] = geohash;
+                                            current["timestamp"] = timestamp;
+                                        } else {
+                                            current = { key: `${geohash}${timestamp}`, name: word.name, location: { latitude: location.latitude, longitude: location.longitude }, geohash: geohash, user: user, timestamp: timestamp };
                                         }
-                                    }
-
-                                    current["attributes"] = attributes;
-
-                                    return current;
-                                }, function (e, c, s) {
-                                    if (c) {
-                                        if (s.exists()) {
-                                            self.update(true);
+    
+                                        for (const key in dictionary.attributes) {
+                                            if (this.attributes.includes(key)) {
+                                                attributes[key] = dictionary.attributes[key];
+                                            }
                                         }
-                                    } else if (e) {
-                                        self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
-                                        console.error(e);
-                                    }
+    
+                                        current["attributes"] = attributes;
+    
+                                        return current;
+                                    });
 
-                                    self.isSubmitting = false;
-                                });
-                            } else {
-                                self.isSubmitting = false;
+                                    if (result.committed && result.snapshot.exists()) {
+                                        this.update(true);
+                                    }
+                                } catch (e) {
+                                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                                    console.error(e);
+                                }
                             }
 
-                            /*await new Promise((resolve, reject) => {
-                                const ref = database.ref(`${databaseRoot}/tracks`).push();
+                            /*try {
+                                const ref = push(databaseRef(database, `${databaseRoot}/tracks`));
             
-                                ref.set({ key: geohash + timestamp, name: word.name, attributes: word.attributes, location: { latitude: position.coords.latitude, longitude: position.coords.longitude }, geohash: geohash, timestamp: timestamp, user: { id: self.user.uid, name: self.user.displayName, image: self.user.photoURL } }, async (error) => {
-                                    if (error) {
-                                        reject(error);
-                                    } else {
-                                        resolve();
-                                    }
-                                });
-                            });*/
+                                await set(ref, { key: geohash + timestamp, name: word.name, attributes: word.attributes, location: { latitude: position.coords.latitude, longitude: position.coords.longitude }, geohash: geohash, timestamp: timestamp, user: { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL } });
+                            } catch (e) {
+                                console.error(e);
+                            }*/
                         } else {
-                            database.ref(databaseRoot + "/users/" + self.user.uid + "/dictionary/count").transaction(function (count) {
+                            runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/count"), count => {
                                 if (count && count > 1) {
                                     return count - 1;
                                 }
 
                                 return null;
                             });
-                            database.ref(databaseRoot + "/tracks/" + await self.digestMessage(`${self.user.uid}&${word.name}`)).transaction(function (current) {
-                                return null;
-                            }, function (e, c, s) {
-                                if (c) {
-                                    if (!s.exists()) {
-                                        self.update(true);
-                                    }
-                                } else if (e) {
-                                    self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
-                                    console.error(e);
-                                }
 
-                                self.isSubmitting = false;
-                            });
-                        }
-                    } else if (error) {
-                        self.notify({ text: error.message, accent: self.character.accent, image: self.character.image });
-                        console.error(error);
-                        self.isSubmitting = false;
-                    } else if ("user" in word === false || word.user.id === self.user.uid) {
-                        database.ref(databaseRoot + "/tracks/" + await self.digestMessage(`${self.user.uid}&${word.name}`)).transaction(function (current) {
-                            if (current) {
-                                current["key"] = `${geohash}${timestamp}`;
-                                current["location"] = { latitude: location.latitude, longitude: location.longitude };
-                                current["geohash"] = geohash;
-                                current["user"] = user;
-                                current["timestamp"] = timestamp;
-
-                                for (const attribute of word.attributes) {
-                                    if (attribute.value) {
-                                        current.attributes[attribute.name] = timestamp - 1;
-                                    } else {
-                                        current.attributes[attribute.name] = 0;
-                                    }
+                            try {
+                                const result = await runTransaction(databaseRef(database, databaseRoot + "/tracks/" + await this.digestMessage(`${this.user.uid}&${word.name}`)), current => {
+                                    return null;
+                                });
+                                
+                                if (result.committed && !result.snapshot) {
+                                    this.update(true);
                                 }
-                            } else {
-                                current = { key: `${geohash}${timestamp}`, name: word.name, location: { latitude: location.latitude, longitude: location.longitude }, geohash: geohash, attributes: {}, user: user, timestamp: timestamp };
-
-                                for (const attribute of word.attributes) {
-                                    if (attribute.value) {
-                                        current.attributes[attribute.name] = timestamp;
-                                    } else {
-                                        current.attributes[attribute.name] = 0;
-                                    }
-                                }
-                            }
-
-                            return current;
-                        }, function (e, c, s) {
-                            if (c) {
-                                if (s.exists()) {
-                                    self.update(true);
-                                }
-                            } else if (e) {
-                                self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
+                            } catch (e) {
+                                this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                                 console.error(e);
                             }
+                        }
+                    } else if ("user" in word === false || word.user.id === this.user.uid) {
+                        try {
+                            const result = await runTransaction(databaseRef(database, databaseRoot + "/tracks/" + await this.digestMessage(`${this.user.uid}&${word.name}`)), current => {
+                                if (current) {
+                                    current["key"] = `${geohash}${timestamp}`;
+                                    current["location"] = { latitude: location.latitude, longitude: location.longitude };
+                                    current["geohash"] = geohash;
+                                    current["user"] = user;
+                                    current["timestamp"] = timestamp;
+    
+                                    for (const attribute of word.attributes) {
+                                        if (attribute.value) {
+                                            current.attributes[attribute.name] = timestamp - 1;
+                                        } else {
+                                            current.attributes[attribute.name] = 0;
+                                        }
+                                    }
+                                } else {
+                                    current = { key: `${geohash}${timestamp}`, name: word.name, location: { latitude: location.latitude, longitude: location.longitude }, geohash: geohash, attributes: {}, user: user, timestamp: timestamp };
+    
+                                    for (const attribute of word.attributes) {
+                                        if (attribute.value) {
+                                            current.attributes[attribute.name] = timestamp;
+                                        } else {
+                                            current.attributes[attribute.name] = 0;
+                                        }
+                                    }
+                                }
+    
+                                return current;
+                            });
 
-                            self.isSubmitting = false;
-                        });
-                    } else {
-                        self.isSubmitting = false;
+                            if (result.committed && result.snapshot.exists()) {
+                                this.update(true);
+                            }
+                        } catch (e) {
+                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                            console.error(e);
+                        }
                     }
-                });
+                } catch (error) {
+                    this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
+                    console.error(error);
+                }
+
+                this.isSubmitting = false;
             },
             next: async function (userId, startAt, limit = 50) {
                 let snapshot;
 
                 if (startAt === null) {
-                    snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words").orderByKey().limitToFirst(limit + 1).once("value");
+                    snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByKey(), limitToFirst(limit + 1)));
                 } else {
-                    snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words").orderByKey().startAt(startAt).limitToFirst(limit + 1).once("value");
+                    snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByKey(), startAt(startAt), limitToFirst(limit + 1)));
                 }
 
                 if ("words" in this.mode) {
@@ -1766,7 +1745,7 @@ window.addEventListener("load", (event) => {
                 }
             },
             previous: async function (userId, startAt, limit = 50) {
-                let snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words").orderByKey().startAt(startAt).limitToFirst(limit).once("value");
+                let snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByKey(), startAt(startAt), limitToFirst(limit)));
 
                 if ("words" in this.mode && snapshot.exists()) {
                     const words = snapshot.val();
@@ -1829,29 +1808,19 @@ window.addEventListener("load", (event) => {
                 this.isDiscovering = true;
 
                 for (const word of shuffle(words)) {
-                    //const snapshot = await database.ref(databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name).once("value");
+                    //const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name));
 
                     try {
-                        const s = await new Promise((resolve, reject) => {
-                            database.ref(databaseRoot + "/users/" + self.user.uid + "/dictionary/words/" + word.name).transaction(function (current) {
-                                if (current) {
-                                    return undefined;
-                                }
+                        const result = await runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name), current => {
+                            if (current) {
+                                return undefined;
+                            }
 
-                                //return { key: word.key, name: word.name, attributes: word.attributes, location: word.location, geohash: word.geohash, timestamp: timestamp };
-                                return current;
-                            }, function (error, committed, snapshot) {
-                                if (committed) {
-                                    resolve(snapshot);
-                                } else if (error) {
-                                    reject(error);
-                                } else {
-                                    resolve(null);
-                                }
-                            });
+                            //return { key: word.key, name: word.name, attributes: word.attributes, location: word.location, geohash: word.geohash, timestamp: timestamp };
+                            return current;
                         });
 
-                        if (s !== null) {
+                        if (result.committed) {
                             function format(format) {
                                 var args = arguments;
 
@@ -2014,7 +1983,7 @@ window.addEventListener("load", (event) => {
 
                     for (const token of tokens) {
                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                            const snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words/" + token).once("value");
+                            const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
 
                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2079,7 +2048,7 @@ window.addEventListener("load", (event) => {
                                         return true;
                                     } else if (token.length > 1 && !tokenSet.includes(token)) {
                                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                            const snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words/" + token).once("value");
+                                            const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
 
                                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2239,7 +2208,7 @@ window.addEventListener("load", (event) => {
 
                 for (const token of hints) {
                     if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                        const snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words/" + token).once("value");
+                        const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
 
                         this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2293,7 +2262,7 @@ window.addEventListener("load", (event) => {
                                     }
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
-                                        const snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words").orderByChild(`attributes/${attribute}`).limitToLast(100).startAt(1).once("value");
+                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
 
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
 
@@ -2353,7 +2322,7 @@ window.addEventListener("load", (event) => {
                             let scores = [];
 
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                const snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words/" + token).once("value");
+                                const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
 
                                 this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2392,7 +2361,7 @@ window.addEventListener("load", (event) => {
                                     }
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
-                                        const snapshot = await database.ref(databaseRoot + "/users/" + userId + "/dictionary/words").orderByChild(`attributes/${attribute}`).limitToLast(100).startAt(1).once("value");
+                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
 
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
 
@@ -2556,7 +2525,7 @@ window.addEventListener("load", (event) => {
 
                 for (const path of image.paths) {
                     try {
-                        this.preloadImages.push({ id: image.id, url: await storage.ref().child(path).getDownloadURL(), timestamp: image.timestamp });
+                        this.preloadImages.push({ id: image.id, url: await getDownloadURL(storageRef(storage, path)), timestamp: image.timestamp });
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e);
@@ -2740,7 +2709,7 @@ window.addEventListener("load", (event) => {
             reverse: function (collection) {
                 return [].concat(collection).reverse();
             },
-            standardDeviation: function(collection) {
+            standardDeviation: function (collection) {
                 let sum = 0.0;
                 let variance = 0.0;
 
@@ -3794,30 +3763,35 @@ window.addEventListener("load", (event) => {
                 this.mode = "sign-in";
                 this.isRevealed = true;
             } else {
-                if (credential.providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithCredential(firebase.auth.GoogleAuthProvider.credential(credential.idToken)).catch((error) => {
-                        console.error(error.code, error.message);
-                    });
-                } else if (credential.providerId === firebase.auth.FacebookAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithCredential(firebase.auth.FacebookAuthProvider.credential(credential.accessToken)).catch((error) => {
-                        console.error(error.code, error.message);
-                    });
-                } else if (credential.providerId === firebase.auth.TwitterAuthProvider.PROVIDER_ID) {
-                    firebase.auth().signInWithCredential(firebase.auth.TwitterAuthProvider.credential(credential.accessToken, credential.secret)).catch((error) => {
-                        console.error(error.code, error.message);
-                    });
+                if (credential.providerId === GoogleAuthProvider.PROVIDER_ID) {
+                    try {
+                        signInWithCredential(auth, GoogleAuthProvider.credential(credential.idToken));
+                    } catch (e) {
+                        self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e.code, e.message);
+                    }
+                } else if (credential.providerId === FacebookAuthProvider.PROVIDER_ID) {
+                    try {
+                        signInWithCredential(auth, FacebookAuthProvider.credential(credential.accessToken));
+                    } catch (e) {
+                        self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e.code, e.message);
+                    }
+                } else if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
+                    try {
+                        signInWithCredential(auth, TwitterAuthProvider.credential(credential.accessToken, credential.secret));
+                    } catch (e) {
+                        self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e.code, e.message);
+                    }
                 } else {
                     this.mode = "sign-in";
                     this.isRevealed = true;
                 }
             }
 
-            /*firebase.auth().signInAnonymously().catch(function (error) {
-                self.notify({ text: error.message, accent: self.character.accent, image: self.character.image });
-                console.error(error.code, error.message);
-            });*/
-
-            firebase.auth().onAuthStateChanged(function (user) {
+            onAuthStateChanged(auth, user => {
+                // Check for user status
                 if (user) {
                     // User is signed in.
                     const nowDate = new Date();
@@ -3831,7 +3805,7 @@ window.addEventListener("load", (event) => {
                         }
                     }
 
-                    database.ref(databaseRoot + "/users/" + user.uid + "/dictionary/count").on("value", snapshot => {
+                    onValue(databaseRef(database, databaseRoot + "/users/" + user.uid + "/dictionary/count"), snapshot => {
                         const count = snapshot.val();
 
                         if (count === null) {
@@ -3840,77 +3814,44 @@ window.addEventListener("load", (event) => {
                             self.stars = count;
                         }
                     });
-                    database.ref(databaseRoot + "/tracks").orderByChild("timestamp").limitToLast(10).on("value", snapshot => {
+                    onValue(query(databaseRef(database, databaseRoot + "/tracks"), orderByChild("timestamp"), limitToLast(10)), snapshot => {
                         if (snapshot.exists()) {
                             const words = snapshot.val();
-                            const tempWords = [];
-                            let index = 0;
+                            let isUpdated = false;
 
                             for (const key in words) {
-                                words[key]["id"] = key;
+                                const index = self.recentWords.findIndex(x => x.name === words[key].name);
 
-                                tempWords.push(words[key]);
-                            }
-
-                            for (const word of tempWords.sort((x, y) => y.timestamp - x.timestamp)) {
-                                let removeIndex = -1;
-
-                                for (let i = 0; i < self.recentWords.length; i++) {
-                                    if (self.recentWords[i].name == word.name) {
-                                        removeIndex = i;
-
-                                        break;
+                                if (index >= 0) {
+                                    if (self.recentWords[index].timestamp < words[key].timestamp) {
+                                        self.recentWords.splice(index, 1);
+                                    } else {
+                                        continue;
                                     }
                                 }
 
-                                if (removeIndex >= 0) {
-                                    self.recentWords.splice(removeIndex, 1);
-                                }
-
-                                self.recentWords.splice(index, 0, word);
-                                index++;
+                                words[key]["id"] = key;
+                                self.recentWords.push(words[key]);
+                                isUpdated = true;
                             }
 
-                            for (let i = self.recentWords.length - 1; i >= index; i--) {
-                                self.recentWords.splice(i, 1);
+                            if (isUpdated) {
+                                self.recentWords.sort((x, y) => y.timestamp - x.timestamp);
+
+                                if (self.recentWords.length > 10) {
+                                    self.recentWords.splice(10, self.recentWords.length - 10);
+                                }
                             }
                         }
                     });
                 } else if (self.user !== null) {
                     // User is signed out.
-                    database.ref(databaseRoot + "/users/" + self.user.uid + "/dictionary/count").off("value");
-                    database.ref(databaseRoot + "/tracks").off("value");
+                    off(databaseRef(database, databaseRoot + "/users/" + self.user.uid + "/dictionary/count"));
+                    off(databaseRef(database, databaseRoot + "/tracks"));
 
                     self.user = null;
                     self.stars = 0;
                 }
-
-                //database.ref(databaseRoot + "/words").orderByChild("timestamp").limitToLast(100).on("value", snapshot => {
-                //    if (snapshot.exists()) {
-                //        const words = snapshot.val();
-                /*let isUpdated = false;
-
-                for (const key in images) {
-                    if (!self.recentImages.some(x => x.id === key && x.timestamp === images[key].timestamp)) {
-                        isUpdated = true;
-
-                        break;
-                    }
-                }
-
-                if (isUpdated) {
-                    self.recentImages.splice(0);
-
-                    for (const key in images) {
-                        images[key]["id"] = key;
-                        self.recentImages.push(images[key]);
-                    }
-
-                    self.update(self.recentImages, self.maxTags);
-                    self.isBlinded = true;
-                }*/
-                //    }
-                //});
             });
         }
     }).mount("#app");
