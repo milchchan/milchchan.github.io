@@ -13,7 +13,7 @@ export default defineConfig({
       },
     },
     cssCodeSplit: false,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 1500,
   },
   plugins: [vue()]
 })

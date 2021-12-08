@@ -3,7 +3,7 @@
 // TinySegmenter is freely distributable under the terms of a new BSD licence.
 // For details, see http://chasen.org/~taku/software/TinySegmenter/LICENCE.txt
 
-function TinySegmenter() {
+export function TinySegmenter() {
   var patterns = {
     "[一二三四五六七八九十百千万億兆]": "M",
     "[一-龠々〆ヵヶ]": "H",
