@@ -20,7 +20,7 @@ import anime from 'animejs/lib/anime.es.js';
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
-import { getDatabase, ref as databaseRef, query, orderByChild, limitToLast, push,runTransaction, onValue, off } from "firebase/database";
+import { getDatabase, ref as databaseRef, query, orderByChild, limitToLast, startAt, get, push, runTransaction, onValue, off } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 //import { getAnalytics } from "firebase/analytics";
 
@@ -42,7 +42,6 @@ const storage = getStorage(firebaseApp);
 
 const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
 const databaseRoot = "bot";
-const databaseMessages = databaseRoot + "/feed";
 const milch = { name: "ミルヒちゃん", accent: "#ffa6bb", image: "/images/Milch.png" };
 const merku = { name: "メルクちゃん", accent: "#5bcbe1", image: "/images/Merku.png" };
 const renderer = new THREE.WebGLRenderer({
@@ -224,7 +223,6 @@ window.addEventListener("load", event => {
                 tags: [],
                 maxTags: 10,
                 scrollTimeoutID: undefined,
-                tickIntervalID: undefined,
                 stars: -1,
                 animatedStars: 0,
                 screenshot: null,
@@ -422,7 +420,7 @@ window.addEventListener("load", event => {
             signIn: async function (event) {
                 if (event === GoogleAuthProvider.PROVIDER_ID) {
                     const provider = new GoogleAuthProvider();
-                        
+
                     try {
                         const result = await signInWithPopup(auth, provider);
                         const credential = provider.credentialFromResult(auth, result);
@@ -456,7 +454,7 @@ window.addEventListener("load", event => {
                     try {
                         const result = await signInWithPopup(auth, provider);
                         const credential = provider.credentialFromResult(auth, result);
-                    
+
                         for (const data of result.user.providerData) {
                             try {
                                 await updateProfile(this.user, {
@@ -480,11 +478,11 @@ window.addEventListener("load", event => {
                     }
                 } else if (event === TwitterAuthProvider.PROVIDER_ID) {
                     const provider = new TwitterAuthProvider();
-                    
+
                     try {
                         const result = await signInWithPopup(auth, provider);
                         const credential = provider.credentialFromResult(auth, result);
-                    
+
                         for (const data of result.user.providerData) {
                             const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
 
@@ -499,7 +497,7 @@ window.addEventListener("load", event => {
 
                             break;
                         }
-                    
+
                         try {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, secret: credential.secret }));
                         } catch (e) {
@@ -823,31 +821,31 @@ window.addEventListener("load", event => {
                     const result = await runTransaction(databaseRef(database, databaseRoot + "/words/" + word.name), current => {
                         if (current) {
                             let updateRequired = false;
-    
+
                             for (const attribute of word.attributes) {
                                 if (attribute.name in current.attributes) {
                                     if (current.attributes[attribute.name] > 0) {
                                         if (!attribute.value) {
                                             updateRequired = true;
-    
+
                                             break;
                                         }
                                     } else if (attribute.value) {
                                         updateRequired = true;
-    
+
                                         break;
                                     }
                                 } else {
                                     updateRequired = true;
-    
+
                                     break;
                                 }
                             }
-    
+
                             if (updateRequired) {
                                 let deleteRequired = true;
                                 const c = { attributes: {} };
-    
+
                                 for (const attribute of word.attributes) {
                                     if (attribute.value) {
                                         if (attribute.name in current.attributes && current.attributes[attribute.name] > 0) {
@@ -855,18 +853,18 @@ window.addEventListener("load", event => {
                                         } else {
                                             c.attributes[attribute.name] = timestamp - 1;
                                         }
-    
+
                                         deleteRequired = false;
                                     } else {
                                         c.attributes[attribute.name] = 0;
                                     }
                                 }
-    
+
                                 if (deleteRequired) {
                                     return null;
                                 } else {
                                     c["timestamp"] = timestamp;
-    
+
                                     return c;
                                 }
                             } else {
@@ -874,7 +872,7 @@ window.addEventListener("load", event => {
                             }
                         } else {
                             current = { attributes: {}, timestamp: timestamp };
-    
+
                             for (const attribute of word.attributes) {
                                 if (attribute.value) {
                                     current.attributes[attribute.name] = timestamp;
@@ -883,44 +881,44 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
-    
+
                         return current;
                     });
-    
+
                     if (result.committed) {
                         if (result.snapshot.exists()) {
                             const dictionary = result.snapshot.val();
                             let timestamps = [];
-    
+
                             for (const key in dictionary.attributes) {
                                 if (typeof dictionary.attributes[key] === "number" && dictionary.attributes[key] > 0 && this.attributes.includes(key)) {
                                     timestamps.push(dictionary.attributes[key]);
                                 }
                             }
-    
+
                             if (timestamps.length === 1 && timestamps[0] === dictionary.timestamp) {
                                 function format(format) {
                                     var args = arguments;
-    
+
                                     return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                                 }
-    
+
                                 runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
                                     return (count || 0) + 1;
                                 });
-    
+
                                 for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learned"))) {
                                     if (obj.type === "Message") {
                                         this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
                                     }
                                 }
-    
+
                                 this.isStared = true;
-    
+
                                 window.setTimeout(() => {
                                     self.isStared = false;
                                 }, 3000);
-    
+
                                 if (!this.isMuted) {
                                     this.$refs.twinkle.play();
                                 }
@@ -930,14 +928,14 @@ window.addEventListener("load", event => {
                                 if (count) {
                                     return count - 1;
                                 }
-    
+
                                 return undefined;
                             });
                         }
-    
+
                         this.word = null;
                     }
-                } catch(error) {
+                } catch (error) {
                     this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
                     console.error(error);
                 }
@@ -965,7 +963,7 @@ window.addEventListener("load", event => {
                         }
                     }
                 } else {
-                    const snapshot = await database.ref(databaseRoot + "/words/" + word.name).once("value");
+                    const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + word.name));
 
                     if (snapshot.exists()) {
                         const w = snapshot.val();
@@ -1055,7 +1053,7 @@ window.addEventListener("load", event => {
 
                     for (const token of tokens) {
                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                            const snapshot = await database.ref(databaseRoot + "/words/" + token).once("value");
+                            const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -1120,7 +1118,7 @@ window.addEventListener("load", event => {
                                         return true;
                                     } else if (token.length > 1 && !tokenSet.includes(token)) {
                                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                            const snapshot = await database.ref(databaseRoot + "/words/" + token).once("value");
+                                            const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
                                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -1280,7 +1278,7 @@ window.addEventListener("load", event => {
 
                 for (const token of hints) {
                     if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                        const snapshot = await database.ref(databaseRoot + "/words/" + token).once("value");
+                        const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
                         this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -1334,7 +1332,7 @@ window.addEventListener("load", event => {
                                     }
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
-                                        const snapshot = await database.ref(databaseRoot + "/words").orderByChild(`attributes/${attribute}`).limitToLast(100).startAt(1).once("value");
+                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
 
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
 
@@ -1394,7 +1392,7 @@ window.addEventListener("load", event => {
                             let scores = [];
 
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                const snapshot = await database.ref(databaseRoot + "/words/" + token).once("value");
+                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
                                 this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -1433,7 +1431,7 @@ window.addEventListener("load", event => {
                                     }
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
-                                        const snapshot = await database.ref(databaseRoot + "/words").orderByChild(`attributes/${attribute}`).limitToLast(100).startAt(1).once("value");
+                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
 
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
 
@@ -3349,14 +3347,14 @@ window.addEventListener("load", event => {
                         self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e.code, e.message);
                     }
-                } else if (credential.providerId === firebase.auth.FacebookAuthProvider.PROVIDER_ID) {
+                } else if (credential.providerId === FacebookAuthProvider.PROVIDER_ID) {
                     try {
                         signInWithCredential(auth, FacebookAuthProvider.credential(credential.accessToken));
                     } catch (e) {
                         self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e.code, e.message);
                     }
-                } else if (credential.providerId === firebase.auth.TwitterAuthProvider.PROVIDER_ID) {
+                } else if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
                     try {
                         signInWithCredential(auth, TwitterAuthProvider.credential(credential.accessToken, credential.secret));
                     } catch (e) {
@@ -3371,127 +3369,8 @@ window.addEventListener("load", event => {
                 if (user) {
                     // User is signed in.
                     self.user = user;
-
-                    onValue(query(databaseRef(database, databaseMessages), limitToLast(100)), snapshot => {
-                               if (snapshot.exists()) {
-                            function format(format) {
-                                var args = arguments;
-
-                                return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
-                            }
-
-                            const messageDictionary = snapshot.val();
-                            let keys = Object.keys(messageDictionary);
-                            let received = null;
-                            let sequences = [];
-                            let sequence = [];
-
-                            if (keys.length > app.maxMessages) {
-                                keys.splice(0, keys.length - app.maxMessages);
-                            }
-
-                            app.feedQueue.splice(0);
-
-                            for (let key of keys) {
-                                const message = messageDictionary[key];
-                                const timestamp = message.timestamp * 1000;
-                                let index = -1;
-
-                                for (let i = 0; i < app.messages.length; i++) {
-                                    if (key === app.messages[i].id) {
-                                        index = i;
-
-                                        break;
-                                    }
-                                }
-
-                                if (!message.user.accent) {
-                                    message.user.accent = "#30c0f5";
-                                }
-
-                                if (index >= 0) {
-                                    //let j = -1;
-                                    const data = { id: key, text: message.text, thread: message.thread, timestamp: new Date(timestamp), user: message.user };
-                                    /*
-                                    for (let i = 0; i < app.messages.length; i++) {
-                                        if (timestamp < Math.floor(app.messages[i].timestamp)) {
-                                            j = i;
-                                        }
-                                    }
-     
-                                    if (j >= 0) {
-                                        const temp = app.messages[j];
-     
-                                        app.messages[j] = data;
-                                        app.messages[index] = temp;
-                                    } else {
-                                        app.messages[index] = data;
-                                    }*/
-
-                                    app.messages[index] = data;
-                                }
-                                else {
-                                    for (let i = 0; i < app.messages.length; i++) {
-                                        if (timestamp < Math.floor(app.messages[i].timestamp)) {
-                                            index = i;
-                                        }
-                                    }
-
-                                    app.messages.splice(index >= 0 ? index : app.messages.length, 0, { id: key, text: message.text, thread: message.thread, timestamp: new Date(timestamp), user: message.user });
-
-                                    if (app.messages.length > app.maxMessages) {
-                                        app.messages.shift();
-                                    }
-
-                                    if (app.user.uid !== message.user.id) {
-                                        received = message.user;
-                                    }
-                                }
-
-                                app.feedQueue.unshift(message);
-                            }
-
-                            for (let i = app.messages.length - 1; i >= 0; i--) {
-                                if (!(app.messages[i].id in messageDictionary)) {
-                                    app.messages.splice(i, 1);
-                                }
-                            }
-
-                            if (received) {
-                                if (!received.id && vrmModel) {
-                                    //app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.Joy, time: 0.0, duration: 0.5, start: 0.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Joy, time: 0.0, duration: 1.0, start: 1.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Joy, time: 0.0, duration: 0.5, start: 1.0, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.A, time: 0.0, duration: 0.5, start: 0.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.A, time: 0.0, duration: 1.0, start: 1.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.A, time: 0.0, duration: 0.5, start: 1.0, end: 0.0 }]);
-                                }
-
-                                //document.body.querySelector("#alert").play();
-                            }
-
-                            //app.update(messageDictionary, app.maxTags);
-
-                            /*for (const sequence of app.character.sequences) {
-                                if (sequence.name == "Alert") {
-                                    sequences.push(sequence);
-                                }
-                            }
-    
-                            for (const obj of app.prepare(sequences)) {
-                                if (obj.type == "Message") {
-                                    sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: format(obj.text, app.feedQueue[0].text) });
-                                } else {
-                                    sequence.push(obj);
-                                }
-                            }
-    
-                            if (sequence.length > 0) {
-                                app.sequenceQueue.push(sequence);
-                            }*/
-
-                            app.feedQueue.push(app.feedQueue.shift());
-                        }
-                    });
                 } else {
                     // User is signed out.
-                    off(databaseRef(datbase, databaseMessages));
-                    
                     self.user = null;
                     self.stars = 0;
                 }
@@ -3503,19 +3382,26 @@ window.addEventListener("load", event => {
                     let isUpdated = false;
 
                     for (const key in images) {
-                        if (!self.recentImages.some(x => x.id === key && x.timestamp === images[key].timestamp)) {
-                            isUpdated = true;
+                        const index = self.recentImages.findIndex(x => x.id === key);
 
-                            break;
+                        if (index >= 0) {
+                            if (self.recentImages[index].timestamp < images[key].timestamp) {
+                                self.recentImages.splice(index, 1);
+                            } else {
+                                continue;
+                            }
                         }
+
+                        images[key]["id"] = key;
+                        self.recentImages.push(images[key]);
+                        isUpdated = true;
                     }
 
                     if (isUpdated) {
-                        self.recentImages.splice(0);
+                        self.recentImages.sort((x, y) => y.timestamp - x.timestamp);
 
-                        for (const key in images) {
-                            images[key]["id"] = key;
-                            self.recentImages.push(images[key]);
+                        if (self.recentImages.length > 100) {
+                            self.recentImages.splice(100, self.recentImages.length - 100);
                         }
 
                         self.update(self.recentImages, self.maxTags);
@@ -3535,76 +3421,64 @@ window.addEventListener("load", event => {
             onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)), snapshot => {
                 if (snapshot.exists()) {
                     const words = snapshot.val();
-                    let tempWords = [];
-                    let index = 0;
+                    let isUpdated = false;
 
-                    for (const word in words) {
-                        tempWords.push({ name: word, timestamp: words[word].timestamp });
-                    }
+                    for (const key in words) {
+                        const index = self.words.findIndex(x => x.name === key && "timestamp" in x);
 
-                    for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), 10)) {
-                        if (obj.type === "Message") {
-                            self.words.splice(index, 0, { name: obj.text, image: self.character.image });
-                            index++;
-                        }
-                    }
-
-                    for (const word of tempWords.sort((x, y) => y.timestamp - x.timestamp)) {
-                        let removeIndex = -1;
-
-                        for (let i = 0; i < self.words.length; i++) {
-                            if (self.words[i].name == word.name) {
-                                removeIndex = i;
-
-                                break;
-                            }
-                        }
-
-                        if (removeIndex >= 0) {
-                            if (self.words[removeIndex].timestamp < word.timestamp) {
-                                if (word.name in self.wordDictionary) {
-                                    delete self.wordDictionary[word.name];
+                        if (index >= 0) {
+                            if (self.words[index].timestamp < words[key].timestamp) {
+                                if (key in self.wordDictionary) {
+                                    delete self.wordDictionary[key];
                                 }
 
-                                Object.keys(self.reverseWordDictionary).forEach((key) => {
-                                    if (self.reverseWordDictionary[key].words.some((x) => x === word.name)) {
-                                        delete self.reverseWordDictionary[key];
+                                Object.keys(self.reverseWordDictionary).forEach((k) => {
+                                    if (self.reverseWordDictionary[k].words.some((x) => x === key)) {
+                                        delete self.reverseWordDictionary[k];
                                     }
                                 });
+                                
+                                self.words.splice(index, 1);
+                            } else {
+                                continue;
                             }
-
-                            self.words.splice(removeIndex, 1);
-                        } else {
-                            if (word.name in self.wordDictionary) {
-                                delete self.wordDictionary[word.name];
-                            }
-
-                            Object.keys(self.reverseWordDictionary).forEach((key) => {
-                                if (self.reverseWordDictionary[key].words.some((x) => x === word.name)) {
-                                    delete self.reverseWordDictionary[key];
-                                }
-                            });
                         }
 
-                        self.words.splice(index, 0, word);
-                        index++;
+                        self.words.push({ name: key, timestamp: words[key].timestamp });
+                        isUpdated = true;
                     }
 
-                    for (let i = self.words.length - 1; i >= index; i--) {
-                        self.words.splice(i, 1);
+                    if (isUpdated) {
+                        for (let i = self.words.length - 1; i >= 0; i--) {
+                            if ("timestamp" in self.words[i] === false) {
+                                self.words.splice(i, 1);
+                            }
+                        }
+
+                        if (self.words.length > 10) {
+                            self.words.splice(10, self.words.length - 10);
+                        }
+
+                        self.words.sort((x, y) => y.timestamp - x.timestamp);
+
+                        for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), 10)) {
+                            if (obj.type === "Message") {
+                                self.words.splice(0, 0, { name: obj.text, image: self.character.image });
+                            }
+                        }
                     }
                 }
             });
         },
         unmounted: function () {
-            if (typeof this.tickIntervalID === "number") {
-                clearInterval(this.tickIntervalID);
-            }
-
             if (vrmModel !== null) {
                 scene.remove(vrmModel.scene);
                 vrmModel = null;
             }
+
+            off(query(databaseRef(database, databaseRoot + "/images"), limitToLast(100)));
+            off(databaseRef(database, databaseRoot + "/stars"));
+            off(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)));
         }
     }).mount("#app");
 
