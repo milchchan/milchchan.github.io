@@ -36,15 +36,6 @@
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&display=swap" rel="stylesheet">
     <script type="text/javascript"
         src="https://www.bing.com/api/maps/mapcontrol?key=AqtU8nXtdnRHFfPmWICfOHBtcPzPOoJueZtb2D_Rkbsx6dyuhx_xaH7G-hfB2Ylb"></script>
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics-compat.js"></script>
-    <script src="js/tiny-segmenter.js"></script>
     <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" type="text/css"
         media="screen" />
@@ -4278,7 +4269,7 @@
                 v-on:enter-cancelled="animationEnd" v-on:before-leave="animationStart" v-on:after-leave="animationEnd"
                 v-on:leave-cancelled="animationEnd">
                 <nav id="popup" class="navbar is-fixed-bottom" v-if="isPopup" v-cloak>
-                    <div class=" navbar-item is-expanded columns is-desktop">
+                    <div class="navbar-item is-expanded columns is-desktop">
                         <div class="column is-half-desktop has-content-centered">
                             <div class="control" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
                                 <nav class="level is-mobile">
