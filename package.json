@@ -21,6 +21,7 @@
   "homepage": "https://milchchan.com/",
   "dependencies": {
     "animejs": "^3.2.1",
+    "firebase": "^9.6.0",
     "stats.js": "^0.17.0",
     "vue": "^3.2.16"
   },
