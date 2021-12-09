@@ -2,8 +2,8 @@
     "name": "ミルヒ",
     "accent": "#ffa6bb",
     "image": "/images/Milch.png",
-    "width": 202,
-    "height": 320,
+    "width": 152,
+    "height": 240,
     "model": "models/Milch.vrm",
     "sequences": [
         {
@@ -27,8 +27,8 @@
                                         {
                                             "x": 0,
                                             "y": 0,
-                                            "width": 202,
-                                            "height": 320,
+                                            "width": 152,
+                                            "height": 240,
                                             "source": "/images/Milchchan.png"
                                         }
                                     ]
@@ -75,8 +75,8 @@
                                         {
                                             "x": 0,
                                             "y": 0,
-                                            "width": 202,
-                                            "height": 320,
+                                            "width": 152,
+                                            "height": 240,
                                             "source": "/images/Milchchan.png"
                                         }
                                     ]
