@@ -2512,7 +2512,9 @@
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="close3">
+                                <button class="button" type="button"
+                                    @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;"
+                                    v-else-if="word" key="close3">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2536,13 +2538,19 @@
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === true" key="close5">
+                                    v-else-if="'name' in mode && 'attributes' in mode" key="close5">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close6">
+                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === true" key="close6">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close7">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2922,7 +2930,8 @@
                                                                                             </span>
                                                                                         </button>
                                                                                     </div>
-                                                                                    <div class="wrap" v-else-if="column.set.length > 1"
+                                                                                    <div class="wrap"
+                                                                                        v-else-if="column.set.length > 1"
                                                                                         key="candidates">
                                                                                         <button
                                                                                             class="button is-rounded is-size-7"
@@ -3071,7 +3080,8 @@
                                                                     </div>
                                                                     <div class="level-item">
                                                                         <button class="button is-white" type="button"
-                                                                            @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null" v-cloak>
+                                                                            @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null"
+                                                                            v-cloak>
                                                                             <span class="icon is-small is-danger">
                                                                                 <i class="fas fa-times"></i>
                                                                             </span>
@@ -3278,6 +3288,19 @@
                                                     </div>
                                                 </div>
                                             </article>
+                                        </div>
+                                        <div class="level-item" v-if="'user' in mode && 'link' in mode.user">
+                                            <div class="level">
+                                                <div class="level-item">
+                                                    <div class="level is-mobile">
+                                                        <div class="level-item">
+                                                            <a v-bind:href="mode.user.link" target="_blank"><span
+                                                                    class="icon is-small"><i
+                                                                        class="fab fa-twitter"></i></span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="level-item" v-if="'stats' in mode" v-cloak>
                                             <div class="level is-mobile">
@@ -3486,19 +3509,6 @@
                                                     </div>
                                                 </div>
                                             </transition>
-                                        </div>
-                                        <div class="level-item" v-if="'user' in mode && 'link' in mode.user">
-                                            <div class="level">
-                                                <div class="level-item">
-                                                    <div class="level is-mobile">
-                                                        <div class="level-item">
-                                                            <a v-bind:href="mode.user.link" target="_blank"><span
-                                                                    class="icon is-small"><i
-                                                                        class="fab fa-twitter"></i></span></a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </nav>
                                     <nav class="level" v-else-if="user === null || mode === 'sign-in'" key="sign-in">
@@ -4451,7 +4461,9 @@
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="close3">
+                <button class="button" type="button"
+                    @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;"
+                    v-else-if="word" key="close3">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
@@ -4470,6 +4482,12 @@
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
                     v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close4">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                    v-else-if="'name' in mode && 'attributes' in mode" key="close4">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
