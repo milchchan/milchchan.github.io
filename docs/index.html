@@ -54,10 +54,12 @@
             --accent-color: #8898aa;*/
             /*--main-color: #00eeff;
             --accent-color: #ffee00;*/
-            --main-color: #b56ed8;
+            /*--main-color: #b56ed8;*/
             /*--accent-color: #ff4c90;*/
-            --accent-color: #ff86b5;
+            /*--accent-color: #ff86b5;*/
             /*ffe598*/
+            --main-color: #00a5cd;
+            --accent-color: #e62d87;
             --background-image: url('/images/Background-Light.png');
             --background-image-2x: url('/images/Background-Light@2x.png');
             --background-image-3x: url('/images/Background-Light@3x.png');
@@ -795,10 +797,10 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 16px;
-            background: rgba(181, 110, 216, 0.75) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
             height: initial;
-            color: var(--accent-color) !important;
+            color: var(--main-color) !important;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -868,6 +870,10 @@
         .center>.level>.level-item>.control>.level>.level-item.level-item:not(:last-child) .field .icon {
             margin: 0px 4px 0px 0px;
             color: var(--main-color);
+        }
+
+        .center>.level>.level-item>.control>.level>.level-item.level-item:not(:last-child) .field .icon svg path {
+            fill: var(--main-color);
         }
 
         .center>.level>.level-item>.control>.level>.level-item:nth-child(1) .field span:last-child {
@@ -1031,7 +1037,7 @@
             height: fit-content;
             line-height: calc(0.75rem * 1.5);
             backface-visibility: hidden;
-            color: rgb(255, 238, 0) !important;
+            color: #ffee00 !important;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -1055,7 +1061,7 @@
 
         .center>.level>.level-item:nth-last-of-type(1) button .icon,
         .center>.level>.level-item:nth-last-of-type(1) .button .icon {
-            color: rgb(255, 238, 0);
+            color: #ffee00;
         }
 
         .center>.level>.level-item:nth-last-of-type(1) button>:not(.wrap),
@@ -1273,15 +1279,26 @@
             padding: 16px 32px 16px 32px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 500px 500px 500px 500px;
-            background: rgba(181, 110, 216, 0.75);
+            background: rgba(255, 255, 255, 0.75);
             background-clip: padding-box;
             height: fit-content;
             line-height: calc(0.75rem * 1.5);
             backface-visibility: hidden;
-            color: #ffffff;
+            color: var(--main-color);
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.button.is-primary {
+            background: rgba(0, 165, 205, 0.75) !important;
+            color: #ffffff !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary .icon,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.button.is-primary .icon {
+            color: #ffffff !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content span.wrap {
@@ -1328,13 +1345,22 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 16px 32px 16px 32px;
-            background: rgba(181, 110, 216, 0.75) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
             height: initial;
-            color: #ffffff;
+            color: var(--main-color);
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:first-of-type button.is-primary {
+            background: rgba(0, 165, 205, 0.75) !important;
+            color: #ffffff !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:first-of-type button.is-primary .icon {
+            color: #ffffff !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item:last-child:not(:first-child)>.level>.level-item button {
@@ -1359,12 +1385,17 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 24px;
-            background: rgba(255, 134, 181, 0.75) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
-            color: #ffffff;
+            color: var(--accent-color);
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item a.is-primary .icon {
+            background: rgba(230, 45, 135, 0.75) !important;
+            color: #ffffff !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns {
@@ -1523,7 +1554,7 @@
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .badge {
             padding: 4px 8px 4px 8px !important;
             border-radius: 500px 500px 500px 500px;
-            background: rgb(255, 238, 0);
+            background: #ffee00;
             color: #ffffff;
             font-size: 0.75rem;
             line-height: 0.75rem !important;
@@ -1626,20 +1657,20 @@
             background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
             height: initial;
-            color: rgb(255, 238, 0);
+            color: #ffee00;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content>.content>button>.icon {
-            color: rgb(255, 238, 0);
+            color: #ffee00;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item .media>.media-content>.content .badge {
             padding: 4px 8px 4px 8px !important;
             border-radius: 500px 500px 500px 500px;
-            background: rgb(255, 238, 0);
+            background: #ffee00;
             color: #ffffff;
             font-size: 0.75rem;
             line-height: 0.75rem !important;
@@ -1663,7 +1694,7 @@
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>span.icon {
-            color: rgb(255, 238, 0);
+            color: #ffee00;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.badge {
@@ -1675,7 +1706,7 @@
             margin: 0;
             padding: 4px 8px 4px 8px !important;
             border-radius: 500px 500px 500px 500px;
-            background: rgb(255, 238, 0);
+            background: #ffee00;
             color: #ffffff;
             font-size: 0.75rem;
             line-height: 0.75rem !important;
@@ -1992,7 +2023,7 @@
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input::placeholder {
-            color: rgba(255, 134, 181, 0.25);
+            color: rgba(230, 45, 135, 0.25);
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             transform: rotate(0.03deg);
         }
@@ -2004,7 +2035,7 @@
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) span {
-            color: rgba(255, 134, 181, 0.25);
+            color: rgba(230, 45, 135, 0.25);
             font-family: 'Hind', 'Josefin Sans', sans-serif;
         }
 
@@ -2429,7 +2460,7 @@
             }
 
             .progress>.bar {
-                background: rgb(255, 238, 0) url('/images/Stripes@2x.png') 50% 50% repeat;
+                background: #ffee00 url('/images/Stripes@2x.png') 50% 50% repeat;
                 background-size: 20px 20px;
             }
 
@@ -2457,7 +2488,7 @@
             }
 
             .progress>.bar {
-                background: rgb(255, 238, 0) url('/images/Stripes@3x.png') 50% 50% repeat;
+                background: #ffee00 url('/images/Stripes@3x.png') 50% 50% repeat;
                 background-size: 20px 20px;
             }
 
@@ -2513,7 +2544,9 @@
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="close3">
+                                <button class="button" type="button"
+                                    @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;"
+                                    v-else-if="word" key="close3">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2537,13 +2570,19 @@
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === true" key="close5">
+                                    v-else-if="'name' in mode && 'attributes' in mode" key="close5">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close6">
+                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === true" key="close6">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close7">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2813,7 +2852,7 @@
                                     <div class="tags has-addons" v-cloak>
                                         <button class="button tag is-rounded is-size-7 has-text-weight-bold"
                                             type="button"
-                                            v-bind:style="{ color: 'rgba(255, 134, 181, ' + (0.25 + 0.75 * tag.score) + ')' }"
+                                            v-bind:style="{ color: 'rgba(230, 45, 135, ' + (0.25 + 0.75 * tag.score) + ')' }"
                                             @click="learn(tag.name); isRevealed = false;">
                                             <div class="clip">
                                                 <div class="scrollable">
@@ -2923,7 +2962,8 @@
                                                                                             </span>
                                                                                         </button>
                                                                                     </div>
-                                                                                    <div class="wrap" v-else-if="column.set.length > 1"
+                                                                                    <div class="wrap"
+                                                                                        v-else-if="column.set.length > 1"
                                                                                         key="candidates">
                                                                                         <button
                                                                                             class="button is-rounded is-size-7"
@@ -3072,7 +3112,8 @@
                                                                     </div>
                                                                     <div class="level-item">
                                                                         <button class="button is-white" type="button"
-                                                                            @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null" v-cloak>
+                                                                            @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null"
+                                                                            v-cloak>
                                                                             <span class="icon is-small is-danger">
                                                                                 <i class="fas fa-times"></i>
                                                                             </span>
@@ -3279,6 +3320,19 @@
                                                     </div>
                                                 </div>
                                             </article>
+                                        </div>
+                                        <div class="level-item" v-if="'user' in mode && 'link' in mode.user">
+                                            <div class="level">
+                                                <div class="level-item">
+                                                    <div class="level is-mobile">
+                                                        <div class="level-item">
+                                                            <a v-bind:href="mode.user.link" target="_blank"><span
+                                                                    class="icon is-small"><i
+                                                                        class="fab fa-twitter"></i></span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="level-item" v-if="'stats' in mode" v-cloak>
                                             <div class="level is-mobile">
@@ -3487,19 +3541,6 @@
                                                     </div>
                                                 </div>
                                             </transition>
-                                        </div>
-                                        <div class="level-item" v-if="'user' in mode && 'link' in mode.user">
-                                            <div class="level">
-                                                <div class="level-item">
-                                                    <div class="level is-mobile">
-                                                        <div class="level-item">
-                                                            <a v-bind:href="mode.user.link" target="_blank"><span
-                                                                    class="icon is-small"><i
-                                                                        class="fab fa-twitter"></i></span></a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </nav>
                                     <nav class="level" v-else-if="user === null || mode === 'sign-in'" key="sign-in">
@@ -3813,7 +3854,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="locate(); isRevealed = false;">
                                                             <span class="icon">
@@ -3836,7 +3877,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="discover(); isRevealed = false;">
                                                             <span class="icon">
@@ -3859,7 +3900,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="isRevealed = false; isLearning = true;">
                                                             <span class="icon">
@@ -3882,7 +3923,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="mode = { words: null, next: null, indexes: [], user: { id: user.uid, name: user.displayName, image: user.photoURL } }; next(user.uid, mode.next);">
                                                             <span class="icon">
@@ -3905,7 +3946,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="activate(); isRevealed = false; mode = null;">
                                                             <span class="icon">
@@ -3928,7 +3969,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="mode = { stats: stats }">
                                                             <span class="icon">
@@ -4144,7 +4185,9 @@
                                 <div class="level-item has-text-centered">
                                     <div class="field is-grouped is-vcentered">
                                         <picture class="icon is-small" v-cloak>
-                                            <img src="/images/Star.svg" width="32" height="32" alt="Star">
+                                            <svg viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                                                <path d="M17,1C25.831,1 33,8.169 33,17C33,25.831 25.831,33 17,33C8.169,33 1,25.831 1,17C1,8.169 8.169,1 17,1ZM24.93,15.084C24.763,14.569 24.318,14.194 23.783,14.116L19.977,13.563L18.274,10.115C18.036,9.629 17.541,9.322 17,9.322C16.459,9.322 15.965,9.629 15.726,10.114L14.023,13.563L10.218,14.116C9.682,14.194 9.237,14.569 9.07,15.084C8.902,15.599 9.042,16.163 9.43,16.541L12.184,19.225L11.534,23.016C11.442,23.549 11.661,24.088 12.099,24.406C12.537,24.724 13.117,24.766 13.596,24.514L17,22.725L20.404,24.514C20.612,24.623 20.839,24.678 21.065,24.678C21.36,24.678 21.654,24.586 21.901,24.406C22.339,24.088 22.558,23.549 22.467,23.016L21.817,19.225L24.571,16.541C24.958,16.163 25.098,15.599 24.93,15.084Z" />
+                                            </svg>
                                         </picture>
                                         <span class="is-size-1 is-uppercase" v-cloak>{{ animatedStars }}</span>
                                     </div>
@@ -4452,7 +4495,9 @@
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;" v-else-if="word" key="close3">
+                <button class="button" type="button"
+                    @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null;"
+                    v-else-if="word" key="close3">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
@@ -4476,13 +4521,19 @@
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === false" key="close5">
+                    v-else-if="'name' in mode && 'attributes' in mode" key="close5">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close6">
+                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === false" key="close6">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="isRevealed = false; mode = null;"
+                    v-else-if="typeof(mode) === 'object' && mode instanceof Array" key="close7">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
