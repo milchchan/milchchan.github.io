@@ -2,8 +2,8 @@
     "name": "メルク",
     "accent": "#5bcbe1",
     "image": "/images/Merku.png",
-    "width": 206,
-    "height": 320,
+    "width": 155,
+    "height": 240,
     "model": "models/Merku.vrm",
     "sequences": [
         {
@@ -26,9 +26,9 @@
                                     "images": [
                                         {
                                             "x": 0,
-                                            "y": 9,
-                                            "width": 206,
-                                            "height": 311,
+                                            "y": 7,
+                                            "width": 155,
+                                            "height": 233,
                                             "source": "/images/Merkuchan.png"
                                         }
                                     ]
@@ -74,9 +74,9 @@
                                     "images": [
                                         {
                                             "x": 0,
-                                            "y": 9,
-                                            "width": 206,
-                                            "height": 311,
+                                            "y": 7,
+                                            "width": 155,
+                                            "height": 233,
                                             "source": "/images/Merkuchan.png"
                                         }
                                     ]
@@ -195,9 +195,9 @@
                             "images": [
                                 {
                                     "x": 0,
-                                    "y": 9,
-                                    "width": 206,
-                                    "height": 311,
+                                    "y": 7,
+                                    "width": 155,
+                                    "height": 233,
                                     "source": "/images/Merkuchan.png"
                                 }
                             ]
@@ -228,9 +228,9 @@
                             "images": [
                                 {
                                     "x": 0,
-                                    "y": 9,
-                                    "width": 206,
-                                    "height": 311,
+                                    "y": 7,
+                                    "width": 155,
+                                    "height": 233,
                                     "source": "/images/Merkuchan.png"
                                 }
                             ]
@@ -260,9 +260,9 @@
                             "images": [
                                 {
                                     "x": 0,
-                                    "y": 9,
-                                    "width": 206,
-                                    "height": 311,
+                                    "y": 7,
+                                    "width": 155,
+                                    "height": 233,
                                     "source": "/images/Merkuchan.png"
                                 }
                             ]
