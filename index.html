@@ -797,10 +797,10 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 16px;
-            background: rgba(0, 165, 205, 0.75) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
             height: initial;
-            color: #ffffff !important;
+            color: var(--main-color) !important;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -1279,15 +1279,26 @@
             padding: 16px 32px 16px 32px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 500px 500px 500px 500px;
-            background: rgba(0, 165, 205, 0.75);
+            background: rgba(255, 255, 255, 0.75);
             background-clip: padding-box;
             height: fit-content;
             line-height: calc(0.75rem * 1.5);
             backface-visibility: hidden;
-            color: #ffffff;
+            color: var(--main-color);
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.button.is-primary {
+            background: rgba(0, 165, 205, 0.75) !important;
+            color: #ffffff !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary .icon,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.button.is-primary .icon {
+            color: #ffffff !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content span.wrap {
@@ -1334,13 +1345,22 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 16px 32px 16px 32px;
-            background: rgba(0, 165, 205, 0.75) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
             height: initial;
-            color: #ffffff;
+            color: var(--main-color);
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:first-of-type button.is-primary {
+            background: rgba(0, 165, 205, 0.75) !important;
+            color: #ffffff !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:first-of-type button.is-primary .icon {
+            color: #ffffff !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item:last-child:not(:first-child)>.level>.level-item button {
@@ -1365,12 +1385,17 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 24px;
-            background: rgba(230, 45, 135, 0.75) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
-            color: #ffffff;
+            color: var(--accent-color);
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item a.is-primary .icon {
+            background: rgba(230, 45, 135, 0.75) !important;
+            color: #ffffff !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns {
@@ -3828,7 +3853,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="locate(); isRevealed = false;">
                                                             <span class="icon">
@@ -3851,7 +3876,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="discover(); isRevealed = false;">
                                                             <span class="icon">
@@ -3874,7 +3899,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="isRevealed = false; isLearning = true;">
                                                             <span class="icon">
@@ -3897,7 +3922,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="mode = { words: null, next: null, indexes: [], user: { id: user.uid, name: user.displayName, image: user.photoURL } }; next(user.uid, mode.next);">
                                                             <span class="icon">
@@ -3920,7 +3945,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="activate(); isRevealed = false; mode = null;">
                                                             <span class="icon">
@@ -3943,7 +3968,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
+                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
                                                             v-bind:disabled="user === null"
                                                             @click="mode = { stats: stats }">
                                                             <span class="icon">
