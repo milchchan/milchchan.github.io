@@ -1056,6 +1056,7 @@ window.addEventListener("load", event => {
                         return a;
                     }
 
+                    const regex = new RegExp("[.#$\\[\\]]");
                     const timestamp = Math.floor(new Date() / 1000);
                     const timeout = 60 * 60;
                     const tempStates = Object.assign({}, this.states);
@@ -1064,25 +1065,27 @@ window.addEventListener("load", event => {
                     const tokenSet = [];
 
                     for (const token of tokens) {
-                        if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                            const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
-
-                            this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-
-                            if (snapshot.exists()) {
-                                const word = snapshot.val();
-
-                                for (let attribute in word.attributes) {
-                                    if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
-                                        this.wordDictionary[token].attributes.push(attribute);
+                        if (!regex.test(token)) {
+                            if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
+                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
+    
+                                this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
+    
+                                if (snapshot.exists()) {
+                                    const word = snapshot.val();
+    
+                                    for (let attribute in word.attributes) {
+                                        if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
+                                            this.wordDictionary[token].attributes.push(attribute);
+                                        }
                                     }
                                 }
                             }
-                        }
-
-                        for (const attribute of this.wordDictionary[token].attributes) {
-                            if (!attributes.includes(attribute)) {
-                                attributes.push(attribute);
+    
+                            for (const attribute of this.wordDictionary[token].attributes) {
+                                if (!attributes.includes(attribute)) {
+                                    attributes.push(attribute);
+                                }
                             }
                         }
                     }
@@ -1128,7 +1131,7 @@ window.addEventListener("load", event => {
                                         this.isLoading = false;
 
                                         return true;
-                                    } else if (token.length > 1 && !tokenSet.includes(token)) {
+                                    } else if (token.length > 1 && !regex.test(token) && !tokenSet.includes(token)) {
                                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                             const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
@@ -1280,7 +1283,7 @@ window.addEventListener("load", event => {
                 let tokens = Array.isArray(message) ? message : segmenter.segment(message);
                 let hintDictionary = {};
                 let tokenSet = [];
-                let regex = new RegExp("[.#$\\[\\]]");
+                const regex = new RegExp("[.#$\\[\\]]");
                 let cachDictionary = {};
                 let text = "";
                 let index = 0;
@@ -1289,27 +1292,29 @@ window.addEventListener("load", event => {
                 let sequences = [{ sequence: [], score: 1.0 }]
 
                 for (const token of hints) {
-                    if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                        const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
-
-                        this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-
-                        if (snapshot.exists()) {
-                            const word = snapshot.val();
-
-                            for (const attribute in word.attributes) {
-                                if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
-                                    this.wordDictionary[token].attributes.push(attribute);
+                    if (!regex.test(token)) {
+                        if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
+                            const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
+    
+                            this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
+    
+                            if (snapshot.exists()) {
+                                const word = snapshot.val();
+    
+                                for (const attribute in word.attributes) {
+                                    if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
+                                        this.wordDictionary[token].attributes.push(attribute);
+                                    }
                                 }
                             }
                         }
-                    }
-
-                    for (const attribute of this.wordDictionary[token].attributes) {
-                        if (attribute in hintDictionary) {
-                            hintDictionary[attribute].push(token);
-                        } else {
-                            hintDictionary[attribute] = [token];
+    
+                        for (const attribute of this.wordDictionary[token].attributes) {
+                            if (attribute in hintDictionary) {
+                                hintDictionary[attribute].push(token);
+                            } else {
+                                hintDictionary[attribute] = [token];
+                            }
                         }
                     }
                 }
