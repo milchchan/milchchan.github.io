@@ -1266,10 +1266,10 @@ window.addEventListener("load", (event) => {
                             <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
                             <svg width="50" height="54" viewBox="0 0 50 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                                 <g transform="matrix(0.999999,0,0,0.999999,17.0011,-13)">
-                                    <path d="M0,50L16,50L8,66L0,50Z" style="fill:rgb(255,238,0);"/>
+                                    <path d="M0,50L16,50L8,66L0,50Z" style="fill:rgb(252,215,62);"/>
                                 </g>
                                 <g transform="matrix(1.96491,0,0,1.96491,-30.0099,-24.5931)">
-                                    <circle cx="27.996" cy="25.239" r="12.214" style="fill:rgb(255,238,0);"/>
+                                    <circle cx="27.996" cy="25.239" r="12.214" style="fill:rgb(252,215,62);"/>
                                     <g transform="matrix(0.410574,0,0,0.410574,34.0498,26.7694)">
                                         <path d="M0,-7.29C-0.311,-8.247 -1.138,-8.944 -2.133,-9.089L-9.21,-10.117L-12.375,-16.529C-12.819,-17.432 -13.738,-18.003 -14.744,-18.003C-15.75,-18.003 -16.67,-17.432 -17.114,-16.53L-20.279,-10.117L-27.355,-9.089C-28.352,-8.944 -29.179,-8.247 -29.49,-7.29C-29.801,-6.333 -29.541,-5.283 -28.82,-4.581L-23.7,0.41L-24.908,7.459C-25.078,8.45 -24.672,9.452 -23.857,10.043C-23.043,10.635 -21.965,10.713 -21.074,10.244L-14.744,6.917L-8.415,10.244C-8.028,10.447 -7.606,10.548 -7.186,10.548C-6.638,10.548 -6.092,10.377 -5.632,10.043C-4.818,9.452 -4.41,8.45 -4.58,7.458L-5.789,0.41L-0.668,-4.581C0.052,-5.283 0.312,-6.333 0,-7.29" style="fill:white;fill-rule:nonzero;"/>
                                     </g>
@@ -1298,10 +1298,10 @@ window.addEventListener("load", (event) => {
                         <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
                         <svg width="50" height="54" viewBox="0 0 50 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                             <g transform="matrix(0.999999,0,0,0.999999,17.0011,-13)">
-                                <path d="M0,50L16,50L8,66L0,50Z" style="fill:rgb(255,238,0);"/>
+                                <path d="M0,50L16,50L8,66L0,50Z" style="fill:(252,215,62);"/>
                             </g>
                             <g transform="matrix(1.96491,0,0,1.96491,-30.0099,-24.5931)">
-                                <circle cx="27.996" cy="25.239" r="12.214" style="fill:rgb(255,238,0);"/>
+                                <circle cx="27.996" cy="25.239" r="12.214" style="fill:rgb(252,215,62);"/>
                                 <clipPath id="_clip1">
                                     <circle cx="27.996" cy="25.239" r="12.214"/>
                                 </clipPath>
