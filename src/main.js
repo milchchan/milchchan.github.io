@@ -552,7 +552,12 @@ window.addEventListener("load", (event) => {
                                     icon: "/images/Marker-Star.svg"
                                 });
 
-                                this.setImage(pushpin, track.user);
+                                if ("image" in track) {
+                                    this.setImage(pushpin, track.image.url);
+                                } else if ("image" in track.user) {
+                                    this.setImage(pushpin, track.user.image);
+                                }
+                                
 
                                 /*if ("dictionary" in track && "words" in track.dictionary) {
                                     for (const word in track.dictionary.words) {
@@ -586,7 +591,12 @@ window.addEventListener("load", (event) => {
                                     title: track.name,
                                     subTitle: this.formatTime(timestamp - track.timestamp)
                                 });
-                                this.setImage(pushpin, track.user);
+
+                                if ("image" in track) {
+                                    this.setImage(pushpin, track.image.url);
+                                } else if ("image" in track.user) {
+                                    this.setImage(pushpin, track.user.image);
+                                }
 
                                 /*if ("dictionary" in track && "words" in track.dictionary) {
                                     for (const word in track.dictionary.words) {
@@ -893,6 +903,11 @@ window.addEventListener("load", (event) => {
 
                         for (const key in dictionary) {
                             dictionary[key]["id"] = key;
+
+                            if ("image" in dictionary[key]) {
+                                dictionary[key]["image"] = { path: dictionary[key].image, url: await getDownloadURL(storageRef(storage, dictionary[key].image)) };
+                            }
+
                             tempRecent.push(dictionary[key]);
                             tempCache[geohash].data.push(dictionary[key]);
 
@@ -1217,43 +1232,37 @@ window.addEventListener("load", (event) => {
                     this.shake(this.$refs.input);
                 }
             },
-            setImage: async function (pushpin, user, selected = false) {
+            setImage: async function (pushpin, url, selected = false) {
                 const self = this;
                 //const hours = new Date(track.position.timestamp * 1000).getHours();
+                let image;
+                /*pushpin.setOptions({
+                    icon: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                    <svg width="18" height="18" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                        <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
+                            <path d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z" style="fill:rgb(255,238,0);"/>
+                        </g>
+                    </svg>`
+                });*/
 
-                if ("image" in user) {
-                    let image;
-                    /*pushpin.setOptions({
+                try {
+                    image = await new Promise(async (resolve, reject) => {
+                        const i = new Image();
+
+                        i.onload = () => {
+                            resolve(i);
+                        };
+                        i.onerror = (e) => {
+                            reject(e);
+                        };
+
+                        i.crossOrigin = "Anonymous";
+                        i.src = url;
+                    });
+                } catch (e) {
+                    pushpin.setOptions({
                         icon: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-                        <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                        <svg width="18" height="18" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                            <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
-                                <path d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z" style="fill:rgb(255,238,0);"/>
-                            </g>
-                        </svg>`
-                    });*/
-
-                    try {
-                        image = await new Promise(async (resolve, reject) => {
-                            const i = new Image();
-
-                            i.onload = () => {
-                                resolve(i);
-                            };
-                            i.onerror = (e) => {
-                                reject(e);
-                            };
-
-                            if (user.image.startsWith("gs://")) {
-                                i.src = await getDownloadURL(storageRef(storage, user.image));
-                            } else {
-                                i.crossOrigin = "Anonymous";
-                                i.src = user.image;
-                            }
-                        });
-                    } catch (e) {
-                        pushpin.setOptions({
-                            icon: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
                             <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
                             <svg width="50" height="54" viewBox="0 0 50 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                                 <g transform="matrix(0.999999,0,0,0.999999,17.0011,-13)">
@@ -1266,25 +1275,26 @@ window.addEventListener("load", (event) => {
                                     </g>
                                 </g>
                             </svg>`
-                        });
+                    });
 
-                        console.error(e);
+                    console.error(e);
 
-                        return;
-                    }
+                    return;
+                }
 
-                    const c = document.createElement("canvas");
-                    const ctx = c.getContext('2d');
+                const c = document.createElement("canvas");
+                const ctx = c.getContext('2d');
+                const min = Math.min(image.width, image.height);
 
-                    c.width = image.width;
-                    c.height = image.height;
+                c.width = min;
+                c.height = min;
 
-                    ctx.drawImage(image, 0, 0, image.width, image.height);
+                ctx.drawImage(image, -(image.width - min) / 2, -(image.height - min) / 2, image.width, image.height);
 
-                    //const opacity = hours >= 6 && hours < 18 ? "0.05" : "1";
-                    //const accentColor = self.user.uid === word.id ? self.character.accent : '#ffffff';
-                    //const selectedColor = selected ? self.character.accent : 'rgb(254,221,80)';
-                    const inlineSvg = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                //const opacity = hours >= 6 && hours < 18 ? "0.05" : "1";
+                //const accentColor = self.user.uid === word.id ? self.character.accent : '#ffffff';
+                //const selectedColor = selected ? self.character.accent : 'rgb(254,221,80)';
+                const inlineSvg = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
                         <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
                         <svg width="50" height="54" viewBox="0 0 50 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                             <g transform="matrix(0.999999,0,0,0.999999,17.0011,-13)">
@@ -1314,10 +1324,9 @@ window.addEventListener("load", (event) => {
                             </defs>
                         </svg>`;
 
-                    pushpin.setOptions({
-                        icon: inlineSvg
-                    });
-                }
+                pushpin.setOptions({
+                    icon: inlineSvg
+                });
             },
             change: function (event) {
                 if (this.input.length <= this.maxInputLength) {
@@ -1327,68 +1336,149 @@ window.addEventListener("load", (event) => {
                 }
             },
             upload: async function (event) {
-                function generateUuid() {
-                    // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
-                    // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-                    let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
-
-                    for (let i = 0, len = chars.length; i < len; i++) {
-                        switch (chars[i]) {
-                            case "x":
-                                chars[i] = Math.floor(Math.random() * 16).toString(16);
-                                break;
-                            case "y":
-                                chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
-                                break;
-                        }
-                    }
-
-                    return chars.join("");
-                }
-
-                const self = this;
-                const storageRef = storage.ref();
-                const files = [];
-                const paths = [];
-
-                for (const file of event.target.files) {
-                    files.push(file);
-                }
+                const timestamp = Math.floor(new Date() / 1000);
 
                 this.isUploading = true;
 
-                for (const file of files.sort((x, y) => {
-                    if (x.name > y.name) {
-                        return 1;
-                    } else if (x.name < y.name) {
-                        return -1;
+                if ("uploadable" in event.target.dataset === false || event.target.dataset.uploadable === "true") {
+                    function generateUuid() {
+                        // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
+                        // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+                        let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
+
+                        for (let i = 0, len = chars.length; i < len; i++) {
+                            switch (chars[i]) {
+                                case "x":
+                                    chars[i] = Math.floor(Math.random() * 16).toString(16);
+                                    break;
+                                case "y":
+                                    chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
+                                    break;
+                            }
+                        }
+
+                        return chars.join("");
                     }
 
-                    return 0;
-                })) {
-                    const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file);
+                    const self = this;
+                    const files = [];
+                    const paths = [];
 
-                    try {
-                        await new Promise(function (resolve, reject) {
-                            uploadTask.on("state_changed", (snapshot) => {
-                                self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + paths.length / files.length;
-                            }, (error) => {
-                                reject(error);
-                            }, () => {
-                                resolve(uploadTask.snapshot.ref);
+                    for (const file of event.target.files) {
+                        files.push(file);
+                    }
+
+                    for (const file of files.sort((x, y) => {
+                        if (x.name > y.name) {
+                            return 1;
+                        } else if (x.name < y.name) {
+                            return -1;
+                        }
+
+                        return 0;
+                    })) {
+                        const uploadTask = uploadBytesResumable(storageRef(storage, `assets/${generateUuid()}`), file);
+
+                        try {
+                            await new Promise(function (resolve, reject) {
+                                uploadTask.on("state_changed", (snapshot) => {
+                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + paths.length / files.length;
+                                }, (error) => {
+                                    reject(error);
+                                }, () => {
+                                    resolve(uploadTask.snapshot.ref);
+                                });
                             });
+
+                            const transactionResult = await runTransaction(databaseRef(database, `${databaseRoot}/users/${this.user.uid}/dictionary/words/${event.target.dataset.name}`), current => {
+                                if (current) {
+                                    current["image"] = uploadTask.snapshot.ref.fullPath;
+                                    current["timestamp"] = timestamp;
+                                }
+
+                                return current;
+                            });
+
+                            if (transactionResult.committed && transactionResult.snapshot.exists()) {
+                                const dictionary = transactionResult.snapshot.val();
+                                const result = await runTransaction(databaseRef(database, `${databaseRoot}/tracks/${await this.digestMessage(`${this.user.uid}&${event.target.dataset.name}`)}`), current => {
+                                    if (current) {
+                                        current["image"] = dictionary["image"];
+                                        current["timestamp"] = dictionary["timestamp"];
+                                    }
+
+                                    return current;
+                                });
+
+                                if (result.committed && result.snapshot.exists()) {
+                                    this.update(true);
+
+                                    if (this.mode !== null) {
+                                        if ("name" in this.mode && "attributes" in this.mode && this.mode.name === event.target.dataset.name) {
+                                            this.mode["image"] = { path: uploadTask.snapshot.ref.fullPath, url: await getDownloadURL(storageRef(storage, uploadTask.snapshot.ref.fullPath)) };
+                                        } else if ("words" in this.mode && this.mode.words !== null) {
+                                            for (const word of this.mode.words) {
+                                                if (word.name === event.target.dataset.name) {
+                                                    word.mode["image"] = { path: uploadTask.snapshot.ref.fullPath, url: await getDownloadURL(storageRef(storage, uploadTask.snapshot.ref.fullPath)) };
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                            console.error(e);
+                        }
+
+                        paths.push(uploadTask.snapshot.ref.fullPath);
+                    }
+
+                    this.progress = null;
+                } else if (event.target.dataset.uploadable === "false") {
+                    try {
+                        const transactionResult = await runTransaction(databaseRef(database, `${databaseRoot}/users/${this.user.uid}/dictionary/words/${event.target.dataset.name}`), current => {
+                            if (current) {
+                                current["image"] = null;
+                                current["timestamp"] = timestamp;
+                            }
+
+                            return current;
                         });
+
+                        if (transactionResult.committed && transactionResult.snapshot.exists()) {
+                            const dictionary = transactionResult.snapshot.val();
+                            const result = await runTransaction(databaseRef(database, `${databaseRoot}/tracks/${await this.digestMessage(`${this.user.uid}&${event.target.dataset.name}`)}`), current => {
+                                if (current) {
+                                    current["image"] = null;
+                                    current["timestamp"] = dictionary["timestamp"];
+                                }
+
+                                return current;
+                            });
+
+                            if (result.committed && result.snapshot.exists()) {
+                                this.update(true);
+
+                                if (this.mode !== null) {
+                                    if ("name" in this.mode && "attributes" in this.mode && this.mode.name === event.target.dataset.name && "image" in this.mode) {
+                                        delete this.mode["image"];
+                                    } else if ("words" in this.mode && this.mode.words !== null) {
+                                        for (const word of this.mode.words) {
+                                            if (word.name === event.target.dataset.name && "image" in word) {
+                                                delete word.mode["image"];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e);
                     }
-
-                    paths.push(uploadTask.snapshot.ref.fullPath);
                 }
 
-                push(databaseRef(database, databaseRoot + "/images"), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
-
-                this.progress = null;
                 this.isUploading = false;
             },
             learn: async function (word) {
@@ -1437,6 +1527,10 @@ window.addEventListener("load", (event) => {
 
                 if ("location" in word) {
                     this.word["location"] = word.location;
+                }
+
+                if ("image" in word) {
+                    this.word["image"] = { path: word.image, url: await getDownloadURL(storageRef(storage, word.image)) };
                 }
 
                 if ("user" in word) {
@@ -1555,6 +1649,10 @@ window.addEventListener("load", (event) => {
                             if ("user" in word) {
                                 current["user"] = { id: word.user.id, name: word.user.name, image: word.user.image };
                             }
+
+                            if ("image" in word) {
+                                current["image"] = word.image.path;
+                            }
                         }
 
                         return current;
@@ -1579,7 +1677,7 @@ window.addEventListener("load", (event) => {
                                 }
 
                                 const self = this;
-                
+
                                 runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/count"), count => {
                                     return (count || 0) + 1;
                                 });
@@ -1605,7 +1703,7 @@ window.addEventListener("load", (event) => {
                                 try {
                                     const result = await runTransaction(databaseRef(database, databaseRoot + "/tracks/" + await this.digestMessage(`${this.user.uid}&${word.name}`)), current => {
                                         const attributes = {};
-    
+
                                         if (current) {
                                             current["key"] = `${geohash}${timestamp}`;
                                             current["location"] = { latitude: location.latitude, longitude: location.longitude };
@@ -1614,15 +1712,15 @@ window.addEventListener("load", (event) => {
                                         } else {
                                             current = { key: `${geohash}${timestamp}`, name: word.name, location: { latitude: location.latitude, longitude: location.longitude }, geohash: geohash, user: user, timestamp: timestamp };
                                         }
-    
+
                                         for (const key in dictionary.attributes) {
                                             if (this.attributes.includes(key)) {
                                                 attributes[key] = dictionary.attributes[key];
                                             }
                                         }
-    
+
                                         current["attributes"] = attributes;
-    
+
                                         return current;
                                     });
 
@@ -1655,7 +1753,7 @@ window.addEventListener("load", (event) => {
                                 const result = await runTransaction(databaseRef(database, databaseRoot + "/tracks/" + await this.digestMessage(`${this.user.uid}&${word.name}`)), current => {
                                     return null;
                                 });
-                                
+
                                 if (result.committed && !result.snapshot) {
                                     this.update(true);
                                 }
@@ -1673,7 +1771,7 @@ window.addEventListener("load", (event) => {
                                     current["geohash"] = geohash;
                                     current["user"] = user;
                                     current["timestamp"] = timestamp;
-    
+
                                     for (const attribute of word.attributes) {
                                         if (attribute.value) {
                                             current.attributes[attribute.name] = timestamp - 1;
@@ -1683,7 +1781,7 @@ window.addEventListener("load", (event) => {
                                     }
                                 } else {
                                     current = { key: `${geohash}${timestamp}`, name: word.name, location: { latitude: location.latitude, longitude: location.longitude }, geohash: geohash, attributes: {}, user: user, timestamp: timestamp };
-    
+
                                     for (const attribute of word.attributes) {
                                         if (attribute.value) {
                                             current.attributes[attribute.name] = timestamp;
@@ -1692,7 +1790,7 @@ window.addEventListener("load", (event) => {
                                         }
                                     }
                                 }
-    
+
                                 return current;
                             });
 
@@ -1721,6 +1819,7 @@ window.addEventListener("load", (event) => {
                 }
 
                 if ("words" in this.mode) {
+                    const user = "user" in this.mode ? this.mode.user : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
                     const tempWords = [];
 
                     if (snapshot.exists()) {
@@ -1731,7 +1830,13 @@ window.addEventListener("load", (event) => {
                         }
 
                         for (const name in words) {
-                            tempWords.push("user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } : { name: name, attributes: words[name].attributes });
+                            let w = "user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } :  { name: name, attributes: words[name].attributes, user: user };
+                            
+                            if ("image" in words[name]) {
+                                w["image"] = { path: words[name].image, url: await getDownloadURL(storageRef(storage, words[name].image)) };
+                            }
+
+                            tempWords.push(w);
                         }
 
                         if (tempWords.length === limit + 1) {
@@ -1749,7 +1854,8 @@ window.addEventListener("load", (event) => {
 
                 if ("words" in this.mode && snapshot.exists()) {
                     const words = snapshot.val();
-
+                    const user = "user" in this.mode ? this.mode.user : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
+                    
                     if (this.mode.words !== null && this.mode.words.length > 0) {
                         this.mode.next = this.mode.words[0];
                     }
@@ -1757,7 +1863,13 @@ window.addEventListener("load", (event) => {
                     this.mode.words = [];
 
                     for (const name in words) {
-                        this.mode.words.push("user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } : { name: name, attributes: words[name].attributes });
+                        const w = "user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } : { name: name, attributes: words[name].attributes, user: user };
+
+                        if ("image" in words[name]) {
+                            w["image"] = { path: words[name].image, url: await getDownloadURL(storageRef(storage, words[name].image)) };
+                        }
+
+                        this.mode.words.push(w);
                     }
                 }
             },
@@ -2479,7 +2591,31 @@ window.addEventListener("load", (event) => {
 
                 this.notifications.unshift(data);
             },
-            blinded: async function () {
+            blinded: async function (image) {
+                try {
+                    await new Promise(async (resolve, reject) => {
+                        const i = new Image();
+
+                        i.onload = () => {
+                            resolve(i);
+                        };
+                        i.onerror = (e) => {
+                            reject(e);
+                        };
+
+                        i.crossOrigin = "Anonymous";
+                        i.src = image.url;
+                    });
+                } catch (e) {
+                    console.error(e);
+                    
+                    return false;
+                }
+
+                return true;
+
+
+                /*
                 function _random(min, max) {
                     min = Math.ceil(min);
                     max = Math.floor(max);
@@ -2534,7 +2670,7 @@ window.addEventListener("load", (event) => {
 
                 if ("tags" in image) {
                     this.talk(this.user.uid, image.tags.filter((x) => x !== this.character.name));
-                }
+                }*/
             },
             load: function (url) {
                 let isCompleted = true;
