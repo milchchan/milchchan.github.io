@@ -607,13 +607,13 @@
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .icon,
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button .icon {
             margin: 0 !important;
-            color: var(--main-color);
+            color: var(--accent-color);
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .icon+.wrap,
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button .icon+.wrap {
             margin: 16px 0px 0px 0px !important;
-            color: #000000;
+            color: var(--main-color);
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .clip,
@@ -907,7 +907,7 @@
             background-clip: padding-box;
             box-shadow: none;
             height: initial;
-            color: var(--main-color) !important;
+            color: var(--accent-color) !important;
         }
 
         .left button,
@@ -922,7 +922,7 @@
             -webkit-backdrop-filter: blur(4px);
             background-clip: padding-box;
             height: initial;
-            color: var(--main-color) !important;
+            color: var(--accent-color) !important;
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:first-child>button>span,
@@ -1031,7 +1031,7 @@
             font-size: 0.75rem;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 0.75rem;
-            color: var(--main-color);
+            color: var(--accent-color);
             transition: .5s;
             transform: rotate(0.03deg);
         }
@@ -1063,7 +1063,7 @@
             padding: 0;
             width: 32px;
             height: 4px;
-            background-color: var(--main-color);
+            background-color: var(--accent-color);
             text-align: center !important;
             transition: .5s;
         }
@@ -1106,10 +1106,15 @@
             background: rgba(104, 230, 255, 0.75) !important;
         }
 
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary span.wrap {
+            color: #ffffff !important;
+        }
+
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content span.wrap {
             display: flex;
             margin: 0;
             height: calc(0.75rem * 1.5);
+            color: var(--main-color) !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button .clip .scrollable div,
@@ -1124,12 +1129,12 @@
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon,
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon {
-            color: var(--main-color);
+            color: var(--accent-color);
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button span.wrap+.icon:last-of-type,
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button span.wrap+.icon:last-of-type {
-            color: var(--accent-color);
+            color: var(--main-color);
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button.is-primary .icon {
@@ -1192,7 +1197,7 @@
             padding: 24px;
             background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
-            color: var(--main-color);
+            color: var(--accent-color);
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
