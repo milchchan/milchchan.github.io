@@ -53,13 +53,16 @@
             /*--main-color: #6772E5;
             --accent-color: #8898aa;*/
             /*--main-color: #00eeff;
-            --accent-color: #ffee00;*/
+            --accent-color: #fcd73e;*/
             /*--main-color: #b56ed8;*/
             /*--accent-color: #ff4c90;*/
             /*--accent-color: #ff86b5;*/
             /*ffe598*/
-            --main-color: #00a5cd;
-            --accent-color: #e62d87;
+            /*--main-color: #00a5cd;
+            --accent-color: #e62d87;*/
+            --main-color: #68e6ff;
+            --accent-color: #fecde2;
+            /*--accent-color: #c1aee6;*/
             --background-image: url('/images/Background-Light.png');
             --background-image-2x: url('/images/Background-Light@2x.png');
             --background-image-3x: url('/images/Background-Light@3x.png');
@@ -214,6 +217,7 @@
 
         .file-input,
         .file-cta {
+            pointer-events: none;
             background-color: transparent !important;
             border: 0px solid transparent !important;
             padding: 0;
@@ -221,6 +225,7 @@
         }
 
         .file-cta_ {
+            margin: 0 !important;
             display: flex;
             flex-direction: row;
         }
@@ -231,7 +236,7 @@
         .is-primary:hover {
             /*color: #fef6a5 !important;*/
             background-color: transparent !important;
-            color: var(--accent-color) !important;
+            color: var(--main-color) !important;
             border: 0px solid transparent !important;
             box-shadow: none !important;
         }
@@ -295,7 +300,7 @@
 
         .is-danger {
             background-color: transparent !important;
-            color: #ff4c90 !important;
+            color: var(--accent-color) !important;
         }
 
         .is-superellips {
@@ -333,9 +338,9 @@
         }
 
         .logo svg g path {
-            fill: var(--foreground-color);
+            fill: var(--main-color);
             fill-opacity: 0;
-            stroke: var(--foreground-color) !important;
+            stroke: var(--main-color) !important;
             stroke-width: 0.5 !important;
             stroke-dasharray: 250;
             stroke-dashoffset: 250;
@@ -367,7 +372,7 @@
         }
 
         .sunrise>svg>radialGradient>stop {
-            stop-color: rgb(134, 134, 123) !important;
+            stop-color: rgb(252, 215, 62) !important;
         }
 
         .progress {
@@ -397,7 +402,7 @@
             top: 0;
             left: 0;
             overflow: hidden;
-            background: #ffee00 url('/images/Stripes.png') 50% 50% repeat;
+            background: #fcd73e url('/images/Stripes.png') 50% 50% repeat;
             background-size: 20px 20px;
             animation: progress 0.5s linear 0s infinite;
             animation-play-state: paused;
@@ -670,7 +675,7 @@
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .icon+.wrap,
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button .icon+.wrap {
             margin: 16px 0px 0px 0px !important;
-            color: #000000;
+            color: var(--main-color);
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .clip,
@@ -727,14 +732,14 @@
 
         .blind {
             z-index: 1;
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             min-height: 100%;
             transform: translate3d(0, 0%, 0);
             overflow: hidden;
-            background: #00eeff;
+            background: var(--main-color);
             /*background: #00eeff url('/images/Background.png') 50% 50% repeat;
             animation: progress 0.5s linear 0s infinite;*/
         }
@@ -1037,7 +1042,7 @@
             height: fit-content;
             line-height: calc(0.75rem * 1.5);
             backface-visibility: hidden;
-            color: #ffee00 !important;
+            color: #fcd73e !important;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -1061,7 +1066,7 @@
 
         .center>.level>.level-item:nth-last-of-type(1) button .icon,
         .center>.level>.level-item:nth-last-of-type(1) .button .icon {
-            color: #ffee00;
+            color: #fcd73e;
         }
 
         .center>.level>.level-item:nth-last-of-type(1) button>:not(.wrap),
@@ -1192,6 +1197,9 @@
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level {
             margin: -8px -8px -8px -8px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item {
@@ -1204,6 +1212,161 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 16px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media {
+            display: flex;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 16px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.75);
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+            backdrop-filter: blur(4px) !important;
+            -webkit-backdrop-filter: blur(4px) !important;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content {
+            position: relative;
+            display: flex;
+            border-radius: 16px;
+            overflow: hidden !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>figure {
+            position: relative;
+            width: 256px;
+            height: 256px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>figure>picture>img {
+            position: absolute;
+            object-fit: cover;
+            width: 256px;
+            height: 256px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level {
+            z-index: 1;
+            position: absolute;
+            display: flex;
+            ;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            width: 256px;
+            height: 256px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:first-child:not(:last-child) {
+            display: flex;
+            margin: 0;
+            padding: 16px 16px 0px 16px;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:first-child:not(:last-child)>.level {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:first-child:not(:last-child)>.level>.level-item:first-child {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:first-child:not(:last-child)>.level>.level-item:last-child {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-end;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:first-child:not(:last-child)>.level>.level-item:last-child .button,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:first-child:not(:last-child)>.level>.level-item:last-child button {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px !important;
+            padding: 16px !important;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box !important;
+            /*background: #f5f5f5;
+            background: linear-gradient(145deg, #ffffff, #dddddd);
+            box-shadow: 10px 10px 30px #d0d0d0,
+                -10px -10px 30px #ffffff;*/
+            height: initial !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+            backdrop-filter: blur(4px) !important;
+            -webkit-backdrop-filter: blur(4px) !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:first-child:not(:last-child)>.level>.level-item:last-child .button .icon {
+            color: var(--accent-color);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child {
+            display: flex;
+            margin: 0px 0px 16px 0px;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child span.wrap {
+            display: flex;
+            margin: 0;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child button .clip .scrollable div,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child .button .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child button .icon,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child .button .icon {
+            color: var(--accent-color);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child button span.wrap+.icon:last-of-type,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child .button span.wrap+.icon:last-of-type {
+            color: var(--accent-color);
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child button span:not(:first-child),
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child .button span:not(:first-child) {
+            margin: 0px 0px 0px 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child button .icon:last-child:not(:first-child),
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child .button .icon:last-child:not(:first-child) {
+            margin: 0px 0px 0px 8px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child button .clip,
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.media>.media-content>.level>.level-item:last-child .button .clip {
+            display: inline-block;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
         }
 
         #menu>.columns>.column>.control>.level:first-child h1 {
@@ -1221,13 +1384,17 @@
             font-size: 0.75rem;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             line-height: 0.75rem;
-            color: var(--main-color);
+            color: var(--accent-color);
             transition: .5s;
             transform: rotate(0.03deg);
         }
 
         #menu>.columns>.column>.control>.level:first-child h1+h2 {
             margin: 8px 0px 0px 0px;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child svg g path {
+            fill: var(--main-color);
         }
 
         #menu>.columns>.column>.control>.level:first-child svg+h2 {
@@ -1249,7 +1416,7 @@
             padding: 0;
             width: 32px;
             height: 4px;
-            background-color: var(--main-color);
+            background-color: var(--accent-color);
             text-align: center !important;
             transition: .5s;
         }
@@ -1277,7 +1444,7 @@
             align-items: center;
             margin: 0;
             padding: 16px 32px 16px 32px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 500px 500px 500px 500px;
             background: rgba(255, 255, 255, 0.75);
             background-clip: padding-box;
@@ -1285,14 +1452,14 @@
             line-height: calc(0.75rem * 1.5);
             backface-visibility: hidden;
             color: var(--main-color);
-            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+            backdrop-filter: blur(4px) !important;
+            -webkit-backdrop-filter: blur(4px) !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary,
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>.button.is-primary {
-            background: rgba(0, 165, 205, 0.75) !important;
+            background: rgba(104, 230, 255, 0.75) !important;
             color: #ffffff !important;
         }
 
@@ -1322,14 +1489,19 @@
             color: var(--accent-color);
         }
 
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button span.wrap+.icon:last-of-type,
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button span.wrap+.icon:last-of-type {
+            color: var(--main-color);
+        }
+
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button span:not(:first-child),
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button span:not(:first-child) {
-            margin: 0px 0px 0px 8px;
+            margin: 0px 0px 0px 8px !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon:last-child:not(:first-child),
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon:last-child:not(:first-child) {
-            margin: 0px 0px 0px 8px;
+            margin: 0px 0px 0px 8px !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .clip,
@@ -1344,18 +1516,18 @@
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
-            padding: 16px 32px 16px 32px;
+            padding: 16px 32px 16px 32px !important;
             background: rgba(255, 255, 255, 0.75) !important;
-            background-clip: padding-box;
-            height: initial;
-            color: var(--main-color);
-            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            background-clip: padding-box !important;
+            height: initial !important;
+            color: var(--main-color) !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+            backdrop-filter: blur(4px) !important;
+            -webkit-backdrop-filter: blur(4px) !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item:first-of-type button.is-primary {
-            background: rgba(0, 165, 205, 0.75) !important;
+            background: rgba(104, 230, 255, 0.75) !important;
             color: #ffffff !important;
         }
 
@@ -1363,21 +1535,26 @@
             color: #ffffff !important;
         }
 
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item>.level>.level-item>.level>.level-item .button,
         #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item:last-child:not(:first-child)>.level>.level-item button {
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 290486px;
-            padding: 16px;
+            border-radius: 290486px !important;
+            padding: 16px !important;
             background: rgba(255, 255, 255, 0.75) !important;
-            background-clip: padding-box;
+            background-clip: padding-box !important;
             /*background: #f5f5f5;
             background: linear-gradient(145deg, #ffffff, #dddddd);
             box-shadow: 10px 10px 30px #d0d0d0,
                 -10px -10px 30px #ffffff;*/
-            height: initial;
-            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            height: initial !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+            backdrop-filter: blur(4px) !important;
+            -webkit-backdrop-filter: blur(4px) !important;
+        }
+
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item>.level>.level-item>.level>.level-item .button .icon {
+            color: var(--accent-color);
         }
 
         #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item a .icon {
@@ -1554,7 +1731,7 @@
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content .level>.level-item>.level>.level-item>.level>.level-item .badge {
             padding: 4px 8px 4px 8px !important;
             border-radius: 500px 500px 500px 500px;
-            background: #ffee00;
+            background: #fcd73e;
             color: #ffffff;
             font-size: 0.75rem;
             line-height: 0.75rem !important;
@@ -1657,20 +1834,20 @@
             background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
             height: initial;
-            color: #ffee00;
+            color: #fcd73e !important;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content>.content>button>.icon {
-            color: #ffee00;
+            color: #fcd73e;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item .media>.media-content>.content .badge {
             padding: 4px 8px 4px 8px !important;
             border-radius: 500px 500px 500px 500px;
-            background: #ffee00;
+            background: #fcd73e;
             color: #ffffff;
             font-size: 0.75rem;
             line-height: 0.75rem !important;
@@ -1694,7 +1871,7 @@
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>span.icon {
-            color: #ffee00;
+            color: #fcd73e;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.badge {
@@ -1706,7 +1883,7 @@
             margin: 0;
             padding: 4px 8px 4px 8px !important;
             border-radius: 500px 500px 500px 500px;
-            background: #ffee00;
+            background: #fcd73e;
             color: #ffffff;
             font-size: 0.75rem;
             line-height: 0.75rem !important;
@@ -2035,7 +2212,7 @@
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) span {
-            color: rgba(230, 45, 135, 0.25);
+            color: var(--accent-color);
             font-family: 'Hind', 'Josefin Sans', sans-serif;
         }
 
@@ -2460,7 +2637,7 @@
             }
 
             .progress>.bar {
-                background: #ffee00 url('/images/Stripes@2x.png') 50% 50% repeat;
+                background: #fcd73e url('/images/Stripes@2x.png') 50% 50% repeat;
                 background-size: 20px 20px;
             }
 
@@ -2488,7 +2665,7 @@
             }
 
             .progress>.bar {
-                background: #ffee00 url('/images/Stripes@3x.png') 50% 50% repeat;
+                background: #fcd73e url('/images/Stripes@3x.png') 50% 50% repeat;
                 background-size: 20px 20px;
             }
 
@@ -2538,7 +2715,7 @@
                                     </span>
                                 </button>
                                 <button class="button" type="button"
-                                    @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false"
+                                    @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false;"
                                     v-else-if="isLearning" key="close2">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
@@ -2558,7 +2735,7 @@
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="mode = mode.users"
-                                    v-else-if="typeof(mode) === 'object' && 'users' in mode === true" key="users">
+                                    v-else-if="typeof(mode) === 'object' && 'users' in mode" key="users">
                                     <span class="icon is-small">
                                         <i class="fas fa-arrow-left"></i>
                                     </span>
@@ -2570,13 +2747,14 @@
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="'name' in mode && 'attributes' in mode" key="close5">
+                                    v-else-if="typeof(mode) === 'object' && 'name' in mode && 'attributes' in mode"
+                                    key="close5">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === true" key="close6">
+                                    v-else-if="typeof(mode) === 'object' && 'stats' in mode && mode.force" key="close6">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -2704,7 +2882,7 @@
                         </div>
                         <div class="level-item">
                             <button class="button" type="button" v-bind:disabled="user === null"
-                                @click="isRevealed = true; mode = { stats: stats };">
+                                @click="isRevealed = true; mode = { stats: stats, force: true };">
                                 <div class="icon is-large">
                                     <i class="fas fa-chart-bar"></i>
                                 </div>
@@ -2766,7 +2944,7 @@
                                     <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
                                         <path
                                             d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z"
-                                            style="fill:rgba(255,238,0,0.5);" />
+                                            style="fill:rgba(254,205,226,0.75);" />
                                     </g>
                                 </svg>
                             </button>
@@ -2828,7 +3006,7 @@
                 <div class="blind" v-if="isBlinded" v-cloak></div>
             </transition>
             <transition name="fade">
-                <div class="logo" v-if="progress !== null">
+                <div class="logo" v-if="progress !== null && !isUploading">
                     <svg viewBox="0 0 1266 130" version="1.1" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
                         xmlns:serif="http://www.serif.com/"
@@ -3081,7 +3259,7 @@
                                                                     <div class="field">
                                                                         <label class="checkbox">
                                                                             <input type="checkbox"
-                                                                                v-bind:data-word="word.name"
+                                                                                v-bind:data-name="word.name"
                                                                                 v-bind:data-attribute="column.name"
                                                                                 @change="check" v-model="column.value">
                                                                             <span class="custom"></span>
@@ -3232,38 +3410,44 @@
                                                     <div class="level-item" v-if="'next' in mode && 'indexes' in mode">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
-                                                                <article class="media">
-                                                                    <div class="media-content">
-                                                                        <div class="content">
-                                                                            <button class="button is-white"
-                                                                                type="button"
-                                                                                v-bind:disabled="mode.indexes.length === 0"
-                                                                                @click="previous(mode.user.id, mode.indexes.shift().name)"
-                                                                                v-cloak>
-                                                                                <span class="icon is-small">
-                                                                                    <i class="fas fa-chevron-left"></i>
-                                                                                </span>
-                                                                            </button>
-                                                                        </div>
+                                                                <div class="level is-mobile">
+                                                                    <div class="level-item">
+                                                                        <article class="media">
+                                                                            <div class="media-content">
+                                                                                <div class="content">
+                                                                                    <button class="button is-white"
+                                                                                        type="button"
+                                                                                        v-bind:disabled="mode.indexes.length === 0"
+                                                                                        @click="previous(mode.user.id, mode.indexes.shift().name)"
+                                                                                        v-cloak>
+                                                                                        <span class="icon is-small">
+                                                                                            <i
+                                                                                                class="fas fa-chevron-left"></i>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
                                                                     </div>
-                                                                </article>
-                                                            </div>
-                                                            <div class="level-item">
-                                                                <article class="media">
-                                                                    <div class="media-content">
-                                                                        <div class="content">
-                                                                            <button class="button is-white"
-                                                                                type="button"
-                                                                                v-bind:disabled="mode.next === null"
-                                                                                @click="next(mode.user.id, mode.next.name)"
-                                                                                v-cloak>
-                                                                                <span class="icon is-small">
-                                                                                    <i class="fas fa-chevron-right"></i>
-                                                                                </span>
-                                                                            </button>
-                                                                        </div>
+                                                                    <div class="level-item">
+                                                                        <article class="media">
+                                                                            <div class="media-content">
+                                                                                <div class="content">
+                                                                                    <button class="button is-white"
+                                                                                        type="button"
+                                                                                        v-bind:disabled="mode.next === null"
+                                                                                        @click="next(mode.user.id, mode.next.name)"
+                                                                                        v-cloak>
+                                                                                        <span class="icon is-small">
+                                                                                            <i
+                                                                                                class="fas fa-chevron-right"></i>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
                                                                     </div>
-                                                                </article>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -3277,31 +3461,29 @@
                                             <article class="media">
                                                 <figure class="media-content">
                                                     <p class="image is-64x64 is-superellips">
-                                                        <picture class="image is-64x64" style="pointer-events: none;"
-                                                            v-if="'image' in mode && mode.image !== null"
-                                                            key="mode.image">
-                                                            <img v-bind:src="mode.image" width="64" height="64"
-                                                                alt="Avatar">
-                                                        </picture>
-                                                        <picture class="image is-64x64" style="pointer-events: none;"
-                                                            v-else-if="'user' in mode && 'image' in mode.user && mode.user.image !== null"
-                                                            key="mode.user.image">
-                                                            <img v-bind:src="mode.user.image" width="64" height="64"
-                                                                v-bind:alt="mode.user.name">
-                                                        </picture>
-                                                        <picture class="image is-64x64" style="pointer-events: none;"
-                                                            v-else-if="'photoURL' in user && user.photoURL !== null"
-                                                            v-bind:key="user.photoURL">
-                                                            <img v-bind:src="user.photoURL" width="64" height="64"
-                                                                v-bind:alt="user.displayName">
-                                                        </picture>
-                                                        <picture class="image is-64x64" style="pointer-events: none;"
-                                                            v-else key="default">
-                                                            <source srcset="/images/Merku.png"
-                                                                media="(prefers-color-scheme: dark)">
-                                                            <img src="/images/Milch.png" width="64" height="64"
-                                                                alt="Logo">
-                                                        </picture>
+                                                        <transition name="fade" mode="out-in">
+                                                            <picture class="image is-64x64"
+                                                                style="pointer-events: none;"
+                                                                v-if="'user' in mode && 'image' in mode.user && mode.user.image !== null"
+                                                                v-bind:key="mode.user.image">
+                                                                <img v-bind:src="mode.user.image" width="64" height="64"
+                                                                    v-bind:alt="mode.user.name">
+                                                            </picture>
+                                                            <picture class="image is-64x64"
+                                                                style="pointer-events: none;"
+                                                                v-else-if="'photoURL' in user && user.photoURL !== null"
+                                                                v-bind:key="user.photoURL">
+                                                                <img v-bind:src="user.photoURL" width="64" height="64"
+                                                                    v-bind:alt="user.displayName">
+                                                            </picture>
+                                                            <picture class="image is-64x64"
+                                                                style="pointer-events: none;" v-else key="default">
+                                                                <source srcset="/images/Merku.png"
+                                                                    media="(prefers-color-scheme: dark)">
+                                                                <img src="/images/Milch.png" width="64" height="64"
+                                                                    alt="Logo">
+                                                            </picture>
+                                                        </transition>
                                                     </p>
                                                 </figure>
                                             </article>
@@ -3394,51 +3576,243 @@
                                             <div class="level is-mobile">
                                                 <div class="level-item">
                                                     <div class="level">
-                                                        <div class="level-item">
-                                                            <article class="media">
-                                                                <div class="media-content">
-                                                                    <div class="content">
-                                                                        <button class="button is-rounded is-size-7"
-                                                                            type="button"
-                                                                            @click="learn({ name: mode.name, attributes: mode.attributes, user: mode.user }); isRevealed = false; mode = null;">
-                                                                            <span class="icon">
-                                                                                <i class="fas fa-star"></i>
-                                                                            </span>
-                                                                            <span class="wrap has-text-weight-bold"
-                                                                                v-if="'user' in mode && user.uid !== mode.user.id">
-                                                                                <div class="clip">
-                                                                                    <div class="scrollable">
-                                                                                        <div>{{ mode.name }}を教えて貰う</div>
-                                                                                        <div>{{ mode.name }}を教えて貰う</div>
+                                                        <transition name="fade" mode="out-in">
+                                                            <div class="level-item"
+                                                                v-if="'image' in mode && mode.image !== null"
+                                                                v-bind:key="mode.image">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <figure class="image">
+                                                                            <picture class="image has-ratio"
+                                                                                style="pointer-events: none;">
+                                                                                <img v-bind:src="mode.image.url"
+                                                                                    v-bind:alt="mode.name"
+                                                                                    v-bind:load="blinded(mode.image).then(x => mode['preloaded'] = x)">
+                                                                            </picture>
+                                                                        </figure>
+                                                                        <transition name="blind">
+                                                                            <div class="blind"
+                                                                                v-if="'preloaded' in mode === false || !mode.preloaded"
+                                                                                v-cloak></div>
+                                                                        </transition>
+                                                                        <div class="level">
+                                                                            <div class="level-item">
+                                                                                <div class="level">
+                                                                                    <div class="level-item">
+                                                                                        <div class="level">
+                                                                                            <div class="level-item">
+                                                                                                <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
+                                                                                                    target="_blank"><span
+                                                                                                        class="icon is-small"><i
+                                                                                                            class="fas fa-search"></i></span></a>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="level-item">
+                                                                                        <transition name="fade"
+                                                                                            mode="out-in">
+                                                                                            <div class="file button is-rounded is-size-7 has-text-weight-bold"
+                                                                                                v-if="'image' in mode === false || mode.image === null"
+                                                                                                key="add">
+                                                                                                <label
+                                                                                                    class="file-label">
+                                                                                                    <input
+                                                                                                        class="file-input"
+                                                                                                        type="file"
+                                                                                                        name="upload"
+                                                                                                        accept="image/png, image/jpeg"
+                                                                                                        data-uploadable="true"
+                                                                                                        v-bind:disabled="isUploading"
+                                                                                                        v-bind:data-name="mode.name"
+                                                                                                        @change="upload">
+                                                                                                    <span
+                                                                                                        class="file-cta_">
+                                                                                                        <transition
+                                                                                                            name="fade"
+                                                                                                            mode="out-in">
+                                                                                                            <span
+                                                                                                                class="icon"
+                                                                                                                v-if="isUploading"
+                                                                                                                key="uploading">
+                                                                                                                <i
+                                                                                                                    class="fas fa-spinner updating"></i>
+                                                                                                            </span>
+                                                                                                            <span
+                                                                                                                class="icon"
+                                                                                                                v-else
+                                                                                                                key="ready">
+                                                                                                                <i
+                                                                                                                    class="fas fa-cloud-upload-alt"></i>
+                                                                                                            </span>
+                                                                                                        </transition>
+                                                                                                    </span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <button class="button"
+                                                                                                type="button"
+                                                                                                data-uploadable="false"
+                                                                                                v-bind:data-name="mode.name"
+                                                                                                @click="upload" v-else
+                                                                                                key="remove">
+                                                                                                <span
+                                                                                                    class="icon is-small">
+                                                                                                    <i
+                                                                                                        class="fas fa-trash"></i>
+                                                                                                </span>
+                                                                                            </button>
+                                                                                        </transition>
                                                                                     </div>
                                                                                 </div>
-                                                                            </span>
-                                                                            <span class="wrap has-text-weight-bold"
-                                                                                v-else>
-                                                                                <div class="clip">
-                                                                                    <div class="scrollable">
-                                                                                        <div>{{ mode.name }}を教える</div>
-                                                                                        <div>{{ mode.name }}を教える</div>
-                                                                                    </div>
+                                                                            </div>
+                                                                            <div class="level-item">
+                                                                                <button
+                                                                                    class="button is-rounded is-size-7"
+                                                                                    type="button"
+                                                                                    @click="learn({ name: mode.name, attributes: mode.attributes, user: mode.user }); isRevealed = false; mode = null;">
+                                                                                    <span class="icon">
+                                                                                        <i class="fas fa-star"></i>
+                                                                                    </span>
+                                                                                    <span
+                                                                                        class="wrap has-text-weight-bold">
+                                                                                        <div class="clip">
+                                                                                            <div class="scrollable">
+                                                                                                <div>{{ mode.name }}
+                                                                                                </div>
+                                                                                                <div>{{ mode.name }}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                            <div class="level-item" v-else key="default">
+                                                                <div class="level">
+                                                                    <div class="level-item">
+                                                                        <article class="media">
+                                                                            <div class="media-content">
+                                                                                <div class="content">
+                                                                                    <button
+                                                                                        class="button is-rounded is-size-7"
+                                                                                        type="button"
+                                                                                        @click="learn({ name: mode.name, attributes: mode.attributes, user: mode.user }); isRevealed = false; mode = null;">
+                                                                                        <span class="icon">
+                                                                                            <i class="fas fa-star"></i>
+                                                                                        </span>
+                                                                                        <span
+                                                                                            class="wrap has-text-weight-bold"
+                                                                                            v-if="'user' in mode && user.uid !== mode.user.id">
+                                                                                            <div class="clip">
+                                                                                                <div class="scrollable">
+                                                                                                    <div>{{ mode.name
+                                                                                                        }}を教えて貰う</div>
+                                                                                                    <div>{{ mode.name
+                                                                                                        }}を教えて貰う</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </span>
+                                                                                        <span
+                                                                                            class="wrap has-text-weight-bold"
+                                                                                            v-else>
+                                                                                            <div class="clip">
+                                                                                                <div class="scrollable">
+                                                                                                    <div>{{ mode.name
+                                                                                                        }}を教える
+                                                                                                    </div>
+                                                                                                    <div>{{ mode.name
+                                                                                                        }}を教える
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </button>
                                                                                 </div>
-                                                                            </span>
-                                                                        </button>
+                                                                            </div>
+                                                                        </article>
+                                                                    </div>
+                                                                    <div class="level-item"
+                                                                        v-if="'user' in mode && user.uid === mode.user.id">
+                                                                        <div class="level">
+                                                                            <div class="level-item">
+                                                                                <article class="media">
+                                                                                    <div class="media-content">
+                                                                                        <div class="content">
+                                                                                            <transition name="fade"
+                                                                                                mode="out-in">
+                                                                                                <div class="file button is-rounded is-size-7 has-text-weight-bold"
+                                                                                                    v-if="'image' in mode === false || mode.image === null"
+                                                                                                    key="add">
+                                                                                                    <label
+                                                                                                        class="file-label">
+                                                                                                        <input
+                                                                                                            class="file-input"
+                                                                                                            type="file"
+                                                                                                            name="upload"
+                                                                                                            accept="image/png, image/jpeg"
+                                                                                                            data-uploadable="true"
+                                                                                                            v-bind:disabled="isUploading"
+                                                                                                            v-bind:data-name="mode.name"
+                                                                                                            @change="upload">
+                                                                                                        <span
+                                                                                                            class="file-cta_">
+                                                                                                            <transition
+                                                                                                                name="fade"
+                                                                                                                mode="out-in">
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-if="isUploading"
+                                                                                                                    key="uploading">
+                                                                                                                    <i
+                                                                                                                        class="fas fa-spinner updating"></i>
+                                                                                                                </span>
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-else
+                                                                                                                    key="ready">
+                                                                                                                    <i
+                                                                                                                        class="fas fa-cloud-upload-alt"></i>
+                                                                                                                </span>
+                                                                                                            </transition>
+                                                                                                        </span>
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                                <button class="button"
+                                                                                                    type="button"
+                                                                                                    data-uploadable="false"
+                                                                                                    v-bind:data-name="mode.name"
+                                                                                                    @click="upload"
+                                                                                                    v-else key="remove">
+                                                                                                    <span
+                                                                                                        class="icon is-small">
+                                                                                                        <i
+                                                                                                            class="fas fa-trash"></i>
+                                                                                                    </span>
+                                                                                                </button>
+                                                                                            </transition>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </article>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="level-item">
+                                                                        <article class="media">
+                                                                            <div class="media-content">
+                                                                                <div class="content">
+                                                                                    <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
+                                                                                        target="_blank"><span
+                                                                                            class="icon is-small"><i
+                                                                                                class="fas fa-search"></i></span></a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
                                                                     </div>
                                                                 </div>
-                                                            </article>
-                                                        </div>
-                                                        <div class="level-item">
-                                                            <article class="media">
-                                                                <div class="media-content">
-                                                                    <div class="content">
-                                                                        <a v-bind:href="encodeURI('https://google.com/search?q=' + mode.name)"
-                                                                            target="_blank"><span
-                                                                                class="icon is-small"><i
-                                                                                    class="fas fa-search"></i></span></a>
-                                                                    </div>
-                                                                </div>
-                                                            </article>
-                                                        </div>
+                                                            </div>
+                                                        </transition>
                                                     </div>
                                                 </div>
                                             </div>
@@ -3462,80 +3836,279 @@
                                                     <div class="level-item" v-for="word in mode.words"
                                                         v-bind:key="word">
                                                         <div class="level">
-                                                            <div class="level-item">
-                                                                <article class="media">
-                                                                    <div class="media-content">
-                                                                        <div class="content">
-                                                                            <button class="button is-rounded is-size-7"
-                                                                                type="button"
-                                                                                @click="learn(word); isRevealed = false; mode = null;">
-                                                                                <span class="icon">
-                                                                                    <i class="fas fa-star"></i>
-                                                                                </span>
-                                                                                <span class="wrap has-text-weight-bold">
-                                                                                    <div class="clip">
-                                                                                        <div class="scrollable">
-                                                                                            <div>{{ word.name }}を教える
-                                                                                            </div>
-                                                                                            <div>{{ word.name }}を教える
+                                                            <transition name="fade" mode="out-in">
+                                                                <div class="level-item"
+                                                                    v-if="'image' in word && word.image !== null"
+                                                                    v-bind:key="word.image">
+                                                                    <article class="media">
+                                                                        <div class="media-content">
+                                                                            <figure class="image">
+                                                                                <picture class="image has-ratio"
+                                                                                    style="pointer-events: none;">
+                                                                                    <img v-bind:src="word.image.url"
+                                                                                        v-bind:alt="word.name"
+                                                                                        v-bind:load="blinded(word.image).then(x => word.image['preloaded'] = x)">
+                                                                                </picture>
+                                                                            </figure>
+                                                                            <transition name="blind">
+                                                                                <div class="blind"
+                                                                                    v-if="'preloaded' in word.image === false || !word.image.preloaded"
+                                                                                    v-cloak></div>
+                                                                            </transition>
+                                                                            <div class="level">
+                                                                                <div class="level-item">
+                                                                                    <div class="level">
+                                                                                        <div class="level-item">
+                                                                                            <div class="level">
+                                                                                                <div class="level-item">
+                                                                                                    <a v-bind:href="encodeURI('https://google.com/search?q=' + word.name)"
+                                                                                                        target="_blank"><span
+                                                                                                            class="icon is-small"><i
+                                                                                                                class="fas fa-search"></i></span></a>
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <div class="level-item">
+                                                                                            <transition name="fade"
+                                                                                                mode="out-in">
+                                                                                                <div class="file button is-rounded is-size-7 has-text-weight-bold"
+                                                                                                    v-if="'image' in word === false || word.image === null"
+                                                                                                    key="add">
+                                                                                                    <label
+                                                                                                        class="file-label">
+                                                                                                        <input
+                                                                                                            class="file-input"
+                                                                                                            type="file"
+                                                                                                            name="upload"
+                                                                                                            accept="image/png, image/jpeg"
+                                                                                                            data-uploadable="true"
+                                                                                                            v-bind:disabled="isUploading"
+                                                                                                            v-bind:data-name="word.name"
+                                                                                                            @change="upload">
+                                                                                                        <span
+                                                                                                            class="file-cta_">
+                                                                                                            <transition
+                                                                                                                name="fade"
+                                                                                                                mode="out-in">
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-if="isUploading"
+                                                                                                                    key="uploading">
+                                                                                                                    <i
+                                                                                                                        class="fas fa-spinner updating"></i>
+                                                                                                                </span>
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-else
+                                                                                                                    key="ready">
+                                                                                                                    <i
+                                                                                                                        class="fas fa-cloud-upload-alt"></i>
+                                                                                                                </span>
+                                                                                                            </transition>
+                                                                                                        </span>
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                                <button class="button"
+                                                                                                    type="button"
+                                                                                                    data-uploadable="false"
+                                                                                                    v-bind:data-name="word.name"
+                                                                                                    @click="upload"
+                                                                                                    v-else key="remove">
+                                                                                                    <span
+                                                                                                        class="icon is-small">
+                                                                                                        <i
+                                                                                                            class="fas fa-trash"></i>
+                                                                                                    </span>
+                                                                                                </button>
+                                                                                            </transition>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </span>
-                                                                            </button>
+                                                                                </div>
+                                                                                <div class="level-item">
+                                                                                    <button
+                                                                                        class="button is-rounded is-size-7"
+                                                                                        type="button"
+                                                                                        @click="learn(word); isRevealed = false; mode = null;">
+                                                                                        <span class="icon">
+                                                                                            <i class="fas fa-star"></i>
+                                                                                        </span>
+                                                                                        <span
+                                                                                            class="wrap has-text-weight-bold">
+                                                                                            <div class="clip">
+                                                                                                <div class="scrollable">
+                                                                                                    <div>{{ word.name }}
+                                                                                                    </div>
+                                                                                                    <div>{{ word.name }}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </article>
+                                                                </div>
+                                                                <div class="level-item" v-else key="default">
+                                                                    <div class="level">
+                                                                        <div class="level-item">
+                                                                            <article class="media">
+                                                                                <div class="media-content">
+                                                                                    <div class="content">
+                                                                                        <button
+                                                                                            class="button is-rounded is-size-7"
+                                                                                            type="button"
+                                                                                            @click="learn(word); isRevealed = false; mode = null;">
+                                                                                            <span class="icon">
+                                                                                                <i
+                                                                                                    class="fas fa-star"></i>
+                                                                                            </span>
+                                                                                            <span
+                                                                                                class="wrap has-text-weight-bold">
+                                                                                                <div class="clip">
+                                                                                                    <div
+                                                                                                        class="scrollable">
+                                                                                                        <div>{{
+                                                                                                            word.name
+                                                                                                            }}を教える
+                                                                                                        </div>
+                                                                                                        <div>{{
+                                                                                                            word.name
+                                                                                                            }}を教える
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </article>
+                                                                        </div>
+                                                                        <div class="level-item"
+                                                                            v-if="'user' in word === false || user.uid === word.user.id">
+                                                                            <div class="level">
+                                                                                <div class="level-item">
+                                                                                    <article class="media">
+                                                                                        <div class="media-content">
+                                                                                            <div class="content">
+                                                                                                <transition name="fade"
+                                                                                                    mode="out-in">
+                                                                                                    <div class="file button is-rounded is-size-7 has-text-weight-bold"
+                                                                                                        v-if="'image' in word === false || word.image === null"
+                                                                                                        key="add">
+                                                                                                        <label
+                                                                                                            class="file-label">
+                                                                                                            <input
+                                                                                                                class="file-input"
+                                                                                                                type="file"
+                                                                                                                name="upload"
+                                                                                                                accept="image/png, image/jpeg"
+                                                                                                                data-uploadable="true"
+                                                                                                                v-bind:disabled="isUploading"
+                                                                                                                v-bind:data-name="word.name"
+                                                                                                                @change="upload">
+                                                                                                            <span
+                                                                                                                class="file-cta_">
+                                                                                                                <transition
+                                                                                                                    name="fade"
+                                                                                                                    mode="out-in">
+                                                                                                                    <span
+                                                                                                                        class="icon"
+                                                                                                                        v-if="isUploading"
+                                                                                                                        key="uploading">
+                                                                                                                        <i
+                                                                                                                            class="fas fa-spinner updating"></i>
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="icon"
+                                                                                                                        v-else
+                                                                                                                        key="ready">
+                                                                                                                        <i
+                                                                                                                            class="fas fa-cloud-upload-alt"></i>
+                                                                                                                    </span>
+                                                                                                                </transition>
+                                                                                                            </span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                    <button
+                                                                                                        class="button"
+                                                                                                        type="button"
+                                                                                                        data-uploadable="false"
+                                                                                                        v-bind:data-name="word.name"
+                                                                                                        @click="upload"
+                                                                                                        v-else
+                                                                                                        key="remove">
+                                                                                                        <span
+                                                                                                            class="icon is-small">
+                                                                                                            <i
+                                                                                                                class="fas fa-trash"></i>
+                                                                                                        </span>
+                                                                                                    </button>
+                                                                                                </transition>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </article>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="level-item">
+                                                                            <article class="media">
+                                                                                <div class="media-content">
+                                                                                    <div class="content">
+                                                                                        <a v-bind:href="encodeURI('https://google.com/search?q=' + word.name)"
+                                                                                            target="_blank"><span
+                                                                                                class="icon is-small"><i
+                                                                                                    class="fas fa-search"></i></span></a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </article>
                                                                         </div>
                                                                     </div>
-                                                                </article>
-                                                            </div>
-                                                            <div class="level-item">
-                                                                <article class="media">
-                                                                    <div class="media-content">
-                                                                        <div class="content">
-                                                                            <a v-bind:href="encodeURI('https://google.com/search?q=' + word.name)"
-                                                                                target="_blank"><span
-                                                                                    class="icon is-small"><i
-                                                                                        class="fas fa-search"></i></span></a>
-                                                                        </div>
-                                                                    </div>
-                                                                </article>
-                                                            </div>
+                                                                </div>
+                                                            </transition>
                                                         </div>
                                                     </div>
                                                     <div class="level-item" v-if="'next' in mode && 'indexes' in mode">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
-                                                                <article class="media">
-                                                                    <div class="media-content">
-                                                                        <div class="content">
-                                                                            <button class="button is-white"
-                                                                                type="button"
-                                                                                v-bind:disabled="mode.indexes.length === 0"
-                                                                                @click="previous(mode.user.id, mode.indexes.shift().name)"
-                                                                                v-cloak>
-                                                                                <span class="icon is-small">
-                                                                                    <i class="fas fa-chevron-left"></i>
-                                                                                </span>
-                                                                            </button>
-                                                                        </div>
+                                                                <div class="level is-mobile">
+                                                                    <div class="level-item">
+                                                                        <article class="media">
+                                                                            <div class="media-content">
+                                                                                <div class="content">
+                                                                                    <button class="button is-white"
+                                                                                        type="button"
+                                                                                        v-bind:disabled="mode.indexes.length === 0"
+                                                                                        @click="previous(mode.user.id, mode.indexes.shift().name)"
+                                                                                        v-cloak>
+                                                                                        <span class="icon is-small">
+                                                                                            <i
+                                                                                                class="fas fa-chevron-left"></i>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
                                                                     </div>
-                                                                </article>
-                                                            </div>
-                                                            <div class="level-item">
-                                                                <article class="media">
-                                                                    <div class="media-content">
-                                                                        <div class="content">
-                                                                            <button class="button is-white"
-                                                                                type="button"
-                                                                                v-bind:disabled="mode.next === null"
-                                                                                @click="next(mode.user.id, mode.next.name)"
-                                                                                v-cloak>
-                                                                                <span class="icon is-small">
-                                                                                    <i class="fas fa-chevron-right"></i>
-                                                                                </span>
-                                                                            </button>
-                                                                        </div>
+                                                                    <div class="level-item">
+                                                                        <article class="media">
+                                                                            <div class="media-content">
+                                                                                <div class="content">
+                                                                                    <button class="button is-white"
+                                                                                        type="button"
+                                                                                        v-bind:disabled="mode.next === null"
+                                                                                        @click="next(mode.user.id, mode.next.name)"
+                                                                                        v-cloak>
+                                                                                        <span class="icon is-small">
+                                                                                            <i
+                                                                                                class="fas fa-chevron-right"></i>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
                                                                     </div>
-                                                                </article>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -3842,8 +4415,13 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content has-text-centered">
-                                                        <h1 class="is-uppercase has-text-weight-bold">
-                                                            Wonderland</h1>
+                                                        <svg width="318px" height="32px" viewBox="0 0 318 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                                                            <g transform="matrix(0.848759,0,0,0.848759,182.888,16.8894)">
+                                                                <path d="M0,-1.181C-0.47,-1.189 -0.915,-1.181 -1.381,-1.461C-1.644,-1.619 -1.804,-1.904 -1.804,-2.21L-1.804,-5.225C-1.804,-5.532 -1.644,-5.816 -1.381,-5.974C-1.065,-6.164 -0.655,-6.359 0,-6.359C1.532,-6.359 2.485,-5.338 2.485,-3.718C2.485,-2.13 1.157,-1.16 0,-1.181M11.261,0.389C11.056,0.054 11.326,-0.421 11.648,-0.187C12.688,0.634 13.655,1.61 14.701,2.391C15.951,0.298 16.399,-2.175 16.399,-4.656C16.399,-12.762 9.841,-19.32 1.735,-19.32L-9.829,-19.32C-14.425,-19.32 -18.194,-15.704 -18.194,-11.161L-18.194,9.078C-18.194,13.673 -14.425,17.442 -9.985,17.442C-5.493,17.442 -1.981,14.086 -1.724,9.749L2.716,15.014C5.504,18.784 11.08,18.215 14.023,15.274C16.967,12.331 17.38,7.993 15.056,4.689L11.261,0.389ZM-41.434,-19.402L-25.57,-19.396C-22.448,-19.396 -19.906,-16.771 -19.906,-13.544C-19.906,-10.318 -22.448,-7.693 -25.57,-7.693C-25.57,-7.693 -32.601,-7.702 -32.626,-7.702C-33.022,-7.702 -33.344,-7.381 -33.344,-6.986C-33.344,-6.589 -33.022,-6.268 -32.626,-6.268C-32.601,-6.268 -26.312,-6.274 -26.312,-6.274C-23.501,-6.274 -21.213,-3.91 -21.213,-1.005C-21.213,1.899 -23.501,4.263 -26.311,4.263C-26.311,4.263 -32.553,4.213 -32.626,4.213C-33.022,4.213 -33.344,4.534 -33.344,4.93C-33.344,5.325 -33.022,5.647 -32.626,5.647C-32.601,5.647 -25.57,5.635 -25.57,5.635C-22.448,5.635 -19.906,8.26 -19.906,11.487C-19.906,14.714 -22.448,17.34 -25.572,17.34L-41.425,17.329C-46.528,17.232 -50.854,13.11 -50.854,8.065L-50.854,-9.973C-50.854,-15.083 -46.541,-19.402 -41.434,-19.402M-165.988,-9.483C-166.708,-6.759 -171.428,8.903 -172.148,11.627C-173.319,16.055 -177.858,18.696 -182.286,17.526C-186.391,16.442 -189.206,12.467 -188.668,8.368L-187.297,3.297C-187.187,2.932 -187.115,2.694 -187.37,2.676C-187.571,2.663 -187.656,2.892 -187.684,2.944C-187.684,2.944 -191.335,11.24 -192.885,13.737C-193.956,15.544 -195.805,16.948 -197.996,17.526C-202.424,18.696 -206.963,16.055 -208.134,11.627C-208.853,8.903 -213.381,-6.759 -214.101,-9.483C-215.271,-13.911 -212.631,-18.451 -208.201,-19.62C-204.575,-20.579 -200.781,-18.883 -198.917,-15.841L-200.98,-9.619C-200.996,-9.561 -201.023,-9.173 -200.728,-9.122C-200.441,-9.073 -200.272,-9.372 -200.249,-9.425L-197.072,-15.999C-195.236,-18.874 -191.651,-20.567 -188.176,-19.648C-185.105,-18.837 -182.92,-16.358 -182.333,-13.441C-182.297,-13.261 -182.266,-13.079 -182.243,-12.897C-182.148,-13.252 -182.074,-13.533 -182.025,-13.721C-180.854,-18.151 -176.315,-20.791 -171.887,-19.62C-167.458,-18.451 -164.816,-13.911 -165.988,-9.483M-146.702,1.768C-148.282,1.768 -149.563,0.486 -149.563,-1.094C-149.563,-2.673 -148.282,-3.954 -146.702,-3.954C-145.122,-3.954 -143.842,-2.673 -143.842,-1.094C-143.842,0.486 -145.122,1.768 -146.702,1.768M-146.754,-19.835C-156.977,-19.835 -165.496,-11.369 -165.496,-1.042C-165.496,9.336 -156.977,17.648 -146.754,17.648C-136.376,17.648 -127.909,9.336 -127.909,-1.042C-127.909,-11.369 -136.376,-19.835 -146.754,-19.835M107.545,14.912C104.499,11.969 101.557,9.181 98.664,6.134C98.51,5.825 98.045,6.29 98.199,6.651L101.144,11.194C100.368,14.757 97.013,17.442 93.141,17.442C88.597,17.442 84.88,13.827 84.88,9.181L84.88,-11.161C84.88,-15.654 88.597,-19.422 93.141,-19.422C95.618,-19.422 97.89,-18.079 99.439,-16.531L107.854,-8.271C108.01,-7.96 108.475,-8.271 108.319,-8.579L105.273,-13.021C106.049,-16.531 109.403,-19.422 113.225,-19.422C117.819,-19.422 121.537,-15.654 121.537,-11.161L121.537,9.181C121.537,17.131 112.192,19.61 107.545,14.912M-70.243,1.619L-71.327,1.619C-71.811,1.619 -72.203,1.227 -72.203,0.743L-72.203,-3.128C-72.203,-3.612 -71.811,-4.003 -71.327,-4.003L-70.243,-4.003C-68.623,-4.003 -67.354,-2.735 -67.354,-1.115C-67.354,0.444 -68.596,1.619 -70.243,1.619M-70.883,-19.422L-78.835,-19.422C-83.482,-19.422 -87.044,-15.654 -87.044,-11.161L-87.044,9.233C-87.044,13.724 -83.327,17.287 -78.68,17.287L-71.245,17.287C-61.074,17.287 -52.813,9.078 -52.813,-1.093C-52.813,-11.161 -60.816,-19.422 -70.883,-19.422M18.717,8.974L18.717,-11.213C18.717,-15.704 22.383,-19.422 26.927,-19.422C31.521,-19.422 35.188,-15.704 35.188,-11.213L35.084,0.817L36.891,0.817C47.63,0.817 47.63,17.339 36.891,17.339L27.082,17.339C22.279,17.339 18.563,13.724 18.717,8.974M64.861,1.524C63.281,1.524 62,0.243 62,-1.337C62,-2.916 63.281,-4.198 64.861,-4.198C66.441,-4.198 67.722,-2.916 67.722,-1.337C67.722,0.243 66.441,1.524 64.861,1.524M64.769,-19.559C55.068,-19.559 47.206,-11.697 47.206,-1.999L47.207,9.133C47.207,13.768 50.914,17.321 55.395,17.321C59.979,17.321 63.582,13.768 63.582,9.133L63.582,7.382C63.582,6.764 64.098,6.249 64.716,6.249C65.335,6.249 65.849,6.764 65.849,7.382L65.849,9.133C65.849,13.665 69.557,17.321 74.14,17.321C78.62,17.321 82.327,13.665 82.327,9.133L82.329,-1.999C82.329,-11.697 74.467,-19.559 64.769,-19.559M-103.356,14.912C-106.403,11.969 -109.346,9.181 -112.237,6.134C-112.392,5.825 -112.856,6.29 -112.702,6.651L-109.759,11.194C-110.533,14.757 -113.889,17.442 -117.762,17.442C-122.305,17.442 -126.022,13.827 -126.022,9.181L-126.022,-11.161C-126.022,-15.654 -122.305,-19.422 -117.762,-19.422C-115.283,-19.422 -113.011,-18.079 -111.463,-16.531L-103.046,-8.271C-102.892,-7.96 -102.428,-8.271 -102.583,-8.579L-105.628,-13.021C-104.854,-16.531 -101.498,-19.422 -97.677,-19.422C-93.083,-19.422 -89.365,-15.654 -89.365,-11.161L-89.365,9.181C-89.365,17.131 -98.71,19.61 -103.356,14.912M140.658,1.619L139.573,1.619C139.09,1.619 138.698,1.227 138.698,0.743L138.698,-3.128C138.698,-3.612 139.09,-4.003 139.573,-4.003L140.658,-4.003C142.278,-4.003 143.547,-2.735 143.547,-1.115C143.547,0.444 142.305,1.619 140.658,1.619M140.017,-19.422L132.065,-19.422C127.418,-19.422 123.856,-15.654 123.856,-11.161L123.856,9.233C123.856,13.724 127.574,17.287 132.221,17.287L139.655,17.287C149.826,17.287 158.088,9.078 158.088,-1.093C158.088,-11.161 150.084,-19.422 140.017,-19.422" style="fill-rule:nonzero;"/>
+                                                            </g>
+                                                        </svg>
+                                                        <!--<h1 class="is-uppercase has-text-weight-bold">
+                                                            Wonderland</h1>-->
                                                         <h2 class="has-text-weight-bold">
                                                             milchchan.com</h2>
                                                     </div>
@@ -3854,8 +4432,8 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
-                                                            v-bind:disabled="user === null"
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" v-bind:disabled="user === null"
                                                             @click="locate(); isRevealed = false;">
                                                             <span class="icon">
                                                                 <i class="fas fa-location-arrow"></i>
@@ -3877,8 +4455,8 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
-                                                            v-bind:disabled="user === null"
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" v-bind:disabled="user === null"
                                                             @click="discover(); isRevealed = false;">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
@@ -3900,8 +4478,8 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
-                                                            v-bind:disabled="user === null"
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" v-bind:disabled="user === null"
                                                             @click="isRevealed = false; isLearning = true;">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
@@ -3923,8 +4501,8 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
-                                                            v-bind:disabled="user === null"
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" v-bind:disabled="user === null"
                                                             @click="mode = { words: null, next: null, indexes: [], user: { id: user.uid, name: user.displayName, image: user.photoURL } }; next(user.uid, mode.next);">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
@@ -3946,8 +4524,8 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
-                                                            v-bind:disabled="user === null"
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" v-bind:disabled="user === null"
                                                             @click="activate(); isRevealed = false; mode = null;">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
@@ -3969,9 +4547,9 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary" type="button"
-                                                            v-bind:disabled="user === null"
-                                                            @click="mode = { stats: stats }">
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" v-bind:disabled="user === null"
+                                                            @click="mode = { stats: stats, force: false }">
                                                             <span class="icon">
                                                                 <i class="fas fa-chart-bar"></i>
                                                             </span>
@@ -4145,26 +4723,30 @@
                                         <div class="level-item">
                                             <div class="level">
                                                 <div class="level-item">
-                                                    <div class="level is-mobile">
+                                                    <div class="level">
                                                         <div class="level-item">
-                                                            <a href="https://twitter.com/milchchan"
-                                                                target="_blank"><span class="icon is-small"><i
-                                                                        class="fab fa-twitter"></i></span></a>
-                                                        </div>
-                                                        <div class="level-item">
-                                                            <a href="https://instagram.com/milchchan"
-                                                                target="_blank"><span class="icon is-small"><i
-                                                                        class="fab fa-instagram"></i></span></a>
-                                                        </div>
-                                                        <div class="level-item">
-                                                            <a href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
-                                                                target="_blank"><span class="icon is-small"><i
-                                                                        class="fab fa-youtube"></i></span></a>
-                                                        </div>
-                                                        <div class="level-item">
-                                                            <a href="https://github.com/milchchan" target="_blank"><span
-                                                                    class="icon is-small"><i
-                                                                        class="fab fa-github"></i></span></a>
+                                                            <div class="level is-mobile">
+                                                                <div class="level-item">
+                                                                    <a href="https://twitter.com/milchchan"
+                                                                        target="_blank"><span class="icon is-small"><i
+                                                                                class="fab fa-twitter"></i></span></a>
+                                                                </div>
+                                                                <div class="level-item">
+                                                                    <a href="https://instagram.com/milchchan"
+                                                                        target="_blank"><span class="icon is-small"><i
+                                                                                class="fab fa-instagram"></i></span></a>
+                                                                </div>
+                                                                <div class="level-item">
+                                                                    <a href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
+                                                                        target="_blank"><span class="icon is-small"><i
+                                                                                class="fab fa-youtube"></i></span></a>
+                                                                </div>
+                                                                <div class="level-item">
+                                                                    <a href="https://github.com/milchchan"
+                                                                        target="_blank"><span class="icon is-small"><i
+                                                                                class="fab fa-github"></i></span></a>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -4185,8 +4767,12 @@
                                 <div class="level-item has-text-centered">
                                     <div class="field is-grouped is-vcentered">
                                         <picture class="icon is-small" v-cloak>
-                                            <svg viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                                                <path d="M17,1C25.831,1 33,8.169 33,17C33,25.831 25.831,33 17,33C8.169,33 1,25.831 1,17C1,8.169 8.169,1 17,1ZM24.93,15.084C24.763,14.569 24.318,14.194 23.783,14.116L19.977,13.563L18.274,10.115C18.036,9.629 17.541,9.322 17,9.322C16.459,9.322 15.965,9.629 15.726,10.114L14.023,13.563L10.218,14.116C9.682,14.194 9.237,14.569 9.07,15.084C8.902,15.599 9.042,16.163 9.43,16.541L12.184,19.225L11.534,23.016C11.442,23.549 11.661,24.088 12.099,24.406C12.537,24.724 13.117,24.766 13.596,24.514L17,22.725L20.404,24.514C20.612,24.623 20.839,24.678 21.065,24.678C21.36,24.678 21.654,24.586 21.901,24.406C22.339,24.088 22.558,23.549 22.467,23.016L21.817,19.225L24.571,16.541C24.958,16.163 25.098,15.599 24.93,15.084Z" />
+                                            <svg viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                                                xmlns:serif="http://www.serif.com/"
+                                                style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                                                <path
+                                                    d="M17,1C25.831,1 33,8.169 33,17C33,25.831 25.831,33 17,33C8.169,33 1,25.831 1,17C1,8.169 8.169,1 17,1ZM24.93,15.084C24.763,14.569 24.318,14.194 23.783,14.116L19.977,13.563L18.274,10.115C18.036,9.629 17.541,9.322 17,9.322C16.459,9.322 15.965,9.629 15.726,10.114L14.023,13.563L10.218,14.116C9.682,14.194 9.237,14.569 9.07,15.084C8.902,15.599 9.042,16.163 9.43,16.541L12.184,19.225L11.534,23.016C11.442,23.549 11.661,24.088 12.099,24.406C12.537,24.724 13.117,24.766 13.596,24.514L17,22.725L20.404,24.514C20.612,24.623 20.839,24.678 21.065,24.678C21.36,24.678 21.654,24.586 21.901,24.406C22.339,24.088 22.558,23.549 22.467,23.016L21.817,19.225L24.571,16.541C24.958,16.163 25.098,15.599 24.93,15.084Z" />
                                             </svg>
                                         </picture>
                                         <span class="is-size-1 is-uppercase" v-cloak>{{ animatedStars }}</span>
@@ -4489,7 +5075,7 @@
                     </span>
                 </button>
                 <button class="button" type="button"
-                    @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false"
+                    @click="[...input].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); input = ''; isLearning = false;"
                     v-else-if="isLearning" key="close2">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
@@ -4515,19 +5101,19 @@
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && 'words' in mode === false" key="close4">
+                    v-else-if="typeof(mode) === 'object' && 'words' in mode" key="close4">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                    v-else-if="'name' in mode && 'attributes' in mode" key="close5">
+                    v-else-if="typeof(mode) === 'object' && 'name' in mode && 'attributes' in mode" key="close5">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = false; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && 'stats' in mode === false" key="close6">
+                    v-else-if="typeof(mode) === 'object' && 'stats' in mode && mode.force" key="close6">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
