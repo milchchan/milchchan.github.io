@@ -753,6 +753,7 @@ window.addEventListener("load", event => {
                 }
 
                 const self = this;
+                const timestamp = Math.floor(new Date() / 1000);
                 const files = [];
                 const paths = [];
 
@@ -783,15 +784,24 @@ window.addEventListener("load", event => {
                                 resolve(uploadTask.snapshot.ref);
                             });
                         });
-                    } catch (e) {
-                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                        console.error(e);
+                    } catch (error) {
+                        this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
+                        console.error(error);
                     }
 
                     paths.push(uploadTask.snapshot.ref.fullPath);
                 }
 
-                push(databaseRef(database, databaseRoot + "/images"), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
+                try {
+                    await runTransaction(databaseRef(database, `${databaseRoot}/images/${push(child(databaseRef(databaseRoot), `${databaseRoot}/images`)).key}`), current => {
+                        return { paths: paths, timestamp: timestamp };
+                    });
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
+                }
+
+                //push(databaseRef(database, databaseRoot + "/images"), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
 
                 this.progress = null;
                 this.isUploading = false;
@@ -3439,7 +3449,7 @@ window.addEventListener("load", event => {
                                         delete self.reverseWordDictionary[k];
                                     }
                                 });
-                                
+
                                 self.words.splice(index, 1);
                             } else {
                                 continue;
@@ -3462,7 +3472,7 @@ window.addEventListener("load", event => {
                         if (self.words.length > 10) {
                             self.words.splice(10, self.words.length - 10);
                         }
-                        
+
                         for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), 10)) {
                             if (obj.type === "Message") {
                                 self.words.splice(0, 0, { name: obj.text, image: self.character.image });
