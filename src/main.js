@@ -1416,7 +1416,7 @@ window.addEventListener("load", (event) => {
                                         } else if ("words" in this.mode && this.mode.words !== null) {
                                             for (const word of this.mode.words) {
                                                 if (word.name === event.target.dataset.name) {
-                                                    word.mode["image"] = { path: uploadTask.snapshot.ref.fullPath, url: await getDownloadURL(storageRef(storage, uploadTask.snapshot.ref.fullPath)) };
+                                                    word["image"] = { path: uploadTask.snapshot.ref.fullPath, url: await getDownloadURL(storageRef(storage, uploadTask.snapshot.ref.fullPath)) };
                                                 }
                                             }
                                         }
@@ -1463,7 +1463,7 @@ window.addEventListener("load", (event) => {
                                     } else if ("words" in this.mode && this.mode.words !== null) {
                                         for (const word of this.mode.words) {
                                             if (word.name === event.target.dataset.name && "image" in word) {
-                                                delete word.mode["image"];
+                                                delete word["image"];
                                             }
                                         }
                                     }
