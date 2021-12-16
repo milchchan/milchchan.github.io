@@ -585,7 +585,7 @@
             padding: 0;
             height: 100%;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             justify-content: flex-start;
         }
 
@@ -593,7 +593,7 @@
             display: flex;
             top: 0;
             margin: 0;
-            padding: 32px 0px 16px 0px;
+            padding: 32px 0px 32px 0px;
             flex-direction: column;
             align-items: flex-start;
             justify-content: flex-start;
@@ -604,7 +604,7 @@
             margin: 0;
             padding: 0;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             justify-content: flex-start;
         }
 
@@ -612,7 +612,7 @@
             position: absolute;
             bottom: 0;
             margin: 0;
-            padding: 0px 0px 16px 0px;
+            padding: 0px 0px 32px 0px;
         }
 
         .sidebar>.level>.level-item:last-child:not(:first-child) .image>button {
@@ -629,7 +629,7 @@
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) {
             margin: 0;
-            padding: 32px 0px 0px 12px;
+            padding: 32px 0px 0px 0px;
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button,
@@ -646,8 +646,9 @@
             backface-visibility: hidden;
             color: #000000;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             justify-content: flex-start;
+            width: 64px;
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) div.wrap {
@@ -661,6 +662,7 @@
             display: flex;
             align-items: center;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            font-size: 0.75rem;
             transform: rotate(0.03deg);
             line-height: 0.75rem !important;
             height: calc(0.75rem * 1.5);
@@ -668,8 +670,13 @@
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .icon,
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button .icon {
+            display: flex;
             margin: 0 !important;
             color: var(--accent-color);
+            width: 48px;
+            height: 48px;
+            align-items: center;
+            justify-content: center;
         }
 
         .sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) button .icon+.wrap,
@@ -2780,8 +2787,8 @@
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>現在地に移動</div>
-                                            <div>現在地に移動</div>
+                                            <div>現在地</div>
+                                            <div>現在地</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2794,8 +2801,8 @@
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>現在地に移動</div>
-                                            <div>現在地に移動</div>
+                                            <div>現在地</div>
+                                            <div>現在地</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2810,8 +2817,8 @@
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>言葉を探す</div>
-                                            <div>言葉を探す</div>
+                                            <div>探す</div>
+                                            <div>探す</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2824,8 +2831,8 @@
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>言葉を探す</div>
-                                            <div>言葉を探す</div>
+                                            <div>探す</div>
+                                            <div>探す</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2840,8 +2847,8 @@
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>ここで言葉を教える</div>
-                                            <div>ここで言葉を教える</div>
+                                            <div>教える</div>
+                                            <div>教える</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2856,8 +2863,8 @@
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>教えた言葉</div>
-                                            <div>教えた言葉</div>
+                                            <div>言葉</div>
+                                            <div>言葉</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2872,8 +2879,8 @@
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>お話してもらう</div>
-                                            <div>お話してもらう</div>
+                                            <div>お話し</div>
+                                            <div>お話し</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2888,8 +2895,8 @@
                                 <div class="wrap is-size-7 has-text-weight-bold">
                                     <div class="clip">
                                         <div class="scrollable">
-                                            <div>アクティビティ</div>
-                                            <div>アクティビティ</div>
+                                            <div>記録</div>
+                                            <div>記録</div>
                                         </div>
                                     </div>
                                 </div>
