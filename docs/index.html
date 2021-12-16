@@ -913,6 +913,7 @@
             border-radius: 290486px;
             width: 128px;
             height: 8px;
+            background-color: var(--main-color);
         }
 
         .center>.level>.level-item>.control>.level>.level-item:nth-child(3) .field span:last-child {
@@ -1049,7 +1050,7 @@
             height: fit-content;
             line-height: calc(0.75rem * 1.5);
             backface-visibility: hidden;
-            color: #fcd73e !important;
+            color: var(--main-color) !important;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -1495,23 +1496,23 @@
             height: calc(0.75rem * 1.5);
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon,
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon {
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button>.icon,
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button>.icon {
             color: var(--accent-color);
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button span.wrap+.icon:last-of-type,
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button span.wrap+.icon:last-of-type {
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button>span.wrap+.icon:last-of-type,
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button>span.wrap+.icon:last-of-type {
             color: var(--main-color);
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button span:not(:first-child),
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button span:not(:first-child) {
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button>span:not(:first-child),
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button>span:not(:first-child) {
             margin: 0px 0px 0px 8px !important;
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button .icon:last-child:not(:first-child),
-        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button .icon:last-child:not(:first-child) {
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>button>.icon:last-child:not(:first-child),
+        #menu>.columns>.column>.control>.level:first-child .level-item>.media>.media-content>.content>.button>.icon:last-child:not(:first-child) {
             margin: 0px 0px 0px 8px !important;
         }
 
@@ -1546,7 +1547,7 @@
             color: #ffffff !important;
         }
 
-        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item>.level>.level-item>.level>.level-item .button,
+        #menu>.columns>.column>.control>.level:first-child .level-item>.level>.level-item>.level>.level-item>.level>.level-item>.level>.level-item .button,
         #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item:last-child:not(:first-child)>.level>.level-item button {
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -1845,7 +1846,7 @@
             background: rgba(255, 255, 255, 0.75) !important;
             background-clip: padding-box;
             height: initial;
-            color: #fcd73e !important;
+            color: var(--main-color) !important;
             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -3674,7 +3675,7 @@
                                                                                                         v-bind:data-name="mode.name"
                                                                                                         @change="upload">
                                                                                                     <span
-                                                                                                        class="file-cta_">
+                                                                                                        class="file-cta_" style="pointer-events: none;">
                                                                                                         <transition
                                                                                                             name="fade"
                                                                                                             mode="out-in">
@@ -3703,7 +3704,7 @@
                                                                                                 @click="upload" v-else
                                                                                                 key="remove">
                                                                                                 <span
-                                                                                                    class="icon is-small">
+                                                                                                    class="icon is-small" style="pointer-events: none;">
                                                                                                     <i
                                                                                                         class="fas fa-trash"></i>
                                                                                                 </span>
@@ -3805,7 +3806,7 @@
                                                                                                             v-bind:data-name="mode.name"
                                                                                                             @change="upload">
                                                                                                         <span
-                                                                                                            class="file-cta_">
+                                                                                                            class="file-cta_" style="pointer-events: none;">
                                                                                                             <transition
                                                                                                                 name="fade"
                                                                                                                 mode="out-in">
@@ -3834,7 +3835,7 @@
                                                                                                     @click="upload"
                                                                                                     v-else key="remove">
                                                                                                     <span
-                                                                                                        class="icon is-small">
+                                                                                                        class="icon is-small" style="pointer-events: none;">
                                                                                                         <i
                                                                                                             class="fas fa-trash"></i>
                                                                                                     </span>
@@ -3934,7 +3935,7 @@
                                                                                                             v-bind:data-name="word.name"
                                                                                                             @change="upload">
                                                                                                         <span
-                                                                                                            class="file-cta_">
+                                                                                                            class="file-cta_" style="pointer-events: none;">
                                                                                                             <transition
                                                                                                                 name="fade"
                                                                                                                 mode="out-in">
@@ -3963,7 +3964,7 @@
                                                                                                     @click="upload"
                                                                                                     v-else key="remove">
                                                                                                     <span
-                                                                                                        class="icon is-small">
+                                                                                                        class="icon is-small" style="pointer-events: none;">
                                                                                                         <i
                                                                                                             class="fas fa-trash"></i>
                                                                                                     </span>
@@ -4056,7 +4057,7 @@
                                                                                                                 v-bind:data-name="word.name"
                                                                                                                 @change="upload">
                                                                                                             <span
-                                                                                                                class="file-cta_">
+                                                                                                                class="file-cta_" style="pointer-events: none;">
                                                                                                                 <transition
                                                                                                                     name="fade"
                                                                                                                     mode="out-in">
@@ -4087,7 +4088,7 @@
                                                                                                         v-else
                                                                                                         key="remove">
                                                                                                         <span
-                                                                                                            class="icon is-small">
+                                                                                                            class="icon is-small" style="pointer-events: none;">
                                                                                                             <i
                                                                                                                 class="fas fa-trash"></i>
                                                                                                         </span>
