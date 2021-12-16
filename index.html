@@ -2129,6 +2129,19 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button.is-primary,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>.button.is-primary {
+            background: rgba(104, 230, 255, 0.75) !important;
+            color: #ffffff !important;
+        }
+        
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button.is-primary .icon,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button.is-primary .clip .scrollable div,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>.button.is-primary .icon,
+        #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>.button.is-primary .clip .scrollable div {
+            color: #ffffff !important;
+        }
+
         #input>.columns>.column>.control:last-child>.level>.level-item:first-child:not(:last-child)>.level>.level-item>button span.wrap {
             display: flex;
             margin: 0;
@@ -5041,7 +5054,7 @@
                                         <div class="level-item" v-if="candidates" v-cloak>
                                             <div class="level">
                                                 <div class="level-item">
-                                                    <button class="button is-rounded is-size-7" type="button"
+                                                    <button class="button is-rounded is-size-7 is-primary" type="button"
                                                         v-bind:disabled="candidates.index === 0"
                                                         @click="candidates.index--">
                                                         <span class="icon">
@@ -5050,7 +5063,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="level-item">
-                                                    <button class="button is-rounded is-size-7" type="button"
+                                                    <button class="button is-rounded is-size-7 is-primary" type="button"
                                                         v-bind:disabled="user === null"
                                                         @click="input += candidates.set[candidates.index]; candidates.count--; candidates = null;">
                                                         <span class="wrap has-text-weight-bold">
@@ -5064,7 +5077,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="level-item">
-                                                    <button class="button is-rounded is-size-7" type="button"
+                                                    <button class="button is-rounded is-size-7 is-primary" type="button"
                                                         v-bind:disabled="candidates.index + 1 === candidates.set.length"
                                                         @click="candidates.index++">
                                                         <span class="icon">
