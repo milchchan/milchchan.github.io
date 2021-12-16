@@ -47,6 +47,7 @@
             --foreground-color: #777777;
             --main-color: #68e6ff;
             --accent-color: #fecde2;
+            --primary-background-color: rgba(255, 255, 255, 0.75);
             --background-image: url('/images/Background.png');
             --background-image-2x: url('/images/Background@2x.png');
             --background-image-3x: url('/images/Background@3x.png');
@@ -56,6 +57,7 @@
             :root {
                 --main-color: #fecde2;
                 --accent-color: #68e6ff;
+                --primary-background-color: rgba(255, 255, 255, 0.75);
             }
         }
 
@@ -1115,7 +1117,7 @@
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary {
-            background: rgba(104, 230, 255, 0.75) !important;
+            background: var(--primary-background-color) !important;
         }
 
         #menu>.columns>.column>.control>.level:first-child>.level-item>.media>.media-content>.content>button.is-primary span.wrap {
@@ -1176,7 +1178,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
             padding: 16px;
-            background: rgba(104, 230, 255, 0.75) !important;
+            background: var(--primary-background-color) !important;
             background-clip: padding-box;
             height: initial;
             color: #ffffff;
