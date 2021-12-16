@@ -2251,7 +2251,10 @@
                     </div>
                 </div>
             </div>
-            <div id="three" ref="three"></div>
+            <transition name="fade">
+                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
+            </transition>
+            <div id="three" v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto' }" ref="three"></div>
             <transition name="fade">
                 <div class="logo" v-if="progress !== null">
                     <svg viewBox="0 0 1100.2 141.3" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -2305,9 +2308,6 @@
                         </g>
                     </svg>
                 </div>
-            </transition>
-            <transition name="fade">
-                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
             </transition>
             <transition name="fade">
                 <div class="hud" v-if="isOverlayed">
