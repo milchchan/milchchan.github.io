@@ -1202,14 +1202,14 @@
             padding: 8px 8px 8px 8px;
         }
 
-        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level {
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.level {
             margin: -8px -8px -8px -8px;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
-        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item {
+        #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-item>.level>.level-item {
             margin: 0;
             padding: 8px 8px 8px 8px;
         }
@@ -2978,25 +2978,6 @@
                     </transition>
                 </div>
             </div>
-            <transition name="slide">
-                <div id="character" oncontextmenu="return false;"
-                    v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
-                    @click="activate()" v-show="character !== null">
-                    <canvas v-bind:width="canvasSize.deviceWidth" v-bind:height="canvasSize.deviceHeight"
-                        v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
-                        ref="canvas"></canvas>
-                </div>
-            </transition>
-            <transition name="alternative">
-                <div id="alternative" oncontextmenu="return false;"
-                    v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
-                    v-show="alternative !== null">
-                    <canvas v-bind:width="canvasSize.alternative.deviceWidth"
-                        v-bind:height="canvasSize.alternative.deviceHeight"
-                        v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
-                        ref="alternative"></canvas>
-                </div>
-            </transition>
             <transition name="fade">
                 <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
             </transition>
@@ -3010,6 +2991,25 @@
                 v-on:enter-cancelled="isHangingOn = false" v-on:before-leave v-on:after-leave="isHangingOn = false"
                 v-on:leave-cancelled="isHangingOn = false">
                 <div class="blind" v-if="isBlinded" v-cloak></div>
+            </transition>
+            <transition name="slide">
+                <div id="character" oncontextmenu="return false;"
+                    v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto', width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                    @click="activate()" v-show="character !== null">
+                    <canvas v-bind:width="canvasSize.deviceWidth" v-bind:height="canvasSize.deviceHeight"
+                        v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                        ref="canvas"></canvas>
+                </div>
+            </transition>
+            <transition name="alternative">
+                <div id="alternative" oncontextmenu="return false;"
+                    v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto', width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                    v-show="alternative !== null">
+                    <canvas v-bind:width="canvasSize.alternative.deviceWidth"
+                        v-bind:height="canvasSize.alternative.deviceHeight"
+                        v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                        ref="alternative"></canvas>
+                </div>
             </transition>
             <transition name="fade">
                 <div class="logo" v-if="progress !== null && !isUploading">
