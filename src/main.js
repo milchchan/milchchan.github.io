@@ -98,7 +98,7 @@ window.addEventListener("load", (event) => {
                 cachedDocuments: [],
                 documentQueue: [],
                 sequenceQueue: [],
-                progress: null,
+                progress: 0,
                 user: null,
                 candidates: null,
                 input: "",
