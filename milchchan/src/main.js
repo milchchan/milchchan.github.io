@@ -210,7 +210,7 @@ window.addEventListener("load", event => {
                 mode: null,
                 feedQueue: [],
                 sequenceQueue: [],
-                progress: null,
+                progress: 0,
                 user: null,
                 input: "",
                 animatedInputLength: 0,
