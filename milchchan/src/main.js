@@ -44,8 +44,6 @@ initializeAnalytics(firebaseApp);
 
 const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
 const databaseRoot = "bot";
-const milch = { name: "ミルヒちゃん", accent: "#ffa6bb", image: "/images/Milch.png" };
-const merku = { name: "メルクちゃん", accent: "#5bcbe1", image: "/images/Merku.png" };
 const renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true,
