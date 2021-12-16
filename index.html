@@ -1421,7 +1421,7 @@
             transform: rotate(0.03deg);
         }
 
-        #menu>.columns>.column>.control>.level:first-child p.is-primary {
+        #menu>.columns>.column>.control>.level:first-child p .is-primary {
             color: #c1aee6 !important;
         }
 
@@ -3576,8 +3576,7 @@
                                                                 <div class="media-content">
                                                                     <div class="content">
                                                                         <h2>平均</h2>
-                                                                        <p class="is-primary has-text-weight-bold" v-text="Math.floor((steps + range(new Date(), [-1, -2, -3, -4, -5, -6]).map(day => stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)).reduce((x, y) => x + y , 0)) / 7 * 100) / 100 + '歩'">
-                                                                        </p>
+                                                                        <p><span class="is-primary has-text-weight-bold" v-text="Math.floor((steps + range(new Date(), [-1, -2, -3, -4, -5, -6]).map(day => stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)).reduce((x, y) => x + y , 0)) / 7 * 100) / 100"></span>歩</p>
                                                                     </div>
                                                                 </div>
                                                             </article>
@@ -3591,8 +3590,7 @@
                                                                 <div class="media-content">
                                                                     <div class="content">
                                                                         <h2>標準偏差</h2>
-                                                                        <p class="is-primary has-text-weight-bold" v-text="Math.floor(standardDeviation([steps].concat(range(new Date(), [-1, -2, -3, -4, -5, -6]).map(day => stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)))) * 100) / 100">
-                                                                        </p>
+                                                                        <p><span class="is-primary has-text-weight-bold" v-text="Math.floor(standardDeviation([steps].concat(range(new Date(), [-1, -2, -3, -4, -5, -6]).map(day => stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)))) * 100) / 100"></span></p>
                                                                     </div>
                                                                 </div>
                                                             </article>
@@ -3610,8 +3608,7 @@
                                                                         <h2 v-if="index === 0">今日</h2>
                                                                         <h2 v-else-if="index === 1">昨日</h2>
                                                                         <h2 v-else>{{ index }}日前</h2>
-                                                                        <p class="has-text-weight-bold" v-text="index === 0 ? steps + '歩' : stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0) + '歩'">
-                                                                        </p>
+                                                                        <p><span class="has-text-weight-bold" v-text="index === 0 ? steps : stats.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + y.steps : x, 0)"></span>歩</p>
                                                                     </div>
                                                                 </div>
                                                             </article>
