@@ -1058,6 +1058,10 @@
             fill: var(--accent-color);
         }
 
+        #menu>.columns>.column>.control>.level:first-child svg g>g:first-child>path {
+            fill: #ffee00 !important;
+        }
+
         #menu>.columns>.column>.control>.level:first-child svg+h2 {
             margin: 8px 0px 0px 0px;
         }
@@ -1294,7 +1298,7 @@
             line-height: 0.75rem !important;
             height: calc(0.75rem * 1.5);
             white-space: nowrap;
-            color: #000000;
+            color: var(--foreground-color);
         }
 
         #menu>.columns>.column>.control>.level:first-child .columns .column .media .media-content .columns .column .field label.checkbox .clip {
@@ -1543,14 +1547,14 @@
             box-shadow: none;
             backface-visibility: hidden;
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-            color: #000000;
+            color: var(--foreground-color);
             transform: rotate(0.03deg);
             overflow-x: auto;
             overflow-y: hidden;
         }
 
         #input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input::placeholder {
-            color: rgba(0, 0, 0, 0.25);
+            color: rgba(119, 119, 119, 0.25);
             font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
             transform: rotate(0.03deg);
         }
