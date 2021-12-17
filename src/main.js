@@ -3676,6 +3676,11 @@ window.addEventListener("load", (event) => {
             const characters = [{ path: "/assets/milch.json", probability: 1.0 }];
             const alternatives = [{ path: "/assets/merku.json", probability: 1.0 }];
 
+            if (window.location.pathname === "/about") {
+                this.mode = "_about";
+                this.isRevealed = true;
+            }
+            
             if (botStorageItem) {
                 try {
                     const bot = JSON.parse(botStorageItem);
