@@ -2061,7 +2061,7 @@
                                         <i class="fas fa-bars"></i>
                                     </span>
                                 </button>
-                                <button class="button is-white" type="button" @click="isRevealed = !isRevealed; mode = null;" v-else-if="mode === '_about'"
+                                <button class="button is-white" type="button" @click="isRevealed = !isRevealed; mode = null;" v-else-if="mode === '_about' || mode === '_milch' || mode === '_merku'"
                                     key="force">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
@@ -2268,10 +2268,6 @@
                 </div>
             </div>
             <transition name="fade">
-                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
-            </transition>
-            <div id="three" v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto' }" ref="three"></div>
-            <transition name="fade">
                 <div class="logo" v-if="progress !== null">
                     <svg viewBox="0 0 408 49" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                         <g transform="matrix(1,0,0,1,-60.914,-457.659)">
@@ -2306,6 +2302,10 @@
                     </svg>
                 </div>
             </transition>
+            <transition name="fade">
+                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
+            </transition>
+            <div id="three" v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto' }" ref="three"></div>            
             <transition name="fade">
                 <div class="hud" v-if="isOverlayed">
                     <div class="columns is-centered"
@@ -2557,7 +2557,7 @@
                                             </div>
                                         </div>
                                     </nav>
-                                    <nav class="level" v-else-if="mode == 'milch'" key="milch">
+                                    <nav class="level" v-else-if="mode == 'milch' || mode == '_milch'" key="milch">
                                         <div class="level-item">
                                             <article class="media">
                                                 <figure class="media-content">
@@ -2619,7 +2619,7 @@
                                             </div>
                                         </div>
                                     </nav>
-                                    <nav class="level" v-else-if="mode == 'merku'" key="merku">
+                                    <nav class="level" v-else-if="mode == 'merku' || mode == '_merku'" key="merku">
                                         <div class="level-item">
                                             <article class="media">
                                                 <figure class="media-content">
@@ -3259,6 +3259,11 @@
                     v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
                     <span class="icon is-small">
                         <i class="fas fa-bars"></i>
+                    </span>
+                </button>
+                <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;" v-else-if="mode === '_about' || mode === '_milch' || mode === '_merku'" key="force">
+                    <span class="icon is-small">
+                        <i class="fas fa-times"></i>
                     </span>
                 </button>
                 <button class="button is-white" type="button" @click="mode = null" v-else key="back">
