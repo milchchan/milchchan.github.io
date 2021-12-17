@@ -3082,6 +3082,17 @@ window.addEventListener("load", event => {
             const characters = [{ path: "/assets/milch.json", probability: 0.9 }, { path: "/assets/merku.json", probability: 0.1 }];
             const loader = new GLTFLoader();
 
+            if (window.location.pathname === "/about") {
+                this.mode = "_about";
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/milch") {
+                this.mode = "_milch";
+                this.isRevealed = true;
+            } if (window.location.pathname === "/merku") {
+                this.mode = "_merku";
+                this.isRevealed = true;
+            }
+
             if (characterStorageItem) {
                 try {
                     const character = JSON.parse(characterStorageItem);
