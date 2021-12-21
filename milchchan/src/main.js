@@ -3299,6 +3299,7 @@ window.addEventListener("load", event => {
             });
             onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)), snapshot => {
                 if (snapshot.exists()) {
+                    console.log(snapshot);
                     const words = snapshot.val();
                     let isUpdated = false;
 
@@ -3327,17 +3328,10 @@ window.addEventListener("load", event => {
                         isUpdated = true;
                     }
 
-                    /*for (let i = self.words.length - 1; i >= 0; i--) {
-                        if (self.words[i].name in words === false) {
-                            self.words.splice(i, 1);
-                            isUpdated = true;
-                        }
-                    }*/
-
                     if (isUpdated) {
-                        for (let j = self.words.length - 1; j >= 0; j--) {
-                            if ("timestamp" in self.words[j] === false) {
-                                self.words.splice(j, 1);
+                        for (let i = self.words.length - 1; i >= 0; i--) {
+                            if ("timestamp" in self.words[i] === false) {
+                                self.words.splice(i, 1);
                             }
                         }
 
