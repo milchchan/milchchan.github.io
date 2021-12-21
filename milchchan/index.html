@@ -82,19 +82,34 @@
                             </transition>
                         </div>
                         <div class="level-item">
-                            <button class="button" type="button" @click="mode = '_about'; isRevealed = true;">
-                                <div class="icon is-large">
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="wrap is-size-7 has-text-weight-bold">
-                                    <div class="clip">
-                                        <div class="scrollable">
-                                            <div>milchchan.com</div>
-                                            <div>milchchan.com</div>
+                            <transition name="fade" mode="out-in">
+                                <button class="button is-selected" type="button" @click="mode = '_about'; isRevealed = true;" v-if="mode === 'about' || mode === '_about'" key="selected">
+                                    <div class="icon is-large">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="wrap is-size-7 has-text-weight-bold">
+                                        <div class="clip">
+                                            <div class="scrollable">
+                                                <div>milchchan.com</div>
+                                                <div>milchchan.com</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </button>
+                                </button>
+                                <button class="button" type="button" @click="mode = '_about'; isRevealed = true;" v-else key="unselected">
+                                    <div class="icon is-large">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="wrap is-size-7 has-text-weight-bold">
+                                        <div class="clip">
+                                            <div class="scrollable">
+                                                <div>milchchan.com</div>
+                                                <div>milchchan.com</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </transition>
                         </div>
                         <div class="level-item">
                             <a class="button" href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q" target="_blank">
