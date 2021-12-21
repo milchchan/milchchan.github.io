@@ -1,8 +1,10 @@
 @charset "UTF-8";
 @import "@fortawesome/fontawesome-free/css/all.css";
-@import "bulma/bulma";
 
 $primary: #68e6ff;
+$family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+
+@import "bulma/bulma";
 
 [v-cloak] {
     display: none;
@@ -74,7 +76,7 @@ p,
 span,
 input,
 button {
-    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    font-family: #{$family-sans-serif};
 }
 
 figure {
