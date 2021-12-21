@@ -3299,7 +3299,6 @@ window.addEventListener("load", event => {
             });
             onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)), snapshot => {
                 if (snapshot.exists()) {
-                    console.log(snapshot);
                     const words = snapshot.val();
                     let isUpdated = false;
 
