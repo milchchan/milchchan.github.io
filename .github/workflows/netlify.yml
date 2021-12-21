@@ -25,14 +25,14 @@ jobs:
         cache: 'npm'
     - run: npm ci && npm run build
     #- run: npm test
-    - run: npx netlify-cli deploy --dir=./dist
-      env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-    #- name: Publish
-    #  uses: netlify/actions/cli@master
-    #  with:
-    #    args: deploy --dir=./dist
+    #- run: npx netlify-cli deploy --dir=./dist
     #  env:
-    #    NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
     #    NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    #    NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+    - name: Publish
+      uses: netlify/actions/cli@master
+      with:
+        args: deploy --dir=./dist
+      env:
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
