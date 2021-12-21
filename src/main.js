@@ -1571,7 +1571,7 @@ window.addEventListener("load", (event) => {
 
                 this.isSubmitting = true;
 
-                if (this.user.providerData[0].providerId === firebase.auth.TwitterAuthProvider.PROVIDER_ID) {
+                if (this.user.providerData[0].providerId === TwitterAuthProvider.PROVIDER_ID) {
                     const link = await get(databaseRef(database, `${databaseRoot}/users/${this.user.uid}/link`));
 
                     if (link.exists()) {
@@ -1751,7 +1751,7 @@ window.addEventListener("load", (event) => {
                                     return null;
                                 });
 
-                                if (result.committed && !result.snapshot) {
+                                if (result.committed && !result.snapshot.exists()) {
                                     this.update(true);
                                 }
                             } catch (e) {
