@@ -3978,11 +3978,11 @@ window.addEventListener("load", (event) => {
                                 isUpdated = true;
                             }
 
-                            for (let i = self.recentWords.length - 1; i >= 0; i--) {
+                            /*for (let i = self.recentWords.length - 1; i >= 0; i--) {
                                 if (self.recentWords[i].name in words === false) {
                                     self.recentWords.splice(i, 1);
                                 }
-                            }
+                            }*/
 
                             if (isUpdated) {
                                 self.recentWords.sort((x, y) => y.timestamp - x.timestamp);
