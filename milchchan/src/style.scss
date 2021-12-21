@@ -584,6 +584,11 @@ label .scrollable > div {
     justify-content: center;
 }
 
+.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button.is-selected .icon,
+.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button.is-selected .icon {
+    color: #c1aee6 !important;
+}
+
 .sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button .icon + .wrap,
 .sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button .icon + .wrap {
     margin: 8px 0px 0px 0px !important;
