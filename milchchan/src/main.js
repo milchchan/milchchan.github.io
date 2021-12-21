@@ -912,12 +912,12 @@ window.addEventListener("load", event => {
                         if (!regex.test(token)) {
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                 const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
-    
+
                                 this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                                 if (snapshot.exists()) {
                                     const word = snapshot.val();
-    
+
                                     for (let attribute in word.attributes) {
                                         if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                             this.wordDictionary[token].attributes.push(attribute);
@@ -925,7 +925,7 @@ window.addEventListener("load", event => {
                                     }
                                 }
                             }
-    
+
                             for (const attribute of this.wordDictionary[token].attributes) {
                                 if (!attributes.includes(attribute)) {
                                     attributes.push(attribute);
@@ -1139,12 +1139,12 @@ window.addEventListener("load", event => {
                     if (!regex.test(token)) {
                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                             const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
-    
+
                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                             if (snapshot.exists()) {
                                 const word = snapshot.val();
-    
+
                                 for (const attribute in word.attributes) {
                                     if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                         this.wordDictionary[token].attributes.push(attribute);
@@ -1152,7 +1152,7 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
-    
+
                         for (const attribute of this.wordDictionary[token].attributes) {
                             if (attribute in hintDictionary) {
                                 hintDictionary[attribute].push(token);
@@ -3269,6 +3269,13 @@ window.addEventListener("load", event => {
                         isUpdated = true;
                     }
 
+                    /*for (let i = self.recentImages.length - 1; i >= 0; i--) {
+                        if (self.recentImages[i].id in images === false) {
+                            self.recentImages.splice(i, 1);
+                            isUpdated = true;
+                        }
+                    }*/
+
                     if (isUpdated) {
                         self.recentImages.sort((x, y) => y.timestamp - x.timestamp);
 
@@ -3320,10 +3327,17 @@ window.addEventListener("load", event => {
                         isUpdated = true;
                     }
 
+                    /*for (let i = self.words.length - 1; i >= 0; i--) {
+                        if (self.words[i].name in words === false) {
+                            self.words.splice(i, 1);
+                            isUpdated = true;
+                        }
+                    }*/
+
                     if (isUpdated) {
-                        for (let i = self.words.length - 1; i >= 0; i--) {
-                            if ("timestamp" in self.words[i] === false) {
-                                self.words.splice(i, 1);
+                        for (let j = self.words.length - 1; j >= 0; j--) {
+                            if ("timestamp" in self.words[j] === false) {
+                                self.words.splice(j, 1);
                             }
                         }
 
