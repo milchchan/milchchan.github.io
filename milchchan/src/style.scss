@@ -517,6 +517,24 @@ label .scrollable > div {
                 > .level-item:first-child {
                     margin: 0;
                     padding: 0;
+
+                    > button {
+                        margin: 0px;
+                        border: 0px solid transparent;
+                        border-radius: 290486px;
+                        padding: 16px;
+                        background: #ffffff !important;
+                        background-clip: padding-box;
+                        box-shadow: none;
+                        height: initial;
+                        color: var(--accent-color) !important;
+
+                        > span {
+                            margin: 0 !important;
+                            width: 1rem !important;
+                            height: 1rem !important;
+                        }
+                    }
                 }
 
                 > .level-item:not(:first-child) {
@@ -975,18 +993,6 @@ label .scrollable > div {
     line-height: 1.25rem;
 }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:first-child > button {
-    margin: 0px;
-    border: 0px solid transparent;
-    border-radius: 290486px;
-    padding: 16px;
-    background: #ffffff !important;
-    background-clip: padding-box;
-    box-shadow: none;
-    height: initial;
-    color: var(--accent-color) !important;
-}
-
 .left button,
 .right button {
     margin: 0px;
@@ -1002,7 +1008,6 @@ label .scrollable > div {
     color: var(--accent-color) !important;
 }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:first-child > button > span,
 .left button > span,
 .center button > span,
 .right button > span {
