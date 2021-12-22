@@ -3105,7 +3105,7 @@ label .scrollable > div {
     display: flex;
     flex-direction: column;
 
-    #input > .columns > .column > .control:last-child {
+    > .columns > .column > .control:last-child {
         > .level {
             display: flex;
             margin: -8px 0px -8px 0px;
