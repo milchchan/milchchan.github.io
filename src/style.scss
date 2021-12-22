@@ -575,6 +575,28 @@ label .scrollable > div {
                 > .level-item:first-child {
                     margin: 0;
                     padding: 0;
+
+                    > button {
+                        margin: 0px;
+                        border: 0px solid rgba(255, 255, 255, 0.5);
+                        border-radius: 290486px;
+                        padding: 16px;
+                        background: #ffffff !important;
+                        background-clip: padding-box;
+                        /*background: #f5f5f5;
+                        background: linear-gradient(145deg, #ffffff, #dddddd);
+                        box-shadow: 10px 10px 30px #d0d0d0,
+                            -10px -10px 30px #ffffff;*/
+                        box-shadow: none;
+                        height: initial;
+                        color: var(--accent-color) !important;
+
+                        > span {
+                            margin: 0 !important;
+                            width: 1rem !important;
+                            height: 1rem !important;
+                        }
+                    }
                 }
 
                 > .level-item:not(:first-child) {
@@ -1060,22 +1082,6 @@ label .scrollable > div {
     height: calc(0.75rem * 1.5);
 }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:first-child > button {
-    margin: 0px;
-    border: 0px solid rgba(255, 255, 255, 0.5);
-    border-radius: 290486px;
-    padding: 16px;
-    background: #ffffff !important;
-    background-clip: padding-box;
-    /*background: #f5f5f5;
-    background: linear-gradient(145deg, #ffffff, #dddddd);
-    box-shadow: 10px 10px 30px #d0d0d0,
-        -10px -10px 30px #ffffff;*/
-    box-shadow: none;
-    height: initial;
-    color: var(--accent-color) !important;
-}
-
 .left button,
 .right button {
     margin: 0px;
@@ -1091,7 +1097,6 @@ label .scrollable > div {
     color: var(--accent-color) !important;
 }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:first-child > button > span,
 .left button > span,
 .center > .level > .level-item:first-child button > span,
 .right button > span {
