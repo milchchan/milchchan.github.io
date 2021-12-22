@@ -276,7 +276,7 @@ label .scrollable > div {
     > picture {
         border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
         overflow: hidden;
-    
+
         > img {
             transform: rotate(19deg);
         }
@@ -3041,7 +3041,7 @@ label .scrollable > div {
                             background: url("/images/Stripes.png") 50% 50% repeat;
                             background-size: 20px 20px;
                             /*box-shadow: 10px 10px 30px #d0d0d0,
-        -10px -10px 30px #ffffff;*/
+                                            -10px -10px 30px #ffffff;*/
                             touch-action: none;
                             -webkit-user-select: none;
                             user-select: none;
@@ -3104,581 +3104,304 @@ label .scrollable > div {
     position: absolute;
     display: flex;
     flex-direction: column;
-}
 
-#input > .columns > .column > .control:last-child > .level {
-    display: flex;
-    margin: -8px 0px -8px 0px;
-    padding: 0;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
+    #input > .columns > .column > .control:last-child {
+        > .level {
+            display: flex;
+            margin: -8px 0px -8px 0px;
+            padding: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
 
-#input > .columns > .column > .control:last-child > .level > .level-item {
-    display: block;
-    margin: 8px 0px 8px 0px;
-    padding: 0;
-    width: 100%;
-}
+            > .level-item {
+                display: block;
+                margin: 8px 0px 8px 0px;
+                padding: 0;
+                width: 100%;
+            }
 
-#input > .columns > .column > .control:last-child > .level > .level-item:first-child:not(:last-child) > .level {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
+            > .level-item:first-child:not(:last-child) > .level {
+                display: flex;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item {
-    margin: 0;
-    padding: 0;
-}
+                > .level-item {
+                    margin: 0;
+                    padding: 0;
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item:first-child {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
+                    button,
+                    .button {
+                        margin: 0px;
+                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                        border-radius: 290486px;
+                        padding: 16px 32px 16px 32px;
+                        background: rgba(255, 255, 255, 0.75) !important;
+                        background-clip: padding-box;
+                        height: initial;
+                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                        backdrop-filter: blur(4px);
+                        -webkit-backdrop-filter: blur(4px);
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item:last-child {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-}
+                        span.wrap {
+                            display: flex;
+                            margin: 0;
+                            height: calc(0.75rem * 1.5);
+                        }
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item:first-child
-    > button,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item:last-child
-    > button {
-    margin: 0px;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 290486px;
-    padding: 16px;
-    background: rgba(255, 255, 255, 0.75) !important;
-    background-clip: padding-box;
-    height: initial;
-    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    color: var(--accent-color) !important;
-}
+                        .clip {
+                            display: inline-block;
+                            overflow: hidden;
+                            box-sizing: content-box;
+                            height: calc(0.75rem * 1.5);
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item:first-child
-    > button
-    > span.icon,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item:last-child
-    > button
-    > span.icon {
-    margin: 0 !important;
-    width: 1rem !important;
-    height: 1rem !important;
-}
+                            .scrollable div {
+                                display: flex;
+                                align-items: center;
+                                font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                                transform: rotate(0.03deg);
+                                line-height: 0.75rem !important;
+                                height: calc(0.75rem * 1.5);
+                                color: var(--accent-color);
+                            }
+                        }
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button {
-    margin: 0px;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 290486px;
-    padding: 16px 32px 16px 32px;
-    background: rgba(255, 255, 255, 0.75) !important;
-    background-clip: padding-box;
-    height: initial;
-    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
+                        .icon {
+                            color: var(--accent-color);
+                        }
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button.is-primary,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > .button.is-primary {
-    background: var(--primary-background-color) !important;
-    color: #ffffff !important;
-}
+                        .icon:last-child:not(:first-child) {
+                            margin: 0px 0px 0px 8px;
+                        }
+                    }
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button.is-primary
-    .icon,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button.is-primary
-    .clip
-    .scrollable
-    div,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > .button.is-primary
-    .icon,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > .button.is-primary
-    .clip
-    .scrollable
-    div {
-    color: #ffffff !important;
-}
+                    button.is-primary,
+                    .button.is-primary {
+                        background: var(--primary-background-color) !important;
+                        color: #ffffff !important;
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button
-    span.wrap {
-    display: flex;
-    margin: 0;
-    height: calc(0.75rem * 1.5);
-}
+                        .icon,
+                        .clip .scrollable div {
+                            color: #ffffff !important;
+                        }
+                    }
+                }
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button
-    .clip
-    .scrollable
-    div,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > .button
-    .clip
-    .scrollable
-    div {
-    display: flex;
-    align-items: center;
-    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-    transform: rotate(0.03deg);
-    line-height: 0.75rem !important;
-    height: calc(0.75rem * 1.5);
-    color: var(--accent-color);
-}
+                > .level-item:first-child {
+                    display: flex;
+                    margin: 0;
+                    padding: 0;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+                }
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button
-    .icon,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > .button
-    .icon {
-    color: var(--accent-color);
-}
+                > .level-item:last-child {
+                    display: flex;
+                    margin: 0;
+                    padding: 0;
+                    flex-direction: row;
+                    justify-content: flex-end;
+                    align-items: center;
+                }
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button
-    .icon:last-child:not(:first-child),
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > .button
-    .icon:last-child:not(:first-child) {
-    margin: 0px 0px 0px 8px;
-}
+                > .level-item:first-child > button,
+                > .level-item:last-child > button {
+                    margin: 0px;
+                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    border-radius: 290486px;
+                    padding: 16px;
+                    background: rgba(255, 255, 255, 0.75) !important;
+                    background-clip: padding-box;
+                    height: initial;
+                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                    backdrop-filter: blur(4px);
+                    -webkit-backdrop-filter: blur(4px);
+                    color: var(--accent-color) !important;
 
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > button
-    .clip,
-#input
-    > .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:first-child:not(:last-child)
-    > .level
-    > .level-item
-    > .button
-    .clip {
-    display: inline-block;
-    overflow: hidden;
-    box-sizing: content-box;
-    height: calc(0.75rem * 1.5);
-}
+                    > span.icon {
+                        margin: 0 !important;
+                        width: 1rem !important;
+                        height: 1rem !important;
+                    }
+                }
+            }
+        }
+    }
 
-#input form .field {
-    margin: 0px;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 500px 500px 500px 500px;
-    padding: 8px 16px 8px 16px;
-    background: rgba(255, 255, 255, 0.75) !important;
-    background-clip: padding-box;
-    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
+    form .field {
+        margin: 0px;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 500px 500px 500px 500px;
+        padding: 8px 16px 8px 16px;
+        background: rgba(255, 255, 255, 0.75) !important;
+        background-clip: padding-box;
+        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
 
-#input .navbar-item:first-of-type > .control:first-child > .level:last-of-type {
-    display: block;
-    margin: 0px 32px 16px 32px;
-    padding: 0;
-}
+    .navbar-item:first-of-type {
+        > .control:first-child {
+            > .level:last-of-type {
+                display: block;
+                margin: 0px 32px 16px 32px;
+                padding: 0;
+            }
 
-#input .navbar-item:first-of-type .control:first-child .level .is-info {
-    color: #ffffff;
-}
+            .level .is-info {
+                color: #ffffff;
+            }
+        }
 
-#input .navbar-item:first-of-type .control {
-    margin: 0;
-    padding: 0;
-}
+        .control {
+            margin: 0;
+            padding: 0;
+        }
 
-#input > .navbar-item:first-of-type > div > .control {
-    margin: 0;
-    padding: 0px 32px 16px 32px;
-}
+        > div > .control {
+            margin: 0;
+            padding: 0px 32px 16px 32px;
+        }
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input {
-    border: 0px solid transparent;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    background-color: transparent;
-    box-shadow: none;
-    backface-visibility: hidden;
-    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-    color: var(--accent-color);
-    transform: rotate(0.03deg);
-    overflow-x: auto;
-    overflow-y: hidden;
-}
+        .control:last-child form .field {
+            .control:nth-of-type(1) {
+                input {
+                    border: 0px solid transparent;
+                    padding-top: 8px;
+                    padding-bottom: 8px;
+                    background-color: transparent;
+                    box-shadow: none;
+                    backface-visibility: hidden;
+                    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                    color: var(--accent-color);
+                    transform: rotate(0.03deg);
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                }
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input::placeholder {
-    color: rgba(230, 45, 135, 0.25);
-    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-    transform: rotate(0.03deg);
-}
+                input::placeholder {
+                    color: rgba(230, 45, 135, 0.25);
+                    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                    transform: rotate(0.03deg);
+                }
+            }
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) {
-    display: flex;
-    align-items: center;
-    padding: 0px 8px 0px 8px;
-}
+            .control:nth-of-type(3) {
+                display: flex;
+                align-items: center;
+                padding: 0px 8px 0px 8px;
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) span {
-    color: var(--accent-color);
-    font-family: "Alata", sans-serif;
-}
+                span {
+                    color: var(--accent-color);
+                    font-family: "Alata", sans-serif;
+                }
+            }
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) button,
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(4) button {
-    margin: 0;
-    border: 0px solid transparent;
-    padding: 8px 16px 8px 16px;
-    background-color: transparent;
-    color: var(--accent-color);
-}
+            .control:nth-of-type(2) button,
+            .control:nth-of-type(4) button {
+                margin: 0;
+                border: 0px solid transparent;
+                padding: 8px 16px 8px 16px;
+                background-color: transparent;
+                color: var(--accent-color);
+            }
+        }
+    }
 
-#input > .columns:last-of-type {
-    margin: 0;
-    padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px !important;
-    height: 16px;
-    min-height: fit-content;
-    background: transparent;
-    font-size: 0rem !important;
-    line-height: 0 !important;
-    pointer-events: none;
-}
+    > .columns:last-of-type {
+        margin: 0;
+        padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px !important;
+        height: 16px;
+        min-height: fit-content;
+        background: transparent;
+        font-size: 0rem !important;
+        line-height: 0 !important;
+        pointer-events: none;
 
-#input > .columns:last-of-type > .column > .control {
-    pointer-events: none;
-    margin: 0;
-    margin: 4px 16px 4px 16px;
-    height: max(16px, 0.75rem);
-    font-size: 0.75rem !important;
-    line-height: 0.75rem !important;
-}
+        > .column > .control {
+            pointer-events: none;
+            margin: 0;
+            margin: 4px 16px 4px 16px;
+            height: max(16px, 0.75rem);
+            font-size: 0.75rem !important;
+            line-height: 0.75rem !important;
 
-#input > .columns:last-of-type > .column > .control .level:first-child .level-item {
-    display: flex;
-    justify-content: center;
-}
+            .level:first-child .level-item {
+                display: flex;
+                justify-content: center;
 
-#input > .columns:last-of-type > .column > .control .level:first-child .level-item .field .clip {
-    margin: 0;
-    border: 0px solid var(--foreground-color);
-    padding: 0px;
-    background-color: transparent;
-    background-clip: padding-box;
-    overflow: hidden;
-    width: 100%;
-}
+                .field {
+                    .clip {
+                        margin: 0;
+                        border: 0px solid var(--foreground-color);
+                        padding: 0px;
+                        background-color: transparent;
+                        background-clip: padding-box;
+                        overflow: hidden;
+                        width: 100%;
+                    }
 
-#input > .columns:last-of-type > .column > .control .level:first-child .level-item .field .ticker-wrap {
-    display: flex;
-    margin: 0;
-    width: 100%;
-    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-}
+                    .ticker-wrap {
+                        display: flex;
+                        margin: 0;
+                        width: 100%;
+                        -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+                        mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
 
-#input > .columns:last-of-type > .column > .control .level:first-child .level-item .field .clip .ticker-wrap .ticker {
-    transform: translate3d(0%, 0, 0);
-    animation: ticker 30s linear 0s infinite;
-    animation-play-state: paused;
-}
+                        .ticker {
+                            transform: translate3d(0%, 0, 0);
+                            animation: ticker 30s linear 0s infinite;
+                            animation-play-state: paused;
 
-#input
-    > .columns:last-of-type
-    > .column
-    > .control
-    .level:first-child
-    .level-item
-    .field
-    .clip
-    .ticker-wrap
-    .ticker
-    .item {
-    padding: 0px 8px;
-    color: #ffffff;
-    height: max(16px, 0.75rem);
-    font-size: 0.75rem !important;
-    line-height: 1rem !important;
-}
+                            .item {
+                                padding: 0px 8px;
+                                color: #ffffff;
+                                height: max(16px, 0.75rem);
+                                font-size: 0.75rem !important;
+                                line-height: 1rem !important;
+                            }
 
-#input
-    > .columns:last-of-type
-    > .column
-    > .control
-    .level:first-child
-    .level-item
-    .field
-    .clip
-    .ticker-wrap
-    .ticker
-    .media {
-    margin: 0px -8px 0px -8px;
-    height: max(16px, 0.75rem);
-}
+                            .media {
+                                margin: 0px -8px 0px -8px;
+                                height: max(16px, 0.75rem);
 
-#input
-    > .columns:last-of-type
-    > .column
-    > .control
-    .level:first-child
-    .level-item
-    .field
-    .clip
-    .ticker-wrap
-    .ticker
-    .media
-    .media-left {
-    margin: 0px 8px 0px 8px !important;
-}
+                                .media-left {
+                                    margin: 0px 8px 0px 8px !important;
+                                }
 
-#input
-    > .columns:last-of-type
-    > .column
-    > .control
-    .level:first-child
-    .level-item
-    .field
-    .clip
-    .ticker-wrap
-    .ticker
-    .media
-    picture
-    img {
-    width: 16px;
-    height: 16px;
-}
+                                picture img {
+                                    width: 16px;
+                                    height: 16px;
+                                }
 
-#input
-    > .columns:last-of-type
-    > .column
-    > .control
-    .level:first-child
-    .level-item
-    .field
-    .clip
-    .ticker-wrap
-    .ticker
-    .media
-    .media-content {
-    margin: 0px 8px 0px 8px;
-}
+                                .media-content {
+                                    margin: 0px 8px 0px 8px;
 
-#input
-    > .columns:last-of-type
-    > .column
-    > .control
-    .level:first-child
-    .level-item
-    .field
-    .clip
-    .ticker-wrap
-    .ticker
-    .media
-    .media-content
-    .content {
-    display: flex;
-    align-content: center;
-    transform: rotate(0.03deg);
-}
+                                    .content {
+                                        display: flex;
+                                        align-content: center;
+                                        transform: rotate(0.03deg);
 
-#input
-    > .columns:last-of-type
-    > .column
-    > .control
-    .level:first-child
-    .level-item
-    .field
-    .clip
-    .ticker-wrap
-    .ticker
-    .media
-    .media-content
-    .content
-    span {
-    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-    height: min(16px, 0.8rem) !important;
-    vertical-align: middle;
-    overflow-y: hidden;
+                                        span {
+                                            font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                                            height: min(16px, 0.8rem) !important;
+                                            vertical-align: middle;
+                                            overflow-y: hidden;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 .navbar-item img {
