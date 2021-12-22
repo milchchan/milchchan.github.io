@@ -15,6 +15,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP"
     --foreground-color: #777777;
     --main-color: #{$primary};
     --accent-color: #fecde2;
+    --highlight-color: #c1aee6;
     --primary-background-color: rgba(104, 230, 255, 0.75);
     --background-image: url("/images/Background.png");
     --background-image-2x: url("/images/Background@2x.png");
@@ -23,9 +24,10 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP"
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --main-color: #fecde2;
-        --accent-color: #{$primary};
-        --primary-background-color: rgba(254, 205, 226, 0.75);
+        --main-color: #c1aee6;
+        --highlight-color: #fecde2;
+        /*--primary-background-color: rgba(254, 205, 226, 0.75);*/
+        --primary-background-color: rgba(193, 174, 230, 0.75);
     }
 }
 
@@ -586,7 +588,7 @@ label .scrollable > div {
 
 .sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button.is-selected .icon,
 .sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button.is-selected .icon {
-    color: #c1aee6 !important;
+    color: var(--highlight-color) !important;
 }
 
 .sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button .icon + .wrap,
@@ -1050,7 +1052,7 @@ label .scrollable > div {
 }
 
 #menu > .columns > .column > .control > .level:first-child p .is-primary {
-    color: #c1aee6 !important;
+    color: var(--highlight-color) !important;
 }
 
 #menu > .columns > .column > .control > .level:first-child hr {
