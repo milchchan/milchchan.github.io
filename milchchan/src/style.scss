@@ -40,7 +40,7 @@ html {
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
-    background: #e3e0e3;
+    background: #f5f5f5;
     transition: 0.5s;
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
@@ -1363,7 +1363,7 @@ label .scrollable > div {
     padding: 16px;
     background: rgba(255, 255, 255, 0.75) !important;
     background-clip: padding-box;
-    /*background: #e3e0e3;
+    /*background: #f5f5f5;
             background: linear-gradient(145deg, #ffffff, #dddddd);
             box-shadow: 10px 10px 30px #d0d0d0,
                 -10px -10px 30px #ffffff;*/
@@ -1432,7 +1432,7 @@ label .scrollable > div {
     border-radius: 500px 500px 500px 0px;
     background: url("/images/Stripes.png") 50% 50% repeat;
     background-size: 20px 20px;
-    /*background: #e3e0e3;
+    /*background: #f5f5f5;
             box-shadow: 20px 20px 60px #d0d0d0,
                 -20px -20px 60px #ffffff;*/
 }
