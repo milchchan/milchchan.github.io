@@ -193,7 +193,7 @@ window.addEventListener("load", event => {
         data() {
             return {
                 isDebug: debug,
-                isDarkMode: false,
+                isDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
                 isMuted: true,
                 isLoading: false,
                 isRevealed: false,
