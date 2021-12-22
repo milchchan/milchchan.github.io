@@ -1027,11 +1027,11 @@ label .scrollable > div {
 }
 
 #menu > .columns > .column > .control > .level:first-child svg g > g:nth-child(odd) > path {
-    fill: var(--main-color);
+    fill: var(--accent-color);
 }
 
 #menu > .columns > .column > .control > .level:first-child svg g > g:nth-child(even) > path {
-    fill: var(--accent-color);
+    fill: var(--main-color);
 }
 
 #menu > .columns > .column > .control > .level:first-child svg g > g:first-child > path {
