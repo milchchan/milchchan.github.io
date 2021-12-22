@@ -65,7 +65,7 @@ window.addEventListener("load", (event) => {
     const app = createApp({
         data() {
             return {
-                isDarkMode: false,
+                isDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
                 isMuted: true,
                 isLoading: false,
                 isUpdating: false,
@@ -551,9 +551,9 @@ window.addEventListener("load", (event) => {
                                 });
 
                                 if ("image" in track) {
-                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : { red:104, green:230, blue:255 });
+                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : this.isDarkMode ? { red:193, green:174, blue:230 } : { red:104, green:230, blue:255 });
                                 } else if ("image" in track.user) {
-                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : { red:104, green:230, blue:255 });
+                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : this.isDarkMode ? { red:193, green:174, blue:230 } : { red:104, green:230, blue:255 });
                                 }
                                 
 
@@ -591,9 +591,9 @@ window.addEventListener("load", (event) => {
                                 });
 
                                 if ("image" in track) {
-                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : { red:104, green:230, blue:255 });
+                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : this.isDarkMode ? { red:193, green:174, blue:230 } : { red:104, green:230, blue:255 });
                                 } else if ("image" in track.user) {
-                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : { red:104, green:230, blue:255 });
+                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : this.isDarkMode ? { red:193, green:174, blue:230 } : { red:104, green:230, blue:255 });
                                 }
 
                                 /*if ("dictionary" in track && "words" in track.dictionary) {
@@ -4188,5 +4188,7 @@ window.addEventListener("load", (event) => {
         } else {
             app.isDarkMode = false;
         }
+
+        app.update(true);
     });
 });
