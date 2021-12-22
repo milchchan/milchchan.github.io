@@ -2,7 +2,9 @@
 @import "@fortawesome/fontawesome-free/css/all.css";
 
 $primary: #68e6ff;
-$family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+$family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", BlinkMacSystemFont, -apple-system,
+    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica",
+    "Arial", sans-serif;
 
 @import "bulma/bulma";
 
@@ -162,10 +164,9 @@ label .scrollable > div {
 
 .columns {
     margin: 0 !important;
-}
-
-.columns > .column {
-    padding: 0 !important;
+    > .column {
+        padding: 0 !important;
+    }
 }
 
 .tags > .tag {
@@ -225,18 +226,18 @@ label .scrollable > div {
     padding: 0;
     align-items: flex-start;
     justify-content: center !important;
-}
 
-.tags > .control {
-    margin: 0 !important;
-    padding: 8px 8px 8px 8px;
-}
+    > .control {
+        margin: 0 !important;
+        padding: 8px 8px 8px 8px;
+    }
 
-.tags button > .clip {
-    display: inline-block;
-    overflow: hidden;
-    box-sizing: content-box;
-    height: calc(0.75rem * 1.5);
+    button > .clip {
+        display: inline-block;
+        overflow: hidden;
+        box-sizing: content-box;
+        height: calc(0.75rem * 1.5);
+    }
 }
 
 .level > .level-item > .tags {
@@ -248,20 +249,20 @@ label .scrollable > div {
     display: flex;
     justify-content: flex-start;
     overflow: hidden;
-}
 
-.media > .media-content > .wrap > picture {
-    margin-left: 0%;
-    width: auto;
-    height: auto;
-    animation: frame 1.33s steps(4) infinite;
-}
+    > picture {
+        margin-left: 0%;
+        width: auto;
+        height: auto;
+        animation: frame 1.33s steps(4) infinite;
 
-.media > .media-content > .wrap > picture > img {
-    object-fit: none;
-    object-position: 0% 0%;
-    width: 100%;
-    height: 100%;
+        > img {
+            object-fit: none;
+            object-position: 0% 0%;
+            width: 100%;
+            height: 100%;
+        }
+    }
 }
 
 .is-danger {
@@ -271,15 +272,15 @@ label .scrollable > div {
 
 .is-superellips {
     transform: rotate(-19deg) !important;
-}
 
-.is-superellips > picture {
-    border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
-    overflow: hidden;
-}
-
-.is-superellips > picture > img {
-    transform: rotate(19deg);
+    > picture {
+        border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
+        overflow: hidden;
+    
+        > img {
+            transform: rotate(19deg);
+        }
+    }
 }
 
 .logo {
@@ -295,22 +296,22 @@ label .scrollable > div {
     width: 100%;
     min-height: 100%;
     touch-action: none;
-}
 
-.logo svg {
-    margin: 0;
-    padding: 0;
-    max-height: 10vmin;
-}
+    svg {
+        margin: 0;
+        padding: 0;
+        max-height: 10vmin;
 
-.logo svg g > path {
-    fill: #ffffff;
-    fill-opacity: 0;
-    stroke: #ffffff !important;
-    stroke-width: 0.5 !important;
-    stroke-dasharray: 250;
-    stroke-dashoffset: 250;
-    animation: draw 1s linear forwards, startup 0.5s ease-out 1s forwards;
+        g > path {
+            fill: #ffffff;
+            fill-opacity: 0;
+            stroke: #ffffff !important;
+            stroke-width: 0.5 !important;
+            stroke-dasharray: 250;
+            stroke-dashoffset: 250;
+            animation: draw 1s linear forwards, startup 0.5s ease-out 1s forwards;
+        }
+    }
 }
 
 .sunrise {
@@ -326,19 +327,19 @@ label .scrollable > div {
     min-height: 100%;
     justify-content: center;
     align-items: center;
-}
 
-.sunrise > svg {
-    position: relative;
-    object-fit: cover;
-    width: 100%;
-    min-height: 100%;
-    height: 100%;
-    animation: loading 30s linear infinite;
-}
+    > svg {
+        position: relative;
+        object-fit: cover;
+        width: 100%;
+        min-height: 100%;
+        height: 100%;
+        animation: loading 30s linear infinite;
 
-.sunrise > svg > radialGradient > stop {
-    stop-color: rgb(255, 238, 0) !important;
+        > radialGradient > stop {
+            stop-color: rgb(255, 238, 0) !important;
+        }
+    }
 }
 
 .progress {
@@ -355,27 +356,27 @@ label .scrollable > div {
     overflow: hidden;
     background: transparent;
     touch-action: none;
-}
 
-.progress > .bar {
-    position: relative;
-    margin: 0;
-    border: 0px solid transparent;
-    padding: 0;
-    border-radius: 0px;
-    width: 0%;
-    height: 2px;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-    background: #ffee00 url("/images/Stripes.png") 50% 50% repeat;
-    background-size: 20px 20px;
-    animation: progress 0.5s linear 0s infinite;
-    animation-play-state: paused;
-}
+    > .bar {
+        position: relative;
+        margin: 0;
+        border: 0px solid transparent;
+        padding: 0;
+        border-radius: 0px;
+        width: 0%;
+        height: 2px;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        background: #ffee00 url("/images/Stripes.png") 50% 50% repeat;
+        background-size: 20px 20px;
+        animation: progress 0.5s linear 0s infinite;
+        animation-play-state: paused;
+    }
 
-.progress > .animating {
-    animation-play-state: running;
+    > .animating {
+        animation-play-state: running;
+    }
 }
 
 .overlay {
@@ -455,31 +456,31 @@ label .scrollable > div {
     overflow: hidden;
     box-sizing: content-box;
     background-color: transparent;
-}
 
-.ticker-wrap .ticker {
-    display: inline-block;
-    white-space: nowrap;
-    padding: 0;
-    box-sizing: content-box;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    /*animation-name: ticker;*/
-    animation-duration: 30s;
-    animation-play-state: paused;
-}
+    .ticker {
+        display: inline-block;
+        white-space: nowrap;
+        padding: 0;
+        box-sizing: content-box;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        /*animation-name: ticker;*/
+        animation-duration: 30s;
+        animation-play-state: paused;
 
-.ticker-wrap .ticker .item {
-    display: inline-block;
-    vertical-align: middle;
-}
+        .item {
+            display: inline-block;
+            vertical-align: middle;
 
-.ticker-wrap .ticker .item .media {
-    align-items: center;
-}
+            .media {
+                align-items: center;
 
-.ticker-wrap .ticker .item .media .media-left {
-    margin: 0px 8px 0px 0px !important;
+                .media-left {
+                    margin: 0px 8px 0px 0px !important;
+                }
+            }
+        }
+    }
 }
 
 .background {
@@ -491,6 +492,36 @@ label .scrollable > div {
     background-size: contain;
     background-repeat: no-repeat;
     overflow: hidden;
+
+    > div {
+        display: block;
+        position: absolute;
+        background-color: transparent;
+        background-attachment: scroll;
+        background-position: 50% 25%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        width: 100%;
+        min-height: 100%;
+        overflow: hidden;
+    }
+
+    > div::before {
+        display: block;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        min-height: 100%;
+        content: "";
+    }
+
+    > img {
+        position: fixed;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .background:first-child::after {
@@ -505,36 +536,6 @@ label .scrollable > div {
     background-size: 2px 2px;
     content: "";
     overflow: hidden;
-}
-
-.background > div {
-    display: block;
-    position: absolute;
-    background-color: transparent;
-    background-attachment: scroll;
-    background-position: 50% 25%;
-    background-size: cover;
-    background-repeat: no-repeat;
-    width: 100%;
-    min-height: 100%;
-    overflow: hidden;
-}
-
-.background > div::before {
-    display: block;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    min-height: 100%;
-    content: "";
-}
-
-.background > img {
-    position: fixed;
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
 }
 
 .sidebar {
@@ -697,16 +698,16 @@ label .scrollable > div {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
 
-#map > button {
-    z-index: 1;
-    margin: 0;
-    border: 0px solid transparent;
-    padding: 16px;
-    background: transparent;
-    width: fit-content;
-    height: fit-content;
+    > button {
+        z-index: 1;
+        margin: 0;
+        border: 0px solid transparent;
+        padding: 16px;
+        background: transparent;
+        width: fit-content;
+        height: fit-content;
+    }
 }
 
 .blind {
@@ -734,16 +735,16 @@ label .scrollable > div {
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-start;
-}
 
-#app > .container > .wrap {
-    position: absolute;
-    margin: 0;
-    padding: 16px;
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
-    overflow: hidden;
+    > .container > .wrap {
+        position: absolute;
+        margin: 0;
+        padding: 16px;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow: hidden;
+    }
 }
 
 .center {
@@ -1175,7 +1176,18 @@ label .scrollable > div {
     padding: 8px 8px 8px 8px;
 }
 
-#menu > .columns > .column > .control > .level:first-child > .level-item > .level > .level-item > .media > .media-content > .content > span.icon {
+#menu
+    > .columns
+    > .column
+    > .control
+    > .level:first-child
+    > .level-item
+    > .level
+    > .level-item
+    > .media
+    > .media-content
+    > .content
+    > span.icon {
     color: var(--accent-color) !important;
 }
 
@@ -2958,202 +2970,136 @@ label .scrollable > div {
     padding: 0;
     width: 100%;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));
-    /*backdrop-filter: blur(8px);*/
-}
 
-#popup .columns > .column > .control:last-child {
-    margin: 0;
-    padding: 0;
-}
+    .columns > .column > .control:last-child {
+        margin: 0;
+        padding: 0;
 
-#popup .columns > .column > .control:last-child > .level {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
+        > .level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
 
-#popup .columns > .column > .control:last-child > .level > .level-item:nth-last-of-type(1) {
-    display: block;
-    margin: 0;
-    padding: 0px 32px 16px 32px;
-    width: 100%;
-}
+            > .level-item:nth-last-of-type(2) {
+                margin: 0;
+                padding: 16px 32px 16px 32px;
+                width: 100%;
 
-#popup .columns > .column > .control:last-child > .level > .level-item:nth-last-of-type(2) {
-    margin: 0;
-    padding: 16px 32px 16px 32px;
-    width: 100%;
-}
+                > .level {
+                    display: flex;
+                    margin: 0;
+                    padding: 0;
+                    flex-direction: row;
+                    align-items: flex-start;
+                    justify-content: space-between;
+                    width: 100%;
 
-#popup .columns > .column > .control:last-child > .level > .level-item:nth-last-of-type(2) > .level {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    width: 100%;
-}
+                    > .level-item:first-child {
+                        display: flex;
+                        margin: 0;
+                        padding: 0;
+                        flex-direction: row;
+                        align-items: flex-start;
+                        justify-content: flex-start;
+                    }
 
-#popup
-    .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:nth-last-of-type(2)
-    > .level
-    > .level-item:first-child {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
+                    > .level-item:last-child:not(:first-child) {
+                        display: flex;
+                        margin: 0;
+                        padding: 0;
+                        flex-direction: row;
+                        align-items: flex-start;
+                        justify-content: flex-end;
+                    }
 
-#popup
-    .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:nth-last-of-type(2)
-    > .level
-    > .level-item:last-child:not(:first-child) {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-end;
-}
+                    > .level-item {
+                        button {
+                            margin: 0px;
+                            border: 0px solid rgba(255, 255, 255, 0.5);
+                            border-radius: 290486px;
+                            padding: 16px;
+                            background: transparent !important;
+                            background-clip: padding-box;
+                            box-shadow: none;
+                            height: initial;
+                            color: #ffffff !important;
 
-#popup
-    .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:nth-last-of-type(2)
-    > .level
-    > .level-item
-    button {
-    margin: 0px;
-    border: 0px solid rgba(255, 255, 255, 0.5);
-    border-radius: 290486px;
-    padding: 16px;
-    background: transparent !important;
-    background-clip: padding-box;
-    box-shadow: none;
-    height: initial;
-    color: #ffffff !important;
-}
+                            > span {
+                                margin: 0 !important;
+                                width: 1rem !important;
+                                height: 1rem !important;
+                            }
+                        }
 
-#popup
-    .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:nth-last-of-type(2)
-    > .level
-    > .level-item
-    button
-    > span {
-    margin: 0 !important;
-    width: 1rem !important;
-    height: 1rem !important;
-}
-
-#popup
-    .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:nth-last-of-type(2)
-    > .level
-    > .level-item
-    .media {
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 500px 500px 500px 500px;
-    padding: 8px 16px 8px 16px;
-    background: url("/images/Stripes.png") 50% 50% repeat;
-    background-size: 20px 20px;
-    /*box-shadow: 10px 10px 30px #d0d0d0,
+                        .media {
+                            pointer-events: none;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 500px 500px 500px 500px;
+                            padding: 8px 16px 8px 16px;
+                            background: url("/images/Stripes.png") 50% 50% repeat;
+                            background-size: 20px 20px;
+                            /*box-shadow: 10px 10px 30px #d0d0d0,
         -10px -10px 30px #ffffff;*/
-    touch-action: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
+                            touch-action: none;
+                            -webkit-user-select: none;
+                            user-select: none;
 
-#popup
-    .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:nth-last-of-type(2)
-    > .level
-    > .level-item
-    .media
-    .media-left {
-    margin: 0px 8px 0px 0px !important;
-    padding: 0;
-}
+                            .media-left {
+                                margin: 0px 8px 0px 0px !important;
+                                padding: 0;
+                            }
 
-#popup
-    .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:nth-last-of-type(2)
-    > .level
-    > .level-item
-    .media
-    .media-content
-    .content {
-    transform: rotate(0.03deg);
-}
+                            .media-content {
+                                .content {
+                                    transform: rotate(0.03deg);
 
-#popup
-    .columns
-    > .column
-    > .control:last-child
-    > .level
-    > .level-item:nth-last-of-type(2)
-    > .level
-    > .level-item
-    .media
-    .media-content
-    .content
-    span {
-    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-    line-height: 1.25rem;
-}
+                                    span {
+                                        font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                                        line-height: 1.25rem;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-#popup .columns > .column > .control:last-child > .level > .level-item:nth-last-of-type(1) .media {
-    margin: 0;
-    padding: 0px 16px 0px 16px;
-}
+            > .level-item:nth-last-of-type(1) {
+                display: block;
+                margin: 0;
+                padding: 0px 32px 16px 32px;
+                width: 100%;
 
-#popup .columns > .column > .control:last-child > .level > .level-item:nth-last-of-type(1) .media .media-content {
-    overflow: hidden;
-    transform: rotate(0.03deg);
-}
+                .media {
+                    margin: 0;
+                    padding: 0px 16px 0px 16px;
 
-#popup .columns > .column > .control:last-child > .level > .level-item:nth-last-of-type(1) .media span {
-    display: inline-block;
-    font-size: 1rem;
-    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-    line-height: 2rem;
-    vertical-align: middle;
-}
+                    .media-content {
+                        overflow: hidden;
+                        transform: rotate(0.03deg);
+                    }
 
-#popup .columns > .column > .control:last-child > .level > .level-item:nth-last-of-type(1) .media span.break {
-    display: block;
-    margin: 0;
+                    span {
+                        display: inline-block;
+                        font-size: 1rem;
+                        font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                        line-height: 2rem;
+                        vertical-align: middle;
+                    }
+
+                    span.break {
+                        display: block;
+                        margin: 0;
+                    }
+                }
+            }
+        }
+    }
 }
 
 #input {
