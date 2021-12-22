@@ -1838,7 +1838,7 @@ label .scrollable > div {
                             background: url("/images/Stripes.png") 50% 50% repeat;
                             background-size: 20px 20px;
                             /*box-shadow: 10px 10px 30px #d0d0d0,
-                -10px -10px 30px #ffffff;*/
+                                            -10px -10px 30px #ffffff;*/
                             touch-action: none;
                             -webkit-user-select: none;
                             user-select: none;
@@ -1901,89 +1901,95 @@ label .scrollable > div {
     position: absolute;
     display: flex;
     flex-direction: column;
-}
 
-#input > .columns > .column > .control:last-child .level .level-item {
-    margin: 0;
-    padding: 0;
-}
+    > .columns > .column > .control:last-child .level .level-item {
+        margin: 0;
+        padding: 0;
+    }
 
-#input form .field {
-    margin: 0px;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 500px 500px 500px 500px;
-    padding: 8px 16px 8px 16px;
-    background: rgba(255, 255, 255, 0.75) !important;
-    background-clip: padding-box;
-    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
+    form .field {
+        margin: 0px;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 500px 500px 500px 500px;
+        padding: 8px 16px 8px 16px;
+        background: rgba(255, 255, 255, 0.75) !important;
+        background-clip: padding-box;
+        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
 
-#input .navbar-item:first-of-type .control:first-child .level:last-of-type {
-    display: block;
-    margin: 0px 32px 16px 32px;
-    padding: 0;
-}
+        .control:nth-of-type(1) {
+            input {
+                border: 0px solid transparent;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                background-color: transparent;
+                box-shadow: none;
+                backface-visibility: hidden;
+                font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                color: var(--foreground-color);
+                transform: rotate(0.03deg);
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
 
-#input .navbar-item:first-of-type .control:first-child .level .is-info {
-    color: #ffffff;
-}
+            input::placeholder {
+                color: rgba(119, 119, 119, 0.25);
+                font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                transform: rotate(0.03deg);
+            }
+        }
 
-#input .navbar-item:first-of-type .control {
-    margin: 0;
-    padding: 0;
-}
+        .control:nth-of-type(3) {
+            display: flex;
+            align-items: center;
+            padding: 0px 8px 0px 8px;
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input {
-    border: 0px solid transparent;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    background-color: transparent;
-    box-shadow: none;
-    backface-visibility: hidden;
-    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-    color: var(--foreground-color);
-    transform: rotate(0.03deg);
-    overflow-x: auto;
-    overflow-y: hidden;
-}
+            span {
+                color: var(--accent-color);
+                font-family: "Alata", sans-serif;
+            }
+        }
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(1) input::placeholder {
-    color: rgba(119, 119, 119, 0.25);
-    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-    transform: rotate(0.03deg);
-}
+        .control:nth-of-type(2) button,
+        .control:nth-of-type(4) button {
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 8px 16px 8px 16px;
+            background-color: transparent;
+            color: var(--accent-color);
+        }
+    }
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) {
-    display: flex;
-    align-items: center;
-    padding: 0px 8px 0px 8px;
-}
+    .navbar-item:first-of-type {
+        .control:first-child {
+            .level .is-info {
+                color: #ffffff;
+            }
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(3) span {
-    color: var(--accent-color);
-    font-family: "Alata", sans-serif;
-}
+            .level:last-of-type {
+                display: block;
+                margin: 0px 32px 16px 32px;
+                padding: 0;
+            }
+        }
 
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(2) button,
-#input .navbar-item:first-of-type .control:last-child form .field .control:nth-of-type(4) button {
-    margin: 0;
-    border: 0px solid transparent;
-    padding: 8px 16px 8px 16px;
-    background-color: transparent;
-    color: var(--accent-color);
-}
+        .control {
+            margin: 0;
+            padding: 0;
+        }
+    }
 
-#input > .columns:last-of-type {
-    margin: 0;
-    padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px !important;
-    height: 16px;
-    min-height: fit-content;
-    background: transparent;
-    font-size: 0rem !important;
-    line-height: 0 !important;
-    pointer-events: none;
+    > .columns:last-of-type {
+        margin: 0;
+        padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px !important;
+        height: 16px;
+        min-height: fit-content;
+        background: transparent;
+        font-size: 0rem !important;
+        line-height: 0 !important;
+        pointer-events: none;
+    }
 }
 
 .navbar-item img {
