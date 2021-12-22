@@ -150,7 +150,7 @@ label .scrollable > div {
 
 .columns {
     margin: 0 !important;
-    
+
     > .column {
         padding: 0 !important;
     }
@@ -487,124 +487,122 @@ label .scrollable > div {
     width: fit-content;
     height: 100%;
     background: #ffffff;
-}
 
-.sidebar > .level {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
+    > .level {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
 
-.sidebar > .level > .level-item:first-child {
-    display: flex;
-    top: 0;
-    margin: 0;
-    padding: 32px 0px 32px 0px;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
+        > .level-item:first-child {
+            display: flex;
+            top: 0;
+            margin: 0;
+            padding: 32px 0px 32px 0px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
 
-.sidebar > .level > .level-item:first-child > .level {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
+            > .level {
+                display: flex;
+                margin: 0;
+                padding: 0;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
 
-.sidebar > .level > .level-item:last-child:not(:first-child) {
-    position: absolute;
-    bottom: 0;
-    margin: 0;
-    padding: 0px 0px 32px 0px;
-}
+                > .level-item:first-child {
+                    margin: 0;
+                    padding: 0;
+                }
 
-.sidebar > .level > .level-item:last-child:not(:first-child) .image > button {
-    margin: 0;
-    border: 0px solid transparent;
-    padding: 0;
-    background: transparent;
-}
+                > .level-item:not(:first-child) {
+                    margin: 0;
+                    padding: 32px 0px 0px 0px;
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:first-child {
-    margin: 0;
-    padding: 0;
-}
+                    button,
+                    .button {
+                        display: flex;
+                        align-items: center;
+                        margin: 0;
+                        padding: 0;
+                        border: 0px solid rgba(255, 255, 255, 0.5);
+                        background: #ffffff;
+                        background-clip: padding-box;
+                        height: fit-content;
+                        line-height: calc(0.75rem * 1.5);
+                        backface-visibility: hidden;
+                        color: #000000;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: flex-start;
+                        width: 64px;
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) {
-    margin: 0;
-    padding: 32px 0px 0px 0px;
-}
+                        .clip {
+                            display: inline-block;
+                            overflow: hidden;
+                            box-sizing: content-box;
+                            height: calc(0.75rem * 1.5);
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button,
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    border: 0px solid rgba(255, 255, 255, 0.5);
-    background: #ffffff;
-    background-clip: padding-box;
-    height: fit-content;
-    line-height: calc(0.75rem * 1.5);
-    backface-visibility: hidden;
-    color: #000000;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 64px;
-}
+                            .scrollable div {
+                                display: flex;
+                                align-items: center;
+                                font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+                                font-size: 0.75rem;
+                                transform: rotate(0.03deg);
+                                line-height: 0.75rem !important;
+                                height: calc(0.75rem * 1.5);
+                            }
+                        }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) div.wrap {
-    display: flex;
-    margin: 0;
-    height: calc(0.75rem * 1.5);
-}
+                        .icon {
+                            margin: 0 !important;
+                            color: var(--accent-color);
+                            width: 48px;
+                            height: 48px;
+                            align-items: center;
+                            justify-content: center;
+                        }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button .clip .scrollable div,
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button .clip .scrollable div {
-    display: flex;
-    align-items: center;
-    font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-    font-size: 0.75rem;
-    transform: rotate(0.03deg);
-    line-height: 0.75rem !important;
-    height: calc(0.75rem * 1.5);
-}
+                        .icon + .wrap {
+                            margin: 8px 0px 0px 0px !important;
+                            color: var(--main-color);
+                        }
+                    }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button .icon,
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button .icon {
-    margin: 0 !important;
-    color: var(--accent-color);
-    width: 48px;
-    height: 48px;
-    align-items: center;
-    justify-content: center;
-}
+                    button.is-selected,
+                    .button.is-selected {
+                        .icon {
+                            color: var(--highlight-color) !important;
+                        }
+                    }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button.is-selected .icon,
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button.is-selected .icon {
-    color: var(--highlight-color) !important;
-}
+                    div.wrap {
+                        display: flex;
+                        margin: 0;
+                        height: calc(0.75rem * 1.5);
+                    }
+                }
+            }
+        }
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button .icon + .wrap,
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button .icon + .wrap {
-    margin: 8px 0px 0px 0px !important;
-    color: var(--main-color);
-}
+        > .level-item:last-child:not(:first-child) {
+            position: absolute;
+            bottom: 0;
+            margin: 0;
+            padding: 0px 0px 32px 0px;
 
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) button .clip,
-.sidebar > .level > .level-item:first-child > .level > .level-item:not(:first-child) .button .clip {
-    display: inline-block;
-    overflow: hidden;
-    box-sizing: content-box;
-    height: calc(0.75rem * 1.5);
+            .image > button {
+                margin: 0;
+                border: 0px solid transparent;
+                padding: 0;
+                background: transparent;
+            }
+        }
+    }
 }
 
 .container {
@@ -626,7 +624,7 @@ label .scrollable > div {
             background: var(--main-color);
             font-size: 0.75rem !important;
             line-height: 0.75rem !important;
-    
+
             > .column > .control {
                 pointer-events: none;
                 margin: 0;
@@ -634,14 +632,14 @@ label .scrollable > div {
                 height: max(16px, 0.75rem);
                 font-size: 0.75rem !important;
                 line-height: 0.75rem !important;
-            
+
                 .level:first-child .level-item {
                     display: flex;
                     justify-content: center;
                 }
             }
         }
-    
+
         .clip {
             margin: 0;
             border: 0px solid var(--foreground-color);
@@ -650,12 +648,12 @@ label .scrollable > div {
             background-clip: padding-box;
             overflow: hidden;
             width: 100%;
-    
+
             .ticker-wrap .ticker {
                 transform: translate3d(0%, 0, 0);
                 animation: ticker 30s linear 0s infinite;
                 animation-play-state: paused;
-    
+
                 .item {
                     padding: 0px 8px;
                     color: #ffffff;
@@ -663,28 +661,28 @@ label .scrollable > div {
                     font-size: 0.75rem !important;
                     line-height: 1rem !important;
                 }
-    
+
                 .media {
                     margin: 0px -8px 0px -8px;
                     height: max(16px, 0.75rem);
-    
+
                     .media-left {
                         margin: 0px 8px 0px 8px !important;
                     }
-    
+
                     picture img {
                         width: 16px;
                         height: 16px;
                     }
-    
+
                     .media-content {
                         margin: 0px 8px 0px 8px;
-    
+
                         .content {
                             display: flex;
                             align-content: center;
                             transform: rotate(0.03deg);
-    
+
                             span {
                                 font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
                                 height: min(16px, 0.8rem) !important;
@@ -696,7 +694,7 @@ label .scrollable > div {
                 }
             }
         }
-    
+
         .ticker-wrap {
             display: flex;
             margin: 0;
