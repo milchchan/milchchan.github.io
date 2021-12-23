@@ -1108,39 +1108,32 @@ label .scrollable > div {
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-}
 
-#menu > .columns,
-.hud > .columns {
-    display: flex;
-    top: 0;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-#menu > .columns > .column,
-.hud > .columns > .column {
-    flex: none;
-    margin: auto !important;
-    overflow-x: hidden;
-    overflow-y: auto;
-    width: 100%;
+    > .columns {
+        display: flex;
+        top: 0;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+        overflow-y: auto;
+    
+        > .column {
+            flex: none;
+            margin: auto !important;
+            overflow-x: hidden;
+            overflow-y: auto;
+            width: 100%;
+        }
+    }
 }
 
 #menu > .columns > .column > .control {
     margin: 0;
     padding: 0px 16px 0px 16px;
-}
-
-.hud > .columns > .column > .field {
-    margin: 0;
-    padding: 16px 32px 16px 32px;
 }
 
 #menu > .columns > .column > .control > .level:first-child {
@@ -2953,6 +2946,11 @@ label .scrollable > div {
     line-height: 0.75rem !important;
     width: fit-content;
     height: fit-content;
+}
+
+.hud > .columns > .column > .field {
+    margin: 0;
+    padding: 16px 32px 16px 32px;
 }
 
 #popup {
