@@ -1335,7 +1335,9 @@ label .scrollable > div {
                                 -webkit-backdrop-filter: blur(4px);
 
                                 span {
-                                    margin: 0;
+                                    margin: 0 !important;
+                                    width: 1rem !important;
+                                    height: 1rem !important;
                                 }
                             }
                         }
