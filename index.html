@@ -616,83 +616,81 @@
                                             </article>
                                         </div>
                                     </nav>
-                                    <nav class="level" v-else-if="word" key="learn">
-                                        <div class="columns is-desktop">
-                                            <div class="column is-full has-content-centered">
-                                                <article class="media" v-cloak>
-                                                    <figure class="media-left">
-                                                        <p class="image is-64x64">
-                                                            <img class="is-rounded" v-bind:src="character.image"
-                                                                v-bind:alt="character.name" v-cloak>
-                                                        </p>
-                                                    </figure>
-                                                    <div class="media-content">
-                                                        <div class="content has-text-left">
-                                                            <div class="balloon"
-                                                                v-bind:style="{ backgroundColor: character.accent }"
+                                    <nav class="columns is-desktop" v-else-if="word" key="learn">
+                                        <div class="column is-full has-content-centered">
+                                            <article class="media" v-cloak>
+                                                <figure class="media-left">
+                                                    <p class="image is-64x64">
+                                                        <img class="is-rounded" v-bind:src="character.image"
+                                                            v-bind:alt="character.name" v-cloak>
+                                                    </p>
+                                                </figure>
+                                                <div class="media-content">
+                                                    <div class="content has-text-left">
+                                                        <div class="balloon"
+                                                            v-bind:style="{ backgroundColor: character.accent }"
+                                                            v-cloak>
+                                                            <p class="is-size-7 has-text-weight-bold has-text-white"
                                                                 v-cloak>
-                                                                <p class="is-size-7 has-text-weight-bold has-text-white"
-                                                                    v-cloak>
-                                                                    {{ word.name }}
-                                                                </p>
-                                                            </div>
+                                                                {{ word.name }}
+                                                            </p>
                                                         </div>
                                                     </div>
-                                                </article>
-                                                <article class="media">
-                                                    <div class="media-content">
-                                                        <div class="content">
-                                                            <div class="columns is-mobile is-gapless"
-                                                                v-for="row in arrange(word.attributes, 2)" v-cloak>
-                                                                <div class="column is-half" v-for="column in row"
-                                                                    v-bind:key="column.name" v-cloak>
-                                                                    <div class="field">
-                                                                        <label class="checkbox">
-                                                                            <input type="checkbox"
-                                                                                v-bind:data-name="word.name"
-                                                                                v-bind:data-attribute="column.name"
-                                                                                @change="check" v-model="column.value">
-                                                                            <span class="custom"></span>
-                                                                            <span
-                                                                                class="wrap is-size-7 has-text-weight-bold">
-                                                                                <div class="clip">
-                                                                                    <div class="scrollable">
-                                                                                        <div>{{ column.name }}</div>
-                                                                                        <div>{{ column.name }}</div>
-                                                                                    </div>
+                                                </div>
+                                            </article>
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <div class="columns is-mobile is-gapless"
+                                                            v-for="row in arrange(word.attributes, 2)" v-cloak>
+                                                            <div class="column is-half" v-for="column in row"
+                                                                v-bind:key="column.name" v-cloak>
+                                                                <div class="field">
+                                                                    <label class="checkbox">
+                                                                        <input type="checkbox"
+                                                                            v-bind:data-name="word.name"
+                                                                            v-bind:data-attribute="column.name"
+                                                                            @change="check" v-model="column.value">
+                                                                        <span class="custom"></span>
+                                                                        <span
+                                                                            class="wrap is-size-7 has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>{{ column.name }}</div>
+                                                                                    <div>{{ column.name }}</div>
                                                                                 </div>
-                                                                            </span>
-                                                                        </label>
-                                                                    </div>
+                                                                            </div>
+                                                                        </span>
+                                                                    </label>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <nav class="level">
-                                                            <div class="level-item">
-                                                                <nav class="level is-mobile">
-                                                                    <div class="level-item">
-                                                                        <button class="button is-white" type="button"
-                                                                            @click="share(word); word = null;" v-cloak>
-                                                                            <span class="icon is-small is-primary">
-                                                                                <i class="fas fa-check"></i>
-                                                                            </span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="level-item">
-                                                                        <button class="button is-white" type="button"
-                                                                            @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null"
-                                                                            v-cloak>
-                                                                            <span class="icon is-small is-danger">
-                                                                                <i class="fas fa-times"></i>
-                                                                            </span>
-                                                                        </button>
-                                                                    </div>
-                                                                </nav>
-                                                            </div>
-                                                        </nav>
                                                     </div>
-                                                </article>
-                                            </div>
+                                                    <nav class="level">
+                                                        <div class="level-item">
+                                                            <nav class="level is-mobile">
+                                                                <div class="level-item">
+                                                                    <button class="button is-white" type="button"
+                                                                        @click="share(word); word = null;" v-cloak>
+                                                                        <span class="icon is-small is-primary">
+                                                                            <i class="fas fa-check"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="level-item">
+                                                                    <button class="button is-white" type="button"
+                                                                        @click="[...word.name].forEach(char => chars.forEach(x => x.forEach(y => y.count += y.set.includes(char) ? 1 : 0 ))); word = null"
+                                                                        v-cloak>
+                                                                        <span class="icon is-small is-danger">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </nav>
+                                                        </div>
+                                                    </nav>
+                                                </div>
+                                            </article>
                                         </div>
                                     </nav>
                                     <nav class="level" v-else-if="mode instanceof Array" key="users">
