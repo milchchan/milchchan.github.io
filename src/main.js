@@ -551,11 +551,11 @@ window.addEventListener("load", (event) => {
                                 });
 
                                 if ("image" in track) {
-                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : this.isDarkMode ? { red:193, green:174, blue:230 } : { red:104, green:230, blue:255 });
+                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red: 254, green: 205, blue: 226 } : this.isDarkMode ? { red: 193, green: 174, blue: 230 } : { red: 104, green: 230, blue: 255 });
                                 } else if ("image" in track.user) {
-                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : this.isDarkMode ? { red:193, green:174, blue:230 } : { red:104, green:230, blue:255 });
+                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red: 254, green: 205, blue: 226 } : this.isDarkMode ? { red: 193, green: 174, blue: 230 } : { red: 104, green: 230, blue: 255 });
                                 }
-                                
+
 
                                 /*if ("dictionary" in track && "words" in track.dictionary) {
                                     for (const word in track.dictionary.words) {
@@ -591,9 +591,9 @@ window.addEventListener("load", (event) => {
                                 });
 
                                 if ("image" in track) {
-                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : this.isDarkMode ? { red:193, green:174, blue:230 } : { red:104, green:230, blue:255 });
+                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red: 254, green: 205, blue: 226 } : this.isDarkMode ? { red: 193, green: 174, blue: 230 } : { red: 104, green: 230, blue: 255 });
                                 } else if ("image" in track.user) {
-                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red:254, green:205, blue:226 } : this.isDarkMode ? { red:193, green:174, blue:230 } : { red:104, green:230, blue:255 });
+                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red: 254, green: 205, blue: 226 } : this.isDarkMode ? { red: 193, green: 174, blue: 230 } : { red: 104, green: 230, blue: 255 });
                                 }
 
                                 /*if ("dictionary" in track && "words" in track.dictionary) {
@@ -1827,8 +1827,8 @@ window.addEventListener("load", (event) => {
                         }
 
                         for (const name in words) {
-                            let w = "user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } :  { name: name, attributes: words[name].attributes, user: user };
-                            
+                            let w = "user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } : { name: name, attributes: words[name].attributes, user: user };
+
                             if ("image" in words[name]) {
                                 w["image"] = { path: words[name].image, url: await getDownloadURL(storageRef(storage, words[name].image)) };
                             }
@@ -1852,7 +1852,7 @@ window.addEventListener("load", (event) => {
                 if ("words" in this.mode && snapshot.exists()) {
                     const words = snapshot.val();
                     const user = "user" in this.mode ? this.mode.user : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
-                    
+
                     if (this.mode.words !== null && this.mode.words.length > 0) {
                         this.mode.next = this.mode.words[0];
                     }
@@ -2001,35 +2001,35 @@ window.addEventListener("load", (event) => {
                 return hashHex;
             },
             activate: async function () {
+                function _random(min, max) {
+                    min = Math.ceil(min);
+                    max = Math.floor(max);
+
+                    return Math.floor(Math.random() * (max - min)) + min;
+                }
+
+                function shuffle(array) {
+                    let a = [].concat(array);
+                    let n = array.length;
+
+                    while (n > 1) {
+                        const k = _random(0, n);
+
+                        n--;
+
+                        const temp = a[n];
+
+                        a[n] = a[k];
+                        a[k] = temp;
+                    }
+
+                    return a;
+                }
+
                 idleTime = activateTime = 0.0;
 
                 if (this.cachedDocuments.length > 0) {
                     if (this.documentQueue.length == 0) {
-                        function shuffle(array) {
-                            function _random(min, max) {
-                                min = Math.ceil(min);
-                                max = Math.floor(max);
-
-                                return Math.floor(Math.random() * (max - min)) + min;
-                            }
-
-                            let a = [].concat(array);
-                            let n = array.length;
-
-                            while (n > 1) {
-                                const k = _random(0, n);
-
-                                n--;
-
-                                const temp = a[n];
-
-                                a[n] = a[k];
-                                a[k] = temp;
-                            }
-
-                            return a;
-                        }
-
                         for (const document of shuffle(this.cachedDocuments)) {
                             this.documentQueue.push(document);
                         }
@@ -2037,7 +2037,41 @@ window.addEventListener("load", (event) => {
 
                     const document = this.documentQueue.shift();
 
-                    if (!await this.talk(this.user.uid, document.filter((x) => x !== this.character.name))) {
+                    if (await this.talk(this.user.uid, document.filter((x) => x !== this.character.name))) {
+                        return;
+                    }
+                }
+
+                const i = _random(0, this.recentWords.length);
+
+                if (i > 0) {
+                    function shuffle(array) {
+                        let a = [].concat(array);
+                        let n = array.length;
+
+                        while (n > 1) {
+                            const k = _random(0, n);
+
+                            n--;
+
+                            const temp = a[n];
+
+                            a[n] = a[k];
+                            a[k] = temp;
+                        }
+
+                        return a;
+                    }
+
+                    const tokens = [];
+
+                    for (const word of shuffle(this.recentWords)) {
+                        if (this.user.uid !== word.user.id && word.name !== this.character.name) {
+                            tokens.push(word.name);
+                        }
+                    }
+
+                    if (!await this.talk(this.user.uid, tokens)) {
                         this.talk(this.user.uid);
                     }
                 } else {
@@ -2095,12 +2129,12 @@ window.addEventListener("load", (event) => {
                         if (!regex.test(token)) {
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                 const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
-    
+
                                 this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                                 if (snapshot.exists()) {
                                     const word = snapshot.val();
-    
+
                                     for (let attribute in word.attributes) {
                                         if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                             this.wordDictionary[token].attributes.push(attribute);
@@ -2108,7 +2142,7 @@ window.addEventListener("load", (event) => {
                                     }
                                 }
                             }
-    
+
                             for (const attribute of this.wordDictionary[token].attributes) {
                                 if (!attributes.includes(attribute)) {
                                     attributes.push(attribute);
@@ -2322,12 +2356,12 @@ window.addEventListener("load", (event) => {
                     if (!regex.test(token)) {
                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                             const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
-    
+
                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                             if (snapshot.exists()) {
                                 const word = snapshot.val();
-    
+
                                 for (const attribute in word.attributes) {
                                     if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                         this.wordDictionary[token].attributes.push(attribute);
@@ -2335,7 +2369,7 @@ window.addEventListener("load", (event) => {
                                 }
                             }
                         }
-    
+
                         for (const attribute of this.wordDictionary[token].attributes) {
                             if (attribute in hintDictionary) {
                                 hintDictionary[attribute].push(token);
@@ -2610,7 +2644,7 @@ window.addEventListener("load", (event) => {
                     });
                 } catch (e) {
                     console.error(e);
-                    
+
                     return false;
                 }
 
@@ -3680,7 +3714,7 @@ window.addEventListener("load", (event) => {
                 this.mode = "_about";
                 this.isRevealed = true;
             }
-            
+
             if (botStorageItem) {
                 try {
                     const bot = JSON.parse(botStorageItem);
@@ -3957,7 +3991,44 @@ window.addEventListener("load", (event) => {
                             self.stars = count;
                         }
                     });
-                    onValue(query(databaseRef(database, databaseRoot + "/tracks"), orderByChild("timestamp"), limitToLast(10)), snapshot => {
+                    onValue(query(databaseRef(database, databaseRoot + "/users/" + user.uid + "/dictionary/words"), orderByChild("timestamp"), limitToLast(25)), snapshot => {
+                        if (snapshot.exists()) {
+                            const words = snapshot.val();
+                            let isUpdated = false;
+
+                            for (const key in words) {
+                                const index = self.recentWords.findIndex(x => x.name === words[key].name);
+
+                                if (index >= 0) {
+                                    if (self.recentWords[index].timestamp < words[key].timestamp) {
+                                        self.recentWords.splice(index, 1);
+                                    } else {
+                                        continue;
+                                    }
+                                }
+
+                                words[key]["id"] = key;
+                                words[key]["user"] = { id: self.user.uid, name: self.user.displayName, image: self.user.photoURL };
+                                self.recentWords.push(words[key]);
+                                isUpdated = true;
+                            }
+
+                            /*for (let i = self.recentWords.length - 1; i >= 0; i--) {
+                                if (self.recentWords[i].name in words === false) {
+                                    self.recentWords.splice(i, 1);
+                                }
+                            }*/
+
+                            if (isUpdated) {
+                                self.recentWords.sort((x, y) => y.timestamp - x.timestamp);
+
+                                if (self.recentWords.length > 50) {
+                                    self.recentWords.splice(50, self.recentWords.length - 50);
+                                }
+                            }
+                        }
+                    });
+                    onValue(query(databaseRef(database, databaseRoot + "/tracks"), orderByChild("timestamp"), limitToLast(25)), snapshot => {
                         if (snapshot.exists()) {
                             const words = snapshot.val();
                             let isUpdated = false;
@@ -3987,8 +4058,8 @@ window.addEventListener("load", (event) => {
                             if (isUpdated) {
                                 self.recentWords.sort((x, y) => y.timestamp - x.timestamp);
 
-                                if (self.recentWords.length > 10) {
-                                    self.recentWords.splice(10, self.recentWords.length - 10);
+                                if (self.recentWords.length > 50) {
+                                    self.recentWords.splice(50, self.recentWords.length - 50);
                                 }
                             }
                         }
@@ -3996,7 +4067,8 @@ window.addEventListener("load", (event) => {
                 } else if (self.user !== null) {
                     // User is signed out.
                     off(databaseRef(database, databaseRoot + "/users/" + self.user.uid + "/dictionary/count"));
-                    off(databaseRef(database, databaseRoot + "/tracks"));
+                    off(query(databaseRef(database, databaseRoot + "/users/" + self.user.uid + "/dictionary/words"), orderByChild("timestamp"), limitToLast(25)));
+                    off(query(databaseRef(database, databaseRoot + "/tracks"), orderByChild("timestamp"), limitToLast(25)));
 
                     self.user = null;
                     self.stars = 0;
