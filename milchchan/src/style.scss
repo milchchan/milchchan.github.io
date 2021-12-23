@@ -1215,151 +1215,6 @@ label .scrollable > div {
             }
         }
 
-        .columns {
-            width: 100%;
-
-            .column {
-                hr {
-                    margin: 8px 0px 8px 0px;
-                    padding: 0;
-                    height: 0;
-                }
-
-                .media {
-                    margin: 0;
-                    border: 0px solid transparent;
-                    padding: 0px 16px 0px 16px;
-
-                    .media-content {
-                        .content {
-                            margin: 0;
-                            padding: 0;
-                        }
-
-                        p {
-                            word-wrap: break-word;
-                            white-space: normal;
-                        }
-
-                        .has-text-left .balloon {
-                            display: inline-block;
-                            padding: 12px 24px 12px 24px;
-                            border-radius: 500px 500px 500px 0px;
-                            background: url("/images/Stripes.png") 50% 50% repeat;
-                            background-size: 20px 20px;
-                            /*background: #f5f5f5;
-                            box-shadow: 20px 20px 60px #d0d0d0,
-                                -20px -20px 60px #ffffff;*/
-
-                            > p {
-                                line-height: 1.25rem;
-                            }
-                        }
-
-                        .columns {
-                            margin: 0;
-                            padding: 0;
-                            width: 100%;
-
-                            .column .field {
-                                margin: 0;
-                                padding: 0px -8px 0px -8px;
-                                display: flex;
-                                align-items: center;
-                                justify-content: start;
-
-                                label.checkbox {
-                                    display: flex;
-                                    align-items: center;
-                                    margin: 16px 0px 0px 0px;
-                                    padding: 16px 32px 16px 32px;
-                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                    border-radius: 500px 500px 500px 500px;
-                                    background: rgba(255, 255, 255, 0.75) !important;
-                                    background-clip: padding-box;
-                                    height: fit-content;
-                                    line-height: calc(0.75rem * 1.5);
-                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                                    backdrop-filter: blur(4px);
-                                    -webkit-backdrop-filter: blur(4px);
-
-                                    span:last-of-type {
-                                        height: calc(0.75rem * 1.5);
-                                    }
-
-                                    .clip {
-                                        display: inline-block;
-                                        overflow: hidden;
-                                        box-sizing: content-box;
-                                        height: calc(0.75rem * 1.5);
-
-                                        .scrollable div {
-                                            display: flex;
-                                            align-items: center;
-                                            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-                                            transform: rotate(0.03deg);
-                                            line-height: 0.75rem !important;
-                                            height: calc(0.75rem * 1.5);
-                                            white-space: nowrap;
-                                            color: var(--foreground-color);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        .level:nth-last-of-type(1) > .level-item {
-                            margin: 16px 0px 16px 0px;
-                            padding: 0;
-
-                            > .level {
-                                margin: -8px -8px -8px -8px;
-                                padding: 0;
-
-                                > .level-item {
-                                    margin: 8px 8px 8px 8px;
-                                    padding: 0;
-                                }
-                            }
-
-                            button {
-                                margin: 0px;
-                                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                border-radius: 290486px;
-                                padding: 16px;
-                                background: rgba(255, 255, 255, 0.75) !important;
-                                background-clip: padding-box;
-                                height: initial;
-                                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                                backdrop-filter: blur(4px);
-                                -webkit-backdrop-filter: blur(4px);
-
-                                span {
-                                    margin: 0 !important;
-                                    width: 1rem !important;
-                                    height: 1rem !important;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                .media:first-child {
-                    padding: 16px;
-                }
-
-                .media:nth-of-type(1) .media-left {
-                    margin: 0px 8px 0px 0px !important;
-                    padding: 0;
-                }
-
-                .media:nth-last-of-type(1) .media-content {
-                    margin: -16px 0px 0px 0px;
-                    padding: 0;
-                }
-            }
-        }
-
         h1 {
             margin: 0;
             font-size: 1.25rem;
@@ -1433,6 +1288,151 @@ label .scrollable > div {
 
             span.icon + span.wrap {
                 margin: 0px 0px 0px 8px;
+            }
+        }
+    }
+
+    .columns {
+        width: 100%;
+
+        .column {
+            hr {
+                margin: 8px 0px 8px 0px;
+                padding: 0;
+                height: 0;
+            }
+
+            .media {
+                margin: 0;
+                border: 0px solid transparent;
+                padding: 0px 16px 0px 16px;
+
+                .media-content {
+                    .content {
+                        margin: 0;
+                        padding: 0;
+                    }
+
+                    p {
+                        word-wrap: break-word;
+                        white-space: normal;
+                    }
+
+                    .has-text-left .balloon {
+                        display: inline-block;
+                        padding: 12px 24px 12px 24px;
+                        border-radius: 500px 500px 500px 0px;
+                        background: url("/images/Stripes.png") 50% 50% repeat;
+                        background-size: 20px 20px;
+                        /*background: #f5f5f5;
+                        box-shadow: 20px 20px 60px #d0d0d0,
+                            -20px -20px 60px #ffffff;*/
+
+                        > p {
+                            line-height: 1.25rem;
+                        }
+                    }
+
+                    .columns {
+                        margin: 0;
+                        padding: 0;
+                        width: 100%;
+
+                        .column .field {
+                            margin: 0;
+                            padding: 0px -8px 0px -8px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: start;
+
+                            label.checkbox {
+                                display: flex;
+                                align-items: center;
+                                margin: 16px 0px 0px 0px;
+                                padding: 16px 32px 16px 32px;
+                                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                border-radius: 500px 500px 500px 500px;
+                                background: rgba(255, 255, 255, 0.75) !important;
+                                background-clip: padding-box;
+                                height: fit-content;
+                                line-height: calc(0.75rem * 1.5);
+                                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                backdrop-filter: blur(4px);
+                                -webkit-backdrop-filter: blur(4px);
+
+                                span:last-of-type {
+                                    height: calc(0.75rem * 1.5);
+                                }
+
+                                .clip {
+                                    display: inline-block;
+                                    overflow: hidden;
+                                    box-sizing: content-box;
+                                    height: calc(0.75rem * 1.5);
+
+                                    .scrollable div {
+                                        display: flex;
+                                        align-items: center;
+                                        font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+                                        transform: rotate(0.03deg);
+                                        line-height: 0.75rem !important;
+                                        height: calc(0.75rem * 1.5);
+                                        white-space: nowrap;
+                                        color: var(--foreground-color);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    .level:nth-last-of-type(1) > .level-item {
+                        margin: 16px 0px 16px 0px;
+                        padding: 0;
+
+                        > .level {
+                            margin: -8px -8px -8px -8px;
+                            padding: 0;
+
+                            > .level-item {
+                                margin: 8px 8px 8px 8px;
+                                padding: 0;
+                            }
+                        }
+
+                        button {
+                            margin: 0px;
+                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            border-radius: 290486px;
+                            padding: 16px;
+                            background: rgba(255, 255, 255, 0.75) !important;
+                            background-clip: padding-box;
+                            height: initial;
+                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                            backdrop-filter: blur(4px);
+                            -webkit-backdrop-filter: blur(4px);
+
+                            span {
+                                margin: 0 !important;
+                                width: 1rem !important;
+                                height: 1rem !important;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .media:first-child {
+                padding: 16px;
+            }
+
+            .media:nth-of-type(1) .media-left {
+                margin: 0px 8px 0px 0px !important;
+                padding: 0;
+            }
+
+            .media:nth-last-of-type(1) .media-content {
+                margin: -16px 0px 0px 0px;
+                padding: 0;
             }
         }
     }
