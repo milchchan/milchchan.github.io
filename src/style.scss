@@ -1834,28 +1834,34 @@ label .scrollable > div {
                             }
                         }
 
-                        .level:nth-last-of-type(1) > .level-item > .level {
-                            margin: -8px -8px -8px -8px;
-                            padding: 0;
+                        .level:nth-last-of-type(1) > .level-item {
+                            padding: 16px 0px;
 
-                            > .level-item {
-                                margin: 8px 8px 8px 8px;
+                            > .level {
+                                margin: -8px -8px -8px -8px;
                                 padding: 0;
 
-                                button {
-                                    margin: 0px;
-                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                    border-radius: 290486px;
-                                    padding: 16px !important;
-                                    background: rgba(255, 255, 255, 0.75) !important;
-                                    background-clip: padding-box;
-                                    height: initial;
-                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                                    backdrop-filter: blur(4px);
-                                    -webkit-backdrop-filter: blur(4px);
+                                > .level-item {
+                                    margin: 8px 8px 8px 8px;
+                                    padding: 0;
 
-                                    span {
-                                        margin: 0;
+                                    button {
+                                        margin: 0px;
+                                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                        border-radius: 290486px;
+                                        padding: 16px !important;
+                                        background: rgba(255, 255, 255, 0.75) !important;
+                                        background-clip: padding-box;
+                                        height: initial;
+                                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                        backdrop-filter: blur(4px);
+                                        -webkit-backdrop-filter: blur(4px);
+
+                                        span {
+                                            margin: 0 !important;
+                                            width: 1rem !important;
+                                            height: 1rem !important;
+                                        }
                                     }
                                 }
                             }
