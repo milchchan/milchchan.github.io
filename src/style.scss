@@ -776,26 +776,6 @@ label .scrollable > div {
     touch-action: none;
 }
 
-.left {
-    z-index: 1;
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 16px 0px 0px 0px;
-    padding: calc(env(safe-area-inset-top, 0px) + 16px) 0px 0px calc(env(safe-area-inset-left, 0px) + 32px);
-    touch-action: none;
-}
-
-.right {
-    z-index: 1;
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin: 16px 0px 0px 0px;
-    padding: calc(env(safe-area-inset-top, 0px) + 16px) calc(env(safe-area-inset-right, 0px) + 32px) 0px 0px;
-    touch-action: none;
-}
-
 .center button {
     margin: 0px;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -1082,6 +1062,32 @@ label .scrollable > div {
     height: calc(0.75rem * 1.5);
 }
 
+.center > .level > .level-item:first-child button > span {
+    margin: 0 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+}
+
+.left {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 16px 0px 0px 0px;
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) 0px 0px calc(env(safe-area-inset-left, 0px) + 32px);
+    touch-action: none;
+}
+
+.right {
+    z-index: 1;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 16px 0px 0px 0px;
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) calc(env(safe-area-inset-right, 0px) + 32px) 0px 0px;
+    touch-action: none;
+}
+
 .left button,
 .right button {
     margin: 0px;
@@ -1095,14 +1101,12 @@ label .scrollable > div {
     background-clip: padding-box;
     height: initial;
     color: var(--accent-color) !important;
-}
 
-.left button > span,
-.center > .level > .level-item:first-child button > span,
-.right button > span {
-    margin: 0 !important;
-    width: 1rem !important;
-    height: 1rem !important;
+    > span {
+        margin: 0 !important;
+        width: 1rem !important;
+        height: 1rem !important;
+    }
 }
 
 #menu,
