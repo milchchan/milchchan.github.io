@@ -31,6 +31,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP"
     --main-color: #{$primary};
     --accent-color: #fecde2;
     --highlight-color: #c1aee6;
+    --placeholder-color: rgba(104, 230, 255, 0.25);
     --primary-background-color: rgba(104, 230, 255, 0.75);
     --background-image: url("/images/Background.png");
     --background-image-2x: url("/images/Background@2x.png");
@@ -41,6 +42,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP"
     :root {
         --main-color: #c1aee6;
         --highlight-color: #fecde2;
+        --placeholder-color: rgba(193, 174, 230, 0.25);
         /*--primary-background-color: rgba(254, 205, 226, 0.75);*/
         --primary-background-color: rgba(193, 174, 230, 0.75);
     }
@@ -1677,12 +1679,12 @@ label .scrollable > div {
                                         transform: rotate(0.03deg);
                                         line-height: 0.75rem !important;
                                         height: calc(0.75rem * 1.5);
-                                        color: var(--accent-color);
+                                        color: var(--main-color);
                                     }
                                 }
 
                                 .icon {
-                                    color: var(--accent-color);
+                                    color: var(--main-color);
                                 }
 
                                 span:not(:first-child) {
@@ -1867,7 +1869,7 @@ label .scrollable > div {
             }
         }
     }
-    
+
     .columns {
         width: 100%;
 
@@ -1962,7 +1964,7 @@ label .scrollable > div {
                                         line-height: 0.75rem !important;
                                         height: calc(0.75rem * 1.5);
                                         white-space: nowrap;
-                                        color: var(--accent-color);
+                                        color: var(--main-color);
                                     }
                                 }
                             }
@@ -2339,14 +2341,14 @@ label .scrollable > div {
                     box-shadow: none;
                     backface-visibility: hidden;
                     font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-                    color: var(--accent-color);
+                    color: var(--main-color);
                     transform: rotate(0.03deg);
                     overflow-x: auto;
                     overflow-y: hidden;
                 }
 
                 input::placeholder {
-                    color: rgba(230, 45, 135, 0.25);
+                    color: var(--placeholder-color);
                     font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
                     transform: rotate(0.03deg);
                 }
