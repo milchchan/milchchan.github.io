@@ -83,7 +83,9 @@
                         </div>
                         <div class="level-item">
                             <transition name="fade" mode="out-in">
-                                <button class="button is-selected" type="button" @click="mode = '_about'; isRevealed = true;" v-if="mode === 'about' || mode === '_about'" key="selected">
+                                <button class="button is-selected" type="button"
+                                    @click="mode = '_about'; isRevealed = true;"
+                                    v-if="mode === 'about' || mode === '_about'" key="selected">
                                     <div class="icon is-large">
                                         <i class="fas fa-star"></i>
                                     </div>
@@ -96,7 +98,8 @@
                                         </div>
                                     </div>
                                 </button>
-                                <button class="button" type="button" @click="mode = '_about'; isRevealed = true;" v-else key="unselected">
+                                <button class="button" type="button" @click="mode = '_about'; isRevealed = true;" v-else
+                                    key="unselected">
                                     <div class="icon is-large">
                                         <i class="fas fa-star"></i>
                                     </div>
@@ -384,7 +387,7 @@
                         <div class="column is-half is-mobile">
                             <div class="control" v-cloak>
                                 <transition name="fade" mode="out-in" v-on:before-leave="$refs.menu.scroll(0, 0)">
-                                    <nav class="columns is-desktop" v-if="word" key="learn">                                        
+                                    <nav class="columns is-desktop" v-if="word" key="learn">
                                         <div class="column is-full has-content-centered">
                                             <article class="media" v-cloak>
                                                 <figure class="media-left">
@@ -636,8 +639,8 @@
                                                         <p
                                                             class="content is-size-6 has-text-weight-bold has-text-justified">
                                                             明るくてまじめな小学5年生の女の子。お友達の<span
-                                                                class="is-primary">メルクちゃん</span>に無理やり恥ずかしい魔法少女の衣装を着せられてマジカルミルヒちゃんが爆誕して以降、なんだかんだで魔法少女をやらされている。<span
-                                                                class="is-primary">メルクちゃん</span>とはいつもいっしょで仲良し。気づいたときにはぱんつがなくなっていて、穿いてないことが多い。
+                                                                class="is-primary">メルクちゃん</span>に無理やり恥ずかしい魔法少女の衣装を着せられてマジカルミルヒちゃんが爆誕した。それ以降、なんだかんだで魔法少女をやらされている。<span
+                                                                class="is-primary">メルクちゃん</span>とはいつもいっしょで仲良し。気づいたときにはぱんつがなくなっていて穿いてないことが多い。
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1047,8 +1050,8 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <a class="button is-rounded is-size-7" href="//clock.milchchan.com/"
-                                                            target="_blank">
+                                                        <a class="button is-rounded is-size-7"
+                                                            href="//clock.milchchan.com/" target="_blank">
                                                             <span class="icon">
                                                                 <i class="fas fa-globe"></i>
                                                             </span>
