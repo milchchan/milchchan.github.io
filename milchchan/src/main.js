@@ -1662,6 +1662,48 @@ window.addEventListener("load", event => {
 
                 this.isUpdating = false;
             },
+            getThumbnail: async function (url, length) {
+                try {
+                    return await new Promise((resolve, reject) => {
+                        const i = new Image();
+
+                        i.onload = () => {
+                            const canvas = document.createElement("canvas");
+
+                            if (i.width > i.height) {
+                                if (i.width > length) {
+                                    canvas.width = length;
+                                    canvas.height = Math.floor(length / i.width * i.height);                                    
+                                } else {
+                                    canvas.width = i.width;
+                                    canvas.height = i.height;
+                                }
+                            } else if (i.height > length) {
+                                canvas.width = Math.floor(length / i.height * i.width);
+                                canvas.height = length;
+                            } else {
+                                canvas.width = i.width;
+                                canvas.height = i.height;
+                            }
+
+                            const ctx = canvas.getContext("2d");
+
+                            ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
+                            ctx.canvas.toBlob(blob => {
+                                resolve(blob);
+                                ctx.canvas.width = ctx.canvas.height = 0;
+                            }, "image/jpeg");
+                        };
+                        i.onerror = (error) => {
+                            reject(error);
+                        };
+                        i.src = url;
+                    });
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
+                }
+            },
             shake: function (element) {
                 element.animate([
                     { transform: "translate3d(0, 0, 0)" },
