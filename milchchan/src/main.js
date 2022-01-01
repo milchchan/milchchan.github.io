@@ -421,9 +421,12 @@ window.addEventListener("load", event => {
                 if (event === GoogleAuthProvider.PROVIDER_ID) {
                     const provider = new GoogleAuthProvider();
 
+                    provider.addScope("profile");
+                    provider.addScope("email");
+
                     try {
                         const result = await signInWithPopup(auth, provider);
-                        const credential = provider.credentialFromResult(auth, result);
+                        const credential = GoogleAuthProvider.credentialFromResult(result);
 
                         for (const data of result.user.providerData) {
                             try {
@@ -453,7 +456,7 @@ window.addEventListener("load", event => {
 
                     try {
                         const result = await signInWithPopup(auth, provider);
-                        const credential = provider.credentialFromResult(auth, result);
+                        const credential = FacebookAuthProvider.credentialFromResult(result);
 
                         for (const data of result.user.providerData) {
                             try {
@@ -481,7 +484,7 @@ window.addEventListener("load", event => {
 
                     try {
                         const result = await signInWithPopup(auth, provider);
-                        const credential = provider.credentialFromResult(auth, result);
+                        const credential = TwitterAuthProvider.credentialFromResult(result);
 
                         for (const data of result.user.providerData) {
                             const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
