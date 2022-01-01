@@ -232,7 +232,6 @@ window.addEventListener("load", event => {
                 recentImages: [],
                 backgroundImagesQueue: [],
                 backgroundImages: [],
-                preloadImages: [],
                 isUploading: false,
                 animations: null,
                 currentAnimations: [],
