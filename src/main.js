@@ -517,6 +517,7 @@ window.addEventListener("load", (event) => {
                 const self = this;
                 const centerLocation = this.map.getCenter();
                 const tracks = await this.fetch(ignore, centerLocation.latitude, centerLocation.longitude);
+                let isUpdated = false;
 
                 if (ignore) {
                     Object.keys(this.cachedTracks).forEach(function (key) {
@@ -527,13 +528,13 @@ window.addEventListener("load", (event) => {
                         self.map.entities.remove(self.cachedTracks[key].pushpin);
 
                         delete self.cachedTracks[key];
+                        isUpdated = true;
                     });
                 }
 
                 if (tracks !== null) {
                     const timestamp = Math.floor(new Date() / 1000);
-                    let isUpdated = false;
-
+                    
                     for (const geohash in tracks) {
                         for (const track of tracks[geohash]) {
                             let pushpinId = null;
@@ -678,8 +679,6 @@ window.addEventListener("load", (event) => {
                         for (const data of leaderboard) {
                             this.leaderboard.push(data);
                         }
-
-                        console.log("ok!");
 
                         try {
                             const results = await new Promise(resolve => {
@@ -2043,7 +2042,7 @@ window.addEventListener("load", (event) => {
 
                     const document = this.documentQueue.shift();
 
-                    if (await this.talk(this.user.uid, document.filter((x) => x !== this.character.name))) {
+                    if (this.user.uid !== null && await this.talk(this.user.uid, document.filter((x) => x !== this.character.name))) {
                         return;
                     }
                 }
@@ -2077,10 +2076,10 @@ window.addEventListener("load", (event) => {
                         }
                     }
 
-                    if (!await this.talk(this.user.uid, tokens)) {
+                    if (this.user.uid !== null && !await this.talk(this.user.uid, tokens)) {
                         this.talk(this.user.uid);
                     }
-                } else {
+                } else if (this.user.uid !== null) {
                     this.talk(this.user.uid);
                 }
             },
@@ -3369,7 +3368,9 @@ window.addEventListener("load", (event) => {
 
                                     const document = this.documentQueue.shift();
 
-                                    this.talk(this.user.uid, document.filter((x) => x !== this.character.name));
+                                    if (this.user.uid !== null) {
+                                        this.talk(this.user.uid, document.filter((x) => x !== this.character.name));
+                                    }
                                 }
 
                                 idleTime = activateTime = 0.0;
