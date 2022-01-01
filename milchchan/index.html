@@ -186,8 +186,6 @@
                     <div class="background">
                         <div v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }"
                             v-for="image in backgroundImages" v-bind:key="image" v-cloak></div>
-                        <img v-bind:src="image.url" @load="load(image.url)" @error="error(image.url)"
-                            v-for="image in preloadImages" v-bind:key="image.url" alt="Background" v-cloak>
                     </div>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
