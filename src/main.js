@@ -392,9 +392,12 @@ window.addEventListener("load", (event) => {
                 if (event === GoogleAuthProvider.PROVIDER_ID) {
                     const provider = new GoogleAuthProvider();
 
+                    provider.addScope("profile");
+                    provider.addScope("email");
+
                     try {
                         const result = await signInWithPopup(auth, provider);
-                        const credential = provider.credentialFromResult(auth, result);
+                        const credential = GoogleAuthProvider.credentialFromResult(result);
 
                         for (const data of result.user.providerData) {
                             try {
@@ -424,7 +427,7 @@ window.addEventListener("load", (event) => {
 
                     try {
                         const result = await signInWithPopup(auth, provider);
-                        const credential = provider.credentialFromResult(auth, result);
+                        const credential = FacebookAuthProvider.credentialFromResult(result);
 
                         for (const data of result.user.providerData) {
                             try {
@@ -452,10 +455,11 @@ window.addEventListener("load", (event) => {
 
                     try {
                         const result = await signInWithPopup(auth, provider);
-                        const credential = provider.credentialFromResult(auth, result);
+                        const credential = TwitterAuthProvider.credentialFromResult(result);
 
                         for (const data of result.user.providerData) {
                             const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
+                            const timestamp = Math.floor(new Date() / 1000);
 
                             try {
                                 await updateProfile(this.user, {
@@ -469,10 +473,10 @@ window.addEventListener("load", (event) => {
                             runTransaction(databaseRef(database, `${databaseRoot}/users/${result.user.uid}`), current => {
                                 if (current) {
                                     current["name"] = data.displayName;
-                                    current["link"] = `https://twitter.com/${result.additionalUserInfo.username}`;
+                                    current["link"] = `https://twitter.com/${result._tokenResponse.screenName}`;
                                     current["timestamp"] = timestamp;
                                 } else {
-                                    current = { name: data.displayName, link: `https://twitter.com/${result.additionalUserInfo.username}`, timestamp: timestamp };
+                                    current = { name: data.displayName, link: `https://twitter.com/${result._tokenResponse.screenName}`, timestamp: timestamp };
                                 }
 
                                 return current;
@@ -674,6 +678,8 @@ window.addEventListener("load", (event) => {
                         for (const data of leaderboard) {
                             this.leaderboard.push(data);
                         }
+
+                        console.log("ok!");
 
                         try {
                             const results = await new Promise(resolve => {
