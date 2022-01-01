@@ -1445,85 +1445,33 @@ window.addEventListener("load", event => {
                     }
                 }
 
-                const image = this.backgroundImagesQueue.shift();
+                const backgroundImage = this.backgroundImagesQueue.shift();
+                const preloadImages = [];
 
-                this.preloadImages.splice(0);
+                for (const image of this.backgroundImages) {
+                    URL.revokeObjectURL(image.url);
+                }
+                
                 this.backgroundImages.splice(0);
 
-                for (const path of image.paths) {
+                for (const path of backgroundImage.paths) {
                     try {
-                        this.preloadImages.push({ id: image.id, url: await getDownloadURL(storageRef(storage, path)), timestamp: image.timestamp });
+                        preloadImages.push({ id: backgroundImage.id, blob: await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)), timestamp: backgroundImage.timestamp });
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e);
                     }
                 }
 
-                if ("tags" in image) {
-                    this.talk(image.tags.filter((x) => x.indexOf(this.character.name) === -1));
-                }
-            },
-            load: function (url) {
-                let isCompleted = true;
-
-                for (let image of this.preloadImages) {
-                    if (image.url == url) {
-                        image["isLoaded"] = true;
-                    } else if (!("isLoaded" in image)) {
-                        isCompleted = false;
-                    }
+                for (const image of preloadImages) {
+                    this.backgroundImages.push({id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp});
                 }
 
-                if (isCompleted) {
-                    let index = 0;
-
-                    for (const image of this.preloadImages) {
-                        if (image.isLoaded) {
-                            this.backgroundImages.push({
-                                index: index,
-                                id: image.id,
-                                url: image.url,
-                                timestamp: image.timestamp
-                            });
-
-                            index++;
-                        }
-                    }
-
-                    this.preloadImages.splice(0);
-                    this.isBlinded = false;
-                }
-            },
-            error: function (url) {
-                let isCompleted = true;
-
-                for (let image of this.preloadImages) {
-                    if (image.url == url) {
-                        image["isLoaded"] = true;
-                    } else if (!("isLoaded" in image)) {
-                        isCompleted = false;
-                    }
+                if ("tags" in backgroundImage) {
+                    this.talk(backgroundImage.tags.filter((x) => x.indexOf(this.character.name) === -1));
                 }
 
-                if (isCompleted) {
-                    let index = 0;
-
-                    for (const image of this.preloadImages) {
-                        if (image.isLoaded) {
-                            this.backgroundImages.push({
-                                index: index,
-                                id: image.id,
-                                url: image.url,
-                                timestamp: image.timestamp
-                            });
-
-                            index++;
-                        }
-                    }
-
-                    this.preloadImages.splice(0);
-                    this.isBlinded = false;
-                }
+                this.isBlinded = false;
             },
             update: async function (data, max) {
                 this.isUpdating = true;
@@ -1697,6 +1645,7 @@ window.addEventListener("load", event => {
                         i.onerror = (error) => {
                             reject(error);
                         };
+                        i.crossOrigin = "anonymous";
                         i.src = url;
                     });
                 } catch (e) {
