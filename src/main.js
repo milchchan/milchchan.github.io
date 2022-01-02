@@ -400,6 +400,8 @@ window.addEventListener("load", (event) => {
                         const credential = GoogleAuthProvider.credentialFromResult(result);
 
                         for (const data of result.user.providerData) {
+                            const timestamp = Math.floor(new Date() / 1000);
+                            
                             try {
                                 await updateProfile(this.user, {
                                     displayName: data.displayName,
@@ -408,6 +410,17 @@ window.addEventListener("load", (event) => {
                             } catch (e) {
                                 console.error(e.code, e.message);
                             }
+
+                            runTransaction(databaseRef(database, `${databaseRoot}/users/${result.user.uid}`), current => {
+                                if (current) {
+                                    current["name"] = data.displayName;
+                                    current["timestamp"] = timestamp;
+                                } else {
+                                    current = { name: data.displayName, timestamp: timestamp };
+                                }
+
+                                return current;
+                            });
 
                             break;
                         }
