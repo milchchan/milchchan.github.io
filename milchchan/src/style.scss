@@ -1272,6 +1272,10 @@ label .scrollable > div {
             }
         }
 
+        p:not(:last-child) {
+            margin-bottom: 16px;
+        }
+
         hr {
             margin: 16px auto 16px auto;
             border-width: 0;
