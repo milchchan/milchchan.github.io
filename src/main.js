@@ -507,6 +507,8 @@ window.addEventListener("load", (event) => {
                         console.error(error.code, error.message);
                     }
                 }
+
+                this.mode = null;
             },
             signOut: async function (event) {
                 try {
