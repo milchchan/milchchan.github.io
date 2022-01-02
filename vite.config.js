@@ -7,7 +7,7 @@ export default defineConfig({
     outDir: "dist",
     rollupOptions: {
       output: {
-        entryFileNames: "[name].js",
+        entryFileNames: "[name].[hash].js",
         manualChunks: undefined,
         assetFileNames: "assets/[name].[ext]",
       },
