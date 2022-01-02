@@ -508,6 +508,7 @@ window.addEventListener("load", (event) => {
                     }
                 }
 
+                this.isRevealed = false;
                 this.mode = null;
             },
             signOut: async function (event) {
