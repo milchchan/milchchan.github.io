@@ -1610,9 +1610,11 @@ label .scrollable > div {
 
                                     > .level-item {
                                         margin: 8px;
+                                        width: 100%;
 
                                         > .level {
                                             margin: -8px;
+                                            flex-wrap: wrap;
 
                                             > .level-item {
                                                 margin: 8px;
