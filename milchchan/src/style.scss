@@ -1243,11 +1243,11 @@ label .scrollable > div {
 
         svg g {
             > g:nth-child(odd) > path {
-                fill: var(--accent-color);
+                fill: var(--main-color);
             }
 
             > g:nth-child(even) > path {
-                fill: var(--main-color);
+                fill: var(--accent-color);
             }
 
             > g:first-child > path {
