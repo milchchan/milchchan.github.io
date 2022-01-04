@@ -1,9 +1,9 @@
 import logging
 import time
-import datetime
 import re
 import json
 import os
+from datetime import timedelta
 from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
@@ -37,16 +37,27 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if match:
             mime_type, encoding, data = match.groups()
         
-            if mime_type in ['image/png', 'image/jpeg'] and encoding == 'base64':
-                #credentials = service_account.Credentials.from_service_account_info({})
-                #storage_client = storage.Client(credentials=credentials, project=credentials.project_id)
-                #bucket = storage_client.bucket(bucket_name)
+            if mime_type in ['image/png', 'image/jpeg'] and encoding == 'base64':                
+                credentials = service_account.Credentials.from_service_account_info({
+                    'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
+                    'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
+                    'private_key_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY_ID'),
+                    'private_key': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY'),
+                    'client_email': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_EMAIL'),
+                    'client_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_ID'),
+                    'auth_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_URL'),
+                    'token_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URL'),
+                    'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
+                    'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
+                })
+                scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
+                #storage_client = storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id)
+                #bucket = storage_client.bucket('merkuchan.com')
                 #blob = bucket.blob(path if path else str(uuid4()))
-                #blob.upload_from_file(BytesIO(b64decode(data)))                
+                #blob.upload_from_file(BytesIO(b64decode(data)))
 
                 return func.HttpResponse(json.dumps({
                         'data': data,
-                        #'key': os.environ.get("AZURE_STORAGE_CONNECTION_STRING"),
                         'timestamp': int(time.time())
                     }),
                     status_code=200,
