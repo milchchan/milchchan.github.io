@@ -1599,7 +1599,10 @@ label .scrollable > div {
                             align-items: center;
 
                             > .level-item {
+                                display: flex;
                                 margin: 8px 0px 8px 0px;
+                                width: 100%;
+                                justify-content: center;
 
                                 > .level {
                                     display: flex;
@@ -1607,20 +1610,35 @@ label .scrollable > div {
                                     flex-direction: row;
                                     justify-content: center;
                                     align-items: center;
+                                    width: 100%;
 
                                     > .level-item {
+                                        display: flex;
                                         margin: 8px;
-                                        width: 100%;
+                                        width: calc(100% - 16px);
+                                        justify-content: center;
 
                                         > .level {
                                             margin: -8px;
+                                            justify-content: flex-start;
                                             flex-wrap: wrap;
 
                                             > .level-item {
+                                                display: flex;
                                                 margin: 8px;
+                                                justify-content: flex-start;
+                                                width: calc(50% - 16px);
                                             }
                                         }
                                     }
+                                }
+                            }
+
+                            > .level-item:not(:first-child) {
+                                justify-content: flex-start;
+
+                                > .level > .level-item {
+                                    justify-content: flex-start;
                                 }
                             }
                         }
