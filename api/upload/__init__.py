@@ -26,13 +26,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             data = req.get_json()            
             match = re.match(pattern, data.get('image'))
             path = data.get('path')
-            #expiration = data.get('expiration')
-            #expiration = datetime.timedelta(seconds=expiration if expiration else 3600)
             
         else:
             match = re.match(pattern, req.get_body.decode('utf-8'))
             path = req.params.get('path')
-            #expiration = datetime.timedelta(minutes=60)
 
         if match:
             mime_type, encoding, data = match.groups()
