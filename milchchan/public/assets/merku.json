@@ -1,7 +1,7 @@
 {
     "name": "メルク",
     "accent": "#5bcbe1",
-    "image": "/images/Merku.png",
+    "image": "/images/Merku-192.png",
     "width": 155,
     "height": 240,
     "model": "models/Merku.vrm",
