@@ -249,21 +249,21 @@
                                     <button class="button image is-48x48 is-superellips" type="button"
                                         @click="mode = 'sign-in'" v-if="user === null" key="default" v-cloak>
                                         <picture class="image is-48x48" style="pointer-events: none;">
-                                            <source srcset="/images/Merku.png" media="(prefers-color-scheme: dark)">
-                                            <img src="/images/Milch.png" width="64" height="64" alt="Logo">
+                                            <source srcset="/images/Merku-48.png 1x,/images/Merku-96.png 2x,/images/Merku-144.png 3x" media="(prefers-color-scheme: dark)">
+                                            <img src="/images/Milch-48.png" srcset="/images/Milch-48.png 1x,/images/Milch-96.png 2x,/images/Milch-144.png 3x" width="48" height="48" alt="Logo">
                                         </picture>
                                     </button>
                                     <button class="button image is-48x48 is-superellips" type="button"
                                         @click="activate()" v-else key="user" v-cloak>
                                         <picture class="image is-48x48" style="pointer-events: none;"
                                             v-if="'photoURL' in user && user.photoURL !== null" key="user.photoURL">
-                                            <img class="is-rounded" v-bind:src="user.photoURL" width="64" height="64"
+                                            <img class="is-rounded" v-bind:src="user.photoURL" width="48" height="48"
                                                 v-bind:alt="user.displayName">
                                         </picture>
                                         <picture class="image is-48x48" style="pointer-events: none;" v-else
                                             key="default">
-                                            <source srcset="/images/Merku.png" media="(prefers-color-scheme: dark)">
-                                            <img src="/images/Milch.png" width="64" height="64" alt="Logo">
+                                            <source srcset="/images/Merku-48.png 1x,/images/Merku-96.png 2x,/images/Merku-144.png 3x" media="(prefers-color-scheme: dark)">
+                                            <img src="/images/Milch-48.png" srcset="/images/Milch-48.png 1x,/images/Milch-96.png 2x,/images/Milch-144.png 3x" width="48" height="48" alt="Logo">
                                         </picture>
                                     </button>
                                 </transition>
@@ -712,9 +712,9 @@
                                                         </picture>
                                                         <picture class="image is-64x64" style="pointer-events: none;"
                                                             v-else key="default">
-                                                            <source srcset="/images/Merku.png"
+                                                            <source srcset="/images/Merku-64.png 1x,/images/Merku-128.png 2x,/images/Merku-192.png 3x"
                                                                 media="(prefers-color-scheme: dark)">
-                                                            <img src="/images/Milch.png" width="64" height="64"
+                                                            <img src="/images/Milch-64.png" srcset="/images/Milch-64.png 1x,/images/Milch-128.png 2x,/images/Milch-192.png 3x" width="64" height="64"
                                                                 alt="Logo">
                                                         </picture>
                                                     </p>
@@ -866,9 +866,9 @@
                                                             </picture>
                                                             <picture class="image is-64x64"
                                                                 style="pointer-events: none;" v-else key="default">
-                                                                <source srcset="/images/Merku.png"
+                                                                <source srcset="/images/Merku-64.png 1x,/images/Merku-128.png 2x,/images/Merku-192.png 3x"
                                                                     media="(prefers-color-scheme: dark)">
-                                                                <img src="/images/Milch.png" width="64" height="64"
+                                                                <img src="/images/Milch-64.png" srcset="/images/Milch-64.png 1x,/images/Milch-128.png 2x,/images/Milch-192.png 3x" width="64" height="64"
                                                                     alt="Logo">
                                                             </picture>
                                                         </transition>
@@ -1774,9 +1774,9 @@
                                                                 v-if="user === null" key="default" v-cloak>
                                                                 <picture class="image is-64x64"
                                                                     style="pointer-events: none;">
-                                                                    <source srcset="/images/Merku.png"
+                                                                    <source srcset="/images/Merku-64.png 1x,/images/Merku-128.png 2x,/images/Merku-192.png 3x"
                                                                         media="(prefers-color-scheme: dark)">
-                                                                    <img src="/images/Milch.png" width="64" height="64"
+                                                                    <img src="/images/Milch-64.png" srcset="/images/Milch-64.png 1x,/images/Milch-128.png 2x,/images/Milch-192.png 3x" width="64" height="64"
                                                                         alt="Logo">
                                                                 </picture>
                                                             </button>
@@ -1792,9 +1792,9 @@
                                                                 </picture>
                                                                 <picture class="image is-64x64"
                                                                     style="pointer-events: none;" v-else key="default">
-                                                                    <source srcset="/images/Merku.png"
+                                                                    <source srcset="/images/Merku-64.png 1x,/images/Merku-128.png 2x,/images/Merku-192.png 3x"
                                                                         media="(prefers-color-scheme: dark)">
-                                                                    <img src="/images/Milch.png" width="64" height="64"
+                                                                    <img src="/images/Milch-64.png" srcset="/images/Milch-64.png 1x,/images/Milch-128.png 2x,/images/Milch-192.png 3x" width="64" height="64"
                                                                         alt="Logo">
                                                                 </picture>
                                                             </button>
