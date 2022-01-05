@@ -2066,27 +2066,9 @@ window.addEventListener("load", (event) => {
                 const i = _random(0, this.recentWords.length);
 
                 if (i > 0) {
-                    function shuffle(array) {
-                        let a = [].concat(array);
-                        let n = array.length;
-
-                        while (n > 1) {
-                            const k = _random(0, n);
-
-                            n--;
-
-                            const temp = a[n];
-
-                            a[n] = a[k];
-                            a[k] = temp;
-                        }
-
-                        return a;
-                    }
-
                     const tokens = [];
 
-                    for (const word of shuffle(this.recentWords)) {
+                    for (const word of this.take(shuffle(this.recentWords), i)) {
                         if (this.user.uid !== word.user.id && word.name !== this.character.name) {
                             tokens.push(word.name);
                         }
