@@ -1,5 +1,5 @@
 # milchchan.github.io
-![](https://github.com/milchchan/milchchan.github.io/workflows/Azure Static Web Apps CI/CD/badge.svg)
+![](https://github.com/milchchan/milchchan.github.io/workflows/Azure%20Static%20Web%20Apps%20CI%2FCD/badge.svg)
 
 ![](https://github.com/milchchan/milchchan.github.io/workflows/Deploy%20to%20Firebase%20Hosting%20on%20merge/badge.svg)
 
