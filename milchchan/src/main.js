@@ -866,9 +866,7 @@ window.addEventListener("load", event => {
                             return Math.floor(Math.random() * (max - min)) + min;
                         }
 
-                        const selectedTokens = [].concat(tokens);
                         const i = _random(0, this.words.length);
-
 
                         if (i > 0) {
                             function shuffle(array) {
@@ -889,17 +887,23 @@ window.addEventListener("load", event => {
                                 return a;
                             }
 
+                            const selectedTokens = [];
+
                             for (const word of this.take(shuffle(this.words), i)) {
                                 if (word.name !== this.character.name) {
                                     selectedTokens.push(word.name);
                                 }
                             }
-                        }
 
-                        if (!await this.talk(selectedTokens)) {
-                            this.talk();
+                            if (!await this.talk(selectedTokens.concat(tokens))) {
+                                this.talk();
+                            }
+
+                            return;
                         }
-                    } else if (!await this.talk(tokens)) {
+                    }
+
+                    if (!await this.talk(tokens)) {
                         this.talk();
                     }
                 }
