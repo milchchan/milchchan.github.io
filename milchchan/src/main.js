@@ -532,7 +532,7 @@ window.addEventListener("load", event => {
                     if (this.input.length > 0) {
                         const tags = this.input.split(/\s/);
                         const keys = [];
-                        
+
                         for (const image of this.backgroundImages) {
                             if (!keys.includes(image.id)) {
                                 keys.push(image.id);
@@ -857,8 +857,51 @@ window.addEventListener("load", event => {
             activate: async function (tokens = []) {
                 idleTime = activateTime = 0.0;
 
-                if (!await this.talk(tokens)) {
-                    this.talk();
+                if (this.user.uid !== null) {
+                    if (Math.random() < 0.5) {
+                        function _random(min, max) {
+                            min = Math.ceil(min);
+                            max = Math.floor(max);
+    
+                            return Math.floor(Math.random() * (max - min)) + min;
+                        }
+
+                        const selectedTokens = [].concat(tokens);
+                        const i = _random(0, this.words.length);
+
+
+                        if (i > 0) {
+                            function shuffle(array) {
+                                let a = [].concat(array);
+                                let n = array.length;
+        
+                                while (n > 1) {
+                                    const k = _random(0, n);
+        
+                                    n--;
+        
+                                    const temp = a[n];
+        
+                                    a[n] = a[k];
+                                    a[k] = temp;
+                                }
+        
+                                return a;
+                            }
+
+                            for (const word of this.take(shuffle(this.words), i)) {
+                                if (word.name !== this.character.name) {
+                                    selectedTokens.push(word.name);
+                                }
+                            }
+                        }
+
+                        if (!await this.talk(selectedTokens)) {
+                            this.talk();
+                        }
+                    } else if (!await this.talk(tokens)) {
+                        this.talk();
+                    }
                 }
             },
             talk: async function (tokens = []) {
@@ -1448,7 +1491,7 @@ window.addEventListener("load", event => {
                 for (const image of this.backgroundImages) {
                     URL.revokeObjectURL(image.url);
                 }
-                
+
                 this.backgroundImages.splice(0);
 
                 for (const path of backgroundImage.paths) {
@@ -1461,11 +1504,11 @@ window.addEventListener("load", event => {
                 }
 
                 for (const image of preloadImages) {
-                    this.backgroundImages.push({id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp});
+                    this.backgroundImages.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
                 }
 
                 if ("tags" in backgroundImage) {
-                    this.talk(backgroundImage.tags.filter((x) => x.indexOf(this.character.name) === -1));
+                    this.activate(backgroundImage.tags.filter((x) => x.indexOf(this.character.name) === -1));
                 }
 
                 this.isBlinded = false;
@@ -1618,7 +1661,7 @@ window.addEventListener("load", event => {
                             if (i.width > i.height) {
                                 if (i.width > length) {
                                     canvas.width = length;
-                                    canvas.height = Math.floor(length / i.width * i.height);                                    
+                                    canvas.height = Math.floor(length / i.width * i.height);
                                 } else {
                                     canvas.width = i.width;
                                     canvas.height = i.height;
