@@ -43,7 +43,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 if path is None:
                     path = str(uuid4())
-                
+                '''
                 credentials = service_account.Credentials.from_service_account_info({
                     'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
                     'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
@@ -60,11 +60,23 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 storage_client = storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id)
                 bucket = storage_client.bucket(bucket_name)
                 blob = bucket.blob(path)
-
+                '''
                 #if not blob.exists():
                 #    blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
 
                 return func.HttpResponse(json.dumps({
+                        'c': {
+                            'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
+                            'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
+                            'private_key_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY_ID'),
+                            'private_key': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY'),
+                            'client_email': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_EMAIL'),
+                            'client_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_ID'),
+                            'auth_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'),
+                            'token_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'),
+                            'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
+                            'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
+                        },
                         'timestamp': int(time.time())
                     }),
                     status_code=200,
