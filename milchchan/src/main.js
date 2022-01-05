@@ -21,7 +21,7 @@ import { TinySegmenter } from './tiny-segmenter.js';
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
-import { getDatabase, ref as databaseRef, query, orderByChild, limitToLast, startAt, get, push, runTransaction, onValue, off } from "firebase/database";
+import { getDatabase, ref as databaseRef, query, orderByChild, limitToLast, startAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from 'firebase/analytics';
 
@@ -530,20 +530,18 @@ window.addEventListener("load", event => {
             send: async function (event) {
                 if (this.isDebug) {
                     if (this.input.length > 0) {
-                        let keys = [];
-                        let tags = [];
-
-                        for (const token of this.input.split(/\s/)) {
-                            if (this.backgroundImages.some((x) => x.id === token)) {
-                                keys.push(token);
-                            } else {
-                                tags.push(token);
+                        const tags = this.input.split(/\s/);
+                        const keys = [];
+                        
+                        for (const image of this.backgroundImages) {
+                            if (!keys.includes(image.id)) {
+                                keys.push(image.id);
                             }
                         }
 
                         if (keys.length > 0 && tags.length > 0) {
                             for (const key of keys) {
-                                runTransaction(databaseRef(database, databaseRoot + "/images/" + key), image => {
+                                runTransaction(databaseRef(database, `${databaseRoot}/images/${key}`), image => {
                                     image["tags"] = tags;
 
                                     return image;
@@ -639,7 +637,7 @@ window.addEventListener("load", event => {
                 }
 
                 try {
-                    await runTransaction(databaseRef(database, `${databaseRoot}/images/${push(child(databaseRef(databaseRoot), `${databaseRoot}/images`)).key}`), current => {
+                    await runTransaction(databaseRef(database, `${databaseRoot}/images/${push(child(databaseRef(database), `${databaseRoot}/images`)).key}`), current => {
                         return { paths: paths, timestamp: timestamp };
                     });
                 } catch (e) {
@@ -647,7 +645,7 @@ window.addEventListener("load", event => {
                     console.error(e);
                 }
 
-                //push(databaseRef(database, databaseRoot + "/images"), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
+                //push(databaseRef(database, `${databaseRoot}/images`), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
 
                 this.progress = null;
                 this.isUploading = false;
