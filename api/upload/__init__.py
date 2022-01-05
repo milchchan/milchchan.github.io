@@ -57,32 +57,32 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
                 })
                 scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
-                #storage_client = storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id)
-                #bucket = storage_client.bucket(bucket_name)
-                #blob = bucket.blob(path)
+                storage_client = storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id)
+                bucket = storage_client.bucket(bucket_name)
+                blob = bucket.blob(path)
 
-                #if not blob.exists():
-                #    blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
+                if not blob.exists():
+                    blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
 
-                return func.HttpResponse(json.dumps({
-                        'url': f'gs://{bucket_name}{urljoin("/", path)}',
-                        'credentials': {
-                            'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
-                            'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
-                            'private_key_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY_ID'),
-                            'private_key': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY'),
-                            'client_email': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_EMAIL'),
-                            'client_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_ID'),
-                            'auth_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_URL'),
-                            'token_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URL'),
-                            'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
-                            'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
-                        },
-                        'timestamp': int(time.time())
-                    }),
-                    status_code=200,
-                    headers=headers,
-                    charset='utf-8')
+                    return func.HttpResponse(json.dumps({
+                            'url': f'gs://{bucket_name}{urljoin("/", path)}',
+                            'credentials': {
+                                'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
+                                'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
+                                'private_key_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY_ID'),
+                                'private_key': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY'),
+                                'client_email': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_EMAIL'),
+                                'client_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_ID'),
+                                'auth_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'),
+                                'token_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'),
+                                'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
+                                'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
+                            },
+                            'timestamp': int(time.time())
+                        }),
+                        status_code=200,
+                        headers=headers,
+                        charset='utf-8')
 
         return func.HttpResponse(status_code=400, headers=headers)
 
