@@ -7,6 +7,7 @@ from datetime import timedelta
 from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
+from urllib.parse import urljoin
 
 import azure.functions as func
 
@@ -37,7 +38,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if match:
             mime_type, encoding, data = match.groups()
         
-            if mime_type in ['image/png', 'image/jpeg'] and encoding == 'base64':                
+            if mime_type in ['image/png', 'image/jpeg'] and encoding == 'base64':
+                bucket_name = 'merkuchan.com'
+
+                if path is None:
+                    path = str(uuid4())
+                
                 credentials = service_account.Credentials.from_service_account_info({
                     'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
                     'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
@@ -51,18 +57,20 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
                 })
                 scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
-                #storage_client = storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id)
-                #bucket = storage_client.bucket('merkuchan.com')
-                #blob = bucket.blob(path if path else str(uuid4()))
-                #blob.upload_from_file(BytesIO(b64decode(data)))
+                storage_client = storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id)
+                bucket = storage_client.bucket(bucket_name)
+                blob = bucket.blob(path)
 
-                return func.HttpResponse(json.dumps({
-                        'data': data,
-                        'timestamp': int(time.time())
-                    }),
-                    status_code=200,
-                    headers=headers,
-                    charset='utf-8')
+                if not blob.exists():
+                    blob.upload_from_file(BytesIO(b64decode(data)))
+
+                    return func.HttpResponse(json.dumps({
+                            'url': f'gs://{bucket_name}{urljoin("/", path)}',
+                            'timestamp': int(time.time())
+                        }),
+                        status_code=200,
+                        headers=headers,
+                        charset='utf-8')
 
         return func.HttpResponse(status_code=400, headers=headers)
 
