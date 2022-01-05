@@ -51,8 +51,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     'private_key': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY'),
                     'client_email': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_EMAIL'),
                     'client_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_ID'),
-                    'auth_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_URL'),
-                    'token_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URL'),
+                    'auth_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'),
+                    'token_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'),
                     'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
                     'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
                 })
@@ -66,18 +66,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                     return func.HttpResponse(json.dumps({
                             'url': f'gs://{bucket_name}{urljoin("/", path)}',
-                            'credentials': {
-                                'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
-                                'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
-                                'private_key_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY_ID'),
-                                'private_key': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY'),
-                                'client_email': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_EMAIL'),
-                                'client_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_ID'),
-                                'auth_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'),
-                                'token_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'),
-                                'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
-                                'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
-                            },
                             'timestamp': int(time.time())
                         }),
                         status_code=200,
