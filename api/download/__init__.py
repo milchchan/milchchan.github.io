@@ -8,6 +8,7 @@ import azure.functions as func
 
 from google.oauth2 import service_account
 from google.cloud import storage
+from google.cloud.storage.blob import Blob
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     headers = {'Content-Type': 'application/json'}
@@ -18,16 +19,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.headers['Content-Type'] == 'application/json':
             data = req.get_json()
-            path = data.get('path')
+            url = data.get('url')
             expiration = data.get('expiration')
             expiration = timedelta(seconds=expiration if expiration else 3600)
             
         else:
-            path = req.params.get('path')
+            url = req.params.get('url')
             expiration = req.params.get('expiration')
             expiration = timedelta(seconds=int(expiration) if expiration and expiration.isnumeric() else 3600)
 
-        if path is not None:
+        if url is not None:
             credentials = service_account.Credentials.from_service_account_info({
                 'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
                 'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
@@ -41,10 +42,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
             })
             scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
-            storage_client = storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id)
-            bucket = storage_client.bucket('merkuchan.com')
-            blob = bucket.blob(path)
-
+            blob = Blob.from_string(url, client=storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id))
+            
             if blob.exists():
                 return func.HttpResponse(json.dumps({
                         'url': blob.generate_signed_url(
