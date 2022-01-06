@@ -110,6 +110,7 @@ label.checkbox input[type="radio"] + .custom:before {
 label.checkbox input[type="checkbox"]:checked + .custom:before,
 label.checkbox input[type="radio"]:checked + .custom:before {
     color: var(--accent-color);
+    transition: 0.5s;
 }
 
 a .scrollable,
@@ -193,6 +194,7 @@ label .scrollable > div {
     color: var(--main-color) !important;
     border: 0px solid transparent !important;
     box-shadow: none !important;
+    transition: 0.5s;
 }
 
 .has-content-centered {
@@ -255,6 +257,7 @@ label .scrollable > div {
 .is-danger {
     background-color: transparent !important;
     color: var(--accent-color) !important;
+    transition: 0.5s;
 }
 
 .is-superellips {
@@ -377,6 +380,7 @@ label .scrollable > div {
     background: var(--background-color);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
+    transition: 0.5s;
 }
 
 .overlay::after {
@@ -390,6 +394,7 @@ label .scrollable > div {
     overflow: hidden;
     background: var(--background-image) 50% 50% repeat;
     animation: fade 0.5s ease-out, loop 10s linear infinite;
+    transition: 0.5s;
     transform: translate3d(0, 0%, 0);
     content: "";
 }
@@ -530,6 +535,7 @@ label .scrollable > div {
                         box-shadow: none;
                         height: initial;
                         color: var(--accent-color) !important;
+                        transition: 0.5s;
 
                         > span {
                             margin: 0 !important;
@@ -585,11 +591,13 @@ label .scrollable > div {
                             height: 48px;
                             align-items: center;
                             justify-content: center;
+                            transition: 0.5s;
                         }
 
                         .icon + .wrap {
                             margin: 8px 0px 0px 0px !important;
                             color: var(--main-color);
+                            transition: 0.5s;
                         }
                     }
 
@@ -597,6 +605,7 @@ label .scrollable > div {
                     .button.is-selected {
                         .icon {
                             color: var(--highlight-color) !important;
+                            transition: 0.5s;
                         }
                     }
 
@@ -644,6 +653,7 @@ label .scrollable > div {
             background: var(--main-color);
             font-size: 0.75rem !important;
             line-height: 0.75rem !important;
+            transition: 0.5s;
 
             > .column > .control {
                 pointer-events: none;
@@ -767,8 +777,7 @@ label .scrollable > div {
     transform: translate3d(0, 0%, 0);
     overflow: hidden;
     background: var(--main-color);
-    /*background: #00eeff url('/images/Background.png') 50% 50% repeat;
-            animation: progress 0.5s linear 0s infinite;*/
+    transition: 0.5s;
 }
 
 #app {
@@ -813,6 +822,7 @@ label .scrollable > div {
         box-shadow: none;
         height: initial;
         color: var(--main-color) !important;
+        transition: 0.5s;
 
         > span {
             margin: 0 !important;
@@ -874,9 +884,11 @@ label .scrollable > div {
                             picture.icon {
                                 margin: 0px 4px 0px 0px;
                                 color: var(--main-color);
+                                transition: 0.5s;
 
                                 svg path {
                                     fill: var(--main-color);
+                                    transition: 0.5s;
                                 }
                             }
 
@@ -1011,6 +1023,7 @@ label .scrollable > div {
     background-clip: padding-box;
     height: initial;
     color: var(--accent-color) !important;
+    transition: 0.5s;
 
     > span {
         margin: 0 !important;
@@ -1153,10 +1166,12 @@ label .scrollable > div {
 
                         .icon {
                             color: var(--accent-color);
+                            transition: 0.5s;
                         }
 
                         span.wrap + .icon:last-of-type {
                             color: var(--main-color);
+                            transition: 0.5s;
                         }
 
                         .icon:first-child + div {
@@ -1171,6 +1186,7 @@ label .scrollable > div {
                     > button.is-primary,
                     > .button.is-primary {
                         background: var(--primary-background-color) !important;
+                        transition: 0.5s;
 
                         span.wrap,
                         .icon {
@@ -1183,6 +1199,7 @@ label .scrollable > div {
                         margin: 0;
                         height: calc(0.75rem * 1.5);
                         color: var(--main-color) !important;
+                        transition: 0.5s;
                     }
                 }
             }
@@ -1201,6 +1218,7 @@ label .scrollable > div {
                 box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                 backdrop-filter: blur(4px);
                 -webkit-backdrop-filter: blur(4px);
+                transition: 0.5s;
             }
 
             > .level-item a .icon {
@@ -1214,6 +1232,7 @@ label .scrollable > div {
                 box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                 backdrop-filter: blur(4px);
                 -webkit-backdrop-filter: blur(4px);
+                transition: 0.5s;
             }
         }
 
@@ -1244,10 +1263,12 @@ label .scrollable > div {
         svg g {
             > g:nth-child(odd) > path {
                 fill: var(--main-color);
+                transition: 0.5s;
             }
 
             > g:nth-child(even) > path {
                 fill: var(--accent-color);
+                transition: 0.5s;
             }
 
             > g:first-child > path {
@@ -1269,6 +1290,7 @@ label .scrollable > div {
 
             .is-primary {
                 color: var(--highlight-color) !important;
+                transition: 0.5s;
             }
         }
 
@@ -1385,6 +1407,7 @@ label .scrollable > div {
                                         height: calc(0.75rem * 1.5);
                                         white-space: nowrap;
                                         color: var(--main-color);
+                                        transition: 0.5s;
                                     }
                                 }
                             }
@@ -1620,6 +1643,7 @@ label .scrollable > div {
                 backface-visibility: hidden;
                 font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
                 color: var(--main-color);
+                transition: 0.5s;
                 transform: rotate(0.03deg);
                 overflow-x: auto;
                 overflow-y: hidden;
@@ -1640,6 +1664,7 @@ label .scrollable > div {
             span {
                 color: var(--accent-color);
                 font-family: "Alata", sans-serif;
+                transition: 0.5s;
             }
         }
 
@@ -1650,6 +1675,7 @@ label .scrollable > div {
             padding: 8px 16px 8px 16px;
             background-color: transparent;
             color: var(--accent-color);
+            transition: 0.5s;
         }
     }
 
