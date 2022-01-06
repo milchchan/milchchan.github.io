@@ -208,6 +208,7 @@ label .scrollable > div {
     color: var(--main-color) !important;
     border: 0px solid transparent !important;
     box-shadow: none !important;
+    transition: 0.5s;
 }
 
 .has-content-centered {
@@ -652,6 +653,7 @@ label .scrollable > div {
                         .icon + .wrap {
                             margin: 8px 0px 0px 0px !important;
                             color: var(--main-color);
+                            transition: 0.5s;
                         }
                     }
 
@@ -659,6 +661,7 @@ label .scrollable > div {
                     .button.is-selected {
                         .icon {
                             color: var(--highlight-color) !important;
+                            transition: 0.5s;
                         }
                     }
 
@@ -741,8 +744,7 @@ label .scrollable > div {
     transform: translate3d(0, 0%, 0);
     overflow: hidden;
     background: var(--main-color);
-    /*background: #00eeff url('/images/Background.png') 50% 50% repeat;
-    animation: progress 0.5s linear 0s infinite;*/
+    transition: 0.5s;
 }
 
 #app {
@@ -789,6 +791,7 @@ label .scrollable > div {
         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
+        transition: 0.5s;
     }
 
     > .level {
@@ -844,9 +847,11 @@ label .scrollable > div {
                             .icon {
                                 margin: 0px 4px 0px 0px;
                                 color: var(--main-color);
+                                transition: 0.5s;
 
                                 svg path {
                                     fill: var(--main-color);
+                                    transition: 0.5s;
                                 }
                             }
 
@@ -877,6 +882,7 @@ label .scrollable > div {
                             width: 128px;
                             height: 8px;
                             background-color: var(--main-color);
+                            transition: 0.5s;
                         }
                     }
 
@@ -1002,6 +1008,7 @@ label .scrollable > div {
                 box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                 backdrop-filter: blur(4px);
                 -webkit-backdrop-filter: blur(4px);
+                transition: 0.5s;
             }
 
             button,
@@ -1021,6 +1028,7 @@ label .scrollable > div {
                 box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                 backdrop-filter: blur(4px);
                 -webkit-backdrop-filter: blur(4px);
+                transition: 0.5s;
 
                 .clip {
                     display: inline-block;
@@ -1176,6 +1184,7 @@ label .scrollable > div {
                             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                             backdrop-filter: blur(4px) !important;
                             -webkit-backdrop-filter: blur(4px) !important;
+                            transition: 0.5s;
 
                             .clip {
                                 display: inline-block;
@@ -1199,6 +1208,7 @@ label .scrollable > div {
 
                             > span.wrap + .icon:last-of-type {
                                 color: var(--main-color);
+                                transition: 0.5s;
                             }
 
                             > span:not(:first-child) {
@@ -1214,6 +1224,7 @@ label .scrollable > div {
                         > .button.is-primary {
                             background: var(--primary-background-color) !important;
                             color: #ffffff !important;
+                            transition: 0.5s;
 
                             .icon {
                                 color: #ffffff !important;
@@ -1256,6 +1267,7 @@ label .scrollable > div {
                                         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                         backdrop-filter: blur(4px) !important;
                                         -webkit-backdrop-filter: blur(4px) !important;
+                                        transition: 0.5s;
 
                                         .clip {
                                             display: inline-block;
@@ -1279,6 +1291,7 @@ label .scrollable > div {
 
                                         > span.wrap + .icon:last-of-type {
                                             color: var(--main-color);
+                                            transition: 0.5s;
                                         }
 
                                         > span:not(:first-child) {
@@ -1294,6 +1307,7 @@ label .scrollable > div {
                                     > .button.is-primary {
                                         background: var(--primary-background-color) !important;
                                         color: #ffffff !important;
+                                        transition: 0.5s;
 
                                         .icon {
                                             color: #ffffff !important;
@@ -1541,6 +1555,7 @@ label .scrollable > div {
                             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                             backdrop-filter: blur(4px) !important;
                             -webkit-backdrop-filter: blur(4px) !important;
+                            transition: 0.5s;
 
                             .clip {
                                 display: inline-block;
@@ -1564,6 +1579,7 @@ label .scrollable > div {
 
                             > span.wrap + .icon:last-of-type {
                                 color: var(--main-color);
+                                transition: 0.5s;
                             }
 
                             > span:not(:first-child) {
@@ -1579,6 +1595,7 @@ label .scrollable > div {
                         > .button.is-primary {
                             background: var(--primary-background-color) !important;
                             color: #ffffff !important;
+                            transition: 0.5s;
 
                             .icon {
                                 color: #ffffff !important;
@@ -1701,11 +1718,13 @@ label .scrollable > div {
                                         line-height: 0.75rem !important;
                                         height: calc(0.75rem * 1.5);
                                         color: var(--main-color);
+                                        transition: 0.5s;
                                     }
                                 }
 
                                 .icon {
                                     color: var(--main-color);
+                                    transition: 0.5s;
                                 }
 
                                 span:not(:first-child) {
@@ -1796,6 +1815,7 @@ label .scrollable > div {
 
             > g:nth-child(even) > path {
                 fill: var(--main-color);
+                transition: 0.5s;
             }
         }
 
@@ -1813,6 +1833,7 @@ label .scrollable > div {
 
             .is-primary {
                 color: var(--highlight-color) !important;
+                transition: 0.5s;
             }
         }
 
@@ -1857,11 +1878,13 @@ label .scrollable > div {
                     box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                     backdrop-filter: blur(4px) !important;
                     -webkit-backdrop-filter: blur(4px) !important;
+                    transition: 0.5s;
                 }
 
                 button.is-primary {
                     background: var(--primary-background-color) !important;
                     color: #ffffff !important;
+                    transition: 0.5s;
 
                     .icon {
                         color: #ffffff !important;
@@ -1990,6 +2013,7 @@ label .scrollable > div {
                                         height: calc(0.75rem * 1.5);
                                         white-space: nowrap;
                                         color: var(--main-color);
+                                        transition: 0.5s;
                                     }
                                 }
                             }
@@ -2271,6 +2295,7 @@ label .scrollable > div {
                     .button.is-primary {
                         background: var(--primary-background-color) !important;
                         color: #ffffff !important;
+                        transition: 0.5s;
 
                         .icon,
                         .clip .scrollable div {
@@ -2367,6 +2392,7 @@ label .scrollable > div {
                     backface-visibility: hidden;
                     font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
                     color: var(--main-color);
+                    transition: 0.5s;
                     transform: rotate(0.03deg);
                     overflow-x: auto;
                     overflow-y: hidden;
@@ -2375,6 +2401,7 @@ label .scrollable > div {
                 input::placeholder {
                     color: var(--placeholder-color);
                     font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                    transition: 0.5s;
                     transform: rotate(0.03deg);
                 }
             }
