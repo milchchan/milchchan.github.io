@@ -22,6 +22,7 @@
       --background-image: url('/images/Background-Light.png');
       --background-image-2x: url('/images/Background-Light@2x.png');
       --background-image-3x: url('/images/Background-Light@3x.png');
+      --error-image: url('/images/404.png');
     }
 
     @media (prefers-color-scheme: dark) {
@@ -31,6 +32,7 @@
         --background-image: url('/images/Background-Dark.png');
         --background-image-2x: url('/images/Background-Dark@2x.png');
         --background-image-3x: url('/images/Background-Dark@3x.png');
+        --error-image: url('/images/Omr.png');
       }
     }
 
@@ -65,6 +67,7 @@
       font-size: 50vmin;
       font-weight: bold;
       line-height: 50vmin;
+      transition: 0.5s;
     }
 
     .wrap {
@@ -98,12 +101,13 @@
       width: 100%;
       min-height: 100%;
       overflow: hidden;
-      background: url('/images/404.png') 50% 50% no-repeat;
+      background: var(--error-image) 50% 50% no-repeat;
       background-attachment: scroll;
       background-size: cover;
       content: "";
       transform-origin: 50% 50%;
       animation: load 0.5s ease-out;
+      transition: 0.5s;
     }
 
     #message {
@@ -121,6 +125,7 @@
       background: var(--background-color);
       -webkit-backdrop-filter: blur(8px);
       backdrop-filter: blur(8px);
+      transition: 0.5s;
     }
 
     #message::before {
@@ -148,6 +153,7 @@
       animation: fade 0.5s ease-out, loop 10s linear infinite;
       transform: translate3d(0, 0%, 0);
       content: "";
+      transition: 0.5s;
     }
 
     @keyframes fade {
