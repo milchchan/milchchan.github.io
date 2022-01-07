@@ -25,11 +25,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.headers.get('Content-Type') == 'application/json':
             data = req.get_json()
-            id = data.get('id')
+            id = data['id'] if 'id' in data else str(uuid4())
             image = data.get('image')
-            location = data.get('location')
-            item = {'id': str(uuid4()) if id is None else id, 'name': data['name'], 'attributes': data['attributes'], 'location': location, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
-
+            item = {'id': id, 'pk': id, 'name': data['name'], 'attributes': data['attributes'] }
+                
             if image is not None:
                 match = re.match("data:([\\w/\\-\\.]+);(\\w+),(.+)", image)
             
@@ -68,8 +67,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 else:
                     return func.HttpResponse(status_code=400, headers=headers)
+            
+            if 'location' in data:
+                item['location'] = data['location']
 
-            item['pk'] = item['id']
+            item['timestamp'] = datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
             client = CosmosClient.from_connection_string(os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
             database = client.get_database_client('Wonderland')
