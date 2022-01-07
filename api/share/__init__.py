@@ -23,8 +23,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         headers['Access-Control-Allow-Origin'] = req.headers['Origin']
 
     try:
-        pattern = "data:([\\w/\\-\\.]+);(\\w+),(.+)"
-        
         if req.headers.get('Content-Type') == 'application/json':
             data = req.get_json()
             id = data.get('id')
@@ -33,7 +31,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             item = {'id': str(uuid4()) if id is None else id, 'name': data['name'], 'attributes': data['attributes'], 'location': location, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
 
             if image is not None:
-                match = re.match(pattern, image)
+                match = re.match("data:([\\w/\\-\\.]+);(\\w+),(.+)", image)
             
                 if match:
                     mime_type, encoding, data = match.groups()
@@ -72,7 +70,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(status_code=400, headers=headers)
 
             item['pk'] = item['id']
-            
+
             client = CosmosClient.from_connection_string(os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
             database = client.get_database_client('Wonderland')
             container = database.get_container_client('Words')
