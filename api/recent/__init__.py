@@ -20,12 +20,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.headers['Content-Type'] == 'application/json':
             data = req.get_json()
-            offset = str(data.get('offset'))
-            limit = str(data.get('limit'))
+            offset = data.get('offset')
+            limit = data.get('limit')
             
         else:
-            offset = req.params.get('offset')
-            limit = req.params.get('limit')
+            offset = int(req.params.get('offset'))
+            limit = int(req.params.get('limit'))
 
         client = CosmosClient.from_connection_string(os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
         database = client.get_database_client('Wonderland')
@@ -33,8 +33,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         items = list(container.query_items(
             query='SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit',
             parameters=[
-                { "name":"@offset", "value": '0' if offset is None else offset },
-                { "name":"@limit", "value": '100' if limit is None else limit }
+                { "name":"@offset", "value": 0 if offset is None else offset },
+                { "name":"@limit", "value": 100 if limit is None else limit }
             ],
             enable_cross_partition_query=True))
 
