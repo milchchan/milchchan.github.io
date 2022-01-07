@@ -33,8 +33,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         items = list(container.query_items(
             query='SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit',
             parameters=[
-                { "name":"@offset", "value": 0 if offset is None else offset },
-                { "name":"@limit", "value": 100 if limit is None else limit }
+                { "name":"@offset", "value": 0 },
+                { "name":"@limit", "value": 100 }
             ],
             enable_cross_partition_query=True))
 
