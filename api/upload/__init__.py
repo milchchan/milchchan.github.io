@@ -22,7 +22,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         pattern = "data:([\\w/\\-\\.]+);(\\w+),(.+)"
         
-        if req.headers['Content-Type'] == 'application/json':
+        if req.headers.get('Content-Type') == 'application/json':
             data = req.get_json()            
             match = re.match(pattern, data.get('image'))
             path = data.get('path')
