@@ -17,7 +17,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         headers['Access-Control-Allow-Origin'] = req.headers['Origin']
 
     try:
-        if req.headers['Content-Type'] == 'application/json':
+        if req.headers.get('Content-Type') == 'application/json':
             data = req.get_json()
             url = data.get('url')
             expiration = data.get('expiration')
