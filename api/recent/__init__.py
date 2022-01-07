@@ -24,8 +24,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             limit = data.get('limit')
             
         else:
-            offset = int(req.params.get('offset'))
-            limit = int(req.params.get('limit'))
+            offset = None #int(req.params.get('offset'))
+            limit = None #int(req.params.get('limit'))
 
         client = CosmosClient.from_connection_string(os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
         database = client.get_database_client('Wonderland')
