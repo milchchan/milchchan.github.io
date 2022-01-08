@@ -2,6 +2,7 @@ import logging
 import json
 import os
 from datetime import datetime, timedelta
+from shared import get_neighbors
 
 import azure.functions as func
 from azure.cosmos.cosmos_client import CosmosClient
@@ -22,21 +23,43 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             data = req.get_json()
             offset = data.get('offset')
             limit = data.get('limit')
+            geohash = data.get('geohash')
             
         else:
             offset = int(req.params['offset']) if 'offset' in req.params else None
             limit = int(req.params['limit']) if 'limit' in req.params else None
+            geohash = req.params['geohash'] if 'geohash' in req.params else None
 
         client = CosmosClient.from_connection_string(os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
         database = client.get_database_client('Wonderland')
         container = database.get_container_client('Words')
-        items = list(container.query_items(
-            query='SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit',
-            parameters=[
-                { "name":"@offset", "value": 0 if offset is None else offset },
-                { "name":"@limit", "value": 100 if limit is None else limit }
-            ],
-            enable_cross_partition_query=True))
+
+        if geohash is None:
+            items = list(container.query_items(
+                query='SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit',
+                parameters=[
+                    { "name":"@offset", "value": 0 if offset is None else offset },
+                    { "name":"@limit", "value": 100 if limit is None else limit }
+                ],
+                enable_cross_partition_query=True))
+        else:
+            neighbors = get_neighbors(geohash)
+            items = list(container.query_items(
+                query="SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w WHERE w.geohash LIKE CONCAT(@centergeohash, '%') OR w.geohash LIKE CONCAT(@topgeohash, '%') OR w.geohash LIKE CONCAT(@bottomgeohash, '%') OR w.geohash LIKE CONCAT(@rightgeohash, '%') OR w.geohash LIKE CONCAT(@leftgeohash, '%') OR w.geohash LIKE CONCAT(@topleftgeohash, '%') OR w.geohash LIKE CONCAT(@toprightgeohash, '%') OR w.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR w.geohash LIKE CONCAT(@bottomleftgeohash, '%') ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit",
+                parameters=[
+                    { "name":"@offset", "value": 0 if offset is None else offset },
+                    { "name":"@limit", "value": 100 if limit is None else limit },
+                    { "name":"@centergeohash", "value": geohash },
+                    { "name":"@topgeohash", "value": neighbors['top'] },
+                    { "name":"@bottomgeohash", "value": neighbors['bottom'] },
+                    { "name":"@rightgeohash", "value": neighbors['right'] },
+                    { "name":"@leftgeohash", "value": neighbors['left'] },
+                    { "name":"@topleftgeohash", "value": neighbors['topleft'] },
+                    { "name":"@toprightgeohash", "value": neighbors['topright'] },
+                    { "name":"@bottomrightgeohash", "value": neighbors['bottomright'] },
+                    { "name":"@bottomleftgeohash", "value": neighbors['bottomleft'] }
+                ],
+                enable_cross_partition_query=True))
 
         for item in items:
             if 'image' in item:
@@ -59,7 +82,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     item['image'] = blob.generate_signed_url(version='v4', expiration=timedelta(minutes=60), method='GET')
 
             if 'location' in item and 'type' in item['location'] and item['location']['type'] == 'Point' and 'coordinates' in item['location']:
-                item['location'] = {'longitude': item['location']['coordinates'][0], 'latitude': item['location']['coordinates'][1]}
+                item['location'] = {'type': 'Point', 'coordinates': item['location']['coordinates']}
 
             item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 
