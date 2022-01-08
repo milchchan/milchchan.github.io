@@ -87,6 +87,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     container = database.get_container_client('Words')
                     container.upsert_item(item)
 
+                    item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
+
                     return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
 
             return func.HttpResponse(status_code=400, headers=headers)
