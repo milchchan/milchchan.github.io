@@ -57,7 +57,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         headers=headers,
                         charset='utf-8')
 
-        return func.HttpResponse(status_code=400, headers=headers)
+            return func.HttpResponse(status_code=400, headers=headers)
+
+        headers['Allow'] = 'GET'
+
+        return func.HttpResponse(status_code=405, headers=headers)
 
     except Exception as e:
         logging.error(f'{e}')
