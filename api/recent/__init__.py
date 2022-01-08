@@ -88,7 +88,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 
-        return func.HttpResponse(json.dumps(items), status_code=200, headers=headers, charset='utf-8')
+            return func.HttpResponse(json.dumps(items), status_code=200, headers=headers, charset='utf-8')
+
+        headers['Allow'] = 'GET'
+
+        return func.HttpResponse(status_code=405, headers=headers)
 
     except Exception as e:
         logging.error(f'{e}')
