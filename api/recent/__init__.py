@@ -58,6 +58,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if blob.exists():
                     item['image'] = blob.generate_signed_url(version='v4', expiration=timedelta(minutes=60), method='GET')
 
+            if 'location' in item and 'type' in item['location'] and item['location']['type'] == 'Point' and 'coordinates' in item['location']:
+                item['location'] = {'longitude': item['location']['coordinates'][0], 'latitude': item['location']['coordinates'][1]}
+
             item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 
         return func.HttpResponse(json.dumps(items), status_code=200, headers=headers, charset='utf-8')
