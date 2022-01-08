@@ -33,16 +33,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         client = CosmosClient.from_connection_string(os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
         database = client.get_database_client('Wonderland')
         container = database.get_container_client('Words')
-        items = None
-
+        items = list(container.query_items(
+            query='SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit',
+            parameters=[
+                { "name":"@offset", "value": 0 if offset is None else offset },
+                { "name":"@limit", "value": 100 if limit is None else limit }
+            ],
+            enable_cross_partition_query=True))
+        '''
         if geohash is None:
-            items = list(container.query_items(
-                query='SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit',
-                parameters=[
-                    { "name":"@offset", "value": 0 if offset is None else offset },
-                    { "name":"@limit", "value": 100 if limit is None else limit }
-                ],
-                enable_cross_partition_query=True))
+            
         else:
             neighbors = get_neighbors(geohash)
             items = list(container.query_items(
@@ -61,7 +61,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     { "name":"@bottomleftgeohash", "value": neighbors['bottomleft'] }
                 ],
                 enable_cross_partition_query=True))
-
+        '''
         for item in items:
             if 'image' in item:
                 credentials = service_account.Credentials.from_service_account_info({
