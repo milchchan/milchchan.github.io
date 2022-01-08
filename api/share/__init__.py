@@ -8,6 +8,7 @@ from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
 from urllib.parse import urljoin
+from shared import encode_geohash
 
 import azure.functions as func
 from azure.cosmos.cosmos_client import CosmosClient
@@ -70,6 +71,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             
             if 'location' in data:
                 item['location'] = data['location']
+                item['geohash'] = encode_geohash(data['location'].latitude, data['location'].longitude)
 
             item['timestamp'] = datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
