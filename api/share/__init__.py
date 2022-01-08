@@ -70,7 +70,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(status_code=400, headers=headers)
             
             if 'location' in data:
-                item['location'] = data['location']
+                item['location'] = {'type': 'Point', 'coordinates': [data['location']['longitude'], data['location']['latitude']]}
                 item['geohash'] = encode_geohash(data['location']['latitude'], data['location']['longitude'])
 
             item['timestamp'] = datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
