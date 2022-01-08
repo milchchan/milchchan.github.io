@@ -35,8 +35,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         container = database.get_container_client('Words')
 
         if geohash is None:
-            items = list()
-            '''
             items = list(container.query_items(
                 query='SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit',
                 parameters=[
@@ -44,7 +42,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     { "name":"@limit", "value": 100 if limit is None else limit }
                 ],
                 enable_cross_partition_query=True))
-            '''
         else:
             neighbors = get_neighbors(geohash)
             items = list(container.query_items(
