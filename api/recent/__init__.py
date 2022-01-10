@@ -2,6 +2,7 @@ import logging
 import json
 import os
 from datetime import datetime, timedelta
+from urllib.request import urlopen, Request
 from shared import get_neighbors
 
 import azure.functions as func
@@ -20,6 +21,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         if req.method == 'GET':
+            if 'Authorization' in req.headers:
+                try:
+                    response = urlopen(Request(
+                        f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
+                        headers={'Content-Type': 'application/json'},
+                        data=json.dumps({'idToken': req.headers['Authorization']}).encode('utf-8')))
+
+                    if response.getcode() != 200:
+                        raise Exception
+
+                except Exception:
+                    return func.HttpResponse(status_code=403, headers=headers)
+            
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
                 offset = data.get('offset')
