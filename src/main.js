@@ -2069,7 +2069,7 @@ window.addEventListener("load", (event) => {
                     const tokens = [];
 
                     for (const word of this.take(shuffle(this.recentWords), i)) {
-                        if (this.user.uid !== word.user.id && word.name !== this.character.name) {
+                        if (this.user.uid !== word.user.id && word.name.indexOf(this.character.name) !== -1) {
                             tokens.push(word.name);
                         }
                     }
