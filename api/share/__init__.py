@@ -8,6 +8,7 @@ from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
 from urllib.parse import urljoin
+from urllib.request import urlopen, Request
 from shared import encode_geohash
 
 import azure.functions as func
@@ -26,6 +27,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'POST':
             if req.headers.get('Content-Type') == 'application/json':
+                if 'Authorization' in req.headers:
+                    try:
+                        response = urlopen(Request(
+                            f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
+                            headers={'Content-Type': 'application/json'},
+                            data=json.dumps({'idToken': req.headers['Authorization']}).encode('utf-8')))
+
+                        if response.getcode() != 200:
+                            raise Exception
+
+                    except Exception:
+                        return func.HttpResponse(status_code=403, headers=headers)
+
                 data = req.get_json()
 
                 if 'name' in data and data['name'] is not None and len(data['name']) > 0 and 'attributes' in data and isinstance(data['attributes'], list):
