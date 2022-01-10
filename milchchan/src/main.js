@@ -890,7 +890,7 @@ window.addEventListener("load", event => {
                             const selectedTokens = [];
 
                             for (const word of this.take(shuffle(this.words), i)) {
-                                if (word.name !== this.character.name) {
+                                if (word.name.indexOf(this.character.name) !== -1) {
                                     selectedTokens.push(word.name);
                                 }
                             }
