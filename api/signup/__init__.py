@@ -22,7 +22,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 response = urlopen(Request(
                         f'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={os.environ.get("FIREBASE_API_KEY")}',
                         headers={'Content-Type': 'application/json'},
-                        data=json.dumps({'email': email, 'password': password, 'returnSecureToken': True}).encode('utf-8')))
+                        data=json.dumps({'email': email, 'password': password, 'returnSecureToken': True}).encode('utf-8'),
+                        method='POST'))
 
                 if response.getcode() == 200:
                     results = json.loads(response.read())
