@@ -41,7 +41,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP"
 @media (prefers-color-scheme: dark) {
     :root {
         --main-color: #c1aee6;
-        --highlight-color: #fecde2;
+        --highlight-color: #{$primary};
         --placeholder-color: rgba(193, 174, 230, 0.25);
         /*--primary-background-color: rgba(254, 205, 226, 0.75);*/
         --primary-background-color: rgba(193, 174, 230, 0.75);
