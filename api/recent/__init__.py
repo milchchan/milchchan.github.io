@@ -21,7 +21,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         if req.method == 'GET':
-            if 'Authorization' in req.headers:
+            if 'Authorization' in req.headers and len(req.headers['Authorization']) > 0:
                 try:
                     response = urlopen(Request(
                         f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
