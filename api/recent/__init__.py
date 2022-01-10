@@ -2,6 +2,7 @@ import logging
 import json
 import os
 from datetime import datetime, timedelta
+from base64 import b64decode
 from urllib.request import urlopen, Request
 from shared import get_neighbors
 
@@ -21,18 +22,21 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         if req.method == 'GET':
-            if 'Authorization' in req.headers and len(req.headers['Authorization']) > 0:
-                try:
-                    response = urlopen(Request(
-                        f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
-                        headers={'Content-Type': 'application/json'},
-                        data=json.dumps({'idToken': req.headers['Authorization']}).encode('utf-8')))
+            if 'Authorization' in req.headers and not req.headers['Authorization'].startswith('Bearer '):
+                jwt = req.headers['Authorization'].split('.')
 
-                    if response.getcode() != 200:
-                        raise Exception
+                if json.loads(b64decode(jwt[0] + '=' * (-len(jwt[0]) % 4)))['typ'] == 'JWT' and 'firebase' in json.loads(b64decode(jwt[1] + '=' * (-len(jwt[1]) % 4))):
+                    try:
+                        response = urlopen(Request(
+                            f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
+                            headers={'Content-Type': 'application/json'},
+                            data=json.dumps({'idToken': req.headers['Authorization']}).encode('utf-8')))
 
-                except Exception:
-                    return func.HttpResponse(status_code=403, headers=headers)
+                        if response.getcode() != 200:
+                            raise Exception
+
+                    except Exception:
+                        return func.HttpResponse(status_code=403, headers=headers)
             
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
