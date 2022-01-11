@@ -1,7 +1,7 @@
-import logging
 import time
 import re
 import json
+import logging
 import os
 from io import BytesIO
 from uuid import uuid4
@@ -12,6 +12,7 @@ import azure.functions as func
 
 from google.oauth2 import service_account
 from google.cloud import storage
+
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     headers = {'Content-Type': 'application/json'}

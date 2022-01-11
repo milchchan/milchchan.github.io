@@ -1,6 +1,6 @@
-import logging
 import time
 import json
+import logging
 import os
 from urllib.request import urlopen, Request
 

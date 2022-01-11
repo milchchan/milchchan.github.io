@@ -1,6 +1,6 @@
-import logging
 import time
 import json
+import logging
 import os
 from datetime import timedelta
 
@@ -9,6 +9,7 @@ import azure.functions as func
 from google.oauth2 import service_account
 from google.cloud import storage
 from google.cloud.storage.blob import Blob
+
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     headers = {'Content-Type': 'application/json'}
