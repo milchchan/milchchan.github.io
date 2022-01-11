@@ -26,10 +26,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         if req.method == 'POST':
-            if 'Authorization' in req.headers and not req.headers['Authorization'].startswith('Bearer '):
-                jwt = req.headers['Authorization'].split('.')
+            if 'Authorization' in req.headers:
+                jwt = req.headers['Authorization'].split(' ')[1].split('.') if req.headers['Authorization'].startswith('Bearer ') else req.headers['Authorization'].split('.')
 
-                if json.loads(b64decode(jwt[0] + '=' * (-len(jwt[0]) % 4)))['typ'] == 'JWT' and 'firebase' in json.loads(b64decode(jwt[1] + '=' * (-len(jwt[1]) % 4))):
+                if json.loads(b64decode(jwt[0] + '=' * (-len(jwt[0]) % 4)))['typ'] == 'JWT' and json.loads(b64decode(jwt[1] + '=' * (-len(jwt[1]) % 4)))['iss'] == 'https://securetoken.google.com/milchchan':
                     try:
                         response = urlopen(Request(
                             f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
