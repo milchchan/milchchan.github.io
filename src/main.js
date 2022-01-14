@@ -2349,7 +2349,7 @@ window.addEventListener("load", (event) => {
                 let tokenSet = [];
                 const regex = new RegExp("[.#$\\[\\]]");
                 let cachDictionary = {};
-                let text = "";
+                const text = [];
                 let index = 0;
                 const epsilon = Math.pow(10, -6);
                 const beamWidth = 10;
@@ -2386,8 +2386,8 @@ window.addEventListener("load", (event) => {
                 for (const token of tokens) {
                     if (!tokenSet.includes(token)) {
                         if (Array.isArray(token)) {
-                            let terms = [];
-                            let scores = [];
+                            const terms = [];
+                            const scores = [];
 
                             for (const attribute of token) {
                                 if (attribute in hintDictionary) {
@@ -2395,7 +2395,7 @@ window.addEventListener("load", (event) => {
                                         if (!terms.includes(s)) {
                                             let isNew = true;
 
-                                            terms.push(s);
+                                            terms.push({ name: s, attributes: this.wordDictionary[s].attributes });
 
                                             for (const tag of this.tags) {
                                                 if (s === tag.name) {
@@ -2430,7 +2430,7 @@ window.addEventListener("load", (event) => {
                                         if (tokens.includes(word) && !terms.includes(word)) {
                                             let isNew = true;
 
-                                            terms.push(word);
+                                            terms.push({ name: word, attributes: this.wordDictionary[word].attributes });
 
                                             for (const tag of this.tags) {
                                                 if (word == tag.name) {
@@ -2469,8 +2469,8 @@ window.addEventListener("load", (event) => {
                                 }
                             }
                         } else if (!regex.test(token)) {
-                            let terms = [];
-                            let scores = [];
+                            const terms = [];
+                            const scores = [];
 
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                 const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
@@ -2494,7 +2494,7 @@ window.addEventListener("load", (event) => {
                                         if (!terms.includes(key)) {
                                             let isNew = true;
 
-                                            terms.push(key);
+                                            terms.push({ name: key, attributes: this.wordDictionary[key].attributes });
 
                                             for (const tag of this.tags) {
                                                 if (key === tag.name) {
@@ -2529,7 +2529,7 @@ window.addEventListener("load", (event) => {
                                         if (tokens.includes(word) && !terms.includes(word)) {
                                             let isNew = true;
 
-                                            terms.push(word);
+                                            terms.push({ name: word, attributes: this.wordDictionary[word].attributes });
 
                                             for (const tag of this.tags) {
                                                 if (word == tag.name) {
@@ -2582,20 +2582,20 @@ window.addEventListener("load", (event) => {
 
                     if (key in cachDictionary) {
                         if (typeof cachDictionary[key] === "undefined") {
-                            text += tokens[i];
+                            text.push(tokens[i]);
                         } else {
-                            text += cachDictionary[key];
+                            text.push(cachDictionary[key]);
                         }
                     } else {
                         let isNew = true;
 
                         for (let j = 0; j < s.sequence.length; j++) {
                             if (s.sequence[j].index == i) {
-                                if (key == s.sequence[j].term) {
+                                if (key == s.sequence[j].term.name) {
                                     cachDictionary[key] = undefined;
                                 } else {
                                     cachDictionary[key] = s.sequence[j].term;
-                                    text += s.sequence[j].term;
+                                    text.push(s.sequence[j].term);
                                     isNew = false;
                                 }
 
@@ -2608,7 +2608,7 @@ window.addEventListener("load", (event) => {
                                 return null;
                             }
 
-                            text += tokens[i];
+                            text.push(tokens[i]);
                         }
                     }
                 }
@@ -3414,10 +3414,22 @@ window.addEventListener("load", (event) => {
 
                                 sequence.shift();
                             } else if (sequence[0].type == "Message" && this.message === null && this.animationQueue.length === 0) {
+                                let text = "";
+                                const words = [];
+
+                                for (const inline of sequence[0].text) {
+                                    if (typeof(inline) === 'object') {
+                                        text += inline.name;
+                                        words.push(inline);
+                                    } else {
+                                        text += inline;
+                                    }
+                                }
+
                                 if ("character" in sequence[0]) {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: sequence[0].text };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words };
                                 } else {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: sequence[0].text };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words };
                                 }
 
                                 sequence.shift();
