@@ -432,6 +432,25 @@
             </transition>
             <div id="three" v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto' }" ref="three">
             </div>
+            <transition name="slide">
+                <div id="character" oncontextmenu="return false;"
+                    v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto', width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                    @click="activate()" v-show="character !== null && character.visible">
+                    <canvas v-bind:width="canvasSize.deviceWidth" v-bind:height="canvasSize.deviceHeight"
+                        v-bind:style="{ width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
+                        ref="canvas"></canvas>
+                </div>
+            </transition>
+            <transition name="alternative">
+                <div id="alternative" oncontextmenu="return false;"
+                    v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto', width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                    v-show="alternative !== null">
+                    <canvas v-bind:width="canvasSize.alternative.deviceWidth"
+                        v-bind:height="canvasSize.alternative.deviceHeight"
+                        v-bind:style="{ width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
+                        ref="alternative"></canvas>
+                </div>
+            </transition>
             <transition name="fade">
                 <div class="hud" v-if="isOverlayed">
                     <div class="columns is-centered"
