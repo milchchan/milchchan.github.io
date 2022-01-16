@@ -2058,7 +2058,7 @@ window.addEventListener("load", (event) => {
 
                     const document = this.documentQueue.shift();
 
-                    if (this.user.uid !== null && await this.talk(this.user.uid, document.filter((x) => x !== this.character.name))) {
+                    if (this.user.uid !== null && await this.talk(this.user.uid, document.filter((x) => x.indexOf(this.character.name) === -1))) {
                         return;
                     }
                 }
@@ -2069,7 +2069,7 @@ window.addEventListener("load", (event) => {
                     const tokens = [];
 
                     for (const word of this.take(shuffle(this.recentWords), i)) {
-                        if (this.user.uid !== word.user.id && word.name.indexOf(this.character.name) !== -1) {
+                        if (this.user.uid !== word.user.id && word.name.indexOf(this.character.name) === -1) {
                             tokens.push(word.name);
                         }
                     }
