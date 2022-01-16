@@ -207,6 +207,7 @@ window.addEventListener("load", event => {
                 isHangingOn: false,
                 isSubmitting: false,
                 isStared: false,
+                isLocked: false,
                 mode: null,
                 feedQueue: [],
                 sequenceQueue: [],
@@ -236,6 +237,11 @@ window.addEventListener("load", event => {
                 animations: null,
                 currentAnimations: [],
                 blendShapeAnimations: [],
+                animationQueue: [],
+                canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0, alternative: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 } },
+                cachedImages: {},
+                cachedSprites: [],
+                alternativeCachedSprites: [],
                 insetTop: 0,
                 insetBottom: 0,
                 text: [],
@@ -246,6 +252,7 @@ window.addEventListener("load", event => {
                 message: null,
                 states: {},
                 character: null,
+                alternative: null,
                 wordDictionary: {},
                 reverseWordDictionary: {},
                 attributes: ["名前", "所属", "時間", "場所", "する事", "生き物", "食べ物", "飲み物", "聞くもの", "見るもの", "読むもの", "使う物", "身につけるもの", "乗り物", "部位", "病気"]
@@ -842,6 +849,19 @@ window.addEventListener("load", event => {
 
                 this.word = { name: word.name, attributes: attributes };
 
+                /*for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Learn"), word.name, this.character.alternative.sequences)) {
+                    if (obj.type === "Message") {
+                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: format(obj.text, word.name) });
+                    } else {
+                        obj["character"] = this.character.alternative;
+                        sequence.push(obj);
+                    }
+                }
+
+                if (sequence.length > 0) {
+                    this.sequenceQueue.push(sequence);
+                }*/
+
                 for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learn"))) {
                     if (obj.type === "Message") {
                         sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: format(obj.text, word.name) });
@@ -862,40 +882,41 @@ window.addEventListener("load", event => {
                         function _random(min, max) {
                             min = Math.ceil(min);
                             max = Math.floor(max);
-    
+
                             return Math.floor(Math.random() * (max - min)) + min;
                         }
 
-                        const i = _random(0, this.words.length);
+                        const words = this.words.filter((x => "timestamp" in x))
+                        const i = _random(0, words.length);
 
                         if (i > 0) {
                             function shuffle(array) {
                                 let a = [].concat(array);
                                 let n = array.length;
-        
+
                                 while (n > 1) {
                                     const k = _random(0, n);
-        
+
                                     n--;
-        
+
                                     const temp = a[n];
-        
+
                                     a[n] = a[k];
                                     a[k] = temp;
                                 }
-        
+
                                 return a;
                             }
 
                             const selectedTokens = [];
 
-                            for (const word of this.take(shuffle(this.words), i)) {
-                                if (word.name.indexOf(this.character.name) !== -1) {
+                            for (const word of this.take(shuffle(words), i)) {
+                                if (word.name.indexOf(this.character.name) === -1) {
                                     selectedTokens.push(word.name);
                                 }
                             }
 
-                            if (!await this.talk(selectedTokens.concat(tokens))) {
+                            if (!await this.talk(selectedTokens.concat(tokens.filter((x) => x.indexOf(this.character.name) === -1)))) {
                                 this.talk();
                             }
 
@@ -903,12 +924,13 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    if (!await this.talk(tokens)) {
+                    if (!await this.talk(tokens.filter((x) => x.indexOf(this.character.name) === -1))) {
                         this.talk();
                     }
                 }
             },
             talk: async function (tokens = []) {
+                console.log(tokens);
                 let sequences = this.character.sequences.filter((x) => x.name === "Activate");
                 let sequence = [];
 
@@ -2007,7 +2029,7 @@ window.addEventListener("load", event => {
 
                 return sequenceStack;
             },
-            animate: function () {
+            animate: async function () {
                 requestAnimationFrame(this.animate);
 
                 stats.begin();
@@ -2031,7 +2053,7 @@ window.addEventListener("load", event => {
                     composer.setSize(width, height);
                 }
 
-                if (vrmModel) {
+                if (this.character !== null && vrmModel) {
                     function _random(min, max) {
                         min = Math.ceil(min);
                         max = Math.floor(max);
@@ -2137,7 +2159,35 @@ window.addEventListener("load", event => {
 
                         if (sequence.length > 0) {
                             if (sequence[0].type == "Animation") {
-                                if ("name" in sequence[0]) {
+                                if ("frames" in sequence[0]) {
+                                    for (const obj of sequence[0].frames) {
+                                        if (Array.isArray(obj)) {
+                                            if ("character" in sequence[0]) {
+                                                this.animationQueue.push({ character: sequence[0].character, images: obj });
+                                            } else {
+                                                this.animationQueue.push({ character: this.character, images: obj });
+                                            }
+                                        } else if (typeof (obj) === "object") {
+                                            if ("iterations" in obj) {
+                                                if ("images" in obj) {
+                                                    const c = "character" in sequence[0] ? sequence[0].character : this.character;
+
+                                                    for (let i = 0; i < obj.iterations; i++) {
+                                                        this.animationQueue.push({ character: c, images: obj.images });
+                                                    }
+                                                } else if ("sprites" in obj) {
+                                                    const c = "character" in sequence[0] ? sequence[0].character : this.character;
+
+                                                    for (let i = 0; i < obj.iterations; i++) {
+                                                        this.animationQueue.push({ character: c, images: obj.sprites });
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    sequence.shift();
+                                } else if ("name" in sequence[0] && ("character" in sequence[0] === false || sequence[0].character.name === this.character.name)) {
                                     if (sequence[0].name in this.animations) {
                                         let isDependency = false;
 
@@ -2237,12 +2287,12 @@ window.addEventListener("load", event => {
                                 } else {
                                     sequence.shift();
                                 }
-                            } else if (sequence[0].type == "Message" && this.message === null && !isAnimating && !isDeforming) {
+                            } else if (sequence[0].type == "Message" && this.message === null && !isAnimating && !isDeforming && this.animationQueue.length === 0) {
                                 let text = "";
                                 const words = [];
 
                                 for (const inline of sequence[0].text) {
-                                    if (typeof(inline) === 'object') {
+                                    if (typeof (inline) === 'object') {
                                         text += inline.name;
                                         words.push(inline);
                                     } else {
@@ -2290,8 +2340,18 @@ window.addEventListener("load", event => {
                                     });
                                 }
                             }
-                        } else if (this.message === null && !isAnimating && !isDeforming) {
+                        } else if (this.message === null && !isAnimating && !isDeforming && this.animationQueue.length === 0) {
+                            const self = this;
+
+                            Object.keys(this.cachedImages).forEach(function (key) {
+                                if (!self.cachedSprites.some(x => x.source === key)) {
+                                    delete self.cachedImages[key];
+                                }
+                            });
+
                             this.sequenceQueue.shift();
+                            this.character["visible"] = false;
+                            this.alternative = null;
                         }
                         /*} else if (app.suggestionQueue.length > 0) {
                             const suggestion = app.suggestionQueue[0];
@@ -3071,6 +3131,66 @@ window.addEventListener("load", event => {
                     /*if (currentMixer) {
                         currentMixer.update(deltaTime);
                     }*/
+
+                    if (this.animationQueue.length > 0) {
+                        const animation = this.animationQueue[0];
+
+                        if (!this.isLocked) {
+                            const animations = [];
+
+                            for (const a of this.animationQueue) {
+                                animations.push(a);
+                            }
+
+                            this.isLocked = true;
+
+                            for (const a of animations) {
+                                for (const sprite of a.images) {
+                                    if (sprite.source in this.cachedImages === false) {
+                                        try {
+                                            const image = await new Promise(async (resolve, reject) => {
+                                                const i = new Image();
+
+                                                i.onload = () => {
+                                                    resolve(i);
+                                                };
+                                                i.onerror = (e) => {
+                                                    reject(e);
+                                                };
+
+                                                i.crossOrigin = "Anonymous";
+                                                i.src = sprite.source;
+                                            });
+
+                                            this.cachedImages[sprite.source] = image;
+                                        } catch (e) {
+                                            console.error(e);
+                                        }
+                                    }
+                                }
+                            }
+
+                            this.isLocked = false;
+
+                            if (animation.character.name === this.character.name) {
+                                this.character["visible"] = true;
+                                this.cachedSprites.splice(0);
+
+                                for (const sprite of this.render(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, animation.images)) {
+                                    this.cachedSprites.push(sprite);
+                                }
+                            } else {
+                                this.alternative = this.character.alternative;
+                                this.alternativeCachedSprites.splice(0);
+
+                                for (const sprite of this.render(this.$refs.alternative.getContext("2d"), this.alternativeCanvasWidth, this.alternativeCanvasHeight, animation.images)) {
+                                    this.alternativeCachedSprites.push(sprite);
+                                }
+                            }
+
+                            this.animationQueue.shift();
+                        }
+                    }
                 }
 
                 controls.update();
@@ -3079,6 +3199,27 @@ window.addEventListener("load", event => {
                 composer.render(deltaTime);
 
                 stats.end();
+            },
+            render: function (ctx, width, height, animation) {
+                const sprites = [];
+
+                ctx.clearRect(0, 0, width, height);
+
+                for (const sprite of animation) {
+                    if (sprite.source in this.cachedImages) {
+                        if ("opacity" in sprite) {
+                            ctx.globalAlpha = sprite.opacity;
+                        } else {
+                            ctx.globalAlpha = 1;
+                        }
+
+                        ctx.drawImage(this.cachedImages[sprite.source], sprite.x * window.devicePixelRatio, sprite.y * window.devicePixelRatio, sprite.width * window.devicePixelRatio, sprite.height * window.devicePixelRatio);
+                    }
+
+                    sprites.push(sprite);
+                }
+
+                return sprites;
             }
         },
         updated: function () {
@@ -3125,11 +3266,33 @@ window.addEventListener("load", event => {
                 return collection[index];
             }
 
+            function softmax(x, func1, func2) {
+                let y = [].concat(x);
+                let max = Number.MIN_VALUE;
+                let sum = 0.0;
+
+                for (let i = 0; i < x.length; i++) {
+                    if (func1(x[i]) > max) {
+                        max = func1(x[i]);
+                    }
+                }
+
+                for (let i = 0; i < x.length; i++) {
+                    sum += Math.exp(func1(x[i]) - max);
+                }
+
+                for (let i = 0; i < x.length; i++) {
+                    func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                }
+
+                return y;
+            }
+
             const self = this;
             const characterStorageItem = localStorage.getItem("character");
             const credentialStorageItem = localStorage.getItem("credential");
             let credential = null;
-            const characters = [{ path: "/assets/milch.json", probability: 0.9 }, { path: "/assets/merku.json", probability: 0.1 }];
+            const characters = [{ path: "/assets/milch.json", probability: 0.1 }, { path: "/assets/merku.json", probability: 0.9 }];
             const loader = new GLTFLoader();
 
             if (window.location.pathname === "/about") {
@@ -3172,26 +3335,115 @@ window.addEventListener("load", event => {
             this.insetBottom = this.$refs.blank.getBoundingClientRect().height;
 
             try {
-                const response = await fetch(choice(characters, (x) => x.probability).path, {
+                const path = choice(characters, (x) => x.probability).path;
+                const response1 = await fetch(path, {
                     mode: "cors",
                     method: "GET",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     }
                 });
+                let character;
 
-                if (response.ok) {
-                    this.character = await response.json();
+                if (response1.ok) {
+                    character = await response1.json();
                 }
                 else {
-                    throw new Error(response.statusText);
+                    throw new Error(response1.statusText);
                 }
+
+                const sequence = this.prepare(character.sequences.filter((x) => x.name === "Start"), null, character.sequences)
+
+                for (let i = characters.length - 1; i >= 0; i--) {
+                    if (characters[i].path === path) {
+                        characters.splice(i, 1);
+                    }
+                }
+
+                const response2 = await fetch(choice(softmax(characters, (x) => x.probability, (x, y) => x.probability = y), (x) => x.probability).path, {
+                    mode: "cors",
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                });
+                let alternative;
+
+                if (response2.ok) {
+                    alternative = await response2.json();
+                } else {
+                    throw new Error(response2.statusText);
+                }
+
+                this.canvasSize.width = character.width;
+                this.canvasSize.height = character.height;
+                this.canvasSize.deviceWidth = character.width * window.devicePixelRatio;
+                this.canvasSize.deviceHeight = character.height * window.devicePixelRatio;
+                this.canvasSize.alternative.width = alternative.width;
+                this.canvasSize.alternative.height = alternative.height;
+                this.canvasSize.alternative.deviceWidth = alternative.width * window.devicePixelRatio;
+                this.canvasSize.alternative.deviceHeight = alternative.height * window.devicePixelRatio;
+
+                for (const obj of sequence) {
+                    if (obj.type == "Animation" && "frames" in obj && obj.frames.length > 0) {
+                        let images = null;
+
+                        if (Array.isArray(obj.frames[0])) {
+                            images = obj.frames[0];
+                        } else if (typeof (obj.frames[0]) === "object") {
+                            if ("iterations" in obj.frames[0]) {
+                                if ("images" in obj.frames[0] && obj.frames[0].images.length > 0) {
+                                    images = obj.frames[0].images;
+                                } else if ("sprites" in obj.frames[0] && obj.frames[0].sprites.length > 0) {
+                                    images = obj.frames[0].sprites;
+                                }
+                            }
+                        }
+
+                        if (images !== null) {
+                            for (const sprite of images) {
+                                if (sprite.source in this.cachedImages === false) {
+                                    try {
+                                        const image = await new Promise(async (resolve, reject) => {
+                                            const i = new Image();
+
+                                            i.onload = () => {
+                                                resolve(i);
+                                            };
+                                            i.onerror = (e) => {
+                                                reject(e);
+                                            };
+
+                                            i.crossOrigin = "Anonymous";
+                                            i.src = sprite.source;
+                                        });
+
+                                        this.cachedImages[sprite.source] = image;
+                                    } catch (e) {
+                                        console.error(e);
+                                    }
+                                }
+                            }
+
+                            this.cachedSprites.splice(0);
+
+                            for (const sprite of this.render(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, images)) {
+                                this.cachedSprites.push(sprite);
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+                this.character = character;
+                this.character["visible"] = false;
+                this.character["alternative"] = alternative;
+                this.sequenceQueue.push(sequence);
             } catch (e) {
                 this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                 console.error(e);
             }
-
-            this.sequenceQueue.push(this.prepare(this.character.sequences.filter((x) => x.name === "Start")));
 
             loader.crossOrigin = "anonymous";
             loader.load(
@@ -3416,6 +3668,19 @@ window.addEventListener("load", event => {
 
         app.insetTop = app.$refs.indicator.getBoundingClientRect().height;
         app.insetBottom = app.$refs.blank.getBoundingClientRect().height;
+        app.canvasSize.width = app.character.width;
+        app.canvasSize.height = app.character.height;
+        app.canvasSize.deviceWidth = app.character.width * window.devicePixelRatio;
+        app.canvasSize.deviceHeight = app.character.height * window.devicePixelRatio;
+        app.canvasSize.alternative.width = app.character.alternative.width;
+        app.canvasSize.alternative.height = app.character.alternative.height;
+        app.canvasSize.alternative.deviceWidth = app.character.alternative.width * window.devicePixelRatio;
+        app.canvasSize.alternative.deviceHeight = app.character.alternative.height * window.devicePixelRatio;
+        app.animationQueue.unshift({ character: app.character, images: [].concat(app.cachedSprites) });
+
+        if (app.alternative !== null) {
+            app.animationQueue.unshift({ character: app.character.alternative, images: [].concat(app.alternativeCachedSprites) });
+        }
 
         //app.$refs.ticker.style.width = document.body.querySelector("#input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(1) form").getBoundingClientRect().width + 'px';
 
