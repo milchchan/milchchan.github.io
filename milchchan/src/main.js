@@ -930,7 +930,6 @@ window.addEventListener("load", event => {
                 }
             },
             talk: async function (tokens = []) {
-                console.log(tokens);
                 let sequences = this.character.sequences.filter((x) => x.name === "Activate");
                 let sequence = [];
 
@@ -3292,7 +3291,7 @@ window.addEventListener("load", event => {
             const characterStorageItem = localStorage.getItem("character");
             const credentialStorageItem = localStorage.getItem("credential");
             let credential = null;
-            const characters = [{ path: "/assets/milch.json", probability: 0.1 }, { path: "/assets/merku.json", probability: 0.9 }];
+            const characters = [{ path: "/assets/milch.json", probability: 0.9 }, { path: "/assets/merku.json", probability: 0.1 }];
             const loader = new GLTFLoader();
 
             if (window.location.pathname === "/about") {
