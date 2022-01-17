@@ -22,7 +22,7 @@ import { TinySegmenter } from './tiny-segmenter.js';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
 import { getDatabase, ref as databaseRef, query, orderByChild, limitToLast, startAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
-import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
@@ -1521,7 +1521,13 @@ window.addEventListener("load", event => {
 
                 for (const path of backgroundImage.paths) {
                     try {
-                        preloadImages.push({ id: backgroundImage.id, blob: await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)), timestamp: backgroundImage.timestamp });
+                        const metadata = await getMetadata(storageRef(storage, path));
+
+                        if (metadata.contentType === 'image/gif') {
+                            preloadImages.push({ id: backgroundImage.id, url: await getDownloadURL(storageRef(storage, path), Math.max(window.screen.width, window.screen.height)), timestamp: backgroundImage.timestamp });
+                        } else {
+                            preloadImages.push({ id: backgroundImage.id, blob: await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)), timestamp: backgroundImage.timestamp });
+                        }
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e);
@@ -1529,7 +1535,11 @@ window.addEventListener("load", event => {
                 }
 
                 for (const image of preloadImages) {
-                    this.backgroundImages.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
+                    if ('url' in image) {
+                        this.backgroundImages.push({ id: image.id, url: image.url, timestamp: image.timestamp });
+                    } else {
+                        this.backgroundImages.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
+                    }
                 }
 
                 if ("tags" in backgroundImage) {
