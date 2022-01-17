@@ -487,26 +487,6 @@
                                 <transition name="fade" mode="out-in" v-on:before-leave="$refs.menu.scroll(0, 0)">
                                     <nav class="columns is-desktop" v-if="word" key="learn">
                                         <div class="column is-full has-content-centered">
-                                            <article class="media" v-cloak>
-                                                <figure class="media-left">
-                                                    <p class="image is-64x64">
-                                                        <img class="is-rounded" v-bind:src="character.image"
-                                                            v-bind:alt="character.name" v-cloak>
-                                                    </p>
-                                                </figure>
-                                                <div class="media-content">
-                                                    <div class="content has-text-left">
-                                                        <div class="balloon"
-                                                            v-bind:style="{ backgroundColor: character.accent }"
-                                                            v-cloak>
-                                                            <p class="is-size-7 has-text-weight-bold has-text-white"
-                                                                v-cloak>
-                                                                {{ word.name }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </article>
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
