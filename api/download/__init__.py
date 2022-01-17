@@ -52,6 +52,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 version='v4',
                                 expiration=expiration,
                                 method='GET'),
+                            'type': blob.content_type,
                             'timestamp': int(time.time())
                         }),
                         status_code=200,
