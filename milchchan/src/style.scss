@@ -507,6 +507,36 @@ label .scrollable > div {
         overflow: hidden;
     }
 
+    > .columns {
+        display: flex;
+        width: 100%;
+        background: transparent !important;
+        justify-content: center;
+        align-items: center;
+
+        > .column {
+            padding: 16px !important;
+
+            > .tags {
+                margin: -8px;
+
+                > .control > .tags > .tag {
+                    margin: 0px;
+                    padding: 8px 16px 8px 16px;
+                    border: 1px solid rgba(255, 255, 255, 1.0) !important;
+                    border-radius: 500px 500px 500px 500px;
+                    background: transparent !important;
+                    background-clip: padding-box;
+                    height: initial;
+                    box-shadow: none;
+                    backdrop-filter: initial;
+                    -webkit-backdrop-filter: initial;
+                    color: #ffffff;
+                }
+            }
+        }
+    }
+
     > div::before {
         display: block;
         position: absolute;
@@ -695,7 +725,7 @@ label .scrollable > div {
     height: 100%;
 
     > .wrap > .frame {
-        .columns:last-of-type {
+        > .columns:last-of-type {
             position: absolute;
             bottom: 0;
             margin: 0;
