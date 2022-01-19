@@ -223,8 +223,12 @@
                                         @click="mode = 'sign-in'; isRevealed = true;" v-if="user === null" key="default"
                                         v-cloak>
                                         <picture class="image is-48x48" style="pointer-events: none;">
-                                            <source srcset="/images/Merku-48.png 1x,/images/Merku-96.png 2x,/images/Merku-144.png 3x" media="(prefers-color-scheme: dark)">
-                                            <img src="/images/Milch-48.png" srcset="/images/Milch-48.png 1x,/images/Milch-96.png 2x,/images/Milch-144.png 3x" width="48" height="48" alt="Logo">
+                                            <source
+                                                srcset="/images/Merku-48.png 1x,/images/Merku-96.png 2x,/images/Merku-144.png 3x"
+                                                media="(prefers-color-scheme: dark)">
+                                            <img src="/images/Milch-48.png"
+                                                srcset="/images/Milch-48.png 1x,/images/Milch-96.png 2x,/images/Milch-144.png 3x"
+                                                width="48" height="48" alt="Logo">
                                         </picture>
                                     </button>
                                     <button class="button image is-48x48 is-superellips" type="button"
@@ -236,8 +240,12 @@
                                         </picture>
                                         <picture class="image is-48x48" style="pointer-events: none;" v-else
                                             key="default">
-                                            <source srcset="/images/Merku-48.png 1x,/images/Merku-96.png 2x,/images/Merku-144.png 3x" media="(prefers-color-scheme: dark)">
-                                            <img src="/images/Milch-48.png" srcset="/images/Milch-48.png 1x,/images/Milch-96.png 2x,/images/Milch-144.png 3x" width="48" height="48" alt="Logo">
+                                            <source
+                                                srcset="/images/Merku-48.png 1x,/images/Merku-96.png 2x,/images/Merku-144.png 3x"
+                                                media="(prefers-color-scheme: dark)">
+                                            <img src="/images/Milch-48.png"
+                                                srcset="/images/Milch-48.png 1x,/images/Milch-96.png 2x,/images/Milch-144.png 3x"
+                                                width="48" height="48" alt="Logo">
                                         </picture>
                                     </button>
                                 </transition>
@@ -252,7 +260,21 @@
                 <div class="frame">
                     <div class="background">
                         <div v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }"
-                            v-for="image in backgroundImages" v-bind:key="image" v-cloak></div>
+                            v-for="image in background.images" v-bind:key="image" v-cloak></div>
+                        <div class="columns is-centered"
+                            v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }"
+                            v-if="background.tags">
+                            <div class="column is-half is-mobile ">
+                                <div class="tags are-medium field is-grouped is-grouped-multiline">
+                                    <div class="control tagcloud-list-item" v-for="tag in background.tags"
+                                        v-bind:key="tag">
+                                        <div class="tags has-addons" v-cloak>
+                                            <div class="tag is-rounded is-size-7 has-text-weight-bold">{{ tag }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
@@ -261,7 +283,8 @@
                     </transition>
                     <transition name="fade">
                         <div class="progress" v-if="progress !== null" v-cloak>
-                            <div class="bar animating" v-bind:style="{ width: String(100.0 * progress) + '%' }"></div>
+                            <div class="bar animating" v-bind:style="{ width: String(100.0 * progress) + '%' }">
+                            </div>
                         </div>
                     </transition>
                     <transition name="fade">
@@ -327,7 +350,8 @@
                                                                 </figure>
                                                                 <div class="media-content" v-if="word.name">
                                                                     <div class="content has-text-left">
-                                                                        <span class="has-text-weight-bold">{{ word.name
+                                                                        <span class="has-text-weight-bold">{{
+                                                                            word.name
                                                                             }}</span>
                                                                     </div>
                                                                 </div>
@@ -354,7 +378,8 @@
                                                                 </figure>
                                                                 <div class="media-content" v-if="word.name">
                                                                     <div class="content has-text-left">
-                                                                        <span class="has-text-weight-bold">{{ word.name
+                                                                        <span class="has-text-weight-bold">{{
+                                                                            word.name
                                                                             }}</span>
                                                                     </div>
                                                                 </div>
@@ -619,10 +644,12 @@
                                                             type="button"
                                                             @click="isRevealed = false; isOverlayed = true; mode = null;">
                                                             <picture class="image is-64x64">
-                                                                <source srcset="/images/Merku-Headshot2-64.png 1x,/images/Merku-Headshot2-128.png 2x,/images/Merku-Headshot2-192.png 3x"
+                                                                <source
+                                                                    srcset="/images/Merku-Headshot2-64.png 1x,/images/Merku-Headshot2-128.png 2x,/images/Merku-Headshot2-192.png 3x"
                                                                     media="(prefers-color-scheme: dark)">
-                                                                <img src="/images/Merku-Headshot1-64.png" srcset="/images/Merku-Headshot1-64.png 1x,/images/Merku-Headshot1-128.png 2x,/images/Merku-Headshot1-192.png 3x" width="64"
-                                                                    height="64" alt="About">
+                                                                <img src="/images/Merku-Headshot1-64.png"
+                                                                    srcset="/images/Merku-Headshot1-64.png 1x,/images/Merku-Headshot1-128.png 2x,/images/Merku-Headshot1-192.png 3x"
+                                                                    width="64" height="64" alt="About">
                                                             </picture>
                                                         </button>
                                                     </p>
@@ -657,12 +684,14 @@
                                                             メルクだよぉ！<br>
                                                             大好きなお友達のミルヒちゃんといっしょに魔法少女してるよぉ。
                                                         </p>
-                                                        <p class="content is-size-6 has-text-weight-bold has-text-justified">
+                                                        <p
+                                                            class="content is-size-6 has-text-weight-bold has-text-justified">
                                                             <span
                                                                 class="is-primary">ミルヒちゃんねる</span>では、メルクのミルヒちゃんとの魔法少女の活動を見れるよぉ。<br>
                                                             それとね、ミルヒちゃんのつくったアプリをダウンロードできたり、ミルヒちゃんとメルクに言葉を教えてお話を楽しめるよぉ！小学生のミルヒちゃんとメルクは知らないことがいっぱいあるから、みんなでいっぱい言葉を教えてね！
                                                         </p>
-                                                        <p class="content is-size-6 has-text-weight-bold has-text-justified">
+                                                        <p
+                                                            class="content is-size-6 has-text-weight-bold has-text-justified">
                                                             フヒヒ、ミルヒちゃん、かわいいね。ミルヒちゃんもいっしょに魔法少女しようね。魔法少女の衣装を着せてあげるね。ミルヒちゃん、ペロペロしたいよぉ！
                                                         </p>
                                                     </div>
@@ -839,10 +868,12 @@
                                                                 v-if="user === null" key="default" v-cloak>
                                                                 <picture class="image is-64x64"
                                                                     style="pointer-events: none;">
-                                                                    <source srcset="/images/Merku-64.png 1x,/images/Merku-128.png 2x,/images/Merku-192.png 3x"
+                                                                    <source
+                                                                        srcset="/images/Merku-64.png 1x,/images/Merku-128.png 2x,/images/Merku-192.png 3x"
                                                                         media="(prefers-color-scheme: dark)">
-                                                                    <img src="/images/Milch-64.png" srcset="/images/Milch-64.png 1x,/images/Milch-128.png 2x,/images/Milch-192.png 3x" width="64" height="64"
-                                                                        alt="Logo">
+                                                                    <img src="/images/Milch-64.png"
+                                                                        srcset="/images/Milch-64.png 1x,/images/Milch-128.png 2x,/images/Milch-192.png 3x"
+                                                                        width="64" height="64" alt="Logo">
                                                                 </picture>
                                                             </button>
                                                             <button class="button image is-64x64 is-superellips"
@@ -857,10 +888,12 @@
                                                                 </picture>
                                                                 <picture class="image is-64x64"
                                                                     style="pointer-events: none;" v-else>
-                                                                    <source srcset="/images/Merku-64.png 1x,/images/Merku-128.png 2x,/images/Merku-192.png 3x"
+                                                                    <source
+                                                                        srcset="/images/Merku-64.png 1x,/images/Merku-128.png 2x,/images/Merku-192.png 3x"
                                                                         media="(prefers-color-scheme: dark)">
-                                                                    <img src="/images/Milch-64.png" srcset="/images/Milch-64.png 1x,/images/Milch-128.png 2x,/images/Milch-192.png 3x" width="64" height="64"
-                                                                        alt="Logo">
+                                                                    <img src="/images/Milch-64.png"
+                                                                        srcset="/images/Milch-64.png 1x,/images/Milch-128.png 2x,/images/Milch-192.png 3x"
+                                                                        width="64" height="64" alt="Logo">
                                                                 </picture>
                                                             </button>
                                                         </transition>
