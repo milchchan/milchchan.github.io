@@ -1524,7 +1524,25 @@ window.addEventListener("load", event => {
                         const metadata = await getMetadata(storageRef(storage, path));
 
                         if (metadata.contentType === 'image/gif') {
-                            preloadImages.push({ id: backgroundImage.id, url: await getDownloadURL(storageRef(storage, path), Math.max(window.screen.width, window.screen.height)), timestamp: backgroundImage.timestamp });
+                            try {
+                                const image = await new Promise(async (resolve, reject) => {
+                                    const i = new Image();
+            
+                                    i.onload = () => {
+                                        resolve(i);
+                                    };
+                                    i.onerror = (e) => {
+                                        reject(e);
+                                    };
+            
+                                    i.crossOrigin = "Anonymous";
+                                    i.src = await getDownloadURL(storageRef(storage, path));
+                                });
+
+                                preloadImages.push({ id: backgroundImage.id, url: image.src, timestamp: backgroundImage.timestamp });
+                            } catch (e) {
+                                console.error(e);
+                            }
                         } else {
                             preloadImages.push({ id: backgroundImage.id, blob: await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)), timestamp: backgroundImage.timestamp });
                         }
