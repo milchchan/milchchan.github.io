@@ -232,7 +232,7 @@ window.addEventListener("load", event => {
                 animatedNotificationHeight: 0,
                 recentImages: [],
                 backgroundImagesQueue: [],
-                backgroundImages: [],
+                background: { images: [], tags: null },
                 isUploading: false,
                 animations: null,
                 currentAnimations: [],
@@ -300,11 +300,11 @@ window.addEventListener("load", event => {
                     }
                 });
             },
-            backgroundImages: {
+            background: {
                 handler: () => {
                     app.$nextTick(() => {
-                        const elements = document.body.querySelectorAll("#app>.background>div");
-
+                        const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.background>div:not(.columns)");
+                        
                         if (elements.length > 1) {
                             const offset = elements.length - 1;
                             const frameRate = 15;
@@ -1513,11 +1513,11 @@ window.addEventListener("load", event => {
                 const backgroundImage = this.backgroundImagesQueue.shift();
                 const preloadImages = [];
 
-                for (const image of this.backgroundImages) {
+                for (const image of this.background.images) {
                     URL.revokeObjectURL(image.url);
                 }
 
-                this.backgroundImages.splice(0);
+                this.background.images.splice(0);
 
                 for (const path of backgroundImage.paths) {
                     try {
@@ -1554,14 +1554,25 @@ window.addEventListener("load", event => {
 
                 for (const image of preloadImages) {
                     if ('url' in image) {
-                        this.backgroundImages.push({ id: image.id, url: image.url, timestamp: image.timestamp });
+                        this.background.images.push({ id: image.id, url: image.url, timestamp: image.timestamp });
                     } else {
-                        this.backgroundImages.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
+                        this.background.images.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
                     }
                 }
 
                 if ("tags" in backgroundImage) {
+                    this.background.tags = backgroundImage.tags.sort((x, y) => {
+                        if (x.name > y.name) {
+                            return 1;
+                        } else if (x.name < y.name) {
+                            return -1;
+                        }
+    
+                        return 0;
+                    });
                     this.activate(backgroundImage.tags.filter((x) => x.indexOf(this.character.name) === -1));
+                } else {
+                    this.background.tags = null;
                 }
 
                 this.isBlinded = false;
