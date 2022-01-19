@@ -1713,18 +1713,18 @@ window.addEventListener("load", event => {
 
                             if (i.width > i.height) {
                                 if (i.width > length) {
-                                    canvas.width = length;
-                                    canvas.height = Math.floor(length / i.width * i.height);
+                                    canvas.width = length * window.devicePixelRatio;
+                                    canvas.height = Math.floor(length / i.width * i.height) * window.devicePixelRatio;
                                 } else {
-                                    canvas.width = i.width;
-                                    canvas.height = i.height;
+                                    canvas.width = i.width * window.devicePixelRatio;
+                                    canvas.height = i.height * window.devicePixelRatio;
                                 }
                             } else if (i.height > length) {
-                                canvas.width = Math.floor(length / i.height * i.width);
-                                canvas.height = length;
+                                canvas.width = Math.floor(length / i.height * i.width) * window.devicePixelRatio;
+                                canvas.height = length * window.devicePixelRatio;
                             } else {
-                                canvas.width = i.width;
-                                canvas.height = i.height;
+                                canvas.width = i.width * window.devicePixelRatio;
+                                canvas.height = i.height * window.devicePixelRatio;
                             }
 
                             const ctx = canvas.getContext("2d");
