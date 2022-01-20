@@ -21,7 +21,7 @@ import { TinySegmenter } from './tiny-segmenter.js';
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
-import { getDatabase, ref as databaseRef, query, orderByChild, limitToLast, startAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
+import { getDatabase, ref as databaseRef, query, orderByKey, orderByChild, limitToFirst, limitToLast, startAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from 'firebase/analytics';
 
@@ -304,7 +304,7 @@ window.addEventListener("load", event => {
                 handler: () => {
                     app.$nextTick(() => {
                         const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.background>div:not(.columns)");
-                        
+
                         if (elements.length > 1) {
                             const offset = elements.length - 1;
                             const frameRate = 15;
@@ -804,6 +804,73 @@ window.addEventListener("load", event => {
                 }
 
                 this.isSubmitting = false;
+            },
+            next: async function (key, offset, limit = 5) {
+                const temp = this.mode[key];
+                let snapshot;
+                const data = [];
+
+                this.mode[key] = null;
+
+                if (offset === null) {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByKey(), limitToFirst(limit + 1)));
+                } else {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByKey(), startAt(offset), limitToFirst(limit + 1)));
+                }
+
+                if (key in this.mode && snapshot.exists()) {
+                    const dictionary = snapshot.val();
+
+                    if (temp !== null && temp.length > 0) {
+                        this.mode.indexes.push(temp[0]);
+                    }
+
+                    for (const id in dictionary) {
+                        dictionary[id]['id'] = id;
+
+                        if ("image" in dictionary[id]) {
+                            dictionary[id]["image"] = { path: dictionary[id].image, url: await getDownloadURL(storageRef(storage, dictionary[id].image)) };
+                        }
+
+                        data.push(dictionary[id]);
+                    }
+
+                    if (data.length === limit + 1) {
+                        this.mode.next = data.pop();
+                    } else {
+                        this.mode.next = null;
+                    }
+                }
+
+                this.mode[key] = data;
+            },
+            previous: async function (key, offset, limit = 5) {
+                const temp = this.mode[key];
+
+                this.mode[key] = null;
+
+                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByKey(), startAt(offset), limitToFirst(limit)));
+                const data = [];
+
+                if (key in this.mode && snapshot.exists()) {
+                    const dictionary = snapshot.val();
+
+                    if (temp !== null && temp.length > 0) {
+                        this.mode.next = temp[0];
+                    }
+
+                    for (const id in dictionary) {
+                        dictionary[id]['id'] = id;
+
+                        if ("image" in dictionary[id]) {
+                            dictionary[id]["image"] = { path: dictionary[id].image, url: await getDownloadURL(storageRef(storage, dictionary[id].image)) };
+                        }
+
+                        data.push(dictionary[id]);
+                    }
+                }
+
+                this.mode[key] = data;
             },
             learn: async function (word) {
                 function format(format) {
@@ -1527,14 +1594,14 @@ window.addEventListener("load", event => {
                             try {
                                 const image = await new Promise(async (resolve, reject) => {
                                     const i = new Image();
-            
+
                                     i.onload = () => {
                                         resolve(i);
                                     };
                                     i.onerror = (e) => {
                                         reject(e);
                                     };
-            
+
                                     i.crossOrigin = "Anonymous";
                                     i.src = await getDownloadURL(storageRef(storage, path));
                                 });
@@ -1567,7 +1634,7 @@ window.addEventListener("load", event => {
                         } else if (x.name < y.name) {
                             return -1;
                         }
-    
+
                         return 0;
                     });
                     this.activate(backgroundImage.tags.filter((x) => x.indexOf(this.character.name) === -1));
