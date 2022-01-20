@@ -136,7 +136,7 @@
                                 </button>
                                 <button class="button is-white" type="button"
                                     @click="isRevealed = !isRevealed; mode = null;"
-                                    v-else-if="mode === '_about' || mode === '_milch' || mode === '_merku'" key="force">
+                                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_about' || mode === '_milch' || mode === '_merku'" key="force">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -1473,7 +1473,7 @@
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
-                    v-else-if="mode === '_about' || mode === '_milch' || mode === '_merku'" key="force">
+                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_about' || mode === '_milch' || mode === '_merku'" key="force">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
