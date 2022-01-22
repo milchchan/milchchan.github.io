@@ -1939,7 +1939,44 @@ label .scrollable > div {
                     }
 
                     > .level-item {
-                        button {
+                        margin: 0;
+                        padding: 0;
+
+                        > .level {
+                            display: flex;
+                            margin: 0px -8px 0px -8px;
+                            padding: 0;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: flex-start;
+
+                            > .level-item {
+                                margin: 0;
+                                padding: 0px 8px 0px 8px;
+
+                                button {
+                                    margin: 0px;
+                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                    border-radius: 290486px;
+                                    padding: 10px;
+                                    background: rgba(255, 255, 255, 0.75) !important;
+                                    background-clip: padding-box;
+                                    height: initial;
+                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                    backdrop-filter: blur(4px);
+                                    -webkit-backdrop-filter: blur(4px);
+                                    color: var(--accent-color) !important;
+
+                                    > span {
+                                        margin: 0 !important;
+                                        width: 1rem !important;
+                                        height: 1rem !important;
+                                    }
+                                }
+                            }
+                        }
+
+                        > button {
                             margin: 0px;
                             border: 0px solid rgba(255, 255, 255, 0.5);
                             border-radius: 290486px;
