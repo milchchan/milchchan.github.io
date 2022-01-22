@@ -849,8 +849,27 @@ window.addEventListener("load", event => {
                 this.isSubmitting = false;
             },
             like: async function (message) {
+                const timestamp = Math.floor(new Date() / 1000);
 
+                try {
+                    /*const result = */await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
+                        if (current) {
+                            current["text"] = message.original;
+                            current["author"] = this.character.name;
+                            current["timestamp"] = timestamp;
 
+                            return current;
+                        }
+
+                        return { text: message.original, author: this.character.name, timestamp: timestamp };
+                    });
+
+                    /*if (result.committed && result.snapshot.exists()) {
+                    }*/
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
+                }
             },
             next: async function (key, offset, limit = 10) {
                 const temp = this.mode[key];
@@ -1895,10 +1914,13 @@ window.addEventListener("load", event => {
                     window.scrollTo(0, document.body.scrollHeight);
                 }, 500);
             },
-            formatDate: function (event) {
-                moment.locale(window.navigator.language);
+            digestMessage: async function (message) {
+                const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
+                const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);           // hash the message
+                const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
 
-                return moment(event).format("LT");
+                return hashHex;
             },
             animationStart: function (el) {
                 this.isAnimating = true;
