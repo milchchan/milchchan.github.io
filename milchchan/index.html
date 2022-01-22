@@ -590,7 +590,7 @@
                                                 </div>
                                                 <div class="level is-mobile" v-else key="loaded">
                                                     <div class="level-item" v-for="like in mode.likes"
-                                                        v-bind:key="likes">
+                                                        v-bind:key="like">
                                                         <div class="level">
                                                             <div class="level-item">
                                                                 <article class="media">
@@ -609,15 +609,14 @@
                                                                             <div>
                                                                                 <div>
                                                                                     <div><span
-                                                                                            class="is-size-4 has-text-weight-bold">{{
-                                                                                            like.text }}</span>
+                                                                                            class="is-size-4 has-text-weight-bold" v-text="typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), '')"></span>
                                                                                     </div>
                                                                                     <div><span
                                                                                             class="is-size-7 has-text-weight-bold">{{
                                                                                             like.author }}</span>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div>
+                                                                                <div v-if="isDebug">
                                                                                     <transition name="fade"
                                                                                         mode="out-in">
                                                                                         <div class="file button is-rounded is-size-7 has-text-weight-bold"
@@ -1644,42 +1643,39 @@
                                     <div class="level-item">
                                         <nav class="level is-mobile"
                                             v-if="message !== null && 'character' in message && message.character !== null">
-                                            <div class="level-item" v-if="'accent' in message.character" key="custom">
-                                                <article class="media"
-                                                    v-bind:style="{ backgroundColor: message.character.accent }">
-                                                    <figure class="media-left" v-if="'image' in message.character">
-                                                        <span class="image is-24x24">
-                                                            <img class="is-rounded" v-bind:src="message.character.image"
-                                                                v-bind:alt="message.character.name" v-cloak>
-                                                        </span>
-                                                    </figure>
-                                                    <div class="media-content">
-                                                        <div class="content has-text-left">
-                                                            <span class="is-size-7 has-text-weight-bold has-text-white"
-                                                                v-cloak>
-                                                                {{ message.character.name }}
-                                                            </span>
-                                                        </div>
+                                            <div class="level-item">
+                                                <div class="level">
+                                                    <div class="level-item">
+                                                        <article class="media"
+                                                            v-bind:style="{ backgroundColor: message.character.accent }">
+                                                            <figure class="media-left"
+                                                                v-if="'image' in message.character">
+                                                                <span class="image is-24x24">
+                                                                    <img class="is-rounded"
+                                                                        v-bind:src="message.character.image"
+                                                                        v-bind:alt="message.character.name" v-cloak>
+                                                                </span>
+                                                            </figure>
+                                                            <div class="media-content">
+                                                                <div class="content has-text-left">
+                                                                    <span
+                                                                        class="is-size-7 has-text-weight-bold has-text-white"
+                                                                        v-cloak>
+                                                                        {{ message.character.name }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </article>
                                                     </div>
-                                                </article>
-                                            </div>
-                                            <div class="level-item" v-else key="default">
-                                                <article class="media">
-                                                    <figure class="media-left" v-if="'image' in message.character">
-                                                        <span class="image is-24x24">
-                                                            <img class="is-rounded" v-bind:src="message.character.image"
-                                                                v-bind:alt="message.character.name" v-cloak>
-                                                        </span>
-                                                    </figure>
-                                                    <div class="media-content">
-                                                        <div class="content has-text-left">
-                                                            <span class="is-size-7 has-text-weight-bold has-text-white"
-                                                                v-cloak>
-                                                                {{ message.character.name }}
+                                                    <div class="level-item">
+                                                        <button class="button" type="button" @click="like(message)"
+                                                            v-cloak>
+                                                            <span class="icon is-small" style="pointer-events: none;">
+                                                                <i class="fas fa-heart"></i>
                                                             </span>
-                                                        </div>
+                                                        </button>
                                                     </div>
-                                                </article>
+                                                </div>
                                             </div>
                                             <div class="level-item">
                                                 <button class="button" type="button" @click="isPopup = false" v-cloak>
