@@ -36,7 +36,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if match:
                 mime_type, encoding, data = match.groups()
             
-                if mime_type in ['image/gif', 'image/png', 'image/jpeg'] and encoding == 'base64':
+                if mime_type in ['image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
                     bucket_name = 'merkuchan.com'
 
                     if path is None:
