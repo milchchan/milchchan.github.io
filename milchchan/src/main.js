@@ -583,78 +583,121 @@ window.addEventListener("load", event => {
                     this.inputHasError = true;
                 }
             },
-            upload: async function (event) {
-                function generateUuid() {
-                    // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
-                    // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-                    let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
-
-                    for (let i = 0, len = chars.length; i < len; i++) {
-                        switch (chars[i]) {
-                            case "x":
-                                chars[i] = Math.floor(Math.random() * 16).toString(16);
-                                break;
-                            case "y":
-                                chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
-                                break;
-                        }
-                    }
-
-                    return chars.join("");
-                }
-
-                const self = this;
+            upload: async function (event, data = null) {
                 const timestamp = Math.floor(new Date() / 1000);
-                const files = [];
-                const paths = [];
-
-                for (const file of event.target.files) {
-                    files.push(file);
-                }
 
                 this.isUploading = true;
 
-                for (const file of files.sort((x, y) => {
-                    if (x.name > y.name) {
-                        return 1;
-                    } else if (x.name < y.name) {
-                        return -1;
+                if ('files' in event.currentTarget) {
+                    function generateUuid() {
+                        // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
+                        // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+                        let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
+
+                        for (let i = 0, len = chars.length; i < len; i++) {
+                            switch (chars[i]) {
+                                case "x":
+                                    chars[i] = Math.floor(Math.random() * 16).toString(16);
+                                    break;
+                                case "y":
+                                    chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
+                                    break;
+                            }
+                        }
+
+                        return chars.join("");
                     }
 
-                    return 0;
-                })) {
-                    const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file);
+                    const self = this;
+                    const files = [];
+                    const paths = [];
+
+                    for (const file of event.currentTarget.files) {
+                        files.push(file);
+                    }
+
+                    for (const file of files.sort((x, y) => {
+                        if (x.name > y.name) {
+                            return 1;
+                        } else if (x.name < y.name) {
+                            return -1;
+                        }
+
+                        return 0;
+                    })) {
+                        const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file);
+
+                        try {
+                            await new Promise(function (resolve, reject) {
+                                uploadTask.on("state_changed", (snapshot) => {
+                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + paths.length / files.length;
+                                }, (error) => {
+                                    reject(error);
+                                }, () => {
+                                    resolve(uploadTask.snapshot.ref);
+                                });
+                            });
+                        } catch (error) {
+                            this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
+                            console.error(error);
+                        }
+
+                        paths.push(uploadTask.snapshot.ref.fullPath);
+                    }
 
                     try {
-                        await new Promise(function (resolve, reject) {
-                            uploadTask.on("state_changed", (snapshot) => {
-                                self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + paths.length / files.length;
-                            }, (error) => {
-                                reject(error);
-                            }, () => {
-                                resolve(uploadTask.snapshot.ref);
+                        if (data === null) {
+                            await runTransaction(databaseRef(database, `${databaseRoot}/images/${push(child(databaseRef(database), `${databaseRoot}/images`)).key}`), current => {
+                                return { paths: paths, timestamp: timestamp };
                             });
-                        });
-                    } catch (error) {
-                        this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
-                        console.error(error);
+                        } else {
+                            const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${data.id}`), current => {
+                                if (current) {
+                                    current['image'] = paths[0];
+                                    current['timestamp'] = timestamp;
+                                }
+
+                                return current;
+                            });
+
+                            if (result.committed && result.snapshot.exists()) {
+                                const d = result.snapshot.val()
+
+                                data['image'] = { path: d['image'], url: await getDownloadURL(storageRef(storage, d['image'])) };
+                                data['timestamp'] = d['timestamp'];
+                            }
+                        }
+                    } catch (e) {
+                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e);
                     }
 
-                    paths.push(uploadTask.snapshot.ref.fullPath);
+                    //push(databaseRef(database, `${databaseRoot}/images`), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
+
+                    this.progress = null;
+                } else {
+                    try {
+                        const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${data.id}`), current => {
+                            if (current) {
+                                current['image'] = null;
+                                current['timestamp'] = timestamp;
+                            }
+
+                            return current;
+                        });
+
+                        if (result.committed && result.snapshot.exists()) {
+                            const d = result.snapshot.val()
+
+                            data['image'] = null;
+                            data['timestamp'] = d['timestamp'];
+                        }
+                    } catch (e) {
+                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e);
+                    }
                 }
 
-                try {
-                    await runTransaction(databaseRef(database, `${databaseRoot}/images/${push(child(databaseRef(database), `${databaseRoot}/images`)).key}`), current => {
-                        return { paths: paths, timestamp: timestamp };
-                    });
-                } catch (e) {
-                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                    console.error(e);
-                }
-
-                //push(databaseRef(database, `${databaseRoot}/images`), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
-
-                this.progress = null;
                 this.isUploading = false;
             },
             check: function (event) {
@@ -805,7 +848,11 @@ window.addEventListener("load", event => {
 
                 this.isSubmitting = false;
             },
-            next: async function (key, offset, limit = 5) {
+            like: async function (message) {
+
+
+            },
+            next: async function (key, offset, limit = 10) {
                 const temp = this.mode[key];
                 let snapshot;
                 const data = [];
@@ -844,7 +891,7 @@ window.addEventListener("load", event => {
 
                 this.mode[key] = data;
             },
-            previous: async function (key, offset, limit = 5) {
+            previous: async function (key, offset, limit = 10) {
                 const temp = this.mode[key];
 
                 this.mode[key] = null;
@@ -941,11 +988,11 @@ window.addEventListener("load", event => {
                     this.sequenceQueue.push(sequence);
                 }
             },
-            activate: async function (tokens = []) {
+            activate: async function (tokens = [], threshold = 0.5) {
                 idleTime = activateTime = 0.0;
 
                 if (this.user.uid !== null) {
-                    if (Math.random() < 0.5) {
+                    if (Math.random() < threshold) {
                         function _random(min, max) {
                             min = Math.ceil(min);
                             max = Math.floor(max);
@@ -1590,23 +1637,15 @@ window.addEventListener("load", event => {
                     try {
                         const metadata = await getMetadata(storageRef(storage, path));
 
-                        if (metadata.contentType === 'image/gif') {
+                        if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
                             try {
-                                const image = await new Promise(async (resolve, reject) => {
-                                    const i = new Image();
-
-                                    i.onload = () => {
-                                        resolve(i);
-                                    };
-                                    i.onerror = (e) => {
-                                        reject(e);
-                                    };
-
-                                    i.crossOrigin = "Anonymous";
-                                    i.src = await getDownloadURL(storageRef(storage, path));
+                                const response = await fetch(await getDownloadURL(storageRef(storage, path)), {
+                                    method: "GET"
                                 });
 
-                                preloadImages.push({ id: backgroundImage.id, url: image.src, timestamp: backgroundImage.timestamp });
+                                if (response.ok) {
+                                    preloadImages.push({ id: backgroundImage.id, blob: await response.blob(), timestamp: backgroundImage.timestamp });
+                                }
                             } catch (e) {
                                 console.error(e);
                             }
@@ -1620,11 +1659,7 @@ window.addEventListener("load", event => {
                 }
 
                 for (const image of preloadImages) {
-                    if ('url' in image) {
-                        this.background.images.push({ id: image.id, url: image.url, timestamp: image.timestamp });
-                    } else {
-                        this.background.images.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
-                    }
+                    this.background.images.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
                 }
 
                 if ("tags" in backgroundImage) {
@@ -2406,14 +2441,14 @@ window.addEventListener("load", event => {
                                 }
 
                                 if ("character" in sequence[0]) {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words, original: sequence[0].text };
                                 } else {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words, original: sequence[0].text };
                                 }
 
                                 sequence.shift();
 
-                                if (!this.isMuted) {
+                                /*if (!this.isMuted) {
                                     const text = this.message.text;
 
                                     new Promise(async resolve => {
@@ -2443,7 +2478,7 @@ window.addEventListener("load", event => {
 
                                         resolve();
                                     });
-                                }
+                                }*/
                             }
                         } else if (this.message === null && !isAnimating && !isDeforming && this.animationQueue.length === 0) {
                             const self = this;
