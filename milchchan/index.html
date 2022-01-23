@@ -780,11 +780,11 @@
                                                                 </button>
                                                             </div>
                                                             <div class="level-item">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-primary" type="button"
                                                                     v-bind:disabled="mode.selected.length === 0 || isBlinded || isLoading || isHangingOn"
                                                                     @click="backgroundQueue.unshift({ color: character.accent, tags: mode.selected }); isRevealed = false; mode = null; refresh();"
                                                                     v-cloak>
-                                                                    <span class="icon is-small is-primary">
+                                                                    <span class="icon is-small">
                                                                         <i class="fas fa-comment"></i>
                                                                     </span>
                                                                 </button>
