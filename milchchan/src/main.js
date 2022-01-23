@@ -884,54 +884,8 @@ window.addEventListener("load", event => {
                     this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                     console.error(e);
                 }
-                /*const timestamp = Math.floor(new Date() / 1000);                
-
-                try {
-                    const hash = await this.digestMessage(`${this.character.name}&${message.text}`);
-                    const snapshot = await get(query(databaseRef(database, `${databaseRoot}/likes`), orderByChild('hash'), equalTo(hash)));
-                    let key;
-                    
-                    if (snapshot.exists()) {
-                        key = Object.keys(snapshot.val())[0];
-                    } else {
-                        key = push(child(databaseRef(database), `${databaseRoot}/likes`)).key;
-                    }
-
-                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${key}`), current => {
-                        if (current) {
-                            current["hash"] = hash;
-                            current["text"] = message.original;
-                            current["author"] = this.character.name;
-                            current["timestamp"] = timestamp;
-
-                            return current;
-                        }
-
-                        return { hash: hash, text: message.original, author: this.character.name, timestamp: timestamp };
-                    });
-
-                    if (result.committed && result.snapshot.exists()) {
-                        const sequence = [];
-
-                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Like"), null, this.character.alternative.sequences)) {
-                            if (obj.type === "Message") {
-                                sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: obj.text });
-                            } else {
-                                obj["character"] = this.character.alternative;
-                                sequence.push(obj);
-                            }
-                        }
-
-                        if (sequence.length > 0) {
-                            this.sequenceQueue.push(sequence);
-                        }
-                    }
-                } catch (e) {
-                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                    console.error(e);
-                }*/
             },
-            next: async function (key, offset, limit = 3) {
+            next: async function (key, offset, limit = 5) {
                 const temp = this.mode[key];
                 let snapshot;
                 const data = [];
@@ -985,7 +939,7 @@ window.addEventListener("load", event => {
 
                 this.mode[key] = data;
             },
-            previous: async function (key, offset, limit = 3) {
+            previous: async function (key, offset, limit = 5) {
                 const temp = this.mode[key];
 
                 this.mode[key] = null;
