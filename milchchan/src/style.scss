@@ -272,11 +272,10 @@ label .scrollable > div {
 
 .is-superellips {
     transform: rotate(-19deg);
-    overflow: hidden;
 
     > figure {
         border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
-        overflow: hidden;
+        overflow: hidden !important;
 
         > picture {
             transform: rotate(19deg);
