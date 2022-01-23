@@ -1207,7 +1207,7 @@ label .scrollable > div {
                                     margin: 0;
                                     padding: 8px 8px 8px 8px;
 
-                                    > button,
+                                    button,
                                     .button {
                                         margin: 0px;
                                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -1225,6 +1225,17 @@ label .scrollable > div {
                                             width: 1rem !important;
                                             height: 1rem !important;
                                             color: var(--accent-color);
+                                        }
+                                    }
+
+                                    button.is-primary,
+                                    .button.is-primary {
+                                        background-color: var(--primary-background-color) !important;
+                                        transition: 0.5s;
+
+                                        span.wrap,
+                                        .icon {
+                                            color: #ffffff !important;
                                         }
                                     }
                                 }
@@ -1391,6 +1402,17 @@ label .scrollable > div {
                                                         color: var(--accent-color);
                                                     }
                                                 }
+
+                                                button.is-primary,
+                                                .button.is-primary {
+                                                    background-color: var(--primary-background-color) !important;
+                                                    transition: 0.5s;
+
+                                                    span.wrap,
+                                                    .icon {
+                                                        color: #ffffff !important;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -1530,23 +1552,36 @@ label .scrollable > div {
                     }
                 }
 
-                > .level-item:last-child:not(:first-child) > .level > .level-item button {
-                    margin: 0px;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                    border-radius: 290486px;
-                    padding: 16px;
-                    background: rgba(255, 255, 255, 0.75) !important;
-                    background-clip: padding-box;
-                    height: initial;
-                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                    backdrop-filter: blur(4px);
-                    -webkit-backdrop-filter: blur(4px);
+                > .level-item:last-child:not(:first-child) > .level > .level-item {
+                    button {
+                        margin: 0px;
+                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                        border-radius: 290486px;
+                        padding: 16px;
+                        background: rgba(255, 255, 255, 0.75) !important;
+                        background-clip: padding-box;
+                        height: initial;
+                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                        backdrop-filter: blur(4px);
+                        -webkit-backdrop-filter: blur(4px);
 
-                    span {
-                        margin: 0 !important;
-                        width: 1rem !important;
-                        height: 1rem !important;
-                        color: var(--accent-color);
+                        span {
+                            margin: 0 !important;
+                            width: 1rem !important;
+                            height: 1rem !important;
+                            color: var(--accent-color);
+                        }
+                    }
+
+                    button.is-primary,
+                    .button.is-primary {
+                        background-color: var(--primary-background-color) !important;
+                        transition: 0.5s;
+
+                        span.wrap,
+                        .icon {
+                            color: #ffffff !important;
+                        }
                     }
                 }
             }
@@ -1615,7 +1650,7 @@ label .scrollable > div {
 
                     > button.is-primary,
                     > .button.is-primary {
-                        background: var(--primary-background-color) !important;
+                        background-color: var(--primary-background-color) !important;
                         transition: 0.5s;
 
                         span.wrap,
@@ -1857,6 +1892,17 @@ label .scrollable > div {
                                 margin: 0 !important;
                                 width: 1rem !important;
                                 height: 1rem !important;
+                            }
+                        }
+
+                        button.is-primary,
+                        .button.is-primary {
+                            background-color: var(--primary-background-color) !important;
+                            transition: 0.5s;
+
+                            span.wrap,
+                            .icon {
+                                color: #ffffff !important;
                             }
                         }
                     }
