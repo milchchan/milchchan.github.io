@@ -262,12 +262,13 @@
         <div class="container">
             <div class="wrap">
                 <div class="frame">
-                    <div class="background">
+                    <div class="background" v-bind:style="{ backgroundColor: background.color === null ? 'transparent' : background.color }">
                         <div v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }"
                             v-for="image in background.images" v-bind:key="image" v-cloak></div>
+                    </div>
+                    <div class="background" v-if="background.tags">
                         <div class="columns is-centered"
-                            v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }"
-                            v-if="background.tags">
+                            v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
                             <div class="column is-half is-mobile ">
                                 <div class="tags are-medium field is-grouped is-grouped-multiline">
                                     <div class="control tagcloud-list-item" v-for="tag in background.tags"
@@ -780,8 +781,8 @@
                                                             </div>
                                                             <div class="level-item">
                                                                 <button class="button" type="button"
-                                                                    v-bind:disabled="mode.selected.length === 0"
-                                                                    @click="activate(mode.selected, 0.0); isRevealed = false; mode = null;"
+                                                                    v-bind:disabled="mode.selected.length === 0 || isBlinded || isLoading || isHangingOn"
+                                                                    @click="backgroundQueue.unshift({ color: character.accent, tags: mode.selected }); isRevealed = false; mode = null; refresh();"
                                                                     v-cloak>
                                                                     <span class="icon is-small is-primary">
                                                                         <i class="fas fa-comment"></i>
