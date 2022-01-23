@@ -2199,6 +2199,23 @@ label .scrollable > div {
     transform: translate3d(0%, 0, 0);
 }
 
+.alternative-enter-active,
+.alternative-leave-active {
+    transition: all 0.5s ease;
+}
+
+.alternative-enter-from,
+.alternative-leave-to {
+    opacity: 0;
+    transform: translate3d(25%, 0, 0);
+}
+
+.alternative-enter-to,
+.alternative-leave-from {
+    opacity: 1;
+    transform: translate3d(0%, 0, 0);
+}
+
 .reveal-enter-active,
 .reveal-leave-active {
     transition: all 0.5s ease;
