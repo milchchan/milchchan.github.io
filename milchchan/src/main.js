@@ -231,8 +231,8 @@ window.addEventListener("load", event => {
                 notificationHeight: 0,
                 animatedNotificationHeight: 0,
                 recentImages: [],
-                backgroundImagesQueue: [],
-                background: { images: [], tags: null },
+                backgroundQueue: [],
+                background: { color: null, images: [], tags: null },
                 isUploading: false,
                 animations: null,
                 currentAnimations: [],
@@ -852,7 +852,7 @@ window.addEventListener("load", event => {
                 const timestamp = Math.floor(new Date() / 1000);
 
                 try {
-                    /*const result = */await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
+                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
                         if (current) {
                             current["text"] = message.original;
                             current["author"] = this.character.name;
@@ -864,8 +864,22 @@ window.addEventListener("load", event => {
                         return { text: message.original, author: this.character.name, timestamp: timestamp };
                     });
 
-                    /*if (result.committed && result.snapshot.exists()) {
-                    }*/
+                    if (result.committed && result.snapshot.exists()) {
+                        const sequence = [];
+
+                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Like"), null, this.character.alternative.sequences)) {
+                            if (obj.type === "Message") {
+                                sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: obj.text });
+                            } else {
+                                obj["character"] = this.character.alternative;
+                                sequence.push(obj);
+                            }
+                        }
+
+                        if (sequence.length > 0) {
+                            this.sequenceQueue.push(sequence);
+                        }
+                    }
                 } catch (e) {
                     this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                     console.error(e);
@@ -1612,7 +1626,7 @@ window.addEventListener("load", event => {
                 this.notifications.unshift(data);
             },
             blinded: async function () {
-                if (this.backgroundImagesQueue.length == 0) {
+                if (this.backgroundQueue.length == 0) {
                     function shuffle(array) {
                         function _random(min, max) {
                             min = Math.ceil(min);
@@ -1639,12 +1653,11 @@ window.addEventListener("load", event => {
                     }
 
                     for (const image of shuffle(this.recentImages)) {
-                        this.backgroundImagesQueue.push(image);
+                        this.backgroundQueue.push(image);
                     }
                 }
 
-                const backgroundImage = this.backgroundImagesQueue.shift();
-                const preloadImages = [];
+                const background = this.backgroundQueue.shift();
 
                 for (const image of this.background.images) {
                     URL.revokeObjectURL(image.url);
@@ -1652,37 +1665,47 @@ window.addEventListener("load", event => {
 
                 this.background.images.splice(0);
 
-                for (const path of backgroundImage.paths) {
-                    try {
-                        const metadata = await getMetadata(storageRef(storage, path));
+                if ('color' in background) {
+                    this.background.color = background.color;
+                } else {
+                    this.background.color = null;
+                }
 
-                        if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
-                            try {
-                                const response = await fetch(await getDownloadURL(storageRef(storage, path)), {
-                                    method: "GET"
-                                });
+                if ('paths' in background) {
+                    const preloadImages = [];
 
-                                if (response.ok) {
-                                    preloadImages.push({ id: backgroundImage.id, blob: await response.blob(), timestamp: backgroundImage.timestamp });
+                    for (const path of background.paths) {
+                        try {
+                            const metadata = await getMetadata(storageRef(storage, path));
+
+                            if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
+                                try {
+                                    const response = await fetch(await getDownloadURL(storageRef(storage, path)), {
+                                        method: "GET"
+                                    });
+
+                                    if (response.ok) {
+                                        preloadImages.push({ id: background.id, blob: await response.blob(), timestamp: background.timestamp });
+                                    }
+                                } catch (e) {
+                                    console.error(e);
                                 }
-                            } catch (e) {
-                                console.error(e);
+                            } else {
+                                preloadImages.push({ id: background.id, blob: await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)), timestamp: background.timestamp });
                             }
-                        } else {
-                            preloadImages.push({ id: backgroundImage.id, blob: await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)), timestamp: backgroundImage.timestamp });
+                        } catch (e) {
+                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                            console.error(e);
                         }
-                    } catch (e) {
-                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                        console.error(e);
+                    }
+
+                    for (const image of preloadImages) {
+                        this.background.images.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
                     }
                 }
 
-                for (const image of preloadImages) {
-                    this.background.images.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
-                }
-
-                if ("tags" in backgroundImage) {
-                    this.background.tags = backgroundImage.tags.sort((x, y) => {
+                if ("tags" in background) {
+                    this.background.tags = background.tags.sort((x, y) => {
                         if (x.name > y.name) {
                             return 1;
                         } else if (x.name < y.name) {
@@ -1691,7 +1714,7 @@ window.addEventListener("load", event => {
 
                         return 0;
                     });
-                    this.activate(backgroundImage.tags.filter((x) => x.indexOf(this.character.name) === -1));
+                    this.activate(background.tags.filter((x) => x.indexOf(this.character.name) === -1), 0.0);
                 } else {
                     this.background.tags = null;
                 }
