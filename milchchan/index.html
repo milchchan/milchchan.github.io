@@ -218,7 +218,7 @@
                 <div class="level-item">
                     <article class="media">
                         <figure class="media-content">
-                            <p class="image is-48x48">
+                            <p class="image is-48x48" v-cloak>
                                 <transition name="fade" mode="out-in">
                                     <button class="button image is-48x48 is-superellips" type="button"
                                         @click="mode = 'sign-in'; isRevealed = true;" v-if="user === null" key="default"
@@ -691,7 +691,7 @@
                                                             <div class="level-item">
                                                                 <button class="button" type="button"
                                                                     v-bind:disabled="mode.indexes.length === 0"
-                                                                    @click="previous('likes', mode.indexes.shift().id, 1)"
+                                                                    @click="previous('likes', mode.indexes.pop().timestamp, 1)"
                                                                     v-cloak>
                                                                     <span class="icon is-small">
                                                                         <i class="fas fa-chevron-left"></i>
@@ -701,7 +701,7 @@
                                                             <div class="level-item">
                                                                 <button class="button" type="button"
                                                                     v-bind:disabled="mode.next === null"
-                                                                    @click="next('likes', mode.next.id, 1)" v-cloak>
+                                                                    @click="next('likes', mode.next.timestamp, 1)" v-cloak>
                                                                     <span class="icon is-small">
                                                                         <i class="fas fa-chevron-right"></i>
                                                                     </span>
@@ -772,7 +772,7 @@
                                                             <div class="level-item">
                                                                 <button class="button" type="button"
                                                                     v-bind:disabled="mode.indexes.length === 0"
-                                                                    @click="previous('words', mode.indexes.shift().id)"
+                                                                    @click="previous('words', mode.indexes.pop().timestamp)"
                                                                     v-cloak>
                                                                     <span class="icon is-small">
                                                                         <i class="fas fa-chevron-left"></i>
@@ -792,7 +792,7 @@
                                                             <div class="level-item">
                                                                 <button class="button" type="button"
                                                                     v-bind:disabled="mode.next === null"
-                                                                    @click="next('words', mode.next.id)" v-cloak>
+                                                                    @click="next('words', mode.next.timestamp)" v-cloak>
                                                                     <span class="icon is-small">
                                                                         <i class="fas fa-chevron-right"></i>
                                                                     </span>
