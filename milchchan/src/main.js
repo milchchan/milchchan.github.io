@@ -208,6 +208,7 @@ window.addEventListener("load", event => {
                 isSubmitting: false,
                 isStared: false,
                 isLocked: false,
+                isDiscovering: false,
                 mode: null,
                 feedQueue: [],
                 sequenceQueue: [],
@@ -977,6 +978,127 @@ window.addEventListener("load", event => {
 
                 this.mode[key] = data;
             },
+            discover: async function () {
+                const self = this;
+                const words = [];
+                const sequence = [];
+
+                function shuffle(array) {
+                    function _random(min, max) {
+                        min = Math.ceil(min);
+                        max = Math.floor(max);
+
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+
+                    let a = [].concat(array);
+                    let n = array.length;
+
+                    while (n > 1) {
+                        const k = _random(0, n);
+
+                        n--;
+
+                        const temp = a[n];
+
+                        a[n] = a[k];
+                        a[k] = temp;
+                    }
+
+                    return a;
+                }
+
+                this.isDiscovering = true;
+
+                const snapshot = await get(query(databaseRef(database, databaseRoot + "/likes"), orderByChild('timestamp'), limitToLast(100)));
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const baseTime = new Date().getTime();// - 12 * 60 * 60 * 1000;
+
+                    for (const key in data) {
+                        if (typeof (data[key].text) === "object") {
+                            for (const i in data[key].text) {
+                                if (typeof (data[key].text[i]) === "object") {
+                                    words.push(data[key].text[i]);
+                                }
+                            }
+                        }
+                    }                    
+
+                    for (const word of shuffle(words)) {
+                        //const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name));
+    
+                        console.log(word);
+                        try {
+                            const result = await runTransaction(databaseRef(database, databaseRoot + "/words/" + word.name), current => {
+                                if (current && current.timestamp * 1000 > baseTime) {
+                                    return undefined;
+                                }
+    
+                                return current;
+                            });
+    
+                            if (result.committed) {
+                                function format(format) {
+                                    var args = arguments;
+    
+                                    return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
+                                }
+    
+                                this.isDiscovering = false;
+    
+                                /*for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Discover"), word.name)) {
+                                    if (obj.type === "Message") {
+                                        this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
+                                    }
+                                }*/
+    
+                                for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Discover"), word.name, this.character.alternative.sequences)) {
+                                    if (obj.type === "Message") {
+                                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: format(obj.text, word.name) });
+                                    } else {
+                                        obj["character"] = this.character.alternative;
+                                        sequence.push(obj);
+                                    }
+                                }
+    
+                                if (sequence.length > 0) {
+                                    this.sequenceQueue.push(sequence);
+                                }
+    
+                                this.learn({ name: word.name, attributes: word.attributes });
+    
+                                return;
+                            }
+                        } catch (e) {
+                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                            console.error(e);
+                        }
+                    }
+                }                
+
+                this.isDiscovering = false;
+
+                /*for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Discover"), "")) {
+                    if (obj.type === "Message") {
+                        this.notify({ text: obj.text, accent: this.character.accent, image: this.character.image });
+                    }
+                }*/
+
+                for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Discover"), "", this.character.alternative.sequences)) {
+                    if (obj.type === "Message") {
+                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: obj.text });
+                    } else {
+                        obj["character"] = this.character.alternative;
+                        sequence.push(obj);
+                    }
+                }
+
+                if (sequence.length > 0) {
+                    this.sequenceQueue.push(sequence);
+                }
+            },
             learn: async function (word) {
                 function format(format) {
                     var args = arguments;
@@ -988,15 +1110,25 @@ window.addEventListener("load", event => {
                 const attributes = [];
 
                 if ("attributes" in word) {
-                    for (const attribute of this.attributes) {
-                        if (attribute in word.attributes) {
-                            if (word.attributes[attribute] > 0) {
+                    if (Array.isArray(word.attributes)) {
+                        for (const attribute of this.attributes) {
+                            if (word.attributes.includes(attribute)) {
                                 attributes.push({ name: attribute, value: true });
                             } else {
                                 attributes.push({ name: attribute, value: false });
                             }
+                        }                        
+                    } else {
+                        for (const attribute of this.attributes) {
+                            if (attribute in word.attributes) {
+                                if (word.attributes[attribute] > 0) {
+                                    attributes.push({ name: attribute, value: true });
+                                } else {
+                                    attributes.push({ name: attribute, value: false });
+                                }
+                            }
                         }
-                    }
+                    }                    
                 } else {
                     const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + word.name));
 
