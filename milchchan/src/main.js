@@ -21,7 +21,7 @@ import { TinySegmenter } from './tiny-segmenter.js';
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
-import { getDatabase, ref as databaseRef, query, orderByKey, orderByChild, limitToFirst, limitToLast, startAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
+import { getDatabase, ref as databaseRef, query, orderByChild, limitToFirst, limitToLast, startAt, endAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from 'firebase/analytics';
 
@@ -884,25 +884,76 @@ window.addEventListener("load", event => {
                     this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                     console.error(e);
                 }
+                /*const timestamp = Math.floor(new Date() / 1000);                
+
+                try {
+                    const hash = await this.digestMessage(`${this.character.name}&${message.text}`);
+                    const snapshot = await get(query(databaseRef(database, `${databaseRoot}/likes`), orderByChild('hash'), equalTo(hash)));
+                    let key;
+                    
+                    if (snapshot.exists()) {
+                        key = Object.keys(snapshot.val())[0];
+                    } else {
+                        key = push(child(databaseRef(database), `${databaseRoot}/likes`)).key;
+                    }
+
+                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${key}`), current => {
+                        if (current) {
+                            current["hash"] = hash;
+                            current["text"] = message.original;
+                            current["author"] = this.character.name;
+                            current["timestamp"] = timestamp;
+
+                            return current;
+                        }
+
+                        return { hash: hash, text: message.original, author: this.character.name, timestamp: timestamp };
+                    });
+
+                    if (result.committed && result.snapshot.exists()) {
+                        const sequence = [];
+
+                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Like"), null, this.character.alternative.sequences)) {
+                            if (obj.type === "Message") {
+                                sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: obj.text });
+                            } else {
+                                obj["character"] = this.character.alternative;
+                                sequence.push(obj);
+                            }
+                        }
+
+                        if (sequence.length > 0) {
+                            this.sequenceQueue.push(sequence);
+                        }
+                    }
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
+                }*/
             },
-            next: async function (key, offset, limit = 10) {
+            next: async function (key, offset, limit = 3) {
                 const temp = this.mode[key];
                 let snapshot;
                 const data = [];
 
                 this.mode[key] = null;
 
-                if (offset === null) {
-                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByKey(), limitToFirst(limit + 1)));
+                /*if (offset === null) {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), limitToFirst(limit + 1)));
                 } else {
-                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByKey(), startAt(offset), limitToFirst(limit + 1)));
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(offset), limitToFirst(limit + 1)));
+                }*/
+                if (offset === null) {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), limitToLast(limit + 1)));
+                } else {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), endAt(offset), limitToLast(limit + 1)));
                 }
 
                 if (key in this.mode && snapshot.exists()) {
                     const dictionary = snapshot.val();
 
                     if (temp !== null && temp.length > 0) {
-                        this.mode.indexes.push(temp[0]);
+                        this.mode.indexes.push(temp[temp.length - 1]);
                     }
 
                     for (const id in dictionary) {
@@ -915,6 +966,16 @@ window.addEventListener("load", event => {
                         data.push(dictionary[id]);
                     }
 
+                    data.sort((x, y) => {
+                        if (x.timestamp < y.timestamp) {
+                            return 1;
+                        } else if (x.timestamp > y.timestamp) {
+                            return -1;
+                        }
+
+                        return 0;
+                    });
+
                     if (data.length === limit + 1) {
                         this.mode.next = data.pop();
                     } else {
@@ -924,12 +985,12 @@ window.addEventListener("load", event => {
 
                 this.mode[key] = data;
             },
-            previous: async function (key, offset, limit = 10) {
+            previous: async function (key, offset, limit = 3) {
                 const temp = this.mode[key];
 
                 this.mode[key] = null;
 
-                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByKey(), startAt(offset), limitToFirst(limit)));
+                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(offset), limitToFirst(limit)));
                 const data = [];
 
                 if (key in this.mode && snapshot.exists()) {
@@ -948,6 +1009,16 @@ window.addEventListener("load", event => {
 
                         data.push(dictionary[id]);
                     }
+
+                    data.sort((x, y) => {
+                        if (x.timestamp < y.timestamp) {
+                            return 1;
+                        } else if (x.timestamp > y.timestamp) {
+                            return -1;
+                        }
+
+                        return 0;
+                    });
                 }
 
                 this.mode[key] = data;
