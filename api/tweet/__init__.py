@@ -211,12 +211,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             return func.HttpResponse(status_code=400, headers=headers)
 
-        elif req.method == 'OPTIONS':
-            return func.HttpResponse(status_code=400, headers=headers)
+        #elif req.method == 'OPTIONS':
+        return func.HttpResponse(status_code=400, headers=headers)
 
-        headers['Allow'] = 'GET, POST, OPTIONS'
+        #headers['Allow'] = 'GET, POST, OPTIONS'
 
-        return func.HttpResponse(status_code=405, headers=headers)
+        #return func.HttpResponse(status_code=405, headers=headers)
 
     except Exception as e:
         logging.error(f'{e}')
