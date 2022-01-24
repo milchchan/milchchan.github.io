@@ -20,6 +20,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if req.method == 'POST':
             #if 'Origin' in req.headers:
             headers['Access-Control-Allow-Origin'] = '*'
+            headers['Access-Control-Allow-Methods'] = 'POST, GET'
 
             if 'Authorization' in req.headers:
                 jwt = req.headers['Authorization'].split(' ')[1].split('.') if req.headers['Authorization'].startswith('Bearer ') else req.headers['Authorization'].split('.')
