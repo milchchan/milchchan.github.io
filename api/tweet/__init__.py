@@ -220,10 +220,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             headers['Access-Control-Allow-Methods'] = 'POST, GET, HEAD, OPTIONS'            
 
-            if 'Access-Control-Request-Headers' in req.headers:
-                headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
-            else:
-                headers['Access-Control-Allow-Headers'] = 'Content-Type'
+            #if 'Access-Control-Request-Headers' in req.headers:
+            #    headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
+            #else:
+            headers['Access-Control-Allow-Headers'] = 'Content-Type'
 
             headers['Access-Control-Max-Age'] = '86400'
 
