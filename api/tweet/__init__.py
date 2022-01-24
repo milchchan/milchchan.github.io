@@ -218,17 +218,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(status_code=400, headers=headers)
 
         else:
-            #headers['Access-Control-Allow-Methods'] = 'POST,GET,OPTIONS'
+            headers['Access-Control-Allow-Methods'] = 'POST, GET, HEAD, OPTIONS'            
 
-            #if 'Access-Control-Request-Headers' in req.headers:
-            #    headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
+            if 'Access-Control-Request-Headers' in req.headers:
+                headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
+            else:
+                headers['Access-Control-Allow-Headers'] = 'Content-Type'
 
-            #headers['Access-Control-Max-Age'] = '86400'
+            headers['Access-Control-Max-Age'] = '86400'
 
-            return func.HttpResponse(status_code=200, headers={
-                'Access-Control-Allow-Origin': req.headers['Origin'],
-                'Access-Control-Allow-Methods': 'POST, GET, HEAD, OPTIONS'
-            })
+            return func.HttpResponse(status_code=200, headers=headers)
 
         #headers['Allow'] = 'GET, POST, OPTIONS'
 
