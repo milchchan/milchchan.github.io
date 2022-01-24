@@ -9,7 +9,8 @@
       "route": "tweet",
       "methods": [
         "get",
-        "post"
+        "post",
+        "options"
       ]
     },
     {
