@@ -1,4 +1,5 @@
 import random
+import re
 import json
 import logging
 import os
@@ -42,7 +43,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if 'status' in data:
                     access_token = data['access_token'] if 'access_token' in data else os.environ.get("TWITTER_OAUTH_TOKEN")
                     secret = data['secret'] if 'secret' in data else os.environ.get("TWITTER_OAUTH_TOKEN_SECRET")
-                    status = data['status'] if 'status' in data else ''
+                    status = data['status']
+                    image = data.get('image')
 
                     CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
                     CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
@@ -50,18 +52,50 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     timestamp = int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
                     nonce = ''.join([str(random.randint(0, 9)) for i in range(8)])
 
+                    if image is None:
+                        parameters = f"oauth_consumer_key={CONSUMER_KEY}&oauth_nonce={str(nonce)}&oauth_signature_method=HMAC-SHA1&oauth_timestamp={str(timestamp)}&oauth_token={access_token}&oauth_version=1.0&status={quote(status, '')}"
+                        url = 'https://api.twitter.com/1.1/statuses/update.json'
+                        signature_base = f"POST&{quote(url, '')}&{quote(parameters, '')}"
+                        url = f"{url}?status={quote(status, '')}"
 
+                    else:
+                        match = re.match("data:([\\w/\\-\\.]+);(\\w+),(.+)", image)
+                    
+                        if match:
+                            mime_type, encoding, image_data = match.groups()
+                        
+                            if mime_type in ['image/gif', 'image/png', 'image/jpeg'] and encoding == 'base64':
+                                pass
+
+                    authorization_header = f'OAuth oauth_consumer_key="{quote(CONSUMER_KEY, "")}", oauth_nonce="{quote(str(nonce), "")}", oauth_signature="{quote(base64.b64encode(hmac.new(("{0}&{1}".format(CONSUMER_SECRET, secret)).encode(), signature_base.encode(), sha1).digest()).decode(), "")}", oauth_signature_method="{quote("HMAC-SHA1", "")}", oauth_timestamp="{quote(str(timestamp), "")}", oauth_token="{quote(access_token, "")}", oauth_version="{quote("1.0", "")}"'
 
                     response = urlopen(Request(
-                            f'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={os.environ.get("FIREBASE_API_KEY")}',
-                            headers={'Content-Type': 'application/json'},
-                            data=json.dumps({'email': email, 'password': password, 'returnSecureToken': True}).encode('utf-8'),
-                            method='POST'))
+                        url,
+                        headers={
+                            'Authorization': authorization_header,
+                            'Content-Type': 'application/x-www-form-urlencoded'},
+                        method='POST'))
 
                     if response.getcode() == 200:
-                        results = json.loads(response.read())
+                        status = json.loads(response.read())
+                        user = status['user']
+                        item = { 'id': status['id'], 'text': status['text'], 'timestamp': int(datetime.strptime(status['created_at'],'%a %b %d %H:%M:%S +0000 %Y').timestamp()), 'user': { 'id': user["screen_name"], 'name': user['name'], 'image': user['profile_image_url_https'] } }
 
-                        return func.HttpResponse(json.dumps({'id': results['localId'], 'token': results['idToken'], 'timestamp': int(time.time())}), status_code=200, headers=headers, charset='utf-8')
+                        if 'extended_entities' in status:
+                            entities = status['extended_entities']
+
+                            if 'media' in entities:
+                                images = []
+
+                                for media in entities['media']:
+                                    if media['type'] == 'photo':
+                                        images.append(media['media_url_https'])
+
+                                if len(images) > 0:
+                                    item['image'] = images[0]
+
+                        if response.getcode() == 200:
+                            return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
 
             return func.HttpResponse(status_code=400, headers=headers)
             
