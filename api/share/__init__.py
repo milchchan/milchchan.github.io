@@ -103,8 +103,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     database = client.get_database_client('Wonderland')
                     container = database.get_container_client('Words')
                     container.upsert_item(item)
-
-                    item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
+                    
+                    item['timestamp'] = int(datetime.utcfromtimestamp(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp()).timestamp())
 
                     return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
 
