@@ -56,7 +56,35 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         parameters = f"oauth_consumer_key={CONSUMER_KEY}&oauth_nonce={str(nonce)}&oauth_signature_method=HMAC-SHA1&oauth_timestamp={str(timestamp)}&oauth_token={access_token}&oauth_version=1.0&status={quote(status, '')}"
                         url = 'https://api.twitter.com/1.1/statuses/update.json'
                         signature_base = f"POST&{quote(url, '')}&{quote(parameters, '')}"
-                        url = f"{url}?status={quote(status, '')}"
+                        authorization_header = f'OAuth oauth_consumer_key="{quote(CONSUMER_KEY, "")}", oauth_nonce="{quote(str(nonce), "")}", oauth_signature="{quote(b64encode(hmac.new(("{0}&{1}".format(CONSUMER_SECRET, secret)).encode(), signature_base.encode(), sha1).digest()).decode(), "")}", oauth_signature_method="{quote("HMAC-SHA1", "")}", oauth_timestamp="{quote(str(timestamp), "")}", oauth_token="{quote(access_token, "")}", oauth_version="{quote("1.0", "")}"'
+
+                        response = urlopen(Request(
+                            f"{url}?status={quote(status, '')}",
+                            headers={
+                                'Authorization': authorization_header,
+                                'Content-Type': 'application/x-www-form-urlencoded'},
+                            method='POST'))
+
+                        if response.getcode() == 200:
+                            status = json.loads(response.read())
+                            user = status['user']
+                            item = { 'id': status['id'], 'text': status['text'], 'timestamp': int(datetime.strptime(status['created_at'],'%a %b %d %H:%M:%S +0000 %Y').timestamp()), 'user': { 'id': user["screen_name"], 'name': user['name'], 'image': user['profile_image_url_https'] } }
+
+                            if 'extended_entities' in status:
+                                entities = status['extended_entities']
+
+                                if 'media' in entities:
+                                    images = []
+
+                                    for media in entities['media']:
+                                        if media['type'] == 'photo':
+                                            images.append(media['media_url_https'])
+
+                                    if len(images) > 0:
+                                        item['image'] = images[0]
+
+                            if response.getcode() == 200:
+                                return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
 
                     else:
                         match = re.match("data:([\\w/\\-\\.]+);(\\w+),(.+)", image)
@@ -65,37 +93,62 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             mime_type, encoding, image_data = match.groups()
                         
                             if mime_type in ['image/gif', 'image/png', 'image/jpeg'] and encoding == 'base64':
-                                pass
+                                url = 'https://upload.twitter.com/1.1/media/upload.json'
+                                parameters = f"oauth_consumer_key={CONSUMER_KEY}&oauth_nonce={str(nonce)}&oauth_signature_method=HMAC-SHA1&oauth_timestamp={str(timestamp)}&oauth_token={access_token}&oauth_version=1.0"
+                                signature_base = f"POST&{quote(url, '')}&{quote(parameters, '')}"
+                                authorization_header = f'OAuth oauth_consumer_key="{quote(CONSUMER_KEY, "")}", oauth_nonce="{quote(str(nonce), "")}", oauth_signature="{quote(b64encode(hmac.new(("{0}&{1}".format(CONSUMER_SECRET, secret)).encode(), signature_base.encode(), sha1).digest()).decode(), "")}", oauth_signature_method="{quote("HMAC-SHA1", "")}", oauth_timestamp="{quote(str(timestamp), "")}", oauth_token="{quote(access_token, "")}", oauth_version="{quote("1.0", "")}"'
 
-                    authorization_header = f'OAuth oauth_consumer_key="{quote(CONSUMER_KEY, "")}", oauth_nonce="{quote(str(nonce), "")}", oauth_signature="{quote(base64.b64encode(hmac.new(("{0}&{1}".format(CONSUMER_SECRET, secret)).encode(), signature_base.encode(), sha1).digest()).decode(), "")}", oauth_signature_method="{quote("HMAC-SHA1", "")}", oauth_timestamp="{quote(str(timestamp), "")}", oauth_token="{quote(access_token, "")}", oauth_version="{quote("1.0", "")}"'
+                                boundary = md5(str(random.randint(0, 32000)).encode()).hexdigest()
+                                data = f'--{boundary}\r\n'.encode()
+                                data += 'Content-Disposition: form-data; name="media"; filename="rkgk"\r\n'.encode()
+                                data += f'Content-Type: {mime_type}\r\n'.encode()
+                                data += 'Content-Transfer-Encoding: binary\r\n\r\n'.encode()
+                                data += b64decode(image_data)
+                                data += f'\r\n'.encode()
+                                data += f'--{boundary}--\r\n'.encode()
 
-                    response = urlopen(Request(
-                        url,
-                        headers={
-                            'Authorization': authorization_header,
-                            'Content-Type': 'application/x-www-form-urlencoded'},
-                        method='POST'))
+                                response = urlopen(Request(
+                                    url,
+                                    headers={
+                                        'Authorization': authorization_header,
+                                        'Content-Type': f'multipart/form-data; boundary={boundary}'},
+                                    data=data,
+                                    method='POST'))
 
-                    if response.getcode() == 200:
-                        status = json.loads(response.read())
-                        user = status['user']
-                        item = { 'id': status['id'], 'text': status['text'], 'timestamp': int(datetime.strptime(status['created_at'],'%a %b %d %H:%M:%S +0000 %Y').timestamp()), 'user': { 'id': user["screen_name"], 'name': user['name'], 'image': user['profile_image_url_https'] } }
+                                if response.getcode() == 200:
+                                    media_id = json.loads(response.read())['media_id_string']
+                                    parameters = f"media_ids={media_id}&oauth_consumer_key={CONSUMER_KEY}&oauth_nonce={str(nonce)}&oauth_signature_method=HMAC-SHA1&oauth_timestamp={str(timestamp)}&oauth_token={access_token}&oauth_version=1.0&status={quote(status, '')}"
+                                    url = 'https://api.twitter.com/1.1/statuses/update.json'
+                                    signature_base = f"POST&{quote(url, '')}&{quote(parameters, '')}"
+                                    authorization_header = f'OAuth oauth_consumer_key="{quote(CONSUMER_KEY, "")}", oauth_nonce="{quote(str(nonce), "")}", oauth_signature="{quote(b64encode(hmac.new(("{0}&{1}".format(CONSUMER_SECRET, secret)).encode(), signature_base.encode(), sha1).digest()).decode(), "")}", oauth_signature_method="{quote("HMAC-SHA1", "")}", oauth_timestamp="{quote(str(timestamp), "")}", oauth_token="{quote(access_token, "")}", oauth_version="{quote("1.0", "")}"'
 
-                        if 'extended_entities' in status:
-                            entities = status['extended_entities']
+                                    response = urlopen(Request(
+                                        f"{url}?status={quote(status, '')}&media_ids={quote(media_id, '')}",
+                                        headers={
+                                            'Authorization': authorization_header,
+                                            'Content-Type': 'application/x-www-form-urlencoded'},
+                                        method='POST'))
 
-                            if 'media' in entities:
-                                images = []
+                                    if response.getcode() == 200:
+                                        status = json.loads(response.read())
+                                        user = status['user']
+                                        item = { 'id': status['id'], 'text': status['text'], 'timestamp': int(datetime.strptime(status['created_at'],'%a %b %d %H:%M:%S +0000 %Y').timestamp()), 'user': { 'id': user["screen_name"], 'name': user['name'], 'image': user['profile_image_url_https'] } }
 
-                                for media in entities['media']:
-                                    if media['type'] == 'photo':
-                                        images.append(media['media_url_https'])
+                                        if 'extended_entities' in status:
+                                            entities = status['extended_entities']
 
-                                if len(images) > 0:
-                                    item['image'] = images[0]
+                                            if 'media' in entities:
+                                                images = []
 
-                        if response.getcode() == 200:
-                            return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
+                                                for media in entities['media']:
+                                                    if media['type'] == 'photo':
+                                                        images.append(media['media_url_https'])
+
+                                                if len(images) > 0:
+                                                    item['image'] = images[0]
+
+                                        if response.getcode() == 200:
+                                            return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
 
             return func.HttpResponse(status_code=400, headers=headers)
             
