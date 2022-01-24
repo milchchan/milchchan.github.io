@@ -1,8 +1,8 @@
-import time
 import re
 import json
 import logging
 import os
+from datetime import datetime, timezone
 from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
@@ -64,7 +64,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                         return func.HttpResponse(json.dumps({
                                 'url': f'gs://{bucket_name}{urljoin("/", path)}',
-                                'timestamp': int(time.time())
+                                'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
                             }),
                             status_code=200,
                             headers=headers,
