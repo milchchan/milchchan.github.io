@@ -1320,7 +1320,7 @@ label .scrollable > div {
                                     > figure {
                                         position: relative;
                                         width: 256px;
-                                        min-height: 256px;
+                                        min-height: calc(256px + 32px + 32px + 1.0rem);
 
                                         > picture {
                                             position: absolute;
@@ -1346,7 +1346,7 @@ label .scrollable > div {
 
                                             > div:first-child {
                                                 margin: 0;
-                                                padding: 16px;
+                                                padding: 16px 16px calc(32px + 32px + 1.0rem) 16px;
 
                                                 > div {
                                                     transform: rotate(0.03deg);
@@ -1389,6 +1389,16 @@ label .scrollable > div {
                                                 margin: 0;
                                                 padding: 16px;
 
+                                                > .level {
+                                                    margin: -8px -8px -8px -8px;
+                                                    flex-direction: row;
+                            
+                                                    > .level-item {
+                                                        margin: 0;
+                                                        padding: 8px 8px 8px 8px;
+                                                    }
+                                                }
+                                                
                                                 button,
                                                 .button {
                                                     margin: 0px;
