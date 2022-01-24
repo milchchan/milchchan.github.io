@@ -82,9 +82,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                     if len(images) > 0:
                                         item['image'] = images[0]
-
-                            if response.getcode() == 200:
-                                return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
+                            
+                            return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
 
                     else:
                         match = re.match("data:([\\w/\\-\\.]+);(\\w+),(.+)", image)
@@ -147,8 +146,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                 if len(images) > 0:
                                                     item['image'] = images[0]
 
-                                        if response.getcode() == 200:
-                                            return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
+                                        return func.HttpResponse(json.dumps(item), status_code=200, headers=headers, charset='utf-8')
 
             return func.HttpResponse(status_code=400, headers=headers)
             
