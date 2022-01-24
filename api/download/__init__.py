@@ -1,8 +1,7 @@
-import time
 import json
 import logging
 import os
-from datetime import timedelta
+from datetime import datetime, timezone
 
 import azure.functions as func
 
@@ -53,7 +52,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 expiration=expiration,
                                 method='GET'),
                             'type': blob.content_type,
-                            'timestamp': int(time.time())
+                            'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
                         }),
                         status_code=200,
                         headers=headers,
