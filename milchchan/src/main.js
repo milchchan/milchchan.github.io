@@ -209,6 +209,7 @@ window.addEventListener("load", event => {
                 isStared: false,
                 isLocked: false,
                 isDiscovering: false,
+                isTweeting: false,
                 mode: null,
                 feedQueue: [],
                 sequenceQueue: [],
@@ -1024,36 +1025,36 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
-                    }                    
+                    }
 
                     for (const word of shuffle(words)) {
                         //const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name));
-    
+
                         console.log(word);
                         try {
                             const result = await runTransaction(databaseRef(database, databaseRoot + "/words/" + word.name), current => {
                                 if (current && current.timestamp * 1000 > baseTime) {
                                     return undefined;
                                 }
-    
+
                                 return current;
                             });
-    
+
                             if (result.committed) {
                                 function format(format) {
                                     var args = arguments;
-    
+
                                     return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                                 }
-    
+
                                 this.isDiscovering = false;
-    
+
                                 /*for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Discover"), word.name)) {
                                     if (obj.type === "Message") {
                                         this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
                                     }
                                 }*/
-    
+
                                 for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Discover"), word.name, this.character.alternative.sequences)) {
                                     if (obj.type === "Message") {
                                         sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: format(obj.text, word.name) });
@@ -1062,13 +1063,13 @@ window.addEventListener("load", event => {
                                         sequence.push(obj);
                                     }
                                 }
-    
+
                                 if (sequence.length > 0) {
                                     this.sequenceQueue.push(sequence);
                                 }
-    
+
                                 this.learn({ name: word.name, attributes: word.attributes });
-    
+
                                 return;
                             }
                         } catch (e) {
@@ -1076,7 +1077,7 @@ window.addEventListener("load", event => {
                             console.error(e);
                         }
                     }
-                }                
+                }
 
                 this.isDiscovering = false;
 
@@ -1117,7 +1118,7 @@ window.addEventListener("load", event => {
                             } else {
                                 attributes.push({ name: attribute, value: false });
                             }
-                        }                        
+                        }
                     } else {
                         for (const attribute of this.attributes) {
                             if (attribute in word.attributes) {
@@ -1128,7 +1129,7 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
-                    }                    
+                    }
                 } else {
                     const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + word.name));
 
@@ -2014,6 +2015,45 @@ window.addEventListener("load", event => {
                 }
 
                 this.isUpdating = false;
+            },
+            tweet: async function (status) {
+                const credentialStorageItem = localStorage.getItem("credential");
+
+                this.isTweeting = true;
+
+                try {
+                    if (credentialStorageItem) {
+                        const credential = JSON.parse(credentialStorageItem);
+
+                        if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
+                            const response = await fetch("https://wonderland.milchchan.com/api/tweet", {
+                                mode: "cors",
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({ access_token: credential.accessToken, secret: credential.secret, status: `${status} #ミルヒちゃんねる https://milchchan.com/` })
+                            });
+
+                            if (response.ok) {
+                                const self = this;
+
+                                this.isTweeting = await response.json();
+
+                                setTimeout(function () {
+                                    self.isTweeting = false;
+                                }, 3000);
+                            } else {
+                                throw new Error(response.statusText);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
+                }
+
+                this.isTweeting = false;
             },
             getThumbnail: async function (url, length) {
                 try {
