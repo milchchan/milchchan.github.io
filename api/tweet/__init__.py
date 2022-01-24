@@ -1,6 +1,12 @@
+import random
 import json
 import logging
 import os
+import hmac
+from datetime import datetime, timezone
+from base64 import b64encode, b64decode
+from hashlib import sha1, md5
+from urllib.parse import quote
 from urllib.request import urlopen, Request
 
 import azure.functions as func
@@ -11,6 +17,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     if 'Origin' in req.headers:
         headers['Access-Control-Allow-Origin'] = req.headers['Origin']
+
+    timestamp = int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
+    nonce = ''.join([str(random.randint(0, 9)) for i in range(8)])
 
     try:
         if req.method == 'POST':
@@ -49,8 +58,62 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 return func.HttpResponse(status_code=400, headers=headers)
             
         elif req.method == 'GET':
+            if req.headers.get('Content-Type') == 'application/json':
+                data = req.get_json()
+                access_token = data['access_token'] if 'access_token' in data else os.environ.get("TWITTER_OAUTH_TOKEN")
+                secret = data['secret'] if 'secret' in data else os.environ.get("TWITTER_OAUTH_TOKEN_SECRET")
+                query = data['query'] if 'query' in data else '#milchchan'
+                count = data['count'] if 'count' in data else 100
+                
+            else:
+                access_token = req.params['access_token'] if 'access_token' in req.params else os.environ.get("TWITTER_OAUTH_TOKEN")
+                secret = req.params['secret'] if 'secret' in req.params else os.environ.get("TWITTER_OAUTH_TOKEN_SECRET")
+                query = int(req.params['query']) if 'query' in req.params else '#milchchan'
+                count = int(req.params['count']) if 'count' in req.params else 100
 
-            pass
+            CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
+            CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
+
+            result_type = 'recent'
+            url = 'https://api.twitter.com/1.1/search/tweets.json'
+            parameters = f"count={str(count)}&include_entities=true&oauth_consumer_key={CONSUMER_KEY}&oauth_nonce={str(nonce)}&oauth_signature_method=HMAC-SHA1&oauth_timestamp={str(timestamp)}&oauth_token={access_token}&oauth_version=1.0&q={quote(query, '')}&result_type={result_type}"
+            signature_base = f"GET&{quote(url, '')}&{quote(parameters, '')}"
+            authorization_header = f'OAuth oauth_consumer_key="{quote(CONSUMER_KEY, "")}", oauth_nonce="{quote(str(nonce), "")}", oauth_signature="{quote(b64encode(hmac.new(("{0}&{1}".format(CONSUMER_SECRET, secret)).encode(), signature_base.encode(), sha1).digest()).decode(), "")}", oauth_signature_method="{quote("HMAC-SHA1", "")}", oauth_timestamp="{quote(str(timestamp), "")}", oauth_token="{quote(access_token, "")}", oauth_version="{quote("1.0", "")}"'
+            response = urlopen(Request(
+                f"{url}?count={str(count)}&q={quote(query, '')}&result_type={result_type}&include_entities=true",
+                headers={
+                    'Authorization': authorization_header,
+                    'Content-Type': 'application/json'},
+                method='GET'))
+
+            if response.getcode() == 200:
+                data = []
+
+                for status in json.loads(response.read())['statuses']:
+                    if 'retweeted_status' not in status and 'quoted_status' not in status:
+                        user = status['user']
+
+                        if not user['protected']:
+                            item = { 'id': status['id'], 'text': status['text'], 'timestamp': int(datetime.strptime(status['created_at'],'%a %b %d %H:%M:%S +0000 %Y').timestamp()), 'user': { 'id': user["screen_name"], 'name': user['name'], 'image': user['profile_image_url_https'] } }
+
+                            if 'extended_entities' in status:
+                                entities = status['extended_entities']
+
+                                if 'media' in entities:
+                                    images = []
+
+                                    for media in entities['media']:
+                                        if media['type'] == 'photo':
+                                            images.append(media['media_url_https'])
+
+                                    if len(images) > 0:
+                                        item['image'] = images[0]
+
+                            data.append(item)
+
+                return func.HttpResponse(json.dumps(data), status_code=200, headers=headers, charset='utf-8')
+
+            return func.HttpResponse(status_code=400, headers=headers)
 
         headers['Allow'] = 'GET, POST'
 
