@@ -1,7 +1,7 @@
-import time
 import json
 import logging
 import os
+from datetime import datetime, timezone
 from urllib.request import urlopen, Request
 
 import azure.functions as func
@@ -28,7 +28,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if response.getcode() == 200:
                     results = json.loads(response.read())
 
-                    return func.HttpResponse(json.dumps({'id': results['localId'], 'token': results['idToken'], 'timestamp': int(time.time())}), status_code=200, headers=headers, charset='utf-8')
+                    return func.HttpResponse(json.dumps({'id': results['localId'], 'token': results['idToken'], 'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())}), status_code=200, headers=headers, charset='utf-8')
 
             else:
                 return func.HttpResponse(status_code=400, headers=headers)
