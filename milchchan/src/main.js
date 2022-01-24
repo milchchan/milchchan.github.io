@@ -2028,6 +2028,7 @@ window.addEventListener("load", event => {
                         if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
                             const response = await fetch("https://wonderland.milchchan.com/api/tweet", {
                                 mode: "cors",
+                                credentials: 'include',
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json"
