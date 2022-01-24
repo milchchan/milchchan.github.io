@@ -217,7 +217,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             return func.HttpResponse(status_code=400, headers=headers)
 
-        elif req.method == 'OPTIONS':
+        else:
             headers['Access-Control-Allow-Methods'] = 'POST,GET,OPTIONS'
 
             if 'Access-Control-Request-Headers' in req.headers:
@@ -227,9 +227,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             return func.HttpResponse(status_code=200, headers=headers)
 
-        headers['Allow'] = 'GET, POST, OPTIONS'
+        #headers['Allow'] = 'GET, POST, OPTIONS'
 
-        return func.HttpResponse(status_code=405, headers=headers)
+        #return func.HttpResponse(status_code=405, headers=headers)
 
     except Exception as e:
         logging.error(f'{e}')
