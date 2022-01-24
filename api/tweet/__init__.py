@@ -19,9 +19,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if 'Origin' in req.headers:
         headers['Access-Control-Allow-Origin'] = req.headers['Origin']
 
-    if 'Access-Control-Request-Headers' in req.headers:
-        headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
-
     try:
         if req.method == 'POST':
             if 'Authorization' in req.headers:
@@ -215,6 +212,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         elif req.method == 'OPTIONS':
             headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+
+            if 'Access-Control-Request-Headers' in req.headers:
+                headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
 
             return func.HttpResponse(status_code=200, headers=headers)
 
