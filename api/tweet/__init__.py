@@ -228,7 +228,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(status_code=200, headers={
                 'Access-Control-Allow-Origin': req.headers['Origin'],
                 'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
-                })
+            })
 
         #headers['Allow'] = 'GET, POST, OPTIONS'
 
