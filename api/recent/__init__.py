@@ -104,7 +104,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if 'location' in item and item['location'] is not None and 'type' in item['location'] and item['location']['type'] == 'Point' and 'coordinates' in item['location']:
                     item['location'] = {'type': 'Point', 'coordinates': item['location']['coordinates']}
 
-                item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
+                item['timestamp'] = int(datetime.utcfromtimestamp(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp()).timestamp())
 
             return func.HttpResponse(json.dumps(items), status_code=200, headers=headers, charset='utf-8')
 
