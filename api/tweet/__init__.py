@@ -213,7 +213,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(status_code=400, headers=headers)
 
         elif req.method == 'OPTIONS':
-            headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+            headers['Access-Control-Allow-Methods'] = 'POST,GET,OPTIONS'
 
             if 'Access-Control-Request-Headers' in req.headers:
                 headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
