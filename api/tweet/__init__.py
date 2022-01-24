@@ -18,7 +18,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     if 'Origin' in req.headers:
         headers['Access-Control-Allow-Origin'] = req.headers['Origin']
+        headers['Access-Control-Allow-Credentials'] = 'true'
         headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+    
+    return func.HttpResponse(status_code=400, headers=headers)
 
     try:
         if req.method == 'POST':
