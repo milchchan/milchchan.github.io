@@ -18,13 +18,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     if 'Origin' in req.headers:
         headers['Access-Control-Allow-Origin'] = req.headers['Origin']
-        headers['Access-Control-Allow-Credentials'] = 'true'
+
+    if 'Access-Control-Request-Headers' in req.headers:
+        headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
 
     try:
         if req.method == 'POST':
             headers['Access-Control-Allow-Origin'] = '*'
-            headers['Access-Control-Allow-Credentials'] = 'true'
-            
+
             if 'Authorization' in req.headers:
                 jwt = req.headers['Authorization'].split(' ')[1].split('.') if req.headers['Authorization'].startswith('Bearer ') else req.headers['Authorization'].split('.')
 
@@ -216,7 +217,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         elif req.method == 'OPTIONS':
             headers['Access-Control-Allow-Origin'] = '*'
-            headers['Access-Control-Allow-Credentials'] = 'true'
             headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
 
             return func.HttpResponse(status_code=200, headers=headers)
