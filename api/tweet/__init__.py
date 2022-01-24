@@ -14,6 +14,8 @@ import azure.functions as func
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    headers = {}
+
     if 'Origin' in req.headers:
         headers['Access-Control-Allow-Origin'] = req.headers['Origin']
     else:
@@ -21,7 +23,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         if req.method == 'POST':
-            headers = {'Content-Type': 'application/json'}
+            #headers = {'Content-Type': 'application/json'}
+            headers['Content-Type'] = 'application/json'
 
             if 'Authorization' in req.headers:
                 jwt = req.headers['Authorization'].split(' ')[1].split('.') if req.headers['Authorization'].startswith('Bearer ') else req.headers['Authorization'].split('.')
@@ -153,7 +156,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(status_code=400, headers=headers)
             
         elif req.method == 'GET':
-            headers = {'Content-Type': 'application/json'}
+            headers['Content-Type'] = 'application/json'
 
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
