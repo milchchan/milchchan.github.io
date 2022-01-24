@@ -22,6 +22,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         if req.method == 'POST':
+            headers['Access-Control-Allow-Origin'] = '*'
+            headers['Access-Control-Allow-Credentials'] = 'true'
+            
             if 'Authorization' in req.headers:
                 jwt = req.headers['Authorization'].split(' ')[1].split('.') if req.headers['Authorization'].startswith('Bearer ') else req.headers['Authorization'].split('.')
 
