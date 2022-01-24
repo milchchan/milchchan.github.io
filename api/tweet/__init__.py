@@ -16,12 +16,12 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     headers = {'Content-Type': 'application/json'}
 
+    if 'Origin' in req.headers:
+        headers['Access-Control-Allow-Origin'] = req.headers['Origin']
+        headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+
     try:
         if req.method == 'POST':
-            #if 'Origin' in req.headers:
-            headers['Access-Control-Allow-Origin'] = '*'
-            headers['Access-Control-Allow-Methods'] = 'POST, GET'
-
             if 'Authorization' in req.headers:
                 jwt = req.headers['Authorization'].split(' ')[1].split('.') if req.headers['Authorization'].startswith('Bearer ') else req.headers['Authorization'].split('.')
 
@@ -152,9 +152,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(status_code=400, headers=headers)
             
         elif req.method == 'GET':
-            if 'Origin' in req.headers:
-                headers['Access-Control-Allow-Origin'] = req.headers['Origin']
-
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
                 access_token = data['access_token'] if 'access_token' in data else os.environ.get("TWITTER_OAUTH_TOKEN")
@@ -214,7 +211,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             return func.HttpResponse(status_code=400, headers=headers)
 
-        headers['Allow'] = 'GET, POST'
+        elif req.method == 'OPTIONS':
+            return func.HttpResponse(status_code=400, headers=headers)
+
+        headers['Allow'] = 'GET, POST, OPTIONS'
 
         return func.HttpResponse(status_code=405, headers=headers)
 
