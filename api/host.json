@@ -11,5 +11,14 @@
   "extensionBundle": {
     "id": "Microsoft.Azure.Functions.ExtensionBundle",
     "version": "[2.*, 3.0.0)"
+  },
+  "extensions": {
+    "http": {
+        "routePrefix": "api",
+        "customHeaders": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, HEAD, OPTIONS"
+        }
+    }
   }
 }
