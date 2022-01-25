@@ -1030,7 +1030,6 @@ window.addEventListener("load", event => {
                     for (const word of shuffle(words)) {
                         //const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name));
 
-                        console.log(word);
                         try {
                             const result = await runTransaction(databaseRef(database, databaseRoot + "/words/" + word.name), current => {
                                 if (current && current.timestamp * 1000 > baseTime) {
