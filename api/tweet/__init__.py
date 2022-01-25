@@ -37,10 +37,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 data = req.get_json()
 
                 if 'status' in data:
-                    access_token = data['access_token'] if 'access_token' in data else os.environ.get(
-                        "TWITTER_OAUTH_TOKEN")
-                    secret = data['secret'] if 'secret' in data else os.environ.get(
-                        "TWITTER_OAUTH_TOKEN_SECRET")
+                    access_token = data['access_token'] if 'access_token' in data else os.environ.get("TWITTER_OAUTH_TOKEN")
+                    secret = data['secret'] if 'secret' in data else os.environ.get("TWITTER_OAUTH_TOKEN_SECRET")
                     status = data['status']
                     image = data.get('image')
 
@@ -168,19 +166,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 count = data['count'] if 'count' in data else 100
 
             else:
-                access_token = req.params['access_token'] if 'access_token' in req.params else os.environ.get(
-                    "TWITTER_OAUTH_TOKEN")
-                secret = req.params['secret'] if 'secret' in req.params else os.environ.get(
-                    "TWITTER_OAUTH_TOKEN_SECRET")
+                access_token = req.params['access_token'] if 'access_token' in req.params else os.environ.get("TWITTER_OAUTH_TOKEN")
+                secret = req.params['secret'] if 'secret' in req.params else os.environ.get("TWITTER_OAUTH_TOKEN_SECRET")
                 query = req.params['query'] if 'query' in req.params else '#milchchan'
-                count = int(req.params['count']
-                            ) if 'count' in req.params else 100
+                count = int(req.params['count']) if 'count' in req.params else 100
 
             CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
             CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
 
-            timestamp = int(datetime.utcfromtimestamp(
-                datetime.now(timezone.utc).timestamp()).timestamp())
+            timestamp = int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
             nonce = ''.join([str(random.randint(0, 9)) for i in range(8)])
             result_type = 'recent'
             url = 'https://api.twitter.com/1.1/search/tweets.json'
@@ -224,7 +218,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 #if 'Origin' in req.headers:
                 #    return func.HttpResponse(json.dumps(data), status_code=200, headers={'Access-Control-Allow-Origin': req.headers['Origin']}, mimetype='application/json', charset='')
 
-                return func.HttpResponse(json.dumps(data), status_code=200, mimetype='application/json', charset='')
+                return func.HttpResponse(json.dumps(data), status_code=200, mimetype='application/json', charset='utf-8')
 
             return func.HttpResponse(status_code=400, mimetype='', charset='')
 
