@@ -690,7 +690,7 @@
                                                                                                 class="button is-rounded is-size-7"
                                                                                                 type="button"
                                                                                                 v-bind:disabled="user === null || isTweeting === true"
-                                                                                                @click="tweet(typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), ''))">
+                                                                                                @click="tweet(typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), ''), 'image' in like && like.image !== null ? like.image.url : null)">
                                                                                                 <transition name="fade"
                                                                                                     mode="out-in">
                                                                                                     <span class="icon"
