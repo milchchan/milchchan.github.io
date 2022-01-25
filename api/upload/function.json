@@ -8,7 +8,6 @@
       "name": "req",
       "route": "upload",
       "methods": [
-        "get",
         "post"
       ]
     },
