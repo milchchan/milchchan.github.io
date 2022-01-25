@@ -227,7 +227,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             headers['Access-Control-Max-Age'] = '86400'
 
-            return func.HttpResponse(status_code=200, headers=headers)
+            return func.HttpResponse(status_code=204, headers=headers)
 
         #headers['Allow'] = 'GET, POST, OPTIONS'
 
