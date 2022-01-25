@@ -222,7 +222,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             data.append(item)
 
-                return func.HttpResponse(json.dumps(data), status_code=200, headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None, mimetype='application/json', charset='')
+                if 'Origin' in req.headers:
+                    return func.HttpResponse(json.dumps(data), status_code=200, headers={'Access-Control-Allow-Origin': req.headers['Origin']}, mimetype='application/json', charset='')
+
+                return func.HttpResponse(json.dumps(data), status_code=200, mimetype='application/json', charset='')
 
             return func.HttpResponse(status_code=400, mimetype='', charset='')
 
