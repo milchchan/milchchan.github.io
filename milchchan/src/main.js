@@ -2032,7 +2032,7 @@ window.addEventListener("load", event => {
                                 headers: {
                                     "Content-Type": "application/json"
                                 },
-                                body: JSON.stringify({ access_token: credential.accessToken, secret: credential.secret, status: `${status} #ミルヒちゃんねる https://milchchan.com/` })
+                                body: JSON.stringify({ access_token: credential.accessToken, secret: credential.secret, status: `${status} #${this.character.name} #ミルヒちゃんねる https://milchchan.com/` })
                             });
 
                             if (response.ok) {
@@ -2043,6 +2043,8 @@ window.addEventListener("load", event => {
                                 setTimeout(function () {
                                     self.isTweeting = false;
                                 }, 3000);
+
+                                return;
                             } else {
                                 throw new Error(response.statusText);
                             }
