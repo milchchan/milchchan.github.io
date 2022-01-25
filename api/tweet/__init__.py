@@ -1,3 +1,4 @@
+from email import charset
 import random
 import re
 import json
@@ -218,6 +219,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(status_code=400, headers=headers)
 
         else:
+            headers = {}
+
+            if 'Origin' in req.headers:
+                headers['Access-Control-Allow-Origin'] = req.headers['Origin']
+            else:
+                headers['Access-Control-Allow-Origin'] = '*'
+
             headers['Access-Control-Allow-Methods'] = 'POST, GET, HEAD, OPTIONS'            
 
             #if 'Access-Control-Request-Headers' in req.headers:
@@ -227,7 +235,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             headers['Access-Control-Max-Age'] = '86400'
 
-            return func.HttpResponse(status_code=204, headers=headers)
+            return func.HttpResponse(status_code=204, headers=headers, mimetype=None, charset=None)
 
         #headers['Allow'] = 'GET, POST, OPTIONS'
 
