@@ -15,33 +15,28 @@ from google.cloud import storage
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    headers = {'Content-Type': 'application/json'}
-
-    if 'Origin' in req.headers:
-        headers['Access-Control-Allow-Origin'] = req.headers['Origin']
-
     try:
         if req.method == 'POST':
             pattern = "data:([\\w/\\-\\.]+);(\\w+),(.+)"
-            
+
             if req.headers.get('Content-Type') == 'application/json':
-                data = req.get_json()            
+                data = req.get_json()
                 match = re.match(pattern, data.get('image'))
                 path = data.get('path')
-                
+
             else:
                 match = re.match(pattern, req.get_body.decode('utf-8'))
                 path = req.params.get('path')
 
             if match:
                 mime_type, encoding, data = match.groups()
-            
+
                 if mime_type in ['image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
                     bucket_name = 'merkuchan.com'
 
                     if path is None:
                         path = str(uuid4())
-                    
+
                     credentials = service_account.Credentials.from_service_account_info({
                         'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
                         'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
@@ -54,36 +49,39 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
                         'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
                     })
-                    scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
-                    storage_client = storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id)
+                    scoped_credentials = credentials.with_scopes(
+                        ['https://www.googleapis.com/auth/cloud-platform'])
+                    storage_client = storage.Client(
+                        credentials=scoped_credentials, project=scoped_credentials.project_id)
                     bucket = storage_client.bucket(bucket_name)
                     blob = bucket.blob(path)
-                    
+
                     if not blob.exists():
-                        blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
+                        blob.upload_from_file(
+                            BytesIO(b64decode(data)), content_type=mime_type)
 
                         return func.HttpResponse(json.dumps({
-                                'url': f'gs://{bucket_name}{urljoin("/", path)}',
-                                'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
-                            }),
+                            'url': f'gs://{bucket_name}{urljoin("/", path)}',
+                            'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
+                        }),
                             status_code=200,
-                            headers=headers,
-                            charset='utf-8')
+                            headers={
+                                'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None,
+                            mimetype='application/json',
+                            charset='')
 
-            return func.HttpResponse(status_code=400, headers=headers)
+            return func.HttpResponse(status_code=400, mimetype='', charset='')
 
-        headers['Allow'] = 'POST'
-
-        return func.HttpResponse(status_code=405, headers=headers)
+        return func.HttpResponse(status_code=405, headers={'Allow': 'POST'}, mimetype='', charset='')
 
     except Exception as e:
         logging.error(f'{e}')
 
         return func.HttpResponse(json.dumps({
-                'error': {
-                    'message': str(e),
-                    'type': type(e).__name__ }
-            }),
+            'error': {
+                'message': str(e),
+                'type': type(e).__name__}
+        }),
             status_code=400,
-            headers=headers,
-            charset='utf-8')
+            mimetype='application/json',
+            charset='')
