@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import azure.functions as func
 
@@ -11,23 +11,20 @@ from google.cloud.storage.blob import Blob
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    headers = {'Content-Type': 'application/json'}
-
-    if 'Origin' in req.headers:
-        headers['Access-Control-Allow-Origin'] = req.headers['Origin']
-
     try:
         if req.method == 'GET':
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
                 url = data.get('url')
                 expiration = data.get('expiration')
-                expiration = timedelta(seconds=expiration if expiration else 3600)
-                
+                expiration = timedelta(
+                    seconds=expiration if expiration else 3600)
+
             else:
                 url = req.params.get('url')
                 expiration = req.params.get('expiration')
-                expiration = timedelta(seconds=int(expiration) if expiration and expiration.isnumeric() else 3600)
+                expiration = timedelta(seconds=int(
+                    expiration) if expiration and expiration.isnumeric() else 3600)
 
             if url is not None:
                 credentials = service_account.Credentials.from_service_account_info({
@@ -42,36 +39,37 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
                     'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
                 })
-                scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
-                blob = Blob.from_string(url, client=storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id))
-                
+                scoped_credentials = credentials.with_scopes(
+                    ['https://www.googleapis.com/auth/cloud-platform'])
+                blob = Blob.from_string(url, client=storage.Client(
+                    credentials=scoped_credentials, project=scoped_credentials.project_id))
+
                 if blob.exists():
                     return func.HttpResponse(json.dumps({
-                            'url': blob.generate_signed_url(
-                                version='v4',
-                                expiration=expiration,
-                                method='GET'),
-                            'type': blob.content_type,
-                            'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
-                        }),
+                        'url': blob.generate_signed_url(
+                            version='v4',
+                            expiration=expiration,
+                            method='GET'),
+                        'type': blob.content_type,
+                        'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
+                    }),
                         status_code=200,
-                        headers=headers,
-                        charset='utf-8')
+                        headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None,
+                        mimetype='application/json',
+                        charset='')
 
-            return func.HttpResponse(status_code=400, headers=headers)
+            return func.HttpResponse(status_code=400, mimetype='', charset='')
 
-        headers['Allow'] = 'GET'
-
-        return func.HttpResponse(status_code=405, headers=headers)
+        return func.HttpResponse(status_code=405, headers={'Allow': 'GET'})
 
     except Exception as e:
         logging.error(f'{e}')
 
         return func.HttpResponse(json.dumps({
-                'error': {
-                    'message': str(e),
-                    'type': type(e).__name__ }
-            }),
+            'error': {
+                'message': str(e),
+                'type': type(e).__name__}
+        }),
             status_code=400,
-            headers=headers,
-            charset='utf-8')
+            mimetype='application/json',
+            charset='')
