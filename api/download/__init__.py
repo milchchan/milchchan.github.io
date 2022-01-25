@@ -57,7 +57,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         headers={
                             'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None,
                         mimetype='application/json',
-                        charset='')
+                        charset='utf-8')
 
             return func.HttpResponse(status_code=400, mimetype='', charset='')
 
@@ -73,4 +73,4 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         }),
             status_code=400,
             mimetype='application/json',
-            charset='')
+            charset='utf-8')
