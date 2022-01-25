@@ -232,7 +232,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             #    headers['Access-Control-Allow-Headers'] = req.headers['Access-Control-Request-Headers']
             #else:
             headers['Access-Control-Allow-Headers'] = 'Accept, Content-Type'
-            headers['Connection'] = 'keep-alive'
 
             return func.HttpResponse(status_code=204, headers=headers, mimetype='', charset='')
 
