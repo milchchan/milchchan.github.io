@@ -1182,7 +1182,7 @@ window.addEventListener("load", event => {
             activate: async function (tokens = [], threshold = 0.5) {
                 idleTime = activateTime = 0.0;
 
-                if (this.user.uid !== null) {
+                if (this.user != null) {
                     if (Math.random() < threshold) {
                         function _random(min, max) {
                             min = Math.ceil(min);
@@ -2028,6 +2028,7 @@ window.addEventListener("load", event => {
                         if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
                             const response = await fetch("https://wonderland.milchchan.com/api/tweet", {
                                 mode: "cors",
+                                //credentials: 'include',
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json"
