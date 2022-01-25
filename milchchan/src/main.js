@@ -2017,8 +2017,7 @@ window.addEventListener("load", event => {
             },
             tweet: async function (status, image) {
                 const credentialStorageItem = localStorage.getItem("credential");
-                let data = null;
-
+                
                 this.isTweeting = true;
 
                 try {
@@ -2026,45 +2025,30 @@ window.addEventListener("load", event => {
                         const credential = JSON.parse(credentialStorageItem);
 
                         if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
-                            data = { access_token: credential.accessToken, secret: credential.secret, status: `${status} #${this.character.name} #ミルヒちゃんねる https://milchchan.com/` };
+                            const data = { access_token: credential.accessToken, secret: credential.secret, status: `${status} #${this.character.name} #ミルヒちゃんねる https://milchchan.com/` };
                             
                             if (image !== null) {
-                                data['image'] = URL.createObjectURL(await new Promise((resolve, reject) => {
+                                data['image'] = await new Promise((resolve, reject) => {
                                     const i = new Image();
             
                                     i.onload = () => {
                                         const canvas = document.createElement("canvas");
             
-                                        if (i.width > i.height) {
-                                            if (i.width > length) {
-                                                canvas.width = length * window.devicePixelRatio;
-                                                canvas.height = Math.floor(length / i.width * i.height) * window.devicePixelRatio;
-                                            } else {
-                                                canvas.width = i.width * window.devicePixelRatio;
-                                                canvas.height = i.height * window.devicePixelRatio;
-                                            }
-                                        } else if (i.height > length) {
-                                            canvas.width = Math.floor(length / i.height * i.width) * window.devicePixelRatio;
-                                            canvas.height = length * window.devicePixelRatio;
-                                        } else {
-                                            canvas.width = i.width * window.devicePixelRatio;
-                                            canvas.height = i.height * window.devicePixelRatio;
-                                        }
+                                        canvas.width = i.width * window.devicePixelRatio;
+                                        canvas.height = i.height * window.devicePixelRatio;
             
                                         const ctx = canvas.getContext("2d");
             
                                         ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
-                                        ctx.canvas.toBlob(blob => {
-                                            resolve(blob);
-                                            ctx.canvas.width = ctx.canvas.height = 0;
-                                        }, "image/jpeg");
+                                        resolve(ctx.canvas.toDataURL("image/jpeg", 1.0));
+                                        ctx.canvas.width = ctx.canvas.height = 0;
                                     };
                                     i.onerror = (error) => {
                                         reject(error);
                                     };
                                     i.crossOrigin = "anonymous";
-                                    i.src = url;
-                                }));
+                                    i.src = image;
+                                });
                             }
 
                             const response = await fetch("https://wonderland.milchchan.com/api/tweet", {
@@ -2094,10 +2078,6 @@ window.addEventListener("load", event => {
                 } catch (e) {
                     this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                     console.error(e);
-                } finally {
-                    if (data !== null && 'image' in data) {
-                        URL.revokeObjectURL(data.image);
-                    }
                 }
 
                 this.isTweeting = false;
