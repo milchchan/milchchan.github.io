@@ -54,7 +54,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
                     }),
                         status_code=200,
-                        headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None,
+                        headers={
+                            'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None,
                         mimetype='application/json',
                         charset='')
 
