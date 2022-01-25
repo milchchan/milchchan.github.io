@@ -31,7 +31,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             raise Exception
 
                     except Exception:
-                        return func.HttpResponse(status_code=403, mimetype='', charset='')
+                        return func.HttpResponse(status_code=403, headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None, mimetype='', charset='')
 
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
@@ -155,10 +155,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                         return func.HttpResponse(json.dumps(item), status_code=200, headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None, mimetype='application/json', charset='utf-8')
 
-            return func.HttpResponse(status_code=400, mimetype='', charset='')
+            return func.HttpResponse(status_code=400, headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None, mimetype='', charset='')
 
         elif req.method == 'GET':
-            '''
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
                 access_token = data['access_token'] if 'access_token' in data else os.environ.get(
@@ -223,8 +222,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             data.append(item)
 
                 return func.HttpResponse(json.dumps(data), status_code=200, headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None, mimetype='application/json', charset='utf-8')
-            '''
-            return func.HttpResponse(status_code=400, mimetype='', charset='')
+            
+            return func.HttpResponse(status_code=400, headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None, mimetype='', charset='')
 
         elif req.method == 'OPTIONS':
             headers = {'Access-Control-Allow-Origin': req.headers['Origin']}
@@ -246,5 +245,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 'type': type(e).__name__}
         }),
             status_code=400,
+            headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None,
             mimetype='application/json',
             charset='utf-8')
