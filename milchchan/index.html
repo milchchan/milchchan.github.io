@@ -685,7 +685,7 @@
                                                                                                 </button>
                                                                                             </transition>
                                                                                         </div>
-                                                                                        <div class="level-item">
+                                                                                        <div class="level-item" v-if="user !== null && user.providerData.some(x => x.providerId === 'twitter.com')">
                                                                                             <button
                                                                                                 class="button is-rounded is-size-7"
                                                                                                 type="button"
