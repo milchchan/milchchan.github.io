@@ -1344,12 +1344,16 @@ label .scrollable > div {
                                             align-items: center;
 
                                             > div:first-child {
+                                                display: flex;
                                                 margin: 0;
                                                 padding: 16px;
                                                 width: 256px;
                                                 height: 256px;
                                                 overflow-x: hidden;
                                                 overflow-y: auto;
+                                                flex-direction: column;
+                                                justify-content: center;
+                                                align-items: center;
 
                                                 > div {
                                                     transform: rotate(0.03deg);
