@@ -2017,7 +2017,7 @@ window.addEventListener("load", event => {
             },
             tweet: async function (status, image) {
                 const credentialStorageItem = localStorage.getItem("credential");
-                
+
                 this.isTweeting = true;
 
                 try {
@@ -2026,32 +2026,32 @@ window.addEventListener("load", event => {
 
                         if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
                             const data = { access_token: credential.accessToken, secret: credential.secret, status: `${status} #${this.character.name} #ミルヒちゃんねる https://milchchan.com/` };
-                            
+                            let response;
+
                             if (image !== null) {
-                                data['image'] = await new Promise((resolve, reject) => {
-                                    const i = new Image();
-            
-                                    i.onload = () => {
-                                        const canvas = document.createElement("canvas");
-            
-                                        canvas.width = i.width * window.devicePixelRatio;
-                                        canvas.height = i.height * window.devicePixelRatio;
-            
-                                        const ctx = canvas.getContext("2d");
-            
-                                        ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
-                                        resolve(ctx.canvas.toDataURL("image/jpeg", 1.0));
-                                        ctx.canvas.width = ctx.canvas.height = 0;
-                                    };
-                                    i.onerror = (error) => {
-                                        reject(error);
-                                    };
-                                    i.crossOrigin = "anonymous";
-                                    i.src = image;
+                                response = await fetch(image, {
+                                    method: "GET"
                                 });
+
+                                if (response.ok) {
+                                    data['image'] = await new Promise(function (resolve, reject) {
+                                        const reader = new FileReader();
+
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+
+                                        if (file) {
+                                            reader.readAsDataURL(await response.blob());
+                                        }
+                                    });
+                                }
                             }
 
-                            const response = await fetch("https://wonderland.milchchan.com/api/tweet", {
+                            response = await fetch("https://wonderland.milchchan.com/api/tweet", {
                                 mode: "cors",
                                 method: "POST",
                                 headers: {
