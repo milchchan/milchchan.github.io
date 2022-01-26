@@ -2034,7 +2034,7 @@ window.addEventListener("load", event => {
                                 });
 
                                 if (response.ok) {
-                                    data['image'] = await new Promise(function (resolve, reject) {
+                                    data['image'] = await new Promise(async (resolve, reject) => {
                                         const reader = new FileReader();
 
                                         reader.onload = () => {
@@ -2043,10 +2043,7 @@ window.addEventListener("load", event => {
                                         reader.onerror = () => {
                                             reject(reader.error);
                                         };
-
-                                        if (file) {
-                                            reader.readAsDataURL(await response.blob());
-                                        }
+                                        reader.readAsDataURL(await response.blob());
                                     });
                                 }
                             }
