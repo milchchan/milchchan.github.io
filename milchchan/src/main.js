@@ -611,70 +611,54 @@ window.addEventListener("load", event => {
                     }
 
                     const self = this;
-                    const files = [];
-                    const paths = [];
+                    const files = event.currentTarget.files;
+                    let completed = 0;
 
-                    for (const file of event.currentTarget.files) {
-                        files.push(file);
-                    }
-
-                    for (const file of files.sort((x, y) => {
-                        if (x.name > y.name) {
-                            return 1;
-                        } else if (x.name < y.name) {
-                            return -1;
-                        }
-
-                        return 0;
-                    })) {
+                    for (const file of files) {
                         const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file);
 
                         try {
-                            await new Promise(function (resolve, reject) {
+                            const path = await new Promise(function (resolve, reject) {
                                 uploadTask.on("state_changed", (snapshot) => {
-                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + paths.length / files.length;
+                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed / files.length;
                                 }, (error) => {
                                     reject(error);
                                 }, () => {
-                                    resolve(uploadTask.snapshot.ref);
+                                    resolve(uploadTask.snapshot.ref.fullPath);
                                 });
                             });
+
+                            if (data === null) {
+                                await runTransaction(databaseRef(database, `${databaseRoot}/backgrounds/${push(child(databaseRef(database), `${databaseRoot}/backgrounds`)).key}`), current => {
+                                    return { image: { path: path, type: file.type }, timestamp: timestamp };
+                                });
+                            } else {
+                                const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${data.id}`), current => {
+                                    if (current) {
+                                        current['image'] = { path: path, type: file.type };
+                                        current['timestamp'] = timestamp;
+                                    }
+
+                                    return current;
+                                });
+
+                                if (result.committed && result.snapshot.exists()) {
+                                    const d = result.snapshot.val()
+
+                                    data['image'] = d['image'];
+                                    data['image']['url'] = await getDownloadURL(storageRef(storage, d['image'].path));
+                                    data['timestamp'] = d['timestamp'];
+                                }
+                            }
                         } catch (error) {
                             this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
                             console.error(error);
                         }
 
-                        paths.push(uploadTask.snapshot.ref.fullPath);
+                        completed++;
                     }
 
-                    try {
-                        if (data === null) {
-                            await runTransaction(databaseRef(database, `${databaseRoot}/images/${push(child(databaseRef(database), `${databaseRoot}/images`)).key}`), current => {
-                                return { paths: paths, timestamp: timestamp };
-                            });
-                        } else {
-                            const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${data.id}`), current => {
-                                if (current) {
-                                    current['image'] = paths[0];
-                                    current['timestamp'] = timestamp;
-                                }
-
-                                return current;
-                            });
-
-                            if (result.committed && result.snapshot.exists()) {
-                                const d = result.snapshot.val()
-
-                                data['image'] = { path: d['image'], url: await getDownloadURL(storageRef(storage, d['image'])) };
-                                data['timestamp'] = d['timestamp'];
-                            }
-                        }
-                    } catch (e) {
-                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                        console.error(e);
-                    }
-
-                    //push(databaseRef(database, `${databaseRoot}/images`), { paths: paths, timestamp: Math.floor(new Date() / 1000) });
+                    //push(databaseRef(database, `${databaseRoot}/backgrounds`), { image: path, timestamp: Math.floor(new Date() / 1000) });
 
                     this.progress = null;
                 } else {
@@ -916,7 +900,7 @@ window.addEventListener("load", event => {
                         dictionary[id]['id'] = id;
 
                         if ("image" in dictionary[id]) {
-                            dictionary[id]["image"] = { path: dictionary[id].image, url: await getDownloadURL(storageRef(storage, dictionary[id].image)) };
+                            dictionary[id]["image"]['url'] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
                         }
 
                         data.push(dictionary[id]);
@@ -960,7 +944,7 @@ window.addEventListener("load", event => {
                         dictionary[id]['id'] = id;
 
                         if ("image" in dictionary[id]) {
-                            dictionary[id]["image"] = { path: dictionary[id].image, url: await getDownloadURL(storageRef(storage, dictionary[id].image)) };
+                            dictionary[id]["image"]['url'] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
                         }
 
                         data.push(dictionary[id]);
@@ -1828,44 +1812,36 @@ window.addEventListener("load", event => {
                     this.background.color = null;
                 }
 
-                if ('paths' in background) {
-                    const preloadImages = [];
+                if ('image' in background) {
+                    try {
+                        const metadata = await getMetadata(storageRef(storage, background.image.path));
 
-                    for (const path of background.paths) {
-                        try {
-                            const metadata = await getMetadata(storageRef(storage, path));
+                        if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
+                            try {
+                                const response = await fetch(await getDownloadURL(storageRef(storage, background.image.path)), {
+                                    method: "GET"
+                                });
 
-                            if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
-                                try {
-                                    const response = await fetch(await getDownloadURL(storageRef(storage, path)), {
-                                        method: "GET"
-                                    });
-
-                                    if (response.ok) {
-                                        preloadImages.push({ id: background.id, blob: await response.blob(), timestamp: background.timestamp });
-                                    }
-                                } catch (e) {
-                                    console.error(e);
+                                if (response.ok) {
+                                    this.background.images.push({ id: background.id, url: URL.createObjectURL(await response.blob()), timestamp: background.timestamp });
                                 }
-                            } else {
-                                preloadImages.push({ id: background.id, blob: await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)), timestamp: background.timestamp });
+                            } catch (e) {
+                                console.error(e);
                             }
-                        } catch (e) {
-                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                            console.error(e);
+                        } else {
+                            this.background.images.push({ id: background.id, url: URL.createObjectURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, background.image.path)), Math.max(window.screen.width, window.screen.height))), timestamp: background.timestamp });
                         }
-                    }
-
-                    for (const image of preloadImages) {
-                        this.background.images.push({ id: image.id, url: URL.createObjectURL(image.blob), timestamp: image.timestamp });
+                    } catch (e) {
+                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e);
                     }
                 }
 
                 if ("tags" in background) {
                     this.background.tags = background.tags.sort((x, y) => {
-                        if (x.name > y.name) {
+                        if (x > y) {
                             return 1;
-                        } else if (x.name < y.name) {
+                        } else if (x < y) {
                             return -1;
                         }
 
@@ -3956,29 +3932,29 @@ window.addEventListener("load", event => {
                 }
             });
 
-            onValue(query(databaseRef(database, databaseRoot + "/images"), limitToLast(100)), snapshot => {
+            onValue(query(databaseRef(database, databaseRoot + "/backgrounds"), orderByChild("timestamp"), limitToLast(100)), snapshot => {
                 if (snapshot.exists()) {
-                    const images = snapshot.val();
+                    const backgrounds = snapshot.val();
                     let isUpdated = false;
 
-                    for (const key in images) {
+                    for (const key in backgrounds) {
                         const index = self.recentImages.findIndex(x => x.id === key);
 
                         if (index >= 0) {
-                            if (self.recentImages[index].timestamp < images[key].timestamp) {
+                            if (self.recentImages[index].timestamp < backgrounds[key].timestamp) {
                                 self.recentImages.splice(index, 1);
                             } else {
                                 continue;
                             }
                         }
 
-                        images[key]["id"] = key;
-                        self.recentImages.push(images[key]);
+                        backgrounds[key]["id"] = key;
+                        self.recentImages.push(backgrounds[key]);
                         isUpdated = true;
                     }
 
                     /*for (let i = self.recentImages.length - 1; i >= 0; i--) {
-                        if (self.recentImages[i].id in images === false) {
+                        if (self.recentImages[i].id in backgrounds === false) {
                             self.recentImages.splice(i, 1);
                             isUpdated = true;
                         }
