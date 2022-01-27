@@ -1908,7 +1908,7 @@
                     <button class="button is-white" type="button" v-bind:disabled="isLoading || isHangingOn"
                         @click="refresh" v-cloak>
                         <span class="icon is-small">
-                            <i class="fas fa-sync" v-bind:class="{ loading: isLoading }"></i>
+                            <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
                         </span>
                     </button>
                 </div>
