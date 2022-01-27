@@ -81,7 +81,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             else:
                                 blob.upload_from_file(
                                     BytesIO(b64decode(data)), content_type=mime_type)
-                                item['image'] = f'gs://{bucket_name}{urljoin("/", path)}'
+                                item['image'] = { 'url': f'gs://{bucket_name}{urljoin("/", path)}', 'type': mime_type }
 
                         else:
                             return func.HttpResponse(status_code=400, mimetype='', charset='')
