@@ -97,12 +97,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 })
                 scoped_credentials = credentials.with_scopes(
                     ['https://www.googleapis.com/auth/cloud-platform'])
-                blob = Blob.from_string(item['image'], client=storage.Client(
+                blob = Blob.from_string(item['image']['url'], client=storage.Client(
                     credentials=scoped_credentials, project=scoped_credentials.project_id))
 
                 if blob.exists():
-                    item['image'] = blob.generate_signed_url(
-                        version='v4', expiration=timedelta(minutes=60), method='GET')
+                    item['image'] = { 'url': blob.generate_signed_url(version='v4', expiration=timedelta(minutes=60), method='GET'), 'type': blob.content_type }
 
             if 'location' in item and item['location'] is not None and 'type' in item['location'] and item['location']['type'] == 'Point' and 'coordinates' in item['location']:
                 item['location'] = {
