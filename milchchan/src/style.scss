@@ -1347,44 +1347,66 @@ label .scrollable > div {
                                                 display: flex;
                                                 margin: 0;
                                                 padding: 16px;
-                                                width: 256px;
-                                                height: 256px;
+                                                width: 100%;
+                                                height: 100%;
                                                 overflow-x: hidden;
-                                                overflow-y: auto;
+                                                overflow-y: hidden;
                                                 flex-direction: column;
                                                 justify-content: center;
                                                 align-items: center;
 
                                                 > div {
-                                                    transform: rotate(0.03deg);
-
-                                                    > span {
-                                                        color: var(--main-color);
-                                                        font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-                                                        transition: 0.5s;
-                                                    }
-                                                }
-
-                                                > div:first-child {
-                                                    margin: 0;
-                                                    padding: 0;
-                                                    /*display: inline-block;
-                                                    border: 4px solid rgba(255, 255, 255, 1) !important;
-                                                    padding: 8px 16px 8px 16px;
-                                                    border-radius: 500px 500px 500px 0px;*/
-                                                    text-align: center;
-                                                }
-
-                                                > div:last-child {
-                                                    margin: 0;
-                                                    padding: 8px 0px 0px 0px;
                                                     display: flex;
+                                                    top: 0;
+                                                    width: 256px;
+                                                    height: 256px;
+                                                    overflow-x: hidden;
+                                                    overflow-y: auto;
+                                                    flex-direction: column;
                                                     justify-content: center;
                                                     align-items: center;
-                                                    line-height: 1rem;
 
-                                                    > span {
-                                                        color: var(--accent-color);
+                                                    > div {
+                                                        top: 0;
+                                                        margin: auto !important;
+                                                        overflow-x: hidden;
+                                                        overflow-y: auto;
+                                                        width: 100%;
+                                                        height: fit-content;
+
+                                                        > div {
+                                                            transform: rotate(0.03deg);
+
+                                                            > span {
+                                                                color: var(--main-color);
+                                                                font-family: "Ropa Sans", "M PLUS Rounded 1c",
+                                                                    sans-serif;
+                                                                transition: 0.5s;
+                                                            }
+                                                        }
+
+                                                        > div:first-child {
+                                                            margin: 0;
+                                                            padding: 0;
+                                                            /*display: inline-block;
+                                                            border: 4px solid rgba(255, 255, 255, 1) !important;
+                                                            padding: 8px 16px 8px 16px;
+                                                            border-radius: 500px 500px 500px 0px;*/
+                                                            text-align: center;
+                                                        }
+
+                                                        > div:last-child {
+                                                            margin: 0;
+                                                            padding: 8px 0px 0px 0px;
+                                                            display: flex;
+                                                            justify-content: center;
+                                                            align-items: center;
+                                                            line-height: 1rem;
+
+                                                            > span {
+                                                                color: var(--accent-color);
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
