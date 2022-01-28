@@ -21,11 +21,11 @@
   "homepage": "https://milchchan.com/",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
-    "@pixiv/three-vrm": "^0.6.6",
-    "@types/three": "^0.131.0",
+    "@pixiv/three-vrm": "^0.6.8",
+    "@types/three": "^0.131.1",
     "animejs": "^3.2.1",
     "bulma": "^0.9.3",
-    "firebase": "^9.6.4",
+    "firebase": "^9.6.5",
     "stats.js": "^0.17.0",
     "three": "^0.132.2",
     "vue": "^3.2.29"
