@@ -27,7 +27,7 @@
     "bulma": "^0.9.3",
     "firebase": "^9.6.5",
     "stats.js": "^0.17.0",
-    "three": "^0.132.2",
+    "three": "^0.137.0",
     "vue": "^3.2.29"
   },
   "devDependencies": {
