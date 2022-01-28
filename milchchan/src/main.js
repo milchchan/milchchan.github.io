@@ -1,5 +1,5 @@
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
-import * as THREE from 'three';
+import { WebGLRenderer, Scene, DirectionalLight, PerspectiveCamera, Clock, Raycaster, Object3D, Vector2, Vector3, LinearToneMapping, sRGBEncoding } from 'three/build/three.module.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -44,7 +44,7 @@ initializeAnalytics(firebaseApp);
 
 const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
 const databaseRoot = "bot";
-const renderer = new THREE.WebGLRenderer({
+const renderer = new WebGLRenderer({
     antialias: true,
     alpha: true,
     preserveDrawingBuffer: true
@@ -54,13 +54,13 @@ const renderer = new THREE.WebGLRenderer({
 //renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0xffffff, 0);
 renderer.toneMappingExposure = 1;
-renderer.toneMapping = THREE.LinearToneMapping;
-renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = LinearToneMapping;
+renderer.outputEncoding = sRGBEncoding;
 //renderer.autoClear = false;
 
 const CAMERA_FOV = 60.0;
 const CAMERA_Z = 5;//1.25;
-const camera = new THREE.PerspectiveCamera(CAMERA_FOV, renderer.domElement.width / renderer.domElement.height, 0.1, 1000);
+const camera = new PerspectiveCamera(CAMERA_FOV, renderer.domElement.width / renderer.domElement.height, 0.1, 1000);
 
 camera.position.set(0.0, 1.5, CAMERA_Z);
 
@@ -79,25 +79,25 @@ controls.maxDistance = 5;
 controls.target.set(0.0, 2.5, 1.0);
 controls.update();
 
-const scene = new THREE.Scene();
-const light = new THREE.DirectionalLight(0xffffff);
-const hemisphereLight = new THREE.HemisphereLight(0xd7fbff, 0x7e94a8, 0.7);
+const scene = new Scene();
+const light = new DirectionalLight(0xffffff);
+//const hemisphereLight = new THREE.HemisphereLight(0xd7fbff, 0x7e94a8, 0.7);
 
 light.intensity = 0.9;
 light.position.set(0.0, 10.0, 10.0).normalize();
 
 scene.add(light);
-scene.add(hemisphereLight);
+//scene.add(hemisphereLight);
 //scene.add(new THREE.GridHelper(10, 10));
 //scene.add(new THREE.AxesHelper(5));
 
-const lookAtTarget = new THREE.Object3D();
+const lookAtTarget = new Object3D();
 
 camera.add(lookAtTarget);
 
 const composer = new EffectComposer(renderer);
 
-var bloomPass = new UnrealBloomPass(new THREE.Vector2(renderer.domElement.width, renderer.domElement.height), 1.5, 0.4, 0.85);
+var bloomPass = new UnrealBloomPass(new Vector2(renderer.domElement.width, renderer.domElement.height), 1.5, 0.4, 0.85);
 var hueSaturation = new ShaderPass(HueSaturationShader);
 var brightnessContrastShader = new ShaderPass(BrightnessContrastShader);
 var gammaCorrectionShader = new ShaderPass(GammaCorrectionShader);
@@ -116,8 +116,8 @@ hueSaturation.uniforms.hue.value = -0.025;
 hueSaturation.uniforms.saturation.value = 0.25;
 //brightnessContrastShader.uniforms.brightness.value = 0.5;
 brightnessContrastShader.uniforms.contrast.value = -0.1;
-colorCorrection.uniforms.mulRGB.value = new THREE.Vector3(0.95, 0.95, 0.95);
-colorCorrection.uniforms.powRGB.value = new THREE.Vector3(1, 1, 1);
+colorCorrection.uniforms.mulRGB.value = new Vector3(0.95, 0.95, 0.95);
+colorCorrection.uniforms.powRGB.value = new Vector3(1, 1, 1);
 rgbShift.uniforms.amount.value = 0.0001;
 rgbShift.uniforms.angle.value = 0;
 vignette.uniforms.darkness.value = 0.25;
@@ -150,9 +150,9 @@ if (!debug) {
     stats.domElement.classList.add("is-hidden");
 }
 
-const clock = new THREE.Clock();
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+const clock = new Clock();
+const raycaster = new Raycaster();
+const mouse = new Vector2();
 let vrmModel = null;
 let vrmSpringBones = [];
 let animationIndex = 0;
@@ -3406,7 +3406,7 @@ window.addEventListener("load", event => {
                             for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                 for (const springBone of springBoneGroup) {
                                     if (springBoneIndex === draggableBone.index) {
-                                        bonePosition = springBone.bone.getWorldPosition(new THREE.Vector3());
+                                        bonePosition = springBone.bone.getWorldPosition(new Vector3());
                                     }
 
                                     springBoneIndex++;
@@ -3421,8 +3421,8 @@ window.addEventListener("load", event => {
 
                                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                     for (const springBone of springBoneGroup) {
-                                        if (bonePosition.distanceTo(springBone.bone.getWorldPosition(new THREE.Vector3())) <= range) {
-                                            draggingBones.bones[springBoneIndex] = { direction: new THREE.Vector3(draggableBone.direction.x, draggableBone.direction.y, 0), base: springBone.gravityPower - vrmSpringBones[springBoneIndex].gravityPower, source: 0, target: -Math.min(0.01 * draggableBone.distance * Math.cos(bonePosition.distanceTo(springBone.bone.getWorldPosition(new THREE.Vector3())) / range), 5) };
+                                        if (bonePosition.distanceTo(springBone.bone.getWorldPosition(new Vector3())) <= range) {
+                                            draggingBones.bones[springBoneIndex] = { direction: new Vector3(draggableBone.direction.x, draggableBone.direction.y, 0), base: springBone.gravityPower - vrmSpringBones[springBoneIndex].gravityPower, source: 0, target: -Math.min(0.01 * draggableBone.distance * Math.cos(bonePosition.distanceTo(springBone.bone.getWorldPosition(new Vector3())) / range), 5) };
                                             mergedBoneAnimationDictionary[springBoneIndex] = { direction: draggingBones.bones[springBoneIndex].direction, force: draggingBones.bones[springBoneIndex].source };
                                         }
 
@@ -3446,9 +3446,9 @@ window.addEventListener("load", event => {
                                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                     for (const springBone of springBoneGroup) {
                                         if (springBoneIndex in draggingBones.bones) {
-                                            draggingBones.bones[springBoneIndex].direction = new THREE.Vector3(draggableBone.direction.x, draggableBone.direction.y, 0);
+                                            draggingBones.bones[springBoneIndex].direction = new Vector3(draggableBone.direction.x, draggableBone.direction.y, 0);
                                             draggingBones.bones[springBoneIndex].source = draggingBones.bones[springBoneIndex].target;
-                                            draggingBones.bones[springBoneIndex].target = -Math.min(0.01 * draggableBone.distance * Math.cos(draggingBones.center.distanceTo(springBone.bone.getWorldPosition(new THREE.Vector3())) / range), 5);
+                                            draggingBones.bones[springBoneIndex].target = -Math.min(0.01 * draggableBone.distance * Math.cos(draggingBones.center.distanceTo(springBone.bone.getWorldPosition(new Vector3())) / range), 5);
                                         }
 
                                         springBoneIndex++;
@@ -3464,7 +3464,7 @@ window.addEventListener("load", event => {
                         if (randomWind === null) {
                             let springBoneIndex = 0;
 
-                            randomWind = { time: 0, duration: 1.0, direction: new THREE.Vector3(1, 0, 0), force: 0.01 * (Math.random() - 0.5), sources: {} };
+                            randomWind = { time: 0, duration: 1.0, direction: new Vector3(1, 0, 0), force: 0.01 * (Math.random() - 0.5), sources: {} };
 
                             for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                                 for (const springBone of springBoneGroup) {
@@ -3498,7 +3498,7 @@ window.addEventListener("load", event => {
                         for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                             for (const springBone of springBoneGroup) {
                                 if (index in mergedBoneAnimationDictionary) {
-                                    const vector = new THREE.Vector3(vrmSpringBones[index].gravityDir.x + mergedBoneAnimationDictionary[index].direction.x, vrmSpringBones[index].gravityDir.y + mergedBoneAnimationDictionary[index].direction.y, vrmSpringBones[index].gravityDir.z + mergedBoneAnimationDictionary[index].direction.z);
+                                    const vector = new Vector3(vrmSpringBones[index].gravityDir.x + mergedBoneAnimationDictionary[index].direction.x, vrmSpringBones[index].gravityDir.y + mergedBoneAnimationDictionary[index].direction.y, vrmSpringBones[index].gravityDir.z + mergedBoneAnimationDictionary[index].direction.z);
 
                                     springBone.gravityDir = vector.normalize();
                                     springBone.gravityPower = vrmSpringBones[index].gravityPower + mergedBoneAnimationDictionary[index].force;
@@ -4180,7 +4180,7 @@ window.addEventListener("load", event => {
 
                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                     for (const springBone of springBoneGroup) {
-                        const distance = springBone.bone.getWorldPosition(new THREE.Vector3()).distanceTo(bestIntersect.point);
+                        const distance = springBone.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
 
                         if (distance < minDistance) {
                             draggableBone.index = springBoneIndex;
@@ -4219,7 +4219,7 @@ window.addEventListener("load", event => {
             lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
 
             if (draggableBone !== null) {
-                const vector = new THREE.Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
+                const vector = new Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
 
                 draggableBone.direction = vector.normalize();
                 draggableBone.distance = Math.sqrt((draggableBone.point.x - x) * (draggableBone.point.x - x) + (draggableBone.point.y - y) * (draggableBone.point.y - y));
@@ -4274,7 +4274,7 @@ window.addEventListener("load", event => {
 
                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                     for (const springBone of springBoneGroup) {
-                        const distance = springBone.bone.getWorldPosition(new THREE.Vector3()).distanceTo(bestIntersect.point);
+                        const distance = springBone.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
 
                         if (distance < minDistance) {
                             draggableBone.index = springBoneIndex;
