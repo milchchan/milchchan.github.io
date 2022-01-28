@@ -610,13 +610,18 @@
                                                                             </transition>
                                                                             <div>
                                                                                 <div>
-                                                                                    <div><span
-                                                                                            class="is-size-4 has-text-weight-bold"
-                                                                                            v-text="typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), '')"></span>
-                                                                                    </div>
-                                                                                    <div><span
-                                                                                            class="is-size-7 has-text-weight-bold">{{
-                                                                                            like.author }}</span>
+                                                                                    <div>
+                                                                                        <div>
+                                                                                            <div><span
+                                                                                                    class="is-size-4 has-text-weight-bold"
+                                                                                                    v-text="typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), '')"></span>
+                                                                                            </div>
+                                                                                            <div><span
+                                                                                                    class="is-size-7 has-text-weight-bold">{{
+                                                                                                    like.author
+                                                                                                    }}</span>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div>
@@ -823,7 +828,7 @@
                                                             <div class="level-item">
                                                                 <button class="button is-primary" type="button"
                                                                     v-bind:disabled="mode.selected.length === 0 || isBlinded || isLoading || isHangingOn"
-                                                                    @click="backgroundQueue.unshift({ color: character.accent, tags: mode.selected }); isRevealed = false; mode = null; refresh();"
+                                                                    @click="backgroundQueue.unshift({ color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected }); isRevealed = false; mode = null; refresh();"
                                                                     v-cloak>
                                                                     <span class="icon is-small">
                                                                         <i class="fas fa-comment"></i>
