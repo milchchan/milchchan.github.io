@@ -19,23 +19,6 @@
                             "name": "jump"
                         },
                         {
-                            "type": "Animation",
-                            "frames": [
-                                {
-                                    "iterations": 1,
-                                    "images": [
-                                        {
-                                            "x": 0,
-                                            "y": 7,
-                                            "width": 155,
-                                            "height": 233,
-                                            "source": "/images/Merkuchan.png"
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
                             "type": "Message",
                             "speed": 50,
                             "duration": 5,
@@ -65,23 +48,6 @@
                         {
                             "type": "Animation",
                             "name": "jump"
-                        },
-                        {
-                            "type": "Animation",
-                            "frames": [
-                                {
-                                    "iterations": 1,
-                                    "images": [
-                                        {
-                                            "x": 0,
-                                            "y": 7,
-                                            "width": 155,
-                                            "height": 233,
-                                            "source": "/images/Merkuchan.png"
-                                        }
-                                    ]
-                                }
-                            ]
                         },
                         {
                             "type": "Message",
@@ -177,6 +143,38 @@
                     "speed": 50,
                     "duration": 5,
                     "text": "{0}を覚えたよぉ！"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Liked",
+            "sequence": [                
+                {
+                    "type": "Animation",
+                    "frames": [
+                        {
+                            "iterations": 1,
+                            "images": [
+                                {
+                                    "x": 0,
+                                    "y": 7,
+                                    "width": 155,
+                                    "height": 233,
+                                    "source": "/images/Merkuchan.png"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "メルクのお気に入りにしたよぉ！"
                 },
                 {
                     "type": "Sequence",
