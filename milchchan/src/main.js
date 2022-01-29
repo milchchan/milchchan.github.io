@@ -615,7 +615,9 @@ window.addEventListener("load", event => {
                     let completed = 0;
 
                     for (const file of files) {
-                        const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file);
+                        const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file, {
+                            contentType: file.type
+                        });
 
                         try {
                             const path = await new Promise(function (resolve, reject) {
@@ -834,21 +836,75 @@ window.addEventListener("load", event => {
 
                 this.isSubmitting = false;
             },
-            like: async function (message) {
+            like: async function (message, canvas) {
                 const timestamp = Math.floor(new Date() / 1000);
 
                 try {
-                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
-                        if (current) {
-                            current["text"] = message.original;
-                            current["author"] = this.character.name;
-                            current["timestamp"] = timestamp;
+                    let result;
 
-                            return current;
+                    if (canvas === null) {
+                        result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
+                            if (current) {
+                                return undefined;
+                            }
+
+                            return { text: message.original, author: this.character.name, timestamp: timestamp };
+                        });
+                    } else {
+                        function generateUuid() {
+                            // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
+                            // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+                            let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
+
+                            for (let i = 0, len = chars.length; i < len; i++) {
+                                switch (chars[i]) {
+                                    case "x":
+                                        chars[i] = Math.floor(Math.random() * 16).toString(16);
+                                        break;
+                                    case "y":
+                                        chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
+                                        break;
+                                }
+                            }
+
+                            return chars.join("");
                         }
 
-                        return { text: message.original, author: this.character.name, timestamp: timestamp };
-                    });
+                        const self = this;
+                        const type = "image/png";
+                        const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), await new Promise(resolve => {
+                            canvas.toBlob(blob => {
+                                resolve(blob);
+                            }, type);
+                        }), {
+                            contentType: type
+                        });
+
+                        try {
+                            const path = await new Promise((resolve, reject) => {
+                                uploadTask.on("state_changed", snapshot => {
+                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes;
+                                }, (error) => {
+                                    reject(error);
+                                }, () => {
+                                    resolve(uploadTask.snapshot.ref.fullPath);
+                                });
+                            });
+
+                            result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
+                                if (current) {
+                                    current["image"] = { path: path, type: type };
+                                    current["timestamp"] = timestamp;
+
+                                    return current;
+                                }
+
+                                return { text: message.original, author: this.character.name, image: { path: path, type: type }, timestamp: timestamp };
+                            });
+                        } finally {
+                            this.progress = null;
+                        }
+                    }
 
                     if (result.committed && result.snapshot.exists()) {
                         const sequence = [];
@@ -3882,13 +3938,13 @@ window.addEventListener("load", event => {
                             }
 
                             //vrm.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).rotation.y = Math.PI;
-                            //currentMixer = prepareAnimation(vrm);
-
-                            self.progress = null;
+                            //currentMixer = prepareAnimation(vrm);                            
                         } catch (e) {
                             self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
                             console.error(e);
                         }
+
+                        self.progress = null;
                     });
                 },
                 (progress) => self.progress = progress.loaded / progress.total,
