@@ -412,22 +412,6 @@ label .scrollable > div {
     transition: 0.5s;
 }
 
-.overlay::after {
-    z-index: 1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    min-height: 100%;
-    transform: translate3d(0, 0%, 0);
-    overflow: hidden;
-    background: var(--background-image) 50% 50% repeat;
-    animation: fade 0.5s ease-out, loop 10s linear infinite;
-    transition: 0.5s;
-    transform: translate3d(0, 0%, 0);
-    content: "";
-}
-
 #character {
     z-index: 1;
     position: absolute;
@@ -880,6 +864,22 @@ label .scrollable > div {
     overflow: hidden;
     background: var(--main-color);
     transition: 0.5s;
+}
+
+.blind::after {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    transform: translate3d(0, 0%, 0);
+    overflow: hidden;
+    background: var(--background-image) 50% 50% repeat;
+    animation: fade 0.5s ease-out, loop 10s linear infinite;
+    transition: 0.5s;
+    transform: translate3d(0, 0%, 0);
+    content: "";
 }
 
 #app {
@@ -2582,11 +2582,6 @@ label .scrollable > div {
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
-    .overlay::after {
-        background: var(--background-image-2x) 50% 50% repeat;
-        background-size: 100px 100px;
-    }
-
     .progress > .bar {
         background: #ffee00 url("/images/Stripes@2x.png") 50% 50% repeat;
         background-size: 20px 20px;
@@ -2602,6 +2597,11 @@ label .scrollable > div {
         background-size: 20px 20px;
     }
 
+    .blind::after {
+        background: var(--background-image-2x) 50% 50% repeat;
+        background-size: 100px 100px;
+    }
+
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
         background: url("/images/Stripes@2x.png") 50% 50% repeat;
         background-size: 20px 20px;
@@ -2609,11 +2609,6 @@ label .scrollable > div {
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx) {
-    .overlay::after {
-        background: var(--background-image-3x) 50% 50% repeat;
-        background-size: 100px 100px;
-    }
-
     .progress > .bar {
         background: #ffee00 url("/images/Stripes@3x.png") 50% 50% repeat;
         background-size: 20px 20px;
@@ -2627,6 +2622,11 @@ label .scrollable > div {
     #container .columns .column .media .media-content .has-text-left .balloon {
         background: url("/images/Stripes@3x.png") 50% 50% repeat;
         background-size: 20px 20px;
+    }
+
+    .blind::after {
+        background: var(--background-image-3x) 50% 50% repeat;
+        background-size: 100px 100px;
     }
 
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
