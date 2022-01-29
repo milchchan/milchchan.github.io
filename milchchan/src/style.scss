@@ -212,6 +212,10 @@ label .scrollable > div {
     margin-right: auto;
 }
 
+.has-text-transparent {
+    color: transparent !important;
+}
+
 .columns .is-vcentered {
     align-items: center;
 }
@@ -1729,9 +1733,9 @@ label .scrollable > div {
 
         h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 2.0rem;
             font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-            line-height: 1.5rem;
+            line-height: 2.0rem;
             color: var(--main-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
@@ -1748,7 +1752,7 @@ label .scrollable > div {
         }
 
         h1 + h2 {
-            margin: 8px 0px 0px 0px;
+            margin: 12px 0px 0px 0px;
         }
 
         svg g {
@@ -1774,7 +1778,7 @@ label .scrollable > div {
         p {
             font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
             font-size: 1.25rem;
-            line-height: 2rem;
+            line-height: 2.5rem;
             color: var(--foreground-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
