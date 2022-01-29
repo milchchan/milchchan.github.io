@@ -1775,8 +1775,8 @@
                                                             </div>
                                                         </article>
                                                     </div>
-                                                    <div class="level-item">
-                                                        <button class="button" type="button" @click="like(message)"
+                                                    <div class="level-item" v-if="character !== null">
+                                                        <button class="button" type="button" @click="like(message, character.visible ? $refs.canvas : null)"
                                                             v-cloak>
                                                             <span class="icon is-small" style="pointer-events: none;">
                                                                 <i class="fas fa-heart"></i>
