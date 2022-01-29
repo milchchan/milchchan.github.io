@@ -48,11 +48,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         client = CosmosClient.from_connection_string(
             os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
         database = client.get_database_client('Wonderland')
-        container = database.get_container_client('Words')
+        container = database.get_container_client('Likes')
 
         if geohash is None:
             items = list(container.query_items(
-                query='SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit',
+                query='SELECT l.id, l.text, l.author, l.image, l.location, l.timestamp FROM Likes AS l ORDER BY l.timestamp DESC OFFSET @offset LIMIT @limit',
                 parameters=[
                     {"name": "@offset", "value": 0 if offset is None else offset},
                     {"name": "@limit", "value": 100 if limit is None else limit}
@@ -62,7 +62,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             neighbors = get_neighbors(geohash)
             items = list(container.query_items(
-                query="SELECT w.id, w.name, w.attributes, w.image, w.location, w.timestamp FROM Words w WHERE w.geohash LIKE CONCAT(@centergeohash, '%') OR w.geohash LIKE CONCAT(@topgeohash, '%') OR w.geohash LIKE CONCAT(@bottomgeohash, '%') OR w.geohash LIKE CONCAT(@rightgeohash, '%') OR w.geohash LIKE CONCAT(@leftgeohash, '%') OR w.geohash LIKE CONCAT(@topleftgeohash, '%') OR w.geohash LIKE CONCAT(@toprightgeohash, '%') OR w.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR w.geohash LIKE CONCAT(@bottomleftgeohash, '%') ORDER BY w.timestamp DESC OFFSET @offset LIMIT @limit",
+                query="SELECT l.id, l.text, l.author, l.image, l.location, l.timestamp FROM Likes AS l WHERE l.geohash LIKE CONCAT(@centergeohash, '%') OR l.geohash LIKE CONCAT(@topgeohash, '%') OR l.geohash LIKE CONCAT(@bottomgeohash, '%') OR l.geohash LIKE CONCAT(@rightgeohash, '%') OR l.geohash LIKE CONCAT(@leftgeohash, '%') OR l.geohash LIKE CONCAT(@topleftgeohash, '%') OR l.geohash LIKE CONCAT(@toprightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomleftgeohash, '%') ORDER BY l.timestamp DESC OFFSET @offset LIMIT @limit",
                 parameters=[
                     {"name": "@offset", "value": 0 if offset is None else offset},
                     {"name": "@limit", "value": 100 if limit is None else limit},
@@ -101,7 +101,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     credentials=scoped_credentials, project=scoped_credentials.project_id))
 
                 if blob.exists():
-                    item['image'] = { 'url': blob.generate_signed_url(version='v4', expiration=timedelta(minutes=60), method='GET'), 'type': blob.content_type }
+                    item['image'] = {'url': blob.generate_signed_url(version='v4', expiration=timedelta(
+                        minutes=60), method='GET'), 'type': blob.content_type}
 
             if 'location' in item and item['location'] is not None and 'type' in item['location'] and item['location']['type'] == 'Point' and 'coordinates' in item['location']:
                 item['location'] = {
