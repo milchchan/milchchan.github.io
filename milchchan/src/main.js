@@ -907,9 +907,9 @@ window.addEventListener("load", event => {
                     }
 
                     if (result.committed && result.snapshot.exists()) {
-                        const sequence = [];
+                        /*const sequence = [];
 
-                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Like"), null, this.character.alternative.sequences)) {
+                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
                             if (obj.type === "Message") {
                                 sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: obj.text });
                             } else {
@@ -920,6 +920,16 @@ window.addEventListener("load", event => {
 
                         if (sequence.length > 0) {
                             this.sequenceQueue.push(sequence);
+                        }*/
+                        
+                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
+                            if (obj.type === "Message") {
+                                this.notify({ text: obj.text, accent: this.character.alternative.accent, image: this.character.alternative.image });
+                            }
+                        }
+
+                        if (!this.isMuted) {
+                            this.$refs.like.play();
                         }
                     }
                 } catch (e) {
