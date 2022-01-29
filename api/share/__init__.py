@@ -40,12 +40,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if req.headers.get('Content-Type') == 'application/json':
             data = req.get_json()
 
-            if 'name' in data and data['name'] is not None and len(data['name']) > 0 and 'attributes' in data and isinstance(data['attributes'], list):
+            if 'text' in data and data['text'] is not None and len(data['text']) > 0:
                 id = data['id'] if 'id' in data and data['id'] is not None and len(
                     data['id']) > 0 else str(uuid4())
+                author = data.get('author')
                 image = data.get('image')
-                item = {'id': id, 'pk': id,
-                        'name': data['name'], 'attributes': data['attributes']}
+                item = {'id': id, 'pk': id, 'text': data['text']}
+
+                if author is not None:
+                    item['author'] = author
 
                 if image is not None:
                     match = re.match("data:([\\w/\\-\\.]+);(\\w+),(.+)", image)
@@ -81,7 +84,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             else:
                                 blob.upload_from_file(
                                     BytesIO(b64decode(data)), content_type=mime_type)
-                                item['image'] = { 'url': f'gs://{bucket_name}{urljoin("/", path)}', 'type': mime_type }
+                                item['image'] = {
+                                    'url': f'gs://{bucket_name}{urljoin("/", path)}', 'type': mime_type}
 
                         else:
                             return func.HttpResponse(status_code=400, mimetype='', charset='')
@@ -106,7 +110,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 client = CosmosClient.from_connection_string(
                     os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
                 database = client.get_database_client('Wonderland')
-                container = database.get_container_client('Words')
+                container = database.get_container_client('Likes')
                 container.upsert_item(item)
 
                 item['timestamp'] = int(datetime.utcfromtimestamp(datetime.fromisoformat(
