@@ -1,12 +1,12 @@
 {
   "name": "milchchan.com",
   "version": "1.0.0",
-  "description": "milchchan.github.io",
+  "description": "milchchan.com",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview",
+    "preview": "vite preview",
     "test": "mocha test/ --require babel-register --reporter spec"
   },
   "repository": {
@@ -21,10 +21,12 @@
   "homepage": "https://milchchan.com/",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "@pixiv/three-vrm": "^0.6.8",
     "animejs": "^3.2.1",
     "bulma": "^0.9.3",
     "firebase": "^9.6.5",
     "stats.js": "^0.17.0",
+    "three": "^0.136.0",
     "vue": "^3.2.29"
   },
   "devDependencies": {

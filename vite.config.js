@@ -7,13 +7,13 @@ export default defineConfig({
     outDir: "dist",
     rollupOptions: {
       output: {
-        entryFileNames: "[name].[hash].js",
+        entryFileNames: "[name].js",
         manualChunks: undefined,
         assetFileNames: "assets/[name].[ext]",
       },
     },
     cssCodeSplit: false,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 1500,
   },
   plugins: [vue()]
 })

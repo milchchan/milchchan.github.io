@@ -2,8 +2,8 @@
     "name": "ミルヒ",
     "accent": "#ffa6bb",
     "image": "/images/Milch-192.png",
-    "width": 304,
-    "height": 480,
+    "width": 152,
+    "height": 240,
     "model": "models/Milch.vrm",
     "sequences": [
         {
@@ -17,6 +17,23 @@
                         {
                             "type": "Animation",
                             "name": "jump"
+                        },
+                        {
+                            "type": "Animation",
+                            "frames": [
+                                {
+                                    "iterations": 1,
+                                    "images": [
+                                        {
+                                            "x": 0,
+                                            "y": 0,
+                                            "width": 152,
+                                            "height": 240,
+                                            "source": "/images/Milchchan.png"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "type": "Message",
@@ -48,6 +65,23 @@
                         {
                             "type": "Animation",
                             "name": "jump"
+                        },
+                        {
+                            "type": "Animation",
+                            "frames": [
+                                {
+                                    "iterations": 1,
+                                    "images": [
+                                        {
+                                            "x": 0,
+                                            "y": 0,
+                                            "width": 152,
+                                            "height": 240,
+                                            "source": "/images/Milchchan.png"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "type": "Message",
@@ -144,39 +178,6 @@
                     "duration": 5,
                     "text": "{0}を覚えたよ！"
                 },
-                {
-                    "type": "Sequence",
-                    "name": "Say"
-                }
-            ]
-        },
-        {
-            "name": "Liked",
-            "sequence": [
-                {
-                    "type": "Animation",
-                    "frames": [
-                        {
-                            "iterations": 1,
-                            "images": [
-                                {
-                                    "x": 0,
-                                    "y": 0,
-                                    "width": 304,
-                                    "height": 480,
-                                    "source": "/images/Milchchan.png"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "Message",
-                    "speed": 50,
-                    "duration": 5,
-                    "text": "お気に入りにしたよ！"
-                },               
-                
                 {
                     "type": "Sequence",
                     "name": "Say"

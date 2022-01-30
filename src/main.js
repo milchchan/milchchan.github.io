@@ -1,12 +1,28 @@
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
+import { WebGLRenderer, Scene, DirectionalLight, PerspectiveCamera, Clock, Raycaster, Object3D, Vector2, Vector3, LinearToneMapping, sRGBEncoding } from 'three/build/three.module.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from './postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { HueSaturationShader } from 'three/examples/jsm/shaders/HueSaturationShader.js';
+import { BrightnessContrastShader } from 'three/examples/jsm/shaders/BrightnessContrastShader.js';
+import { GammaCorrectionShader } from 'three/examples/jsm/shaders/GammaCorrectionShader.js';
+import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader.js';
+import { ColorCorrectionShader } from 'three/examples/jsm/shaders/ColorCorrectionShader.js';
+import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
+import { VRM } from '@pixiv/three-vrm';
 import Stats from 'stats.js'
 import anime from 'animejs/lib/anime.es.js';
 import { TinySegmenter } from './tiny-segmenter.js';
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
-import { getDatabase, ref as databaseRef, query, orderByKey, orderByChild, limitToFirst, limitToLast, startAt, endAt, get, push, runTransaction, onValue, off } from "firebase/database";
-import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { getDatabase, ref as databaseRef, query, orderByChild, limitToFirst, limitToLast, startAt, endAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
+import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
@@ -27,7 +43,101 @@ const storage = getStorage(firebaseApp);
 initializeAnalytics(firebaseApp);
 
 const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
-const databaseRoot = "wonderland";
+const databaseRoot = "bot";
+const renderer = new WebGLRenderer({
+    antialias: true,
+    alpha: true,
+    preserveDrawingBuffer: true
+});
+
+//renderer.setSize(window.innerWidth, window.outerHeight);
+//renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0xffffff, 0);
+renderer.toneMappingExposure = 1;
+renderer.toneMapping = LinearToneMapping;
+renderer.outputEncoding = sRGBEncoding;
+//renderer.autoClear = false;
+
+const CAMERA_FOV = 60.0;
+const CAMERA_Z = 5;//1.25;
+const camera = new PerspectiveCamera(CAMERA_FOV, renderer.domElement.width / renderer.domElement.height, 0.1, 1000);
+
+camera.position.set(0.0, 1.5, CAMERA_Z);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+
+controls.enabled = false;
+controls.enableKeys = false;
+controls.screenSpacePanning = false;
+controls.enableDamping = true;
+controls.minPolarAngle = 30 * Math.PI / 180;
+controls.maxPolarAngle = 150 * Math.PI / 180;
+controls.minAzimuthAngle = -45 * Math.PI / 180;
+controls.maxAzimuthAngle = 45 * Math.PI / 180;
+controls.minDistance = 0.75;
+controls.maxDistance = 5;
+controls.target.set(0.0, 2.5, 1.0);
+controls.update();
+
+const scene = new Scene();
+const light = new DirectionalLight(0xffffff);
+//const hemisphereLight = new THREE.HemisphereLight(0xd7fbff, 0x7e94a8, 0.7);
+
+light.intensity = 0.9;
+light.position.set(0.0, 10.0, 10.0).normalize();
+
+scene.add(light);
+//scene.add(hemisphereLight);
+//scene.add(new THREE.GridHelper(10, 10));
+//scene.add(new THREE.AxesHelper(5));
+
+const lookAtTarget = new Object3D();
+
+camera.add(lookAtTarget);
+
+const composer = new EffectComposer(renderer);
+
+var bloomPass = new UnrealBloomPass(new Vector2(renderer.domElement.width, renderer.domElement.height), 1.5, 0.4, 0.85);
+var hueSaturation = new ShaderPass(HueSaturationShader);
+var brightnessContrastShader = new ShaderPass(BrightnessContrastShader);
+var gammaCorrectionShader = new ShaderPass(GammaCorrectionShader);
+var effectCopy = new ShaderPass(CopyShader);
+var vignette = new ShaderPass(VignetteShader);
+var colorCorrection = new ShaderPass(ColorCorrectionShader);
+var rgbShift = new ShaderPass(RGBShiftShader);
+var fxaaShader = new ShaderPass(FXAAShader);
+
+bloomPass.renderToScreen = true;
+bloomPass.threshold = 0.5;
+bloomPass.strength = 0.25;
+bloomPass.radius = 0;
+
+hueSaturation.uniforms.hue.value = -0.025;
+hueSaturation.uniforms.saturation.value = 0.25;
+//brightnessContrastShader.uniforms.brightness.value = 0.5;
+brightnessContrastShader.uniforms.contrast.value = -0.1;
+colorCorrection.uniforms.mulRGB.value = new Vector3(0.95, 0.95, 0.95);
+colorCorrection.uniforms.powRGB.value = new Vector3(1, 1, 1);
+rgbShift.uniforms.amount.value = 0.0001;
+rgbShift.uniforms.angle.value = 0;
+vignette.uniforms.darkness.value = 0.25;
+vignette.uniforms.offset.value = 0.0
+effectCopy.renderToScreen = true;
+fxaaShader.uniforms.resolution.value.set(1 / (renderer.domElement.width * window.devicePixelRatio), 1 / (renderer.domElement.height * window.devicePixelRatio));
+
+composer.setSize(renderer.domElement.width, renderer.domElement.height);
+composer.setPixelRatio(window.devicePixelRatio);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(bloomPass);
+composer.addPass(hueSaturation);
+//composer.addPass(brightnessContrastShader);
+//composer.addPass(colorCorrection);
+composer.addPass(rgbShift);
+composer.addPass(vignette);
+//composer.addPass(gammaCorrectionShader);
+//composer.addPass(fxaaShader);
+composer.addPass(effectCopy);
+
 const stats = new Stats();
 
 stats.domElement.style.position = "fixed";
@@ -40,13 +150,30 @@ if (!debug) {
     stats.domElement.classList.add("is-hidden");
 }
 
+const clock = new Clock();
+const raycaster = new Raycaster();
+const mouse = new Vector2();
+let vrmModel = null;
+let vrmSpringBones = [];
+let animationIndex = 0;
+const animationSkipFrames = 2;
 let idleTime = 0.0;
 const blinkThreshold = 5.0;
+let waitTime = 0.0;
+const waitThreshold = 1.0;
 let activateTime = 0.0;
 const activateThreshold = 10.0;
+let alertTime = 0.0;
+const alertThreshold = 30.0;
+let lookAnimation = null;
+let randomWind = null;
+let backgroundTime = 30.0;
+const backgroundThreshold = 30.0;
+let draggableBone = null;
+let draggingBones = null;
 let tapCount = 0;
 
-window.addEventListener("load", (event) => {
+window.addEventListener("load", event => {
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("sw.js").then(registration => {
             registration.onupdatefound = function () {
@@ -65,13 +192,13 @@ window.addEventListener("load", (event) => {
     const app = createApp({
         data() {
             return {
+                isDebug: debug,
                 isDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
                 isMuted: true,
                 isLoading: false,
-                isUpdating: false,
-                isLocating: false,
                 isRevealed: false,
                 isOverlayed: false,
+                isUpdating: false,
                 isBlinded: false,
                 isPopup: false,
                 isExpanded: false,
@@ -79,28 +206,15 @@ window.addEventListener("load", (event) => {
                 isAnimating: false,
                 isHangingOn: false,
                 isSubmitting: false,
-                isDiscovering: false,
                 isStared: false,
                 isLocked: false,
-                isEditing: false,
-                canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0, alternative: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 } },
-                cachedImages: {},
-                cachedSprites: [],
-                alternativeCachedSprites: [],
-                animationQueue: [],
-                elapsed: 0,
-                map: null,
-                layer: null,
+                isDiscovering: false,
+                isTweeting: false,
                 mode: null,
-                queryQueue: [],
-                queryCache: {},
-                cachedTracks: {},
-                cachedDocuments: [],
-                documentQueue: [],
+                feedQueue: [],
                 sequenceQueue: [],
                 progress: 0,
                 user: null,
-                candidates: null,
                 input: "",
                 animatedInputLength: 0,
                 maxInputLength: 100,
@@ -108,31 +222,28 @@ window.addEventListener("load", (event) => {
                 messages: [],
                 maxMessages: 10,
                 word: null,
-                recentWords: [],
+                words: [],
                 tags: [],
                 maxTags: 10,
                 scrollTimeoutID: undefined,
                 stars: -1,
                 animatedStars: 0,
-                steps: 0,
-                isStepping: false,
-                animatedSteps: 0,
-                deviceMotion: null,
-                stats: [],
                 screenshot: null,
                 notifications: [],
                 notificationHeight: 0,
                 animatedNotificationHeight: 0,
-                inputHeight: 0,
-                animatedInputHeight: 0,
                 recentImages: [],
-                backgroundImagesQueue: [],
-                backgroundImages: [],
-                preloadImages: [],
+                backgroundQueue: [],
+                background: { color: null, images: [], tags: null },
                 isUploading: false,
                 animations: null,
                 currentAnimations: [],
                 blendShapeAnimations: [],
+                animationQueue: [],
+                canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0, alternative: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 } },
+                cachedImages: {},
+                cachedSprites: [],
+                alternativeCachedSprites: [],
                 insetTop: 0,
                 insetBottom: 0,
                 text: [],
@@ -140,17 +251,13 @@ window.addEventListener("load", (event) => {
                 animatedPopupTextHeight: 0,
                 tickerWidth: 0,
                 animatedTickerWidth: 0,
-                leaderboard: [],
-                leaderboardHeight: 0,
-                animatedLeaderboardHeight: 0,
                 message: null,
                 states: {},
                 character: null,
                 alternative: null,
                 wordDictionary: {},
                 reverseWordDictionary: {},
-                attributes: ["名前", "所属", "時間", "場所", "する事", "生き物", "食べ物", "飲み物", "聞くもの", "見るもの", "読むもの", "使う物", "身につけるもの", "乗り物", "部位", "病気"],
-                chars: []
+                attributes: ["名前", "所属", "時間", "場所", "する事", "生き物", "食べ物", "飲み物", "聞くもの", "見るもの", "読むもの", "使う物", "身につけるもの", "乗り物", "部位", "病気"]
             }
         },
         watch: {
@@ -164,7 +271,7 @@ window.addEventListener("load", (event) => {
             words: {
                 handler: () => {
                     app.$nextTick(() => {
-                        for (const clip of document.body.querySelectorAll("#input>.columns:last-of-type>.column>.control .clip")) {
+                        for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                             let width = 0;
 
                             for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
@@ -172,7 +279,7 @@ window.addEventListener("load", (event) => {
                             }
 
                             if (width > 0) {
-                                app.tickerWidth = Math.min(width / 2, document.body.querySelector("#input>.columns:last-of-type>.column>.control .level").getBoundingClientRect().width);
+                                app.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                                 clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
                             }
                         }
@@ -195,10 +302,10 @@ window.addEventListener("load", (event) => {
                     }
                 });
             },
-            backgroundImages: {
+            background: {
                 handler: () => {
                     app.$nextTick(() => {
-                        const elements = document.body.querySelectorAll("#app>.background>div");
+                        const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.background>div:not(.columns)");
 
                         if (elements.length > 1) {
                             const offset = elements.length - 1;
@@ -283,42 +390,6 @@ window.addEventListener("load", (event) => {
                     }
                 });
             },
-            leaderboard: {
-                handler: () => {
-                    app.$nextTick(() => {
-                        app.leaderboardHeight = app.$refs.leaderboard.getBoundingClientRect().height;
-                    });
-                },
-                deep: true
-            },
-            leaderboardHeight(newValue) {
-                const obj = { height: this.animatedLeaderboardHeight };
-
-                anime({
-                    targets: obj,
-                    height: newValue,
-                    round: 1,
-                    duration: 500,
-                    easing: "linear",
-                    update: () => {
-                        this.animatedLeaderboardHeight = obj.height
-                    }
-                });
-            },
-            inputHeight(newValue) {
-                const obj = { height: this.animatedInputHeight };
-
-                anime({
-                    targets: obj,
-                    height: newValue,
-                    round: 1,
-                    duration: 500,
-                    easing: "linear",
-                    update: () => {
-                        this.animatedInputHeight = obj.height
-                    }
-                });
-            },
             stars(newValue) {
                 const obj = { count: this.animatedStars };
 
@@ -330,20 +401,6 @@ window.addEventListener("load", (event) => {
                     easing: "linear",
                     update: () => {
                         this.animatedStars = obj.count
-                    }
-                });
-            },
-            steps(newValue) {
-                const obj = { count: this.animatedSteps };
-
-                anime({
-                    targets: obj,
-                    count: newValue,
-                    round: 100,
-                    duration: 500,
-                    easing: "linear",
-                    update: () => {
-                        this.animatedSteps = obj.count
                     }
                 });
             },
@@ -365,26 +422,6 @@ window.addEventListener("load", (event) => {
                     });
                 },
                 deep: true
-            },
-            chars: {
-                handler: () => {
-                    const fragments = [];
-
-                    for (const row of app.chars) {
-                        for (const column of row) {
-                            if (column.count > 0 || !column.reserved) {
-                                fragments.push({ set: column.set, count: column.count, timestamp: column.timestamp, checksum: [...String(column.timestamp)].reduce((x, y) => x + y, 0) + [...String(column.count)].reduce((x, y) => x + y, 0) });
-                            }
-                        }
-                    }
-
-                    try {
-                        localStorage.setItem("fragments", JSON.stringify(fragments));
-                    } catch (e) {
-                        localStorage.removeItem("fragments");
-                    }
-                },
-                deep: true
             }
         },
         methods: {
@@ -400,8 +437,6 @@ window.addEventListener("load", (event) => {
                         const credential = GoogleAuthProvider.credentialFromResult(result);
 
                         for (const data of result.user.providerData) {
-                            const timestamp = Math.floor(new Date() / 1000);
-                            
                             try {
                                 await updateProfile(this.user, {
                                     displayName: data.displayName,
@@ -410,17 +445,6 @@ window.addEventListener("load", (event) => {
                             } catch (e) {
                                 console.error(e.code, e.message);
                             }
-
-                            runTransaction(databaseRef(database, `${databaseRoot}/users/${result.user.uid}`), current => {
-                                if (current) {
-                                    current["name"] = data.displayName;
-                                    current["timestamp"] = timestamp;
-                                } else {
-                                    current = { name: data.displayName, timestamp: timestamp };
-                                }
-
-                                return current;
-                            });
 
                             break;
                         }
@@ -472,7 +496,6 @@ window.addEventListener("load", (event) => {
 
                         for (const data of result.user.providerData) {
                             const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
-                            const timestamp = Math.floor(new Date() / 1000);
 
                             try {
                                 await updateProfile(this.user, {
@@ -482,18 +505,6 @@ window.addEventListener("load", (event) => {
                             } catch (e) {
                                 console.error(e.code, e.message);
                             }
-
-                            runTransaction(databaseRef(database, `${databaseRoot}/users/${result.user.uid}`), current => {
-                                if (current) {
-                                    current["name"] = data.displayName;
-                                    current["link"] = `https://twitter.com/${result._tokenResponse.screenName}`;
-                                    current["timestamp"] = timestamp;
-                                } else {
-                                    current = { name: data.displayName, link: `https://twitter.com/${result._tokenResponse.screenName}`, timestamp: timestamp };
-                                }
-
-                                return current;
-                            });
 
                             break;
                         }
@@ -507,9 +518,6 @@ window.addEventListener("load", (event) => {
                         console.error(error.code, error.message);
                     }
                 }
-
-                this.isRevealed = false;
-                this.mode = null;
             },
             signOut: async function (event) {
                 try {
@@ -525,826 +533,50 @@ window.addEventListener("load", (event) => {
                 }
             },
             refresh: function (event) {
-                this.update(true);
+                this.isBlinded = true;
+                activateTime = 0.0;
             },
-            update: async function (ignore = false) {
-                this.isLoading = true;
+            send: async function (event) {
+                if (this.isDebug) {
+                    if (this.input.length > 0) {
+                        const tags = this.input.split(/\s/);
+                        const keys = [];
 
-                const self = this;
-                const centerLocation = this.map.getCenter();
-                const tracks = await this.fetch(ignore, centerLocation.latitude, centerLocation.longitude);
-                let isUpdated = false;
-
-                if (ignore) {
-                    Object.keys(this.cachedTracks).forEach(function (key) {
-                        for (const handlerId of self.cachedTracks[key].handlers) {
-                            Microsoft.Maps.Events.removeHandler(handlerId);
+                        for (const image of this.backgroundImages) {
+                            if (!keys.includes(image.id)) {
+                                keys.push(image.id);
+                            }
                         }
 
-                        self.map.entities.remove(self.cachedTracks[key].pushpin);
+                        if (keys.length > 0 && tags.length > 0) {
+                            for (const key of keys) {
+                                runTransaction(databaseRef(database, `${databaseRoot}/images/${key}`), image => {
+                                    image["tags"] = tags;
 
-                        delete self.cachedTracks[key];
-                        isUpdated = true;
-                    });
-                }
-
-                if (tracks !== null) {
-                    const timestamp = Math.floor(new Date() / 1000);
-                    
-                    for (const geohash in tracks) {
-                        for (const track of tracks[geohash]) {
-                            let pushpinId = null;
-                            //const words = [];
-
-                            for (const id in this.cachedTracks) {
-                                if (track.id === this.cachedTracks[id].id) {
-                                    pushpinId = id;
-
-                                    break;
-                                }
-                            }
-
-                            if (pushpinId === null) {
-                                const pushpin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(track.location.latitude, track.location.longitude), {
-                                    title: track.name,
-                                    subTitle: this.formatTime(timestamp - track.timestamp),
-                                    icon: "/images/Marker-Star.svg"
+                                    return image;
                                 });
-
-                                if ("image" in track) {
-                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red: 254, green: 205, blue: 226 } : this.isDarkMode ? { red: 193, green: 174, blue: 230 } : { red: 104, green: 230, blue: 255 });
-                                } else if ("image" in track.user) {
-                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red: 254, green: 205, blue: 226 } : this.isDarkMode ? { red: 193, green: 174, blue: 230 } : { red: 104, green: 230, blue: 255 });
-                                }
-
-
-                                /*if ("dictionary" in track && "words" in track.dictionary) {
-                                    for (const word in track.dictionary.words) {
-                                        const clonedWord = Object.assign({}, track.dictionary.words[word]);
-
-                                        clonedWord["name"] = word;
-                                        words.push(clonedWord);
-                                    }
-
-                                    words.sort((x, y) => y.timestamp - x.timestamp)
-                                }
-
-                                track["words"] = words;*/
-
-                                this.cachedTracks[pushpin.id] = track;
-                                this.cachedTracks[pushpin.id]["pushpin"] = pushpin;
-                                this.cachedTracks[pushpin.id]["handlers"] = [Microsoft.Maps.Events.addHandler(pushpin, 'click', async (args) => {
-                                    self.mode = this.cachedTracks[args.target.id];
-                                    self.isRevealed = true;
-                                }), Microsoft.Maps.Events.addHandler(pushpin, 'dblclick', (args) => {
-                                    window.location.hash = self.cachedTracks[args.target.id].id;
-                                })];
-                                this.map.entities.push(pushpin);
-                                isUpdated = true;
-                            } else if (track.timestamp > this.cachedTracks[pushpinId].timestamp) {
-                                const pushpin = this.cachedTracks[pushpinId]["pushpin"];
-                                const handlers = this.cachedTracks[pushpinId]["handlers"];
-
-                                pushpin.setLocation(new Microsoft.Maps.Location(track.location.latitude, track.location.longitude));
-                                pushpin.setOptions({
-                                    title: track.name,
-                                    subTitle: this.formatTime(timestamp - track.timestamp)
-                                });
-
-                                if ("image" in track) {
-                                    this.setImage(pushpin, track.image.url, this.user.uid === track.user.id ? { red: 254, green: 205, blue: 226 } : this.isDarkMode ? { red: 193, green: 174, blue: 230 } : { red: 104, green: 230, blue: 255 });
-                                } else if ("image" in track.user) {
-                                    this.setImage(pushpin, track.user.image, this.user.uid === track.user.id ? { red: 254, green: 205, blue: 226 } : this.isDarkMode ? { red: 193, green: 174, blue: 230 } : { red: 104, green: 230, blue: 255 });
-                                }
-
-                                /*if ("dictionary" in track && "words" in track.dictionary) {
-                                    for (const word in track.dictionary.words) {
-                                        const clonedWord = Object.assign({}, track.dictionary.words[word]);
-
-                                        clonedWord["name"] = word;
-                                        words.push(clonedWord);
-                                    }
-
-                                    words.sort((x, y) => y.timestamp - x.timestamp)
-                                }
-
-                                track["words"] = words;*/
-
-                                this.cachedTracks[pushpinId] = track;
-                                this.cachedTracks[pushpinId]["pushpin"] = pushpin;
-                                this.cachedTracks[pushpinId]["handlers"] = handlers;
-                                isUpdated = true;
-                            }
-                        }
-                    }
-
-                    const ids = [];
-
-                    for (const geohash in tracks) {
-                        for (const track of tracks[geohash]) {
-                            ids.push(track.id);
-                        }
-                    }
-
-                    Object.keys(this.cachedTracks).forEach(function (key) {
-                        if (!ids.some(x => x === self.cachedTracks[key].id)) {
-                            for (const handlerId of self.cachedTracks[key].handlers) {
-                                Microsoft.Maps.Events.removeHandler(handlerId);
                             }
 
-                            self.map.entities.remove(self.cachedTracks[key].pushpin);
-
-                            delete self.cachedTracks[key];
-                            isUpdated = true;
+                            this.isLearning = false;
+                        } else if (this.input.length <= this.maxInputLength) {
+                            this.learn({ name: this.input });
+                            this.input = "";
+                            this.isLearning = false;
                         }
-                    });
-
-                    if (isUpdated) {
-                        const max = 10;
-
-                        this.isUpdating = true;
-
-                        const leaderboard = await new Promise(resolve => {
-                            const trackDictionary = {};
-                            const trackRanking = [];
-
-                            for (const key in tracks) {
-                                for (const track of tracks[key]) {
-                                    if (track.user.id in trackDictionary) {
-                                        trackDictionary[track.user.id].count++;
-                                    } else {
-                                        const t = Object.assign({}, track.user);
-
-                                        t["count"] = 1;
-                                        trackDictionary[track.user.id] = t;
-                                    }
-                                }
-                            }
-
-                            for (const key in trackDictionary) {
-                                trackRanking.push(trackDictionary[key]);
-                            }
-
-                            trackRanking.sort((x, y) => y.count - x.count);
-
-                            resolve(trackRanking);
-                        });
-
-                        this.leaderboard.splice(0);
-
-                        for (const data of leaderboard) {
-                            this.leaderboard.push(data);
-                        }
-
-                        try {
-                            const results = await new Promise(resolve => {
-                                const epsilon = Math.pow(10, -6);
-                                let documents = [];
-                                //let filteredDocuments = [];
-                                let termFrequencies = [];
-                                let inverseDocumentFrequency = {};
-                                //const baseTime = new Date().getTime() - 24 * 60 * 60 * 1000;
-                                //const limit = 10;
-                                let scoreDictionary = {};
-                                let scores = [];
-                                let maxScore = epsilon;
-
-                                for (const key in tracks) {
-                                    let tokens = [];
-                                    let termSet = [];
-
-                                    for (const track of tracks[key]) {
-                                        tokens.push(track.name);
-
-                                        if (!termSet.includes(track.name)) {
-                                            if (track.name in inverseDocumentFrequency) {
-                                                inverseDocumentFrequency[track.name] += 1.0;
-                                            } else {
-                                                inverseDocumentFrequency[track.name] = 1.0;
-                                            }
-
-                                            termSet.push(track.name);
-                                        }
-                                    }
-
-                                    documents.push(tokens);
-                                    //documents.push({ tokens: tokens, timestamp: user.timestamp, user: { id: user.id, name: user.name, image: "image" in user ? user.image : null } });
-
-                                    /*for (const track of tracks[key]) {
-                                        if ("words" in user && user.words.length > 0) {
-
-                                        }
-                                    }*/
-                                }
-
-                                for (const key in inverseDocumentFrequency) {
-                                    inverseDocumentFrequency[key] = Math.log(documents.length / (inverseDocumentFrequency[key] + epsilon));
-                                }
-
-                                /*for (const document of documents) {
-                                    if (document.timestamp * 1000 > baseTime) {
-                                        filteredDocuments.push(document);
-                                    }
-                                }
-
-                                if (filteredDocuments.length < limit) {
-                                    const min = Math.max(documents.length - limit, 0);
-
-                                    filteredDocuments.splice(0);
-
-                                    for (let i = documents.length - 1; i >= min; i--) {
-                                        filteredDocuments.unshift(documents[i]);
-                                    }
-                                }*/
-
-                                for (const document of documents) {
-                                    let tf = {};
-
-                                    for (const token of document) {
-                                        if (token in tf) {
-                                            tf[token] += 1.0;
-                                        } else {
-                                            tf[token] = 1.0;
-                                        }
-                                    }
-
-                                    for (const key in tf) {
-                                        tf[key] /= document.length;
-
-                                        if (!(key in scoreDictionary)) {
-                                            scoreDictionary[key] = 0.0;
-                                        }
-                                    }
-
-                                    termFrequencies.push(tf);
-                                }
-
-                                for (const key in scoreDictionary) {
-                                    for (const termFrequency of termFrequencies) {
-                                        if (key in termFrequency) {
-                                            const tfidf = termFrequency[key] * inverseDocumentFrequency[key];
-
-                                            if (tfidf > scoreDictionary[key]) {
-                                                scoreDictionary[key] = tfidf;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                for (const key in scoreDictionary) {
-                                    if (key.length > 1 && key != "...") {
-                                        scores.push({ term: key, value: scoreDictionary[key] });
-                                    }
-                                }
-
-                                scores.sort((x, y) => y.value - x.value);
-
-                                if (scores.length > max) {
-                                    scores.splice(max);
-                                }
-
-                                for (const score of scores) {
-                                    if (score.value > maxScore) {
-                                        maxScore = score.value;
-                                    }
-                                }
-
-                                for (const score of scores) {
-                                    score.value /= maxScore;
-                                }
-
-                                scores.sort((x, y) => {
-                                    if (x.term > y.term) {
-                                        return 1;
-                                    } else if (x.term < y.term) {
-                                        return -1;
-                                    }
-
-                                    return 0;
-                                });
-
-                                resolve([documents, scores]);
-                            });
-
-                            this.cachedDocuments.splice(0)
-                            this.tags.splice(0);
-
-                            for (const document of results[0]) {
-                                this.cachedDocuments.push(document);
-                            }
-
-                            for (let i = 0; i < results[1].length; i++) {
-                                this.tags.push({ index: i, name: results[1][i].term, score: results[1][i].value })
-                            }
-                        } catch (e) {
-                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                            console.error(e);
-                        }
-
-                        this.isUpdating = false;
-                    }
-                }
-
-                //this.isBlinded = true;
-                //activateTime = 0.0;
-                this.isLoading = false;
-            },
-            fetch: async function (ignore, latitude, longitude) {
-                const self = this;
-                const precisions = { 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 3, 11: 3, 12: 4, 13: 4, 14: 4, 15: 5, 16: 5, 17: 5, 18: 6, 19: 6, 20: 6 };
-                const centerGeohash = this.encodeGeohash(latitude, longitude, precisions[this.map.getZoom()]);
-                let geohashes = [centerGeohash];
-                const tempRecent = [];
-                const data = {};
-                let primitives = [];
-                let rect = this.decodeGeohash(centerGeohash);
-                const timestamp = Math.floor(new Date() / 1000);
-                const timeout = 60;
-                const tempCache = {};
-
-                primitives.push(new Microsoft.Maps.Polygon([
-                    new Microsoft.Maps.Location(rect.topleft.latitude, rect.topleft.longitude),
-                    new Microsoft.Maps.Location(rect.topright.latitude, rect.topright.longitude),
-                    new Microsoft.Maps.Location(rect.bottomright.latitude, rect.bottomright.longitude),
-                    new Microsoft.Maps.Location(rect.bottomleft.latitude, rect.bottomleft.longitude),
-                    new Microsoft.Maps.Location(rect.topleft.latitude, rect.topleft.longitude)], {
-                    fillColor: 'rgba(255, 0, 0, 0.5)',
-                    strokeColor: 'red',
-                    strokeThickness: 1
-                }));
-
-                if (centerGeohash.length > 2) {
-                    const neighbors = this.getNeighbors(centerGeohash);
-
-                    for (const key in neighbors) {
-                        geohashes.push(neighbors[key]);
-
-                        rect = this.decodeGeohash(neighbors[key]);
-
-                        primitives.push(new Microsoft.Maps.Polygon([
-                            new Microsoft.Maps.Location(rect.topleft.latitude, rect.topleft.longitude),
-                            new Microsoft.Maps.Location(rect.topright.latitude, rect.topright.longitude),
-                            new Microsoft.Maps.Location(rect.bottomright.latitude, rect.bottomright.longitude),
-                            new Microsoft.Maps.Location(rect.bottomleft.latitude, rect.bottomleft.longitude),
-                            new Microsoft.Maps.Location(rect.topleft.latitude, rect.topleft.longitude)], {
-                            fillColor: 'rgba(255, 0, 0, 0.5)',
-                            strokeColor: 'red',
-                            strokeThickness: 1
-                        }));
-                    }
-                }
-
-                this.layer.setPrimitives(primitives);
-
-                this.queryQueue.push(centerGeohash);
-
-                for (const geohash of geohashes) {
-                    if (!ignore && geohash in this.queryCache && timestamp - this.queryCache[geohash].timestamp < timeout) {
-                        for (const user of this.queryCache[geohash].data) {
-                            tempRecent.push(user);
-
-                            if (geohash in data) {
-                                data[geohash].push(user);
-                            } else {
-                                data[geohash] = [user];
-                            }
-                        }
-
-                        continue;
-                    }
-
-                    const snapshot = await get(query(databaseRef(database, databaseRoot + "/tracks"), orderByChild("key"), limitToLast(50), startAt(geohash), endAt(geohash.padEnd(12, "z") + "\uf8ff")));
-
-                    tempCache[geohash] = { timestamp: timestamp, data: [] };
-
-                    if (snapshot.exists()) {
-                        const dictionary = snapshot.val();
-
-                        for (const key in dictionary) {
-                            dictionary[key]["id"] = key;
-
-                            if ("image" in dictionary[key]) {
-                                dictionary[key]["image"] = { path: dictionary[key].image, url: await getDownloadURL(storageRef(storage, dictionary[key].image)) };
-                            }
-
-                            tempRecent.push(dictionary[key]);
-                            tempCache[geohash].data.push(dictionary[key]);
-
-                            if (geohash in data) {
-                                data[geohash].push(dictionary[key]);
-                            } else {
-                                data[geohash] = [dictionary[key]];
-                            }
-                        }
-                    }
-                }
-
-                this.queryQueue.shift();
-
-                if (this.queryQueue.length > 0) {
-                    return null;
-                }
-
-                for (const geohash in tempCache) {
-                    this.queryCache[geohash] = tempCache[geohash];
-                }
-
-                Object.keys(this.queryCache).forEach(function (key) {
-                    if (timestamp - self.queryCache[key].timestamp >= timeout) {
-                        delete self.queryCache[key];
-                    }
-                });
-
-                const recent = this.take(tempRecent.sort((x, y) => y.timestamp - x.timestamp), 100);
-
-                Object.keys(data).forEach(function (key) {
-                    for (let i = data[key].length - 1; i > 0; i--) {
-                        if (!recent.includes(data[key][i])) {
-                            data[key].splice(i, 1);
-                        }
-                    }
-
-                    if (data[key].length === 0) {
-                        delete data[key];
-                    }
-                });
-
-                return data;
-            },
-            startPedometer: async function () {
-                const self = this;
-
-                if (DeviceMotionEvent.requestPermission) {
-                    const permissionState = await DeviceMotionEvent.requestPermission();
-
-                    if (permissionState !== "granted") {
-                        return;
-                    }
-                }
-
-                this.deviceMotion = event => {
-                    if (event.accelerationIncludingGravity) {
-                        const ag = event.accelerationIncludingGravity;
-                        const d = Math.sqrt(ag.x * ag.x + ag.y * ag.y + ag.z * ag.z);
-
-                        if (self.isStepping) {
-                            if (d < 9.8) {
-                                const nowDate = new Date();
-                                const baseDate = nowDate.getTime() - 7 * 24 * 60 * 60 * 1000;
-                                const stats = [];
-
-                                self.steps++;
-                                self.isStepping = false;
-
-                                for (let days = self.stats.length - 1; days > 0; days--) {
-                                    if (self.stats[days].date.getTime() <= baseDate) {
-                                        self.stats.splice(days, 1);
-                                    } else if (self.stats[days].date.getFullYear() !== nowDate.getFullYear() && self.stats[days].date.getMonth() !== nowDate.getMonth() && self.stats[days].date.getDate() !== nowDate.getDate()) {
-                                        stats.push({ date: self.stats[days].date.toISOString(), steps: self.stats[days].steps });
-                                    }
-                                }
-
-                                stats.unshift({ date: new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0).toISOString(), steps: self.steps });
-
-                                try {
-                                    localStorage.setItem("stats", JSON.stringify(stats));
-                                } catch (e) {
-                                    localStorage.removeItem("stats");
-                                }
-
-                                if (self.steps % 10 === 0) {
-                                    const map = [];
-                                    let i = 0;
-                                    let minCount = Number.MAX_SAFE_INTEGER;
-
-                                    function _random(min, max) {
-                                        min = Math.ceil(min);
-                                        max = Math.floor(max);
-
-                                        return Math.floor(Math.random() * (max - min)) + min;
-                                    }
-
-                                    function format(format) {
-                                        var args = arguments;
-
-                                        return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
-                                    }
-
-                                    for (const group of self.chars) {
-                                        let j = 0;
-
-                                        for (const d of group) {
-                                            map.push({ path: { row: i, column: j }, data: d });
-                                            j++;
-
-                                            if (d.count < minCount) {
-                                                minCount = d.count;
-                                            }
-                                        }
-
-                                        i++;
-                                    }
-
-                                    for (let j = map.length - 1; j > 0; j--) {
-                                        if (map[j].data.count > minCount) {
-                                            map.splice(j, 1);
-                                        }
-                                    }
-
-                                    const indexPath = map[_random(0, map.length)].path;
-                                    const sequence = [];
-
-                                    self.chars[indexPath.row][indexPath.column].count++;
-                                    self.chars[indexPath.row][indexPath.column].timestamp = Math.floor(new Date() / 1000);
-
-                                    /*for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Capture"), self.chars[indexPath.row][indexPath.column].set[0], this.character.sequences)) {
-                                        if (obj.type === "Message") {
-                                            self.notify({ text: format(obj.text, self.chars[indexPath.row][indexPath.column].set[0]), accent: self.character.accent, image: self.character.image });
-                                        }
-                                    }*/
-
-                                    for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Capture"), self.chars[indexPath.row][indexPath.column].set[0], this.character.sequences)) {
-                                        if (obj.type === "Message") {
-                                            sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character, text: format(obj.text, self.chars[indexPath.row][indexPath.column].set[0]) });
-                                        } else {
-                                            obj["character"] = this.character;
-                                            sequence.push(obj);
-                                        }
-                                    }
-
-                                    if (sequence.length > 0) {
-                                        this.sequenceQueue.push(sequence);
-                                    }
-                                }
-                            }
-                        } else if (d > 12.0) {
-                            self.isStepping = true;
-                        }
-                    }
-                };
-                window.addEventListener("devicemotion", this.deviceMotion, true);
-            },
-            stopPedometer: function () {
-                window.removeEventListener("devicemotion", this.deviceMotion, true);
-                this.deviceMotion = null;
-            },
-            locate: async function (event) {
-                if ("permissions" in navigator) {
-                    const permissionStatus = await navigator.permissions.query({ name: "geolocation" });
-
-                    if (permissionStatus.state == "granted" || permissionStatus.state == "prompt") {
-                        const self = this;
-
-                        this.isLocating = true;
-
-                        navigator.geolocation.getCurrentPosition((position) => {
-                            self.isLocating = false;
-                            self.map.setView({
-                                center: new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude),
-                                zoom: self.map.getZoom() < 16 ? 16 : self.map.getZoom()
-                            });
-                        }, (error) => {
-                            self.isLocating = false;
-                            self.notify({ text: error.message, accent: self.character.accent, image: self.character.image });
-                            console.error(error);
-                        }, {
-                            enableHighAccuracy: true,
-                            timeout: 30000,
-                            maximumAge: 0
-                        });
-                    }
-                } else {
-                    const self = this;
-
-                    this.isLocating = true;
-
-                    navigator.geolocation.getCurrentPosition((position) => {
-                        self.isLocating = false;
-                        self.map.setView({
-                            center: new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude),
-                            zoom: self.map.getZoom() < 16 ? 16 : self.map.getZoom()
-                        });
-                    }, (error) => {
-                        self.isLocating = false;
-                        self.notify({ text: error.message, accent: self.character.accent, image: self.character.image });
-                        console.error(error);
-                    }, {
-                        enableHighAccuracy: true,
-                        timeout: 30000,
-                        maximumAge: 0
-                    });
-                }
-                /*const permissionStatus = await navigator.permissions.query({ name: "geolocation" });
-
-                if (permissionStatus.state == "granted" || permissionStatus.state == "prompt") {
-                    const self = this;
-
-                    navigator.geolocation.getCurrentPosition((position) => {
-                        self.map.setView({
-                            center: new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude),
-                            zoom: self.map.getZoom() < 16 ? 16 : self.map.getZoom()
-                        });
-                    }, (error) => {
-                        self.notify({ text: error.message, accent: self.character.accent, image: self.character.image });
-                        console.error(error);
-                    }, {
-                        enableHighAccuracy: true,
-                        timeout: 30000,
-                        maximumAge: 0
-                    });*/
-
-                /*try {
-                    
-                    const position = await new Promise((resolve, reject) => {
-                        navigator.geolocation.getCurrentPosition((position) => {
-                            resolve(position);
-                        }, (error) => {
-                            reject(error);
-                        }, {
-                            enableHighAccuracy: true,
-                            timeout: 5000,
-                            maximumAge: 0
-                        });
-                    });*/
-
-                /*const self = this;
-                const geohash = this.encodeGeohash(position.coords.latitude, position.coords.longitude);
-                const timestamp = Math.floor(new Date() / 1000);
-
-                await new Promise((resolve, reject) => {
-                    database.ref(databaseRoot + "/users/" + this.user.uid).transaction(function (user) {
-                        if (user === null) {
-                            return { key: geohash + timestamp, name: self.user.displayName, image: self.user.photoURL, location: { latitude: position.coords.latitude, longitude: position.coords.longitude }, geohash: geohash, timestamp: timestamp };
-                        }
-
-                        user["key"] = geohash + timestamp;
-                        user["name"] = self.user.displayName;
-                        user["image"] = self.user.photoURL;
-                        user["location"] = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-                        user["geohash"] = geohash;
-                        user["timestamp"] = timestamp;
-
-                        return user;
-                    }, function (error, committed, snapshot) {
-                        if (!committed && error) {
-                            reject(error);
-                        } else {
-                            database.ref(databaseRoot + "/users/" + self.user.uid).transaction(function (u) {
-                                return u;
-                            }, function (error, committed, snapshot) {
-                                if (!committed && error) {
-                                    reject(error);
-                                } else {
-                                    resolve();
-                                }
-                            });
-                        }
-                    });
-                });*/
-
-
-                /*} catch (e) {
-                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                    console.error(e);
-                }*/
-                //}
-            },
-            backspace: function (event) {
-                if (!this.isEditing) {
-                    this.chars.forEach(x => x.forEach(y => y.count += y.set.includes(this.input.charAt(this.input.length - 1)) ? 1 : 0));
-                }
-
-                this.input = this.input.slice(0, -1);
-            },
-            send: async function (text) {
-                if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
-                    if (this.isEditing) {
-                        let index = -1;
-                        const column = [];
-
-                        for (let i = this.chars.length - 1; i >= 0; i--) {
-                            if (this.chars[i].some(x => !x.reserved)) {
-                                index = i;
-
-                                break;
-                            }
-                        }
-
-                        column.push({ set: [this.input], index: 0, count: 0, timestamp: Math.floor(new Date() / 1000), reserved: false });
-
-                        if (index >= 0) {
-                            this.chars.splice(index + 1, 0, column);
-                        } else {
-                            this.chars.splice(0, 0, column);
-                        }
-
-                        this.input = "";
-                        this.isEditing = false;
                     } else {
-                        const location = this.map.getCenter();
+                        for (const image of this.backgroundImages) {
+                            this.input = image.id;
 
-                        this.learn({ name: this.input, location: { latitude: location.latitude, longitude: location.longitude } });
-                        this.input = "";
-                        this.isLearning = false;
+                            break;
+                        }
                     }
+                } else if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
+                    this.learn({ name: this.input });
+                    this.input = "";
+                    this.isLearning = false;
                 } else {
                     this.shake(this.$refs.input);
                 }
-            },
-            setImage: async function (pushpin, url, color = { red: 0, green: 0, blue: 0 }) {
-                //const hours = new Date(track.position.timestamp * 1000).getHours();
-                let image;
-                /*pushpin.setOptions({
-                    icon: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-                    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                    <svg width="18" height="18" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                        <g transform="matrix(1,0,0,1,-17.7077,-18.7538)">
-                            <path d="M26.708,19.754C31.123,19.754 34.708,23.339 34.708,27.754C34.708,32.169 31.123,35.754 26.708,35.754C22.292,35.754 18.708,32.169 18.708,27.754C18.708,23.339 22.292,19.754 26.708,19.754ZM26.708,23.754C28.915,23.754 30.708,25.546 30.708,27.754C30.708,29.962 28.915,31.754 26.708,31.754C24.5,31.754 22.708,29.962 22.708,27.754C22.708,25.546 24.5,23.754 26.708,23.754Z" style="fill:rgb(255,238,0);"/>
-                        </g>
-                    </svg>`
-                });*/
-
-                try {
-                    image = await new Promise(async (resolve, reject) => {
-                        const i = new Image();
-
-                        i.onload = () => {
-                            resolve(i);
-                        };
-                        i.onerror = (e) => {
-                            reject(e);
-                        };
-
-                        i.crossOrigin = "Anonymous";
-                        i.src = url;
-                    });
-                } catch (e) {
-                    pushpin.setOptions({
-                        icon: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-                            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                            <svg width="50" height="54" viewBox="0 0 50 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                                <g transform="matrix(0.999999,0,0,0.999999,17.0011,-13)">
-                                    <path d="M0,50L16,50L8,66L0,50Z" style="fill:rgb(${String(color.red)},${String(color.green)},${String(color.blue)});"/>
-                                </g>
-                                <g transform="matrix(1.96491,0,0,1.96491,-30.0099,-24.5931)">
-                                    <circle cx="27.996" cy="25.239" r="12.214" style="fill:rgb(${String(color.red)},${String(color.green)},${String(color.blue)});"/>
-                                    <g transform="matrix(0.410574,0,0,0.410574,34.0498,26.7694)">
-                                        <path d="M0,-7.29C-0.311,-8.247 -1.138,-8.944 -2.133,-9.089L-9.21,-10.117L-12.375,-16.529C-12.819,-17.432 -13.738,-18.003 -14.744,-18.003C-15.75,-18.003 -16.67,-17.432 -17.114,-16.53L-20.279,-10.117L-27.355,-9.089C-28.352,-8.944 -29.179,-8.247 -29.49,-7.29C-29.801,-6.333 -29.541,-5.283 -28.82,-4.581L-23.7,0.41L-24.908,7.459C-25.078,8.45 -24.672,9.452 -23.857,10.043C-23.043,10.635 -21.965,10.713 -21.074,10.244L-14.744,6.917L-8.415,10.244C-8.028,10.447 -7.606,10.548 -7.186,10.548C-6.638,10.548 -6.092,10.377 -5.632,10.043C-4.818,9.452 -4.41,8.45 -4.58,7.458L-5.789,0.41L-0.668,-4.581C0.052,-5.283 0.312,-6.333 0,-7.29" style="fill:white;fill-rule:nonzero;"/>
-                                    </g>
-                                </g>
-                            </svg>`
-                    });
-
-                    console.error(e);
-
-                    return;
-                }
-
-                const c = document.createElement("canvas");
-                const ctx = c.getContext('2d');
-                const min = Math.min(image.width, image.height);
-
-                c.width = min;
-                c.height = min;
-
-                ctx.drawImage(image, -(image.width - min) / 2, -(image.height - min) / 2, image.width, image.height);
-
-                //const opacity = hours >= 6 && hours < 18 ? "0.05" : "1";
-                //const accentColor = self.user.uid === word.id ? self.character.accent : '#ffffff';
-                //const selectedColor = selected ? self.character.accent : 'rgb(254,221,80)';
-                const inlineSvg = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-                        <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                        <svg width="50" height="54" viewBox="0 0 50 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                            <g transform="matrix(0.999999,0,0,0.999999,17.0011,-13)">
-                                <path d="M0,50L16,50L8,66L0,50Z" style="fill:(${String(color.red)},${String(color.green)},${String(color.blue)});"/>
-                            </g>
-                            <g transform="matrix(1.96491,0,0,1.96491,-30.0099,-24.5931)">
-                                <circle cx="27.996" cy="25.239" r="12.214" style="fill:rgb(${String(color.red)},${String(color.green)},${String(color.blue)});"/>
-                                <clipPath id="_clip1">
-                                    <circle cx="27.996" cy="25.239" r="12.214"/>
-                                </clipPath>
-                                <g clip-path="url(#_clip1)">
-                                    <g transform="matrix(0.791667,0,0,0.791667,5.83249,5.2582)">
-                                        <circle cx="27.996" cy="25.239" r="12.214" style="fill:white;"/>
-                                        <clipPath id="_clip2">
-                                            <circle cx="27.996" cy="25.239" r="12.214"/>
-                                        </clipPath>
-                                        <g clip-path="url(#_clip2)">
-                                            <g id="Background" transform="matrix(0.023856,0,0,0.023856,-2.53964,-5.29658)">
-                                                <use xlink:href="#_Image3" x="767" y="767" width="1026px" height="1026px"/>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </g>
-                            </g>
-                            <defs>
-                                <image id="_Image3" width="1026px" height="1026px" xlink:href="` + c.toDataURL() + `"/>
-                            </defs>
-                        </svg>`;
-
-                pushpin.setOptions({
-                    icon: inlineSvg
-                });
             },
             change: function (event) {
                 if (this.input.length <= this.maxInputLength) {
@@ -1353,12 +585,12 @@ window.addEventListener("load", (event) => {
                     this.inputHasError = true;
                 }
             },
-            upload: async function (event) {
+            upload: async function (event, data = null) {
                 const timestamp = Math.floor(new Date() / 1000);
 
                 this.isUploading = true;
 
-                if ("uploadable" in event.target.dataset === false || event.target.dataset.uploadable === "true") {
+                if ('files' in event.currentTarget) {
                     function generateUuid() {
                         // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
                         // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
@@ -1379,117 +611,74 @@ window.addEventListener("load", (event) => {
                     }
 
                     const self = this;
-                    const files = [];
-                    const paths = [];
+                    const files = event.currentTarget.files;
+                    let completed = 0;
 
-                    for (const file of event.target.files) {
-                        files.push(file);
-                    }
-
-                    for (const file of files.sort((x, y) => {
-                        if (x.name > y.name) {
-                            return 1;
-                        } else if (x.name < y.name) {
-                            return -1;
-                        }
-
-                        return 0;
-                    })) {
-                        const uploadTask = uploadBytesResumable(storageRef(storage, `assets/${generateUuid()}`), file);
+                    for (const file of files) {
+                        const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file, {
+                            contentType: file.type
+                        });
 
                         try {
-                            await new Promise(function (resolve, reject) {
+                            const path = await new Promise(function (resolve, reject) {
                                 uploadTask.on("state_changed", (snapshot) => {
-                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + paths.length / files.length;
+                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed / files.length;
                                 }, (error) => {
                                     reject(error);
                                 }, () => {
-                                    resolve(uploadTask.snapshot.ref);
+                                    resolve(uploadTask.snapshot.ref.fullPath);
                                 });
                             });
 
-                            const transactionResult = await runTransaction(databaseRef(database, `${databaseRoot}/users/${this.user.uid}/dictionary/words/${event.target.dataset.name}`), current => {
-                                if (current) {
-                                    current["image"] = uploadTask.snapshot.ref.fullPath;
-                                    current["timestamp"] = timestamp;
-                                }
-
-                                return current;
-                            });
-
-                            if (transactionResult.committed && transactionResult.snapshot.exists()) {
-                                const dictionary = transactionResult.snapshot.val();
-                                const result = await runTransaction(databaseRef(database, `${databaseRoot}/tracks/${await this.digestMessage(`${this.user.uid}&${event.target.dataset.name}`)}`), current => {
+                            if (data === null) {
+                                await runTransaction(databaseRef(database, `${databaseRoot}/backgrounds/${push(child(databaseRef(database), `${databaseRoot}/backgrounds`)).key}`), current => {
+                                    return { image: { path: path, type: file.type }, timestamp: timestamp };
+                                });
+                            } else {
+                                const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${data.id}`), current => {
                                     if (current) {
-                                        current["image"] = dictionary["image"];
-                                        current["timestamp"] = dictionary["timestamp"];
+                                        current['image'] = { path: path, type: file.type };
+                                        current['timestamp'] = timestamp;
                                     }
 
                                     return current;
                                 });
 
                                 if (result.committed && result.snapshot.exists()) {
-                                    this.update(true);
+                                    const d = result.snapshot.val()
 
-                                    if (this.mode !== null) {
-                                        if ("name" in this.mode && "attributes" in this.mode && this.mode.name === event.target.dataset.name) {
-                                            this.mode["image"] = { path: uploadTask.snapshot.ref.fullPath, url: await getDownloadURL(storageRef(storage, uploadTask.snapshot.ref.fullPath)) };
-                                        } else if ("words" in this.mode && this.mode.words !== null) {
-                                            for (const word of this.mode.words) {
-                                                if (word.name === event.target.dataset.name) {
-                                                    word["image"] = { path: uploadTask.snapshot.ref.fullPath, url: await getDownloadURL(storageRef(storage, uploadTask.snapshot.ref.fullPath)) };
-                                                }
-                                            }
-                                        }
-                                    }
+                                    data['image'] = d['image'];
+                                    data['image']['url'] = await getDownloadURL(storageRef(storage, d['image'].path));
+                                    data['timestamp'] = d['timestamp'];
                                 }
                             }
-                        } catch (e) {
-                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                            console.error(e);
+                        } catch (error) {
+                            this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
+                            console.error(error);
                         }
 
-                        paths.push(uploadTask.snapshot.ref.fullPath);
+                        completed++;
                     }
 
+                    //push(databaseRef(database, `${databaseRoot}/backgrounds`), { image: path, timestamp: Math.floor(new Date() / 1000) });
+
                     this.progress = null;
-                } else if (event.target.dataset.uploadable === "false") {
+                } else {
                     try {
-                        const transactionResult = await runTransaction(databaseRef(database, `${databaseRoot}/users/${this.user.uid}/dictionary/words/${event.target.dataset.name}`), current => {
+                        const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${data.id}`), current => {
                             if (current) {
-                                current["image"] = null;
-                                current["timestamp"] = timestamp;
+                                current['image'] = null;
+                                current['timestamp'] = timestamp;
                             }
 
                             return current;
                         });
 
-                        if (transactionResult.committed && transactionResult.snapshot.exists()) {
-                            const dictionary = transactionResult.snapshot.val();
-                            const result = await runTransaction(databaseRef(database, `${databaseRoot}/tracks/${await this.digestMessage(`${this.user.uid}&${event.target.dataset.name}`)}`), current => {
-                                if (current) {
-                                    current["image"] = null;
-                                    current["timestamp"] = dictionary["timestamp"];
-                                }
+                        if (result.committed && result.snapshot.exists()) {
+                            const d = result.snapshot.val()
 
-                                return current;
-                            });
-
-                            if (result.committed && result.snapshot.exists()) {
-                                this.update(true);
-
-                                if (this.mode !== null) {
-                                    if ("name" in this.mode && "attributes" in this.mode && this.mode.name === event.target.dataset.name && "image" in this.mode) {
-                                        delete this.mode["image"];
-                                    } else if ("words" in this.mode && this.mode.words !== null) {
-                                        for (const word of this.mode.words) {
-                                            if (word.name === event.target.dataset.name && "image" in word) {
-                                                delete word["image"];
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            data['image'] = null;
+                            data['timestamp'] = d['timestamp'];
                         }
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
@@ -1499,74 +688,6 @@ window.addEventListener("load", (event) => {
 
                 this.isUploading = false;
             },
-            learn: async function (word) {
-                function format(format) {
-                    var args = arguments;
-
-                    return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
-                }
-
-                const sequence = [];
-                const attributes = [];
-
-                if ("attributes" in word) {
-                    for (const attribute of this.attributes) {
-                        if (attribute in word.attributes) {
-                            if (word.attributes[attribute] > 0) {
-                                attributes.push({ name: attribute, value: true });
-                            } else {
-                                attributes.push({ name: attribute, value: false });
-                            }
-                        }
-                    }
-                } else {
-                    const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name));
-
-                    if (snapshot.exists()) {
-                        const w = snapshot.val();
-
-                        for (const attribute of this.attributes) {
-                            if (attribute in w.attributes) {
-                                if (w.attributes[attribute] > 0) {
-                                    attributes.push({ name: attribute, value: true });
-                                } else {
-                                    attributes.push({ name: attribute, value: false });
-                                }
-                            }
-                        }
-                    } else {
-                        for (const attribute of this.attributes) {
-                            attributes.push({ name: attribute, value: false });
-                        }
-                    }
-                }
-
-                this.word = { name: word.name, attributes: attributes };
-
-                if ("location" in word) {
-                    this.word["location"] = word.location;
-                }
-
-                if ("image" in word) {
-                    this.word["image"] = { path: word.image, url: await getDownloadURL(storageRef(storage, word.image)) };
-                }
-
-                if ("user" in word) {
-                    this.word["user"] = word.user;
-                }
-
-                for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learn"))) {
-                    if (obj.type === "Message") {
-                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: format(obj.text, word.name) });
-                    } else {
-                        sequence.push(obj);
-                    }
-                }
-
-                if (sequence.length > 0) {
-                    this.sequenceQueue.push(sequence);
-                }
-            },
             check: function (event) {
                 for (const attribute of this.word.attributes) {
                     if (attribute === event.target.dataset.attribute) {
@@ -1575,9 +696,7 @@ window.addEventListener("load", (event) => {
                 }
             },
             share: async function (word) {
-                const location = "location" in word ? word.location : this.map.getCenter();
-                const geohash = this.encodeGeohash(location.latitude, location.longitude);
-                const user = { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
+                const self = this;
                 const timestamp = Math.floor(new Date() / 1000);
 
                 if (word.name in this.wordDictionary) {
@@ -1592,16 +711,8 @@ window.addEventListener("load", (event) => {
 
                 this.isSubmitting = true;
 
-                if (this.user.providerData[0].providerId === TwitterAuthProvider.PROVIDER_ID) {
-                    const link = await get(databaseRef(database, `${databaseRoot}/users/${this.user.uid}/link`));
-
-                    if (link.exists()) {
-                        user["link"] = link.val();
-                    }
-                }
-
                 try {
-                    const transactionResult = await runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name), current => {
+                    const result = await runTransaction(databaseRef(database, databaseRoot + "/words/" + word.name), current => {
                         if (current) {
                             let updateRequired = false;
 
@@ -1663,23 +774,15 @@ window.addEventListener("load", (event) => {
                                     current.attributes[attribute.name] = 0;
                                 }
                             }
-
-                            if ("user" in word) {
-                                current["user"] = { id: word.user.id, name: word.user.name, image: word.user.image };
-                            }
-
-                            if ("image" in word) {
-                                current["image"] = word.image.path;
-                            }
                         }
 
                         return current;
                     });
 
-                    if (transactionResult.committed) {
-                        if (transactionResult.snapshot.exists()) {
-                            const dictionary = transactionResult.snapshot.val();
-                            const timestamps = [];
+                    if (result.committed) {
+                        if (result.snapshot.exists()) {
+                            const dictionary = result.snapshot.val();
+                            let timestamps = [];
 
                             for (const key in dictionary.attributes) {
                                 if (typeof dictionary.attributes[key] === "number" && dictionary.attributes[key] > 0 && this.attributes.includes(key)) {
@@ -1694,9 +797,7 @@ window.addEventListener("load", (event) => {
                                     return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                                 }
 
-                                const self = this;
-
-                                runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/count"), count => {
+                                runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
                                     return (count || 0) + 1;
                                 });
 
@@ -1716,109 +817,17 @@ window.addEventListener("load", (event) => {
                                     this.$refs.twinkle.play();
                                 }
                             }
-
-                            if ("user" in word === false || word.user.id === this.user.uid) {
-                                try {
-                                    const result = await runTransaction(databaseRef(database, databaseRoot + "/tracks/" + await this.digestMessage(`${this.user.uid}&${word.name}`)), current => {
-                                        const attributes = {};
-
-                                        if (current) {
-                                            current["key"] = `${geohash}${timestamp}`;
-                                            current["location"] = { latitude: location.latitude, longitude: location.longitude };
-                                            current["geohash"] = geohash;
-                                            current["timestamp"] = timestamp;
-                                        } else {
-                                            current = { key: `${geohash}${timestamp}`, name: word.name, location: { latitude: location.latitude, longitude: location.longitude }, geohash: geohash, user: user, timestamp: timestamp };
-                                        }
-
-                                        for (const key in dictionary.attributes) {
-                                            if (this.attributes.includes(key)) {
-                                                attributes[key] = dictionary.attributes[key];
-                                            }
-                                        }
-
-                                        current["attributes"] = attributes;
-
-                                        return current;
-                                    });
-
-                                    if (result.committed && result.snapshot.exists()) {
-                                        this.update(true);
-                                    }
-                                } catch (e) {
-                                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                                    console.error(e);
-                                }
-                            }
-
-                            /*try {
-                                const ref = push(databaseRef(database, `${databaseRoot}/tracks`));
-            
-                                await set(ref, { key: geohash + timestamp, name: word.name, attributes: word.attributes, location: { latitude: position.coords.latitude, longitude: position.coords.longitude }, geohash: geohash, timestamp: timestamp, user: { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL } });
-                            } catch (e) {
-                                console.error(e);
-                            }*/
                         } else {
-                            runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/count"), count => {
-                                if (count && count > 1) {
+                            runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
+                                if (count) {
                                     return count - 1;
                                 }
 
-                                return null;
+                                return undefined;
                             });
-
-                            try {
-                                const result = await runTransaction(databaseRef(database, databaseRoot + "/tracks/" + await this.digestMessage(`${this.user.uid}&${word.name}`)), current => {
-                                    return null;
-                                });
-
-                                if (result.committed && !result.snapshot.exists()) {
-                                    this.update(true);
-                                }
-                            } catch (e) {
-                                this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                                console.error(e);
-                            }
                         }
-                    } else if ("user" in word === false || word.user.id === this.user.uid) {
-                        try {
-                            const result = await runTransaction(databaseRef(database, databaseRoot + "/tracks/" + await this.digestMessage(`${this.user.uid}&${word.name}`)), current => {
-                                if (current) {
-                                    current["key"] = `${geohash}${timestamp}`;
-                                    current["location"] = { latitude: location.latitude, longitude: location.longitude };
-                                    current["geohash"] = geohash;
-                                    current["user"] = user;
-                                    current["timestamp"] = timestamp;
 
-                                    for (const attribute of word.attributes) {
-                                        if (attribute.value) {
-                                            current.attributes[attribute.name] = timestamp - 1;
-                                        } else {
-                                            current.attributes[attribute.name] = 0;
-                                        }
-                                    }
-                                } else {
-                                    current = { key: `${geohash}${timestamp}`, name: word.name, location: { latitude: location.latitude, longitude: location.longitude }, geohash: geohash, attributes: {}, user: user, timestamp: timestamp };
-
-                                    for (const attribute of word.attributes) {
-                                        if (attribute.value) {
-                                            current.attributes[attribute.name] = timestamp;
-                                        } else {
-                                            current.attributes[attribute.name] = 0;
-                                        }
-                                    }
-                                }
-
-                                return current;
-                            });
-
-                            if (result.committed && result.snapshot.exists()) {
-                                this.update(true);
-                            }
-                        } catch (e) {
-                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                            console.error(e);
-                        }
+                        this.word = null;
                     }
                 } catch (error) {
                     this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
@@ -1827,74 +836,202 @@ window.addEventListener("load", (event) => {
 
                 this.isSubmitting = false;
             },
-            next: async function (userId, startAt, limit = 50) {
-                let snapshot;
+            like: async function (message, canvas) {
+                const timestamp = Math.floor(new Date() / 1000);
 
-                if (startAt === null) {
-                    snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByKey(), limitToFirst(limit + 1)));
-                } else {
-                    snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByKey(), startAt(startAt), limitToFirst(limit + 1)));
-                }
+                try {
+                    let result;
 
-                if ("words" in this.mode) {
-                    const user = "user" in this.mode ? this.mode.user : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
-                    const tempWords = [];
-
-                    if (snapshot.exists()) {
-                        const words = snapshot.val();
-
-                        if (this.mode.words !== null && this.mode.words.length > 0) {
-                            this.mode.indexes.push(this.mode.words[0]);
-                        }
-
-                        for (const name in words) {
-                            let w = "user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } : { name: name, attributes: words[name].attributes, user: user };
-
-                            if ("image" in words[name]) {
-                                w["image"] = { path: words[name].image, url: await getDownloadURL(storageRef(storage, words[name].image)) };
+                    if (canvas === null) {
+                        result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
+                            if (current) {
+                                return undefined;
                             }
 
-                            tempWords.push(w);
+                            return { text: message.original, author: this.character.name, timestamp: timestamp };
+                        });
+                    } else {
+                        function generateUuid() {
+                            // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
+                            // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+                            let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
+
+                            for (let i = 0, len = chars.length; i < len; i++) {
+                                switch (chars[i]) {
+                                    case "x":
+                                        chars[i] = Math.floor(Math.random() * 16).toString(16);
+                                        break;
+                                    case "y":
+                                        chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
+                                        break;
+                                }
+                            }
+
+                            return chars.join("");
                         }
 
-                        if (tempWords.length === limit + 1) {
-                            this.mode.next = tempWords.pop();
-                        } else {
-                            this.mode.next = null;
+                        const self = this;
+                        const type = "image/png";
+                        const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), await new Promise(resolve => {
+                            canvas.toBlob(blob => {
+                                resolve(blob);
+                            }, type);
+                        }), {
+                            contentType: type
+                        });
+
+                        try {
+                            const path = await new Promise((resolve, reject) => {
+                                uploadTask.on("state_changed", snapshot => {
+                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes;
+                                }, (error) => {
+                                    reject(error);
+                                }, () => {
+                                    resolve(uploadTask.snapshot.ref.fullPath);
+                                });
+                            });
+
+                            result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
+                                if (current) {
+                                    current["image"] = { path: path, type: type };
+                                    current["timestamp"] = timestamp;
+
+                                    return current;
+                                }
+
+                                return { text: message.original, author: this.character.name, image: { path: path, type: type }, timestamp: timestamp };
+                            });
+                        } finally {
+                            this.progress = null;
                         }
                     }
 
-                    this.mode.words = tempWords;
+                    if (result.committed && result.snapshot.exists()) {
+                        /*const sequence = [];
+
+                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
+                            if (obj.type === "Message") {
+                                sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: obj.text });
+                            } else {
+                                obj["character"] = this.character.alternative;
+                                sequence.push(obj);
+                            }
+                        }
+
+                        if (sequence.length > 0) {
+                            this.sequenceQueue.push(sequence);
+                        }*/
+                        
+                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
+                            if (obj.type === "Message") {
+                                this.notify({ text: obj.text, accent: this.character.alternative.accent, image: this.character.alternative.image });
+                            }
+                        }
+
+                        if (!this.isMuted) {
+                            this.$refs.like.play();
+                        }
+                    }
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
                 }
             },
-            previous: async function (userId, startAt, limit = 50) {
-                let snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByKey(), startAt(startAt), limitToFirst(limit)));
+            next: async function (key, offset, limit = 5) {
+                const temp = this.mode[key];
+                let snapshot;
+                const data = [];
 
-                if ("words" in this.mode && snapshot.exists()) {
-                    const words = snapshot.val();
-                    const user = "user" in this.mode ? this.mode.user : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
+                this.mode[key] = null;
 
-                    if (this.mode.words !== null && this.mode.words.length > 0) {
-                        this.mode.next = this.mode.words[0];
+                /*if (offset === null) {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), limitToFirst(limit + 1)));
+                } else {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(offset), limitToFirst(limit + 1)));
+                }*/
+                if (offset === null) {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), limitToLast(limit + 1)));
+                } else {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), endAt(offset), limitToLast(limit + 1)));
+                }
+
+                if (key in this.mode && snapshot.exists()) {
+                    const dictionary = snapshot.val();
+
+                    if (temp !== null && temp.length > 0) {
+                        this.mode.indexes.push(temp[temp.length - 1]);
                     }
 
-                    this.mode.words = [];
+                    for (const id in dictionary) {
+                        dictionary[id]['id'] = id;
 
-                    for (const name in words) {
-                        const w = "user" in words[name] ? { name: name, attributes: words[name].attributes, user: words[name].user } : { name: name, attributes: words[name].attributes, user: user };
-
-                        if ("image" in words[name]) {
-                            w["image"] = { path: words[name].image, url: await getDownloadURL(storageRef(storage, words[name].image)) };
+                        if ("image" in dictionary[id]) {
+                            dictionary[id]["image"]['url'] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
                         }
 
-                        this.mode.words.push(w);
+                        data.push(dictionary[id]);
+                    }
+
+                    data.sort((x, y) => {
+                        if (x.timestamp < y.timestamp) {
+                            return 1;
+                        } else if (x.timestamp > y.timestamp) {
+                            return -1;
+                        }
+
+                        return 0;
+                    });
+
+                    if (data.length === limit + 1) {
+                        this.mode.next = data.pop();
+                    } else {
+                        this.mode.next = null;
                     }
                 }
+
+                this.mode[key] = data;
+            },
+            previous: async function (key, offset, limit = 5) {
+                const temp = this.mode[key];
+
+                this.mode[key] = null;
+
+                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(offset), limitToFirst(limit)));
+                const data = [];
+
+                if (key in this.mode && snapshot.exists()) {
+                    const dictionary = snapshot.val();
+
+                    if (temp !== null && temp.length > 0) {
+                        this.mode.next = temp[0];
+                    }
+
+                    for (const id in dictionary) {
+                        dictionary[id]['id'] = id;
+
+                        if ("image" in dictionary[id]) {
+                            dictionary[id]["image"]['url'] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
+                        }
+
+                        data.push(dictionary[id]);
+                    }
+
+                    data.sort((x, y) => {
+                        if (x.timestamp < y.timestamp) {
+                            return 1;
+                        } else if (x.timestamp > y.timestamp) {
+                            return -1;
+                        }
+
+                        return 0;
+                    });
+                }
+
+                this.mode[key] = data;
             },
             discover: async function () {
                 const self = this;
                 const words = [];
-                const wordSet = {};
                 const sequence = [];
 
                 function shuffle(array) {
@@ -1922,73 +1059,72 @@ window.addEventListener("load", (event) => {
                     return a;
                 }
 
-                for (const word of this.recentWords) {
-                    if (this.user.uid !== word.user.id) {
-                        words.push(word);
-                        wordSet[word.name] = word;
-                    }
-                }
-
-                for (const key in this.cachedTracks) {
-                    if (this.user.uid !== this.cachedTracks[key].user.id && this.cachedTracks[key].name in wordSet === false) {
-                        words.push(this.cachedTracks[key]);
-                    }
-                }
-
                 this.isDiscovering = true;
 
-                for (const word of shuffle(words)) {
-                    //const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name));
+                const snapshot = await get(query(databaseRef(database, databaseRoot + "/likes"), orderByChild('timestamp'), limitToLast(100)));
 
-                    try {
-                        const result = await runTransaction(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name), current => {
-                            if (current) {
-                                return undefined;
-                            }
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const baseTime = new Date().getTime();// - 12 * 60 * 60 * 1000;
 
-                            //return { key: word.key, name: word.name, attributes: word.attributes, location: word.location, geohash: word.geohash, timestamp: timestamp };
-                            return current;
-                        });
-
-                        if (result.committed) {
-                            function format(format) {
-                                var args = arguments;
-
-                                return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
-                            }
-
-                            this.isDiscovering = false;
-
-                            /*for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Discover"), word.name)) {
-                                if (obj.type === "Message") {
-                                    this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
-                                }
-                            }*/
-
-                            for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Discover"), word.name, this.character.alternative.sequences)) {
-                                if (obj.type === "Message") {
-                                    sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: format(obj.text, word.name) });
-                                } else {
-                                    obj["character"] = this.character.alternative;
-                                    sequence.push(obj);
+                    for (const key in data) {
+                        if (typeof (data[key].text) === "object") {
+                            for (const i in data[key].text) {
+                                if (typeof (data[key].text[i]) === "object") {
+                                    words.push(data[key].text[i]);
                                 }
                             }
+                        }
+                    }
 
-                            if (sequence.length > 0) {
-                                this.sequenceQueue.push(sequence);
-                            }
+                    for (const word of shuffle(words)) {
+                        //const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + this.user.uid + "/dictionary/words/" + word.name));
 
-                            this.learn({ name: word.name, attributes: word.attributes, location: word.location, user: word.user });
-                            this.map.setView({
-                                center: new Microsoft.Maps.Location(word.location.latitude, word.location.longitude),
-                                zoom: self.map.getZoom() < 16 ? 16 : self.map.getZoom()
+                        try {
+                            const result = await runTransaction(databaseRef(database, databaseRoot + "/words/" + word.name), current => {
+                                if (current && current.timestamp * 1000 > baseTime) {
+                                    return undefined;
+                                }
+
+                                return current;
                             });
 
-                            return;
+                            if (result.committed) {
+                                function format(format) {
+                                    var args = arguments;
+
+                                    return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
+                                }
+
+                                this.isDiscovering = false;
+
+                                /*for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Discover"), word.name)) {
+                                    if (obj.type === "Message") {
+                                        this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
+                                    }
+                                }*/
+
+                                for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Discover"), word.name, this.character.alternative.sequences)) {
+                                    if (obj.type === "Message") {
+                                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: format(obj.text, word.name) });
+                                    } else {
+                                        obj["character"] = this.character.alternative;
+                                        sequence.push(obj);
+                                    }
+                                }
+
+                                if (sequence.length > 0) {
+                                    this.sequenceQueue.push(sequence);
+                                }
+
+                                this.learn({ name: word.name, attributes: word.attributes });
+
+                                return;
+                            }
+                        } catch (e) {
+                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                            console.error(e);
                         }
-                    } catch (e) {
-                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                        console.error(e);
                     }
                 }
 
@@ -2013,75 +1149,141 @@ window.addEventListener("load", (event) => {
                     this.sequenceQueue.push(sequence);
                 }
             },
-            digestMessage: async function (message) {
-                const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
-                const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
-                const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+            learn: async function (word) {
+                function format(format) {
+                    var args = arguments;
 
-                return hashHex;
-            },
-            activate: async function () {
-                function _random(min, max) {
-                    min = Math.ceil(min);
-                    max = Math.floor(max);
-
-                    return Math.floor(Math.random() * (max - min)) + min;
+                    return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                 }
 
-                function shuffle(array) {
-                    let a = [].concat(array);
-                    let n = array.length;
+                const sequence = [];
+                const attributes = [];
 
-                    while (n > 1) {
-                        const k = _random(0, n);
-
-                        n--;
-
-                        const temp = a[n];
-
-                        a[n] = a[k];
-                        a[k] = temp;
+                if ("attributes" in word) {
+                    if (Array.isArray(word.attributes)) {
+                        for (const attribute of this.attributes) {
+                            if (word.attributes.includes(attribute)) {
+                                attributes.push({ name: attribute, value: true });
+                            } else {
+                                attributes.push({ name: attribute, value: false });
+                            }
+                        }
+                    } else {
+                        for (const attribute of this.attributes) {
+                            if (attribute in word.attributes) {
+                                if (word.attributes[attribute] > 0) {
+                                    attributes.push({ name: attribute, value: true });
+                                } else {
+                                    attributes.push({ name: attribute, value: false });
+                                }
+                            }
+                        }
                     }
+                } else {
+                    const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + word.name));
 
-                    return a;
+                    if (snapshot.exists()) {
+                        const w = snapshot.val();
+
+                        for (const attribute of this.attributes) {
+                            if (attribute in w.attributes) {
+                                if (w.attributes[attribute] > 0) {
+                                    attributes.push({ name: attribute, value: true });
+                                } else {
+                                    attributes.push({ name: attribute, value: false });
+                                }
+                            }
+                        }
+                    } else {
+                        for (const attribute of this.attributes) {
+                            attributes.push({ name: attribute, value: false });
+                        }
+                    }
                 }
 
+                this.word = { name: word.name, attributes: attributes };
+
+                /*for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Learn"), word.name, this.character.alternative.sequences)) {
+                    if (obj.type === "Message") {
+                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: format(obj.text, word.name) });
+                    } else {
+                        obj["character"] = this.character.alternative;
+                        sequence.push(obj);
+                    }
+                }
+
+                if (sequence.length > 0) {
+                    this.sequenceQueue.push(sequence);
+                }*/
+
+                for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learn"))) {
+                    if (obj.type === "Message") {
+                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: format(obj.text, word.name) });
+                    } else {
+                        sequence.push(obj);
+                    }
+                }
+
+                if (sequence.length > 0) {
+                    this.sequenceQueue.push(sequence);
+                }
+            },
+            activate: async function (tokens = [], threshold = 0.5) {
                 idleTime = activateTime = 0.0;
 
-                if (this.cachedDocuments.length > 0) {
-                    if (this.documentQueue.length == 0) {
-                        for (const document of shuffle(this.cachedDocuments)) {
-                            this.documentQueue.push(document);
+                if (this.user != null) {
+                    if (Math.random() < threshold) {
+                        function _random(min, max) {
+                            min = Math.ceil(min);
+                            max = Math.floor(max);
+
+                            return Math.floor(Math.random() * (max - min)) + min;
+                        }
+
+                        const words = this.words.filter((x => "timestamp" in x))
+                        const i = _random(0, words.length);
+
+                        if (i > 0) {
+                            function shuffle(array) {
+                                let a = [].concat(array);
+                                let n = array.length;
+
+                                while (n > 1) {
+                                    const k = _random(0, n);
+
+                                    n--;
+
+                                    const temp = a[n];
+
+                                    a[n] = a[k];
+                                    a[k] = temp;
+                                }
+
+                                return a;
+                            }
+
+                            const selectedTokens = [];
+
+                            for (const word of this.take(shuffle(words), i)) {
+                                if (word.name.indexOf(this.character.name) === -1) {
+                                    selectedTokens.push(word.name);
+                                }
+                            }
+
+                            if (!await this.talk(selectedTokens.concat(tokens.filter((x) => x.indexOf(this.character.name) === -1)))) {
+                                this.talk();
+                            }
+
+                            return;
                         }
                     }
 
-                    const document = this.documentQueue.shift();
-
-                    if (this.user.uid !== null && await this.talk(this.user.uid, document.filter((x) => x.indexOf(this.character.name) === -1))) {
-                        return;
+                    if (!await this.talk(tokens.filter((x) => x.indexOf(this.character.name) === -1))) {
+                        this.talk();
                     }
-                }
-
-                const i = _random(0, this.recentWords.length);
-
-                if (i > 0) {
-                    const tokens = [];
-
-                    for (const word of this.take(shuffle(this.recentWords), i)) {
-                        if (this.user.uid !== word.user.id && word.name.indexOf(this.character.name) === -1) {
-                            tokens.push(word.name);
-                        }
-                    }
-
-                    if (this.user.uid !== null && !await this.talk(this.user.uid, tokens)) {
-                        this.talk(this.user.uid);
-                    }
-                } else if (this.user.uid !== null) {
-                    this.talk(this.user.uid);
                 }
             },
-            talk: async function (userId, tokens = []) {
+            talk: async function (tokens = []) {
                 let sequences = this.character.sequences.filter((x) => x.name === "Activate");
                 let sequence = [];
 
@@ -2131,7 +1333,7 @@ window.addEventListener("load", (event) => {
                     for (const token of tokens) {
                         if (!regex.test(token)) {
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
+                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
                                 this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2164,7 +1366,7 @@ window.addEventListener("load", (event) => {
                                     if (Array.isArray(token)) {
                                         for (const obj of preparedSequence) {
                                             if (obj.type == "Message") {
-                                                const temp = await this.generate(userId, obj.text, tokens);
+                                                const temp = await this.generate(obj.text, tokens);
 
                                                 if (temp === null) {
                                                     isAborted = true;
@@ -2197,7 +1399,7 @@ window.addEventListener("load", (event) => {
                                         return true;
                                     } else if (token.length > 1 && !regex.test(token) && !tokenSet.includes(token)) {
                                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                            const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
+                                            const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
                                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2216,7 +1418,7 @@ window.addEventListener("load", (event) => {
                                             if (attributes.includes(attribute)) {
                                                 for (const obj of preparedSequence) {
                                                     if (obj.type == "Message") {
-                                                        const temp = await this.generate(userId, obj.text, tokens);
+                                                        const temp = await this.generate(obj.text, tokens);
 
                                                         if (temp === null) {
                                                             isAborted = true;
@@ -2271,7 +1473,7 @@ window.addEventListener("load", (event) => {
 
                 for (const obj of this.prepare(sequences)) {
                     if (obj.type === "Message") {
-                        const temp = await this.generate(userId, obj.text);
+                        const temp = await this.generate(obj.text);
 
                         if (temp === null) {
                             this.isLoading = false;
@@ -2301,7 +1503,7 @@ window.addEventListener("load", (event) => {
 
                 return false;
             },
-            generate: async function (userId, message, hints = []) {
+            generate: async function (message, hints = []) {
                 function choice(probabilities) {
                     const r = Math.random();
                     let sum = 0.0;
@@ -2358,7 +1560,7 @@ window.addEventListener("load", (event) => {
                 for (const token of hints) {
                     if (!regex.test(token)) {
                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                            const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
+                            const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2413,7 +1615,7 @@ window.addEventListener("load", (event) => {
                                     }
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
-                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
+                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
 
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
 
@@ -2473,7 +1675,7 @@ window.addEventListener("load", (event) => {
                             const scores = [];
 
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                const snapshot = await get(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words/" + token));
+                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
                                 this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2512,7 +1714,7 @@ window.addEventListener("load", (event) => {
                                     }
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
-                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/users/" + userId + "/dictionary/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
+                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
 
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
 
@@ -2630,39 +1832,8 @@ window.addEventListener("load", (event) => {
 
                 this.notifications.unshift(data);
             },
-            blinded: async function (image) {
-                try {
-                    await new Promise(async (resolve, reject) => {
-                        const i = new Image();
-
-                        i.onload = () => {
-                            resolve(i);
-                        };
-                        i.onerror = (e) => {
-                            reject(e);
-                        };
-
-                        i.crossOrigin = "Anonymous";
-                        i.src = image.url;
-                    });
-                } catch (e) {
-                    console.error(e);
-
-                    return false;
-                }
-
-                return true;
-
-
-                /*
-                function _random(min, max) {
-                    min = Math.ceil(min);
-                    max = Math.floor(max);
-
-                    return Math.floor(Math.random() * (max - min)) + min;
-                }
-
-                if (this.backgroundImagesQueue.length == 0) {
+            blinded: async function () {
+                if (this.backgroundQueue.length == 0) {
                     function shuffle(array) {
                         function _random(min, max) {
                             min = Math.ceil(min);
@@ -2689,88 +1860,308 @@ window.addEventListener("load", (event) => {
                     }
 
                     for (const image of shuffle(this.recentImages)) {
-                        this.backgroundImagesQueue.push(image);
+                        this.backgroundQueue.push(image);
                     }
                 }
 
-                const image = this.backgroundImagesQueue.shift();
+                const background = this.backgroundQueue.shift();
 
-                this.preloadImages.splice(0);
-                this.backgroundImages.splice(0);
+                for (const image of this.background.images) {
+                    URL.revokeObjectURL(image.url);
+                }
 
-                for (const path of image.paths) {
+                this.background.images.splice(0);
+
+                if ('color' in background) {
+                    this.background.color = background.color;
+                } else {
+                    this.background.color = null;
+                }
+
+                if ('image' in background) {
                     try {
-                        this.preloadImages.push({ id: image.id, url: await getDownloadURL(storageRef(storage, path)), timestamp: image.timestamp });
+                        const metadata = await getMetadata(storageRef(storage, background.image.path));
+
+                        if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
+                            try {
+                                const response = await fetch(await getDownloadURL(storageRef(storage, background.image.path)), {
+                                    method: "GET"
+                                });
+
+                                if (response.ok) {
+                                    this.background.images.push({ id: background.id, url: URL.createObjectURL(await response.blob()), timestamp: background.timestamp });
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        } else {
+                            this.background.images.push({ id: background.id, url: URL.createObjectURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, background.image.path)), Math.max(window.screen.width, window.screen.height))), timestamp: background.timestamp });
+                        }
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e);
                     }
                 }
 
-                if ("tags" in image) {
-                    this.talk(this.user.uid, image.tags.filter((x) => x !== this.character.name));
-                }*/
-            },
-            load: function (url) {
-                let isCompleted = true;
+                if ("tags" in background) {
+                    this.background.tags = background.tags.sort((x, y) => {
+                        if (x > y) {
+                            return 1;
+                        } else if (x < y) {
+                            return -1;
+                        }
 
-                for (let image of this.preloadImages) {
-                    if (image.url == url) {
-                        image["isLoaded"] = true;
-                    } else if (!("isLoaded" in image)) {
-                        isCompleted = false;
-                    }
+                        return 0;
+                    });
+                    this.activate(background.tags.filter((x) => x.indexOf(this.character.name) === -1), 0.0);
+                } else {
+                    this.background.tags = null;
                 }
 
-                if (isCompleted) {
-                    let index = 0;
+                this.isBlinded = false;
+            },
+            update: async function (data, max) {
+                this.isUpdating = true;
 
-                    for (const image of this.preloadImages) {
-                        if (image.isLoaded) {
-                            this.backgroundImages.push({
-                                index: index,
-                                id: image.id,
-                                url: image.url,
-                                timestamp: image.timestamp
+                try {
+                    const results = await new Promise(resolve => {
+                        const epsilon = Math.pow(10, -6);
+                        let documents = [];
+                        let filteredDocuments = [];
+                        let termFrequencies = [];
+                        let inverseDocumentFrequency = {};
+                        const baseTime = new Date().getTime() - 12 * 60 * 60 * 1000;
+                        const limit = 10;
+                        let scoreDictionary = {};
+                        let scores = [];
+                        let maxScore = epsilon;
+
+                        for (const key in data) {
+                            if ("tags" in data[key] && data[key].tags.length > 0) {
+                                let termSet = [];
+
+                                documents.push({ tokens: data[key].tags, timestamp: data[key].timestamp });
+
+                                for (const token of data[key].tags) {
+                                    if (!termSet.includes(token)) {
+                                        if (token in inverseDocumentFrequency) {
+                                            inverseDocumentFrequency[token] += 1.0;
+                                        } else {
+                                            inverseDocumentFrequency[token] = 1.0;
+                                        }
+
+                                        termSet.push(token);
+                                    }
+                                }
+                            }
+                        }
+
+                        for (const key in inverseDocumentFrequency) {
+                            inverseDocumentFrequency[key] = Math.log(documents.length / (inverseDocumentFrequency[key] + epsilon));
+                        }
+
+                        for (const document of documents) {
+                            if (document.timestamp * 1000 > baseTime) {
+                                filteredDocuments.push(document);
+                            }
+                        }
+
+                        if (filteredDocuments.length < limit) {
+                            const min = Math.max(documents.length - limit, 0);
+
+                            filteredDocuments.splice(0);
+
+                            for (let i = documents.length - 1; i >= min; i--) {
+                                filteredDocuments.unshift(documents[i]);
+                            }
+                        }
+
+                        for (const document of filteredDocuments) {
+                            let tf = {};
+
+                            for (const token of document.tokens) {
+                                if (token in tf) {
+                                    tf[token] += 1.0;
+                                } else {
+                                    tf[token] = 1.0;
+                                }
+                            }
+
+                            for (const key in tf) {
+                                tf[key] /= document.tokens.length;
+
+                                if (!(key in scoreDictionary)) {
+                                    scoreDictionary[key] = 0.0;
+                                }
+                            }
+
+                            termFrequencies.push(tf);
+                        }
+
+                        for (const key in scoreDictionary) {
+                            for (const termFrequency of termFrequencies) {
+                                if (key in termFrequency) {
+                                    const tfidf = termFrequency[key] * inverseDocumentFrequency[key];
+
+                                    if (tfidf > scoreDictionary[key]) {
+                                        scoreDictionary[key] = tfidf;
+                                    }
+                                }
+                            }
+                        }
+
+                        for (const key in scoreDictionary) {
+                            if (key.length > 1 && key != "...") {
+                                scores.push({ term: key, value: scoreDictionary[key] });
+                            }
+                        }
+
+                        scores.sort((x, y) => y.value - x.value);
+
+                        if (scores.length > max) {
+                            scores.splice(max);
+                        }
+
+                        for (const score of scores) {
+                            if (score.value > maxScore) {
+                                maxScore = score.value;
+                            }
+                        }
+
+                        for (const score of scores) {
+                            score.value /= maxScore;
+                        }
+
+                        scores.sort((x, y) => {
+                            if (x.term > y.term) {
+                                return 1;
+                            } else if (x.term < y.term) {
+                                return -1;
+                            }
+
+                            return 0;
+                        });
+
+                        resolve(scores);
+                    });
+
+                    this.tags.splice(0);
+
+                    for (let i = 0; i < results.length; i++) {
+                        this.tags.push({ index: i, name: results[i].term, score: results[i].value })
+                    }
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
+                }
+
+                this.isUpdating = false;
+            },
+            tweet: async function (status, image) {
+                const credentialStorageItem = localStorage.getItem("credential");
+
+                this.isTweeting = true;
+
+                try {
+                    if (credentialStorageItem) {
+                        const credential = JSON.parse(credentialStorageItem);
+
+                        if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
+                            const data = { access_token: credential.accessToken, secret: credential.secret, status: `${status} #${this.character.name} #milchchan https://milchchan.com/` };
+                            let response;
+
+                            if (image !== null) {
+                                response = await fetch(image, {
+                                    method: "GET"
+                                });
+
+                                if (response.ok) {
+                                    data['image'] = await new Promise(async (resolve, reject) => {
+                                        const reader = new FileReader();
+
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+                                        reader.readAsDataURL(await response.blob());
+                                    });
+                                }
+                            }
+
+                            response = await fetch("https://wonderland.milchchan.com/api/tweet", {
+                                mode: "cors",
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(data)
                             });
 
-                            index++;
+                            if (response.ok) {
+                                const self = this;
+
+                                this.isTweeting = await response.json();
+
+                                setTimeout(function () {
+                                    self.isTweeting = false;
+                                }, 3000);
+
+                                return;
+                            } else {
+                                throw new Error(response.statusText);
+                            }
                         }
                     }
-
-                    this.preloadImages.splice(0);
-                    this.isBlinded = false;
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
                 }
+
+                this.isTweeting = false;
             },
-            error: function (url) {
-                let isCompleted = true;
+            getThumbnail: async function (url, length) {
+                try {
+                    return await new Promise((resolve, reject) => {
+                        const i = new Image();
 
-                for (let image of this.preloadImages) {
-                    if (image.url == url) {
-                        image["isLoaded"] = true;
-                    } else if (!("isLoaded" in image)) {
-                        isCompleted = false;
-                    }
-                }
+                        i.onload = () => {
+                            const canvas = document.createElement("canvas");
 
-                if (isCompleted) {
-                    let index = 0;
+                            if (i.width > i.height) {
+                                if (i.width > length) {
+                                    canvas.width = length * window.devicePixelRatio;
+                                    canvas.height = Math.floor(length / i.width * i.height) * window.devicePixelRatio;
+                                } else {
+                                    canvas.width = i.width * window.devicePixelRatio;
+                                    canvas.height = i.height * window.devicePixelRatio;
+                                }
+                            } else if (i.height > length) {
+                                canvas.width = Math.floor(length / i.height * i.width) * window.devicePixelRatio;
+                                canvas.height = length * window.devicePixelRatio;
+                            } else {
+                                canvas.width = i.width * window.devicePixelRatio;
+                                canvas.height = i.height * window.devicePixelRatio;
+                            }
 
-                    for (const image of this.preloadImages) {
-                        if (image.isLoaded) {
-                            this.backgroundImages.push({
-                                index: index,
-                                id: image.id,
-                                url: image.url,
-                                timestamp: image.timestamp
-                            });
+                            const ctx = canvas.getContext("2d");
 
-                            index++;
-                        }
-                    }
-
-                    this.preloadImages.splice(0);
-                    this.isBlinded = false;
+                            ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
+                            ctx.canvas.toBlob(blob => {
+                                resolve(blob);
+                                ctx.canvas.width = ctx.canvas.height = 0;
+                            }, "image/jpeg");
+                        };
+                        i.onerror = (error) => {
+                            reject(error);
+                        };
+                        i.crossOrigin = "anonymous";
+                        i.src = url;
+                    });
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
                 }
             },
             shake: function (element) {
@@ -2809,6 +2200,14 @@ window.addEventListener("load", (event) => {
                     window.scrollTo(0, document.body.scrollHeight);
                 }, 500);
             },
+            digestMessage: async function (message) {
+                const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
+                const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);           // hash the message
+                const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
+
+                return hashHex;
+            },
             animationStart: function (el) {
                 this.isAnimating = true;
             },
@@ -2817,7 +2216,6 @@ window.addEventListener("load", (event) => {
 
                 this.$nextTick(() => {
                     self.notificationHeight = self.$refs.notifications.getBoundingClientRect().height;
-                    self.leaderboardHeight = self.$refs.leaderboard.getBoundingClientRect().height;
                 });
 
                 if (!this.isPopup) {
@@ -2830,7 +2228,7 @@ window.addEventListener("load", (event) => {
                 const self = this;
 
                 this.$nextTick(() => {
-                    for (const clip of document.body.querySelectorAll("#input>.columns:last-of-type>.column>.control .clip")) {
+                    for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                         let width = 0;
 
                         for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
@@ -2838,20 +2236,11 @@ window.addEventListener("load", (event) => {
                         }
 
                         if (width > 0) {
-                            self.tickerWidth = Math.min(width / 2, document.body.querySelector("#input>.columns:last-of-type>.column>.control .level").getBoundingClientRect().width);
+                            self.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                             clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
                         }
                     }
                 });
-            },
-            range: function (date, days) {
-                const collection = [];
-
-                for (const day of days) {
-                    collection.push(new Date(new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()).getTime() + day * 24 * 60 * 60 * 1000));
-                }
-
-                return collection;
             },
             arrange: function (collection, limit) {
                 let rows = [];
@@ -2880,222 +2269,6 @@ window.addEventListener("load", (event) => {
                 }
 
                 return collection;
-            },
-            reverse: function (collection) {
-                return [].concat(collection).reverse();
-            },
-            standardDeviation: function (collection) {
-                let sum = 0.0;
-                let variance = 0.0;
-
-                for (const x of collection) {
-                    sum += x;
-                }
-
-                const average = sum / collection.length;
-
-                for (const x of collection) {
-                    variance += (x - average) * (x - average);
-                }
-
-                variance /= collection.length;
-
-                return Math.sqrt(variance);
-            },
-            formatTime: function (time) {
-                const t = Math.floor(time);
-                const days = Math.floor(t / 86400);
-                const hours = Math.floor(t / 3600);
-                const minutes = Math.floor(t / 60);
-                const seconds = t % 60;
-
-                if (days > 0) {
-                    return days + "d";
-                } else if (minutes > 0) {
-                    if (hours > 0) {
-                        return hours + "h";
-                    }
-
-                    return minutes + "m";
-                }
-
-                return seconds + "s";
-            },
-            digestMessage: async function (message) {
-                const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
-                const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);           // hash the message
-                const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
-
-                return hashHex;
-            },
-            getDistance: function (lat1, lon1, lat2, lon2) {
-                var R = 6371; // Radius of the earth in km
-                var dLat = this.deg2rad(lat2 - lat1);
-                var dLon = this.deg2rad(lon2 - lon1);
-                var a =
-                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                var d = R * c; // Distance in km
-
-                return d;
-            },
-            deg2rad: function (deg) {
-                return deg * (Math.PI / 180)
-            },
-            encodeGeohash: function (latitude, longitude, precision = 12) {
-                const BITS = [16, 8, 4, 2, 1];
-                const BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
-                var is_even = 1;
-                var lat = [];
-                var lon = [];
-                var bit = 0;
-                var ch = 0;
-                let geohash = "";
-
-                lat[0] = -90.0; lat[1] = 90.0;
-                lon[0] = -180.0; lon[1] = 180.0;
-
-                while (geohash.length < precision) {
-                    if (is_even) {
-                        const mid = (lon[0] + lon[1]) / 2;
-
-                        if (longitude > mid) {
-                            ch |= BITS[bit];
-                            lon[0] = mid;
-                        } else
-                            lon[1] = mid;
-                    } else {
-                        const mid = (lat[0] + lat[1]) / 2;
-
-                        if (latitude > mid) {
-                            ch |= BITS[bit];
-                            lat[0] = mid;
-                        } else
-                            lat[1] = mid;
-                    }
-
-                    is_even = !is_even;
-
-                    if (bit < 4) {
-                        bit++;
-                    } else {
-                        geohash += BASE32[ch];
-                        bit = 0;
-                        ch = 0;
-                    }
-                }
-
-                return geohash;
-            },
-            decodeGeohash: function (geohash) {
-                const BITS = [16, 8, 4, 2, 1];
-                const BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
-                var is_even = 1;
-                var lat = [];
-                var lon = [];
-                var lat_err = 90.0;
-                var lon_err = 180.0;
-
-                lat[0] = -90.0;
-                lat[1] = 90.0;
-                lon[0] = -180.0;
-                lon[1] = 180.0;
-
-                for (var i = 0; i < geohash.length; i++) {
-                    var c = geohash[i];
-                    var cd = BASE32.indexOf(c);
-
-                    for (var j = 0; j < 5; j++) {
-                        const mask = BITS[j];
-
-                        if (is_even) {
-                            lon_err /= 2;
-
-                            if (cd & mask) {
-                                lon[0] = (lon[0] + lon[1]) / 2;
-                            } else {
-                                lon[1] = (lon[0] + lon[1]) / 2;
-                            }
-                        } else {
-                            lat_err /= 2;
-
-                            if (cd & mask) {
-                                lat[0] = (lat[0] + lat[1]) / 2;
-                            } else {
-                                lat[1] = (lat[0] + lat[1]) / 2;
-                            }
-                        }
-
-                        is_even = !is_even;
-                    }
-                }
-
-                lat[2] = (lat[0] + lat[1]) / 2;
-                lon[2] = (lon[0] + lon[1]) / 2;
-
-                return {
-                    latitude: lat[2],
-                    longitude: lon[2],
-                    topleft: { latitude: lat[0], longitude: lon[0] },
-                    topright: { latitude: lat[1], longitude: lon[0] },
-                    bottomright: { latitude: lat[1], longitude: lon[1] },
-                    bottomleft: { latitude: lat[0], longitude: lon[1] }
-                };
-            },
-            getNeighbors: function (geohash) {
-                const rightGeohash = this.calculateAdjacent(geohash, 'right');
-                const leftGeohash = this.calculateAdjacent(geohash, 'left');
-
-                return {
-                    top: this.calculateAdjacent(geohash, 'top'),
-                    bottom: this.calculateAdjacent(geohash, 'bottom'),
-                    right: rightGeohash,
-                    left: leftGeohash,
-                    topleft: this.calculateAdjacent(leftGeohash, 'top'),
-                    topright: this.calculateAdjacent(rightGeohash, 'top'),
-                    bottomright: this.calculateAdjacent(rightGeohash, 'bottom'),
-                    bottomleft: this.calculateAdjacent(leftGeohash, 'bottom')
-                };
-            },
-            calculateAdjacent: function (srcHash, dir) {
-                const BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
-                const NEIGHBORS = {
-                    right: { even: "bc01fg45238967deuvhjyznpkmstqrwx" },
-                    left: { even: "238967debc01fg45kmstqrwxuvhjyznp" },
-                    top: { even: "p0r21436x8zb9dcf5h7kjnmqesgutwvy" },
-                    bottom: { even: "14365h7k9dcfesgujnmqp0r2twvyx8zb" }
-                };
-                const BORDERS = {
-                    right: { even: "bcfguvyz" },
-                    left: { even: "0145hjnp" },
-                    top: { even: "prxz" },
-                    bottom: { even: "028b" }
-                };
-
-                NEIGHBORS.bottom.odd = NEIGHBORS.left.even;
-                NEIGHBORS.top.odd = NEIGHBORS.right.even;
-                NEIGHBORS.left.odd = NEIGHBORS.bottom.even;
-                NEIGHBORS.right.odd = NEIGHBORS.top.even;
-
-                BORDERS.bottom.odd = BORDERS.left.even;
-                BORDERS.top.odd = BORDERS.right.even;
-                BORDERS.left.odd = BORDERS.bottom.even;
-                BORDERS.right.odd = BORDERS.top.even;
-
-                srcHash = srcHash.toLowerCase();
-
-                var lastChr = srcHash.charAt(srcHash.length - 1);
-                var type = (srcHash.length % 2) ? 'odd' : 'even';
-                var base = srcHash.substring(0, srcHash.length - 1);
-
-                if (BORDERS[dir][type].indexOf(lastChr) != -1) {
-                    base = this.calculateAdjacent(base, dir);
-                }
-
-                return base + BASE32[NEIGHBORS[dir][type].indexOf(lastChr)];
             },
             prepare: function (sequences, state = null, selectedSequences = null) {
                 function _random(min, max) {
@@ -3304,12 +2477,31 @@ window.addEventListener("load", (event) => {
 
                 return sequenceStack;
             },
-            animate: async function (timestamp) {
+            animate: async function () {
                 requestAnimationFrame(this.animate);
 
                 stats.begin();
 
-                if (this.character !== null) {
+                const deltaTime = clock.getDelta();
+
+                if (renderer.domElement.width !== renderer.domElement.clientWidth || renderer.domElement.height !== renderer.domElement.clientHeight) {
+                    const width = renderer.domElement.clientWidth;
+                    const height = renderer.domElement.clientHeight;
+
+                    bloomPass.setSize(width, height);
+                    fxaaShader.uniforms.resolution.value.set(1 / (width * window.devicePixelRatio), 1 / (height * window.devicePixelRatio));
+
+                    renderer.setPixelRatio(window.devicePixelRatio);
+                    renderer.setSize(width, height, false);
+
+                    camera.aspect = width / height;
+                    camera.updateProjectionMatrix();
+
+                    composer.setPixelRatio(window.devicePixelRatio);
+                    composer.setSize(width, height);
+                }
+
+                if (this.character !== null && vrmModel) {
                     function _random(min, max) {
                         min = Math.ceil(min);
                         max = Math.floor(max);
@@ -3317,9 +2509,75 @@ window.addEventListener("load", (event) => {
                         return Math.floor(Math.random() * (max - min)) + min;
                     }
 
-                    const deltaTime = (timestamp - this.elapsed) / 1000;
+                    let isAnimating = false;
+                    let isDeforming = false;
+                    let animationData = null;
+                    let updatedBlendShapeNames = [];
 
-                    this.elapsed = timestamp;
+                    if (lookAnimation === null) {
+                        lookAnimation = { time: 0.0, duration: 0.5, base: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: lookAtTarget.position.x + _random(-1.0, 1.0) * 0.1, y: lookAtTarget.position.y + _random(-1.0, 1.0) * 0.1 } };
+                    }
+
+                    lookAnimation.time += deltaTime;
+
+                    if (lookAnimation.time >= lookAnimation.duration) {
+                        lookAtTarget.position.x = lookAnimation.target.x;
+                        lookAtTarget.position.y = lookAnimation.target.y;
+
+                        if (lookAnimation.base) {
+                            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: lookAnimation.base.x, y: lookAnimation.base.y } };
+                        } else {
+                            lookAnimation = null;
+                        }
+                    } else {
+                        const rate = lookAnimation.time / lookAnimation.duration;
+
+                        lookAtTarget.position.x = lookAnimation.source.x + (lookAnimation.target.x - lookAnimation.source.x) * rate;
+                        lookAtTarget.position.y = lookAnimation.source.y + (lookAnimation.target.y - lookAnimation.source.y) * rate;
+                    }
+
+                    let blinkOffset = Math.max(0, Math.min(-lookAtTarget.position.y, 1));
+                    let blinkRequired = true;
+
+                    if (this.currentAnimations.length > 0 && animationIndex < this.currentAnimations.length) {
+                        animationData = this.currentAnimations[animationIndex];
+                        animationIndex += animationSkipFrames;
+                        isAnimating = true;
+                    }
+
+                    for (let i = this.blendShapeAnimations.length - 1; i >= 0; i--) {
+                        let blendShapeAnimation = this.blendShapeAnimations[i];
+
+                        if (!updatedBlendShapeNames.includes(blendShapeAnimation.name)) {
+                            if (blendShapeAnimation.time <= blendShapeAnimation.duration) {
+                                blendShapeAnimation.time += deltaTime;
+
+                                if (blendShapeAnimation.time >= blendShapeAnimation.duration) {
+                                    if (blendShapeAnimation.name == "blink") {
+                                        vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, 0.1 * blinkOffset + (1 - 0.1) * Math.abs(Math.sin(blendShapeAnimation.end / 2 * Math.PI)));
+                                        blinkRequired = false;
+                                    } else {
+                                        vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.end / 2 * Math.PI)));
+                                    }
+
+                                    this.blendShapeAnimations.splice(i, 1);
+                                } else if (blendShapeAnimation.name == "blink") {
+                                    vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, 0.1 * blinkOffset + (1 - 0.1) * Math.abs(Math.sin((blendShapeAnimation.time / blendShapeAnimation.duration * (blendShapeAnimation.end - blendShapeAnimation.start) + blendShapeAnimation.start) / 2 * Math.PI)));
+                                    blinkRequired = false;
+                                } else {
+                                    vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin((blendShapeAnimation.time / blendShapeAnimation.duration * (blendShapeAnimation.end - blendShapeAnimation.start) + blendShapeAnimation.start) / 2 * Math.PI)));
+                                }
+
+                                isDeforming = true;
+                            }
+
+                            updatedBlendShapeNames.push(blendShapeAnimation.name);
+                        }
+                    }
+
+                    if (blinkRequired) {
+                        vrmModel.blendShapeProxy.setValue("blink", 0.1 * blinkOffset);
+                    }
 
                     if (this.sequenceQueue.length > 0 && Array.isArray(this.sequenceQueue[0])) {
                         idleTime = 0.0;
@@ -3332,54 +2590,19 @@ window.addEventListener("load", (event) => {
 
                         if (this.sequenceQueue.length == 0) {
                             if (activateTime >= activateThreshold) {
-                                if (this.cachedDocuments.length > 0) {
-                                    if (this.documentQueue.length == 0) {
-                                        function shuffle(array) {
-                                            function _random(min, max) {
-                                                min = Math.ceil(min);
-                                                max = Math.floor(max);
-
-                                                return Math.floor(Math.random() * (max - min)) + min;
-                                            }
-
-                                            let a = [].concat(array);
-                                            let n = array.length;
-
-                                            while (n > 1) {
-                                                const k = _random(0, n);
-
-                                                n--;
-
-                                                const temp = a[n];
-
-                                                a[n] = a[k];
-                                                a[k] = temp;
-                                            }
-
-                                            return a;
-                                        }
-
-                                        for (const document of shuffle(this.cachedDocuments)) {
-                                            this.documentQueue.push(document);
-                                        }
-                                    }
-
-                                    const document = this.documentQueue.shift();
-
-                                    if (this.user.uid !== null) {
-                                        this.talk(this.user.uid, document.filter((x) => x !== this.character.name));
-                                    }
+                                if (this.recentImages.length > 0) {
+                                    this.isBlinded = true;
                                 }
 
                                 idleTime = activateTime = 0.0;
-                            } else if (idleTime >= blinkThreshold) {
+                            } else if (idleTime >= blinkThreshold || animationData === null) {
                                 this.sequenceQueue.push({ sequences: this.prepare(this.character.sequences.filter((x) => x.name === "Idle")) });
                                 idleTime = 0.0;
                             }
                         }
                     }
 
-                    if (!this.isLocked && this.sequenceQueue.length > 0) {
+                    if (this.sequenceQueue.length > 0) {
                         const sequence = Array.isArray(this.sequenceQueue[0]) ? this.sequenceQueue[0] : this.sequenceQueue[0].sequences;
 
                         if (sequence.length > 0) {
@@ -3410,15 +2633,114 @@ window.addEventListener("load", (event) => {
                                             }
                                         }
                                     }
-                                }
 
-                                sequence.shift();
-                            } else if (sequence[0].type == "Message" && this.message === null && this.animationQueue.length === 0) {
+                                    sequence.shift();
+                                } else if ("name" in sequence[0] && ("character" in sequence[0] === false || sequence[0].character.name === this.character.name)) {
+                                    if (sequence[0].name in this.animations) {
+                                        let isDependency = false;
+
+                                        if ("dependencies" in sequence[0]) {
+                                            for (const animation of this.currentAnimations) {
+                                                if (sequence[0].dependencies.includes(animation.name)) {
+                                                    isDependency = true;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (!isDependency || !isAnimating) {
+                                            /*const skipFrames = 60 / 12;
+                                            let animations = this.animations[suggestion.animation];
+                                            let maxFrames = Math.min(animations.length, 60);
+                                            let offset = Math.floor(Math.max(0, random(0, animations.length - maxFrames - 1)) / 2);
+                                            let length = Math.round(90 / 24);
+                
+                                            for (let i = 0; i < maxFrames; i += skipFrames) {
+                                                for (let j = 0; j < length; j++) {
+                                                    this.currentAnimations.push(animations[offset + i]);
+                                                }
+                                            }
+                
+                                            for (let i = this.currentAnimations.length - 1; i >= 0; i--) {
+                                                this.currentAnimations.push(animations[offset + i]);
+                                            }*/
+
+                                            this.currentAnimations.splice(0);
+
+                                            for (let animation of this.animations[sequence[0].name]) {
+                                                this.currentAnimations.push(animation);
+                                            }
+
+                                            sequence.shift();
+
+                                            animationIndex = 0;
+                                            animationData = this.currentAnimations[animationIndex];
+                                            animationIndex += animationSkipFrames;
+                                        }
+                                    } else {
+                                        let isDependency = false;
+
+                                        if ("dependencies" in sequence[0]) {
+                                            for (const animation of this.blendShapeAnimations) {
+                                                if (sequence[0].dependencies.includes(animation.name)) {
+                                                    isDependency = true;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (!isDependency || !isDeforming) {
+                                            let nameSet = [];
+
+                                            this.blendShapeAnimations.unshift({ name: sequence[0].name, time: 0.0, duration: sequence[0].duration, start: sequence[0].start, end: sequence[0].end });
+                                            sequence.shift();
+
+                                            while (sequence.length > 0) {
+                                                isDependency = false;
+
+                                                if ("dependencies" in sequence[0]) {
+                                                    for (const animation of this.blendShapeAnimations) {
+                                                        if (sequence[0].dependencies.includes(animation.name)) {
+                                                            isDependency = true;
+
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+
+                                                if (isDependency || sequence[0].type != "Animation" || sequence[0].name in this.animations) {
+                                                    break;
+                                                }
+
+                                                this.blendShapeAnimations.unshift({ name: sequence[0].name, time: 0.0, duration: sequence[0].duration, start: sequence[0].start, end: sequence[0].end });
+                                                sequence.shift();
+                                            }
+
+                                            for (let i = this.blendShapeAnimations.length - 1; i >= 0; i--) {
+                                                let blendShapeAnimation = this.blendShapeAnimations[i];
+
+                                                if (!nameSet.includes(blendShapeAnimation.name)) {
+                                                    vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.start / 2 * Math.PI)));
+                                                    nameSet.push(blendShapeAnimation.name);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    /*if (lookAtTarget.position.x != 0.0 || lookAtTarget.position.y != 0.0) {
+                                        lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
+                                    }*/
+                                } else {
+                                    sequence.shift();
+                                }
+                            } else if (sequence[0].type == "Message" && this.message === null && !isAnimating && !isDeforming && this.animationQueue.length === 0) {
                                 let text = "";
                                 const words = [];
 
                                 for (const inline of sequence[0].text) {
-                                    if (typeof(inline) === 'object') {
+                                    if (typeof (inline) === 'object') {
                                         text += inline.name;
                                         words.push(inline);
                                     } else {
@@ -3427,9 +2749,9 @@ window.addEventListener("load", (event) => {
                                 }
 
                                 if ("character" in sequence[0]) {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words, original: sequence[0].text };
                                 } else {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words, original: sequence[0].text };
                                 }
 
                                 sequence.shift();
@@ -3466,7 +2788,7 @@ window.addEventListener("load", (event) => {
                                     });
                                 }*/
                             }
-                        } else if (this.message === null && this.animationQueue.length === 0) {
+                        } else if (this.message === null && !isAnimating && !isDeforming && this.animationQueue.length === 0) {
                             const self = this;
 
                             Object.keys(this.cachedImages).forEach(function (key) {
@@ -3476,10 +2798,322 @@ window.addEventListener("load", (event) => {
                             });
 
                             this.sequenceQueue.shift();
+                            this.character["visible"] = false;
                             this.alternative = null;
-
-                            return;
                         }
+                        /*} else if (app.suggestionQueue.length > 0) {
+                            const suggestion = app.suggestionQueue[0];
+                            const message = suggestion.messages[0];
+                            let loopRequired = true;
+     
+                            if (message.type.reverse) {
+                                if (message.type.count > 0) {
+                                    message.type.elapsed += deltaTime;
+     
+                                    if (message.type.elapsed >= message.type.speed / 1000.0) {
+                                        let index = message.type.count - 1;
+     
+                                        if (index < message.text.length) {
+                                            let width = Math.floor(message.text.length / 2);
+     
+                                            if (message.type.buffer.length <= width) {
+                                                message.type.count -= 1;
+                                            }
+     
+                                            if (message.type.buffer.length > 0) {
+                                                message.type.buffer = message.type.buffer.substring(message.type.buffer.length - 2, message.type.buffer.length - 1);
+                                            }
+                                        }
+     
+                                        message.type.elapsed = 0;
+                                    }
+                                } else if (app.isSuggested) {
+                                    if (suggestion.messages.length > 1) {
+                                        suggestion.messages.shift();
+                                    } else {
+                                        app.suggestionQueue.shift();
+     
+                                        if (app.suggestionQueue.length > 0 && 'highlight' in app.suggestionQueue[0]) {
+                                            if ('text' in app.suggestionQueue[0].highlight) {
+                                                app.highlight = app.suggestionQueue[0].highlight.text;
+                                            } else {
+                                                app.highlight = null;
+                                            }
+     
+                                            if ('image' in app.suggestionQueue[0].highlight) {
+                                                app.cover = app.suggestionQueue[0].highlight.image;
+                                            } else {
+                                                app.cover = app;
+                                            }
+                                        }
+     
+                                        app.isBlinded = true;
+                                    }
+                                } else if (app.isBlinded && !isActive) {
+                                    if ('morphs' in suggestion) {
+                                        for (let blendShape of suggestion.morphs.defaults) {
+                                            vrmModel.blendShapeProxy.setValue(blendShape.name, Math.abs(Math.sin(blendShape.weight / 2 * Math.PI)));
+                                        }
+                                    }
+     
+                                    app.suggestionQueue.splice(0);
+                                    app.isBlinded = false;
+                                    loopRequired = false;
+                                }
+                            } else if (message.type.buffer.length < message.text.length) {
+                                if (message.type.elapsed >= 0) {
+                                    message.type.elapsed += deltaTime;
+                                } else if (!isActive) {
+                                    if (!app.isPreloading) {
+                                        waitTime += deltaTime;
+                                    }
+     
+                                    if (app.highlight === null && app.cover === null || waitTime >= waitThreshold) {
+                                        message.type.elapsed = deltaTime;
+                                        app.isBlinded = false;
+                                        app.currentAnimations.splice(0);
+     
+                                        if ('animation' in suggestion && suggestion.animation in app.animations) {
+                                            const skipFrames = 60 / 12;
+                                            let animations = app.animations[suggestion.animation];
+                                            let maxFrames = Math.min(animations.length, 60);
+                                            let offset = Math.floor(Math.max(0, _random(0, animations.length - maxFrames)) / 2);
+                                            let length = Math.round(90 / 24);
+     
+                                            for (let i = 0; i < maxFrames; i += skipFrames) {
+                                                for (let j = 0; j < length; j++) {
+                                                    app.currentAnimations.push(animations[offset + i]);
+                                                }
+                                            }
+     
+                                            for (let i = app.currentAnimations.length - 1; i >= 0; i--) {
+                                                app.currentAnimations.push(animations[offset + i]);
+                                            }
+                                        }
+     
+                                        if ('morphs' in suggestion) {
+                                            let nameSet = [];
+     
+                                            for (let blendShape of suggestion.morphs.defaults) {
+                                                vrmModel.blendShapeProxy.setValue(blendShape.name, Math.abs(Math.sin(blendShape.weight / 2 * Math.PI)));
+                                            }
+     
+                                            for (let blendShapeAnimation of suggestion.morphs.animations) {
+                                                app.blendShapeAnimations.unshift(blendShapeAnimation);
+                                            }
+     
+                                            for (let i = app.blendShapeAnimations.length - 1; i >= 0; i--) {
+                                                let blendShapeAnimation = app.blendShapeAnimations[i];
+     
+                                                if (!nameSet.includes(blendShapeAnimation.name)) {
+                                                    vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.start / 2 * Math.PI)));
+                                                    nameSet.push(blendShapeAnimation.name);
+                                                }
+                                            }
+                                        }
+     
+                                        waitTime = 0.0;
+                                    } else {
+                                        loopRequired = false;
+                                    }
+                                }
+     
+                                if (message.type.elapsed >= message.type.speed / 1000.0) {
+                                    let index = message.type.buffer.length;
+                                    let width = Math.floor(message.text.length / 2);
+                                    let length = message.text.length;
+     
+                                    if (message.type.count >= width) {
+                                        message.type.buffer += message.text.charAt(index);
+                                    }
+     
+                                    if (message.type.count < length) {
+                                        message.type.count += 1;
+                                    }
+     
+                                    message.type.elapsed = 0;
+                                }
+                            } else {
+                                message.time += deltaTime;
+     
+                                if (message.time >= message.duration) {
+                                    message.type.reverse = true;
+                                }
+                            }
+     
+                            if (message.text.length === message.type.buffer.length) {
+                                const characters = message.text.split("");
+     
+                                app.text.splice(0);
+     
+                                for (let i = 0; i < characters.length; i++) {
+                                    app.text.push({ key: i, value: characters[i] });
+                                }
+                            } else {
+                                let charArray = new Array();
+                                let randomBuffer = "";
+     
+                                for (let i = 0; i < message.text.length; i++) {
+                                    if (charArray.indexOf(message.text.charAt(i)) == -1 && message.text.charAt(i) != "\n" && message.text.charAt(i).match(/\s/) == null) {
+                                        charArray.push(message.text.charAt(i));
+                                    }
+                                }
+     
+                                for (let i = 0; i < message.type.count; i++) {
+                                    if (charArray.length > 0) {
+                                        randomBuffer += charArray[~~_random(0, charArray.length)];
+                                    }
+                                }
+     
+                                if (randomBuffer.length > message.type.buffer.length) {
+                                    const characters = (message.type.buffer + randomBuffer.substring(message.type.buffer.length, randomBuffer.length)).split("");
+     
+                                    app.text.splice(0);
+     
+                                    for (let i = 0; i < characters.length; i++) {
+                                        app.text.push({ key: i, value: characters[i] });
+                                    }
+                                } else if (app.text.length !== message.type.buffer.length) {
+                                    const characters = message.type.buffer.split("");
+     
+                                    app.text.splice(0);
+     
+                                    for (let i = 0; i < characters.length; i++) {
+                                        app.text.push({ key: i, value: characters[i] });
+                                    }
+                                }
+                            }
+     
+                            if (loopRequired && animationData === null) {
+                                animationIndex = 0;
+                                animationData = app.currentAnimations[animationIndex];
+                                animationIndex += animationSkipFrames;
+                            }*/
+                        //} else {
+                        /*if (app.isSuggested && app.suggestionQueue.length == 0 && !app.isComputing) {
+                            const tempMessages1 = [].concat(app.messages);
+                            const tempTags = [].concat(app.tags);
+     
+                            app.isComputing = true;
+     
+                            new Promise(resolve => {
+                                let segmenter = new TinySegmenter();
+                                const presets = [{ animation: 'idle2', name: THREE.VRMSchema.BlendShapePresetName.Fun },
+                                { animation: 'jump', name: THREE.VRMSchema.BlendShapePresetName.Joy },
+                                { animation: 'win', name: THREE.VRMSchema.BlendShapePresetName.Joy },
+                                { animation: 'lose', name: THREE.VRMSchema.BlendShapePresetName.Sorrow }];
+                                let suggestions = [];
+                                let tempMessages2 = [];
+                                let ids1 = [];
+                                let ids2 = [];
+     
+                                for (let tag of tempTags.sort((x, y) => y.score - x.score)) {
+                                    for (let message of tempMessages1.reverse()) {
+                                        if (!ids1.includes(message.id) && segmenter.segment(message.text).includes(tag.name)) {
+                                            let thread = null;
+     
+                                            if ('thread' in message) {
+                                                for (let m of tempMessages1) {
+                                                    if (message.thread == m.id) {
+                                                        thread = m;
+     
+                                                        break;
+                                                    }
+                                                }
+                                            }
+     
+                                            if (thread === null) {
+                                                tempMessages2.push(message);
+                                            } else {
+                                                const item = presets[_random(0, 2)];
+     
+                                                suggestions.push({ highlight: { text: '今日の' + document.title, image: '/images/Cover.png' }, messages: [{ time: 0, duration: 5, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: thread.text }, { time: 0, duration: 5, type: { elapsed: 0, speed: 50, reverse: false, buffer: "", count: 0 }, text: message.text }], animation: item.animation, morphs: { animations: [{ name: item.name, time: 0.0, duration: 1.0, start: 1.0, end: 1.0 }], defaults: [{ name: THREE.VRMSchema.BlendShapePresetName.Joy, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Sorrow, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Fun, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Blink, weight: 0.0 }] } });
+     
+                                                if (!ids2.includes(thread.id)) {
+                                                    ids2.push(thread.id);
+                                                }
+                                            }
+     
+                                            ids1.push(message.id);
+                                        }
+                                    }
+                                }
+     
+                                for (const message of tempMessages2) {
+                                    if (!ids2.includes(message.id)) {
+                                        const item = presets[_random(0, 2)];
+     
+                                        suggestions.push({ highlight: { text: '今日の' + document.title, image: '/images/Cover.png' }, messages: [{ time: 0, duration: 5, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: message.text }], animation: item.animation, morphs: { animations: [{ name: item.name, time: 0.0, duration: 1.0, start: 1.0, end: 1.0 }], defaults: [{ name: THREE.VRMSchema.BlendShapePresetName.Joy, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Sorrow, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Fun, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Blink, weight: 0.0 }] } });
+                                    }
+                                }
+     
+                                resolve(suggestions);
+                            }).then((result) => {
+                                if (app.isSuggested && result.length > 0) {
+                                    for (const suggestion of result) {
+                                        app.suggestionQueue.push(suggestion);
+                                    }
+     
+                                    if ('highlight' in app.suggestionQueue[0]) {
+                                        if ('text' in app.suggestionQueue[0].highlight) {
+                                            app.highlight = app.suggestionQueue[0].highlight.text;
+                                        } else {
+                                            app.highlight = null;
+                                        }
+     
+                                        if ('image' in app.suggestionQueue[0].highlight) {
+                                            app.cover = app.suggestionQueue[0].highlight.image;
+                                        } else {
+                                            app.cover = null;
+                                        }
+                                    }
+                                }
+     
+                                app.isComputing = false;
+                            });
+                        }*/
+
+                        /*if (animationData === null) {
+                            if (app.sequenceQueue.length > 0) {
+                                idleTime = activateTime = 0.0;
+                            } else {
+                                idleTime += deltaTime;
+                                activateTime += deltaTime;
+     
+                                if (activateTime >= activateThreshold) {
+                                    app.talk();
+     
+                                    idleTime = activateTime = 0.0;
+                                } else if (idleTime >= blinkThreshold) {
+                                    let sequences = [];
+     
+                                    for (const sequence of this.character.sequences) {
+                                        if (sequence.name == "Idle") {
+                                            sequences.push(sequence);
+                                        }
+                                    }
+     
+                                    this.sequenceQueue.push(this.prepare(sequences));
+     
+                                    idleTime = 0.0;
+                                }
+                            }
+     
+                            app.currentAnimations.splice(0);
+     
+                            for (let animation of app.animations["idle1"]) {
+                                app.currentAnimations.push(animation);
+                            }
+     
+                            animationIndex = 0;
+                            animationData = app.currentAnimations[animationIndex];
+                            animationIndex += animationSkipFrames;
+                        } else if (app.sequenceQueue.length > 0) {
+                            idleTime = activateTime = 0.0;
+                        } else {
+                            idleTime += deltaTime;
+                            activateTime += deltaTime;
+                        }*/
                     }
 
                     if (this.message !== null) {
@@ -3589,6 +3223,363 @@ window.addEventListener("load", (event) => {
                         }
                     }
 
+                    if (animationData) {
+                        for (let animation of animationData.animations) {
+                            switch (animation.bone) {
+                                case "chest":
+                                case "head":
+                                case "hips":
+                                case "jaw":
+                                case "leftEye":
+                                case "leftFoot":
+                                case "leftHand":
+                                case "leftIndexDistal":
+                                case "leftIndexIntermediate":
+                                case "leftIndexProximal":
+                                case "leftLittleDistal":
+                                case "leftLittleIntermediate":
+                                case "leftLittleProximal":
+                                case "leftLowerArm":
+                                case "leftLowerLeg":
+                                case "leftMiddleDistal":
+                                case "leftMiddleIntermediate":
+                                case "leftMiddleProximal":
+                                case "leftRingDistal":
+                                case "leftRingIntermediate":
+                                case "leftRingProximal":
+                                case "leftShoulder":
+                                case "leftThumbDistal":
+                                case "leftThumbIntermediate":
+                                case "leftThumbProximal":
+                                case "leftToes":
+                                case "leftUpperArm":
+                                case "leftUpperLeg":
+                                case "neck":
+                                case "rightEye":
+                                case "rightFoot":
+                                case "rightHand":
+                                case "rightIndexDistal":
+                                case "rightIndexIntermediate":
+                                case "rightIndexProximal":
+                                case "rightLittleDistal":
+                                case "rightLittleIntermediate":
+                                case "rightLittleProximal":
+                                case "rightLowerArm":
+                                case "rightLowerLeg":
+                                case "rightMiddleDistal":
+                                case "rightMiddleIntermediate":
+                                case "rightMiddleProximal":
+                                case "rightRingDistal":
+                                case "rightRingIntermediate":
+                                case "rightRingProximal":
+                                case "rightShoulder":
+                                case "rightThumbDistal":
+                                case "rightThumbIntermediate":
+                                case "rightThumbProximal":
+                                case "rightToes":
+                                case "rightUpperArm":
+                                case "rightUpperLeg":
+                                case "spine":
+                                case "upperChest":
+                                    break;
+                                case "eye.L":
+                                    animation.bone = "leftEye";
+                                    break;
+                                case "foot.L":
+                                    animation.bone = "leftFoot";
+                                    break;
+                                case "hand.L":
+                                    animation.bone = "leftHand";
+                                    break;
+                                case "f_index.03.L":
+                                    animation.bone = "leftIndexDistal";
+                                    break;
+                                case "f_index.02.L":
+                                    animation.bone = "leftIndexIntermediate";
+                                    break;
+                                case "f_index.01.L":
+                                    animation.bone = "leftIndexProximal";
+                                    break;
+                                case "f_pinky.03.L":
+                                    animation.bone = "leftLittleDistal";
+                                    break;
+                                case "f_pinky.02.L":
+                                    animation.bone = "leftLittleIntermediate";
+                                    break;
+                                case "f_pinky.01.L":
+                                    animation.bone = "leftLittleProximal";
+                                    break;
+                                case "lower_arm.L":
+                                    animation.bone = "leftLowerArm";
+                                    break;
+                                case "shin.L":
+                                    animation.bone = "leftLowerLeg";
+                                    break;
+                                case "f_middle.03.L":
+                                    animation.bone = "leftMiddleDistal";
+                                    break;
+                                case "f_middle.02.L":
+                                    animation.bone = "leftMiddleIntermediate";
+                                    break;
+                                case "f_middle.01.L":
+                                    animation.bone = "leftMiddleProximal";
+                                    break;
+                                case "f_ring.03.L":
+                                    animation.bone = "leftRingDistal";
+                                    break;
+                                case "f_ring.02.L":
+                                    animation.bone = "leftRingIntermediate";
+                                    break;
+                                case "f_ring.01.L":
+                                    animation.bone = "leftRingProximal";
+                                    break;
+                                case "shoulder.L":
+                                    animation.bone = "leftShoulder";
+                                    break;
+                                case "thumb_distal.L":
+                                    animation.bone = "leftThumbDistal";
+                                    break;
+                                case "thumb_intermediate.L":
+                                    animation.bone = "leftThumbIntermediate";
+                                    break;
+                                case "thumb_proximal.L":
+                                    animation.bone = "leftThumbProximal";
+                                    break;
+                                case "toe.L":
+                                    animation.bone = "leftToes";
+                                    break;
+                                case "upper_arm.L":
+                                    animation.bone = "leftUpperArm";
+                                    break;
+                                case "thigh.L":
+                                    animation.bone = "leftUpperLeg";
+                                    break;
+                                case "eye.R":
+                                    animation.bone = "rightEye";
+                                    break;
+                                case "foot.R":
+                                    animation.bone = "rightFoot";
+                                    break;
+                                case "hand.R":
+                                    animation.bone = "rightHand";
+                                    break;
+                                case "f_index.03.R":
+                                    animation.bone = "rightIndexDistal";
+                                    break;
+                                case "f_index.02.R":
+                                    animation.bone = "rightIndexIntermediate";
+                                    break;
+                                case "f_index.01.R":
+                                    animation.bone = "rightIndexProximal";
+                                    break;
+                                case "f_pinky.03.R":
+                                    animation.bone = "rightLittleDistal";
+                                    break;
+                                case "f_pinky.02.R":
+                                    animation.bone = "rightLittleIntermediate";
+                                    break;
+                                case "f_pinky.01.R":
+                                    animation.bone = "rightLittleProximal";
+                                    break;
+                                case "lower_arm.R":
+                                    animation.bone = "rightLowerArm";
+                                    break;
+                                case "shin.R":
+                                    animation.bone = "rightLowerLeg";
+                                    break;
+                                case "f_middle.03.R":
+                                    animation.bone = "rightMiddleDistal";
+                                    break;
+                                case "f_middle.02.R":
+                                    animation.bone = "rightMiddleIntermediate";
+                                    break;
+                                case "f_middle.01.R":
+                                    animation.bone = "rightMiddleProximal";
+                                    break;
+                                case "f_ring.03.R":
+                                    animation.bone = "rightRingDistal";
+                                    break;
+                                case "f_ring.02.R":
+                                    animation.bone = "rightRingIntermediate";
+                                    break;
+                                case "f_ring.01.R":
+                                    animation.bone = "rightRingProximal";
+                                    break;
+                                case "shoulder.R":
+                                    animation.bone = "rightShoulder";
+                                    break;
+                                case "thumb_distal.R":
+                                    animation.bone = "rightThumbDistal";
+                                    break;
+                                case "thumb_intermediate.R":
+                                    animation.bone = "rightThumbIntermediate";
+                                    break;
+                                case "thumb_proximal.R":
+                                    animation.bone = "rightThumbProximal";
+                                    break;
+                                case "toe.R":
+                                    animation.bone = "rightToes";
+                                    break;
+                                case "upper_arm.R":
+                                    animation.bone = "rightUpperArm";
+                                    break;
+                                case "thigh.R":
+                                    animation.bone = "rightUpperLeg";
+                                    break;
+                                case "upper_chest":
+                                    animation.bone = "upperChest";
+                                    break;
+                                default:
+                                    animation.bone = null;
+                            }
+
+                            if (animation.bone && animation.rotation.length == 4) {
+                                try {
+                                    vrmModel.humanoid.getBoneNode(animation.bone).position.set(animation.position[0], animation.position[1], -animation.position[2]);
+                                    vrmModel.humanoid.getBoneNode(animation.bone).quaternion.set(-animation.rotation[0], -animation.rotation[1], animation.rotation[2], animation.rotation[3]);
+                                } catch (e) {
+                                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                                    console.error(e);
+                                }
+                            }
+                        }
+                    }
+
+                    if (vrmSpringBones.length > 0) {
+                        const mergedBoneAnimationDictionary = {};
+                        let index = 0;
+
+                        if (draggableBone === null) {
+                            if (draggingBones !== null) {
+                                draggingBones.time -= deltaTime;
+
+                                if (draggingBones.time <= 0) {
+                                    for (const key in draggingBones.bones) {
+                                        mergedBoneAnimationDictionary[key] = { direction: draggingBones.bones[key].direction, force: draggingBones.bones[key].base };
+                                    }
+
+                                    draggingBones = null;
+                                } else {
+                                    for (const key in draggingBones.bones) {
+                                        mergedBoneAnimationDictionary[key] = { direction: draggingBones.bones[key].direction, force: draggingBones.bones[key].base + draggingBones.bones[key].source + draggingBones.time / draggingBones.duration * (draggingBones.bones[key].target - draggingBones.bones[key].source - draggingBones.bones[key].base) };
+                                    }
+                                }
+                            }
+                        } else if (draggingBones === null) {
+                            let bonePosition = null;
+                            let springBoneIndex = 0;
+
+                            for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
+                                for (const springBone of springBoneGroup) {
+                                    if (springBoneIndex === draggableBone.index) {
+                                        bonePosition = springBone.bone.getWorldPosition(new Vector3());
+                                    }
+
+                                    springBoneIndex++;
+                                }
+                            }
+
+                            if (bonePosition !== null) {
+                                const range = 0.25;
+
+                                springBoneIndex = 0;
+                                draggingBones = { time: 0, duration: 0.5, center: bonePosition, bones: {} };
+
+                                for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
+                                    for (const springBone of springBoneGroup) {
+                                        if (bonePosition.distanceTo(springBone.bone.getWorldPosition(new Vector3())) <= range) {
+                                            draggingBones.bones[springBoneIndex] = { direction: new Vector3(draggableBone.direction.x, draggableBone.direction.y, 0), base: springBone.gravityPower - vrmSpringBones[springBoneIndex].gravityPower, source: 0, target: -Math.min(0.01 * draggableBone.distance * Math.cos(bonePosition.distanceTo(springBone.bone.getWorldPosition(new Vector3())) / range), 5) };
+                                            mergedBoneAnimationDictionary[springBoneIndex] = { direction: draggingBones.bones[springBoneIndex].direction, force: draggingBones.bones[springBoneIndex].source };
+                                        }
+
+                                        springBoneIndex++;
+                                    }
+                                }
+                            }
+                        } else {
+                            draggingBones.time += deltaTime;
+
+                            if (draggingBones.time >= draggingBones.duration) {
+                                const range = 0.25;
+                                let springBoneIndex = 0;
+
+                                for (const key in draggingBones.bones) {
+                                    mergedBoneAnimationDictionary[key] = { direction: draggingBones.bones[key].direction, force: draggingBones.bones[key].target };
+                                }
+
+                                draggingBones.time = 0;
+
+                                for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
+                                    for (const springBone of springBoneGroup) {
+                                        if (springBoneIndex in draggingBones.bones) {
+                                            draggingBones.bones[springBoneIndex].direction = new Vector3(draggableBone.direction.x, draggableBone.direction.y, 0);
+                                            draggingBones.bones[springBoneIndex].source = draggingBones.bones[springBoneIndex].target;
+                                            draggingBones.bones[springBoneIndex].target = -Math.min(0.01 * draggableBone.distance * Math.cos(draggingBones.center.distanceTo(springBone.bone.getWorldPosition(new Vector3())) / range), 5);
+                                        }
+
+                                        springBoneIndex++;
+                                    }
+                                }
+                            } else {
+                                for (const key in draggingBones.bones) {
+                                    mergedBoneAnimationDictionary[key] = { direction: draggingBones.bones[key].direction, force: draggingBones.bones[key].base + draggingBones.bones[key].source + draggingBones.time / draggingBones.duration * (draggingBones.bones[key].target - draggingBones.bones[key].source - draggingBones.bones[key].base) };
+                                }
+                            }
+                        }
+
+                        if (randomWind === null) {
+                            let springBoneIndex = 0;
+
+                            randomWind = { time: 0, duration: 1.0, direction: new Vector3(1, 0, 0), force: 0.01 * (Math.random() - 0.5), sources: {} };
+
+                            for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
+                                for (const springBone of springBoneGroup) {
+                                    if (springBoneIndex in mergedBoneAnimationDictionary === false) {
+                                        randomWind.sources[springBoneIndex] = springBone.gravityPower - vrmSpringBones[springBoneIndex].gravityPower;
+                                    }
+
+                                    springBoneIndex++;
+                                }
+                            }
+                        } else {
+                            randomWind.time += deltaTime;
+
+                            if (randomWind.time >= randomWind.duration) {
+                                for (const key in randomWind.sources) {
+                                    if (key in mergedBoneAnimationDictionary === false) {
+                                        mergedBoneAnimationDictionary[key] = { direction: randomWind.direction, force: randomWind.force };
+                                    }
+                                }
+
+                                randomWind = null;
+                            } else {
+                                for (const key in randomWind.sources) {
+                                    if (key in mergedBoneAnimationDictionary === false) {
+                                        mergedBoneAnimationDictionary[key] = { direction: randomWind.direction, force: randomWind.sources[key] + randomWind.time / randomWind.duration * (randomWind.force - randomWind.sources[key]) };
+                                    }
+                                }
+                            }
+                        }
+
+                        for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
+                            for (const springBone of springBoneGroup) {
+                                if (index in mergedBoneAnimationDictionary) {
+                                    const vector = new Vector3(vrmSpringBones[index].gravityDir.x + mergedBoneAnimationDictionary[index].direction.x, vrmSpringBones[index].gravityDir.y + mergedBoneAnimationDictionary[index].direction.y, vrmSpringBones[index].gravityDir.z + mergedBoneAnimationDictionary[index].direction.z);
+
+                                    springBone.gravityDir = vector.normalize();
+                                    springBone.gravityPower = vrmSpringBones[index].gravityPower + mergedBoneAnimationDictionary[index].force;
+                                }
+
+                                index++;
+                            }
+                        }
+                    }
+
+                    vrmModel.update(deltaTime);
+                    /*if (currentMixer) {
+                        currentMixer.update(deltaTime);
+                    }*/
+
                     if (this.animationQueue.length > 0) {
                         const animation = this.animationQueue[0];
 
@@ -3630,6 +3621,7 @@ window.addEventListener("load", (event) => {
                             this.isLocked = false;
 
                             if (animation.character.name === this.character.name) {
+                                this.character["visible"] = true;
                                 this.cachedSprites.splice(0);
 
                                 for (const sprite of this.render(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, animation.images)) {
@@ -3649,26 +3641,44 @@ window.addEventListener("load", (event) => {
                     }
                 }
 
+                controls.update();
+
+                //renderer.render(scene, camera);
+                composer.render(deltaTime);
+
                 stats.end();
             },
             render: function (ctx, width, height, animation) {
+                const offscreenCanvas = document.createElement("canvas");                
+
+                offscreenCanvas.width = ctx.canvas.width;
+                offscreenCanvas.height = ctx.canvas.height;
+
+                const offscreenContext = offscreenCanvas.getContext("2d");
                 const sprites = [];
 
-                ctx.clearRect(0, 0, width, height);
+                offscreenContext.imageSmoothingEnabled = true;
+                offscreenContext.imageSmoothingQuality = "high";
+                offscreenContext.clearRect(0, 0, width, height);
 
                 for (const sprite of animation) {
                     if (sprite.source in this.cachedImages) {
                         if ("opacity" in sprite) {
-                            ctx.globalAlpha = sprite.opacity;
+                            offscreenContext.globalAlpha = sprite.opacity;
                         } else {
-                            ctx.globalAlpha = 1;
+                            offscreenContext.globalAlpha = 1;
                         }
 
-                        ctx.drawImage(this.cachedImages[sprite.source], sprite.x * window.devicePixelRatio, sprite.y * window.devicePixelRatio, sprite.width * window.devicePixelRatio, sprite.height * window.devicePixelRatio);
+                        offscreenContext.drawImage(this.cachedImages[sprite.source], sprite.x * window.devicePixelRatio, sprite.y * window.devicePixelRatio, sprite.width * window.devicePixelRatio, sprite.height * window.devicePixelRatio);
                     }
 
                     sprites.push(sprite);
                 }
+
+                ctx.clearRect(0, 0, width, height);
+                ctx.drawImage(offscreenCanvas, 0, 0);
+
+                offscreenCanvas.width = offscreenCanvas.height = 0;
 
                 return sprites;
             }
@@ -3684,7 +3694,7 @@ window.addEventListener("load", (event) => {
             //document.body.querySelector("#heading>.columns>.column>.columns:first-child>.column>.columns:last-child .level:first-child .level-item .field .ticker").style.width = "100%";
             /*this.$refs.ticker.style.width = document.body.querySelector("#input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(1) form").getBoundingClientRect().width + 'px';
             */
-            /*for (const clip of document.body.querySelectorAll("#input>.columns:last-of-type>.column>.control .clip")) {
+            for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                 let width = 0;
 
                 for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
@@ -3692,10 +3702,10 @@ window.addEventListener("load", (event) => {
                 }
 
                 if (width > 0) {
-                    this.tickerWidth = Math.min(width / 2, document.body.querySelector("#input>.columns:last-of-type>.column>.control .level").getBoundingClientRect().width);
+                    this.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                     clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
                 }
-            }*/
+            }
         },
         mounted: async function () {
             function choice(collection, func) {
@@ -3717,27 +3727,52 @@ window.addEventListener("load", (event) => {
                 return collection[index];
             }
 
+            function softmax(x, func1, func2) {
+                let y = [].concat(x);
+                let max = Number.MIN_VALUE;
+                let sum = 0.0;
+
+                for (let i = 0; i < x.length; i++) {
+                    if (func1(x[i]) > max) {
+                        max = func1(x[i]);
+                    }
+                }
+
+                for (let i = 0; i < x.length; i++) {
+                    sum += Math.exp(func1(x[i]) - max);
+                }
+
+                for (let i = 0; i < x.length; i++) {
+                    func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                }
+
+                return y;
+            }
+
             const self = this;
-            const botStorageItem = localStorage.getItem("character");
+            const characterStorageItem = localStorage.getItem("character");
             const credentialStorageItem = localStorage.getItem("credential");
-            const statsStorageItem = localStorage.getItem("stats");
-            const fragmentsStorageItem = localStorage.getItem("fragments");
             let credential = null;
-            let fragments;
-            const characters = [{ path: "/assets/milch.json", probability: 1.0 }];
-            const alternatives = [{ path: "/assets/merku.json", probability: 1.0 }];
+            const characters = [{ path: "/assets/milch.json", probability: 0.9 }, { path: "/assets/merku.json", probability: 0.1 }];
+            const loader = new GLTFLoader();
 
             if (window.location.pathname === "/about") {
                 this.mode = "_about";
                 this.isRevealed = true;
+            } else if (window.location.pathname === "/milch") {
+                this.mode = "_milch";
+                this.isRevealed = true;
+            } if (window.location.pathname === "/merku") {
+                this.mode = "_merku";
+                this.isRevealed = true;
             }
 
-            if (botStorageItem) {
+            if (characterStorageItem) {
                 try {
-                    const bot = JSON.parse(botStorageItem);
+                    const character = JSON.parse(characterStorageItem);
 
-                    if (bot !== null) {
-                        this.isMuted = bot.mute;
+                    if (character !== null) {
+                        this.isMuted = character.mute;
                     }
                 } catch (e) {
                     localStorage.removeItem("character");
@@ -3752,211 +3787,193 @@ window.addEventListener("load", (event) => {
                 }
             }
 
-            if (statsStorageItem) {
-                const baseDate = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+            this.$refs.three.appendChild(renderer.domElement);
+            this.$refs.three.after(stats.domElement);
 
-                try {
-                    for (const day of JSON.parse(statsStorageItem)) {
-                        const date = new Date(day.date);
-
-                        if (date.getTime() > baseDate) {
-                            this.stats.push({ date: date, steps: day.steps });
-                        }
-                    }
-                } catch (e) {
-                    localStorage.removeItem("stats");
-                }
-            }
-
-            if (fragmentsStorageItem) {
-                try {
-                    fragments = JSON.parse(fragmentsStorageItem);
-                } catch (e) {
-                    localStorage.removeItem("fragments");
-                    fragments = [];
-                }
-            } else {
-                fragments = [];
-            }
-
-            this.$refs.container.after(stats.domElement);
+            this.animate();
 
             this.insetTop = this.$refs.indicator.getBoundingClientRect().height;
             this.insetBottom = this.$refs.blank.getBoundingClientRect().height;
 
-            this.map = new Microsoft.Maps.Map(this.$refs.map, {
-                mapTypeId: Microsoft.Maps.MapTypeId.canvasLight
-            });
-            this.map.setOptions({
-                enableHighDpi: window.devicePixelRatio > 1 ? true : false,
-                showLocateMeButton: false,
-                showMapTypeSelector: false,
-                showZoomButtons: false,
-                showScalebar: false,
-                supportedMapTypes: [Microsoft.Maps.MapTypeId.grayscale, Microsoft.Maps.MapTypeId.canvasLight, Microsoft.Maps.MapTypeId.canvasDark]
-            });
-
-            this.layer = new Microsoft.Maps.Layer();
-            this.layer.setVisible(false);
-            this.map.layers.insert(this.layer);
-
-            Microsoft.Maps.Events.addHandler(this.map, 'viewchangeend', () => {
-                if (self.user !== null) {
-                    self.update();
-                }
-            });
-
             try {
-                this.progress = 1;
-
-                const response1 = await fetch(choice(characters, (x) => x.probability).path, {
+                const path = choice(characters, (x) => x.probability).path;
+                const response1 = await fetch(path, {
                     mode: "cors",
                     method: "GET",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     }
                 });
+                let character;
 
                 if (response1.ok) {
-                    const character = await response1.json();
-                    const sequence = this.prepare(character.sequences.filter((x) => x.name === "Start"), null, character.sequences)
-                    const response2 = await fetch(choice(alternatives, (x) => x.probability).path, {
-                        mode: "cors",
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        }
-                    });
-                    let alternative;
-
-                    if (response2.ok) {
-                        alternative = await response2.json();
-                    } else {
-                        throw new Error(response2.statusText);
-                    }
-
-                    const response3 = await fetch("/assets/fragments.json", {
-                        mode: "cors",
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        }
-                    });
-
-                    if (response3.ok) {
-                        const timestamp = Math.floor(new Date() / 1000);
-                        const baseTime = new Date().getTime() - 24 * 60 * 60 * 1000;
-                        let index = 0;
-
-                        for (const group of await response3.json()) {
-                            const g = [];
-
-                            for (const set of group) {
-                                const result = fragments.find(x => set.some(y => x.set.includes(y)) && x.count > 0 && x.timestamp * 1000 > baseTime && x.checksum === [...String(x.timestamp)].reduce((x, y) => x + y, 0) + [...String(x.count)].reduce((x, y) => x + y, 0));
-
-                                if (typeof result === "undefined") {
-                                    g.push({ set: set, index: 0, count: 0, timestamp: timestamp, reserved: true });
-                                } else {
-                                    g.push({ set: set, index: 0, count: result.count, timestamp: result.timestamp, reserved: true });
-                                }
-                            }
-
-                            this.chars.push(g);
-                        }
-
-                        for (const fragment of fragments) {
-                            if (!fragment.set.some(x => this.chars.some(y => y.some(z => z.set.includes(x))))) {
-                                const column = [];
-
-                                column.push({ set: fragment.set, index: 0, count: fragment.count, timestamp: fragment.timestamp, reserved: false });
-                                this.chars.splice(index, 0, column);
-                                index++;
-                            }
-                        }
-                    } else {
-                        throw new Error(response3.statusText);
-                    }
-
-                    this.progress = null;
-                    this.canvasSize.width = character.width;
-                    this.canvasSize.height = character.height;
-                    this.canvasSize.deviceWidth = character.width * window.devicePixelRatio;
-                    this.canvasSize.deviceHeight = character.height * window.devicePixelRatio;
-                    this.canvasSize.alternative.width = alternative.width;
-                    this.canvasSize.alternative.height = alternative.height;
-                    this.canvasSize.alternative.deviceWidth = alternative.width * window.devicePixelRatio;
-                    this.canvasSize.alternative.deviceHeight = alternative.height * window.devicePixelRatio;
-
-                    for (const obj of sequence) {
-                        if (obj.type == "Animation" && "frames" in obj && obj.frames.length > 0) {
-                            let images = null;
-
-                            if (Array.isArray(obj.frames[0])) {
-                                images = obj.frames[0];
-                            } else if (typeof (obj.frames[0]) === "object") {
-                                if ("iterations" in obj.frames[0]) {
-                                    if ("images" in obj.frames[0] && obj.frames[0].images.length > 0) {
-                                        images = obj.frames[0].images;
-                                    } else if ("sprites" in obj.frames[0] && obj.frames[0].sprites.length > 0) {
-                                        images = obj.frames[0].sprites;
-                                    }
-                                }
-                            }
-
-                            if (images !== null) {
-                                for (const sprite of images) {
-                                    if (sprite.source in this.cachedImages === false) {
-                                        try {
-                                            const image = await new Promise(async (resolve, reject) => {
-                                                const i = new Image();
-
-                                                i.onload = () => {
-                                                    resolve(i);
-                                                };
-                                                i.onerror = (e) => {
-                                                    reject(e);
-                                                };
-
-                                                i.crossOrigin = "Anonymous";
-                                                i.src = sprite.source;
-                                            });
-
-                                            this.cachedImages[sprite.source] = image;
-                                        } catch (e) {
-                                            console.error(e);
-                                        }
-                                    }
-                                }
-
-                                this.cachedSprites.splice(0);
-
-                                for (const sprite of this.render(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, images)) {
-                                    this.cachedSprites.push(sprite);
-                                }
-                            }
-
-                            break;
-                        }
-                    }
-
-                    this.character = character;
-                    this.character["alternative"] = alternative;
-                    this.sequenceQueue.push(sequence);
-                } else {
+                    character = await response1.json();
+                }
+                else {
                     throw new Error(response1.statusText);
                 }
+
+                const sequence = this.prepare(character.sequences.filter((x) => x.name === "Start"), null, character.sequences)
+
+                for (let i = characters.length - 1; i >= 0; i--) {
+                    if (characters[i].path === path) {
+                        characters.splice(i, 1);
+                    }
+                }
+
+                const response2 = await fetch(choice(softmax(characters, (x) => x.probability, (x, y) => x.probability = y), (x) => x.probability).path, {
+                    mode: "cors",
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                });
+                let alternative;
+
+                if (response2.ok) {
+                    alternative = await response2.json();
+                } else {
+                    throw new Error(response2.statusText);
+                }
+
+                this.canvasSize.width = character.width;
+                this.canvasSize.height = character.height;
+                this.canvasSize.deviceWidth = character.width * window.devicePixelRatio;
+                this.canvasSize.deviceHeight = character.height * window.devicePixelRatio;
+                this.canvasSize.alternative.width = alternative.width;
+                this.canvasSize.alternative.height = alternative.height;
+                this.canvasSize.alternative.deviceWidth = alternative.width * window.devicePixelRatio;
+                this.canvasSize.alternative.deviceHeight = alternative.height * window.devicePixelRatio;
+
+                for (const obj of sequence) {
+                    if (obj.type == "Animation" && "frames" in obj && obj.frames.length > 0) {
+                        let images = null;
+
+                        if (Array.isArray(obj.frames[0])) {
+                            images = obj.frames[0];
+                        } else if (typeof (obj.frames[0]) === "object") {
+                            if ("iterations" in obj.frames[0]) {
+                                if ("images" in obj.frames[0] && obj.frames[0].images.length > 0) {
+                                    images = obj.frames[0].images;
+                                } else if ("sprites" in obj.frames[0] && obj.frames[0].sprites.length > 0) {
+                                    images = obj.frames[0].sprites;
+                                }
+                            }
+                        }
+
+                        if (images !== null) {
+                            for (const sprite of images) {
+                                if (sprite.source in this.cachedImages === false) {
+                                    try {
+                                        const image = await new Promise(async (resolve, reject) => {
+                                            const i = new Image();
+
+                                            i.onload = () => {
+                                                resolve(i);
+                                            };
+                                            i.onerror = (e) => {
+                                                reject(e);
+                                            };
+
+                                            i.crossOrigin = "Anonymous";
+                                            i.src = sprite.source;
+                                        });
+
+                                        this.cachedImages[sprite.source] = image;
+                                    } catch (e) {
+                                        console.error(e);
+                                    }
+                                }
+                            }
+
+                            this.cachedSprites.splice(0);
+
+                            for (const sprite of this.render(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, images)) {
+                                this.cachedSprites.push(sprite);
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+                this.character = character;
+                this.character["visible"] = false;
+                this.character["alternative"] = alternative;
+                this.sequenceQueue.push(sequence);
             } catch (e) {
-                this.progress = null;
-                this.notify({ text: e.message });
                 console.error(e);
             }
 
-            this.animate();
+            loader.crossOrigin = "anonymous";
+            loader.load(
+                await getDownloadURL(storageRef(storage, this.character.model)),
+                (gltf) => {
+                    VRM.from(gltf).then(async (vrm) => {
+                        const urls = {
+                            idle1: "/assets/animation-idle1.json",
+                            idle2: "/assets/animation-idle2.json",
+                            //idle3: "/assets/animation-idle3.json",
+                            //idle4: "/assets/animation-idle4.json",
+                            jump: "/assets/animation-jump.json",
+                            lose: "/assets/animation-lose.json",
+                            //run: "/assets/animation-run.json",
+                            //walk: "/assets/animation-walk.json",
+                            win: "/assets/animation-win.json"
+                        };
+                        let animationDictionary = {};
 
-            if (credential === null) {
-                this.mode = "sign-in";
-                this.isRevealed = true;
-            } else {
+                        try {
+                            for (let key in urls) {
+                                const response3 = await fetch(encodeURI(urls[key]), {
+                                    mode: "cors",
+                                    method: "GET",
+                                    headers: {
+                                        "Content-Type": "application/x-www-form-urlencoded"
+                                    }
+                                });
+
+                                if (response3.ok) {
+                                    const json = await response3.json();
+
+                                    animationDictionary[key] = json.data;
+                                }
+                                else {
+                                    throw new Error(response3.statusText);
+                                }
+                            }
+
+                            self.animations = animationDictionary;
+                            vrmModel = vrm;
+
+                            scene.add(vrm.scene);
+
+                            vrm.scene.rotation.y = Math.PI;
+                            vrm.lookAt.target = lookAtTarget;
+
+                            vrmSpringBones.splice(0);
+
+                            for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
+                                for (const springBone of springBoneGroup) {
+                                    vrmSpringBones.push({ gravityDir: springBone.gravityDir.clone(), gravityPower: springBone.gravityPower });
+                                }
+                            }
+
+                            //vrm.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).rotation.y = Math.PI;
+                            //currentMixer = prepareAnimation(vrm);                            
+                        } catch (e) {
+                            self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
+                            console.error(e);
+                        }
+
+                        self.progress = null;
+                    });
+                },
+                (progress) => self.progress = progress.loaded / progress.total,
+                (error) => console.error(error)
+            );
+
+            if (credential !== null) {
                 if (credential.providerId === GoogleAuthProvider.PROVIDER_ID) {
                     try {
                         signInWithCredential(auth, GoogleAuthProvider.credential(credential.idToken));
@@ -3978,9 +3995,6 @@ window.addEventListener("load", (event) => {
                         self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e.code, e.message);
                     }
-                } else {
-                    this.mode = "sign-in";
-                    this.isRevealed = true;
                 }
             }
 
@@ -3988,113 +4002,130 @@ window.addEventListener("load", (event) => {
                 // Check for user status
                 if (user) {
                     // User is signed in.
-                    const nowDate = new Date();
-
                     self.user = user;
-                    self.update();
-
-                    for (const day of self.stats) {
-                        if (day.date.getFullYear() === nowDate.getFullYear() && day.date.getMonth() === nowDate.getMonth() && day.date.getDate() === nowDate.getDate()) {
-                            self.steps = day.steps;
-                        }
-                    }
-
-                    onValue(databaseRef(database, databaseRoot + "/users/" + user.uid + "/dictionary/count"), snapshot => {
-                        const count = snapshot.val();
-
-                        if (count === null) {
-                            self.stars = 0;
-                        } else {
-                            self.stars = count;
-                        }
-                    });
-                    onValue(query(databaseRef(database, databaseRoot + "/users/" + user.uid + "/dictionary/words"), orderByChild("timestamp"), limitToLast(25)), snapshot => {
-                        if (snapshot.exists()) {
-                            const words = snapshot.val();
-                            let isUpdated = false;
-
-                            for (const key in words) {
-                                const index = self.recentWords.findIndex(x => x.name === words[key].name);
-
-                                if (index >= 0) {
-                                    if (self.recentWords[index].timestamp < words[key].timestamp) {
-                                        self.recentWords.splice(index, 1);
-                                    } else {
-                                        continue;
-                                    }
-                                }
-
-                                words[key]["id"] = key;
-                                words[key]["user"] = { id: self.user.uid, name: self.user.displayName, image: self.user.photoURL };
-                                self.recentWords.push(words[key]);
-                                isUpdated = true;
-                            }
-
-                            /*for (let i = self.recentWords.length - 1; i >= 0; i--) {
-                                if (self.recentWords[i].name in words === false) {
-                                    self.recentWords.splice(i, 1);
-                                }
-                            }*/
-
-                            if (isUpdated) {
-                                self.recentWords.sort((x, y) => y.timestamp - x.timestamp);
-
-                                if (self.recentWords.length > 50) {
-                                    self.recentWords.splice(50, self.recentWords.length - 50);
-                                }
-                            }
-                        }
-                    });
-                    onValue(query(databaseRef(database, databaseRoot + "/tracks"), orderByChild("timestamp"), limitToLast(25)), snapshot => {
-                        if (snapshot.exists()) {
-                            const words = snapshot.val();
-                            let isUpdated = false;
-
-                            for (const key in words) {
-                                const index = self.recentWords.findIndex(x => x.name === words[key].name);
-
-                                if (index >= 0) {
-                                    if (self.recentWords[index].timestamp < words[key].timestamp) {
-                                        self.recentWords.splice(index, 1);
-                                    } else {
-                                        continue;
-                                    }
-                                }
-
-                                words[key]["id"] = key;
-                                self.recentWords.push(words[key]);
-                                isUpdated = true;
-                            }
-
-                            /*for (let i = self.recentWords.length - 1; i >= 0; i--) {
-                                if (self.recentWords[i].name in words === false) {
-                                    self.recentWords.splice(i, 1);
-                                }
-                            }*/
-
-                            if (isUpdated) {
-                                self.recentWords.sort((x, y) => y.timestamp - x.timestamp);
-
-                                if (self.recentWords.length > 50) {
-                                    self.recentWords.splice(50, self.recentWords.length - 50);
-                                }
-                            }
-                        }
-                    });
-                } else if (self.user !== null) {
+                } else {
                     // User is signed out.
-                    off(databaseRef(database, databaseRoot + "/users/" + self.user.uid + "/dictionary/count"));
-                    off(query(databaseRef(database, databaseRoot + "/users/" + self.user.uid + "/dictionary/words"), orderByChild("timestamp"), limitToLast(25)));
-                    off(query(databaseRef(database, databaseRoot + "/tracks"), orderByChild("timestamp"), limitToLast(25)));
-
                     self.user = null;
                     self.stars = 0;
                 }
             });
+
+            onValue(query(databaseRef(database, databaseRoot + "/backgrounds"), orderByChild("timestamp"), limitToLast(100)), snapshot => {
+                if (snapshot.exists()) {
+                    const backgrounds = snapshot.val();
+                    let isUpdated = false;
+
+                    for (const key in backgrounds) {
+                        const index = self.recentImages.findIndex(x => x.id === key);
+
+                        if (index >= 0) {
+                            if (self.recentImages[index].timestamp < backgrounds[key].timestamp) {
+                                self.recentImages.splice(index, 1);
+                            } else {
+                                continue;
+                            }
+                        }
+
+                        backgrounds[key]["id"] = key;
+                        self.recentImages.push(backgrounds[key]);
+                        isUpdated = true;
+                    }
+
+                    /*for (let i = self.recentImages.length - 1; i >= 0; i--) {
+                        if (self.recentImages[i].id in backgrounds === false) {
+                            self.recentImages.splice(i, 1);
+                            isUpdated = true;
+                        }
+                    }*/
+
+                    if (isUpdated) {
+                        self.recentImages.sort((x, y) => y.timestamp - x.timestamp);
+
+                        if (self.recentImages.length > 100) {
+                            self.recentImages.splice(100, self.recentImages.length - 100);
+                        }
+
+                        self.update(self.recentImages, self.maxTags);
+                        self.isBlinded = true;
+                    }
+                }
+            });
+            onValue(databaseRef(database, databaseRoot + "/stars"), snapshot => {
+                const count = snapshot.val();
+
+                if (count === null) {
+                    self.stars = 0;
+                } else {
+                    self.stars = count;
+                }
+            });
+            onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)), snapshot => {
+                if (snapshot.exists()) {
+                    const words = snapshot.val();
+                    let isUpdated = false;
+
+                    for (const key in words) {
+                        const index = self.words.findIndex(x => x.name === key && "timestamp" in x);
+
+                        if (index >= 0) {
+                            if (self.words[index].timestamp < words[key].timestamp) {
+                                if (key in self.wordDictionary) {
+                                    delete self.wordDictionary[key];
+                                }
+
+                                Object.keys(self.reverseWordDictionary).forEach((k) => {
+                                    if (self.reverseWordDictionary[k].words.some((x) => x === key)) {
+                                        delete self.reverseWordDictionary[k];
+                                    }
+                                });
+
+                                self.words.splice(index, 1);
+                            } else {
+                                continue;
+                            }
+                        }
+
+                        self.words.push({ name: key, timestamp: words[key].timestamp });
+                        isUpdated = true;
+                    }
+
+                    if (isUpdated) {
+                        for (let i = self.words.length - 1; i >= 0; i--) {
+                            if ("timestamp" in self.words[i] === false) {
+                                self.words.splice(i, 1);
+                            }
+                        }
+
+                        self.words.sort((x, y) => y.timestamp - x.timestamp);
+
+                        if (self.words.length > 10) {
+                            self.words.splice(10, self.words.length - 10);
+                        }
+
+                        for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), 10)) {
+                            if (obj.type === "Message") {
+                                self.words.splice(0, 0, { name: obj.text, image: self.character.image });
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        unmounted: function () {
+            if (vrmModel !== null) {
+                scene.remove(vrmModel.scene);
+                vrmModel = null;
+            }
+
+            off(query(databaseRef(database, databaseRoot + "/images"), limitToLast(100)));
+            off(databaseRef(database, databaseRoot + "/stars"));
+            off(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)));
         }
     }).mount("#app");
 
     window.addEventListener("resize", event => {
+        //let container = app.$refs.container;
+
         app.insetTop = app.$refs.indicator.getBoundingClientRect().height;
         app.insetBottom = app.$refs.blank.getBoundingClientRect().height;
         app.canvasSize.width = app.character.width;
@@ -4110,32 +4141,26 @@ window.addEventListener("load", (event) => {
         if (app.alternative !== null) {
             app.animationQueue.unshift({ character: app.character.alternative, images: [].concat(app.alternativeCachedSprites) });
         }
-        /*
-        
-        
-        Object.keys(app.cachedImages).forEach(function (key) {
-            delete app.cachedImages[key];
-        });*/
 
         //app.$refs.ticker.style.width = document.body.querySelector("#input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(1) form").getBoundingClientRect().width + 'px';
 
         /*const width = window.innerWidth;
         const height = window.outerHeight;
-     
+    
         bloomPass.setSize(width, height);
         fxaaShader.uniforms.resolution.value.set(1 / (width * window.devicePixelRatio), 1 / (height * window.devicePixelRatio));
-     
+    
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(width, height);
-     
+    
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
-     
+    
         composer.setPixelRatio(window.devicePixelRatio);
         composer.setSize(width, height);*/
 
-        /*app.$nextTick(() => {
-            for (const clip of document.body.querySelectorAll("#input>.columns:last-of-type>.column>.control .clip")) {
+        app.$nextTick(() => {
+            for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                 let width = 0;
 
                 for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
@@ -4143,57 +4168,164 @@ window.addEventListener("load", (event) => {
                 }
 
                 if (width > 0) {
-                    app.tickerWidth = Math.min(width / 2, document.body.querySelector("#input>.columns:last-of-type>.column>.control .level").getBoundingClientRect().width);
+                    app.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                     clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
                 }
             }
-        });*/
+        });
     });
     window.addEventListener("click", event => {
+        const element = app.$refs.three;
+        const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+        const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+        const w = element.offsetWidth;
+        const h = element.offsetHeight;
+
+        mouse.x = (x / w) * 2 - 1;
+        mouse.y = -(y / h) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObjects(scene.children, true);
+
+        for (let intersect of intersects) {
+            if (intersect.object.name === "face") {
+                //app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.0, end: 2.0 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.0, end: 2.0 }]);
+
+                break;
+            } else if (intersect.object.name.indexOf("breast") >= 0) {
+                /*if (random(0, 1) === 0) {
+                    app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }]);
+                } else {
+                    app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 0.5, start: 0.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 3.0, start: 1.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 0.5, start: 1.0, end: 0.0 }]);
+                }*/
+
+                break;
+            }
+        }
     });
     window.addEventListener("dblclick", event => {
-        //app.activate();
-        //activateTime = 0.0;
+        const element = app.$refs.three;
+        const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+        const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+        const w = element.offsetWidth;
+        const h = element.offsetHeight;
+
+        mouse.x = (x / w) * 2 - 1;
+        mouse.y = -(y / h) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        if (raycaster.intersectObjects(scene.children, true).length > 0) {
+            app.activate();
+        }
+    });
+    window.addEventListener("keydown", event => {
+        if (event.ctrlKey) {
+            controls.enabled = true;
+        }
+    });
+    window.addEventListener("keyup", event => {
+        controls.enabled = false;
     });
     window.addEventListener("mousedown", event => {
-        /*if (event.button === 0) {
+        if (!controls.enabled && event.button === 0) {
+            let minDistance = Number.MAX_SAFE_INTEGER;
+            let bestIntersect = null;
+            const element = app.$refs.three;
+            const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+            const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
+
+            mouse.x = (x / w) * 2 - 1;
+            mouse.y = -(y / h) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+
+            for (let intersect of raycaster.intersectObjects(scene.children, true)) {
+                if (intersect.distance < minDistance) {
+                    bestIntersect = intersect;
+                    minDistance = intersect.distance;
+                }
+            }
+
             if (bestIntersect !== null) {
                 let springBoneIndex = 0;
-    
-                draggableBone = { point: { x: event.clientX, y: event.clientY }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
+
+                draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
                 minDistance = Number.MAX_SAFE_INTEGER;
-    
+
                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                     for (const springBone of springBoneGroup) {
-                        const distance = springBone.bone.getWorldPosition(new THREE.Vector3()).distanceTo(bestIntersect.point);
-    
+                        const distance = springBone.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
+
                         if (distance < minDistance) {
                             draggableBone.index = springBoneIndex;
                             minDistance = distance;
                         }
-    
+
                         springBoneIndex++;
                     }
                 }
-    
+
                 if (app.character !== null) {
                     app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchStart"), bestIntersect.object.name));
                 }
             }
-        }*/
+        }
     });
     window.addEventListener("mousemove", event => {
+        /*if (vrmModel) {
+     
+            const range = CAMERA_Z * Math.tan(CAMERA_FOV / 360.0 * Math.PI);
+            const px = (2.0 * event.clientX - window.innerWidth) / window.outerHeight * range;
+            const py = -(2.0 * event.clientY - window.outerHeight) / window.outerHeight * range;
+     
+            vrmModel.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).position.set(px, py, 0.0);
+        }*/
+        const element = app.$refs.three;
+        const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+        const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+        const w = element.offsetWidth;
+        const h = element.offsetHeight;
 
+        mouse.x = (x / w) * 2 - 1;
+        mouse.y = -(y / h) * 2 + 1;
+
+        if (!controls.enabled && event.button === 0) {
+            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+
+            if (draggableBone !== null) {
+                const vector = new Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
+
+                draggableBone.direction = vector.normalize();
+                draggableBone.distance = Math.sqrt((draggableBone.point.x - x) * (draggableBone.point.x - x) + (draggableBone.point.y - y) * (draggableBone.point.y - y));
+            }
+        }
     });
     window.addEventListener("mouseup", event => {
-        /*if (event.button === 0) {
+        if (!controls.enabled && event.button === 0) {
+            draggableBone = null;
+
             if (app.character !== null) {
                 app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
             }
-        }*/
+        }
     });
     window.addEventListener("touchstart", event => {
         event.stopPropagation();
+
+        const element = app.$refs.three;
+        const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+        const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+        const w = element.offsetWidth;
+        const h = element.offsetHeight;
+
+        mouse.x = (x / w) * 2 - 1;
+        mouse.y = -(y / h) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
 
         if (tapCount == 0) {
             tapCount++;
@@ -4202,54 +4334,45 @@ window.addEventListener("load", (event) => {
                 tapCount = 0;
             }, 500);
 
-            /*let minDistance = Number.MAX_SAFE_INTEGER;
+            let minDistance = Number.MAX_SAFE_INTEGER;
             let bestIntersect = null;
-    
-            mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2.0 - 1.0;
-            mouse.y = -(event.changedTouches[0].clientY / window.outerHeight) * 2.0 + 1.0;
-    
-            raycaster.setFromCamera(mouse, camera);
-    
+
             for (let intersect of raycaster.intersectObjects(scene.children, true)) {
                 if (intersect.distance < minDistance) {
                     bestIntersect = intersect;
                     minDistance = intersect.distance;
                 }
             }
-    
+
             if (bestIntersect !== null) {
                 let springBoneIndex = 0;
-    
-                draggableBone = { point: { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
+
+                draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
                 minDistance = Number.MAX_SAFE_INTEGER;
-    
+
                 for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
                     for (const springBone of springBoneGroup) {
-                        const distance = springBone.bone.getWorldPosition(new THREE.Vector3()).distanceTo(bestIntersect.point);
-    
+                        const distance = springBone.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
+
                         if (distance < minDistance) {
                             draggableBone.index = springBoneIndex;
                             minDistance = distance;
                         }
-    
+
                         springBoneIndex++;
                     }
                 }
-    
+
                 if (app.character !== null) {
                     app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchStart"), bestIntersect.object.name));
                 }
             }
-    
-            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (event.changedTouches[0].clientX - 0.5 * window.innerWidth) / window.outerHeight * 10.0, y: (event.changedTouches[0].clientY - 0.5 * window.outerHeight) / window.outerHeight * -10.0 } };
-            */
-        } else {
-            //raycaster.setFromCamera(mouse, camera);
 
-            //if (raycaster.intersectObjects(scene.children, true).length > 0) {
-            //app.talk(app.user.uid);
-            //activateTime = 0.0;
-            //}
+            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+        } else {
+            if (raycaster.intersectObjects(scene.children, true).length > 0) {
+                app.activate();
+            }
 
             tapCount = 0;
         }
@@ -4257,27 +4380,107 @@ window.addEventListener("load", (event) => {
     window.addEventListener("touchmove", event => {
         event.stopPropagation();
 
-        //lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (event.changedTouches[0].clientX - 0.5 * window.innerWidth) / window.outerHeight * 10.0, y: (event.changedTouches[0].clientY - 0.5 * window.outerHeight) / window.outerHeight * -10.0 } };
+        const element = app.$refs.three;
+        const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+        const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+        const w = element.offsetWidth;
+        const h = element.offsetHeight;
+
+        lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
     });
     window.addEventListener("touchend", event => {
         event.stopPropagation();
 
-        /*lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (event.changedTouches[0].clientX - 0.5 * window.innerWidth) / window.outerHeight * 10.0, y: (event.changedTouches[0].clientY - 0.5 * window.outerHeight) / window.outerHeight * -10.0 } };
-    
+        const element = app.$refs.three;
+        const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+        const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+        const w = element.offsetWidth;
+        const h = element.offsetHeight;
+
+        lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+
         if (app.character !== null) {
             app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
-        }*/
+        }
     });
     window.addEventListener("touchcancel", event => {
         event.stopPropagation();
     });
+    window.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "copy";
+    }, false);
+    window.addEventListener("drop", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        for (let file of event.dataTransfer.files) {
+            const name = file.name.toLowerCase();
+
+            if (name.endsWith(".vrm")) {
+                let reader = new FileReader();
+
+                reader.addEventListener("load", (e) => {
+                    const loader = new GLTFLoader();
+
+                    loader.crossOrigin = "anonymous";
+                    loader.load(
+                        e.target.result,
+                        (gltf) => {
+                            VRM.from(gltf).then((vrm) => {
+                                if (vrmModel !== null) {
+                                    scene.remove(vrmModel.scene);
+                                }
+
+                                vrmModel = vrm;
+
+                                scene.add(vrm.scene);
+
+                                vrm.scene.rotation.y = Math.PI;
+                                vrm.lookAt.target = lookAtTarget;
+
+                                vrmSpringBones.splice(0);
+
+                                for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
+                                    for (const springBone of springBoneGroup) {
+                                        vrmSpringBones.push({ gravityDir: springBone.gravityDir.clone(), gravityPower: springBone.gravityPower });
+                                    }
+                                }
+
+                                app.progress = null;
+                            });
+                        },
+                        (progress) => app.progress = progress.loaded / progress.total,
+                        (error) => console.error(error)
+                    );
+                });
+                reader.readAsDataURL(file);
+            } else if (name.endsWith(".json")) {
+                let reader = new FileReader();
+
+                reader.addEventListener("load", (e) => {
+                    try {
+                        app.character = JSON.parse(e.target.result);
+                    } catch (e) {
+                        app.notify({ text: error.message, accent: app.character.accent, image: app.character.image });
+                        console.error(e);
+
+                        return;
+                    }
+
+                    app.sequenceQueue.splice(0);
+                    app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "Start")));
+                });
+                reader.readAsText(file);
+            }
+        }
+
+    }, false);
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
         if (e.matches) {
             app.isDarkMode = true;
         } else {
             app.isDarkMode = false;
         }
-
-        app.update(true);
     });
 });

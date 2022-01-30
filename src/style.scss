@@ -15,19 +15,6 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP"
 :root {
     --background-color: rgba(255, 255, 255, 0.75);
     --foreground-color: #777777;
-    /*--base-color: #cba9e1;
-    --main-color: #ffa6bb;
-    --accent-color: #5bcbe1;*/
-    /*--main-color: #6772E5;
-    --accent-color: #8898aa;*/
-    /*--main-color: #00eeff;
-    --accent-color: #ffee00;*/
-    /*--main-color: #b56ed8;*/
-    /*--accent-color: #ff4c90;*/
-    /*--accent-color: #ff86b5;*/
-    /*ffe598*/
-    /*--main-color: #00a5cd;
-    --accent-color: #e62d87;*/
     --main-color: #{$primary};
     --accent-color: #fecde2;
     --highlight-color: #c1aee6;
@@ -57,7 +44,6 @@ html {
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
-    /*background: #f5f5f7;*/
     background: #f5f5f5;
     transition: 0.5s;
     overscroll-behavior-x: none;
@@ -72,7 +58,7 @@ body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
     overflow: hidden;
-    background-size: 100px 100px;
+    background: transparent;
 }
 
 h1,
@@ -124,6 +110,7 @@ label.checkbox input[type="radio"] + .custom:before {
 label.checkbox input[type="checkbox"]:checked + .custom:before,
 label.checkbox input[type="radio"]:checked + .custom:before {
     color: var(--accent-color);
+    transition: 0.5s;
 }
 
 a .scrollable,
@@ -158,6 +145,11 @@ label .scrollable > div {
     box-shadow: none;
 }
 
+.button:hover,
+.button.is-hovered {
+    border: 0px solid transparent;
+}
+
 .navbar {
     margin: 0;
     padding: 0;
@@ -171,6 +163,7 @@ label .scrollable > div {
 
 .columns {
     margin: 0 !important;
+
     > .column {
         padding: 0 !important;
     }
@@ -191,7 +184,6 @@ label .scrollable > div {
 
 .file-input,
 .file-cta {
-    pointer-events: none;
     background-color: transparent !important;
     border: 0px solid transparent !important;
     padding: 0;
@@ -199,7 +191,6 @@ label .scrollable > div {
 }
 
 .file-cta_ {
-    margin: 0 !important;
     display: flex;
     flex-direction: row;
 }
@@ -219,6 +210,10 @@ label .scrollable > div {
 .has-content-centered {
     margin-left: auto;
     margin-right: auto;
+}
+
+.has-text-transparent {
+    color: transparent !important;
 }
 
 .columns .is-vcentered {
@@ -276,19 +271,31 @@ label .scrollable > div {
 .is-danger {
     background-color: transparent !important;
     color: var(--accent-color) !important;
+    transition: 0.5s;
 }
 
 .is-superellips {
-    transform: rotate(-19deg) !important;
+    transform: rotate(-19deg);
 
-    > picture {
+    > figure {
         border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
-        overflow: hidden;
+        overflow: hidden !important;
 
-        > img {
+        > picture {
             transform: rotate(19deg);
         }
     }
+}
+
+.is-animatable {
+    transform-origin: 50% 50%;
+    transform: scale3d(1, 1, 1);
+    transition: 0.5s ease-out;
+}
+
+.is-animatable:hover {
+    transform: scale3d(1.1, 1.1, 1);
+    transition: 0.5s ease-in;
 }
 
 .logo {
@@ -350,7 +357,7 @@ label .scrollable > div {
     }
 
     > .media {
-        position: absolute;        
+        position: absolute;
     }
 }
 
@@ -402,21 +409,7 @@ label .scrollable > div {
     background: var(--background-color);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-}
-
-.overlay::after {
-    z-index: 1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    min-height: 100%;
-    transform: translate3d(0, 0%, 0);
-    overflow: hidden;
-    background: var(--background-image) 50% 50% repeat;
-    animation: fade 0.5s ease-out, loop 10s linear infinite;
-    transform: translate3d(0, 0%, 0);
-    content: "";
+    transition: 0.5s;
 }
 
 #character {
@@ -459,7 +452,7 @@ label .scrollable > div {
     background-color: transparent;
     /*image-rendering: -moz-crisp-edges;
     image-rendering: pixelated;*/
-    image-rendering: optimizeQuality;
+    image-rendering: auto;
 }
 
 .ticker-wrap {
@@ -518,9 +511,39 @@ label .scrollable > div {
         overflow: hidden;
     }
 
+    > .columns {
+        display: flex;
+        width: 100%;
+        background: transparent !important;
+        justify-content: center;
+        align-items: center;
+
+        > .column {
+            padding: 16px !important;
+
+            > .tags {
+                margin: -8px;
+
+                > .control > .tags > .tag {
+                    margin: 0px;
+                    padding: 8px 16px 8px 16px;
+                    border: 2px solid rgba(255, 255, 255, 1) !important;
+                    border-radius: 500px 500px 500px 500px;
+                    background: transparent !important;
+                    background-clip: padding-box;
+                    height: initial;
+                    box-shadow: none;
+                    backdrop-filter: initial;
+                    -webkit-backdrop-filter: initial;
+                    color: #ffffff;
+                }
+            }
+        }
+    }
+
     > div::before {
         display: block;
-        position: fixed;
+        position: absolute;
         left: 0;
         top: 0;
         width: 100%;
@@ -529,7 +552,7 @@ label .scrollable > div {
     }
 
     > img {
-        position: fixed;
+        position: absolute;
         object-fit: cover;
         width: 100%;
         height: 100%;
@@ -590,18 +613,15 @@ label .scrollable > div {
 
                     > button {
                         margin: 0px;
-                        border: 0px solid rgba(255, 255, 255, 0.5);
+                        border: 0px solid transparent;
                         border-radius: 290486px;
                         padding: 16px;
                         background: #ffffff !important;
                         background-clip: padding-box;
-                        /*background: #f5f5f5;
-                        background: linear-gradient(145deg, #ffffff, #dddddd);
-                        box-shadow: 10px 10px 30px #d0d0d0,
-                            -10px -10px 30px #ffffff;*/
                         box-shadow: none;
                         height: initial;
                         color: var(--accent-color) !important;
+                        transition: 0.5s;
 
                         > span {
                             margin: 0 !important;
@@ -657,6 +677,7 @@ label .scrollable > div {
                             height: 48px;
                             align-items: center;
                             justify-content: center;
+                            transition: 0.5s;
                         }
 
                         .icon + .wrap {
@@ -706,6 +727,98 @@ label .scrollable > div {
     width: 100%;
     max-width: 100% !important;
     height: 100%;
+
+    > .wrap > .frame {
+        > .columns:last-of-type {
+            position: absolute;
+            bottom: 0;
+            margin: 0;
+            padding: 0 !important;
+            width: 100%;
+            min-height: fit-content;
+            background: var(--main-color);
+            font-size: 0.75rem !important;
+            line-height: 0.75rem !important;
+            transition: 0.5s;
+
+            > .column > .control {
+                pointer-events: none;
+                margin: 0;
+                margin: 4px 16px 4px 16px;
+                height: max(16px, 0.75rem);
+                font-size: 0.75rem !important;
+                line-height: 0.75rem !important;
+
+                .level:first-child .level-item {
+                    display: flex;
+                    justify-content: center;
+                }
+            }
+        }
+
+        .clip {
+            margin: 0;
+            border: 0px solid var(--foreground-color);
+            padding: 0px;
+            background-color: transparent;
+            background-clip: padding-box;
+            overflow: hidden;
+            width: 100%;
+
+            .ticker-wrap .ticker {
+                transform: translate3d(0%, 0, 0);
+                animation: ticker 30s linear 0s infinite;
+                animation-play-state: paused;
+
+                .item {
+                    padding: 0px 8px;
+                    color: #ffffff;
+                    height: max(16px, 0.75rem);
+                    font-size: 0.75rem !important;
+                    line-height: 1rem !important;
+                }
+
+                .media {
+                    margin: 0px -8px 0px -8px;
+                    height: max(16px, 0.75rem);
+
+                    .media-left {
+                        margin: 0px 8px 0px 8px !important;
+                    }
+
+                    picture img {
+                        width: 16px;
+                        height: 16px;
+                    }
+
+                    .media-content {
+                        margin: 0px 8px 0px 8px;
+
+                        .content {
+                            display: flex;
+                            align-content: center;
+                            transform: rotate(0.03deg);
+
+                            span {
+                                font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                                height: min(16px, 0.8rem) !important;
+                                vertical-align: middle;
+                                overflow-y: hidden;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .ticker-wrap {
+            display: flex;
+            margin: 0;
+            width: 100%;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+        }
+    }
 }
 
 .frame {
@@ -720,26 +833,23 @@ label .scrollable > div {
     overflow: hidden;
 }
 
-#map {
-    z-index: 0;
-    position: absolute !important;
-    display: flex;
+#three {
+    z-index: 1;
+    position: absolute;
     padding: 0;
     width: 100%;
     height: 100%;
+    min-height: 100%;
     overflow: hidden;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 
-    > button {
-        z-index: 1;
-        margin: 0;
-        border: 0px solid transparent;
-        padding: 16px;
-        background: transparent;
-        width: fit-content;
-        height: fit-content;
+    > canvas {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        outline: none;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
     }
 }
 
@@ -754,6 +864,22 @@ label .scrollable > div {
     overflow: hidden;
     background: var(--main-color);
     transition: 0.5s;
+}
+
+.blind::after {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    transform: translate3d(0, 0%, 0);
+    overflow: hidden;
+    background: var(--background-image) 50% 50% repeat;
+    animation: fade 0.5s ease-out, loop 10s linear infinite;
+    transition: 0.5s;
+    transform: translate3d(0, 0%, 0);
+    content: "";
 }
 
 #app {
@@ -790,17 +916,21 @@ label .scrollable > div {
 
     button {
         margin: 0px;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border: 0px solid rgba(255, 255, 255, 0.5);
         border-radius: 290486px;
         padding: 16px;
-        background: rgba(255, 255, 255, 0.75) !important;
+        background: transparent !important;
         background-clip: padding-box;
+        box-shadow: none;
         height: initial;
         color: var(--main-color) !important;
-        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
         transition: 0.5s;
+
+        > span {
+            margin: 0 !important;
+            width: 1rem !important;
+            height: 1rem !important;
+        }
     }
 
     > .level {
@@ -826,7 +956,7 @@ label .scrollable > div {
                     align-items: center;
                     justify-content: flex-start;
 
-                    > .level-item:not(:last-child) {
+                    > .level-item:first-child {
                         pointer-events: none;
                         margin: 0px 0px 8px 0px;
                         touch-action: none;
@@ -853,7 +983,7 @@ label .scrollable > div {
                             align-items: center;
                             justify-content: flex-start;
 
-                            .icon {
+                            picture.icon {
                                 margin: 0px 4px 0px 0px;
                                 color: var(--main-color);
                                 transition: 0.5s;
@@ -873,51 +1003,16 @@ label .scrollable > div {
                             }
                         }
                     }
-
-                    > .level-item:nth-child(2) .progress {
-                        position: relative;
-                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                        border-radius: 290486px;
-                        background: rgba(255, 255, 255, 0.75) !important;
-                        width: 128px;
-                        height: 10px;
-                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                        backdrop-filter: blur(4px);
-                        -webkit-backdrop-filter: blur(4px);
-
-                        > .bar {
-                            position: relative;
-                            border-radius: 290486px;
-                            width: 128px;
-                            height: 8px;
-                            background-color: var(--main-color);
-                            transition: 0.5s;
-                        }
-                    }
-
-                    > .level-item:nth-child(3) .field span:last-child {
-                        font-family: "Alata", sans-serif;
-                        font-size: 1.5rem !important;
-                        line-height: 1.5rem !important;
-                        color: var(--main-color);
-                        transition: 0.5s;
-                    }
                 }
             }
         }
 
-        > .level-item:first-child button > span {
-            margin: 0 !important;
-            width: 1rem !important;
-            height: 1rem !important;
-        }
-
-        > .level-item:nth-last-of-type(2),
-        > .level-item:nth-last-of-type(1) {
+        .level-item:nth-last-of-type(1) {
             display: flex;
             margin: 0;
             padding: 0;
             justify-content: center;
+            align-items: flex-start;
 
             .wrap > .control,
             .control {
@@ -927,28 +1022,47 @@ label .scrollable > div {
                 width: fit-content;
                 height: fit-content;
                 justify-content: center;
-            }
 
-            .level {
-                display: flex;
-                margin: -8px 0px -8px 0px;
-                padding: 16px 0px 0px 0px;
-                width: fit-content;
-                height: fit-content;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-
-                > .level-item {
+                > .level {
                     display: flex;
-                    align-items: center;
+                    margin: -8px 0px -8px 0px;
+                    padding: 16px 0px 0px 0px;
+                    width: fit-content;
+                    height: fit-content;
+                    flex-direction: column;
                     justify-content: center;
-                    margin: 8px 0px 8px 0px;
-                    padding: 0;
+                    align-items: center;
+
+                    > .level-item {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin: 8px 0px 8px 0px;
+                        padding: 0;
+                    }
                 }
             }
 
+            .notification {
+                background-color: transparent;
+                margin: 0;
+                padding: 0;
+            }
+
             .media {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                border-radius: 500px 500px 500px 500px;
+                padding: 12px 24px 12px 24px;
+                background: rgba(255, 255, 255, 0.75) !important;
+                background-clip: padding-box;
+                color: #000000;
+                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+
                 .media-left {
                     display: flex;
                     margin: 0px 8px 0px 0px !important;
@@ -975,101 +1089,6 @@ label .scrollable > div {
                 }
             }
         }
-
-        > .level-item:nth-last-of-type(2) {
-            align-items: flex-start;
-
-            .notification {
-                background-color: transparent;
-                margin: 0;
-                padding: 0;
-            }
-
-            .media {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                border-radius: 500px 500px 500px 500px;
-                padding: 12px 24px 12px 24px;
-                background: rgba(255, 255, 255, 0.75) !important;
-                background-clip: padding-box;
-                color: #000000;
-                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
-            }
-        }
-
-        > .level-item:nth-last-of-type(1) {
-            align-items: flex-end;
-
-            .media {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                border-radius: 500px 500px 500px 500px;
-                padding: 12px 24px 12px 24px;
-                background: var(--primary-background-color) !important;
-                background-clip: padding-box;
-                color: #ffffff;
-                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
-                transition: 0.5s;
-            }
-
-            button,
-            .button {
-                display: flex;
-                align-items: center;
-                margin: 0;
-                padding: 12px 24px 12px 24px;
-                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                border-radius: 500px 500px 500px 500px;
-                background: rgba(255, 255, 255, 0.75) !important;
-                background-clip: padding-box;
-                height: fit-content;
-                line-height: calc(0.75rem * 1.5);
-                backface-visibility: hidden;
-                color: var(--main-color) !important;
-                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
-                transition: 0.5s;
-
-                .clip {
-                    display: inline-block;
-                    overflow: hidden;
-                    box-sizing: content-box;
-                    height: calc(0.75rem * 1.5);
-
-                    .scrollable div {
-                        display: flex;
-                        align-items: center;
-                        font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-                        transform: rotate(0.03deg);
-                        line-height: 0.75rem !important;
-                        height: calc(0.75rem * 1.5);
-                    }
-                }
-
-                .icon {
-                    color: #ffee00;
-                }
-
-                > :not(.wrap) {
-                    margin: 0px 8px 0px 0px !important;
-                }
-            }
-
-            span.wrap {
-                display: flex;
-                margin: 0;
-                height: calc(0.75rem * 1.5);
-            }
-        }
     }
 }
 
@@ -1078,8 +1097,8 @@ label .scrollable > div {
     position: absolute;
     left: 0;
     top: 0;
-    margin: 16px 0px 0px 0px;
-    padding: calc(env(safe-area-inset-top, 0px) + 16px) 0px 0px calc(env(safe-area-inset-left, 0px) + 32px);
+    margin: 0;
+    padding: calc(env(safe-area-inset-top, 0px) + 32px) 0px 0px calc(env(safe-area-inset-left, 0px) + 32px);
     touch-action: none;
 }
 
@@ -1088,8 +1107,8 @@ label .scrollable > div {
     position: absolute;
     right: 0;
     top: 0;
-    margin: 16px 0px 0px 0px;
-    padding: calc(env(safe-area-inset-top, 0px) + 16px) calc(env(safe-area-inset-right, 0px) + 32px) 0px 0px;
+    margin: 0;
+    padding: calc(env(safe-area-inset-top, 0px) + 32px) calc(env(safe-area-inset-right, 0px) + 32px) 0px 0px;
     touch-action: none;
 }
 
@@ -1106,6 +1125,7 @@ label .scrollable > div {
     background-clip: padding-box;
     height: initial;
     color: var(--accent-color) !important;
+    transition: 0.5s;
 
     > span {
         margin: 0 !important;
@@ -1175,263 +1195,239 @@ label .scrollable > div {
                     margin: 0;
                     padding: 8px 8px 8px 8px;
 
-                    > .media > .media-content > .content {
-                        > button,
-                        > .button {
-                            display: flex;
-                            align-items: center;
+                    > .level {
+                        margin: -8px -8px -8px -8px;
+                        flex-direction: row;
+
+                        > .level-item {
                             margin: 0;
-                            padding: 16px 32px 16px 32px;
-                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                            border-radius: 500px 500px 500px 500px;
-                            background: rgba(255, 255, 255, 0.75);
-                            background-clip: padding-box;
-                            height: fit-content;
-                            line-height: calc(0.75rem * 1.5);
-                            backface-visibility: hidden;
-                            color: var(--main-color);
-                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                            backdrop-filter: blur(4px) !important;
-                            -webkit-backdrop-filter: blur(4px) !important;
-                            transition: 0.5s;
+                            padding: 8px 8px 8px 8px;
 
-                            .clip {
-                                display: inline-block;
-                                overflow: hidden;
-                                box-sizing: content-box;
-                                height: calc(0.75rem * 1.5);
+                            > .level {
+                                margin: -8px -8px -8px -8px;
+                                flex-direction: column;
 
-                                .scrollable div {
-                                    display: flex;
-                                    align-items: center;
-                                    font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-                                    transform: rotate(0.03deg);
-                                    line-height: 0.75rem !important;
-                                    height: calc(0.75rem * 1.5);
-                                }
-                            }
+                                > .level-item {
+                                    margin: 0;
+                                    padding: 8px 8px 8px 8px;
 
-                            > .icon {
-                                color: #ffee00;
-                            }
-
-                            > span.wrap + .icon:last-of-type {
-                                color: var(--main-color);
-                                transition: 0.5s;
-                            }
-
-                            > span:not(:first-child) {
-                                margin: 0px 0px 0px 8px !important;
-                            }
-
-                            > .icon:last-child:not(:first-child) {
-                                margin: 0px 0px 0px 8px !important;
-                            }
-                        }
-
-                        > button.is-primary,
-                        > .button.is-primary {
-                            background: var(--primary-background-color) !important;
-                            color: #ffffff !important;
-                            transition: 0.5s;
-
-                            .icon {
-                                color: #ffffff !important;
-                            }
-                        }
-
-                        span.wrap {
-                            display: flex;
-                            margin: 0;
-                            height: calc(0.75rem * 1.5);
-                        }
-                    }
-
-                    > .level > .level-item {
-                        > .level {
-                            margin: -8px -8px -8px -8px;
-                            flex-direction: row;
-                            justify-content: center;
-                            align-items: center;
-
-                            > .level-item {
-                                margin: 0;
-                                padding: 8px 8px 8px 8px;
-
-                                > .media > .media-content > .content {
-                                    > button,
-                                    > .button {
-                                        display: flex;
-                                        align-items: center;
-                                        margin: 0;
-                                        padding: 16px 32px 16px 32px;
-                                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                        border-radius: 500px 500px 500px 500px;
-                                        background: rgba(255, 255, 255, 0.75);
-                                        background-clip: padding-box;
-                                        height: fit-content;
-                                        line-height: calc(0.75rem * 1.5);
-                                        backface-visibility: hidden;
-                                        color: var(--main-color);
-                                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                                        backdrop-filter: blur(4px) !important;
-                                        -webkit-backdrop-filter: blur(4px) !important;
-                                        transition: 0.5s;
-
-                                        .clip {
-                                            display: inline-block;
-                                            overflow: hidden;
-                                            box-sizing: content-box;
-                                            height: calc(0.75rem * 1.5);
-
-                                            .scrollable div {
-                                                display: flex;
-                                                align-items: center;
-                                                font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-                                                transform: rotate(0.03deg);
-                                                line-height: 0.75rem !important;
-                                                height: calc(0.75rem * 1.5);
-                                            }
-                                        }
-
-                                        > .icon {
-                                            color: var(--accent-color);
-                                        }
-
-                                        > span.wrap + .icon:last-of-type {
-                                            color: var(--main-color);
-                                            transition: 0.5s;
-                                        }
-
-                                        > span:not(:first-child) {
-                                            margin: 0px 0px 0px 8px !important;
-                                        }
-
-                                        > .icon:last-child:not(:first-child) {
-                                            margin: 0px 0px 0px 8px !important;
-                                        }
-                                    }
-
-                                    > button.is-primary,
-                                    > .button.is-primary {
-                                        background: var(--primary-background-color) !important;
-                                        color: #ffffff !important;
-                                        transition: 0.5s;
-
-                                        .icon {
-                                            color: #ffffff !important;
-                                        }
-                                    }
-
-                                    span.wrap {
-                                        display: flex;
-                                        margin: 0;
-                                        height: calc(0.75rem * 1.5);
-                                    }
-                                }
-
-                                > .level > .level-item {
                                     button,
                                     .button {
                                         margin: 0px;
                                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                        border-radius: 290486px !important;
-                                        padding: 16px !important;
+                                        border-radius: 290486px;
+                                        padding: 16px;
                                         background: rgba(255, 255, 255, 0.75) !important;
-                                        background-clip: padding-box !important;
-                                        /*background: #f5f5f5;
-                                        background: linear-gradient(145deg, #ffffff, #dddddd);
-                                        box-shadow: 10px 10px 30px #d0d0d0,
-                                            -10px -10px 30px #ffffff;*/
-                                        height: initial !important;
-                                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                                        backdrop-filter: blur(4px) !important;
-                                        -webkit-backdrop-filter: blur(4px) !important;
+                                        background-clip: padding-box;
+                                        height: initial;
+                                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                        backdrop-filter: blur(4px);
+                                        -webkit-backdrop-filter: blur(4px);
+
+                                        span {
+                                            margin: 0 !important;
+                                            width: 1rem !important;
+                                            height: 1rem !important;
+                                            color: var(--accent-color);
+                                        }
+                                    }
+
+                                    button.is-primary,
+                                    .button.is-primary {
+                                        background-color: var(--primary-background-color) !important;
+                                        transition: 0.5s;
+
+                                        span.wrap,
+                                        .icon {
+                                            color: #ffffff !important;
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        > .media {
-                            display: flex;
-                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                            border-radius: 16px;
-                            padding: 16px;
-                            background: rgba(255, 255, 255, 0.75);
-                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                            backdrop-filter: blur(4px) !important;
-                            -webkit-backdrop-filter: blur(4px) !important;
-                            overflow: hidden;
-                            justify-content: center;
-                            align-items: center;
-                            width: 100%;
-                            height: fit-content;
-
-                            > .media-content {
-                                position: relative;
+                            .field {
+                                margin: 0;
+                                padding: 0px -8px 0px -8px;
                                 display: flex;
-                                border-radius: 16px;
-                                overflow: hidden !important;
+                                align-items: center;
+                                justify-content: start;
 
-                                > .content {
+                                label.checkbox {
                                     display: flex;
-                                    flex-direction: column;
-                                    justify-content: center;
                                     align-items: center;
-                                    padding: 16px;
-                                }
+                                    margin: 0;
+                                    padding: 16px 32px 16px 32px;
+                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                    border-radius: 500px 500px 500px 500px;
+                                    background: rgba(255, 255, 255, 0.75) !important;
+                                    background-clip: padding-box;
+                                    height: fit-content;
+                                    line-height: calc(0.75rem * 1.5);
+                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                    backdrop-filter: blur(4px);
+                                    -webkit-backdrop-filter: blur(4px);
 
-                                > figure {
-                                    position: relative;
-                                    width: 256px;
-                                    height: 256px;
+                                    span:last-of-type {
+                                        height: calc(0.75rem * 1.5);
+                                    }
 
-                                    > picture > img {
-                                        position: absolute;
-                                        object-fit: cover;
-                                        width: 256px;
-                                        height: 256px;
+                                    .clip {
+                                        display: inline-block;
+                                        overflow: hidden;
+                                        box-sizing: content-box;
+                                        height: calc(0.75rem * 1.5);
+
+                                        .scrollable div {
+                                            display: flex;
+                                            align-items: center;
+                                            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+                                            transform: rotate(0.03deg);
+                                            line-height: 0.75rem !important;
+                                            height: calc(0.75rem * 1.5);
+                                            white-space: nowrap;
+                                            color: var(--main-color);
+                                            transition: 0.5s;
+                                        }
                                     }
                                 }
+                            }
 
-                                > .level {
-                                    z-index: 1;
-                                    position: absolute;
+                            > .media {
+                                position: relative;
+                                margin: 0px 0px 16px 0px;
+                                border: 0px solid rgba(255, 255, 255, 0.1) !important;
+                                border-radius: 16px;
+                                padding: 16px;
+                                background: rgba(255, 255, 255, 0.75);
+                                /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                                backdrop-filter: blur(4px) !important;
+                                -webkit-backdrop-filter: blur(4px) !important;*/
+                                justify-content: center;
+                                align-items: center;
+                                width: 100%;
+                                height: fit-content;
+
+                                > .media-content {
+                                    position: relative;
                                     display: flex;
-                                    flex-direction: column;
-                                    justify-content: space-between;
-                                    align-items: center;
-                                    width: 256px;
-                                    height: 256px;
+                                    border-radius: 16px;
+                                    overflow: hidden !important;
 
-                                    > .level-item:first-child:not(:last-child) {
+                                    > .content {
                                         display: flex;
-                                        margin: 0;
-                                        padding: 16px 16px 0px 16px;
                                         flex-direction: column;
-                                        justify-content: flex-start;
+                                        justify-content: center;
                                         align-items: center;
+                                        padding: 16px;
+                                    }
+
+                                    > figure {
+                                        position: relative;
                                         width: 100%;
 
-                                        > .level {
-                                            display: flex;
-                                            flex-direction: row;
-                                            justify-content: space-between;
-                                            align-items: center;
+                                        > picture {
+                                            position: absolute;
                                             width: 100%;
+                                            height: 100%;
 
-                                            > .level-item:first-child {
+                                            img {
+                                                position: absolute;
+                                                object-fit: cover;
+                                                width: 100%;
+                                                height: 100%;
+                                            }
+                                        }
+
+                                        > div {
+                                            display: flex;
+                                            width: 100%;
+                                            height: 100%;
+                                            /*background: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));*/
+                                            flex-direction: column;
+                                            justify-content: center;
+                                            align-items: center;
+
+                                            > div:first-child {
                                                 display: flex;
+                                                margin: 0;
+                                                padding: 16px;
+                                                width: 100%;
+                                                height: 100%;
+                                                overflow-x: hidden;
+                                                overflow-y: hidden;
                                                 flex-direction: column;
-                                                justify-content: flex-start;
-                                                align-items: flex-start;
+                                                justify-content: center;
+                                                align-items: center;
+
+                                                > div {
+                                                    display: flex;
+                                                    top: 0;
+                                                    width: 256px;
+                                                    height: 256px;
+                                                    overflow-x: hidden;
+                                                    overflow-y: auto;
+                                                    flex-direction: column;
+                                                    justify-content: center;
+                                                    align-items: center;
+
+                                                    > div {
+                                                        top: 0;
+                                                        margin: auto !important;
+                                                        overflow-x: hidden;
+                                                        overflow-y: auto;
+                                                        width: 100%;
+                                                        height: fit-content;
+
+                                                        > div {
+                                                            transform: rotate(0.03deg);
+
+                                                            > span {
+                                                                color: var(--main-color);
+                                                                font-family: "Ropa Sans", "M PLUS Rounded 1c",
+                                                                    sans-serif;
+                                                                transition: 0.5s;
+                                                            }
+                                                        }
+
+                                                        > div:first-child {
+                                                            margin: 0;
+                                                            padding: 0;
+                                                            /*display: inline-block;
+                                                            border: 4px solid rgba(255, 255, 255, 1) !important;
+                                                            padding: 8px 16px 8px 16px;
+                                                            border-radius: 500px 500px 500px 0px;*/
+                                                            text-align: center;
+                                                        }
+
+                                                        > div:last-child {
+                                                            margin: 0;
+                                                            padding: 8px 0px 0px 0px;
+                                                            display: flex;
+                                                            justify-content: center;
+                                                            align-items: center;
+                                                            line-height: 1rem;
+
+                                                            > span {
+                                                                color: var(--accent-color);
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
 
-                                            > .level-item:last-child {
-                                                display: flex;
-                                                flex-direction: column;
-                                                justify-content: flex-start;
-                                                align-items: flex-end;
+                                            > div:last-child:not(:first-child) {
+                                                margin: 0;
+                                                padding: 0;
+
+                                                > .level {
+                                                    margin: -8px -8px -8px -8px;
+                                                    flex-direction: row;
+
+                                                    > .level-item {
+                                                        margin: 0;
+                                                        padding: 8px 8px 24px 8px;
+                                                    }
+                                                }
 
                                                 button,
                                                 .button {
@@ -1441,363 +1437,305 @@ label .scrollable > div {
                                                     padding: 16px !important;
                                                     background: rgba(255, 255, 255, 0.75) !important;
                                                     background-clip: padding-box !important;
-                                                    /*background: #f5f5f5;
-                                                    background: linear-gradient(145deg, #ffffff, #dddddd);
-                                                    box-shadow: 10px 10px 30px #d0d0d0,
-                                                        -10px -10px 30px #ffffff;*/
                                                     height: initial !important;
                                                     box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                                     backdrop-filter: blur(4px) !important;
                                                     -webkit-backdrop-filter: blur(4px) !important;
 
                                                     .icon {
+                                                        margin: 0 !important;
+                                                        width: 1rem !important;
+                                                        height: 1rem !important;
                                                         color: var(--accent-color);
+                                                    }
+                                                }
+
+                                                button.is-primary,
+                                                .button.is-primary {
+                                                    background-color: var(--primary-background-color) !important;
+                                                    transition: 0.5s;
+
+                                                    span.wrap,
+                                                    .icon {
+                                                        color: #ffffff !important;
                                                     }
                                                 }
                                             }
                                         }
                                     }
 
-                                    > .level-item:last-child {
+                                    > .level {
+                                        z-index: 1;
+                                        position: absolute;
                                         display: flex;
-                                        margin: 0px 0px 16px 0px;
                                         flex-direction: column;
-                                        justify-content: flex-end;
+                                        justify-content: space-between;
                                         align-items: center;
+                                        width: 256px;
+                                        height: 256px;
 
-                                        span.wrap {
+                                        > .level-item:first-child:not(:last-child) {
                                             display: flex;
                                             margin: 0;
-                                            height: calc(0.75rem * 1.5);
-                                        }
-
-                                        button,
-                                        .button {
-                                            .clip {
-                                                display: inline-block;
-                                                overflow: hidden;
-                                                box-sizing: content-box;
-                                                height: calc(0.75rem * 1.5);
-
-                                                .scrollable div {
-                                                    display: flex;
-                                                    align-items: center;
-                                                    font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-                                                    transform: rotate(0.03deg);
-                                                    line-height: 0.75rem !important;
-                                                    height: calc(0.75rem * 1.5);
-                                                }
-                                            }
-
-                                            .icon {
-                                                color: var(--accent-color);
-                                            }
-
-                                            span.wrap + .icon:last-of-type {
-                                                color: var(--accent-color);
-                                            }
-
-                                            span:not(:first-child) {
-                                                margin: 0px 0px 0px 8px;
-                                            }
-
-                                            .icon:last-child:not(:first-child) {
-                                                margin: 0px 0px 0px 8px;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                > .level-item:last-child:not(:first-child) > .level > .level-item button {
-                    margin: 0px;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                    border-radius: 290486px !important;
-                    padding: 16px !important;
-                    background: rgba(255, 255, 255, 0.75) !important;
-                    background-clip: padding-box !important;
-                    /*background: #f5f5f5;
-                    background: linear-gradient(145deg, #ffffff, #dddddd);
-                    box-shadow: 10px 10px 30px #d0d0d0,
-                        -10px -10px 30px #ffffff;*/
-                    height: initial !important;
-                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                    backdrop-filter: blur(4px) !important;
-                    -webkit-backdrop-filter: blur(4px) !important;
-                }
-            }
-
-            > .media {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
-
-                > .media-content {
-                    position: relative;
-
-                    > .image > button {
-                        margin: 0;
-                        border: 0px solid transparent;
-                        padding: 0;
-                        background: transparent;
-                    }
-
-                    > .content {
-                        > button,
-                        > .button {
-                            display: flex;
-                            align-items: center;
-                            margin: 0;
-                            padding: 16px 32px 16px 32px;
-                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                            border-radius: 500px 500px 500px 500px;
-                            background: rgba(255, 255, 255, 0.75);
-                            background-clip: padding-box;
-                            height: fit-content;
-                            line-height: calc(0.75rem * 1.5);
-                            backface-visibility: hidden;
-                            color: var(--main-color);
-                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                            backdrop-filter: blur(4px) !important;
-                            -webkit-backdrop-filter: blur(4px) !important;
-                            transition: 0.5s;
-
-                            .clip {
-                                display: inline-block;
-                                overflow: hidden;
-                                box-sizing: content-box;
-                                height: calc(0.75rem * 1.5);
-
-                                .scrollable div {
-                                    display: flex;
-                                    align-items: center;
-                                    font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-                                    transform: rotate(0.03deg);
-                                    line-height: 0.75rem !important;
-                                    height: calc(0.75rem * 1.5);
-                                }
-                            }
-
-                            > .icon {
-                                color: var(--accent-color);
-                            }
-
-                            > span.wrap + .icon:last-of-type {
-                                color: var(--main-color);
-                                transition: 0.5s;
-                            }
-
-                            > span:not(:first-child) {
-                                margin: 0px 0px 0px 8px !important;
-                            }
-
-                            > .icon:last-child:not(:first-child) {
-                                margin: 0px 0px 0px 8px !important;
-                            }
-                        }
-
-                        > button.is-primary,
-                        > .button.is-primary {
-                            background: var(--primary-background-color) !important;
-                            color: #ffffff !important;
-                            transition: 0.5s;
-
-                            .icon {
-                                color: #ffffff !important;
-                            }
-                        }
-
-                        span.wrap {
-                            display: flex;
-                            margin: 0;
-                            height: calc(0.75rem * 1.5);
-                        }
-
-                        > .level {
-                            display: flex;
-                            margin: -8px 0px -8px 0px;
-                            flex-direction: column;
-                            justify-content: center;
-                            align-items: center;
-
-                            > .level-item {
-                                display: flex;
-                                margin: 8px 0px 8px 0px;
-                                width: 100%;
-                                justify-content: center;
-
-                                > .level {
-                                    display: flex;
-                                    margin: -8px;
-                                    flex-direction: row;
-                                    justify-content: center;
-                                    align-items: center;
-                                    width: 100%;
-
-                                    > .level-item {
-                                        display: flex;
-                                        margin: 8px;
-                                        width: calc(100% - 16px);
-                                        justify-content: center;
-
-                                        > .level {
-                                            margin: -8px;
+                                            padding: 16px 16px 0px 16px;
+                                            flex-direction: column;
                                             justify-content: flex-start;
-                                            flex-wrap: wrap;
+                                            align-items: center;
                                             width: 100%;
 
-                                            > .level-item {
+                                            > .level {
                                                 display: flex;
-                                                margin: 8px;
-                                                justify-content: flex-start;
-                                                width: calc(50% - 16px);
+                                                flex-direction: row;
+                                                justify-content: space-between;
+                                                align-items: center;
+                                                width: 100%;
+
+                                                > .level-item:first-child {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    justify-content: flex-start;
+                                                    align-items: flex-start;
+                                                }
+
+                                                > .level-item:last-child {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    justify-content: flex-start;
+                                                    align-items: flex-end;
+
+                                                    button,
+                                                    .button {
+                                                        margin: 0px;
+                                                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                                        border-radius: 290486px !important;
+                                                        padding: 16px !important;
+                                                        background: rgba(255, 255, 255, 0.75) !important;
+                                                        background-clip: padding-box !important;
+                                                        /*background: #f5f5f5;
+                                                        background: linear-gradient(145deg, #ffffff, #dddddd);
+                                                        box-shadow: 10px 10px 30px #d0d0d0,
+                                                            -10px -10px 30px #ffffff;*/
+                                                        height: initial !important;
+                                                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                                                        backdrop-filter: blur(4px) !important;
+                                                        -webkit-backdrop-filter: blur(4px) !important;
+
+                                                        .icon {
+                                                            color: var(--accent-color);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        > .level-item:last-child {
+                                            display: flex;
+                                            margin: 0px 0px 16px 0px;
+                                            flex-direction: column;
+                                            justify-content: flex-end;
+                                            align-items: center;
+
+                                            span.wrap {
+                                                display: flex;
+                                                margin: 0;
+                                                height: calc(0.75rem * 1.5);
+                                            }
+
+                                            button,
+                                            .button {
+                                                .clip {
+                                                    display: inline-block;
+                                                    overflow: hidden;
+                                                    box-sizing: content-box;
+                                                    height: calc(0.75rem * 1.5);
+
+                                                    .scrollable div {
+                                                        display: flex;
+                                                        align-items: center;
+                                                        font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+                                                        transform: rotate(0.03deg);
+                                                        line-height: 0.75rem !important;
+                                                        height: calc(0.75rem * 1.5);
+                                                    }
+                                                }
+
+                                                .icon {
+                                                    color: var(--accent-color);
+                                                }
+
+                                                span.wrap + .icon:last-of-type {
+                                                    color: var(--accent-color);
+                                                }
+
+                                                span:not(:first-child) {
+                                                    margin: 0px 0px 0px 8px;
+                                                }
+
+                                                .icon:last-child:not(:first-child) {
+                                                    margin: 0px 0px 0px 8px;
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            > .level-item:not(:first-child) {
-                                justify-content: flex-start;
-
-                                > .level > .level-item {
-                                    justify-content: flex-start;
-                                }
+                            > .media:before {
+                                content: "";
+                                z-index: 1;
+                                position: absolute;
+                                top: 100%;
+                                left: 50%;
+                                margin-left: -16px;
+                                border: 16px solid transparent;
+                                border-top: 16px solid rgba(255, 255, 255, 0.75);
                             }
                         }
                     }
 
-                    .level,
-                    .level > .level-item {
-                        margin: 0;
-                        padding: 0;
+                    > .media > .media-content > .content .icon {
+                        color: var(--accent-color);
+                        transition: 0.5s;
                     }
+                }
 
-                    .level > .level-item > .level > .level-item {
-                        > button {
-                            margin: 0px;
-                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                            border-radius: 290486px !important;
-                            padding: 16px !important;
-                            background: rgba(255, 255, 255, 0.75) !important;
-                            background-clip: padding-box !important;
-                            height: initial !important;
-                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                            backdrop-filter: blur(4px) !important;
-                            -webkit-backdrop-filter: blur(4px) !important;
-                            color: var(--accent-color) !important;
-                        }
+                > .level-item:last-child:not(:first-child) > .level > .level-item {
+                    button {
+                        margin: 0px;
+                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                        border-radius: 290486px;
+                        padding: 16px;
+                        background: rgba(255, 255, 255, 0.75) !important;
+                        background-clip: padding-box;
+                        height: initial;
+                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                        backdrop-filter: blur(4px);
+                        -webkit-backdrop-filter: blur(4px);
 
-                        > .level > .level-item {
-                            > .wrap > button {
-                                margin: 0px;
-                                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                border-radius: 290486px;
-                                padding: 16px 32px 16px 32px;
-                                background: rgba(255, 255, 255, 0.75) !important;
-                                background-clip: padding-box;
-                                height: initial;
-                                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                                backdrop-filter: blur(4px);
-                                -webkit-backdrop-filter: blur(4px);
-                            }
-
-                            button {
-                                span.wrap {
-                                    display: flex;
-                                    margin: 0;
-                                    height: calc(0.75rem * 1.5);
-                                }
-
-                                .clip {
-                                    display: inline-block;
-                                    overflow: hidden;
-                                    box-sizing: content-box;
-                                    height: calc(0.75rem * 1.5);
-
-                                    .scrollable div {
-                                        display: flex;
-                                        align-items: center;
-                                        font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
-                                        transform: rotate(0.03deg);
-                                        line-height: 0.75rem !important;
-                                        height: calc(0.75rem * 1.5);
-                                        color: var(--main-color);
-                                        transition: 0.5s;
-                                    }
-                                }
-
-                                .icon {
-                                    color: var(--main-color);
-                                    transition: 0.5s;
-                                }
-
-                                span:not(:first-child) {
-                                    margin: 0px 0px 0px 8px !important;
-                                }
-                            }
-
-                            .badge {
-                                padding: 4px 8px 4px 8px !important;
-                                border-radius: 500px 500px 500px 500px;
-                                background: var(--accent-color);
-                                color: #ffffff;
-                                font-size: 0.75rem;
-                                line-height: 0.75rem !important;
-                            }
+                        span {
+                            margin: 0 !important;
+                            width: 1rem !important;
+                            height: 1rem !important;
+                            color: var(--accent-color);
                         }
                     }
 
-                    > span.icon {
-                        color: #ffee00;
-                    }
+                    button.is-primary,
+                    .button.is-primary {
+                        background-color: var(--primary-background-color) !important;
+                        transition: 0.5s;
 
-                    > .badge {
-                        position: absolute;
-                        left: auto;
-                        top: 0;
-                        right: 0;
-                        bottom: auto;
-                        margin: 0;
-                        padding: 4px 8px 4px 8px !important;
-                        border-radius: 500px 500px 500px 500px;
-                        background: #ffee00;
-                        color: #ffffff;
-                        font-size: 0.75rem;
-                        line-height: 0.75rem !important;
-                        width: fit-content;
-                        height: fit-content;
+                        span.wrap,
+                        .icon {
+                            color: #ffffff !important;
+                        }
                     }
                 }
             }
 
-            .media {
-                > .media-content > .content .badge {
-                    padding: 4px 8px 4px 8px !important;
-                    border-radius: 500px 500px 500px 500px;
-                    background: #ffee00;
-                    color: #ffffff;
-                    font-size: 0.75rem;
-                    line-height: 0.75rem !important;
+            > .media > .media-content {
+                > .image > button {
+                    margin: 0;
+                    border: 0px solid transparent;
+                    padding: 0;
+                    background: transparent;
                 }
 
-                > .wrap {
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
+                > .content {
+                    > button,
+                    > .button {
+                        display: flex;
+                        align-items: center;
+                        margin: 0;
+                        padding: 16px 32px 16px 32px;
+                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                        border-radius: 500px 500px 500px 500px;
+                        background: rgba(255, 255, 255, 0.75) !important;
+                        background-clip: padding-box;
+                        height: fit-content;
+                        line-height: calc(0.75rem * 1.5);
+                        backface-visibility: hidden;
+                        color: #000000;
+                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                        backdrop-filter: blur(4px) !important;
+                        -webkit-backdrop-filter: blur(4px) !important;
+
+                        .clip {
+                            display: inline-block;
+                            overflow: hidden;
+                            box-sizing: content-box;
+                            height: calc(0.75rem * 1.5);
+
+                            .scrollable div {
+                                display: flex;
+                                align-items: center;
+                                font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+                                transform: rotate(0.03deg);
+                                line-height: 0.75rem !important;
+                                height: calc(0.75rem * 1.5);
+                            }
+                        }
+
+                        .icon {
+                            color: var(--accent-color);
+                            transition: 0.5s;
+                        }
+
+                        span.wrap + .icon:last-of-type {
+                            color: var(--main-color);
+                            transition: 0.5s;
+                        }
+
+                        .icon:first-child + div {
+                            margin: 0px 8px 0px 0px;
+                        }
+
+                        span:not(:first-child) {
+                            margin: 0px 0px 0px 8px;
+                        }
+                    }
+
+                    > button.is-primary,
+                    > .button.is-primary {
+                        background-color: var(--primary-background-color) !important;
+                        transition: 0.5s;
+
+                        span.wrap,
+                        .icon {
+                            color: #ffffff !important;
+                        }
+                    }
+
+                    span.wrap {
+                        display: flex;
+                        margin: 0;
+                        height: calc(0.75rem * 1.5);
+                        color: var(--main-color) !important;
+                        transition: 0.5s;
+                    }
                 }
             }
         }
 
+        .level-item > .level > .level-item a .icon {
+            margin: 0px;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 290486px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.75) !important;
+            background-clip: padding-box;
+            color: var(--accent-color);
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: 0.5s;
+        }
+
         h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 2.0rem;
             font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-            line-height: 1.5rem;
+            line-height: 2.0rem;
             color: var(--main-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
@@ -1814,12 +1752,13 @@ label .scrollable > div {
         }
 
         h1 + h2 {
-            margin: 8px 0px 0px 0px;
+            margin: 12px 0px 0px 0px;
         }
 
         svg g {
             > g:nth-child(odd) > path {
                 fill: var(--accent-color);
+                transition: 0.5s;
             }
 
             > g:nth-child(even) > path {
@@ -1835,7 +1774,7 @@ label .scrollable > div {
         p {
             font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
             font-size: 1.25rem;
-            line-height: 2rem;
+            line-height: 2.5rem;
             color: var(--foreground-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
@@ -1863,66 +1802,11 @@ label .scrollable > div {
 
         .button {
             span.icon {
-                margin: 0 !important;
-                width: 1rem !important;
-                height: 1rem !important;
+                margin: 0;
             }
 
             span.icon + span.wrap {
                 margin: 0px 0px 0px 8px;
-            }
-        }
-
-        .level-item > .level {
-            > .level-item:first-of-type {
-                button {
-                    margin: 0px;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                    border-radius: 290486px;
-                    padding: 16px 32px 16px 32px !important;
-                    background: rgba(255, 255, 255, 0.75) !important;
-                    background-clip: padding-box !important;
-                    height: initial !important;
-                    color: var(--main-color) !important;
-                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                    backdrop-filter: blur(4px) !important;
-                    -webkit-backdrop-filter: blur(4px) !important;
-                    transition: 0.5s;
-                }
-
-                button.is-primary {
-                    background: var(--primary-background-color) !important;
-                    color: #ffffff !important;
-                    transition: 0.5s;
-
-                    .icon {
-                        color: #ffffff !important;
-                    }
-                }
-            }
-
-            > .level-item > .level > .level-item {
-                > .level > .level-item .button .icon {
-                    color: var(--accent-color);
-                }
-
-                a .icon {
-                    margin: 0px;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                    border-radius: 290486px;
-                    padding: 24px;
-                    background: rgba(255, 255, 255, 0.75) !important;
-                    background-clip: padding-box;
-                    color: var(--accent-color);
-                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                    backdrop-filter: blur(4px);
-                    -webkit-backdrop-filter: blur(4px);
-                }
-
-                a.is-primary .icon {
-                    background: rgba(230, 45, 135, 0.75) !important;
-                    color: #ffffff !important;
-                }
             }
         }
     }
@@ -1968,14 +1852,6 @@ label .scrollable > div {
                         }
                     }
 
-                    .columns:first-child {
-                        padding: 0 !important;
-                    }
-
-                    .columns:not(:first-child) {
-                        padding: 16px 0px 0px 0px !important;
-                    }
-
                     .columns {
                         margin: 0;
                         padding: 0;
@@ -1991,7 +1867,7 @@ label .scrollable > div {
                             label.checkbox {
                                 display: flex;
                                 align-items: center;
-                                margin: 0;
+                                margin: 16px 0px 0px 0px;
                                 padding: 16px 32px 16px 32px;
                                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
                                 border-radius: 500px 500px 500px 500px;
@@ -2030,7 +1906,8 @@ label .scrollable > div {
                     }
 
                     .level:nth-last-of-type(1) > .level-item {
-                        padding: 16px 0px;
+                        margin: 16px 0px 0px 0px;
+                        padding: 0;
 
                         > .level {
                             margin: -8px -8px -8px -8px;
@@ -2039,25 +1916,36 @@ label .scrollable > div {
                             > .level-item {
                                 margin: 8px 8px 8px 8px;
                                 padding: 0;
+                            }
+                        }
 
-                                button {
-                                    margin: 0px;
-                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                    border-radius: 290486px;
-                                    padding: 16px !important;
-                                    background: rgba(255, 255, 255, 0.75) !important;
-                                    background-clip: padding-box;
-                                    height: initial;
-                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                                    backdrop-filter: blur(4px);
-                                    -webkit-backdrop-filter: blur(4px);
+                        button {
+                            margin: 0px;
+                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            border-radius: 290486px;
+                            padding: 16px;
+                            background: rgba(255, 255, 255, 0.75) !important;
+                            background-clip: padding-box;
+                            height: initial;
+                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                            backdrop-filter: blur(4px);
+                            -webkit-backdrop-filter: blur(4px);
 
-                                    span {
-                                        margin: 0 !important;
-                                        width: 1rem !important;
-                                        height: 1rem !important;
-                                    }
-                                }
+                            span {
+                                margin: 0 !important;
+                                width: 1rem !important;
+                                height: 1rem !important;
+                            }
+                        }
+
+                        button.is-primary,
+                        .button.is-primary {
+                            background-color: var(--primary-background-color) !important;
+                            transition: 0.5s;
+
+                            span.wrap,
+                            .icon {
+                                color: #ffffff !important;
                             }
                         }
                     }
@@ -2070,6 +1958,11 @@ label .scrollable > div {
 
             .media:nth-of-type(1) .media-left {
                 margin: 0px 8px 0px 0px !important;
+                padding: 0;
+            }
+
+            .media:nth-last-of-type(1) .media-content {
+                margin: -16px 0px 0px 0px;
                 padding: 0;
             }
         }
@@ -2134,7 +2027,44 @@ label .scrollable > div {
                     }
 
                     > .level-item {
-                        button {
+                        margin: 0;
+                        padding: 0;
+
+                        > .level {
+                            display: flex;
+                            margin: 0px -8px 0px -8px;
+                            padding: 0;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: flex-start;
+
+                            > .level-item {
+                                margin: 0;
+                                padding: 0px 8px 0px 8px;
+
+                                button {
+                                    margin: 0px;
+                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                    border-radius: 290486px;
+                                    padding: 10px;
+                                    background: rgba(255, 255, 255, 0.75) !important;
+                                    background-clip: padding-box;
+                                    height: initial;
+                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                    backdrop-filter: blur(4px);
+                                    -webkit-backdrop-filter: blur(4px);
+                                    color: var(--accent-color) !important;
+
+                                    > span {
+                                        margin: 0 !important;
+                                        width: 1rem !important;
+                                        height: 1rem !important;
+                                    }
+                                }
+                            }
+                        }
+
+                        > button {
                             margin: 0px;
                             border: 0px solid rgba(255, 255, 255, 0.5);
                             border-radius: 290486px;
@@ -2221,138 +2151,14 @@ label .scrollable > div {
 }
 
 #input {
-    z-index: 1;
+    z-index: 1 !important;
     position: absolute;
     display: flex;
     flex-direction: column;
 
-    > .columns > .column > .control:last-child {
-        > .level {
-            display: flex;
-            margin: -8px 0px -8px 0px;
-            padding: 0;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-
-            > .level-item {
-                display: block;
-                margin: 8px 0px 8px 0px;
-                padding: 0;
-                width: 100%;
-            }
-
-            > .level-item:first-child:not(:last-child) > .level {
-                display: flex;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-
-                > .level-item {
-                    margin: 0;
-                    padding: 0;
-
-                    button,
-                    .button {
-                        margin: 0px;
-                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                        border-radius: 290486px;
-                        padding: 16px 32px 16px 32px;
-                        background: rgba(255, 255, 255, 0.75) !important;
-                        background-clip: padding-box;
-                        height: initial;
-                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                        backdrop-filter: blur(4px);
-                        -webkit-backdrop-filter: blur(4px);
-
-                        span.wrap {
-                            display: flex;
-                            margin: 0;
-                            height: calc(0.75rem * 1.5);
-                        }
-
-                        .clip {
-                            display: inline-block;
-                            overflow: hidden;
-                            box-sizing: content-box;
-                            height: calc(0.75rem * 1.5);
-
-                            .scrollable div {
-                                display: flex;
-                                align-items: center;
-                                font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-                                transform: rotate(0.03deg);
-                                line-height: 0.75rem !important;
-                                height: calc(0.75rem * 1.5);
-                                color: var(--accent-color);
-                            }
-                        }
-
-                        .icon {
-                            color: var(--accent-color);
-                        }
-
-                        .icon:last-child:not(:first-child) {
-                            margin: 0px 0px 0px 8px;
-                        }
-                    }
-
-                    button.is-primary,
-                    .button.is-primary {
-                        background: var(--primary-background-color) !important;
-                        color: #ffffff !important;
-                        transition: 0.5s;
-
-                        .icon,
-                        .clip .scrollable div {
-                            color: #ffffff !important;
-                        }
-                    }
-                }
-
-                > .level-item:first-child {
-                    display: flex;
-                    margin: 0;
-                    padding: 0;
-                    flex-direction: row;
-                    justify-content: flex-start;
-                    align-items: center;
-                }
-
-                > .level-item:last-child {
-                    display: flex;
-                    margin: 0;
-                    padding: 0;
-                    flex-direction: row;
-                    justify-content: flex-end;
-                    align-items: center;
-                }
-
-                > .level-item:first-child > button,
-                > .level-item:last-child > button {
-                    margin: 0px;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                    border-radius: 290486px;
-                    padding: 16px;
-                    background: rgba(255, 255, 255, 0.75) !important;
-                    background-clip: padding-box;
-                    height: initial;
-                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-                    backdrop-filter: blur(4px);
-                    -webkit-backdrop-filter: blur(4px);
-                    color: var(--accent-color) !important;
-
-                    > span.icon {
-                        margin: 0 !important;
-                        width: 1rem !important;
-                        height: 1rem !important;
-                    }
-                }
-            }
-        }
+    > .columns > .column > .control:last-child .level .level-item {
+        margin: 0;
+        padding: 0;
     }
 
     form .field {
@@ -2365,75 +2171,69 @@ label .scrollable > div {
         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
+
+        .control:nth-of-type(1) {
+            input {
+                border: 0px solid transparent;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                background-color: transparent;
+                box-shadow: none;
+                backface-visibility: hidden;
+                font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                color: var(--main-color);
+                transition: 0.5s;
+                transform: rotate(0.03deg);
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
+
+            input::placeholder {
+                color: var(--placeholder-color);
+                font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                transform: rotate(0.03deg);
+            }
+        }
+
+        .control:nth-of-type(3) {
+            display: flex;
+            align-items: center;
+            padding: 0px 8px 0px 8px;
+
+            span {
+                color: var(--accent-color);
+                font-family: "Alata", sans-serif;
+                transition: 0.5s;
+            }
+        }
+
+        .control:nth-of-type(2) button,
+        .control:nth-of-type(4) button {
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 8px 16px 8px 16px;
+            background-color: transparent;
+            color: var(--accent-color);
+            transition: 0.5s;
+        }
     }
 
     .navbar-item:first-of-type {
-        > .control:first-child {
-            > .level:last-of-type {
+        .control:first-child {
+            .level .is-info {
+                color: #ffffff;
+            }
+
+            .level:last-of-type {
                 display: block;
                 margin: 0px 32px 16px 32px;
                 padding: 0;
-            }
-
-            .level .is-info {
-                color: #ffffff;
             }
         }
 
         .control {
             margin: 0;
             padding: 0;
-        }
-
-        > div > .control {
-            margin: 0;
-            padding: 0px 32px 16px 32px;
-        }
-
-        .control:last-child form .field {
-            .control:nth-of-type(1) {
-                input {
-                    border: 0px solid transparent;
-                    padding-top: 8px;
-                    padding-bottom: 8px;
-                    background-color: transparent;
-                    box-shadow: none;
-                    backface-visibility: hidden;
-                    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-                    color: var(--main-color);
-                    transition: 0.5s;
-                    transform: rotate(0.03deg);
-                    overflow-x: auto;
-                    overflow-y: hidden;
-                }
-
-                input::placeholder {
-                    color: var(--placeholder-color);
-                    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-                    transition: 0.5s;
-                    transform: rotate(0.03deg);
-                }
-            }
-
-            .control:nth-of-type(3) {
-                display: flex;
-                align-items: center;
-                padding: 0px 8px 0px 8px;
-
-                span {
-                    color: var(--accent-color);
-                    font-family: "Alata", sans-serif;
-                }
-            }
-
-            .control:nth-of-type(2) button,
-            .control:nth-of-type(4) button {
-                margin: 0;
-                border: 0px solid transparent;
-                padding: 8px 16px 8px 16px;
-                background-color: transparent;
-                color: var(--accent-color);
-            }
         }
     }
 
@@ -2446,85 +2246,6 @@ label .scrollable > div {
         font-size: 0rem !important;
         line-height: 0 !important;
         pointer-events: none;
-
-        > .column > .control {
-            pointer-events: none;
-            margin: 0;
-            margin: 4px 16px 4px 16px;
-            height: max(16px, 0.75rem);
-            font-size: 0.75rem !important;
-            line-height: 0.75rem !important;
-
-            .level:first-child .level-item {
-                display: flex;
-                justify-content: center;
-
-                .field {
-                    .clip {
-                        margin: 0;
-                        border: 0px solid var(--foreground-color);
-                        padding: 0px;
-                        background-color: transparent;
-                        background-clip: padding-box;
-                        overflow: hidden;
-                        width: 100%;
-                    }
-
-                    .ticker-wrap {
-                        display: flex;
-                        margin: 0;
-                        width: 100%;
-                        -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-                        mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-
-                        .ticker {
-                            transform: translate3d(0%, 0, 0);
-                            animation: ticker 30s linear 0s infinite;
-                            animation-play-state: paused;
-
-                            .item {
-                                padding: 0px 8px;
-                                color: #ffffff;
-                                height: max(16px, 0.75rem);
-                                font-size: 0.75rem !important;
-                                line-height: 1rem !important;
-                            }
-
-                            .media {
-                                margin: 0px -8px 0px -8px;
-                                height: max(16px, 0.75rem);
-
-                                .media-left {
-                                    margin: 0px 8px 0px 8px !important;
-                                }
-
-                                picture img {
-                                    width: 16px;
-                                    height: 16px;
-                                }
-
-                                .media-content {
-                                    margin: 0px 8px 0px 8px;
-
-                                    .content {
-                                        display: flex;
-                                        align-content: center;
-                                        transform: rotate(0.03deg);
-
-                                        span {
-                                            font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-                                            height: min(16px, 0.8rem) !important;
-                                            vertical-align: middle;
-                                            overflow-y: hidden;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -2542,7 +2263,7 @@ label .scrollable > div {
 
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.25s;
+    transition: opacity 0.25s ease;
 }
 
 .fade-enter-from,
@@ -2723,17 +2444,17 @@ label .scrollable > div {
 }
 
 /*.ticker-item-list-enter-active,
-.ticker-item-list-leave-active {
-    transition: all 0.5s ease;
-}*/
+        .ticker-item-list-leave-active {
+            transition: all 0.5s ease;
+        }*/
 
 .ticker-item-list-item {
     transition: all 0.5s ease;
 }
 
 /*.ticker-item-list-move {
-    transition: transform 0.5s ease;
-}*/
+            transition: transform 0.5s ease;
+        }*/
 
 .ticker-item-list-enter-from,
 .ticker-item-list-leave-to {
@@ -2793,6 +2514,18 @@ label .scrollable > div {
     }
 }
 
+@keyframes load {
+    from {
+        opacity: 0;
+        transform: scale3d(1.1, 1.1, 1);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale3d(1, 1, 1);
+    }
+}
+
 @keyframes progress {
     0% {
         background-position: 0px 0px;
@@ -2845,11 +2578,6 @@ label .scrollable > div {
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
-    .overlay::after {
-        background: var(--background-image-2x) 50% 50% repeat;
-        background-size: 100px 100px;
-    }
-
     .progress > .bar {
         background: #ffee00 url("/images/Stripes@2x.png") 50% 50% repeat;
         background-size: 20px 20px;
@@ -2865,6 +2593,11 @@ label .scrollable > div {
         background-size: 20px 20px;
     }
 
+    .blind::after {
+        background: var(--background-image-2x) 50% 50% repeat;
+        background-size: 100px 100px;
+    }
+
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
         background: url("/images/Stripes@2x.png") 50% 50% repeat;
         background-size: 20px 20px;
@@ -2872,11 +2605,6 @@ label .scrollable > div {
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx) {
-    .overlay::after {
-        background: var(--background-image-3x) 50% 50% repeat;
-        background-size: 100px 100px;
-    }
-
     .progress > .bar {
         background: #ffee00 url("/images/Stripes@3x.png") 50% 50% repeat;
         background-size: 20px 20px;
@@ -2892,8 +2620,25 @@ label .scrollable > div {
         background-size: 20px 20px;
     }
 
+    .blind::after {
+        background: var(--background-image-3x) 50% 50% repeat;
+        background-size: 100px 100px;
+    }
+
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
         background: url("/images/Stripes@3x.png") 50% 50% repeat;
         background-size: 20px 20px;
     }
+}
+
+@font-face {
+    font-family: "Gotham";
+    src: url("/fonts/Gotham-Book.woff") format("woff");
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Gotham";
+    src: url("/fonts/Gotham-Bold.woff") format("woff");
+    font-weight: bold;
 }
