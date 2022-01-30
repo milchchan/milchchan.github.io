@@ -452,7 +452,7 @@ label .scrollable > div {
     background-color: transparent;
     /*image-rendering: -moz-crisp-edges;
     image-rendering: pixelated;*/
-    image-rendering: optimizeQuality;
+    image-rendering: auto;
 }
 
 .ticker-wrap {
