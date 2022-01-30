@@ -1757,17 +1757,13 @@ label .scrollable > div {
 
         svg g {
             > g:nth-child(odd) > path {
-                fill: var(--main-color);
-                transition: 0.5s;
-            }
-
-            > g:nth-child(even) > path {
                 fill: var(--accent-color);
                 transition: 0.5s;
             }
 
-            > g:first-child > path {
-                fill: #ffee00 !important;
+            > g:nth-child(even) > path {
+                fill: var(--main-color);
+                transition: 0.5s;
             }
         }
 
