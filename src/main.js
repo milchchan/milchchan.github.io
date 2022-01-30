@@ -3762,8 +3762,18 @@ window.addEventListener("load", event => {
             } else if (window.location.pathname === "/milch") {
                 this.mode = "_milch";
                 this.isRevealed = true;
-            } if (window.location.pathname === "/merku") {
+            } else if (window.location.pathname === "/merku") {
                 this.mode = "_merku";
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/words" || window.location.pathname === "/talk") {
+                this.mode = { words: null, next: null, indexes: [], selected: [], disposable: true };
+                this.next("words", mode.next);
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/learn") {
+                this.isLearning = true;
+            } else if (window.location.pathname === "/likes") {
+                this.mode = { likes: null, next: null, indexes: [], disposable: true };
+                this.next("likes", mode.next, 1);
                 this.isRevealed = true;
             }
 
