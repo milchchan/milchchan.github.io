@@ -2067,7 +2067,7 @@ window.addEventListener("load", event => {
                         const credential = JSON.parse(credentialStorageItem);
 
                         if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
-                            const data = { access_token: credential.accessToken, secret: credential.secret, status: `${status} #${this.character.name} #ミルヒちゃんねる https://milchchan.com/` };
+                            const data = { access_token: credential.accessToken, secret: credential.secret, status: `${status} #${this.character.name} #milchchan https://milchchan.com/` };
                             let response;
 
                             if (image !== null) {
