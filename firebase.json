@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "milchchan/dist",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
