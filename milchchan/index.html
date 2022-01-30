@@ -830,9 +830,15 @@
                                                                     v-bind:disabled="mode.selected.length === 0 || isBlinded || isLoading || isHangingOn"
                                                                     @click="backgroundQueue.unshift({ color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected }); isRevealed = false; mode = null; refresh();"
                                                                     v-cloak>
-                                                                    <span class="icon is-small">
-                                                                        <i class="fas fa-comment"></i>
-                                                                    </span>
+                                                                    <transition name="fade" mode="out-in">
+                                                                        <span class="icon" v-if="isBlinded || isLoading || isHangingOn"
+                                                                            key="processing">
+                                                                            <i class="fas fa-spinner updating"></i>
+                                                                        </span>
+                                                                        <span class="icon" v-else key="ready">
+                                                                            <i class="fas fa-comment"></i>
+                                                                        </span>
+                                                                    </transition>
                                                                 </button>
                                                             </div>
                                                             <div class="level-item">
