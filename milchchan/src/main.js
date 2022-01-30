@@ -3651,6 +3651,8 @@ window.addEventListener("load", event => {
             render: function (ctx, width, height, animation) {
                 const sprites = [];
 
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = "high";
                 ctx.clearRect(0, 0, width, height);
 
                 for (const sprite of animation) {
