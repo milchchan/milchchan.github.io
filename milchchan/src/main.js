@@ -3649,25 +3649,36 @@ window.addEventListener("load", event => {
                 stats.end();
             },
             render: function (ctx, width, height, animation) {
+                const offscreenCanvas = document.createElement("canvas");                
+
+                offscreenCanvas.width = ctx.canvas.width;
+                offscreenCanvas.height = ctx.canvas.height;
+
+                const offscreenContext = offscreenCanvas.getContext("2d");
                 const sprites = [];
 
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = "high";
-                ctx.clearRect(0, 0, width, height);
+                offscreenContext.imageSmoothingEnabled = true;
+                offscreenContext.imageSmoothingQuality = "high";
+                offscreenContext.clearRect(0, 0, width, height);
 
                 for (const sprite of animation) {
                     if (sprite.source in this.cachedImages) {
                         if ("opacity" in sprite) {
-                            ctx.globalAlpha = sprite.opacity;
+                            offscreenContext.globalAlpha = sprite.opacity;
                         } else {
-                            ctx.globalAlpha = 1;
+                            offscreenContext.globalAlpha = 1;
                         }
 
-                        ctx.drawImage(this.cachedImages[sprite.source], sprite.x * window.devicePixelRatio, sprite.y * window.devicePixelRatio, sprite.width * window.devicePixelRatio, sprite.height * window.devicePixelRatio);
+                        offscreenContext.drawImage(this.cachedImages[sprite.source], sprite.x * window.devicePixelRatio, sprite.y * window.devicePixelRatio, sprite.width * window.devicePixelRatio, sprite.height * window.devicePixelRatio);
                     }
 
                     sprites.push(sprite);
                 }
+
+                ctx.clearRect(0, 0, width, height);
+                ctx.drawImage(offscreenCanvas, 0, 0);
+
+                offscreenCanvas.width = offscreenCanvas.height = 0;
 
                 return sprites;
             }
@@ -3891,7 +3902,6 @@ window.addEventListener("load", event => {
                 this.character["alternative"] = alternative;
                 this.sequenceQueue.push(sequence);
             } catch (e) {
-                this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                 console.error(e);
             }
 
