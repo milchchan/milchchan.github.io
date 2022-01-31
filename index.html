@@ -833,9 +833,9 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <h2 v-if="index === 0">今日</h2>
-                                                                    <h2 v-else-if="index === 1">昨日</h2>
-                                                                    <h2 v-else>{{ index }}日前</h2>
+                                                                    <h2 v-if="index === 0">今日の教えた言葉の数</h2>
+                                                                    <h2 v-else-if="index === 1">昨日の教えた言葉の数</h2>
+                                                                    <h2 v-else>{{ index }}日前の教えた言葉の数</h2>
                                                                     <p><span class="is-primary has-text-weight-bold"
                                                                             v-text="mode.words.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)"></span>
                                                                     </p>
