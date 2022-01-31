@@ -706,36 +706,42 @@
                                                                                                 </button>
                                                                                             </transition>
                                                                                         </div>
-                                                                                        <div class="level-item"
-                                                                                            v-if="user !== null && user.providerData.some(x => x.providerId === 'twitter.com')">
-                                                                                            <button
-                                                                                                class="button is-rounded is-size-7"
-                                                                                                type="button"
-                                                                                                v-bind:disabled="user === null || isTweeting === true"
-                                                                                                @click="tweet(typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), ''), 'image' in like && like.image !== null ? like.image.url : null)">
-                                                                                                <transition name="fade"
-                                                                                                    mode="out-in">
-                                                                                                    <span class="icon"
-                                                                                                        v-if="typeof(isTweeting) === 'object'"
-                                                                                                        key="tweeted">
-                                                                                                        <i
-                                                                                                            class="fas fa-check"></i>
-                                                                                                    </span>
-                                                                                                    <span class="icon"
-                                                                                                        v-else-if="isTweeting === true"
-                                                                                                        key="tweeting">
-                                                                                                        <i
-                                                                                                            class="fas fa-spinner updating"></i>
-                                                                                                    </span>
-                                                                                                    <span class="icon"
-                                                                                                        v-else
-                                                                                                        key="ready">
-                                                                                                        <i
-                                                                                                            class="fab fa-twitter"></i>
-                                                                                                    </span>
-                                                                                                </transition>
-                                                                                            </button>
-                                                                                        </div>
+                                                                                        <transition name="fade">
+                                                                                            <div class="level-item"
+                                                                                                v-if="user !== null && user.providerData.some(x => x.providerId === 'twitter.com')">
+                                                                                                <button
+                                                                                                    class="button is-rounded is-size-7"
+                                                                                                    type="button"
+                                                                                                    v-bind:disabled="user === null || isTweeting === true"
+                                                                                                    @click="tweet(typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), ''), 'image' in like && like.image !== null ? like.image.url : null)">
+                                                                                                    <transition
+                                                                                                        name="fade"
+                                                                                                        mode="out-in">
+                                                                                                        <span
+                                                                                                            class="icon"
+                                                                                                            v-if="typeof(isTweeting) === 'object'"
+                                                                                                            key="tweeted">
+                                                                                                            <i
+                                                                                                                class="fas fa-check"></i>
+                                                                                                        </span>
+                                                                                                        <span
+                                                                                                            class="icon"
+                                                                                                            v-else-if="isTweeting === true"
+                                                                                                            key="tweeting">
+                                                                                                            <i
+                                                                                                                class="fas fa-spinner updating"></i>
+                                                                                                        </span>
+                                                                                                        <span
+                                                                                                            class="icon"
+                                                                                                            v-else
+                                                                                                            key="ready">
+                                                                                                            <i
+                                                                                                                class="fab fa-twitter"></i>
+                                                                                                        </span>
+                                                                                                    </transition>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </transition>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -823,8 +829,7 @@
                                                         </transition-group>
                                                     </div>
                                                     <div class="level-item"
-                                                        v-for="(day, index) in range(new Date(), [0])"
-                                                        v-bind:key="day">
+                                                        v-for="(day, index) in range(new Date(), [0])" v-bind:key="day">
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
