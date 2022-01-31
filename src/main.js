@@ -223,6 +223,7 @@ window.addEventListener("load", event => {
                 maxMessages: 10,
                 word: null,
                 words: [],
+                likes: [],
                 tags: [],
                 maxTags: 10,
                 scrollTimeoutID: undefined,
@@ -921,7 +922,7 @@ window.addEventListener("load", event => {
                         if (sequence.length > 0) {
                             this.sequenceQueue.push(sequence);
                         }*/
-                        
+
                         for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
                             if (obj.type === "Message") {
                                 this.notify({ text: obj.text, accent: this.character.alternative.accent, image: this.character.alternative.image });
@@ -949,8 +950,21 @@ window.addEventListener("load", event => {
                 } else {
                     snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(offset), limitToFirst(limit + 1)));
                 }*/
+
                 if (offset === null) {
-                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), limitToLast(limit + 1)));
+                    if (limit === null) {
+                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp')));
+                    } else {
+                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), limitToLast(limit + 1)));
+                    }
+                } else if (typeof (offset) === "object") {
+                    if (limit === null) {
+                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(Math.floor(offset.getTime() / 1000))));
+                    } else {
+                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(Math.floor(offset.getTime() / 1000)), limitToLast(limit + 1)));
+                    }
+                } else if (limit === null) {
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), endAt(offset)));
                 } else {
                     snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), endAt(offset), limitToLast(limit + 1)));
                 }
@@ -963,10 +977,11 @@ window.addEventListener("load", event => {
                     }
 
                     for (const id in dictionary) {
-                        dictionary[id]['id'] = id;
+                        dictionary[id]["id"] = id;
+                        dictionary[id]["date"] = new Date(dictionary[id].timestamp * 1000);
 
                         if ("image" in dictionary[id]) {
-                            dictionary[id]["image"]['url'] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
+                            dictionary[id]["image"]["url"] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
                         }
 
                         data.push(dictionary[id]);
@@ -1007,10 +1022,10 @@ window.addEventListener("load", event => {
                     }
 
                     for (const id in dictionary) {
-                        dictionary[id]['id'] = id;
+                        dictionary[id]["id"] = id;
 
                         if ("image" in dictionary[id]) {
-                            dictionary[id]["image"]['url'] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
+                            dictionary[id]["image"]["url"] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
                         }
 
                         data.push(dictionary[id]);
@@ -1265,7 +1280,7 @@ window.addEventListener("load", event => {
                             const selectedTokens = [];
 
                             for (const word of this.take(shuffle(words), i)) {
-                                if (word.name.indexOf(this.character.name) === -1) {
+                                if (!tokens.includes(word.name) && word.name.indexOf(this.character.name) === -1) {
                                     selectedTokens.push(word.name);
                                 }
                             }
@@ -1937,20 +1952,31 @@ window.addEventListener("load", event => {
                         let maxScore = epsilon;
 
                         for (const key in data) {
-                            if ("tags" in data[key] && data[key].tags.length > 0) {
-                                let termSet = [];
+                            if ("text" in data[key] && Array.isArray(data[key].text)) {
+                                const tokens = data[key].text.reduce((x, y) => {
+                                    if (typeof (y) === "object") {
+                                        x.push(y.name);
+                                    }
 
-                                documents.push({ tokens: data[key].tags, timestamp: data[key].timestamp });
+                                    return x;
+                                }, []);
 
-                                for (const token of data[key].tags) {
-                                    if (!termSet.includes(token)) {
-                                        if (token in inverseDocumentFrequency) {
-                                            inverseDocumentFrequency[token] += 1.0;
-                                        } else {
-                                            inverseDocumentFrequency[token] = 1.0;
+                                if (tokens.length > 0) {
+                                    const document = { tokens: tokens, timestamp: data[key].timestamp };
+                                    const termSet = [];
+
+                                    documents.push(document);
+
+                                    for (const token of document.tokens) {
+                                        if (!termSet.includes(token)) {
+                                            if (token in inverseDocumentFrequency) {
+                                                inverseDocumentFrequency[token] += 1.0;
+                                            } else {
+                                                inverseDocumentFrequency[token] = 1.0;
+                                            }
+
+                                            termSet.push(token);
                                         }
-
-                                        termSet.push(token);
                                     }
                                 }
                             }
@@ -1990,7 +2016,7 @@ window.addEventListener("load", event => {
                             for (const key in tf) {
                                 tf[key] /= document.tokens.length;
 
-                                if (!(key in scoreDictionary)) {
+                                if (key in scoreDictionary === false) {
                                     scoreDictionary[key] = 0.0;
                                 }
                             }
@@ -2242,6 +2268,15 @@ window.addEventListener("load", event => {
                     }
                 });
             },
+            range: function (date, days) {
+                const collection = [];
+
+                for (const day of days) {
+                    collection.push(new Date(new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()).getTime() + day * 24 * 60 * 60 * 1000));
+                }
+
+                return collection;
+            },
             arrange: function (collection, limit) {
                 let rows = [];
                 let columns = [];
@@ -2269,6 +2304,27 @@ window.addEventListener("load", event => {
                 }
 
                 return collection;
+            },
+            reverse: function (collection) {
+                return [].concat(collection).reverse();
+            },
+            standardDeviation: function (collection) {
+                let sum = 0.0;
+                let variance = 0.0;
+
+                for (const x of collection) {
+                    sum += x;
+                }
+
+                const average = sum / collection.length;
+
+                for (const x of collection) {
+                    variance += (x - average) * (x - average);
+                }
+
+                variance /= collection.length;
+
+                return Math.sqrt(variance);
             },
             prepare: function (sequences, state = null, selectedSequences = null) {
                 function _random(min, max) {
@@ -3649,7 +3705,7 @@ window.addEventListener("load", event => {
                 stats.end();
             },
             render: function (ctx, width, height, animation) {
-                const offscreenCanvas = document.createElement("canvas");                
+                const offscreenCanvas = document.createElement("canvas");
 
                 offscreenCanvas.width = ctx.canvas.width;
                 offscreenCanvas.height = ctx.canvas.height;
@@ -4120,6 +4176,45 @@ window.addEventListener("load", event => {
                     }
                 }
             });
+            onValue(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(100)), snapshot => {
+                if (snapshot.exists()) {
+                    const likes = snapshot.val();
+                    let isUpdated = false;
+
+                    for (const key in likes) {
+                        const index = self.likes.findIndex(x => x.id === key);
+
+                        if (index >= 0) {
+                            if (self.likes[index].timestamp < likes[key].timestamp) {
+                                self.likes.splice(index, 1);
+                            } else {
+                                continue;
+                            }
+                        }
+
+                        likes[key]["id"] = key;
+                        self.likes.push(likes[key]);
+                        isUpdated = true;
+                    }
+
+                    /*for (let i = self.likes.length - 1; i >= 0; i--) {
+                        if (self.likes[i].id in likes === false) {
+                            self.likes.splice(i, 1);
+                            isUpdated = true;
+                        }
+                    }*/
+
+                    if (isUpdated) {
+                        self.likes.sort((x, y) => y.timestamp - x.timestamp);
+
+                        if (self.likes.length > 100) {
+                            self.likes.splice(100, self.likes.length - 100);
+                        }
+
+                        self.update(self.likes, self.maxTags);
+                    }
+                }
+            });
         },
         unmounted: function () {
             if (vrmModel !== null) {
@@ -4130,6 +4225,7 @@ window.addEventListener("load", event => {
             off(query(databaseRef(database, databaseRoot + "/images"), limitToLast(100)));
             off(databaseRef(database, databaseRoot + "/stars"));
             off(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)));
+            off(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(100)));
         }
     }).mount("#app");
 
