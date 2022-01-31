@@ -794,7 +794,7 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <h2>トレンド</h2>
+                                                                    <h2>注目の教えた言葉</h2>
                                                                 </div>
                                                             </div>
                                                         </article>
@@ -842,7 +842,7 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <h2>平均</h2>
+                                                                    <h2>教えた言葉の数の平均</h2>
                                                                     <p><span class="is-primary has-text-weight-bold"
                                                                             v-text="Math.floor(range(new Date(), [0, -1, -2, -3, -4, -5, -6]).map(day => mode.words.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)).reduce((x, y) => x + y , 0) / 7 * 100) / 100"></span>
                                                                     </p>
@@ -854,7 +854,7 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <h2>標準偏差</h2>
+                                                                    <h2>教えた言葉の数の標準偏差</h2>
                                                                     <p><span class="is-primary has-text-weight-bold"
                                                                             v-text="Math.floor(standardDeviation([].concat(range(new Date(), [0, -1, -2, -3, -4, -5, -6]).map(day => mode.words.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)))) * 100) / 100"></span>
                                                                     </p>
@@ -1519,24 +1519,8 @@
                                                 <div class="media-content">
                                                     <div class="content">
                                                         <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'sign-in'"
-                                                            v-if="user === null">
-                                                            <span class="icon">
-                                                                <i class="fas fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>お気に入り</div>
-                                                                        <div>お気に入り</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                        <button class="button is-rounded is-size-7 is-primary"
                                                             type="button"
-                                                            @click="mode = { likes: null, next: null, indexes: [], disposable: false }; next('likes', mode.next, 1);"
-                                                            v-else>
+                                                            @click="mode = { likes: null, next: null, indexes: [], disposable: false }; next('likes', mode.next, 1);">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
                                                             </span>
@@ -1558,32 +1542,16 @@
                                                 <div class="media-content">
                                                     <div class="content">
                                                         <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'sign-in'"
-                                                            v-if="user === null">
-                                                            <span class="icon">
-                                                                <i class="fas fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>記録</div>
-                                                                        <div>記録</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                        <button class="button is-rounded is-size-7 is-primary"
                                                             type="button"
-                                                            @click="mode = { stats: null, words: null, disposable: false }; next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);"
-                                                            v-else>
+                                                            @click="mode = { stats: null, words: null, disposable: false }; next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);">
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
-                                                                        <div>記録</div>
-                                                                        <div>記録</div>
+                                                                        <div>活動記録</div>
+                                                                        <div>活動記録</div>
                                                                     </div>
                                                                 </div>
                                                             </span>
