@@ -1147,7 +1147,6 @@ label .scrollable > div {
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-    touch-action: none;
 
     > .columns {
         display: flex;
@@ -1167,6 +1166,7 @@ label .scrollable > div {
             overflow-x: hidden;
             overflow-y: auto;
             width: 100%;
+            touch-action: none;
         }
     }
 }
@@ -1174,7 +1174,7 @@ label .scrollable > div {
 #menu > .columns > .column > .control {
     margin: 0;
     padding: 0px 16px 0px 16px;
-
+    
     > .level:first-child {
         display: flex;
         flex-direction: column;
