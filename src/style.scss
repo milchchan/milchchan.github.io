@@ -1593,9 +1593,16 @@ label .scrollable > div {
                         }
                     }
 
-                    > .media > .media-content > .content .icon {
-                        color: var(--accent-color);
-                        transition: 0.5s;
+                    > .media > .media-content > .content {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: start;
+
+                        .icon {
+                            color: var(--accent-color);
+                            transition: 0.5s;
+                        }
                     }
                 }
 
@@ -1733,9 +1740,9 @@ label .scrollable > div {
 
         h1 {
             margin: 0;
-            font-size: 2.0rem;
+            font-size: 2rem;
             font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
-            line-height: 2.0rem;
+            line-height: 2rem;
             color: var(--main-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
@@ -1969,9 +1976,15 @@ label .scrollable > div {
     }
 }
 
-.hud > .columns > .column > .field {
-    margin: 0;
-    padding: 16px 32px 16px 32px;
+.hud > .columns > .column {
+    > .level > .level-item > .media > .media-content > .content > .icon {
+        color: var(--accent-color);
+    }
+
+    > .field {
+        margin: 0;
+        padding: 16px 32px 16px 32px;
+    }
 }
 
 #popup {
