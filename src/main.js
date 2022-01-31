@@ -3831,6 +3831,10 @@ window.addEventListener("load", event => {
                 this.mode = { likes: null, next: null, indexes: [], disposable: true };
                 this.next("likes", mode.next, 1);
                 this.isRevealed = true;
+            } else if (window.location.pathname === "/stats") {
+                this.mode = { stats: null, words: null, disposable: true };
+                this.next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.isRevealed = true;
             }
 
             if (characterStorageItem) {
