@@ -1166,7 +1166,6 @@ label .scrollable > div {
             overflow-x: hidden;
             overflow-y: auto;
             width: 100%;
-            touch-action: none;
         }
     }
 }
@@ -1174,7 +1173,8 @@ label .scrollable > div {
 #menu > .columns > .column > .control {
     margin: 0;
     padding: 0px 16px 0px 16px;
-    
+    touch-action: none;
+
     > .level:first-child {
         display: flex;
         flex-direction: column;
@@ -1978,13 +1978,18 @@ label .scrollable > div {
 }
 
 .hud > .columns > .column {
-    > .level > .level-item > .media > .media-content > .content > .icon {
-        color: var(--accent-color);
+    > .level {
+        touch-action: none;
+
+        > .level-item > .media > .media-content > .content > .icon {
+            color: var(--accent-color);
+        }
     }
 
     > .field {
         margin: 0;
         padding: 16px 32px 16px 32px;
+        touch-action: none;
     }
 }
 
