@@ -1166,6 +1166,10 @@ label .scrollable > div {
             overflow-x: hidden;
             overflow-y: auto;
             width: 100%;
+
+            .tags > .control > .tags > .tag {
+                color: var(--main-color);
+            }
         }
     }
 }
