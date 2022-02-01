@@ -1881,10 +1881,6 @@ window.addEventListener("load", event => {
 
                 const background = this.backgroundQueue.shift();
 
-                for (const image of this.background.images) {
-                    URL.revokeObjectURL(image.url);
-                }
-
                 this.background.images.splice(0);
 
                 if ('color' in background) {
@@ -1904,13 +1900,33 @@ window.addEventListener("load", event => {
                                 });
 
                                 if (response.ok) {
-                                    this.background.images.push({ id: background.id, url: URL.createObjectURL(await response.blob()), timestamp: background.timestamp });
+                                    this.background.images.push({ id: background.id, url: await new Promise(async (resolve, reject) => {
+                                        const reader = new FileReader();
+    
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+                                        reader.readAsDataURL(await response.blob());
+                                    }), timestamp: background.timestamp });
                                 }
                             } catch (e) {
                                 console.error(e);
                             }
                         } else {
-                            this.background.images.push({ id: background.id, url: URL.createObjectURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, background.image.path)), Math.max(window.screen.width, window.screen.height))), timestamp: background.timestamp });
+                            this.background.images.push({ id: background.id, url: await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(reader.error);
+                                };
+                                reader.readAsDataURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, background.image.path)), Math.max(window.screen.width, window.screen.height)));
+                            }), timestamp: background.timestamp });
                         }
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
