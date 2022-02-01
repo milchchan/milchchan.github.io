@@ -508,10 +508,9 @@
                                     <div class="tags has-addons" v-cloak>
                                         <button class="button tag is-rounded is-size-7 has-text-weight-bold"
                                             type="button"
-                                            v-bind:style="{ color: 'rgba(193, 174, 230, ' + (0.25 + 0.75 * tag.score) + ')' }"
                                             @click="learn({ name: tag.name }); isRevealed = false; mode = null;">
                                             <div class="clip">
-                                                <div class="scrollable">
+                                                <div class="scrollable" v-bind:style="{ opacity: String(Math.floor((0.5 + 0.5 * tag.score) * 100) / 100) }">
                                                     <div>{{ tag.name }}</div>
                                                     <div>{{ tag.name }}</div>
                                                 </div>
@@ -815,10 +814,9 @@
                                                                     <button
                                                                         class="button tag is-rounded is-size-7 has-text-weight-bold"
                                                                         type="button"
-                                                                        v-bind:style="{ color: 'rgba(193, 174, 230, ' + (0.25 + 0.75 * tag.score) + ')' }"
                                                                         @click="learn({ name: tag.name }); isRevealed = false; mode = null;">
                                                                         <div class="clip">
-                                                                            <div class="scrollable">
+                                                                            <div class="scrollable" v-bind:style="{ opacity: String(Math.floor((0.5 + 0.5 * tag.score) * 100) / 100) }">
                                                                                 <div>{{ tag.name }}</div>
                                                                                 <div>{{ tag.name }}</div>
                                                                             </div>
