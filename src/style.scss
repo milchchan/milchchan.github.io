@@ -1981,8 +1981,12 @@ label .scrollable > div {
 }
 
 .hud > .columns > .column {
-    > .level > .level-item > .media > .media-content > .content > .icon {
-        color: var(--accent-color);
+    > .level > .level-item > .media > .media-content > .content {
+        overflow: hidden;
+
+        > .icon {            
+            color: var(--accent-color);
+        }
     }
 
     > .field {
