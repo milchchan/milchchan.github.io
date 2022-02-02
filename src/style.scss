@@ -867,12 +867,16 @@ label .scrollable > div {
 }
 
 .blind::after {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
     min-height: 100%;
     transform: translate3d(0, 0%, 0);
     overflow: hidden;
     background: var(--background-image) 50% 50% repeat;
-    animation: fade 0.5s ease-out, loop 10s linear infinite;
+    animation: loop 10s linear infinite;
     transition: 0.5s;
     transform: translate3d(0, 0%, 0);
     content: "";
