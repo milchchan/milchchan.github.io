@@ -1717,6 +1717,75 @@ label .scrollable > div {
                         }
                     }
 
+                    > .balloon {
+                        margin: -16px 0px 0px calc(50% + 32px);
+                        transform: translate3d(0px, 16px, 0px);
+                        
+                        > button,
+                        > .button {
+                            display: flex;
+                            align-items: center;
+                            margin: 0;
+                            padding: 12px 12px 12px 12px;
+                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            border-radius: 500px 500px 500px 0px;
+                            background: rgba(255, 255, 255, 0.75) !important;
+                            background-clip: padding-box;
+                            height: fit-content;
+                            line-height: calc(0.75rem * 1.5);
+                            backface-visibility: hidden;
+                            color: #000000;
+                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                            backdrop-filter: blur(4px) !important;
+                            -webkit-backdrop-filter: blur(4px) !important;
+
+                            .clip {
+                                display: inline-block;
+                                overflow: hidden;
+                                box-sizing: content-box;
+                                height: calc(0.75rem * 1.5);
+
+                                .scrollable div {
+                                    display: flex;
+                                    align-items: center;
+                                    font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+                                    transform: rotate(0.03deg);
+                                    line-height: 0.75rem !important;
+                                    height: calc(0.75rem * 1.5);
+                                }
+                            }
+
+                            .icon {
+                                color: var(--accent-color);
+                                transition: 0.5s;
+                            }
+
+                            span.wrap + .icon:last-of-type {
+                                color: var(--main-color);
+                                transition: 0.5s;
+                            }
+
+                            .icon:first-child + div {
+                                margin: 0px 8px 0px 0px;
+                            }
+
+                            span:not(:first-child) {
+                                margin: 0px 0px 0px 8px;
+                            }
+                        }
+
+                        > button.is-primary,
+                        > .button.is-primary {
+                            background-color: var(--primary-background-color) !important;
+                            transition: 0.5s;
+
+                            span.wrap,
+                            .icon {
+                                color: #ffffff !important;
+                            }
+                        }
+                    }
+
                     span.wrap {
                         display: flex;
                         margin: 0;
@@ -1984,7 +2053,7 @@ label .scrollable > div {
     > .level > .level-item > .media > .media-content > .content {
         overflow: hidden;
 
-        > .icon {            
+        > .icon {
             color: var(--accent-color);
         }
     }
