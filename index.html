@@ -136,7 +136,7 @@
                                 </button>
                                 <button class="button is-white" type="button"
                                     @click="isRevealed = !isRevealed; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_about' || mode === '_milch' || mode === '_merku'"
+                                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_about' || mode === '_milch' || mode === '_merku' || mode === '_help'"
                                     key="force">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
@@ -275,7 +275,8 @@
                                     <div class="control tagcloud-list-item" v-for="tag in background.tags"
                                         v-bind:key="tag">
                                         <div class="tags has-addons" v-cloak>
-                                            <span class="tag is-rounded is-size-7 has-text-weight-bold" v-text="tag"></span>
+                                            <span class="tag is-rounded is-size-7 has-text-weight-bold"
+                                                v-text="tag"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -510,7 +511,8 @@
                                             type="button"
                                             @click="learn({ name: tag.name }); isRevealed = false; mode = null;">
                                             <div class="clip">
-                                                <div class="scrollable" v-bind:style="{ opacity: String(Math.floor((0.5 + 0.5 * tag.score) * 100) / 100) }">
+                                                <div class="scrollable"
+                                                    v-bind:style="{ opacity: String(Math.floor((0.5 + 0.5 * tag.score) * 100) / 100) }">
                                                     <div>{{ tag.name }}</div>
                                                     <div>{{ tag.name }}</div>
                                                 </div>
@@ -816,7 +818,8 @@
                                                                         type="button"
                                                                         @click="learn({ name: tag.name }); isRevealed = false; mode = null;">
                                                                         <div class="clip">
-                                                                            <div class="scrollable" v-bind:style="{ opacity: String(Math.floor((0.5 + 0.5 * tag.score) * 100) / 100) }">
+                                                                            <div class="scrollable"
+                                                                                v-bind:style="{ opacity: String(Math.floor((0.5 + 0.5 * tag.score) * 100) / 100) }">
                                                                                 <div>{{ tag.name }}</div>
                                                                                 <div>{{ tag.name }}</div>
                                                                             </div>
@@ -1288,7 +1291,147 @@
                                             </div>
                                         </div>
                                     </nav>
+                                    <nav class="level" v-else-if="mode == 'help' || mode == '_help'" key="help">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content is-superellips">
+                                                        <figure>
+                                                            <picture class="image is-64x64">
+                                                                <source
+                                                                    srcset="/images/Merku-Headshot2-64.png 1x,/images/Merku-Headshot2-128.png 2x,/images/Merku-Headshot2-192.png 3x"
+                                                                    media="(prefers-color-scheme: dark)">
+                                                                <img class="is-animatable"
+                                                                    src="/images/Merku-Headshot1-64.png"
+                                                                    srcset="/images/Merku-Headshot1-64.png 1x,/images/Merku-Headshot1-128.png 2x,/images/Merku-Headshot1-192.png 3x"
+                                                                    width="64" height="64" alt="About">
+                                                            </picture>
+                                                        </figure>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            使い方</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            Help</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <hr>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <h3>お話し</h3>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">                                                        
+                                                        <p
+                                                            class="content is-size-5 has-text-weight-bold has-text-justified">
+                                                            ミルヒちゃんにお話しして貰う言葉を選んでね。言葉を選んだら<span class="icon marker"><i class="fas fa-comment"></i></span>でミルヒちゃんにお話しして貰えるよぉ。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <h3>教える</h3>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">                                                        
+                                                        <p
+                                                            class="content is-size-5 has-text-weight-bold has-text-justified">
+                                                            ミルヒちゃんに教えてあげる言葉を入力してね。入力したら<span class="icon marker"><i class="fas fa-arrow-right"></i></span>で今度は言葉の意味を選んでね。言葉の意味を選び終えたら<span class="icon marker"><i class="fas fa-check"></i></span>で言葉を教えてあげられるよぉ。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <h3>お気に入り</h3>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">                                                        
+                                                        <p
+                                                            class="content is-size-5 has-text-weight-bold has-text-justified">
+                                                            ミルヒちゃんがお話ししている時に<span class="icon marker"><i class="fas fa-heart"></i></span>でお話しをメルクのお気に入りに出来るよぉ。お気に入りにしたお話しはいつでも見ることが出来るよぉ。それとね、Twitterアカウントでサインインしていると<span class="icon marker"><i class="fab fa-twitter"></i></span>でお話をツイートできるよぉ。みんなでミルヒちゃんを有名にしてあげてね。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <h3>活動記録</h3>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">                                                        
+                                                        <p
+                                                            class="content is-size-5 has-text-weight-bold has-text-justified">
+                                                            お気に入りのミルヒちゃんのお話しの中から注目の言葉と今日投稿された言葉の数や過去7日間で投稿された言葉の数の平均や標準偏差がみれるよぉ。ミルヒちゃんをいっぱい愛でてね。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </nav>
                                     <nav class="level" v-else key="main">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <div class="balloon">
+                                                            <button class="button is-rounded is-size-7 is-primary"
+                                                                type="button" @click="mode = 'help'">
+                                                                <span class="icon">
+                                                                    <i class="fas fa-life-ring"></i>
+                                                                </span>
+                                                                <span class="wrap has-text-weight-bold has-text-black">
+                                                                    <div class="clip">
+                                                                        <div class="scrollable">
+                                                                            <div>使い方</div>
+                                                                            <div>使い方</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
                                         <div class="level-item">
                                             <article class="media">
                                                 <figure class="media-content">
