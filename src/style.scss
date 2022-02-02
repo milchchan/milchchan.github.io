@@ -1704,8 +1704,7 @@ label .scrollable > div {
                     > .balloon {
                         margin: -16px 0px 0px calc(50% + 32px);
                         transform: translate3d(0px, 16px, 0px);
-                        background: transparent !important;
-
+                        
                         > button,
                         > .button {
                             display: flex;
@@ -1714,8 +1713,7 @@ label .scrollable > div {
                             padding: 12px 12px 12px 12px;
                             border: 1px solid rgba(255, 255, 255, 0.1) !important;
                             border-radius: 500px 500px 500px 0px;
-                            background: rgba(255, 255, 255, 0.75) var(--background-image) 50% 50% repeat;
-                            background-size: 24px 24px;
+                            background: rgba(255, 255, 255, 0.75) !important;
                             background-clip: padding-box;
                             height: fit-content;
                             line-height: calc(0.75rem * 1.5);
@@ -1762,8 +1760,7 @@ label .scrollable > div {
 
                         > button.is-primary,
                         > .button.is-primary {
-                            background: var(--primary-background-color) var(--background-image) 50% 50% repeat !important;
-                            background-size: 24px 24px;
+                            background-color: var(--primary-background-color) !important;
                             transition: 0.5s;
 
                             span.wrap,
@@ -2696,29 +2693,6 @@ label .scrollable > div {
         background-size: 24px 24px;
     }
 
-    #menu
-        > .columns
-        > .column
-        > .control
-        > .level:first-child
-        > .level-item
-        > .media
-        > .media-content
-        > .content
-        > .balloon {
-        button,
-        .button {
-            background: rgba(255, 255, 255, 0.75) var(--background-image-2x) 50% 50% repeat;
-            background-size: 24px 24px !important;
-        }
-
-        > button.is-primary,
-        > .button.is-primary {
-            background: var(--primary-background-color) var(--background-image-2x) 50% 50% repeat !important;
-            background-size: 24px 24px !important;
-        }
-    }
-
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
         background: var(--background-image-2x) 50% 50% repeat;
         background-size: 24px 24px;
@@ -2739,29 +2713,6 @@ label .scrollable > div {
     #container .columns .column .media .media-content .has-text-left .balloon {
         background: var(--background-image-3x) 50% 50% repeat;
         background-size: 24px 24px;
-    }
-
-    #menu
-        > .columns
-        > .column
-        > .control
-        > .level:first-child
-        > .level-item
-        > .media
-        > .media-content
-        > .content
-        > .balloon {
-        button,
-        .button {
-            background: rgba(255, 255, 255, 0.75) var(--background-image-3x) 50% 50% repeat;
-            background-size: 24px 24px !important;
-        }
-
-        > button.is-primary,
-        > .button.is-primary {
-            background: var(--primary-background-color) var(--background-image-3x) 50% 50% repeat !important;
-            background-size: 24px 24px !important;
-        }
     }
 
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
