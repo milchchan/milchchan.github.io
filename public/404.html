@@ -18,21 +18,15 @@
   <style media="screen">
     :root {
       --background-color: rgba(255, 255, 255, 0.75);
-      --foreground-color: #000000;
-      --background-image: url('/images/Background-Light.png');
-      --background-image-2x: url('/images/Background-Light@2x.png');
-      --background-image-3x: url('/images/Background-Light@3x.png');
-      --error-image: url('/images/404.png');
+      --foreground-color: #68e6ff;
+      --accent-color: #fecde2;
+      --background-image: url('/images/404.png');
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --background-color: rgba(0, 0, 0, 0.75);
-        --foreground-color: #ffffff;
-        --background-image: url('/images/Background-Dark.png');
-        --background-image-2x: url('/images/Background-Dark@2x.png');
-        --background-image-3x: url('/images/Background-Dark@3x.png');
-        --error-image: url('/images/Omr.png');
+        --foreground-color: #c1aee6;
+        --background-image: url('/images/Omr.png');
       }
     }
 
@@ -62,13 +56,22 @@
       z-index: 1;
       margin: 0;
       padding: 0;
-      color: var(--foreground-color);
+      color: transparent;
       font-family: 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
       font-size: 50vmin;
       font-weight: bold;
       line-height: 50vmin;
       transition: 0.5s;
       animation: fade 0.5s ease-out;
+    }    
+
+    h1>span:nth-child(odd) {
+      color: var(--accent-color);
+    }
+
+    h1>span:nth-child(even) {
+      color: var(--foreground-color);
+      transition: 0.5s;
     }
 
     .wrap {
@@ -91,6 +94,12 @@
       max-width: 100% !important;
       height: 100%;
       overflow: hidden;
+      background: var(--background-image) 50% 50% no-repeat;
+      background-attachment: scroll;
+      background-size: cover;
+      transform-origin: 50% 50%;
+      animation: load 0.5s ease-out;
+      transition: 0.5s;
     }
 
     .frame::before {
@@ -102,13 +111,9 @@
       width: 100%;
       min-height: 100%;
       overflow: hidden;
-      background: var(--error-image) 50% 50% no-repeat;
-      background-attachment: scroll;
-      background-size: cover;
+      background: url('/images/Overlay.png') repeat;
+      background-size: 2px 2px;
       content: "";
-      transform-origin: 50% 50%;
-      animation: load 0.5s ease-out;
-      transition: 0.5s;
     }
 
     #message {
@@ -126,35 +131,6 @@
       background: var(--background-color);
       -webkit-backdrop-filter: blur(8px);
       backdrop-filter: blur(8px);
-      transition: 0.5s;
-    }
-
-    #message::before {
-      z-index: 0;
-      position: absolute;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      min-height: 100%;
-      background: url('/images/Overlay.png') repeat;
-      background-size: 2px 2px;
-      content: "";
-    }
-
-    #message::after {
-      z-index: 0;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      min-height: 100%;
-      transform: translate3d(0, 0%, 0);
-      overflow: hidden;
-      background: var(--background-image) 50% 50% repeat;
-      animation: fade 0.5s ease-out, loop 10s linear infinite;
-      transform: translate3d(0, 0%, 0);
-      content: "";
-      transition: 0.5s;
     }
 
     @keyframes fade {
@@ -191,27 +167,17 @@
 
     @media screen and (-webkit-min-device-pixel-ratio:2),
     (min-resolution: 2dppx) {
-      #message::before {
+      .frame::before {
         background: url('/images/Overlay@2x.png') repeat;
         background-size: 2px 2px;
-      }
-
-      #message::after {
-        background: var(--background-image-2x) 50% 50% repeat;
-        background-size: 100px 100px;
       }
     }
 
     @media screen and (-webkit-min-device-pixel-ratio:3),
     (min-resolution: 3dppx) {
-      #message::before {
+      .frame::before {
         background: url('/images/Overlay@3x.png') repeat;
         background-size: 2px 2px;
-      }
-
-      #message::after {
-        background: var(--background-image-3x) 50% 50% repeat;
-        background-size: 100px 100px;
       }
     }
   </style>
@@ -221,7 +187,7 @@
   <div class="wrap">
     <div class="frame">
       <div id="message">
-        <h1>404</h1>
+        <h1><span>4</span><span>0</span><span>4</span></h1>
       </div>
     </div>
   </div>
