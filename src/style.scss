@@ -1766,11 +1766,11 @@ label .scrollable > div {
                             }
 
                             .icon:first-child + div {
-                                margin: 0px 8px 0px 0px;
+                                margin: 0px 4px 0px 0px;
                             }
 
                             span:not(:first-child) {
-                                margin: 0px 0px 0px 8px;
+                                margin: 0px 0px 0px 4px;
                             }
                         }
 
@@ -1814,6 +1814,7 @@ label .scrollable > div {
         h1 {
             margin: 0;
             font-size: 2rem;
+            font-weight: bold;
             font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
             line-height: 2rem;
             color: var(--main-color);
@@ -1824,9 +1825,21 @@ label .scrollable > div {
         h2 {
             margin: 0;
             font-size: 0.75rem;
+            font-weight: bold;
             font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
             line-height: 0.75rem;
             color: var(--accent-color);
+            transition: 0.5s;
+            transform: rotate(0.03deg);
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: bold;
+            font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+            line-height: 1.25rem;
+            color: var(--foreground-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
         }
@@ -1862,6 +1875,19 @@ label .scrollable > div {
             .is-primary {
                 color: var(--highlight-color) !important;
                 transition: 0.5s;
+            }
+
+            .marker {
+                background-color: var(--highlight-color);
+                color: #ffffff !important;
+                border-radius: 4px;
+                padding: 4px 8px 4px 8px;
+                transition: 0.5s;
+            }
+
+            .icon {
+                width: fit-content !important;
+                height: fit-content !important;
             }
         }
 
