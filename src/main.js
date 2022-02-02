@@ -586,6 +586,53 @@ window.addEventListener("load", event => {
                     this.inputHasError = true;
                 }
             },
+            download: async function (url) {
+                try {
+                    const response = await fetch(url);
+
+                    if (response.ok) {
+                        const reader = response.body.getReader();
+                        const contentType = response.headers.get("Content-Type");
+                        const contentLength = +response.headers.get("Content-Length");
+                        const chunks = [];
+                        let receivedLength = 0;
+
+                        while (true) {
+                            const { done, value } = await reader.read();
+
+                            if (done) {
+                                break;
+                            }
+
+                            chunks.push(value);
+                            receivedLength += value.length;
+                            this.progress = receivedLength / contentLength;
+                        }
+
+                        if (receivedLength === contentLength) {
+                            this.progress = null;
+
+                            if (contentType === "application/json") {
+                                return new TextDecoder("utf-8").decode(chunks.reduce((x, y) => {
+                                    x.buffer.set(y, x.position);
+                                    x.position += chunk.length;
+
+                                    return x;
+                                }, { buffer: new Uint8Array(receivedLength), position: 0 }).buffer);
+                            } else {
+                                return new Blob(chunks, { type: contentType });
+                            }
+                        }
+                    }
+                } catch (error) {
+                    this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
+                    console.error(error);
+                }
+
+                this.progress = null;
+
+                return null;
+            },
             upload: async function (event, data = null) {
                 const timestamp = Math.floor(new Date() / 1000);
 
@@ -1895,38 +1942,40 @@ window.addEventListener("load", event => {
 
                         if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
                             try {
-                                const response = await fetch(await getDownloadURL(storageRef(storage, background.image.path)), {
-                                    method: "GET"
-                                });
+                                const blob = await this.download(await getDownloadURL(storageRef(storage, background.image.path)));
 
-                                if (response.ok) {
-                                    this.background.images.push({ id: background.id, url: await new Promise(async (resolve, reject) => {
-                                        const reader = new FileReader();
-    
-                                        reader.onload = () => {
-                                            resolve(reader.result);
-                                        };
-                                        reader.onerror = () => {
-                                            reject(reader.error);
-                                        };
-                                        reader.readAsDataURL(await response.blob());
-                                    }), timestamp: background.timestamp });
+                                if (blob !== null) {
+                                    this.background.images.push({
+                                        id: background.id, url: await new Promise(async (resolve, reject) => {
+                                            const reader = new FileReader();
+
+                                            reader.onload = () => {
+                                                resolve(reader.result);
+                                            };
+                                            reader.onerror = () => {
+                                                reject(reader.error);
+                                            };
+                                            reader.readAsDataURL(blob);
+                                        }), timestamp: background.timestamp
+                                    });
                                 }
                             } catch (e) {
                                 console.error(e);
                             }
                         } else {
-                            this.background.images.push({ id: background.id, url: await new Promise(async (resolve, reject) => {
-                                const reader = new FileReader();
+                            this.background.images.push({
+                                id: background.id, url: await new Promise(async (resolve, reject) => {
+                                    const reader = new FileReader();
 
-                                reader.onload = () => {
-                                    resolve(reader.result);
-                                };
-                                reader.onerror = () => {
-                                    reject(reader.error);
-                                };
-                                reader.readAsDataURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, background.image.path)), Math.max(window.screen.width, window.screen.height)));
-                            }), timestamp: background.timestamp });
+                                    reader.onload = () => {
+                                        resolve(reader.result);
+                                    };
+                                    reader.onerror = () => {
+                                        reject(reader.error);
+                                    };
+                                    reader.readAsDataURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, background.image.path)), Math.max(window.screen.width, window.screen.height)));
+                                }), timestamp: background.timestamp
+                            });
                         }
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
@@ -2165,46 +2214,62 @@ window.addEventListener("load", event => {
             },
             getThumbnail: async function (url, length) {
                 try {
-                    return await new Promise((resolve, reject) => {
-                        const i = new Image();
+                    const blob = await this.download(url);
 
-                        i.onload = () => {
-                            const canvas = document.createElement("canvas");
+                    if (blob !== null) {
+                        return await new Promise(async (resolve1, reject1) => {
+                            const i = new Image();
 
-                            if (i.width > i.height) {
-                                if (i.width > length) {
-                                    canvas.width = length * window.devicePixelRatio;
-                                    canvas.height = Math.floor(length / i.width * i.height) * window.devicePixelRatio;
+                            i.onload = () => {
+                                const canvas = document.createElement("canvas");
+
+                                if (i.width > i.height) {
+                                    if (i.width > length) {
+                                        canvas.width = length * window.devicePixelRatio;
+                                        canvas.height = Math.floor(length / i.width * i.height) * window.devicePixelRatio;
+                                    } else {
+                                        canvas.width = i.width * window.devicePixelRatio;
+                                        canvas.height = i.height * window.devicePixelRatio;
+                                    }
+                                } else if (i.height > length) {
+                                    canvas.width = Math.floor(length / i.height * i.width) * window.devicePixelRatio;
+                                    canvas.height = length * window.devicePixelRatio;
                                 } else {
                                     canvas.width = i.width * window.devicePixelRatio;
                                     canvas.height = i.height * window.devicePixelRatio;
                                 }
-                            } else if (i.height > length) {
-                                canvas.width = Math.floor(length / i.height * i.width) * window.devicePixelRatio;
-                                canvas.height = length * window.devicePixelRatio;
-                            } else {
-                                canvas.width = i.width * window.devicePixelRatio;
-                                canvas.height = i.height * window.devicePixelRatio;
-                            }
 
-                            const ctx = canvas.getContext("2d");
+                                const ctx = canvas.getContext("2d");
 
-                            ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
-                            ctx.canvas.toBlob(blob => {
-                                resolve(blob);
-                                ctx.canvas.width = ctx.canvas.height = 0;
-                            }, "image/jpeg");
-                        };
-                        i.onerror = (error) => {
-                            reject(error);
-                        };
-                        i.crossOrigin = "anonymous";
-                        i.src = url;
-                    });
+                                ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
+                                ctx.canvas.toBlob(blob => {
+                                    resolve1(blob);
+                                    ctx.canvas.width = ctx.canvas.height = 0;
+                                }, "image/jpeg");
+                            };
+                            i.onerror = (error) => {
+                                reject1(error);
+                            };
+                            i.crossOrigin = "anonymous";
+                            i.src = await new Promise(async (resolve2, reject2) => {
+                                const reader = new FileReader();
+    
+                                reader.onload = () => {
+                                    resolve2(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject2(reader.error);
+                                };
+                                reader.readAsDataURL(blob);
+                            });
+                        });
+                    }
                 } catch (e) {
                     this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                     console.error(e);
                 }
+
+                return null;
             },
             shake: function (element) {
                 element.animate([
