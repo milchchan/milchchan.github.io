@@ -3902,6 +3902,9 @@ window.addEventListener("load", event => {
             } else if (window.location.pathname === "/merku") {
                 this.mode = "_merku";
                 this.isRevealed = true;
+            } else if (window.location.pathname === "/help") {
+                this.mode = "_help";
+                this.isRevealed = true;
             } else if (window.location.pathname === "/words" || window.location.pathname === "/talk") {
                 this.mode = { words: null, next: null, indexes: [], selected: [], disposable: true };
                 this.next("words", mode.next);
