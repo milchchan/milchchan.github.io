@@ -20,7 +20,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP"
     --highlight-color: #c1aee6;
     --placeholder-color: rgba(104, 230, 255, 0.25);
     --primary-background-color: rgba(104, 230, 255, 0.75);
-    --background-image: url("/images/Background.png");
+    --background-image: url("/images/Stripes.png");
     --background-image-2x: url("/images/Background@2x.png");
     --background-image-3x: url("/images/Background@3x.png");
 }
@@ -387,7 +387,7 @@ label .scrollable > div {
         top: 0;
         left: 0;
         overflow: hidden;
-        background: #ffee00 url("/images/Stripes.png") 50% 50% repeat;
+        background: #ffee00 var(--background-image) 50% 50% repeat;
         background-size: 20px 20px;
         animation: progress 0.5s linear 0s infinite;
         animation-play-state: paused;
@@ -866,22 +866,6 @@ label .scrollable > div {
     transition: 0.5s;
 }
 
-.blind::after {
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    min-height: 100%;
-    transform: translate3d(0, 0%, 0);
-    overflow: hidden;
-    background: var(--background-image) 50% 50% repeat;
-    animation: loop 10s linear infinite;
-    transition: 0.5s;
-    transform: translate3d(0, 0%, 0);
-    content: "";
-}
-
 #app {
     position: absolute;
     display: flex;
@@ -1328,7 +1312,7 @@ label .scrollable > div {
                                     > figure {
                                         position: relative;
                                         width: 100%;
-
+                                        
                                         > picture {
                                             position: absolute;
                                             width: 100%;
@@ -1720,7 +1704,7 @@ label .scrollable > div {
                     > .balloon {
                         margin: -16px 0px 0px calc(50% + 32px);
                         transform: translate3d(0px, 16px, 0px);
-                        
+
                         > button,
                         > .button {
                             display: flex;
@@ -1947,7 +1931,7 @@ label .scrollable > div {
                         display: inline-block;
                         padding: 12px 24px 12px 24px;
                         border-radius: 500px 500px 500px 0px;
-                        background: url("/images/Stripes.png") 50% 50% repeat;
+                        background: var(--background-image) 50% 50% repeat;
                         background-size: 20px 20px;
                         /*background: #f5f5f5;
                         box-shadow: 20px 20px 60px #d0d0d0,
@@ -2205,7 +2189,7 @@ label .scrollable > div {
                             justify-content: center;
                             border-radius: 500px 500px 500px 500px;
                             padding: 8px 16px 8px 16px;
-                            background: url("/images/Stripes.png") 50% 50% repeat;
+                            background: var(--background-image) 50% 50% repeat;
                             background-size: 20px 20px;
                             /*box-shadow: 10px 10px 30px #d0d0d0,
                                             -10px -10px 30px #ffffff;*/
@@ -2695,54 +2679,44 @@ label .scrollable > div {
 
 @media screen and (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
     .progress > .bar {
-        background: #ffee00 url("/images/Stripes@2x.png") 50% 50% repeat;
+        background: #ffee00 var(--background-image-2x) 50% 50% repeat;
         background-size: 20px 20px;
     }
 
     .background:first-child::after {
-        background: url("/images/Overlay@2x.png") repeat;
+        background: var(--background-image-2x) repeat;
         background-size: 2px 2px;
     }
 
     #container .columns .column .media .media-content .has-text-left .balloon {
-        background: url("/images/Stripes@2x.png") 50% 50% repeat;
+        background: var(--background-image-2x) 50% 50% repeat;
         background-size: 20px 20px;
     }
 
-    .blind::after {
-        background: var(--background-image-2x) 50% 50% repeat;
-        background-size: 100px 100px;
-    }
-
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
-        background: url("/images/Stripes@2x.png") 50% 50% repeat;
+        background: var(--background-image-2x) 50% 50% repeat;
         background-size: 20px 20px;
     }
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx) {
     .progress > .bar {
-        background: #ffee00 url("/images/Stripes@3x.png") 50% 50% repeat;
+        background: #ffee00 var(--background-image-3x) 50% 50% repeat;
         background-size: 20px 20px;
     }
 
     .background:first-child::after {
-        background: url("/images/Overlay@3x.png") repeat;
+        background: var(--background-image-3x) repeat;
         background-size: 2px 2px;
     }
 
     #container .columns .column .media .media-content .has-text-left .balloon {
-        background: url("/images/Stripes@3x.png") 50% 50% repeat;
+        background: var(--background-image-3x) 50% 50% repeat;
         background-size: 20px 20px;
     }
 
-    .blind::after {
-        background: var(--background-image-3x) 50% 50% repeat;
-        background-size: 100px 100px;
-    }
-
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
-        background: url("/images/Stripes@3x.png") 50% 50% repeat;
+        background: var(--background-image-3x) 50% 50% repeat;
         background-size: 20px 20px;
     }
 }
