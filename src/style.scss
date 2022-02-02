@@ -388,7 +388,7 @@ label .scrollable > div {
         left: 0;
         overflow: hidden;
         background: #ffee00 var(--background-image) 50% 50% repeat;
-        background-size: 20px 20px;
+        background-size: 24px 24px;
         animation: progress 0.5s linear 0s infinite;
         animation-play-state: paused;
     }
@@ -1312,7 +1312,7 @@ label .scrollable > div {
                                     > figure {
                                         position: relative;
                                         width: 100%;
-                                        
+
                                         > picture {
                                             position: absolute;
                                             width: 100%;
@@ -1713,7 +1713,8 @@ label .scrollable > div {
                             padding: 12px 12px 12px 12px;
                             border: 1px solid rgba(255, 255, 255, 0.1) !important;
                             border-radius: 500px 500px 500px 0px;
-                            background: rgba(255, 255, 255, 0.75) !important;
+                            background: rgba(255, 255, 255, 0.75) var(--background-image) 50% 50% repeat;
+                            background-size: 24px 24px;
                             background-clip: padding-box;
                             height: fit-content;
                             line-height: calc(0.75rem * 1.5);
@@ -1760,7 +1761,8 @@ label .scrollable > div {
 
                         > button.is-primary,
                         > .button.is-primary {
-                            background-color: var(--primary-background-color) !important;
+                            background: var(--primary-background-color) var(--background-image) 50% 50% repeat !important;
+                            background-size: 24px 24px;
                             transition: 0.5s;
 
                             span.wrap,
@@ -1932,7 +1934,7 @@ label .scrollable > div {
                         padding: 12px 24px 12px 24px;
                         border-radius: 500px 500px 500px 0px;
                         background: var(--background-image) 50% 50% repeat;
-                        background-size: 20px 20px;
+                        background-size: 24px 24px;
                         /*background: #f5f5f5;
                         box-shadow: 20px 20px 60px #d0d0d0,
                             -20px -20px 60px #ffffff;*/
@@ -2190,7 +2192,7 @@ label .scrollable > div {
                             border-radius: 500px 500px 500px 500px;
                             padding: 8px 16px 8px 16px;
                             background: var(--background-image) 50% 50% repeat;
-                            background-size: 20px 20px;
+                            background-size: 24px 24px;
                             /*box-shadow: 10px 10px 30px #d0d0d0,
                                             -10px -10px 30px #ffffff;*/
                             touch-action: none;
@@ -2680,7 +2682,7 @@ label .scrollable > div {
 @media screen and (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
     .progress > .bar {
         background: #ffee00 var(--background-image-2x) 50% 50% repeat;
-        background-size: 20px 20px;
+        background-size: 24px 24px;
     }
 
     .background:first-child::after {
@@ -2690,19 +2692,42 @@ label .scrollable > div {
 
     #container .columns .column .media .media-content .has-text-left .balloon {
         background: var(--background-image-2x) 50% 50% repeat;
-        background-size: 20px 20px;
+        background-size: 24px 24px;
+    }
+
+    #menu
+        > .columns
+        > .column
+        > .control
+        > .level:first-child
+        > .level-item
+        > .media
+        > .media-content
+        > .content
+        > .balloon {
+        button,
+        .button {
+            background: rgba(255, 255, 255, 0.75) var(--background-image-2x) 50% 50% repeat;
+            background-size: 24px 24px !important;
+        }
+
+        > button.is-primary,
+        > .button.is-primary {
+            background: var(--primary-background-color) var(--background-image-2x) 50% 50% repeat !important;
+            background-size: 24px 24px !important;
+        }
     }
 
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
         background: var(--background-image-2x) 50% 50% repeat;
-        background-size: 20px 20px;
+        background-size: 24px 24px;
     }
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx) {
     .progress > .bar {
         background: #ffee00 var(--background-image-3x) 50% 50% repeat;
-        background-size: 20px 20px;
+        background-size: 24px 24px;
     }
 
     .background:first-child::after {
@@ -2712,12 +2737,35 @@ label .scrollable > div {
 
     #container .columns .column .media .media-content .has-text-left .balloon {
         background: var(--background-image-3x) 50% 50% repeat;
-        background-size: 20px 20px;
+        background-size: 24px 24px;
+    }
+
+    #menu
+        > .columns
+        > .column
+        > .control
+        > .level:first-child
+        > .level-item
+        > .media
+        > .media-content
+        > .content
+        > .balloon {
+        button,
+        .button {
+            background: rgba(255, 255, 255, 0.75) var(--background-image-3x) 50% 50% repeat;
+            background-size: 24px 24px !important;
+        }
+
+        > button.is-primary,
+        > .button.is-primary {
+            background: var(--primary-background-color) var(--background-image-3x) 50% 50% repeat !important;
+            background-size: 24px 24px !important;
+        }
     }
 
     #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
         background: var(--background-image-3x) 50% 50% repeat;
-        background-size: 20px 20px;
+        background-size: 24px 24px;
     }
 }
 
