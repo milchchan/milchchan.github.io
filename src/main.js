@@ -3918,8 +3918,9 @@ window.addEventListener("load", event => {
                 this.next("likes", mode.next, 1);
                 this.isRevealed = true;
             } else if (window.location.pathname === "/stats") {
-                this.mode = { stats: null, words: null, disposable: true };
+                this.mode = { stats: null, words: null, likes: null, disposable: true };
                 this.next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
                 this.isRevealed = true;
             }
 
