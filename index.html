@@ -611,144 +611,198 @@
                                                         v-bind:key="like">
                                                         <div class="level">
                                                             <div class="level-item">
-                                                                <article class="media">
-                                                                    <div class="media-content">
-                                                                        <figure class="image">
-                                                                            <transition name="fade">
-                                                                                <picture class="image has-ratio"
-                                                                                    style="pointer-events: none;"
-                                                                                    v-if="'image' in like && like.image !== null">
-                                                                                    <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
-                                                                                        v-bind:src="like.image.url"
-                                                                                        v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
-                                                                                        v-bind:alt="like.text">
-                                                                                </picture>
-                                                                            </transition>
-                                                                            <div>
-                                                                                <div>
+                                                                <div class="level">
+                                                                    <div class="level-item" v-if="'user' in like">
+                                                                        <div class="level">
+                                                                            <div class="level-item">
+                                                                                <article class="media">
+                                                                                    <div class="media-content">
+                                                                                        <div class="content">
+                                                                                            <span class="image is-24x24"
+                                                                                                v-if="like.user.image">
+                                                                                                <img class="is-rounded"
+                                                                                                    v-bind:src="like.user.image"
+                                                                                                    v-bind:alt="like.user.name"
+                                                                                                    v-cloak>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </article>
+                                                                            </div>
+                                                                            <div class="level-item">
+                                                                                <article class="media">
+                                                                                    <div class="media-content">
+                                                                                        <div class="content">
+                                                                                            <span
+                                                                                                class="wrap is-size-7 has-text-weight-bold">{{
+                                                                                                like.user.name }}</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </article>
+                                                                            </div>
+                                                                            <div class="level-item"
+                                                                                v-if="'link' in like.user && like.user.link !== null">
+                                                                                <article class="media">
+                                                                                    <div class="media-content">
+                                                                                        <div class="content">
+                                                                                            <a v-bind:href="like.user.link"
+                                                                                                target="_blank"><span
+                                                                                                    class="icon is-small"><i
+                                                                                                        class="fab fa-twitter"
+                                                                                                        v-if="like.user.link.startsWith('https://twitter.com/')"></i><i
+                                                                                                        class="fas fa-link"
+                                                                                                        v-else></i></span></a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </article>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="level-item">
+                                                                        <article class="media">
+                                                                            <div class="media-content">
+                                                                                <figure class="image">
+                                                                                    <transition name="fade">
+                                                                                        <picture class="image has-ratio"
+                                                                                            style="pointer-events: none;"
+                                                                                            v-if="'image' in like && like.image !== null">
+                                                                                            <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
+                                                                                                v-bind:src="like.image.url"
+                                                                                                v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
+                                                                                                v-bind:alt="like.text">
+                                                                                        </picture>
+                                                                                    </transition>
                                                                                     <div>
                                                                                         <div>
-                                                                                            <div><span
-                                                                                                    class="is-size-4 has-text-weight-bold"
-                                                                                                    v-text="typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), '')"></span>
-                                                                                            </div>
-                                                                                            <div><span
-                                                                                                    class="is-size-7 has-text-weight-bold">{{
-                                                                                                    like.author
-                                                                                                    }}</span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div>
-                                                                                    <div class="level is-mobile">
-                                                                                        <div class="level-item"
-                                                                                            v-if="isDebug">
-                                                                                            <transition name="fade"
-                                                                                                mode="out-in">
-                                                                                                <label
-                                                                                                    class="file-label file button is-rounded is-size-7 has-text-weight-bold"
-                                                                                                    v-if="'image' in like === false || like.image === null"
-                                                                                                    key="add">
-                                                                                                    <input
-                                                                                                        class="file-input"
-                                                                                                        type="file"
-                                                                                                        name="upload"
-                                                                                                        accept="image/apng, image/png, image/jpeg, image/webp"
-                                                                                                        style="pointer-events: none;"
-                                                                                                        v-bind:disabled="isUploading"
-                                                                                                        @change="upload($event, like)">
-                                                                                                    <div
-                                                                                                        class="file-cta_">
-                                                                                                        <transition
-                                                                                                            name="fade"
-                                                                                                            mode="out-in">
-                                                                                                            <span
-                                                                                                                class="icon"
-                                                                                                                v-if="isUploading"
-                                                                                                                key="uploading">
-                                                                                                                <i
-                                                                                                                    class="fas fa-spinner updating"></i>
-                                                                                                            </span>
-                                                                                                            <span
-                                                                                                                class="icon"
-                                                                                                                v-else
-                                                                                                                key="ready">
-                                                                                                                <i
-                                                                                                                    class="fas fa-cloud-upload-alt"></i>
-                                                                                                            </span>
-                                                                                                        </transition>
+                                                                                            <div>
+                                                                                                <div>
+                                                                                                    <div><span
+                                                                                                            class="is-size-4 has-text-weight-bold"
+                                                                                                            v-text="typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), '')"></span>
                                                                                                     </div>
-                                                                                                </label>
-                                                                                                <button class="button"
-                                                                                                    type="button"
-                                                                                                    v-bind:disabled="isUploading"
-                                                                                                    @click="upload($event, like)"
-                                                                                                    v-else key="remove">
-                                                                                                    <transition
-                                                                                                        name="fade"
-                                                                                                        mode="out-in">
-                                                                                                        <span
-                                                                                                            class="icon"
-                                                                                                            v-if="isUploading"
-                                                                                                            key="uploading">
-                                                                                                            <i
-                                                                                                                class="fas fa-spinner updating"></i>
-                                                                                                        </span>
-                                                                                                        <span
-                                                                                                            class="icon is-small"
-                                                                                                            style="pointer-events: none;"
-                                                                                                            v-else
-                                                                                                            key="ready">
-                                                                                                            <i
-                                                                                                                class="fas fa-trash"></i>
-                                                                                                        </span>
-                                                                                                    </transition>
-                                                                                                </button>
-                                                                                            </transition>
-                                                                                        </div>
-                                                                                        <transition name="fade">
-                                                                                            <div class="level-item"
-                                                                                                v-if="user !== null && user.providerData.some(x => x.providerId === 'twitter.com')">
-                                                                                                <button
-                                                                                                    class="button is-rounded is-size-7"
-                                                                                                    type="button"
-                                                                                                    v-bind:disabled="user === null || isTweeting === true"
-                                                                                                    @click="tweet(typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), ''), 'image' in like && like.image !== null ? like.image.url : null)">
-                                                                                                    <transition
-                                                                                                        name="fade"
-                                                                                                        mode="out-in">
-                                                                                                        <span
-                                                                                                            class="icon"
-                                                                                                            v-if="typeof(isTweeting) === 'object'"
-                                                                                                            key="tweeted">
-                                                                                                            <i
-                                                                                                                class="fas fa-check"></i>
-                                                                                                        </span>
-                                                                                                        <span
-                                                                                                            class="icon"
-                                                                                                            v-else-if="isTweeting === true"
-                                                                                                            key="tweeting">
-                                                                                                            <i
-                                                                                                                class="fas fa-spinner updating"></i>
-                                                                                                        </span>
-                                                                                                        <span
-                                                                                                            class="icon"
-                                                                                                            v-else
-                                                                                                            key="ready">
-                                                                                                            <i
-                                                                                                                class="fab fa-twitter"></i>
-                                                                                                        </span>
-                                                                                                    </transition>
-                                                                                                </button>
+                                                                                                    <div><span
+                                                                                                            class="is-size-7 has-text-weight-bold">{{
+                                                                                                            like.author
+                                                                                                            }}</span>
+                                                                                                    </div>
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </transition>
+                                                                                        </div>
+                                                                                        <div>
+                                                                                            <div
+                                                                                                class="level is-mobile">
+                                                                                                <div class="level-item"
+                                                                                                    v-if="isDebug">
+                                                                                                    <transition
+                                                                                                        name="fade"
+                                                                                                        mode="out-in">
+                                                                                                        <label
+                                                                                                            class="file-label file button is-rounded is-size-7 has-text-weight-bold"
+                                                                                                            v-if="'image' in like === false || like.image === null"
+                                                                                                            key="add">
+                                                                                                            <input
+                                                                                                                class="file-input"
+                                                                                                                type="file"
+                                                                                                                name="upload"
+                                                                                                                accept="image/apng, image/png, image/jpeg, image/webp"
+                                                                                                                style="pointer-events: none;"
+                                                                                                                v-bind:disabled="isUploading"
+                                                                                                                @change="upload($event, like)">
+                                                                                                            <div
+                                                                                                                class="file-cta_">
+                                                                                                                <transition
+                                                                                                                    name="fade"
+                                                                                                                    mode="out-in">
+                                                                                                                    <span
+                                                                                                                        class="icon"
+                                                                                                                        v-if="isUploading"
+                                                                                                                        key="uploading">
+                                                                                                                        <i
+                                                                                                                            class="fas fa-spinner updating"></i>
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="icon"
+                                                                                                                        v-else
+                                                                                                                        key="ready">
+                                                                                                                        <i
+                                                                                                                            class="fas fa-cloud-upload-alt"></i>
+                                                                                                                    </span>
+                                                                                                                </transition>
+                                                                                                            </div>
+                                                                                                        </label>
+                                                                                                        <button
+                                                                                                            class="button"
+                                                                                                            type="button"
+                                                                                                            v-bind:disabled="isUploading"
+                                                                                                            @click="upload($event, like)"
+                                                                                                            v-else
+                                                                                                            key="remove">
+                                                                                                            <transition
+                                                                                                                name="fade"
+                                                                                                                mode="out-in">
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-if="isUploading"
+                                                                                                                    key="uploading">
+                                                                                                                    <i
+                                                                                                                        class="fas fa-spinner updating"></i>
+                                                                                                                </span>
+                                                                                                                <span
+                                                                                                                    class="icon is-small"
+                                                                                                                    style="pointer-events: none;"
+                                                                                                                    v-else
+                                                                                                                    key="ready">
+                                                                                                                    <i
+                                                                                                                        class="fas fa-trash"></i>
+                                                                                                                </span>
+                                                                                                            </transition>
+                                                                                                        </button>
+                                                                                                    </transition>
+                                                                                                </div>
+                                                                                                <transition name="fade">
+                                                                                                    <div class="level-item"
+                                                                                                        v-if="user !== null && user.providerData.some(x => x.providerId === 'twitter.com')">
+                                                                                                        <button
+                                                                                                            class="button is-rounded is-size-7"
+                                                                                                            type="button"
+                                                                                                            v-bind:disabled="user === null || isTweeting === true"
+                                                                                                            @click="tweet(typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), ''), 'image' in like && like.image !== null ? like.image.url : null)">
+                                                                                                            <transition
+                                                                                                                name="fade"
+                                                                                                                mode="out-in">
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-if="typeof(isTweeting) === 'object'"
+                                                                                                                    key="tweeted">
+                                                                                                                    <i
+                                                                                                                        class="fas fa-check"></i>
+                                                                                                                </span>
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-else-if="isTweeting === true"
+                                                                                                                    key="tweeting">
+                                                                                                                    <i
+                                                                                                                        class="fas fa-spinner updating"></i>
+                                                                                                                </span>
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-else
+                                                                                                                    key="ready">
+                                                                                                                    <i
+                                                                                                                        class="fab fa-twitter"></i>
+                                                                                                                </span>
+                                                                                                            </transition>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </transition>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
+                                                                                </figure>
                                                                             </div>
-                                                                        </figure>
+                                                                        </article>
                                                                     </div>
-                                                                </article>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -899,6 +953,13 @@
                                                                                     @change="mode.selected.includes(word.id) ? mode.selected = mode.selected.filter(x => x !== word.id) : mode.selected.push(word.id)"
                                                                                     v-bind:checked="mode.selected.includes(word.id)">
                                                                                 <span class="custom"></span>
+                                                                                <span class="image is-24x24"
+                                                                                    v-if="'user' in word && 'image' in word.user && word.user.image != null">
+                                                                                    <img class="is-rounded"
+                                                                                        v-bind:src="word.user.image"
+                                                                                        v-bind:alt="word.user.name"
+                                                                                        v-cloak>
+                                                                                </span>
                                                                                 <span
                                                                                     class="wrap is-size-7 has-text-weight-bold">
                                                                                     <div class="clip">
@@ -1340,10 +1401,11 @@
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
-                                                    <div class="content">                                                        
+                                                    <div class="content">
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
-                                                            ミルヒちゃんにお話しして貰う言葉を選んでね。言葉を選んだら<span class="icon marker"><i class="fas fa-comment"></i></span>でミルヒちゃんにお話しして貰えるよぉ。ミルヒちゃんのお話しをいっぱい楽しんでね。
+                                                            ミルヒちゃんにお話しして貰う言葉を選んでね。言葉を選んだら<span class="icon marker"><i
+                                                                    class="fas fa-comment"></i></span>でミルヒちゃんにお話しして貰えるよぉ。ミルヒちゃんのお話しをいっぱい楽しんでね。
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1359,10 +1421,13 @@
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
-                                                    <div class="content">                                                        
+                                                    <div class="content">
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
-                                                            ミルヒちゃんに教えてあげる言葉を入力してね。入力したら<span class="icon marker"><i class="fas fa-arrow-right"></i></span>で今度は言葉の意味を選んでね。言葉の意味を選び終えたら<span class="icon marker"><i class="fas fa-check"></i></span>で言葉を教えてあげられるよぉ。ミルヒちゃんにあんなことやこんなことを教えてあげてね。
+                                                            ミルヒちゃんに教えてあげる言葉を入力してね。入力したら<span class="icon marker"><i
+                                                                    class="fas fa-arrow-right"></i></span>で今度は言葉の意味を選んでね。言葉の意味を選び終えたら<span
+                                                                class="icon marker"><i
+                                                                    class="fas fa-check"></i></span>で言葉を教えてあげられるよぉ。ミルヒちゃんにあんなことやこんなことを教えてあげてね。
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1378,10 +1443,13 @@
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
-                                                    <div class="content">                                                        
+                                                    <div class="content">
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
-                                                            ミルヒちゃんがお話ししている時に<span class="icon marker"><i class="fas fa-heart"></i></span>でお話しをメルクのお気に入りに出来るよぉ。お気に入りにしたお話しはいつでも見ることが出来るよぉ。かわいいミルヒちゃんをいっぱいお気に入りにしてね。それとね、Twitterアカウントでサインインしていると<span class="icon marker"><i class="fab fa-twitter"></i></span>でお話をツイートできるよぉ。みんなでミルヒちゃんを有名にしてあげてね。
+                                                            ミルヒちゃんがお話ししている時に<span class="icon marker"><i
+                                                                    class="fas fa-heart"></i></span>でお話しをメルクのお気に入りに出来るよぉ。お気に入りにしたお話しはいつでも見ることが出来るよぉ。かわいいミルヒちゃんをいっぱいお気に入りにしてね。それとね、Twitterアカウントでサインインしていると<span
+                                                                class="icon marker"><i
+                                                                    class="fab fa-twitter"></i></span>でお話をツイートできるよぉ。みんなでミルヒちゃんを有名にしてあげてね。
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1397,7 +1465,7 @@
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
-                                                    <div class="content">                                                        
+                                                    <div class="content">
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
                                                             お気に入りのミルヒちゃんのお話しの中から注目の言葉と今日投稿された言葉の数や過去7日間で投稿された言葉の数の平均や標準偏差がみれるよぉ。ミルヒちゃんをいっぱい愛でてね。フヒヒ……。
@@ -1413,8 +1481,8 @@
                                                 <div class="media-content">
                                                     <div class="content">
                                                         <div class="balloon">
-                                                            <button class="button is-rounded is-size-7"
-                                                                type="button" @click="mode = 'help'">
+                                                            <button class="button is-rounded is-size-7" type="button"
+                                                                @click="mode = 'help'">
                                                                 <span class="icon">
                                                                     <i class="fas fa-question"></i>
                                                                 </span>
@@ -1977,23 +2045,24 @@
                                                 <div class="level-item">
                                                     <div class="level is-mobile">
                                                         <div class="level-item">
-                                                            <a href="https://twitter.com/milchchan"
+                                                            <a class="button" href="https://twitter.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-twitter"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
-                                                            <a href="https://instagram.com/milchchan"
+                                                            <a class="button" href="https://instagram.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-instagram"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
-                                                            <a href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
+                                                            <a class="button"
+                                                                href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-youtube"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
-                                                            <a href="https://github.com/milchchan" target="_blank"><span
-                                                                    class="icon is-small"><i
+                                                            <a class="button" href="https://github.com/milchchan"
+                                                                target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-github"></i></span></a>
                                                         </div>
                                                     </div>
