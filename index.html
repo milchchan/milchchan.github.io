@@ -618,6 +618,20 @@
                                                             </div>
                                                         </article>
                                                     </div>
+                                                    <div class="level-item" v-if="!mode.words.some(x => 'user' in x)">
+                                                        <div class="level is-mobile">
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <span
+                                                                                class="is-primary is-size-5 has-text-weight-bold">N/A</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="level-item"
                                                         v-for="(user, index) in Object.values(mode.words.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count)"
                                                         v-bind:key="user">
@@ -662,6 +676,20 @@
                                                                 </div>
                                                             </div>
                                                         </article>
+                                                    </div>
+                                                    <div class="level-item" v-if="!mode.likes.some(x => 'user' in x)">
+                                                        <div class="level is-mobile">
+                                                            <div class="level-item">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <span
+                                                                                class="is-primary is-size-5 has-text-weight-bold">N/A</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="level-item"
                                                         v-for="(user, index) in Object.values(mode.likes.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count)"
