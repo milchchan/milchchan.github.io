@@ -514,7 +514,7 @@ window.addEventListener("load", event => {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, secret: credential.secret }));
                         } catch (e) {
                             localStorage.removeItem("credential");
-                        }
+                        }                        
                     } catch (error) {
                         console.error(error.code, error.message);
                     }
@@ -745,6 +745,7 @@ window.addEventListener("load", event => {
             },
             share: async function (word) {
                 const self = this;
+                const user = 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
                 const timestamp = Math.floor(new Date() / 1000);
 
                 if (word.name in this.wordDictionary) {
@@ -813,7 +814,7 @@ window.addEventListener("load", event => {
                                 return undefined;
                             }
                         } else {
-                            current = { attributes: {}, timestamp: timestamp };
+                            current = { attributes: {}, user: user, timestamp: timestamp};
 
                             for (const attribute of word.attributes) {
                                 if (attribute.value) {
@@ -885,6 +886,7 @@ window.addEventListener("load", event => {
                 this.isSubmitting = false;
             },
             like: async function (message, canvas) {
+                const user = 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
                 const timestamp = Math.floor(new Date() / 1000);
 
                 try {
@@ -896,7 +898,7 @@ window.addEventListener("load", event => {
                                 return undefined;
                             }
 
-                            return { text: message.original, author: this.character.name, timestamp: timestamp };
+                            return { text: message.original, author: this.character.name, user: user, timestamp: timestamp };
                         });
                     } else {
                         function generateUuid() {
@@ -947,7 +949,7 @@ window.addEventListener("load", event => {
                                     return current;
                                 }
 
-                                return { text: message.original, author: this.character.name, image: { path: path, type: type }, timestamp: timestamp };
+                                return { text: message.original, author: this.character.name, image: { path: path, type: type }, user: user, timestamp: timestamp };
                             });
                         } finally {
                             this.progress = null;
@@ -4144,7 +4146,10 @@ window.addEventListener("load", event => {
                     }
                 } else if (credential.providerId === TwitterAuthProvider.PROVIDER_ID) {
                     try {
-                        signInWithCredential(auth, TwitterAuthProvider.credential(credential.accessToken, credential.secret));
+                        const result = await signInWithCredential(auth, TwitterAuthProvider.credential(credential.accessToken, credential.secret));
+
+                        this.user = result.user;
+                        this.user['link'] = `https://twitter.com/${result._tokenResponse.screenName}`;
                     } catch (e) {
                         self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                         console.error(e.code, e.message);
@@ -4156,11 +4161,12 @@ window.addEventListener("load", event => {
                 // Check for user status
                 if (user) {
                     // User is signed in.
-                    self.user = user;
+                    if (self.user === null) {
+                        self.user = user;
+                    }
                 } else {
                     // User is signed out.
                     self.user = null;
-                    self.stars = 0;
                 }
             });
 
