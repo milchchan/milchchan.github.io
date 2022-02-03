@@ -593,7 +593,8 @@
                                         key="popup">
                                         <div class="level-item" v-if="'stats' in mode" v-cloak>
                                             <transition name="fade" mode="out-in">
-                                                <div class="level" v-if="isUpdating || mode.words === null || mode.likes === null"
+                                                <div class="level"
+                                                    v-if="isUpdating || mode.words === null || mode.likes === null"
                                                     key="updating">
                                                     <div class="level-item">
                                                         <article class="media">
@@ -618,7 +619,7 @@
                                                         </article>
                                                     </div>
                                                     <div class="level-item"
-                                                        v-for="(user, index) in Object.values(mode.words.filter(x => 'user' in x).reduce((x, y) => y.user.id in x ? x[y.user.id].user.count += 1 : x[y.user.id] = { user: Object.assign({ count: 1 }, y.user) }, {})).sort((x, y) => y.count - x.count)"
+                                                        v-for="(user, index) in Object.values(mode.words.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count)"
                                                         v-bind:key="user">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
@@ -663,7 +664,7 @@
                                                         </article>
                                                     </div>
                                                     <div class="level-item"
-                                                        v-for="(user, index) in Object.values(mode.likes.filter(x => 'user' in x).reduce((x, y) => y.user.id in x ? x[y.user.id].user.count += 1 : x[y.user.id] = { user: Object.assign({ count: 1 }, y.user) }, {})).sort((x, y) => y.count - x.count)"
+                                                        v-for="(user, index) in Object.values(mode.likes.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count)"
                                                         v-bind:key="user">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
@@ -819,7 +820,7 @@
                                                     </div>
                                                 </div>
                                             </transition>
-                                        </div>                                        
+                                        </div>
                                         <div class="level-item" v-else-if="'likes' in mode" v-cloak>
                                             <transition name="fade" mode="out-in">
                                                 <div class="level" v-if="mode.likes === null" key="loading">
