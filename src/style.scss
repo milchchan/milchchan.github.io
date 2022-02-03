@@ -201,7 +201,7 @@ label .scrollable > div {
 .is-primary:hover {
     /*color: #fef6a5 !important;*/
     background-color: transparent !important;
-    color: var(--main-color) !important;
+    color: var(--highlight-color) !important;
     border: 0px solid transparent !important;
     box-shadow: none !important;
     transition: 0.5s;
@@ -1207,15 +1207,40 @@ label .scrollable > div {
                                             margin: 0;
                                             padding: 8px 8px 8px 8px;
 
+                                            > .level {
+                                                margin: -8px -8px -8px -8px;
+                                                flex-direction: column;
+                
+                                                > .level-item {
+                                                    margin: 0;
+                                                    padding: 8px 8px 8px 8px;
+
+                                                    > .level {
+                                                        margin: -8px -8px -8px -8px;
+                                                        flex-direction: row;
+                
+                                                        > .level-item {
+                                                            margin: 0;
+                                                            padding: 8px 8px 8px 8px;
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+
                                             > .media > .media-content > .content {
                                                 display: flex;
-                                                flex-direction: column;
+                                                flex-direction: row;
                                                 justify-content: center;
                                                 align-items: center;
                                                 color: var(--accent-color);
-
+                
+                                                span:not(:first-of-type) {
+                                                    margin: 0px 0px 0px 16px;
+                                                }
+                
                                                 a {
-                                                    margin: 0px;
+                                                    margin: 0;
                                                     border: 0px none transparent;
                                                     border-radius: 290486px;
                                                     padding: 0;
@@ -1223,7 +1248,7 @@ label .scrollable > div {
                                                     background-clip: padding-box;
                                                     height: initial;
                                                     
-                                                    .icon {
+                                                    > .icon {
                                                         margin: 0 !important;
                                                         width: 1rem !important;
                                                         height: 1rem !important;
@@ -1273,9 +1298,6 @@ label .scrollable > div {
                                         border-radius: 16px;
                                         padding: 16px;
                                         background: rgba(255, 255, 255, 0.75);
-                                        /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                                backdrop-filter: blur(4px) !important;
-                                -webkit-backdrop-filter: blur(4px) !important;*/
                                         justify-content: center;
                                         align-items: center;
                                         width: 100%;
@@ -1620,6 +1642,51 @@ label .scrollable > div {
                                     }
                                 }
                             }
+
+                            > .media > .media-content > .content {
+                                display: flex;
+                                flex-direction: row;
+                                justify-content: center;
+                                align-items: center;
+
+                                .badge {
+                                    padding: 4px 8px 4px 8px !important;
+                                    border-radius: 500px 500px 500px 500px;
+                                    background: #ffee00;
+                                    color: #ffffff !important;
+                                    font-size: 0.75rem;
+                                    line-height: 0.75rem !important;
+                                }
+                                
+                                > span.icon:first-of-type {
+                                    color: #ffee00;
+                                }
+
+                                > span:not(.icon) {
+                                    color: var(--accent-color);
+                                }
+
+                                span:not(:first-of-type) {
+                                    margin: 0px 0px 0px 16px;
+                                }
+
+                                a {
+                                    margin: 0;
+                                    border: 0px none transparent;
+                                    border-radius: 290486px;
+                                    padding: 0;
+                                    background: transparent;
+                                    background-clip: padding-box;
+                                    height: initial;
+                                    
+                                    > .icon {
+                                        margin: 0 !important;
+                                        width: 1rem !important;
+                                        height: 1rem !important;
+                                        color: var(--accent-color);
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -1903,11 +1970,6 @@ label .scrollable > div {
             color: var(--foreground-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
-
-            .is-primary {
-                color: var(--highlight-color) !important;
-                transition: 0.5s;
-            }
 
             .marker {
                 background-color: var(--highlight-color);
