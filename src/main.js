@@ -514,7 +514,7 @@ window.addEventListener("load", event => {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, secret: credential.secret }));
                         } catch (e) {
                             localStorage.removeItem("credential");
-                        }                        
+                        }
                     } catch (error) {
                         console.error(error.code, error.message);
                     }
@@ -814,7 +814,7 @@ window.addEventListener("load", event => {
                                 return undefined;
                             }
                         } else {
-                            current = { attributes: {}, user: user, timestamp: timestamp};
+                            current = { attributes: {}, user: user, timestamp: timestamp };
 
                             for (const attribute of word.attributes) {
                                 if (attribute.value) {
@@ -2255,7 +2255,7 @@ window.addEventListener("load", event => {
                             i.crossOrigin = "anonymous";
                             i.src = await new Promise(async (resolve2, reject2) => {
                                 const reader = new FileReader();
-    
+
                                 reader.onload = () => {
                                     resolve2(reader.result);
                                 };
