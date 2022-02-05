@@ -4050,7 +4050,7 @@ window.addEventListener("load", event => {
             const characterStorageItem = localStorage.getItem("character");
             const credentialStorageItem = localStorage.getItem("credential");
             let credential = null;
-            const characters = [{ path: "/assets/milch.json", probability: 0.9 }, { path: "/assets/merku.json", probability: 0.1 }];
+            const characters = [{ path: "/assets/milch.json", probability: 0.99 }, { path: "/assets/merku.json", probability: 0.01 }];
             const loader = new GLTFLoader();
 
             if (window.location.pathname === "/about") {
