@@ -389,7 +389,7 @@ label .scrollable > div {
         overflow: hidden;
         background: #ffee00 var(--background-image) 50% 50% repeat;
         background-size: 24px 24px;
-        animation: progress 0.5s linear 0s infinite;
+        animation: progress 1s linear 0s infinite;
         animation-play-state: paused;
     }
 
@@ -677,7 +677,6 @@ label .scrollable > div {
                             height: 48px;
                             align-items: center;
                             justify-content: center;
-                            transition: 0.5s;
                         }
 
                         .icon + .wrap {
@@ -948,6 +947,35 @@ label .scrollable > div {
                         user-select: none;
                     }
 
+                    > .level-item:nth-child(2) {
+                        pointer-events: none;
+                        margin: 8px 0px 8px 0px;
+                        touch-action: none;
+                        -webkit-user-select: none;
+                        user-select: none;
+
+                        .progress {
+                            position: relative;
+                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            border-radius: 290486px;
+                            background: rgba(255, 255, 255, 0.75) !important;
+                            width: 128px;
+                            height: 10px;
+                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                            backdrop-filter: blur(4px);
+                            -webkit-backdrop-filter: blur(4px);
+
+                            > .bar {
+                                position: relative;
+                                border-radius: 290486px;
+                                width: 128px;
+                                height: 8px;
+                                background-color: var(--main-color);
+                                transition: 0.5s;
+                            }
+                        }
+                    }
+
                     > .level-item {
                         > .level {
                             margin: 0px -8px 0px -8px;
@@ -1210,7 +1238,7 @@ label .scrollable > div {
                                             > .level {
                                                 margin: -8px -8px -8px -8px;
                                                 flex-direction: column;
-                
+
                                                 > .level-item {
                                                     margin: 0;
                                                     padding: 8px 8px 8px 8px;
@@ -1218,11 +1246,10 @@ label .scrollable > div {
                                                     > .level {
                                                         margin: -8px -8px -8px -8px;
                                                         flex-direction: row;
-                
+
                                                         > .level-item {
                                                             margin: 0;
                                                             padding: 8px 8px 8px 8px;
-
                                                         }
                                                     }
                                                 }
@@ -1234,11 +1261,11 @@ label .scrollable > div {
                                                 justify-content: center;
                                                 align-items: center;
                                                 color: var(--accent-color);
-                
+
                                                 span:not(:first-of-type) {
                                                     margin: 0px 0px 0px 16px;
                                                 }
-                
+
                                                 a {
                                                     margin: 0;
                                                     border: 0px none transparent;
@@ -1247,7 +1274,7 @@ label .scrollable > div {
                                                     background: transparent;
                                                     background-clip: padding-box;
                                                     height: initial;
-                                                    
+
                                                     > .icon {
                                                         margin: 0 !important;
                                                         width: 1rem !important;
@@ -1614,6 +1641,15 @@ label .scrollable > div {
                                     backdrop-filter: blur(4px);
                                     -webkit-backdrop-filter: blur(4px);
 
+                                    .badge {
+                                        padding: 4px 8px 4px 8px !important;
+                                        border-radius: 500px 500px 500px 500px;
+                                        background: #ffee00;
+                                        color: #ffffff !important;
+                                        font-size: 0.75rem;
+                                        line-height: 0.75rem !important;
+                                    }
+
                                     span:last-of-type {
                                         height: calc(0.75rem * 1.5);
                                     }
@@ -1657,7 +1693,7 @@ label .scrollable > div {
                                     font-size: 0.75rem;
                                     line-height: 0.75rem !important;
                                 }
-                                
+
                                 > span.icon:first-of-type {
                                     color: #ffee00;
                                 }
@@ -1678,7 +1714,7 @@ label .scrollable > div {
                                     background: transparent;
                                     background-clip: padding-box;
                                     height: initial;
-                                    
+
                                     > .icon {
                                         margin: 0 !important;
                                         width: 1rem !important;
@@ -1692,13 +1728,17 @@ label .scrollable > div {
 
                     > .media > .media-content > .content {
                         display: flex;
-                        flex-direction: column;
+                        flex-direction: rows;
                         align-items: center;
                         justify-content: start;
+                        color: var(--accent-color);
 
                         .icon {
                             color: var(--accent-color);
-                            transition: 0.5s;
+                        }
+
+                        span:not(:first-child) {
+                            margin: 0px 0px 0px 8px;
                         }
                     }
                 }
@@ -1782,7 +1822,6 @@ label .scrollable > div {
 
                         .icon {
                             color: var(--accent-color);
-                            transition: 0.5s;
                         }
 
                         span.wrap + .icon:last-of-type {
@@ -1850,7 +1889,6 @@ label .scrollable > div {
 
                             .icon {
                                 color: var(--accent-color);
-                                transition: 0.5s;
                             }
 
                             span.wrap + .icon:last-of-type {
@@ -2078,6 +2116,15 @@ label .scrollable > div {
                                 box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                 backdrop-filter: blur(4px);
                                 -webkit-backdrop-filter: blur(4px);
+
+                                .badge {
+                                    padding: 4px 8px 4px 8px !important;
+                                    border-radius: 500px 500px 500px 500px;
+                                    background: #ffee00;
+                                    color: #ffffff !important;
+                                    font-size: 0.75rem;
+                                    line-height: 0.75rem !important;
+                                }
 
                                 span:last-of-type {
                                     height: calc(0.75rem * 1.5);
