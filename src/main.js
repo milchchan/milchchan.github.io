@@ -1461,56 +1461,54 @@ window.addEventListener("load", event => {
             activate: async function (tokens = [], threshold = 0.5) {
                 idleTime = activateTime = 0.0;
 
-                if (this.user != null) {
-                    if (Math.random() < threshold) {
-                        function _random(min, max) {
-                            min = Math.ceil(min);
-                            max = Math.floor(max);
+                if (Math.random() < threshold) {
+                    function _random(min, max) {
+                        min = Math.ceil(min);
+                        max = Math.floor(max);
 
-                            return Math.floor(Math.random() * (max - min)) + min;
-                        }
-
-                        const words = this.words.filter((x => "timestamp" in x))
-                        const i = _random(0, words.length);
-
-                        if (i > 0) {
-                            function shuffle(array) {
-                                let a = [].concat(array);
-                                let n = array.length;
-
-                                while (n > 1) {
-                                    const k = _random(0, n);
-
-                                    n--;
-
-                                    const temp = a[n];
-
-                                    a[n] = a[k];
-                                    a[k] = temp;
-                                }
-
-                                return a;
-                            }
-
-                            const selectedTokens = [];
-
-                            for (const word of this.take(shuffle(words), i)) {
-                                if (!tokens.includes(word.name) && word.name.indexOf(this.character.name) === -1) {
-                                    selectedTokens.push(word.name);
-                                }
-                            }
-
-                            if (!await this.talk(selectedTokens.concat(tokens.filter((x) => x.indexOf(this.character.name) === -1)))) {
-                                this.talk();
-                            }
-
-                            return;
-                        }
+                        return Math.floor(Math.random() * (max - min)) + min;
                     }
 
-                    if (!await this.talk(tokens.filter((x) => x.indexOf(this.character.name) === -1))) {
-                        this.talk();
+                    const words = this.words.filter((x => "timestamp" in x))
+                    const i = _random(0, words.length);
+
+                    if (i > 0) {
+                        function shuffle(array) {
+                            let a = [].concat(array);
+                            let n = array.length;
+
+                            while (n > 1) {
+                                const k = _random(0, n);
+
+                                n--;
+
+                                const temp = a[n];
+
+                                a[n] = a[k];
+                                a[k] = temp;
+                            }
+
+                            return a;
+                        }
+
+                        const selectedTokens = [];
+
+                        for (const word of this.take(shuffle(words), i)) {
+                            if (!tokens.includes(word.name) && word.name.indexOf(this.character.name) === -1) {
+                                selectedTokens.push(word.name);
+                            }
+                        }
+
+                        if (!await this.talk(selectedTokens.concat(tokens.filter((x) => x.indexOf(this.character.name) === -1)))) {
+                            this.talk();
+                        }
+
+                        return;
                     }
+                }
+
+                if (!await this.talk(tokens.filter((x) => x.indexOf(this.character.name) === -1))) {
+                    this.talk();
                 }
             },
             talk: async function (tokens = []) {
