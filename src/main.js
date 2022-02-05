@@ -1114,6 +1114,16 @@ window.addEventListener("load", event => {
                         this.captures[word.name] = "user" in word ? { name: word.name, attributes: word.attributes, user: word.user, timestamp: Math.floor(new Date() / 1000), count: 1 } : { name: word.name, attributes: word.attributes, timestamp: Math.floor(new Date() / 1000), count: 1 };
                     }
 
+                    try {
+                        localStorage.setItem("captures", JSON.stringify(Object.values(this.captures).map(x => {
+                            x["checksum"] = [...String(x.timestamp)].reduce((x, y) => x + y, 0) + [...String(x.count)].reduce((x, y) => x + y, 0);
+
+                            return x;
+                          })));
+                    } catch (e) {
+                        localStorage.removeItem("captures");
+                    }
+
                     for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Capture"), word.name)) {
                         if (obj.type === "Message") {
                             this.notify({ text: format(obj.text, word.name), accent: this.character.alternative.accent, image: this.character.alternative.image });
@@ -4048,6 +4058,7 @@ window.addEventListener("load", event => {
 
             const self = this;
             const characterStorageItem = localStorage.getItem("character");
+            const capturesStorageItem = localStorage.getItem("captures");
             const credentialStorageItem = localStorage.getItem("credential");
             let credential = null;
             const characters = [{ path: "/assets/milch.json", probability: 0.99 }, { path: "/assets/merku.json", probability: 0.01 }];
@@ -4091,6 +4102,24 @@ window.addEventListener("load", event => {
                     }
                 } catch (e) {
                     localStorage.removeItem("character");
+                }
+            }
+
+            if (capturesStorageItem) {
+                try {
+                    const captures = JSON.parse(capturesStorageItem);
+
+                    if (captures !== null) {
+                        for(const capture of captures) {
+                            if (capture.checksum === [...String(capture.timestamp)].reduce((x, y) => x + y, 0) + [...String(capture.count)].reduce((x, y) => x + y, 0)) {
+                                delete capture["checksum"];
+                                
+                                this.captures[capture.name] = capture;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    localStorage.removeItem("captures");
                 }
             }
 
