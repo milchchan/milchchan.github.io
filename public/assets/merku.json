@@ -206,7 +206,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "「{0}」を見つけたよぉ！"
+                    "text": "「{0}」でお話ししようね"
                 },
                 {
                     "type": "Sequence",
