@@ -136,7 +136,7 @@
                                 </button>
                                 <button class="button is-white" type="button"
                                     @click="isRevealed = !isRevealed; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_about' || mode === '_milch' || mode === '_merku' || mode === '_help'"
+                                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_sign-in' || mode === '_about' || mode === '_milch' || mode === '_merku' || mode === '_help'"
                                     key="force">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
@@ -1262,7 +1262,7 @@
                                             </transition>
                                         </div>
                                     </nav>
-                                    <nav class="level" v-else-if="user === null && mode === 'sign-in'" key="sign-in">
+                                    <nav class="level" v-else-if="user === null && (mode === 'sign-in' || mode === '_sign-in')" key="sign-in">
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
@@ -2453,13 +2453,24 @@
                                                         </article>
                                                     </div>
                                                     <div class="level-item" v-if="character !== null">
-                                                        <button class="button" type="button"
-                                                            @click="like(message, character.visible ? $refs.canvas : null)"
-                                                            v-cloak>
-                                                            <span class="icon is-small" style="pointer-events: none;">
-                                                                <i class="fas fa-heart"></i>
-                                                            </span>
-                                                        </button>
+                                                        <transition name="fade" mode="out-in">
+                                                            <button class="button" type="button"
+                                                                @click="isRevealed = true; mode = '_sign-in';"
+                                                                v-if="user === null" key="disable" v-cloak>
+                                                                <span class="icon is-small"
+                                                                    style="pointer-events: none;">
+                                                                    <i class="fas fa-heart"></i>
+                                                                </span>
+                                                            </button>
+                                                            <button class="button" type="button"
+                                                                @click="like(message, character.visible ? $refs.canvas : null)"
+                                                                v-else key="enable" v-cloak>
+                                                                <span class="icon is-small"
+                                                                    style="pointer-events: none;">
+                                                                    <i class="fas fa-heart"></i>
+                                                                </span>
+                                                            </button>
+                                                        </transition>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2575,7 +2586,7 @@
                     </span>
                 </button>
                 <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
-                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_about' || mode === '_milch' || mode === '_merku'"
+                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_sign-in' || mode === '_about' || mode === '_milch' || mode === '_merku'"
                     key="force">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
