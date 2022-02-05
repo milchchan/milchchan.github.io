@@ -207,9 +207,13 @@ window.addEventListener("load", event => {
                 isDiscovering: false,
                 isTweeting: false,
                 mode: null,
-                feedQueue: [],
                 sequenceQueue: [],
-                progress: 0,
+                progress: null,
+                animatedProgress: 0,
+                uptime: 0,
+                points: 0,
+                animatedPoints: 0,
+                captures: {},
                 user: null,
                 input: "",
                 animatedInputLength: 0,
@@ -264,6 +268,41 @@ window.addEventListener("load", event => {
                 } catch (e) {
                     localStorage.removeItem("character");
                 }
+            },
+            progress(newValue) {
+                const self = this;
+                const obj = { count: this.animatedProgress };
+
+                anime({
+                    targets: obj,
+                    count: newValue === null && self.animatedProgress > 0 ? 1 : newValue,
+                    round: 100,
+                    duration: 500,
+                    easing: "linear",
+                    update: () => {
+                        self.animatedProgress = obj.count;
+                    },
+                    complete: () => {
+                        if (newValue === null) {
+                            self.animatedProgress = 0;
+                        }
+                    }
+                });
+            },
+            points(newValue, oldValue) {
+                const self = this;
+                const obj = { count: this.animatedPoints };
+
+                anime({
+                    targets: obj,
+                    count: newValue,
+                    round: 100,
+                    duration: 500,
+                    easing: "linear",
+                    update: () => {
+                        self.animatedPoints = obj.count;
+                    }
+                });
             },
             words: {
                 handler: () => {
@@ -810,7 +849,7 @@ window.addEventListener("load", event => {
                                 return undefined;
                             }
                         } else {
-                            current = { attributes: {}, user: user, timestamp: timestamp };
+                            current = { attributes: {}, user: user, random: Math.random(), timestamp: timestamp };
 
                             for (const attribute of word.attributes) {
                                 if (attribute.value) {
@@ -857,6 +896,14 @@ window.addEventListener("load", event => {
                                 window.setTimeout(() => {
                                     self.isStared = false;
                                 }, 3000);
+
+                                for (let i = parseInt(this.points) + 1, length = this.points + 60; i <= length; i++) {
+                                    if (i % 60 === 0) {
+                                        this.retain();
+                                    }
+                                }
+
+                                this.points += 60;
 
                                 if (!this.isMuted) {
                                     this.$refs.twinkle.play();
@@ -974,6 +1021,14 @@ window.addEventListener("load", event => {
                             }
                         }
 
+                        for (let i = parseInt(this.points) + 1, length = this.points + 60; i <= length; i++) {
+                            if (i % 60 === 0) {
+                                this.retain();
+                            }
+                        }
+
+                        this.points += 60;
+
                         if (!this.isMuted) {
                             this.$refs.like.play();
                         }
@@ -981,6 +1036,100 @@ window.addEventListener("load", event => {
                 } catch (e) {
                     this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
                     console.error(e);
+                }
+            },
+            retain: async function () {
+                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+
+                if (snapshot.exists()) {
+                    function choice(collection, func) {
+                        const r = Math.random();
+                        let sum = 0.0;
+                        let index = 0;
+
+                        for (let item of collection) {
+                            const probability = func(item);
+
+                            if (sum <= r && r < sum + probability) {
+                                break;
+                            }
+
+                            sum += probability;
+                            index++;
+                        }
+
+                        return collection[index];
+                    }
+
+                    function softmax(x, func1, func2) {
+                        let y = [].concat(x);
+                        let max = Number.MIN_VALUE;
+                        let sum = 0.0;
+
+                        for (let i = 0; i < x.length; i++) {
+                            if (func1(x[i]) > max) {
+                                max = func1(x[i]);
+                            }
+                        }
+
+                        for (let i = 0; i < x.length; i++) {
+                            sum += Math.exp(func1(x[i]) - max);
+                        }
+
+                        for (let i = 0; i < x.length; i++) {
+                            func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                        }
+
+                        return y;
+                    }
+
+                    function format(format) {
+                        var args = arguments;
+
+                        return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
+                    }
+
+                    const dictionary = snapshot.val();
+                    const words = [];
+
+                    for (const key in dictionary) {
+                        dictionary[key]["name"] = key;
+                        dictionary[key]["probability"] = 1;
+
+                        words.push(dictionary[key]);
+                    }
+
+                    const word = choice(softmax(words, x => x.probability, (x, y) => x.probability = y), x => x.probability);
+
+                    if (word.name in this.captures) {
+                        this.captures[word.name].name = word.name;
+                        this.captures[word.name].attributes = word.attributes;
+                        this.captures[word.name].timestamp = Math.floor(new Date() / 1000);
+                        this.captures[word.name].count += 1;
+
+                        if ("user" in word) {
+                            this.captures[word.name]["user"] = word.user;
+                        }
+                    } else {
+                        this.captures[word.name] = "user" in word ? { name: word.name, attributes: word.attributes, user: word.user, timestamp: Math.floor(new Date() / 1000), count: 1 } : { name: word.name, attributes: word.attributes, timestamp: Math.floor(new Date() / 1000), count: 1 };
+                    }
+
+                    for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Capture"), word.name)) {
+                        if (obj.type === "Message") {
+                            this.notify({ text: format(obj.text, word.name), accent: this.character.alternative.accent, image: this.character.alternative.image });
+                        }
+                    }
+                }
+            },
+            release: function (words) {
+                for (const word of words) {
+                    if (word.name in this.captures) {
+                        if (this.captures[word.name].count > 1) {
+                            this.captures[word.name].count -= 1;
+                        } else {
+                            delete this.captures[word.name];
+                        }
+                    }
                 }
             },
             next: async function (key, offset, limit = 5) {
@@ -1090,7 +1239,6 @@ window.addEventListener("load", event => {
                 this.mode[key] = data;
             },
             discover: async function () {
-                const self = this;
                 const words = [];
                 const sequence = [];
 
@@ -2356,7 +2504,7 @@ window.addEventListener("load", event => {
 
                 return collection;
             },
-            arrange: function (collection, limit) {
+            arrange: function (collection, limit = 5) {
                 let rows = [];
                 let columns = [];
 
@@ -3774,6 +3922,20 @@ window.addEventListener("load", event => {
                             this.animationQueue.shift();
                         }
                     }
+
+                    const points = parseInt(this.uptime + deltaTime) - parseInt(this.uptime);
+
+                    if (points > 0) {
+                        for (let i = parseInt(this.points) + 1, length = this.points + points; i <= length; i++) {
+                            if (i % 60 === 0) {
+                                this.retain();
+                            }
+                        }
+
+                        this.points += points;
+                    }
+
+                    this.uptime += deltaTime;
                 }
 
                 controls.update();
