@@ -2347,7 +2347,7 @@ window.addEventListener("load", event => {
                                 }
                             }
 
-                            response = await fetch("https://wonderland.milchchan.com/api/tweet", {
+                            response = await fetch("https://milchchan.com/api/tweet", {
                                 mode: "cors",
                                 method: "POST",
                                 headers: {
