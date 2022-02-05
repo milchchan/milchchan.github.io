@@ -2195,12 +2195,12 @@ label .scrollable > div {
 
                         button.is-primary,
                         .button.is-primary {
-                            background-color: var(--primary-background-color) !important;
+                            color: var(--main-color) !important;
                             transition: 0.5s;
 
-                            span.wrap,
-                            .icon {
-                                color: #ffffff !important;
+                            span {
+                                color: var(--main-color) !important;
+                                transition: 0.5s;
                             }
                         }
                     }
@@ -2472,14 +2472,24 @@ label .scrollable > div {
             }
         }
 
-        .control:nth-of-type(2) button,
-        .control:nth-of-type(4) button {
-            margin: 0;
-            border: 0px solid transparent;
-            padding: 8px 16px 8px 16px;
-            background-color: transparent;
-            color: var(--accent-color);
-            transition: 0.5s;
+        .control:nth-of-type(2),
+        .control:nth-of-type(4) {
+            button {
+                margin: 0;
+                border: 0px solid transparent;
+                padding: 8px 16px 8px 16px;
+                background-color: transparent;
+                color: var(--accent-color);
+                transition: 0.5s;
+
+                span {
+                    margin: 0;
+                }
+            }
+
+            button.is-primary {
+                color: var(--main-color) !important;
+            }
         }
     }
 
