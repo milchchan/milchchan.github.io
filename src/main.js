@@ -899,7 +899,7 @@ window.addEventListener("load", event => {
 
                                 for (let i = parseInt(this.points) + 1, length = this.points + 60; i <= length; i++) {
                                     if (i % 60 === 0) {
-                                        this.retain();
+                                        this.retain(Object.assign({ name: word.name }, dictionary));
                                     }
                                 }
 
@@ -1038,96 +1038,106 @@ window.addEventListener("load", event => {
                     console.error(e);
                 }
             },
-            retain: async function () {
-                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+            retain: async function (word = null) {
+                if (word === null) {
+                    const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
 
-                if (snapshot.exists()) {
-                    function choice(collection, func) {
-                        const r = Math.random();
-                        let sum = 0.0;
-                        let index = 0;
+                    if (snapshot.exists()) {
+                        function choice(collection, func) {
+                            const r = Math.random();
+                            let sum = 0.0;
+                            let index = 0;
 
-                        for (let item of collection) {
-                            const probability = func(item);
+                            for (let item of collection) {
+                                const probability = func(item);
 
-                            if (sum <= r && r < sum + probability) {
-                                break;
+                                if (sum <= r && r < sum + probability) {
+                                    break;
+                                }
+
+                                sum += probability;
+                                index++;
                             }
 
-                            sum += probability;
-                            index++;
+                            return collection[index];
                         }
 
-                        return collection[index];
-                    }
+                        function softmax(x, func1, func2) {
+                            let y = [].concat(x);
+                            let max = Number.MIN_VALUE;
+                            let sum = 0.0;
 
-                    function softmax(x, func1, func2) {
-                        let y = [].concat(x);
-                        let max = Number.MIN_VALUE;
-                        let sum = 0.0;
-
-                        for (let i = 0; i < x.length; i++) {
-                            if (func1(x[i]) > max) {
-                                max = func1(x[i]);
+                            for (let i = 0; i < x.length; i++) {
+                                if (func1(x[i]) > max) {
+                                    max = func1(x[i]);
+                                }
                             }
+
+                            for (let i = 0; i < x.length; i++) {
+                                sum += Math.exp(func1(x[i]) - max);
+                            }
+
+                            for (let i = 0; i < x.length; i++) {
+                                func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                            }
+
+                            return y;
                         }
 
-                        for (let i = 0; i < x.length; i++) {
-                            sum += Math.exp(func1(x[i]) - max);
+                        function format(format) {
+                            var args = arguments;
+
+                            return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                         }
 
-                        for (let i = 0; i < x.length; i++) {
-                            func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                        const dictionary = snapshot.val();
+                        const words = [];
+
+                        for (const key in dictionary) {
+                            dictionary[key]["name"] = key;
+                            dictionary[key]["probability"] = 1;
+
+                            words.push(dictionary[key]);
                         }
 
-                        return y;
-                    }
-
-                    function format(format) {
-                        var args = arguments;
-
-                        return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
-                    }
-
-                    const dictionary = snapshot.val();
-                    const words = [];
-
-                    for (const key in dictionary) {
-                        dictionary[key]["name"] = key;
-                        dictionary[key]["probability"] = 1;
-
-                        words.push(dictionary[key]);
-                    }
-
-                    const word = choice(softmax(words, x => x.probability, (x, y) => x.probability = y), x => x.probability);
-
-                    if (word.name in this.captures) {
-                        this.captures[word.name].name = word.name;
-                        this.captures[word.name].attributes = word.attributes;
-                        this.captures[word.name].timestamp = Math.floor(new Date() / 1000);
-                        this.captures[word.name].count += 1;
-
-                        if ("user" in word) {
-                            this.captures[word.name]["user"] = word.user;
-                        }
+                        word = choice(softmax(words, x => x.probability, (x, y) => x.probability = y), x => x.probability);
                     } else {
-                        this.captures[word.name] = "user" in word ? { name: word.name, attributes: word.attributes, user: word.user, timestamp: Math.floor(new Date() / 1000), count: 1 } : { name: word.name, attributes: word.attributes, timestamp: Math.floor(new Date() / 1000), count: 1 };
+                        return;
                     }
+                }
 
-                    try {
-                        localStorage.setItem("captures", JSON.stringify(Object.values(this.captures).map(x => {
-                            x["checksum"] = [...String(x.timestamp)].reduce((x, y) => x + y, 0) + [...String(x.count)].reduce((x, y) => x + y, 0);
+                if (word.name in this.captures) {
+                    this.captures[word.name].name = word.name;
+                    this.captures[word.name].attributes = word.attributes;
+                    this.captures[word.name].timestamp = Math.floor(new Date() / 1000);
+                    this.captures[word.name].count += 1;
 
-                            return x;
-                          })));
-                    } catch (e) {
-                        localStorage.removeItem("captures");
+                    if ("user" in word) {
+                        this.captures[word.name]["user"] = word.user;
                     }
+                } else {
+                    this.captures[word.name] = "user" in word ? { name: word.name, attributes: word.attributes, user: word.user, timestamp: Math.floor(new Date() / 1000), count: 1 } : { name: word.name, attributes: word.attributes, timestamp: Math.floor(new Date() / 1000), count: 1 };
+                }
 
-                    for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Capture"), word.name)) {
-                        if (obj.type === "Message") {
-                            this.notify({ text: format(obj.text, word.name), accent: this.character.alternative.accent, image: this.character.alternative.image });
-                        }
+                function format(format) {
+                    var args = arguments;
+
+                    return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
+                }
+
+                try {
+                    localStorage.setItem("captures", JSON.stringify(Object.values(this.captures).map(x => {
+                        x["checksum"] = [...String(x.timestamp)].reduce((x, y) => x + y, 0) + [...String(x.count)].reduce((x, y) => x + y, 0);
+
+                        return x;
+                    })));
+                } catch (e) {
+                    localStorage.removeItem("captures");
+                }
+
+                for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Capture"), word.name)) {
+                    if (obj.type === "Message") {
+                        this.notify({ text: format(obj.text, word.name), accent: this.character.alternative.accent, image: this.character.alternative.image });
                     }
                 }
             },
@@ -4110,10 +4120,10 @@ window.addEventListener("load", event => {
                     const captures = JSON.parse(capturesStorageItem);
 
                     if (captures !== null) {
-                        for(const capture of captures) {
+                        for (const capture of captures) {
                             if (capture.checksum === [...String(capture.timestamp)].reduce((x, y) => x + y, 0) + [...String(capture.count)].reduce((x, y) => x + y, 0)) {
                                 delete capture["checksum"];
-                                
+
                                 this.captures[capture.name] = capture;
                             }
                         }
