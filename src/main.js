@@ -545,6 +545,8 @@ window.addEventListener("load", event => {
                             break;
                         }
 
+                        this.user['link'] = `https://twitter.com/${result._tokenResponse.screenName}`;
+
                         try {
                             localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, secret: credential.secret }));
                         } catch (e) {
