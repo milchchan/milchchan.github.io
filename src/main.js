@@ -3945,7 +3945,7 @@ window.addEventListener("load", event => {
 
                     const points = parseInt(this.uptime + deltaTime) - parseInt(this.uptime);
 
-                    if (points > 0) {
+                    if (points > 0 && points < 60) {
                         for (let i = parseInt(this.points) + 1, length = this.points + points; i <= length; i++) {
                             if (i % 60 === 0) {
                                 this.retain();
