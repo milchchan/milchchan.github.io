@@ -2804,7 +2804,7 @@ window.addEventListener("load", event => {
                     composer.setSize(width, height);
                 }
 
-                if (this.character !== null && vrmModel) {
+                if (document.visibilityState === "visible" && this.character !== null && vrmModel) {
                     function _random(min, max) {
                         min = Math.ceil(min);
                         max = Math.floor(max);
