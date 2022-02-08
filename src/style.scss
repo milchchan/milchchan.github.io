@@ -1789,6 +1789,37 @@ label .scrollable > div {
                                     }
                                 }
                             }
+
+                            button {
+                                margin: 0px;
+                                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                border-radius: 290486px;
+                                padding: 16px;
+                                background: rgba(255, 255, 255, 0.75) !important;
+                                background-clip: padding-box;
+                                height: initial;
+                                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                backdrop-filter: blur(4px);
+                                -webkit-backdrop-filter: blur(4px);
+        
+                                span {
+                                    margin: 0 !important;
+                                    width: 1rem !important;
+                                    height: 1rem !important;
+                                    color: var(--accent-color);
+                                }
+                            }
+        
+                            button.is-primary,
+                            .button.is-primary {
+                                background-color: var(--primary-background-color) !important;
+                                transition: 0.5s;
+        
+                                span.wrap,
+                                .icon {
+                                    color: #ffffff !important;
+                                }
+                            }
                         }
                     }
 
@@ -1852,6 +1883,15 @@ label .scrollable > div {
                 }
 
                 > .content {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: flex-start;
+
+                    span {
+                        color: var(--main-color);
+                    }
+
                     > button,
                     > .button {
                         display: flex;
@@ -1916,7 +1956,7 @@ label .scrollable > div {
                     }
 
                     > .balloon {
-                        margin: -16px 0px 0px calc(50% + 32px);
+                        margin: -16px 0px 0px calc(100% + 64px);
                         transform: translate3d(0px, 16px, 0px);
 
                         > button,
@@ -2048,6 +2088,10 @@ label .scrollable > div {
         }
 
         h1 + h2 {
+            margin: 12px 0px 0px 0px;
+        }
+
+        span.icon + h2 {
             margin: 12px 0px 0px 0px;
         }
 
