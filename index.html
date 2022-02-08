@@ -136,7 +136,7 @@
                                 </button>
                                 <button class="button is-white" type="button"
                                     @click="isRevealed = !isRevealed; mode = null;"
-                                    v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_sign-in' || mode === '_about' || mode === '_milch' || mode === '_merku' || mode === '_help'"
+                                    v-else-if="typeof(mode) === 'object' && mode.disposable || typeof(mode) === 'string' && mode.startsWith('_')"
                                     key="force">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
@@ -462,8 +462,10 @@
             <transition name="fade">
                 <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
             </transition>
-            <div id="three" v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto' }" ref="three">
-            </div>
+            <transition name="fade">
+                <div id="three" v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto' }"
+                    ref="three" v-show="isVisible"></div>
+            </transition>
             <transition name="slide">
                 <div id="character" oncontextmenu="return false;"
                     v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto', width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
@@ -1262,7 +1264,9 @@
                                             </transition>
                                         </div>
                                     </nav>
-                                    <nav class="level" v-else-if="user === null && (mode === 'sign-in' || mode === '_sign-in')" key="sign-in">
+                                    <nav class="level"
+                                        v-else-if="user === null && (mode === 'sign-in' || mode === '_sign-in')"
+                                        key="sign-in">
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
@@ -1583,6 +1587,87 @@
                                             </div>
                                         </div>
                                     </nav>
+                                    <nav class="level" v-else-if="mode == 'settings' || mode == '_settings'"
+                                        key="settings">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <span class="icon is-large">
+                                                            <i class="fas fa-cog fa-2x"></i>
+                                                        </span>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            Settings</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <hr>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <div class="level is-mobile">
+                                                <div class="level-item">
+                                                    <div class="level is-mobile">
+                                                        <div class="level-item">
+                                                            <transition name="fade" mode="out-in">
+                                                                <button class="button" type="button" @click="isVisible = false" v-if="isVisible"
+                                                                    key="disabled" v-cloak>
+                                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button" type="button" @click="isVisible = true" v-else key="enabled"
+                                                                    v-cloak>
+                                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                                        <i class="fas fa-eye-slash"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </transition>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <transition name="fade" mode="out-in">
+                                                                <button class="button" type="button" @click="isMuted = false" v-if="isMuted"
+                                                                    key="disabled" v-cloak>
+                                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                                        <i class="fas fa-volume-mute"></i>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button" type="button" @click="isMuted = true" v-else key="enabled"
+                                                                    v-cloak>
+                                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                                        <i class="fas fa-volume-up"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </transition>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <transition name="fade" mode="out-in">
+                                                                <button class="button" type="button"
+                                                                    @click="mode = 'sign-in'" v-if="user === null"
+                                                                    key="signedout" v-cloak>
+                                                                    <span class="icon">
+                                                                        <i class="fas fa-sign-in-alt"></i>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button" type="button"
+                                                                    v-bind:disabled="user === null" @click="signOut()"
+                                                                    v-else key="signedin" v-cloak>
+                                                                    <span class="icon">
+                                                                        <i class="fas fa-sign-out-alt"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </transition>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </nav>
                                     <nav class="level" v-else-if="mode == 'help' || mode == '_help'" key="help">
                                         <div class="level-item">
                                             <article class="media">
@@ -1753,8 +1838,8 @@
                                                                 </figure>
                                                             </button>
                                                             <button class="button image is-64x64 is-superellips"
-                                                                type="button" @click="signOut()" v-else key="user"
-                                                                v-cloak>
+                                                                type="button" @click="mode = 'settings'" v-else
+                                                                key="user" v-cloak>
                                                                 <figure>
                                                                     <picture class="image is-64x64"
                                                                         v-if="'photoURL' in user && user.photoURL !== null">
@@ -2600,32 +2685,14 @@
             </transition>
         </div>
         <div class="right" v-cloak>
-            <transition name="fade" mode="out-in">
-                <div class="level-item" v-if="isRevealed" key="mute" v-cloak>
-                    <transition name="fade" mode="out-in">
-                        <button class="button is-white" type="button" @click="isMuted = false" v-if="isMuted"
-                            key="disabled" v-cloak>
-                            <span class="icon is-small" style="pointer-events: none;">
-                                <i class="fas fa-volume-mute"></i>
-                            </span>
-                        </button>
-                        <button class="button is-white" type="button" @click="isMuted = true" v-else key="enabled"
-                            v-cloak>
-                            <span class="icon is-small" style="pointer-events: none;">
-                                <i class="fas fa-volume-up"></i>
-                            </span>
-                        </button>
-                    </transition>
-                </div>
-                <div class="level-item" v-else key="sync">
-                    <button class="button is-white" type="button" v-bind:disabled="isLoading || isHangingOn"
-                        @click="refresh" v-cloak>
-                        <span class="icon is-small">
-                            <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
-                        </span>
-                    </button>
-                </div>
-            </transition>
+            <div class="level-item">
+                <button class="button is-white" type="button" v-bind:disabled="isLoading || isHangingOn"
+                    @click="refresh" v-cloak>
+                    <span class="icon is-small">
+                        <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                    </span>
+                </button>
+            </div>
         </div>
         <audio preload="auto" ref="like">
             <source src="/sounds/float_001.mp3" type="audio/mpeg" />
