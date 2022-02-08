@@ -59,10 +59,10 @@ renderer.outputEncoding = sRGBEncoding;
 //renderer.autoClear = false;
 
 const CAMERA_FOV = 60.0;
-const CAMERA_Z = 5;//1.25;
+const CAMERA_Z = 1.25;
 const camera = new PerspectiveCamera(CAMERA_FOV, renderer.domElement.width / renderer.domElement.height, 0.1, 1000);
 
-camera.position.set(0.0, 1.5, CAMERA_Z);
+camera.position.set(0.0, 1.25, CAMERA_Z);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -76,7 +76,7 @@ controls.minAzimuthAngle = -45 * Math.PI / 180;
 controls.maxAzimuthAngle = 45 * Math.PI / 180;
 controls.minDistance = 0.75;
 controls.maxDistance = 5;
-controls.target.set(0.0, 2.5, 1.0);
+controls.target.set(0.0, 1.0, 0.0);
 controls.update();
 
 const scene = new Scene();
@@ -109,18 +109,18 @@ var fxaaShader = new ShaderPass(FXAAShader);
 
 bloomPass.renderToScreen = true;
 bloomPass.threshold = 0.5;
-bloomPass.strength = 0.25;
-bloomPass.radius = 0;
+bloomPass.strength = 0.1;
+bloomPass.radius = 0.1;
 
-hueSaturation.uniforms.hue.value = -0.025;
-hueSaturation.uniforms.saturation.value = 0.25;
-//brightnessContrastShader.uniforms.brightness.value = 0.5;
+//hueSaturation.uniforms.hue.value = -0.025;
+hueSaturation.uniforms.saturation.value = 0.5;
+brightnessContrastShader.uniforms.brightness.value = 0.5;
 brightnessContrastShader.uniforms.contrast.value = -0.1;
 colorCorrection.uniforms.mulRGB.value = new Vector3(0.95, 0.95, 0.95);
 colorCorrection.uniforms.powRGB.value = new Vector3(1, 1, 1);
 rgbShift.uniforms.amount.value = 0.0001;
 rgbShift.uniforms.angle.value = 0;
-vignette.uniforms.darkness.value = 0.25;
+vignette.uniforms.darkness.value = 1.0;
 vignette.uniforms.offset.value = 0.0
 effectCopy.renderToScreen = true;
 fxaaShader.uniforms.resolution.value.set(1 / (renderer.domElement.width * window.devicePixelRatio), 1 / (renderer.domElement.height * window.devicePixelRatio));
@@ -132,8 +132,8 @@ composer.addPass(bloomPass);
 composer.addPass(hueSaturation);
 //composer.addPass(brightnessContrastShader);
 //composer.addPass(colorCorrection);
-composer.addPass(rgbShift);
-composer.addPass(vignette);
+//composer.addPass(rgbShift);
+//composer.addPass(vignette);
 //composer.addPass(gammaCorrectionShader);
 //composer.addPass(fxaaShader);
 composer.addPass(effectCopy);
@@ -190,6 +190,7 @@ window.addEventListener("load", event => {
             return {
                 isDebug: debug,
                 isDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+                isVisible: true,
                 isMuted: true,
                 isLoading: false,
                 isRevealed: false,
@@ -262,9 +263,16 @@ window.addEventListener("load", event => {
             }
         },
         watch: {
+            isVisible(newValue) {
+                try {
+                    localStorage.setItem("character", JSON.stringify({ visible: newValue, mute: this.isMuted }));
+                } catch (e) {
+                    localStorage.removeItem("character");
+                }
+            },
             isMuted(newValue) {
                 try {
-                    localStorage.setItem("character", JSON.stringify({ mute: newValue }));
+                    localStorage.setItem("character", JSON.stringify({ visible: this.isVisible, mute: newValue }));
                 } catch (e) {
                     localStorage.removeItem("character");
                 }
@@ -2787,23 +2795,6 @@ window.addEventListener("load", event => {
 
                 const deltaTime = clock.getDelta();
 
-                if (renderer.domElement.width !== renderer.domElement.clientWidth || renderer.domElement.height !== renderer.domElement.clientHeight) {
-                    const width = renderer.domElement.clientWidth;
-                    const height = renderer.domElement.clientHeight;
-
-                    bloomPass.setSize(width, height);
-                    fxaaShader.uniforms.resolution.value.set(1 / (width * window.devicePixelRatio), 1 / (height * window.devicePixelRatio));
-
-                    renderer.setPixelRatio(window.devicePixelRatio);
-                    renderer.setSize(width, height, false);
-
-                    camera.aspect = width / height;
-                    camera.updateProjectionMatrix();
-
-                    composer.setPixelRatio(window.devicePixelRatio);
-                    composer.setSize(width, height);
-                }
-
                 if (document.visibilityState === "visible" && this.character !== null && vrmModel) {
                     function _random(min, max) {
                         min = Math.ceil(min);
@@ -3958,10 +3949,29 @@ window.addEventListener("load", event => {
                     this.uptime += deltaTime;
                 }
 
-                controls.update();
+                if (this.isVisible) {
+                    if (renderer.domElement.width !== renderer.domElement.clientWidth || renderer.domElement.height !== renderer.domElement.clientHeight) {
+                        const width = renderer.domElement.clientWidth;
+                        const height = renderer.domElement.clientHeight;
 
-                //renderer.render(scene, camera);
-                composer.render(deltaTime);
+                        bloomPass.setSize(width, height);
+                        fxaaShader.uniforms.resolution.value.set(1 / (width * window.devicePixelRatio), 1 / (height * window.devicePixelRatio));
+
+                        renderer.setPixelRatio(window.devicePixelRatio);
+                        renderer.setSize(width, height, false);
+
+                        camera.aspect = width / height;
+                        camera.updateProjectionMatrix();
+
+                        composer.setPixelRatio(window.devicePixelRatio);
+                        composer.setSize(width, height);
+                    }
+
+                    controls.update();
+
+                    //renderer.render(scene, camera);
+                    composer.render(deltaTime);
+                }
 
                 stats.end();
             },
@@ -4083,6 +4093,9 @@ window.addEventListener("load", event => {
             } else if (window.location.pathname === "/merku") {
                 this.mode = "_merku";
                 this.isRevealed = true;
+            } else if (window.location.pathname === "/settings") {
+                this.mode = "_settings";
+                this.isRevealed = true;
             } else if (window.location.pathname === "/help") {
                 this.mode = "_help";
                 this.isRevealed = true;
@@ -4108,7 +4121,13 @@ window.addEventListener("load", event => {
                     const character = JSON.parse(characterStorageItem);
 
                     if (character !== null) {
-                        this.isMuted = character.mute;
+                        if ("visible" in character) {
+                            this.isVisible = character.visible;
+                        }
+
+                        if ("mute" in character) {
+                            this.isMuted = character.mute;
+                        }
                     }
                 } catch (e) {
                     localStorage.removeItem("character");
@@ -4573,49 +4592,53 @@ window.addEventListener("load", event => {
         });
     });
     window.addEventListener("click", event => {
-        const element = app.$refs.three;
-        const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
-        const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
-        const w = element.offsetWidth;
-        const h = element.offsetHeight;
+        if (app.isVisible) {
+            const element = app.$refs.three;
+            const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+            const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
 
-        mouse.x = (x / w) * 2 - 1;
-        mouse.y = -(y / h) * 2 + 1;
+            mouse.x = (x / w) * 2 - 1;
+            mouse.y = -(y / h) * 2 + 1;
 
-        raycaster.setFromCamera(mouse, camera);
+            raycaster.setFromCamera(mouse, camera);
 
-        const intersects = raycaster.intersectObjects(scene.children, true);
+            const intersects = raycaster.intersectObjects(scene.children, true);
 
-        for (let intersect of intersects) {
-            if (intersect.object.name === "face") {
-                //app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.0, end: 2.0 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.0, end: 2.0 }]);
+            for (let intersect of intersects) {
+                if (intersect.object.name === "face") {
+                    //app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.0, end: 2.0 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.0, end: 2.0 }]);
 
-                break;
-            } else if (intersect.object.name.indexOf("breast") >= 0) {
-                /*if (random(0, 1) === 0) {
-                    app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }]);
-                } else {
-                    app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 0.5, start: 0.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 3.0, start: 1.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 0.5, start: 1.0, end: 0.0 }]);
-                }*/
+                    break;
+                } else if (intersect.object.name.indexOf("breast") >= 0) {
+                    /*if (random(0, 1) === 0) {
+                        app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkL, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.BlinkR, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }]);
+                    } else {
+                        app.blendShapeAnimationQueue.push([{ name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 0.5, start: 0.0, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 3.0, start: 0.5, end: 0.5 }, { name: THREE.VRMSchema.BlendShapePresetName.Angry, time: 0.0, duration: 0.5, start: 0.5, end: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 0.5, start: 0.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 3.0, start: 1.0, end: 1.0 }, { name: THREE.VRMSchema.BlendShapePresetName.O, time: 0.0, duration: 0.5, start: 1.0, end: 0.0 }]);
+                    }*/
 
-                break;
+                    break;
+                }
             }
         }
     });
     window.addEventListener("dblclick", event => {
-        const element = app.$refs.three;
-        const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
-        const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
-        const w = element.offsetWidth;
-        const h = element.offsetHeight;
+        if (app.isVisible) {
+            const element = app.$refs.three;
+            const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+            const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
 
-        mouse.x = (x / w) * 2 - 1;
-        mouse.y = -(y / h) * 2 + 1;
+            mouse.x = (x / w) * 2 - 1;
+            mouse.y = -(y / h) * 2 + 1;
 
-        raycaster.setFromCamera(mouse, camera);
+            raycaster.setFromCamera(mouse, camera);
 
-        if (raycaster.intersectObjects(scene.children, true).length > 0) {
-            app.activate();
+            if (raycaster.intersectObjects(scene.children, true).length > 0) {
+                app.activate();
+            }
         }
     });
     window.addEventListener("keydown", event => {
@@ -4627,7 +4650,7 @@ window.addEventListener("load", event => {
         controls.enabled = false;
     });
     window.addEventListener("mousedown", event => {
-        if (!controls.enabled && event.button === 0) {
+        if (app.isVisible && !controls.enabled && event.button === 0) {
             let minDistance = Number.MAX_SAFE_INTEGER;
             let bestIntersect = null;
             const element = app.$refs.three;
@@ -4682,28 +4705,30 @@ window.addEventListener("load", event => {
      
             vrmModel.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).position.set(px, py, 0.0);
         }*/
-        const element = app.$refs.three;
-        const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
-        const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
-        const w = element.offsetWidth;
-        const h = element.offsetHeight;
+        if (app.isVisible) {
+            const element = app.$refs.three;
+            const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+            const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
 
-        mouse.x = (x / w) * 2 - 1;
-        mouse.y = -(y / h) * 2 + 1;
+            mouse.x = (x / w) * 2 - 1;
+            mouse.y = -(y / h) * 2 + 1;
 
-        if (!controls.enabled && event.button === 0) {
-            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+            if (!controls.enabled && event.button === 0) {
+                lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
 
-            if (draggableBone !== null) {
-                const vector = new Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
+                if (draggableBone !== null) {
+                    const vector = new Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
 
-                draggableBone.direction = vector.normalize();
-                draggableBone.distance = Math.sqrt((draggableBone.point.x - x) * (draggableBone.point.x - x) + (draggableBone.point.y - y) * (draggableBone.point.y - y));
+                    draggableBone.direction = vector.normalize();
+                    draggableBone.distance = Math.sqrt((draggableBone.point.x - x) * (draggableBone.point.x - x) + (draggableBone.point.y - y) * (draggableBone.point.y - y));
+                }
             }
         }
     });
     window.addEventListener("mouseup", event => {
-        if (!controls.enabled && event.button === 0) {
+        if (app.isVisible && !controls.enabled && event.button === 0) {
             draggableBone = null;
 
             if (app.character !== null) {
@@ -4714,91 +4739,97 @@ window.addEventListener("load", event => {
     window.addEventListener("touchstart", event => {
         event.stopPropagation();
 
-        const element = app.$refs.three;
-        const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
-        const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
-        const w = element.offsetWidth;
-        const h = element.offsetHeight;
+        if (app.isVisible) {
+            const element = app.$refs.three;
+            const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+            const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
 
-        mouse.x = (x / w) * 2 - 1;
-        mouse.y = -(y / h) * 2 + 1;
+            mouse.x = (x / w) * 2 - 1;
+            mouse.y = -(y / h) * 2 + 1;
 
-        raycaster.setFromCamera(mouse, camera);
+            raycaster.setFromCamera(mouse, camera);
 
-        if (tapCount == 0) {
-            tapCount++;
+            if (tapCount == 0) {
+                tapCount++;
 
-            setTimeout(() => {
-                tapCount = 0;
-            }, 500);
+                setTimeout(() => {
+                    tapCount = 0;
+                }, 500);
 
-            let minDistance = Number.MAX_SAFE_INTEGER;
-            let bestIntersect = null;
+                let minDistance = Number.MAX_SAFE_INTEGER;
+                let bestIntersect = null;
 
-            for (let intersect of raycaster.intersectObjects(scene.children, true)) {
-                if (intersect.distance < minDistance) {
-                    bestIntersect = intersect;
-                    minDistance = intersect.distance;
-                }
-            }
-
-            if (bestIntersect !== null) {
-                let springBoneIndex = 0;
-
-                draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
-                minDistance = Number.MAX_SAFE_INTEGER;
-
-                for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                    for (const springBone of springBoneGroup) {
-                        const distance = springBone.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
-
-                        if (distance < minDistance) {
-                            draggableBone.index = springBoneIndex;
-                            minDistance = distance;
-                        }
-
-                        springBoneIndex++;
+                for (let intersect of raycaster.intersectObjects(scene.children, true)) {
+                    if (intersect.distance < minDistance) {
+                        bestIntersect = intersect;
+                        minDistance = intersect.distance;
                     }
                 }
 
-                if (app.character !== null) {
-                    app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchStart"), bestIntersect.object.name));
+                if (bestIntersect !== null) {
+                    let springBoneIndex = 0;
+
+                    draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
+                    minDistance = Number.MAX_SAFE_INTEGER;
+
+                    for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
+                        for (const springBone of springBoneGroup) {
+                            const distance = springBone.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
+
+                            if (distance < minDistance) {
+                                draggableBone.index = springBoneIndex;
+                                minDistance = distance;
+                            }
+
+                            springBoneIndex++;
+                        }
+                    }
+
+                    if (app.character !== null) {
+                        app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchStart"), bestIntersect.object.name));
+                    }
                 }
-            }
 
-            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
-        } else {
-            if (raycaster.intersectObjects(scene.children, true).length > 0) {
-                app.activate();
-            }
+                lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+            } else {
+                if (raycaster.intersectObjects(scene.children, true).length > 0) {
+                    app.activate();
+                }
 
-            tapCount = 0;
+                tapCount = 0;
+            }
         }
     });
     window.addEventListener("touchmove", event => {
         event.stopPropagation();
 
-        const element = app.$refs.three;
-        const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
-        const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
-        const w = element.offsetWidth;
-        const h = element.offsetHeight;
+        if (app.isVisible) {
+            const element = app.$refs.three;
+            const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+            const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
 
-        lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+        }
     });
     window.addEventListener("touchend", event => {
         event.stopPropagation();
 
-        const element = app.$refs.three;
-        const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
-        const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
-        const w = element.offsetWidth;
-        const h = element.offsetHeight;
+        if (app.isVisible) {
+            const element = app.$refs.three;
+            const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+            const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
 
-        lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
 
-        if (app.character !== null) {
-            app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
+            if (app.character !== null) {
+                app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
+            }
         }
     });
     window.addEventListener("touchcancel", event => {
