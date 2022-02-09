@@ -874,7 +874,7 @@ window.addEventListener("load", event => {
 
                             if (updateRequired) {
                                 let deleteRequired = true;
-                                const c = { attributes: {} };
+                                const c = { attributes: {}, user: user };
 
                                 if ("image" in word && word.image !== null) {
                                     c["image"] = { path: word.image.path, type: word.image.type };
