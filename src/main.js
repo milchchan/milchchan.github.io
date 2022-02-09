@@ -214,7 +214,7 @@ window.addEventListener("load", event => {
                 uptime: 0,
                 points: 0,
                 animatedPoints: 0,
-                captures: { _resolve: async () => await Object.values(app.captures).filter(x => typeof(x) !== "function" && "image" in x).forEach(async x => x["image"]["url"] = await getDownloadURL(storageRef(storage, x.image.path))) },
+                captures: { _resolve: async () => await Object.values(app.captures).filter(x => typeof (x) !== "function" && "image" in x).forEach(async x => x["image"]["url"] = await getDownloadURL(storageRef(storage, x.image.path))) },
                 user: null,
                 input: "",
                 animatedInputLength: 0,
@@ -337,7 +337,7 @@ window.addEventListener("load", event => {
                         try {
                             localStorage.setItem("captures", JSON.stringify(Object.values(newValue).filter(x => typeof (x) !== "function").map(x => {
                                 x["checksum"] = [...String(x.timestamp)].reduce((x, y) => x + y, 0) + [...String(x.count)].reduce((x, y) => x + y, 0);
-    
+
                                 return x;
                             })));
                         } catch (e) {
@@ -755,12 +755,18 @@ window.addEventListener("load", event => {
                                     return current;
                                 });
 
-                                if (result.committed && result.snapshot.exists()) {
-                                    const d = result.snapshot.val()
+                                if (result.committed) {
+                                    if (result.snapshot.exists()) {
+                                        const d = result.snapshot.val()
 
-                                    data['image'] = d['image'];
-                                    data['image']['url'] = await getDownloadURL(storageRef(storage, d['image'].path));
-                                    data['timestamp'] = d['timestamp'];
+                                        data['image'] = d['image'];
+                                        data['image']['url'] = await getDownloadURL(storageRef(storage, d['image'].path));
+                                        data['timestamp'] = d['timestamp'];
+                                    }
+                                    else {
+                                        data['image'] = { path: path, url: await getDownloadURL(storageRef(storage, path)), type: file.type };
+                                        data['timestamp'] = timestamp;
+                                    }
                                 }
                             }
                         } catch (error) {
@@ -848,9 +854,21 @@ window.addEventListener("load", event => {
                                 }
                             }
 
+                            if ("image" in current === "image" in word) {
+                                if ("image" in current && current.image.path !== word.image.path) {
+                                    updateRequired = true;
+                                }
+                            } else {
+                                updateRequired = true;
+                            }
+
                             if (updateRequired) {
                                 let deleteRequired = true;
                                 const c = { attributes: {} };
+
+                                if ("image" in word) {
+                                    c["image"] = { path: word.image.path, type: word.image.type };
+                                }
 
                                 for (const attribute of word.attributes) {
                                     if (attribute.value) {
@@ -878,6 +896,10 @@ window.addEventListener("load", event => {
                             }
                         } else {
                             current = { attributes: {}, user: user, random: Math.random(), timestamp: timestamp };
+
+                            if ("image" in word) {
+                                current["image"] = { path: word.image.path, type: word.image.type };
+                            }
 
                             for (const attribute of word.attributes) {
                                 if (attribute.value) {
@@ -1416,6 +1438,7 @@ window.addEventListener("load", event => {
 
                 const sequence = [];
                 const attributes = [];
+                let image = null;
 
                 if ("attributes" in word) {
                     if (Array.isArray(word.attributes)) {
@@ -1437,6 +1460,10 @@ window.addEventListener("load", event => {
                             }
                         }
                     }
+
+                    if ("image" in word) {
+                        image = { path: word.image.path, url: await getDownloadURL(storageRef(storage, word.image.path)), type: word.image.type };
+                    }
                 } else {
                     const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + word.name));
 
@@ -1452,6 +1479,10 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
+
+                        if ("image" in w) {
+                            image = { path: w.image.path, url: await getDownloadURL(storageRef(storage, w.image.path)), type: w.image.type };
+                        }
                     } else {
                         for (const attribute of this.attributes) {
                             attributes.push({ name: attribute, value: false });
@@ -1459,7 +1490,7 @@ window.addEventListener("load", event => {
                     }
                 }
 
-                this.word = { name: word.name, attributes: attributes };
+                this.word = image === null ? { name: word.name, attributes: attributes } : { name: word.name, image: image, attributes: attributes } ;
 
                 /*for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Learn"), word.name, this.character.alternative.sequences)) {
                     if (obj.type === "Message") {
@@ -2134,16 +2165,16 @@ window.addEventListener("load", event => {
                     for (const image of background.images) {
                         try {
                             const metadata = await getMetadata(storageRef(storage, image.path));
-    
+
                             if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
                                 try {
                                     const blob = await this.download(await getDownloadURL(storageRef(storage, image.path)));
-    
+
                                     if (blob !== null) {
                                         this.background.images.push({
                                             id: background.id, url: await new Promise(async (resolve, reject) => {
                                                 const reader = new FileReader();
-    
+
                                                 reader.onload = () => {
                                                     resolve(reader.result);
                                                 };
@@ -2161,7 +2192,7 @@ window.addEventListener("load", event => {
                                 this.background.images.push({
                                     id: background.id, url: await new Promise(async (resolve, reject) => {
                                         const reader = new FileReader();
-    
+
                                         reader.onload = () => {
                                             resolve(reader.result);
                                         };
