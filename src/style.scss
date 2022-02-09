@@ -1853,7 +1853,7 @@ label .scrollable > div {
                                 }
                             }
 
-                            button {
+                            > button {
                                 margin: 0px;
                                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
                                 border-radius: 290486px;
@@ -1873,8 +1873,8 @@ label .scrollable > div {
                                 }
                             }
 
-                            button.is-primary,
-                            .button.is-primary {
+                            > button.is-primary,
+                            > .button.is-primary {
                                 background-color: var(--primary-background-color) !important;
                                 transition: 0.5s;
 
