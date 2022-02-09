@@ -1402,7 +1402,7 @@ window.addEventListener("load", event => {
                                     this.sequenceQueue.push(sequence);
                                 }
 
-                                this.learn({ name: word.name, attributes: word.attributes });
+                                this.learn("image" in word && word.image !== null ? { name: word.name, attributes: word.attributes, image: word.image } : { name: word.name, attributes: word.attributes });
 
                                 return;
                             }
