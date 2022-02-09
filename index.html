@@ -1155,12 +1155,59 @@
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
                                                                 <div class="level is-mobile">
-                                                                    <div class="level-item">
-                                                                        <div class="level is-mobile">
+                                                                    <div class="level-item">                                                                        
+                                                                        <div class="card" v-if="'image' in word && word.image !== null">
+                                                                            <div class="card-image">
+                                                                                <figure class="image">
+                                                                                    <transition name="fade">
+                                                                                        <picture class="image has-ratio"
+                                                                                            style="pointer-events: none;"
+                                                                                            v-if="'image' in word && word.image !== null">
+                                                                                            <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
+                                                                                                v-bind:src="word.image.url"
+                                                                                                v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
+                                                                                                v-bind:alt="word.name">
+                                                                                        </picture>
+                                                                                    </transition>
+                                                                                </figure>
+                                                                            </div>
+                                                                            <div class="card-content">
+                                                                                <div class="content">
+                                                                                    <div class="field">
+                                                                                        <button class="button is-size-7"
+                                                                                            type="button"
+                                                                                            v-bind:disabled="user === null"
+                                                                                            @click="learn('image' in word && word.image !== null ? { name: word.id, attributes: word.attributes, image: word.image } : { name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
+                                                                                            v-cloak>
+                                                                                            <span class="image is-24x24"
+                                                                                                v-if="'user' in word && 'image' in word.user && word.user.image != null">
+                                                                                                <img class="is-rounded"
+                                                                                                    v-bind:src="word.user.image"
+                                                                                                    v-bind:alt="word.user.name"
+                                                                                                    v-cloak>
+                                                                                            </span>
+                                                                                            <span
+                                                                                                class="wrap has-text-weight-bold has-text-black">
+                                                                                                <div class="clip">
+                                                                                                    <div
+                                                                                                        class="scrollable">
+                                                                                                        <div>{{ word.id
+                                                                                                            }}</div>
+                                                                                                        <div>{{ word.id
+                                                                                                            }}</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="level is-mobile" v-else>
                                                                             <div class="level-item">
                                                                                 <button class="button" type="button"
                                                                                     v-bind:disabled="user === null"
-                                                                                    @click="learn({ name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
+                                                                                    @click="learn('image' in word && word.image !== null ? { name: word.id, attributes: word.attributes, image: word.image } : { name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
                                                                                     v-cloak>
                                                                                     <span class="image is-24x24"
                                                                                         v-if="'user' in word && 'image' in word.user && word.user.image != null">
@@ -1243,7 +1290,8 @@
                                                         </article>
                                                     </div>
                                                 </div>
-                                                <div class="level is-mobile" v-else v-bind:key="mode.collection[mode.index][0]">
+                                                <div class="level is-mobile" v-else
+                                                    v-bind:key="mode.collection[mode.index][0]">
                                                     <div class="level-item" v-for="word in mode.collection[mode.index]"
                                                         v-bind:key="word">
                                                         <div class="level is-mobile">
@@ -1365,16 +1413,6 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div class="level-item"
-                                                                        v-if="user !== null && isDebug">
-                                                                        <button class="button" type="button"
-                                                                            @click="learn({ name: word.name, attributes: word.attributes }); isRevealed = false; mode = null;"
-                                                                            v-cloak>
-                                                                            <span class="icon is-small">
-                                                                                <i class="fas fa-arrow-right"></i>
-                                                                            </span>
-                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
