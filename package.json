@@ -20,18 +20,18 @@
   },
   "homepage": "https://milchchan.com/",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.4",
+    "@fortawesome/fontawesome-free": "^6.0.0",
     "@pixiv/three-vrm": "^0.6.8",
     "animejs": "^3.2.1",
     "bulma": "^0.9.3",
-    "firebase": "^9.6.5",
+    "firebase": "^9.6.6",
     "stats.js": "^0.17.0",
     "three": "^0.136.0",
-    "vue": "^3.2.29"
+    "vue": "^3.2.30"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.10.2",
-    "sass": "^1.49.0",
+    "sass": "^1.49.7",
     "vite": "^2.7.13"
   }
 }
