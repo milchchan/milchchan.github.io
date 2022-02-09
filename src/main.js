@@ -4206,13 +4206,13 @@ window.addEventListener("load", event => {
                 this.isRevealed = true;
             } else if (window.location.pathname === "/words" || window.location.pathname === "/talk") {
                 this.mode = { words: null, next: null, indexes: [], selected: [], disposable: true };
-                this.next("words", mode.next);
+                this.next("words", this.mode.next);
                 this.isRevealed = true;
             } else if (window.location.pathname === "/learn") {
                 this.isLearning = true;
             } else if (window.location.pathname === "/likes") {
                 this.mode = { likes: null, next: null, indexes: [], disposable: true };
-                this.next("likes", mode.next, 1);
+                this.next("likes", this.mode.next, 1);
                 this.isRevealed = true;
             } else if (window.location.pathname === "/stats") {
                 this.mode = { stats: null, words: null, likes: null, disposable: true };
