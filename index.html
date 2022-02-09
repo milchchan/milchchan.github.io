@@ -710,7 +710,7 @@
                                                                                     v-bind:alt="user.name" v-cloak>
                                                                             </span>
                                                                             <span
-                                                                                class="is-primary is-size-5 has-text-weight-bold">{{
+                                                                                class="is-size-5 has-text-weight-bold">{{
                                                                                 user.name }}</span>
                                                                             <span><a v-bind:href="user.link"
                                                                                     target="_blank"
@@ -769,7 +769,7 @@
                                                                                     v-bind:alt="user.name" v-cloak>
                                                                             </span>
                                                                             <span
-                                                                                class="is-primary is-size-5 has-text-weight-bold">{{
+                                                                                class="is-size-5 has-text-weight-bold">{{
                                                                                 user.name }}</span>
                                                                             <span><a v-bind:href="user.link"
                                                                                     target="_blank"
@@ -848,7 +848,7 @@
                                                                                             <div class="media-content">
                                                                                                 <div class="content">
                                                                                                     <span
-                                                                                                        class="is-primary is-size-5 has-text-weight-bold"
+                                                                                                        class="is-size-5 has-text-weight-bold"
                                                                                                         v-text="mode.words.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)"></span>
                                                                                                 </div>
                                                                                             </div>
@@ -875,10 +875,8 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <p class="is-size-5"><span
-                                                                            class="is-primary has-text-weight-bold"
-                                                                            v-text="Math.floor(range(new Date(), [0, -1, -2, -3, -4, -5, -6]).map(day => mode.words.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)).reduce((x, y) => x + y , 0) / 7 * 100) / 100"></span>
-                                                                    </p>
+                                                                    <span class="is-size-5 has-text-weight-bold"
+                                                                        v-text="Math.floor(range(new Date(), [0, -1, -2, -3, -4, -5, -6]).map(day => mode.words.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)).reduce((x, y) => x + y , 0) / 7 * 100) / 100"></span>
                                                                 </div>
                                                             </div>
                                                         </article>
@@ -896,10 +894,8 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <p class="is-size-5"><span
-                                                                            class="is-primary has-text-weight-bold"
-                                                                            v-text="Math.floor(standardDeviation([].concat(range(new Date(), [0, -1, -2, -3, -4, -5, -6]).map(day => mode.words.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)))) * 100) / 100"></span>
-                                                                    </p>
+                                                                    <span class="is-size-5 has-text-weight-bold"
+                                                                        v-text="Math.floor(standardDeviation([].concat(range(new Date(), [0, -1, -2, -3, -4, -5, -6]).map(day => mode.words.reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)))) * 100) / 100"></span>
                                                                 </div>
                                                             </div>
                                                         </article>
@@ -1155,8 +1151,9 @@
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
                                                                 <div class="level is-mobile">
-                                                                    <div class="level-item">                                                                        
-                                                                        <div class="card" v-if="'image' in word && word.image !== null">
+                                                                    <div class="level-item">
+                                                                        <div class="card"
+                                                                            v-if="'image' in word && word.image !== null">
                                                                             <div class="card-image">
                                                                                 <figure class="image">
                                                                                     <transition name="fade">
