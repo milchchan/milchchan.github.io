@@ -220,6 +220,7 @@ label .scrollable > div {
 
 .has-text-transparent {
     color: transparent !important;
+    text-shadow: none !important;
 }
 
 .columns .is-vcentered {
@@ -1267,6 +1268,18 @@ label .scrollable > div {
                                                             padding: 8px 8px 8px 8px;
                                                         }
                                                     }
+
+                                                    > .media > .media-content > .content {
+                                                        display: flex;
+                                                        flex-direction: row;
+                                                        justify-content: center;
+                                                        align-items: center;
+
+                                                        span {
+                                                            color: var(--main-color);
+                                                            transition: 0.5s;
+                                                        }
+                                                    }
                                                 }
                                             }
 
@@ -1275,7 +1288,11 @@ label .scrollable > div {
                                                 flex-direction: row;
                                                 justify-content: center;
                                                 align-items: center;
-                                                color: var(--accent-color);
+
+                                                span {
+                                                    color: var(--main-color);
+                                                    transition: 0.5s;
+                                                }
 
                                                 span:not(:first-of-type) {
                                                     margin: 0px 0px 0px 16px;
@@ -1490,13 +1507,13 @@ label .scrollable > div {
                                                     box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                                     backdrop-filter: blur(4px) !important;
                                                     -webkit-backdrop-filter: blur(4px) !important;
-                            
+
                                                     .clip {
                                                         display: inline-block;
                                                         overflow: hidden;
                                                         box-sizing: content-box;
                                                         height: calc(0.75rem * 1.5);
-                            
+
                                                         .scrollable div {
                                                             display: flex;
                                                             align-items: center;
@@ -1507,7 +1524,7 @@ label .scrollable > div {
                                                             height: calc(0.75rem * 1.5);
                                                         }
                                                     }
-                            
+
                                                     .icon {
                                                         color: var(--accent-color);
                                                     }
@@ -1516,26 +1533,26 @@ label .scrollable > div {
                                                         color: var(--main-color) !important;
                                                         transition: 0.5s;
                                                     }
-                            
+
                                                     span.wrap + .icon:last-of-type {
                                                         color: var(--main-color);
                                                         transition: 0.5s;
                                                     }
-                            
+
                                                     .icon:first-child + div {
                                                         margin: 0px 8px 0px 0px;
                                                     }
-                            
+
                                                     span:not(:first-child) {
                                                         margin: 0px 0px 0px 8px;
                                                     }
                                                 }
-                            
+
                                                 > button.is-primary,
                                                 > .button.is-primary {
                                                     background-color: var(--primary-background-color) !important;
                                                     transition: 0.5s;
-                            
+
                                                     span.wrap,
                                                     .icon {
                                                         color: #ffffff !important;
@@ -1933,7 +1950,8 @@ label .scrollable > div {
                                 }
 
                                 > span:not(.icon) {
-                                    color: var(--accent-color);
+                                    color: var(--main-color);
+                                    transition: 0.5s;
                                 }
 
                                 span:not(:first-of-type) {
@@ -1996,14 +2014,18 @@ label .scrollable > div {
                         flex-direction: rows;
                         align-items: center;
                         justify-content: start;
-                        color: var(--accent-color);
 
-                        .icon {
-                            color: var(--accent-color);
+                        span {
+                            color: var(--main-color);
+                            transition: 0.5s;
                         }
 
                         span:not(:first-child) {
                             margin: 0px 0px 0px 8px;
+                        }
+                        
+                        .icon {
+                            color: var(--accent-color);
                         }
                     }
                 }
@@ -2058,6 +2080,7 @@ label .scrollable > div {
 
                     span {
                         color: var(--main-color);
+                        transition: 0.5s;
                     }
 
                     > button,
