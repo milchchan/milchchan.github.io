@@ -951,7 +951,7 @@
                                                                                                                 accept="image/apng, image/png, image/jpeg, image/webp"
                                                                                                                 style="pointer-events: none;"
                                                                                                                 v-bind:disabled="isUploading"
-                                                                                                                @change="upload($event, like)">
+                                                                                                                @change="upload($event, Object.assign(like, { type: 'likes' }))">
                                                                                                             <div
                                                                                                                 class="file-cta_">
                                                                                                                 <transition
@@ -978,7 +978,7 @@
                                                                                                             class="button"
                                                                                                             type="button"
                                                                                                             v-bind:disabled="isUploading"
-                                                                                                            @click="upload($event, like)"
+                                                                                                            @click="upload($event, Object.assign(like, { type: 'likes' }))"
                                                                                                             v-else
                                                                                                             key="remove">
                                                                                                             <transition
@@ -1159,7 +1159,20 @@
                                         </div>
                                         <div class="level-item" v-else-if="'collection' in mode" v-cloak>
                                             <transition name="fade" mode="out-in">
-                                                <div class="level" v-if="mode.collection[0].length === 0" key="empty">
+                                                <div class="level" v-if="mode.collection === null" key="loading">
+                                                    <div class="level-item">
+                                                        <article class="media">
+                                                            <div class="media-content">
+                                                                <div class="content">
+                                                                    <span class="icon is-small">
+                                                                        <i class="fas fa-spinner updating"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                </div>
+                                                <div class="level" v-else-if="mode.collection[0].length === 0" key="empty">
                                                     <div class="level-item">
                                                         <article class="media">
                                                             <div class="media-content">
@@ -1180,31 +1193,120 @@
                                                             <div class="level-item">
                                                                 <div class="level is-mobile">
                                                                     <div class="level-item">
-                                                                        <div class="field">
-                                                                            <label class="checkbox">
-                                                                                <input type="checkbox"
-                                                                                    @change="mode.selected.some(x => x.name === word.name) ? mode.selected = mode.selected.filter(x => x.name !== word.name) : mode.selected.push(word)"
-                                                                                    v-bind:checked="mode.selected.some(x => x.name === word.name)">
-                                                                                <span class="custom"></span>
-                                                                                <span class="badge">{{ word.count
-                                                                                    }}</span>
-                                                                                <span class="image is-24x24"
-                                                                                    v-if="'user' in word && 'image' in word.user && word.user.image != null">
-                                                                                    <img class="is-rounded"
-                                                                                        v-bind:src="word.user.image"
-                                                                                        v-bind:alt="word.user.name"
-                                                                                        v-cloak>
-                                                                                </span>
-                                                                                <span
-                                                                                    class="wrap is-size-7 has-text-weight-bold">
-                                                                                    <div class="clip">
-                                                                                        <div class="scrollable">
-                                                                                            <div>{{ word.name }}</div>
-                                                                                            <div>{{ word.name }}</div>
-                                                                                        </div>
+                                                                        <div class="card">
+                                                                            <div class="card-image">
+                                                                                <figure class="image">
+                                                                                    <transition name="fade">
+                                                                                        <picture class="image has-ratio"
+                                                                                            style="pointer-events: none;"
+                                                                                            v-if="'image' in word && word.image !== null">
+                                                                                            <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
+                                                                                                v-bind:src="word.image.url"
+                                                                                                v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
+                                                                                                v-bind:alt="word.name">
+                                                                                        </picture>
+                                                                                    </transition>
+                                                                                </figure>
+                                                                            </div>
+                                                                            <div class="card-content">
+                                                                                <div class="media">
+                                                                                    <div class="media-content">
+                                                                                        <transition name="fade"
+                                                                                            mode="out-in">
+                                                                                            <label
+                                                                                                class="file-label file button is-rounded is-size-7 has-text-weight-bold"
+                                                                                                v-if="'image' in word === false || word.image === null"
+                                                                                                key="add">
+                                                                                                <input
+                                                                                                    class="file-input"
+                                                                                                    type="file"
+                                                                                                    name="upload"
+                                                                                                    accept="image/apng, image/png, image/jpeg, image/webp"
+                                                                                                    style="pointer-events: none;"
+                                                                                                    v-bind:disabled="isUploading"
+                                                                                                    @change="upload($event, Object.assign(word, { id: word.name, type: 'words' }))">
+                                                                                                <div class="file-cta_">
+                                                                                                    <transition
+                                                                                                        name="fade"
+                                                                                                        mode="out-in">
+                                                                                                        <span
+                                                                                                            class="icon"
+                                                                                                            v-if="isUploading"
+                                                                                                            key="uploading">
+                                                                                                            <i
+                                                                                                                class="fas fa-spinner updating"></i>
+                                                                                                        </span>
+                                                                                                        <span
+                                                                                                            class="icon"
+                                                                                                            v-else
+                                                                                                            key="ready">
+                                                                                                            <i
+                                                                                                                class="fas fa-cloud-upload-alt"></i>
+                                                                                                        </span>
+                                                                                                    </transition>
+                                                                                                </div>
+                                                                                            </label>
+                                                                                            <button class="button"
+                                                                                                type="button"
+                                                                                                v-bind:disabled="isUploading"
+                                                                                                @click="upload($event, Object.assign(word, { id: word.name, type: 'words' }))"
+                                                                                                v-else key="remove">
+                                                                                                <transition name="fade"
+                                                                                                    mode="out-in">
+                                                                                                    <span class="icon"
+                                                                                                        v-if="isUploading"
+                                                                                                        key="uploading">
+                                                                                                        <i
+                                                                                                            class="fas fa-spinner updating"></i>
+                                                                                                    </span>
+                                                                                                    <span
+                                                                                                        class="icon is-small"
+                                                                                                        style="pointer-events: none;"
+                                                                                                        v-else
+                                                                                                        key="ready">
+                                                                                                        <i
+                                                                                                            class="fas fa-trash"></i>
+                                                                                                    </span>
+                                                                                                </transition>
+                                                                                            </button>
+                                                                                        </transition>
                                                                                     </div>
-                                                                                </span>
-                                                                            </label>
+                                                                                </div>
+                                                                                <div class="content">
+                                                                                    <div class="field">
+                                                                                        <label class="checkbox">
+                                                                                            <input type="checkbox"
+                                                                                                @change="mode.selected.some(x => x.name === word.name) ? mode.selected = mode.selected.filter(x => x.name !== word.name) : mode.selected.push(word)"
+                                                                                                v-bind:checked="mode.selected.some(x => x.name === word.name)">
+                                                                                            <span class="custom"></span>
+                                                                                            <span class="badge">{{
+                                                                                                word.count
+                                                                                                }}</span>
+                                                                                            <span class="image is-24x24"
+                                                                                                v-if="'user' in word && 'image' in word.user && word.user.image != null">
+                                                                                                <img class="is-rounded"
+                                                                                                    v-bind:src="word.user.image"
+                                                                                                    v-bind:alt="word.user.name"
+                                                                                                    v-cloak>
+                                                                                            </span>
+                                                                                            <span
+                                                                                                class="wrap is-size-7 has-text-weight-bold">
+                                                                                                <div class="clip">
+                                                                                                    <div
+                                                                                                        class="scrollable">
+                                                                                                        <div>{{
+                                                                                                            word.name }}
+                                                                                                        </div>
+                                                                                                        <div>{{
+                                                                                                            word.name }}
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                     <div class="level-item"
@@ -1235,7 +1337,7 @@
                                                             <div class="level-item">
                                                                 <button class="button is-primary" type="button"
                                                                     v-bind:disabled="mode.selected.length === 0 || isBlinded || isLoading || isHangingOn"
-                                                                    @click="release(mode.selected); backgroundQueue.unshift({ color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name) }); isRevealed = false; mode = null; refresh();"
+                                                                    @click="release(mode.selected); backgroundQueue.unshift(mode.selected.some(x => 'image' in x) ? { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name), images: mode.selected.filter(x => 'image' in x).map(x => x.image) } : { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name) }); isRevealed = false; mode = null; refresh();"
                                                                     v-cloak>
                                                                     <transition name="fade" mode="out-in">
                                                                         <span class="icon"
@@ -1615,15 +1717,19 @@
                                                     <div class="level is-mobile">
                                                         <div class="level-item">
                                                             <transition name="fade" mode="out-in">
-                                                                <button class="button" type="button" @click="isVisible = false" v-if="isVisible"
+                                                                <button class="button" type="button"
+                                                                    @click="isVisible = false" v-if="isVisible"
                                                                     key="disabled" v-cloak>
-                                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                                    <span class="icon is-small"
+                                                                        style="pointer-events: none;">
                                                                         <i class="fas fa-eye"></i>
                                                                     </span>
                                                                 </button>
-                                                                <button class="button" type="button" @click="isVisible = true" v-else key="enabled"
+                                                                <button class="button" type="button"
+                                                                    @click="isVisible = true" v-else key="enabled"
                                                                     v-cloak>
-                                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                                    <span class="icon is-small"
+                                                                        style="pointer-events: none;">
                                                                         <i class="fas fa-eye-slash"></i>
                                                                     </span>
                                                                 </button>
@@ -1631,15 +1737,19 @@
                                                         </div>
                                                         <div class="level-item">
                                                             <transition name="fade" mode="out-in">
-                                                                <button class="button" type="button" @click="isMuted = false" v-if="isMuted"
+                                                                <button class="button" type="button"
+                                                                    @click="isMuted = false" v-if="isMuted"
                                                                     key="disabled" v-cloak>
-                                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                                    <span class="icon is-small"
+                                                                        style="pointer-events: none;">
                                                                         <i class="fas fa-volume-mute"></i>
                                                                     </span>
                                                                 </button>
-                                                                <button class="button" type="button" @click="isMuted = true" v-else key="enabled"
+                                                                <button class="button" type="button"
+                                                                    @click="isMuted = true" v-else key="enabled"
                                                                     v-cloak>
-                                                                    <span class="icon is-small" style="pointer-events: none;">
+                                                                    <span class="icon is-small"
+                                                                        style="pointer-events: none;">
                                                                         <i class="fas fa-volume-up"></i>
                                                                     </span>
                                                                 </button>
@@ -1998,7 +2108,7 @@
                                                         </button>
                                                         <button class="button is-rounded is-size-7 is-primary"
                                                             type="button"
-                                                            @click="mode = { collection: arrange(Object.values(captures).sort((x, y) => y.timestamp - x.timestamp)), index: 0, selected: [], disposable: false };"
+                                                            @click="mode = { collection: null, index: 0, selected: [], disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp)));"
                                                             v-else>
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
