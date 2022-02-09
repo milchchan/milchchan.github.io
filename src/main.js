@@ -701,7 +701,7 @@ window.addEventListener("load", event => {
 
                 this.isUploading = true;
 
-                if ('files' in event.currentTarget) {
+                if ("files" in event.currentTarget) {
                     function generateUuid() {
                         // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
                         // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
@@ -745,11 +745,14 @@ window.addEventListener("load", event => {
                                 await runTransaction(databaseRef(database, `${databaseRoot}/backgrounds/${push(child(databaseRef(database), `${databaseRoot}/backgrounds`)).key}`), current => {
                                     return { image: { path: path, type: file.type }, timestamp: timestamp };
                                 });
+                            } else if (data.type === null) {
+                                data["image"] = { path: path, url: await getDownloadURL(storageRef(storage, path)), type: file.type };
+                                data["timestamp"] = timestamp;
                             } else {
                                 const result = await runTransaction(databaseRef(database, `${databaseRoot}/${data.type}/${data.id}`), current => {
                                     if (current) {
-                                        current['image'] = { path: path, type: file.type };
-                                        current['timestamp'] = timestamp;
+                                        current["image"] = { path: path, type: file.type };
+                                        current["timestamp"] = timestamp;
                                     }
 
                                     return current;
@@ -759,13 +762,13 @@ window.addEventListener("load", event => {
                                     if (result.snapshot.exists()) {
                                         const d = result.snapshot.val()
 
-                                        data['image'] = d['image'];
-                                        data['image']['url'] = await getDownloadURL(storageRef(storage, d['image'].path));
-                                        data['timestamp'] = d['timestamp'];
+                                        data["image"] = d["image"];
+                                        data["image"]["url"] = await getDownloadURL(storageRef(storage, d["image"].path));
+                                        data["timestamp"] = d["timestamp"];
                                     }
                                     else {
-                                        data['image'] = { path: path, url: await getDownloadURL(storageRef(storage, path)), type: file.type };
-                                        data['timestamp'] = timestamp;
+                                        data["image"] = { path: path, url: await getDownloadURL(storageRef(storage, path)), type: file.type };
+                                        data["timestamp"] = timestamp;
                                     }
                                 }
                             }
@@ -784,8 +787,8 @@ window.addEventListener("load", event => {
                     try {
                         const result = await runTransaction(databaseRef(database, `${databaseRoot}/${data.type}/${data.id}`), current => {
                             if (current) {
-                                current['image'] = null;
-                                current['timestamp'] = timestamp;
+                                current["image"] = null;
+                                current["timestamp"] = timestamp;
                             }
 
                             return current;
@@ -794,8 +797,8 @@ window.addEventListener("load", event => {
                         if (result.committed && result.snapshot.exists()) {
                             const d = result.snapshot.val()
 
-                            data['image'] = null;
-                            data['timestamp'] = d['timestamp'];
+                            data["image"] = null;
+                            data["timestamp"] = d["timestamp"];
                         }
                     } catch (e) {
                         this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
@@ -854,11 +857,15 @@ window.addEventListener("load", event => {
                                 }
                             }
 
-                            if ("image" in current === "image" in word) {
-                                if ("image" in current && current.image.path !== word.image.path) {
+                            if ("image" in current) {
+                                if ("image" in word) {
+                                    if (word.image === null || current.image.path !== word.image.path) {
+                                        updateRequired = true;
+                                    }
+                                } else {
                                     updateRequired = true;
                                 }
-                            } else {
+                            } else if ("image" in word && word.image !== null) {
                                 updateRequired = true;
                             }
 
@@ -866,7 +873,7 @@ window.addEventListener("load", event => {
                                 let deleteRequired = true;
                                 const c = { attributes: {} };
 
-                                if ("image" in word) {
+                                if ("image" in word && word.image !== null) {
                                     c["image"] = { path: word.image.path, type: word.image.type };
                                 }
 
@@ -1490,7 +1497,7 @@ window.addEventListener("load", event => {
                     }
                 }
 
-                this.word = image === null ? { name: word.name, attributes: attributes } : { name: word.name, image: image, attributes: attributes } ;
+                this.word = image === null ? { name: word.name, attributes: attributes } : { name: word.name, image: image, attributes: attributes };
 
                 /*for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Learn"), word.name, this.character.alternative.sequences)) {
                     if (obj.type === "Message") {
