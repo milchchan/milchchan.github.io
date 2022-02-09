@@ -783,6 +783,9 @@ window.addEventListener("load", event => {
                     //push(databaseRef(database, `${databaseRoot}/backgrounds`), { image: path, timestamp: Math.floor(new Date() / 1000) });
 
                     this.progress = null;
+                } else if (data.type === null) {
+                    data["image"] = null;
+                    data["timestamp"] = timestamp;
                 } else {
                     try {
                         const result = await runTransaction(databaseRef(database, `${databaseRoot}/${data.type}/${data.id}`), current => {
