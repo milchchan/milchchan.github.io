@@ -874,18 +874,14 @@ window.addEventListener("load", event => {
 
                             if (updateRequired) {
                                 let deleteRequired = true;
-                                const c = { attributes: {}, user: user };
-
-                                if ("image" in word && word.image !== null) {
-                                    c["image"] = { path: word.image.path, type: word.image.type };
-                                }
+                                const c = { attributes: {} };
 
                                 for (const attribute of word.attributes) {
                                     if (attribute.value) {
                                         if (attribute.name in current.attributes && current.attributes[attribute.name] > 0) {
                                             c.attributes[attribute.name] = current.attributes[attribute.name];
                                         } else {
-                                            c.attributes[attribute.name] = timestamp - 1;
+                                            c.attributes[attribute.name] = timestamp;
                                         }
 
                                         deleteRequired = false;
@@ -897,17 +893,22 @@ window.addEventListener("load", event => {
                                 if (deleteRequired) {
                                     return null;
                                 } else {
-                                    c["timestamp"] = timestamp;
+                                    if ("image" in word && word.image !== null) {
+                                        c["image"] = { path: word.image.path, type: word.image.type };
+                                    }
 
+                                    c["user"] = user;
+                                    c["timestamp"] = timestamp - 1;
+                                    
                                     return c;
                                 }
                             } else {
                                 return undefined;
                             }
-                        } else {
+                        } else if (word.attributes.some(x => x.value)) {
                             current = { attributes: {}, user: user, random: Math.random(), timestamp: timestamp };
 
-                            if ("image" in word) {
+                            if ("image" in word && word.image !== null) {
                                 current["image"] = { path: word.image.path, type: word.image.type };
                             }
 
@@ -918,6 +919,8 @@ window.addEventListener("load", event => {
                                     current.attributes[attribute.name] = 0;
                                 }
                             }
+                        } else {
+                            return undefined;
                         }
 
                         return current;
@@ -926,15 +929,8 @@ window.addEventListener("load", event => {
                     if (result.committed) {
                         if (result.snapshot.exists()) {
                             const dictionary = result.snapshot.val();
-                            let timestamps = [];
-
-                            for (const key in dictionary.attributes) {
-                                if (typeof dictionary.attributes[key] === "number" && dictionary.attributes[key] > 0 && this.attributes.includes(key)) {
-                                    timestamps.push(dictionary.attributes[key]);
-                                }
-                            }
-
-                            if (timestamps.length === 1 && timestamps[0] === dictionary.timestamp) {
+                            
+                            if (dictionary.timestamp === timestamp) {
                                 function format(format) {
                                     var args = arguments;
 
@@ -950,24 +946,23 @@ window.addEventListener("load", event => {
                                         this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
                                     }
                                 }
+                            }
 
-                                this.isStared = true;
-
-                                window.setTimeout(() => {
-                                    self.isStared = false;
-                                }, 3000);
-
-                                for (let i = parseInt(this.points) + 1, length = this.points + 60; i <= length; i++) {
-                                    if (i % 60 === 0) {
-                                        this.retain(Object.assign({ name: word.name }, dictionary));
-                                    }
+                            for (let i = parseInt(this.points) + 1, length = this.points + 60; i <= length; i++) {
+                                if (i % 60 === 0) {
+                                    this.retain(Object.assign({ name: word.name }, dictionary));
                                 }
+                            }
 
-                                this.points += 60;
+                            this.points += 60;
+                            this.isStared = true;
 
-                                if (!this.isMuted) {
-                                    this.$refs.twinkle.play();
-                                }
+                            window.setTimeout(() => {
+                                self.isStared = false;
+                            }, 3000);
+
+                            if (!this.isMuted) {
+                                this.$refs.twinkle.play();
                             }
                         } else {
                             runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
