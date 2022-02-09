@@ -364,7 +364,7 @@ window.addEventListener("load", event => {
                     }
                 });
             },
-            background: {
+            /*background: {
                 handler: () => {
                     app.$nextTick(() => {
                         const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.background>div:not(.columns)");
@@ -405,7 +405,7 @@ window.addEventListener("load", event => {
                     });
                 },
                 deep: true
-            },
+            },*/
             text: {
                 handler: () => {
                     app.$nextTick(() => {
@@ -2131,8 +2131,55 @@ window.addEventListener("load", event => {
                 }
 
                 if ('images' in background) {
-                    
-                } else if ('image' in background) {
+                    for (const image of background.images) {
+                        try {
+                            const metadata = await getMetadata(storageRef(storage, image.path));
+    
+                            if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
+                                try {
+                                    const blob = await this.download(await getDownloadURL(storageRef(storage, image.path)));
+    
+                                    if (blob !== null) {
+                                        this.background.images.push({
+                                            id: background.id, url: await new Promise(async (resolve, reject) => {
+                                                const reader = new FileReader();
+    
+                                                reader.onload = () => {
+                                                    resolve(reader.result);
+                                                };
+                                                reader.onerror = () => {
+                                                    reject(reader.error);
+                                                };
+                                                reader.readAsDataURL(blob);
+                                            }), timestamp: background.timestamp
+                                        });
+                                    }
+                                } catch (e) {
+                                    console.error(e);
+                                }
+                            } else {
+                                this.background.images.push({
+                                    id: background.id, url: await new Promise(async (resolve, reject) => {
+                                        const reader = new FileReader();
+    
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+                                        reader.readAsDataURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, image.path)), Math.max(window.screen.width, window.screen.height)));
+                                    }), timestamp: background.timestamp
+                                });
+                            }
+                        } catch (e) {
+                            this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                            console.error(e);
+                        }
+                    }
+                }
+
+                if ('image' in background) {
                     try {
                         const metadata = await getMetadata(storageRef(storage, background.image.path));
 
