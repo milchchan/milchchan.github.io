@@ -534,12 +534,65 @@
                         <div class="column is-half is-mobile">
                             <div class="control" v-cloak>
                                 <transition name="fade" mode="out-in" v-on:before-leave="$refs.menu.scroll(0, 0)">
-                                    <nav class="columns is-desktop" v-if="word" key="learn">
-                                        <div class="column is-full has-content-centered">
+                                    <nav class="level" v-if="word" key="learn">
+                                        <div class="level-item">
                                             <article class="media">
+                                                <div class="media-left">
+                                                    <figure>
+                                                        <transition name="fade">
+                                                            <picture class="image has-ratio"
+                                                                style="pointer-events: none;"
+                                                                v-if="'image' in word && word.image !== null">
+                                                                <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
+                                                                    v-bind:src="word.image.url"
+                                                                    v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
+                                                                    v-bind:alt="word.name">
+                                                            </picture>
+                                                        </transition>
+                                                        <transition name="fade" mode="out-in">
+                                                            <label
+                                                                class="file-label file button is-rounded is-size-7 has-text-weight-bold"
+                                                                v-if="'image' in word === false || word.image === null"
+                                                                key="add">
+                                                                <input class="file-input" type="file" name="upload"
+                                                                    accept="image/apng, image/png, image/jpeg, image/webp"
+                                                                    style="pointer-events: none;"
+                                                                    v-bind:disabled="isUploading"
+                                                                    @change="upload($event, Object.assign(word, { id: word.name, type: 'words' }))">
+                                                                <div class="file-cta_">
+                                                                    <transition name="fade" mode="out-in">
+                                                                        <span class="icon" v-if="isUploading"
+                                                                            key="uploading">
+                                                                            <i class="fas fa-spinner updating"></i>
+                                                                        </span>
+                                                                        <span class="icon" v-else key="ready">
+                                                                            <i class="fas fa-cloud-upload-alt"></i>
+                                                                        </span>
+                                                                    </transition>
+                                                                </div>
+                                                            </label>
+                                                            <button class="button" type="button"
+                                                                v-bind:disabled="isUploading"
+                                                                @click="upload($event, Object.assign(word, { id: word.name, type: 'words' }))"
+                                                                v-else key="remove">
+                                                                <transition name="fade" mode="out-in">
+                                                                    <span class="icon" v-if="isUploading"
+                                                                        key="uploading">
+                                                                        <i class="fas fa-spinner updating"></i>
+                                                                    </span>
+                                                                    <span class="icon is-small"
+                                                                        style="pointer-events: none;" v-else
+                                                                        key="ready">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </span>
+                                                                </transition>
+                                                            </button>
+                                                        </transition>
+                                                    </figure>
+                                                </div>
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <div class="columns is-mobile is-gapless"
+                                                        <div class="columns is-gapless"
                                                             v-for="row in arrange(word.attributes, 2)" v-cloak>
                                                             <div class="column is-half" v-for="column in row"
                                                                 v-bind:key="column.name" v-cloak>
@@ -564,31 +617,33 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <nav class="level">
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <nav class="level">
+                                                <div class="level-item">
+                                                    <nav class="level is-mobile">
                                                         <div class="level-item">
-                                                            <nav class="level is-mobile">
-                                                                <div class="level-item">
-                                                                    <button class="button is-primary" type="button"
-                                                                        @click="share({ name: word.name, attributes: word.attributes }); word = null;"
-                                                                        v-cloak>
-                                                                        <span class="icon is-small is-primary">
-                                                                            <i class="fas fa-check"></i>
-                                                                        </span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="level-item">
-                                                                    <button class="button" type="button"
-                                                                        @click="word = null" v-cloak>
-                                                                        <span class="icon is-small is-danger">
-                                                                            <i class="fas fa-times"></i>
-                                                                        </span>
-                                                                    </button>
-                                                                </div>
-                                                            </nav>
+                                                            <button class="button is-primary" type="button"
+                                                                @click="share({ name: word.name, attributes: word.attributes }); word = null;"
+                                                                v-cloak>
+                                                                <span class="icon is-small is-primary">
+                                                                    <i class="fas fa-check"></i>
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <button class="button" type="button" @click="word = null"
+                                                                v-cloak>
+                                                                <span class="icon is-small is-danger">
+                                                                    <i class="fas fa-times"></i>
+                                                                </span>
+                                                            </button>
                                                         </div>
                                                     </nav>
                                                 </div>
-                                            </article>
+                                            </nav>
                                         </div>
                                     </nav>
                                     <nav class="level" v-else-if="mode !== null && typeof(mode) === 'object'"
