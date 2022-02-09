@@ -558,7 +558,7 @@
                                                                     accept="image/apng, image/png, image/jpeg, image/webp"
                                                                     style="pointer-events: none;"
                                                                     v-bind:disabled="isUploading"
-                                                                    @change="upload($event, Object.assign(word, { id: word.name, type: 'words' }))">
+                                                                    @change="upload($event, Object.assign(word, { id: word.name, type: null }))">
                                                                 <div class="file-cta_">
                                                                     <transition name="fade" mode="out-in">
                                                                         <span class="icon" v-if="isUploading"
@@ -573,7 +573,7 @@
                                                             </label>
                                                             <button class="button" type="button"
                                                                 v-bind:disabled="isUploading"
-                                                                @click="upload($event, Object.assign(word, { id: word.name, type: 'words' }))"
+                                                                @click="upload($event, Object.assign(word, { id: word.name, type: null }))"
                                                                 v-else key="remove">
                                                                 <transition name="fade" mode="out-in">
                                                                     <span class="icon" v-if="isUploading"
@@ -626,7 +626,7 @@
                                                     <nav class="level is-mobile">
                                                         <div class="level-item">
                                                             <button class="button is-primary" type="button"
-                                                                @click="share({ name: word.name, attributes: word.attributes }); word = null;"
+                                                                @click="share('image' in word && word.image !== null ? { name: word.name, attributes: word.attributes, image: word.image } : { name: word.name, attributes: word.attributes }); word = null;"
                                                                 v-cloak>
                                                                 <span class="icon is-small is-primary">
                                                                     <i class="fas fa-check"></i>
