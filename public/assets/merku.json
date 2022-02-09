@@ -193,9 +193,9 @@
                             "images": [
                                 {
                                     "x": 0,
-                                    "y": 7,
-                                    "width": 155,
-                                    "height": 233,
+                                    "y": 14,
+                                    "width": 310,
+                                    "height": 466,
                                     "source": "/images/Merkuchan.png"
                                 }
                             ]
@@ -226,9 +226,9 @@
                             "images": [
                                 {
                                     "x": 0,
-                                    "y": 7,
-                                    "width": 155,
-                                    "height": 233,
+                                    "y": 14,
+                                    "width": 310,
+                                    "height": 466,
                                     "source": "/images/Merkuchan.png"
                                 }
                             ]
@@ -258,9 +258,9 @@
                             "images": [
                                 {
                                     "x": 0,
-                                    "y": 7,
-                                    "width": 155,
-                                    "height": 233,
+                                    "y": 14,
+                                    "width": 310,
+                                    "height": 466,
                                     "source": "/images/Merkuchan.png"
                                 }
                             ]
