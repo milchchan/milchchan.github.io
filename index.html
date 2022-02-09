@@ -626,6 +626,7 @@
                                                     <nav class="level is-mobile">
                                                         <div class="level-item">
                                                             <button class="button is-primary" type="button"
+                                                                v-bind:disabled="'image' in word && word.image !== null && word.attributes.every(x => !x.value)"
                                                                 @click="share('image' in word && word.image !== null ? { name: word.name, attributes: word.attributes, image: word.image } : { name: word.name, attributes: word.attributes }); word = null;"
                                                                 v-cloak>
                                                                 <span class="icon is-small is-primary">
