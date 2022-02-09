@@ -214,7 +214,7 @@ window.addEventListener("load", event => {
                 uptime: 0,
                 points: 0,
                 animatedPoints: 0,
-                captures: {},
+                captures: { _resolve: async () => await Object.values(app.captures).filter(x => typeof(x) !== "function" && "image" in x).forEach(async x => x["image"]["url"] = await getDownloadURL(storageRef(storage, x.image.path))) },
                 user: null,
                 input: "",
                 animatedInputLength: 0,
@@ -328,6 +328,24 @@ window.addEventListener("load", event => {
                             }
                         }
                     });
+                },
+                deep: true
+            },
+            captures: {
+                handler: (newValue) => {
+                    if (Object.keys(newValue).length > 0) {
+                        try {
+                            localStorage.setItem("captures", JSON.stringify(Object.values(newValue).filter(x => typeof (x) !== "function").map(x => {
+                                x["checksum"] = [...String(x.timestamp)].reduce((x, y) => x + y, 0) + [...String(x.count)].reduce((x, y) => x + y, 0);
+    
+                                return x;
+                            })));
+                        } catch (e) {
+                            localStorage.removeItem("captures");
+                        }
+                    } else {
+                        localStorage.removeItem("captures");
+                    }
                 },
                 deep: true
             },
@@ -728,7 +746,7 @@ window.addEventListener("load", event => {
                                     return { image: { path: path, type: file.type }, timestamp: timestamp };
                                 });
                             } else {
-                                const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${data.id}`), current => {
+                                const result = await runTransaction(databaseRef(database, `${databaseRoot}/${data.type}/${data.id}`), current => {
                                     if (current) {
                                         current['image'] = { path: path, type: file.type };
                                         current['timestamp'] = timestamp;
@@ -758,7 +776,7 @@ window.addEventListener("load", event => {
                     this.progress = null;
                 } else {
                     try {
-                        const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${data.id}`), current => {
+                        const result = await runTransaction(databaseRef(database, `${databaseRoot}/${data.type}/${data.id}`), current => {
                             if (current) {
                                 current['image'] = null;
                                 current['timestamp'] = timestamp;
@@ -1122,27 +1140,29 @@ window.addEventListener("load", event => {
                     this.captures[word.name].timestamp = Math.floor(new Date() / 1000);
                     this.captures[word.name].count += 1;
 
+                    if ("image" in word) {
+                        this.captures[word.name]["image"] = word.image;
+                    }
+
                     if ("user" in word) {
                         this.captures[word.name]["user"] = word.user;
                     }
+                } else if ("user" in word) {
+                    if ("image" in word) {
+                        this.captures[word.name] = { name: word.name, attributes: word.attributes, image: word.image, user: word.user, timestamp: Math.floor(new Date() / 1000), count: 1 };
+                    } else {
+                        this.captures[word.name] = { name: word.name, attributes: word.attributes, user: word.user, timestamp: Math.floor(new Date() / 1000), count: 1 };
+                    }
+                } else if ("image" in word) {
+                    this.captures[word.name] = { name: word.name, attributes: word.attributes, image: word.image, timestamp: Math.floor(new Date() / 1000), count: 1 };
                 } else {
-                    this.captures[word.name] = "user" in word ? { name: word.name, attributes: word.attributes, user: word.user, timestamp: Math.floor(new Date() / 1000), count: 1 } : { name: word.name, attributes: word.attributes, timestamp: Math.floor(new Date() / 1000), count: 1 };
+                    this.captures[word.name] = { name: word.name, attributes: word.attributes, timestamp: Math.floor(new Date() / 1000), count: 1 };
                 }
 
                 function format(format) {
                     var args = arguments;
 
                     return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
-                }
-
-                try {
-                    localStorage.setItem("captures", JSON.stringify(Object.values(this.captures).map(x => {
-                        x["checksum"] = [...String(x.timestamp)].reduce((x, y) => x + y, 0) + [...String(x.count)].reduce((x, y) => x + y, 0);
-
-                        return x;
-                    })));
-                } catch (e) {
-                    localStorage.removeItem("captures");
                 }
 
                 for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Capture"), word.name)) {
@@ -2110,7 +2130,9 @@ window.addEventListener("load", event => {
                     this.background.color = null;
                 }
 
-                if ('image' in background) {
+                if ('images' in background) {
+                    
+                } else if ('image' in background) {
                     try {
                         const metadata = await getMetadata(storageRef(storage, background.image.path));
 
