@@ -2165,7 +2165,7 @@
                                                         </button>
                                                         <button class="button is-rounded is-size-7 is-primary"
                                                             type="button"
-                                                            @click="mode = { collection: null, index: 0, selected: [], disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp)));"
+                                                            @click="mode = { collection: null, index: 0, selected: [], disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1));"
                                                             v-else>
                                                             <span class="icon">
                                                                 <i class="fas fa-star"></i>
