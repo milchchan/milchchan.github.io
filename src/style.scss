@@ -1365,8 +1365,8 @@ label .scrollable > div {
                                         }
                                     }
 
-                                    button,
-                                    .button {
+                                    > button,
+                                    > .button {
                                         margin: 0px;
                                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
                                         border-radius: 290486px;
@@ -1386,8 +1386,8 @@ label .scrollable > div {
                                         }
                                     }
 
-                                    button.is-primary,
-                                    .button.is-primary {
+                                    > button.is-primary,
+                                    > .button.is-primary {
                                         background-color: var(--primary-background-color) !important;
                                         transition: 0.5s;
 
@@ -1406,7 +1406,8 @@ label .scrollable > div {
                                         align-items: end;
                                         justify-content: center;
                                         overflow: hidden;
-                                        box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0px 0 1px rgb(10 10 10 / 2%);
+                                        box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%),
+                                            0 0px 0 1px rgb(10 10 10 / 2%);
 
                                         > .card-image {
                                             position: absolute;
@@ -1437,6 +1438,110 @@ label .scrollable > div {
                                             padding: 16px;
                                             margin: 0 auto;
                                             width: fit-content;
+
+                                            .media > .media-content {
+                                                button,
+                                                .button {
+                                                    margin: 0px;
+                                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                                    border-radius: 290486px;
+                                                    padding: 16px;
+                                                    background: rgba(255, 255, 255, 0.75) !important;
+                                                    background-clip: padding-box;
+                                                    height: initial;
+                                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                                    backdrop-filter: blur(4px);
+                                                    -webkit-backdrop-filter: blur(4px);
+
+                                                    span.icon {
+                                                        margin: 0 !important;
+                                                        width: 1rem !important;
+                                                        height: 1rem !important;
+                                                        color: var(--accent-color);
+                                                    }
+                                                }
+
+                                                button.is-primary,
+                                                .button.is-primary {
+                                                    background-color: var(--primary-background-color) !important;
+                                                    transition: 0.5s;
+
+                                                    span.wrap,
+                                                    .icon {
+                                                        color: #ffffff !important;
+                                                    }
+                                                }
+                                            }
+
+                                            > .content > .field {
+                                                > button,
+                                                > .button {
+                                                    display: flex;
+                                                    align-items: center;
+                                                    margin: 0;
+                                                    padding: 16px 32px 16px 32px;
+                                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                                    border-radius: 500px 500px 500px 500px;
+                                                    background: rgba(255, 255, 255, 0.75) !important;
+                                                    background-clip: padding-box;
+                                                    height: fit-content;
+                                                    line-height: calc(0.75rem * 1.5);
+                                                    backface-visibility: hidden;
+                                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                                                    backdrop-filter: blur(4px) !important;
+                                                    -webkit-backdrop-filter: blur(4px) !important;
+                            
+                                                    .clip {
+                                                        display: inline-block;
+                                                        overflow: hidden;
+                                                        box-sizing: content-box;
+                                                        height: calc(0.75rem * 1.5);
+                            
+                                                        .scrollable div {
+                                                            display: flex;
+                                                            align-items: center;
+                                                            font-size: 0.75rem !important;
+                                                            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+                                                            transform: rotate(0.03deg);
+                                                            line-height: 0.75rem !important;
+                                                            height: calc(0.75rem * 1.5);
+                                                        }
+                                                    }
+                            
+                                                    .icon {
+                                                        color: var(--accent-color);
+                                                    }
+
+                                                    .wrap {
+                                                        color: var(--main-color) !important;
+                                                        transition: 0.5s;
+                                                    }
+                            
+                                                    span.wrap + .icon:last-of-type {
+                                                        color: var(--main-color);
+                                                        transition: 0.5s;
+                                                    }
+                            
+                                                    .icon:first-child + div {
+                                                        margin: 0px 8px 0px 0px;
+                                                    }
+                            
+                                                    span:not(:first-child) {
+                                                        margin: 0px 0px 0px 8px;
+                                                    }
+                                                }
+                            
+                                                > button.is-primary,
+                                                > .button.is-primary {
+                                                    background-color: var(--primary-background-color) !important;
+                                                    transition: 0.5s;
+                            
+                                                    span.wrap,
+                                                    .icon {
+                                                        color: #ffffff !important;
+                                                    }
+                                                }
+                                            }
                                         }
 
                                         .media:not(:last-child) {
