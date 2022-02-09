@@ -106,7 +106,7 @@ label.checkbox .custom {
 label.checkbox input[type="checkbox"] + .custom:before,
 label.checkbox input[type="radio"] + .custom:before {
     font-weight: 900;
-    font-family: "Font Awesome 5 Free";
+    font-family: "Font Awesome 6 Free";
     content: "\f00c";
     color: transparent;
     text-shadow: none;
@@ -1392,6 +1392,63 @@ label .scrollable > div {
                                         }
                                     }
 
+                                    > .card {
+                                        position: relative;
+                                        display: flex;
+                                        border-radius: 16px;
+                                        width: 256px;
+                                        height: 512px;
+                                        align-items: end;
+                                        justify-content: center;
+                                        overflow: hidden;
+
+                                        > .card-image {
+                                            position: absolute;
+                                            width: 100%;
+                                            height: 100%;
+
+                                            figure {
+                                                width: 100%;
+                                                height: 100%;
+
+                                                picture {
+                                                    width: 100%;
+                                                    height: 100%;
+
+                                                    img {
+                                                        object-fit: cover;
+                                                        width: 100%;
+                                                        height: 100%;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        > .card-content {
+                                            z-index: 1;
+                                            position: relative;
+                                            display: block;
+                                            padding: 16px;
+                                            margin: 0 auto;
+                                            width: fit-content;
+                                        }
+
+                                        .media:not(:last-child) {
+                                            margin-bottom: 16px;
+
+                                            .media-content {
+                                                display: flex;
+                                                align-items: flex-start;
+                                                justify-content: center;
+                                            }
+
+                                            label {
+                                                width: fit-content;
+                                                height: fit-content;
+                                            }
+                                        }
+                                    }
+
                                     > .media {
                                         position: relative;
                                         margin: 0px 0px 16px 0px;
@@ -1801,7 +1858,7 @@ label .scrollable > div {
                                 box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                 backdrop-filter: blur(4px);
                                 -webkit-backdrop-filter: blur(4px);
-        
+
                                 span {
                                     margin: 0 !important;
                                     width: 1rem !important;
@@ -1809,12 +1866,12 @@ label .scrollable > div {
                                     color: var(--accent-color);
                                 }
                             }
-        
+
                             button.is-primary,
                             .button.is-primary {
                                 background-color: var(--primary-background-color) !important;
                                 transition: 0.5s;
-        
+
                                 span.wrap,
                                 .icon {
                                     color: #ffffff !important;
