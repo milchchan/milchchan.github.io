@@ -110,7 +110,7 @@
                     <div class="level">
                         <div class="level-item">
                             <transition name="fade" mode="out-in">
-                                <button class="button is-white" type="button" @click="isOverlayed = false"
+                                <button class="button" type="button" @click="isOverlayed = false"
                                     v-if="isOverlayed" key="close">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
@@ -127,14 +127,14 @@
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button is-white" type="button"
+                                <button class="button" type="button"
                                     @click="isRevealed = !isRevealed; mode = null;"
                                     v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
                                     <span class="icon is-small">
                                         <i class="fas fa-bars"></i>
                                     </span>
                                 </button>
-                                <button class="button is-white" type="button"
+                                <button class="button" type="button"
                                     @click="isRevealed = !isRevealed; mode = null;"
                                     v-else-if="typeof(mode) === 'object' && mode.disposable || typeof(mode) === 'string' && mode.startsWith('_')"
                                     key="force">
@@ -142,7 +142,7 @@
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button is-white" type="button" @click="mode = null" v-else key="back">
+                                <button class="button" type="button" @click="mode = null" v-else key="back">
                                     <span class="icon is-small">
                                         <i class="fas fa-arrow-left"></i>
                                     </span>
