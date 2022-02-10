@@ -571,7 +571,7 @@
                                                                     </transition>
                                                                 </div>
                                                             </label>
-                                                            <button class="button" type="button"
+                                                            <button class="button is-circle" type="button"
                                                                 v-bind:disabled="isUploading"
                                                                 @click="upload($event, Object.assign(word, { id: word.name, type: null }))"
                                                                 v-else key="remove">
@@ -625,7 +625,7 @@
                                                 <div class="level-item">
                                                     <nav class="level is-mobile">
                                                         <div class="level-item">
-                                                            <button class="button is-primary" type="button"
+                                                            <button class="button is-primary is-circle" type="button"
                                                                 v-bind:disabled="'image' in word && word.image !== null && word.attributes.every(x => !x.value)"
                                                                 @click="share('image' in word && word.image !== null ? { name: word.name, attributes: word.attributes, image: word.image } : { name: word.name, attributes: word.attributes }); word = null;"
                                                                 v-cloak>
@@ -635,7 +635,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="level-item">
-                                                            <button class="button" type="button" @click="word = null"
+                                                            <button class="button is-circle" type="button" @click="word = null"
                                                                 v-cloak>
                                                                 <span class="icon is-small is-danger">
                                                                     <i class="fas fa-times"></i>
@@ -993,7 +993,7 @@
                                                                                                         name="fade"
                                                                                                         mode="out-in">
                                                                                                         <label
-                                                                                                            class="file-label file button is-rounded is-size-7 has-text-weight-bold"
+                                                                                                            class="file-label file button is-circle is-size-7 has-text-weight-bold"
                                                                                                             v-if="'image' in like === false || like.image === null"
                                                                                                             key="add">
                                                                                                             <input
@@ -1027,7 +1027,7 @@
                                                                                                             </div>
                                                                                                         </label>
                                                                                                         <button
-                                                                                                            class="button"
+                                                                                                            class="button is-circle"
                                                                                                             type="button"
                                                                                                             v-bind:disabled="isUploading"
                                                                                                             @click="upload($event, Object.assign(like, { type: 'likes' }))"
@@ -1059,7 +1059,7 @@
                                                                                                     <div class="level-item"
                                                                                                         v-if="user !== null && user.providerData.some(x => x.providerId === 'twitter.com')">
                                                                                                         <button
-                                                                                                            class="button is-rounded is-size-7"
+                                                                                                            class="button is-circle is-size-7"
                                                                                                             type="button"
                                                                                                             v-bind:disabled="user === null || isTweeting === true"
                                                                                                             @click="tweet(typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), ''), 'image' in like && like.image !== null ? like.image.url : null)">
@@ -1106,7 +1106,7 @@
                                                         v-if="mode.likes.length > 0 && 'next' in mode && 'indexes' in mode">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.indexes.length === 0"
                                                                     @click="previous('likes', mode.indexes.pop().timestamp, 1)"
                                                                     v-cloak>
@@ -1116,7 +1116,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="level-item">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.next === null"
                                                                     @click="next('likes', mode.next.timestamp, 1)"
                                                                     v-cloak>
@@ -1171,7 +1171,7 @@
                                                                             <div class="card-content">
                                                                                 <div class="content">
                                                                                     <div class="field">
-                                                                                        <button class="button is-size-7"
+                                                                                        <button class="button is-rounded is-size-7"
                                                                                             type="button"
                                                                                             v-bind:disabled="user === null"
                                                                                             @click="learn('image' in word && word.image !== null ? { name: word.id, attributes: word.attributes, image: word.image } : { name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
@@ -1202,7 +1202,7 @@
                                                                         </div>
                                                                         <div class="level is-mobile" v-else>
                                                                             <div class="level-item">
-                                                                                <button class="button" type="button"
+                                                                                <button class="button is-rounded" type="button"
                                                                                     v-bind:disabled="user === null"
                                                                                     @click="learn('image' in word && word.image !== null ? { name: word.id, attributes: word.attributes, image: word.image } : { name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
                                                                                     v-cloak>
@@ -1234,7 +1234,7 @@
                                                         v-if="mode.words.length > 0 && 'next' in mode && 'indexes' in mode">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.indexes.length === 0"
                                                                     @click="previous('words', mode.indexes.pop().timestamp)"
                                                                     v-cloak>
@@ -1244,7 +1244,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="level-item">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.next === null"
                                                                     @click="next('words', mode.next.timestamp)" v-cloak>
                                                                     <span class="icon is-small">
@@ -1316,7 +1316,7 @@
                                                                                         <transition name="fade"
                                                                                             mode="out-in">
                                                                                             <label
-                                                                                                class="file-label file button is-rounded is-size-7 has-text-weight-bold"
+                                                                                                class="file-label file button is-circle is-size-7 has-text-weight-bold"
                                                                                                 v-if="'image' in word === false || word.image === null"
                                                                                                 key="add">
                                                                                                 <input
@@ -1348,7 +1348,7 @@
                                                                                                     </transition>
                                                                                                 </div>
                                                                                             </label>
-                                                                                            <button class="button"
+                                                                                            <button class="button is-circle"
                                                                                                 type="button"
                                                                                                 v-bind:disabled="isUploading"
                                                                                                 @click="upload($event, Object.assign(word, { id: word.name, type: 'words' }))"
@@ -1418,7 +1418,7 @@
                                                     <div class="level-item">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.index === 0"
                                                                     @click="mode.index--" v-cloak>
                                                                     <span class="icon is-small">
@@ -1427,7 +1427,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="level-item">
-                                                                <button class="button is-primary" type="button"
+                                                                <button class="button is-primary is-circle" type="button"
                                                                     v-bind:disabled="mode.selected.length === 0 || isBlinded || isLoading || isHangingOn"
                                                                     @click="release(mode.selected); backgroundQueue.unshift(mode.selected.some(x => 'image' in x) ? { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name), images: mode.selected.filter(x => 'image' in x).map(x => x.image) } : { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name) }); isRevealed = false; mode = null; refresh();"
                                                                     v-cloak>
@@ -1444,7 +1444,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="level-item">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.index === mode.collection.length - 1"
                                                                     @click="mode.index++" v-cloak>
                                                                     <span class="icon is-small">
@@ -1809,7 +1809,7 @@
                                                     <div class="level is-mobile">
                                                         <div class="level-item">
                                                             <transition name="fade" mode="out-in">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     @click="isVisible = false" v-if="isVisible"
                                                                     key="disabled" v-cloak>
                                                                     <span class="icon is-small"
@@ -1817,7 +1817,7 @@
                                                                         <i class="fas fa-eye"></i>
                                                                     </span>
                                                                 </button>
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     @click="isVisible = true" v-else key="enabled"
                                                                     v-cloak>
                                                                     <span class="icon is-small"
@@ -1829,7 +1829,7 @@
                                                         </div>
                                                         <div class="level-item">
                                                             <transition name="fade" mode="out-in">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     @click="isMuted = false" v-if="isMuted"
                                                                     key="disabled" v-cloak>
                                                                     <span class="icon is-small"
@@ -1837,7 +1837,7 @@
                                                                         <i class="fas fa-volume-mute"></i>
                                                                     </span>
                                                                 </button>
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     @click="isMuted = true" v-else key="enabled"
                                                                     v-cloak>
                                                                     <span class="icon is-small"
@@ -1849,14 +1849,14 @@
                                                         </div>
                                                         <div class="level-item">
                                                             <transition name="fade" mode="out-in">
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     @click="mode = 'sign-in'" v-if="user === null"
                                                                     key="signedout" v-cloak>
                                                                     <span class="icon">
                                                                         <i class="fas fa-sign-in-alt"></i>
                                                                     </span>
                                                                 </button>
-                                                                <button class="button" type="button"
+                                                                <button class="button is-circle" type="button"
                                                                     v-bind:disabled="user === null" @click="signOut()"
                                                                     v-else key="signedin" v-cloak>
                                                                     <span class="icon">
@@ -2603,23 +2603,23 @@
                                                 <div class="level-item">
                                                     <div class="level is-mobile">
                                                         <div class="level-item">
-                                                            <a class="button" href="https://twitter.com/milchchan"
+                                                            <a class="button is-circle" href="https://twitter.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-twitter"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
-                                                            <a class="button" href="https://instagram.com/milchchan"
+                                                            <a class="button is-circle" href="https://instagram.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-instagram"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
-                                                            <a class="button"
+                                                            <a class="button is-circle"
                                                                 href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-youtube"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
-                                                            <a class="button" href="https://github.com/milchchan"
+                                                            <a class="button is-circle" href="https://github.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-github"></i></span></a>
                                                         </div>
@@ -2741,7 +2741,7 @@
                                                     </div>
                                                     <div class="level-item" v-if="character !== null">
                                                         <transition name="fade" mode="out-in">
-                                                            <button class="button" type="button"
+                                                            <button class="button is-circle" type="button"
                                                                 @click="isRevealed = true; mode = '_sign-in';"
                                                                 v-if="user === null" key="disable" v-cloak>
                                                                 <span class="icon is-small"
@@ -2749,7 +2749,7 @@
                                                                     <i class="fas fa-heart"></i>
                                                                 </span>
                                                             </button>
-                                                            <button class="button" type="button"
+                                                            <button class="button is-circle" type="button"
                                                                 @click="like(message, character.visible ? $refs.canvas : null)"
                                                                 v-else key="enable" v-cloak>
                                                                 <span class="icon is-small"
@@ -2849,37 +2849,37 @@
         </div>
         <div class="left is-hidden-tablet" v-cloak>
             <transition name="fade" mode="out-in">
-                <button class="button is-white" type="button" @click="isOverlayed = false" v-if="isOverlayed"
+                <button class="button is-circle" type="button" @click="isOverlayed = false" v-if="isOverlayed"
                     key="close">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="$refs.text.blur(); isLearning = false;"
+                <button class="button is-circle" type="button" @click="$refs.text.blur(); isLearning = false;"
                     v-else-if="isLearning" key="abort">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
+                <button class="button is-circle" type="button" @click="word = null" v-else-if="word" key="cancel">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button is-white" type="button" @click="isRevealed = !isRevealed; mode = null;"
+                <button class="button is-circle" type="button" @click="isRevealed = !isRevealed; mode = null;"
                     v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
                     <span class="icon is-small">
                         <i class="fas fa-bars"></i>
                     </span>
                 </button>
-                <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
+                <button class="button is-circle" type="button" @click="isRevealed = !isRevealed; mode = null;"
                     v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_sign-in' || mode === '_about' || mode === '_milch' || mode === '_merku'"
                     key="force">
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
                 </button>
-                <button class="button is-white" type="button" @click="mode = null" v-else key="back">
+                <button class="button is-circle" type="button" @click="mode = null" v-else key="back">
                     <span class="icon is-small">
                         <i class="fas fa-arrow-left"></i>
                     </span>
@@ -2888,7 +2888,7 @@
         </div>
         <div class="right" v-cloak>
             <div class="level-item">
-                <button class="button is-white" type="button" v-bind:disabled="isLoading || isHangingOn"
+                <button class="button is-circle" type="button" v-bind:disabled="isLoading || isHangingOn"
                     @click="refresh" v-cloak>
                     <span class="icon is-small">
                         <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
