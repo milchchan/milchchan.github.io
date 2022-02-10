@@ -1140,25 +1140,32 @@ label .scrollable > div {
     touch-action: none;
 }
 
-.left button,
-.right button {
-    margin: 0px;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 290486px;
-    padding: 16px;
-    background: rgba(255, 255, 255, 0.75) !important;
-    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    background-clip: padding-box;
-    height: initial;
-    color: var(--accent-color) !important;
-    transition: 0.5s;
+.left,
+.right {
+    button,
+    .button {
+        margin: 0px;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.75) !important;
+        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        background-clip: padding-box;
+        height: initial;
+        color: var(--accent-color) !important;
+        transition: 0.5s;
+    }
 
-    > span {
-        margin: 0 !important;
-        width: 1rem !important;
-        height: 1rem !important;
+    button.is-circle,
+    .button.is-circle {
+        border-radius: 290486px;
+
+        > span {
+            margin: 0 !important;
+            width: 1rem !important;
+            height: 1rem !important;
+        }
     }
 }
 
@@ -2023,7 +2030,7 @@ label .scrollable > div {
                         span:not(:first-child) {
                             margin: 0px 0px 0px 8px;
                         }
-                        
+
                         .icon {
                             color: var(--accent-color);
                         }
