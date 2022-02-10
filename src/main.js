@@ -168,6 +168,7 @@ let randomWind = null;
 let draggableBone = null;
 let draggingBones = null;
 let tapCount = 0;
+let isTouching = false;
 
 window.addEventListener("load", event => {
     if ("serviceWorker" in navigator) {
@@ -899,7 +900,7 @@ window.addEventListener("load", event => {
 
                                     c["user"] = user;
                                     c["timestamp"] = timestamp - 1;
-                                    
+
                                     return c;
                                 }
                             } else {
@@ -929,7 +930,7 @@ window.addEventListener("load", event => {
                     if (result.committed) {
                         if (result.snapshot.exists()) {
                             const dictionary = result.snapshot.val();
-                            
+
                             if (dictionary.timestamp === timestamp) {
                                 function format(format) {
                                     var args = arguments;
@@ -3153,6 +3154,8 @@ window.addEventListener("load", event => {
                                     this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words, original: sequence[0].text };
                                 }
 
+                                lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
+
                                 sequence.shift();
 
                                 /*if (!this.isMuted) {
@@ -4755,7 +4758,7 @@ window.addEventListener("load", event => {
         controls.enabled = false;
     });
     window.addEventListener("mousedown", event => {
-        if (app.isVisible && !controls.enabled && event.button === 0) {
+        if (app.isVisible && !controls.enabled && event.button === 0 && !isTouching) {
             let minDistance = Number.MAX_SAFE_INTEGER;
             let bestIntersect = null;
             const element = app.$refs.three;
@@ -4810,7 +4813,7 @@ window.addEventListener("load", event => {
      
             vrmModel.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).position.set(px, py, 0.0);
         }*/
-        if (app.isVisible) {
+        if (app.isVisible && !isTouching) {
             const element = app.$refs.three;
             const x = event.clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
             const y = event.clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
@@ -4821,21 +4824,21 @@ window.addEventListener("load", event => {
             mouse.y = -(y / h) * 2 + 1;
 
             if (!controls.enabled && event.button === 0) {
-                lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
-
                 if (draggableBone !== null) {
                     const vector = new Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
 
                     draggableBone.direction = vector.normalize();
                     draggableBone.distance = Math.sqrt((draggableBone.point.x - x) * (draggableBone.point.x - x) + (draggableBone.point.y - y) * (draggableBone.point.y - y));
                 }
+
+                lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
             }
         }
     });
     window.addEventListener("mouseup", event => {
-        if (app.isVisible && !controls.enabled && event.button === 0) {
+        if (app.isVisible && !controls.enabled && event.button === 0 && !isTouching) {
             draggableBone = null;
-
+            
             if (app.character !== null) {
                 app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
             }
@@ -4906,6 +4909,8 @@ window.addEventListener("load", event => {
                 tapCount = 0;
             }
         }
+
+        isTouching = true;
     });
     window.addEventListener("touchmove", event => {
         event.stopPropagation();
@@ -4917,28 +4922,37 @@ window.addEventListener("load", event => {
             const w = element.offsetWidth;
             const h = element.offsetHeight;
 
+            mouse.x = (x / w) * 2 - 1;
+            mouse.y = -(y / h) * 2 + 1;
+
+            if (draggableBone !== null) {
+                const vector = new Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
+
+                draggableBone.direction = vector.normalize();
+                draggableBone.distance = Math.sqrt((draggableBone.point.x - x) * (draggableBone.point.x - x) + (draggableBone.point.y - y) * (draggableBone.point.y - y));
+            }
+
             lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
         }
     });
     window.addEventListener("touchend", event => {
         event.stopPropagation();
 
-        if (app.isVisible) {
-            const element = app.$refs.three;
-            const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
-            const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
-            const w = element.offsetWidth;
-            const h = element.offsetHeight;
+        draggableBone = null;
+        lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
 
-            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
-
-            if (app.character !== null) {
-                app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
-            }
+        if (app.isVisible && app.character !== null) {
+            app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
         }
+
+        isTouching = false;
     });
     window.addEventListener("touchcancel", event => {
         event.stopPropagation();
+
+        draggableBone = null;
+        lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
+        isTouching = false;
     });
     window.addEventListener("dragover", (event) => {
         event.preventDefault();
