@@ -1331,7 +1331,6 @@ label .scrollable > div {
                                                 margin: 0;
                                                 padding: 16px 32px 16px 32px;
                                                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                                border-radius: 500px 500px 500px 500px;
                                                 background: rgba(255, 255, 255, 0.75) !important;
                                                 background-clip: padding-box;
                                                 height: fit-content;
@@ -1394,14 +1393,19 @@ label .scrollable > div {
                                     > .button {
                                         margin: 0px;
                                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                        border-radius: 290486px;
-                                        padding: 16px;
+                                        padding: 16px 32px 16px 32px;
                                         background: rgba(255, 255, 255, 0.75) !important;
                                         background-clip: padding-box;
                                         height: initial;
                                         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                         backdrop-filter: blur(4px);
                                         -webkit-backdrop-filter: blur(4px);
+                                    }
+
+                                    > button.is-circle,
+                                    > .button.is-circle {
+                                        border-radius: 290486px;
+                                        padding: 16px !important;
 
                                         span.icon {
                                             margin: 0 !important;
@@ -1469,14 +1473,19 @@ label .scrollable > div {
                                                 .button {
                                                     margin: 0px;
                                                     border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                                    border-radius: 290486px;
-                                                    padding: 16px;
+                                                    padding: 16px 32px 16px 32px;
                                                     background: rgba(255, 255, 255, 0.75) !important;
                                                     background-clip: padding-box;
                                                     height: initial;
                                                     box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                                     backdrop-filter: blur(4px);
                                                     -webkit-backdrop-filter: blur(4px);
+                                                }
+
+                                                button.is-circle,
+                                                .button.is-circle {
+                                                    border-radius: 290486px;
+                                                    padding: 16px !important;
 
                                                     span.icon {
                                                         margin: 0 !important;
@@ -1506,7 +1515,6 @@ label .scrollable > div {
                                                     margin: 0;
                                                     padding: 16px 32px 16px 32px;
                                                     border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                                    border-radius: 500px 500px 500px 500px;
                                                     background: rgba(255, 255, 255, 0.75) !important;
                                                     background-clip: padding-box;
                                                     height: fit-content;
@@ -1719,16 +1727,21 @@ label .scrollable > div {
                                                         .button {
                                                             margin: 0px;
                                                             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                                            border-radius: 290486px !important;
-                                                            padding: 16px !important;
+                                                            padding: 16px 32px 16px 32px;
                                                             background: rgba(255, 255, 255, 0.75) !important;
                                                             background-clip: padding-box !important;
                                                             height: initial !important;
                                                             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                                             backdrop-filter: blur(4px) !important;
                                                             -webkit-backdrop-filter: blur(4px) !important;
+                                                        }
 
-                                                            .icon {
+                                                        button.is-circle,
+                                                        .button.is-circle {
+                                                            border-radius: 290486px;
+                                                            padding: 16px !important;
+
+                                                            span.icon {
                                                                 margin: 0 !important;
                                                                 width: 1rem !important;
                                                                 height: 1rem !important;
@@ -1795,16 +1808,24 @@ label .scrollable > div {
                                                             .button {
                                                                 margin: 0px;
                                                                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                                                border-radius: 290486px !important;
-                                                                padding: 16px !important;
+                                                                padding: 16px 32px 16px 32px;
                                                                 background: rgba(255, 255, 255, 0.75) !important;
                                                                 background-clip: padding-box !important;
                                                                 height: initial !important;
                                                                 box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                                                 backdrop-filter: blur(4px) !important;
                                                                 -webkit-backdrop-filter: blur(4px) !important;
+                                                            }
 
-                                                                .icon {
+                                                            button.is-circle,
+                                                            .button.is-circle {
+                                                                border-radius: 290486px;
+                                                                padding: 16px !important;
+
+                                                                span.icon {
+                                                                    margin: 0 !important;
+                                                                    width: 1rem !important;
+                                                                    height: 1rem !important;
                                                                     color: var(--accent-color);
                                                                 }
                                                             }
@@ -1987,16 +2008,21 @@ label .scrollable > div {
                             > button {
                                 margin: 0px;
                                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                border-radius: 290486px;
-                                padding: 16px;
+                                padding: 16px 32px 16px 32px;
                                 background: rgba(255, 255, 255, 0.75) !important;
                                 background-clip: padding-box;
                                 height: initial;
                                 box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                 backdrop-filter: blur(4px);
                                 -webkit-backdrop-filter: blur(4px);
+                            }
 
-                                span {
+                            > button.is-circle,
+                            > .button.is-circle {
+                                border-radius: 290486px;
+                                padding: 16px !important;
+
+                                span.icon {
                                     margin: 0 !important;
                                     width: 1rem !important;
                                     height: 1rem !important;
@@ -2042,16 +2068,21 @@ label .scrollable > div {
                     button {
                         margin: 0px;
                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                        border-radius: 290486px;
-                        padding: 16px;
+                        padding: 16px 32px 16px 32px;
                         background: rgba(255, 255, 255, 0.75) !important;
                         background-clip: padding-box;
                         height: initial;
                         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                         backdrop-filter: blur(4px);
                         -webkit-backdrop-filter: blur(4px);
+                    }
 
-                        span {
+                    button.is-circle,
+                    .button.is-circle {
+                        border-radius: 290486px;
+                        padding: 16px !important;
+
+                        span.icon {
                             margin: 0 !important;
                             width: 1rem !important;
                             height: 1rem !important;
@@ -2272,8 +2303,7 @@ label .scrollable > div {
                     .button {
                         margin: 0px;
                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                        border-radius: 290486px;
-                        padding: 16px;
+                        padding: 16px 32px 16px 32px;
                         background: rgba(255, 255, 255, 0.75) !important;
                         background-clip: padding-box;
                         width: fit-content;
@@ -2281,6 +2311,12 @@ label .scrollable > div {
                         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                         backdrop-filter: blur(4px);
                         -webkit-backdrop-filter: blur(4px);
+                    }
+
+                    button.is-circle,
+                    .button.is-circle {
+                        border-radius: 290486px;
+                        padding: 16px !important;
 
                         span.icon {
                             margin: 0 !important;
@@ -2421,19 +2457,25 @@ label .scrollable > div {
                         button {
                             margin: 0px;
                             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                            border-radius: 290486px;
-                            padding: 16px;
+                            padding: 16px 32px 16px 32px;
                             background: rgba(255, 255, 255, 0.75) !important;
                             background-clip: padding-box;
                             height: initial;
                             box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                             backdrop-filter: blur(4px);
                             -webkit-backdrop-filter: blur(4px);
+                        }
 
-                            span {
+                        button.is-circle,
+                        .button.is-circle {
+                            border-radius: 290486px;
+                            padding: 16px !important;
+
+                            span.icon {
                                 margin: 0 !important;
                                 width: 1rem !important;
                                 height: 1rem !important;
+                                color: var(--accent-color);
                             }
                         }
 
@@ -2452,7 +2494,7 @@ label .scrollable > div {
             }
         }
 
-        .level-item > .level > .level-item a.button {
+        .level-item > .level > .level-item a.button.is-circle {
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px;
