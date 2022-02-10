@@ -1146,7 +1146,7 @@ label .scrollable > div {
     .button {
         margin: 0px;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        padding: 16px;
+        padding: 16px 32px 16px 32px;
         background: rgba(255, 255, 255, 0.75) !important;
         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
         backdrop-filter: blur(4px);
@@ -1159,7 +1159,8 @@ label .scrollable > div {
 
     button.is-circle,
     .button.is-circle {
-        border-radius: 290486px;
+        border-radius: 290486px !important;
+        padding: 16px !important;
 
         > span {
             margin: 0 !important;
