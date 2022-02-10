@@ -110,8 +110,8 @@
                     <div class="level">
                         <div class="level-item">
                             <transition name="fade" mode="out-in">
-                                <button class="button" type="button" @click="isOverlayed = false"
-                                    v-if="isOverlayed" key="close">
+                                <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed"
+                                    key="close">
                                     <span class="icon is-small">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -127,15 +127,13 @@
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
-                                <button class="button" type="button"
-                                    @click="isRevealed = !isRevealed; mode = null;"
+                                <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
                                     v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
                                     <span class="icon is-small">
                                         <i class="fas fa-bars"></i>
                                     </span>
                                 </button>
-                                <button class="button" type="button"
-                                    @click="isRevealed = !isRevealed; mode = null;"
+                                <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
                                     v-else-if="typeof(mode) === 'object' && mode.disposable || typeof(mode) === 'string' && mode.startsWith('_')"
                                     key="force">
                                     <span class="icon is-small">
@@ -635,8 +633,8 @@
                                                             </button>
                                                         </div>
                                                         <div class="level-item">
-                                                            <button class="button is-circle" type="button" @click="word = null"
-                                                                v-cloak>
+                                                            <button class="button is-circle" type="button"
+                                                                @click="word = null" v-cloak>
                                                                 <span class="icon is-small is-danger">
                                                                     <i class="fas fa-times"></i>
                                                                 </span>
@@ -1171,7 +1169,8 @@
                                                                             <div class="card-content">
                                                                                 <div class="content">
                                                                                     <div class="field">
-                                                                                        <button class="button is-rounded is-size-7"
+                                                                                        <button
+                                                                                            class="button is-rounded is-size-7"
                                                                                             type="button"
                                                                                             v-bind:disabled="user === null"
                                                                                             @click="learn('image' in word && word.image !== null ? { name: word.id, attributes: word.attributes, image: word.image } : { name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
@@ -1202,7 +1201,8 @@
                                                                         </div>
                                                                         <div class="level is-mobile" v-else>
                                                                             <div class="level-item">
-                                                                                <button class="button is-rounded" type="button"
+                                                                                <button class="button is-rounded"
+                                                                                    type="button"
                                                                                     v-bind:disabled="user === null"
                                                                                     @click="learn('image' in word && word.image !== null ? { name: word.id, attributes: word.attributes, image: word.image } : { name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
                                                                                     v-cloak>
@@ -1348,7 +1348,8 @@
                                                                                                     </transition>
                                                                                                 </div>
                                                                                             </label>
-                                                                                            <button class="button is-circle"
+                                                                                            <button
+                                                                                                class="button is-circle"
                                                                                                 type="button"
                                                                                                 v-bind:disabled="isUploading"
                                                                                                 @click="upload($event, Object.assign(word, { id: word.name, type: 'words' }))"
@@ -1427,7 +1428,8 @@
                                                                 </button>
                                                             </div>
                                                             <div class="level-item">
-                                                                <button class="button is-primary is-circle" type="button"
+                                                                <button class="button is-primary is-circle"
+                                                                    type="button"
                                                                     v-bind:disabled="mode.selected.length === 0 || isBlinded || isLoading || isHangingOn"
                                                                     @click="release(mode.selected); backgroundQueue.unshift(mode.selected.some(x => 'image' in x) ? { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name), images: mode.selected.filter(x => 'image' in x).map(x => x.image) } : { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name) }); isRevealed = false; mode = null; refresh();"
                                                                     v-cloak>
@@ -2603,12 +2605,14 @@
                                                 <div class="level-item">
                                                     <div class="level is-mobile">
                                                         <div class="level-item">
-                                                            <a class="button is-circle" href="https://twitter.com/milchchan"
+                                                            <a class="button is-circle"
+                                                                href="https://twitter.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-twitter"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
-                                                            <a class="button is-circle" href="https://instagram.com/milchchan"
+                                                            <a class="button is-circle"
+                                                                href="https://instagram.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-instagram"></i></span></a>
                                                         </div>
@@ -2619,7 +2623,8 @@
                                                                         class="fab fa-youtube"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
-                                                            <a class="button is-circle" href="https://github.com/milchchan"
+                                                            <a class="button is-circle"
+                                                                href="https://github.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
                                                                         class="fab fa-github"></i></span></a>
                                                         </div>
@@ -2888,12 +2893,27 @@
         </div>
         <div class="right" v-cloak>
             <div class="level-item">
-                <button class="button is-circle" type="button" v-bind:disabled="isLoading || isHangingOn"
-                    @click="refresh" v-cloak>
-                    <span class="icon is-small">
-                        <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
-                    </span>
-                </button>
+                <transition name="fade" mode="out-in">
+                    <button class="button is-circle" v-if="isRevealed" type="button"
+                        v-bind:disabled="isLoading || isHangingOn"
+                        @click="refresh" key="overlay" v-cloak>
+                        <span class="icon is-small">
+                            <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                        </span>
+                    </button>
+                    <button class="button is-circle" type="button"
+                        v-bind:disabled="user === null || isLoading || isHangingOn"
+                        @click="isRevealed = true; mode = { collection: null, index: 0, selected: [], disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1));" v-else key="default" v-cloak>
+                        <transition name="fade" mode="out-in">
+                            <span class="icon is-small" v-if="isLoading || isHangingOn" key="processing">
+                                <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                            </span>
+                            <span class="icon" v-else key="ready">
+                                <i class="fas fa-comment"></i>
+                            </span>
+                        </transition>
+                    </button>                    
+                </transition>
             </div>
         </div>
         <audio preload="auto" ref="like">
