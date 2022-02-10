@@ -1077,13 +1077,13 @@ window.addEventListener("load", event => {
                             }
                         }
 
-                        for (let i = parseInt(this.points) + 1, length = this.points + 60; i <= length; i++) {
+                        for (let i = parseInt(this.points) + 1, length = this.points + 30; i <= length; i++) {
                             if (i % 60 === 0) {
                                 this.retain();
                             }
                         }
 
-                        this.points += 60;
+                        this.points += 30;
 
                         if (!this.isMuted) {
                             this.$refs.like.play();
