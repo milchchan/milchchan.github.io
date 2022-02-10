@@ -4042,19 +4042,21 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    const points = parseInt(this.uptime + deltaTime) - parseInt(this.uptime);
+                    if (!this.isRevealed) {
+                        const points = parseInt(this.uptime + deltaTime) - parseInt(this.uptime);
 
-                    if (points > 0 && points < 60) {
-                        for (let i = parseInt(this.points) + 1, length = this.points + points; i <= length; i++) {
-                            if (i % 60 === 0) {
-                                this.retain();
+                        if (points > 0 && points < 60) {
+                            for (let i = parseInt(this.points) + 1, length = this.points + points; i <= length; i++) {
+                                if (i % 60 === 0) {
+                                    this.retain();
+                                }
                             }
+
+                            this.points += points;
                         }
 
-                        this.points += points;
+                        this.uptime += deltaTime;
                     }
-
-                    this.uptime += deltaTime;
                 }
 
                 if (this.isVisible) {
@@ -4838,7 +4840,7 @@ window.addEventListener("load", event => {
     window.addEventListener("mouseup", event => {
         if (app.isVisible && !controls.enabled && event.button === 0 && !isTouching) {
             draggableBone = null;
-            
+
             if (app.character !== null) {
                 app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
             }
