@@ -696,20 +696,25 @@
                                                                 <article class="media">
                                                                     <div class="media-content">
                                                                         <div class="content">
+                                                                            <div v-if="user.image">
+                                                                                <span class="icon is-small"
+                                                                                    v-if="index === 0">
+                                                                                    <i class="fa-solid fa-crown"></i>
+                                                                                </span>
+                                                                                <span class="image is-32x32">
+                                                                                    <img class="is-rounded"
+                                                                                        v-bind:src="user.image"
+                                                                                        v-bind:alt="user.name" v-cloak>
+                                                                                </span>
+                                                                            </div>
                                                                             <span class="icon is-small"
-                                                                                v-if="index === 0">
+                                                                                v-else-if="index === 0">
                                                                                 <i class="fa-solid fa-crown"></i>
-                                                                            </span>
-                                                                            <span class="badge">{{ user.count }}</span>
-                                                                            <span class="image is-32x32"
-                                                                                v-if="user.image">
-                                                                                <img class="is-rounded"
-                                                                                    v-bind:src="user.image"
-                                                                                    v-bind:alt="user.name" v-cloak>
                                                                             </span>
                                                                             <span
                                                                                 class="is-size-5 has-text-weight-bold">{{
                                                                                 user.name }}</span>
+                                                                            <span class="badge">{{ user.count }}</span>
                                                                             <span><a v-bind:href="user.link"
                                                                                     target="_blank"
                                                                                     v-if="'link' in user && user.link !== null"><span
@@ -755,20 +760,21 @@
                                                                 <article class="media">
                                                                     <div class="media-content">
                                                                         <div class="content">
-                                                                            <span class="icon is-small"
-                                                                                v-if="index === 0">
-                                                                                <i class="fa-solid fa-crown"></i>
-                                                                            </span>
-                                                                            <span class="badge">{{ user.count }}</span>
-                                                                            <span class="image is-32x32"
-                                                                                v-if="user.image">
-                                                                                <img class="is-rounded"
-                                                                                    v-bind:src="user.image"
-                                                                                    v-bind:alt="user.name" v-cloak>
-                                                                            </span>
+                                                                            <div v-if="user.image">
+                                                                                <span class="icon is-small"
+                                                                                    v-if="index === 0">
+                                                                                    <i class="fa-solid fa-crown"></i>
+                                                                                </span>
+                                                                                <span class="image is-32x32">
+                                                                                    <img class="is-rounded"
+                                                                                        v-bind:src="user.image"
+                                                                                        v-bind:alt="user.name" v-cloak>
+                                                                                </span>
+                                                                            </div>
                                                                             <span
                                                                                 class="is-size-5 has-text-weight-bold">{{
                                                                                 user.name }}</span>
+                                                                            <span class="badge">{{ user.count }}</span>
                                                                             <span><a v-bind:href="user.link"
                                                                                     target="_blank"
                                                                                     v-if="'link' in user && user.link !== null"><span
@@ -1382,9 +1388,6 @@
                                                                                                 @change="mode.selected.some(x => x.name === word.name) ? mode.selected = mode.selected.filter(x => x.name !== word.name) : mode.selected.push(word)"
                                                                                                 v-bind:checked="mode.selected.some(x => x.name === word.name)">
                                                                                             <span class="custom"></span>
-                                                                                            <span class="badge">{{
-                                                                                                word.count
-                                                                                                }}</span>
                                                                                             <span class="image is-24x24"
                                                                                                 v-if="'user' in word && 'image' in word.user && word.user.image != null">
                                                                                                 <img class="is-rounded"
@@ -1406,6 +1409,9 @@
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </span>
+                                                                                            <span class="badge">{{
+                                                                                                word.count
+                                                                                                }}</span>
                                                                                         </label>
                                                                                     </div>
                                                                                 </div>
@@ -1855,14 +1861,16 @@
                                                                     @click="mode = 'sign-in'" v-if="user === null"
                                                                     key="signedout" v-cloak>
                                                                     <span class="icon">
-                                                                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                                                                        <i
+                                                                            class="fa-solid fa-arrow-right-to-bracket"></i>
                                                                     </span>
                                                                 </button>
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="user === null" @click="signOut()"
                                                                     v-else key="signedin" v-cloak>
                                                                     <span class="icon">
-                                                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                                                        <i
+                                                                            class="fa-solid fa-arrow-right-from-bracket"></i>
                                                                     </span>
                                                                 </button>
                                                             </transition>
@@ -2897,7 +2905,8 @@
                     <button class="button is-circle" v-if="isRevealed" type="button"
                         v-bind:disabled="isLoading || isHangingOn" @click="refresh" key="overlay" v-cloak>
                         <span class="icon is-small">
-                            <i class="fa-solid fa-arrows-rotate" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                            <i class="fa-solid fa-arrows-rotate"
+                                v-bind:class="{ loading: isLoading || isHangingOn }"></i>
                         </span>
                     </button>
                     <button class="button is-circle" type="button"
@@ -2906,7 +2915,8 @@
                         v-else key="default" v-cloak>
                         <transition name="fade" mode="out-in">
                             <span class="icon is-small" v-if="isLoading || isHangingOn" key="processing">
-                                <i class="fa-solid fa-arrows-rotate" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                                <i class="fa-solid fa-arrows-rotate"
+                                    v-bind:class="{ loading: isLoading || isHangingOn }"></i>
                             </span>
                             <span class="icon" v-else key="ready">
                                 <i class="fa-solid fa-comment"></i>
