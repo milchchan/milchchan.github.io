@@ -688,41 +688,49 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="level-item"
-                                                        v-for="(user, index) in take(Object.values(mode.words.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count), 10)"
-                                                        v-bind:key="user">
+                                                    <div class="level-item">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
                                                                 <article class="media">
                                                                     <div class="media-content">
                                                                         <div class="content">
-                                                                            <div v-if="user.image">
-                                                                                <span class="icon is-small"
-                                                                                    v-if="index === 0">
-                                                                                    <i class="fa-solid fa-crown"></i>
-                                                                                </span>
-                                                                                <span class="image is-32x32">
-                                                                                    <img class="is-rounded"
-                                                                                        v-bind:src="user.image"
-                                                                                        v-bind:alt="user.name" v-cloak>
-                                                                                </span>
+                                                                            <div class="columns is-gapless"
+                                                                                v-for="(user, index) in take(Object.values(mode.words.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count), 10)"
+                                                                                v-bind:key="user">
+                                                                                <div class="column is-full">
+                                                                                    <div v-if="user.image">
+                                                                                        <span class="icon is-small"
+                                                                                            v-if="index === 0">
+                                                                                            <i
+                                                                                                class="fa-solid fa-crown"></i>
+                                                                                        </span>
+                                                                                        <span class="image is-32x32">
+                                                                                            <img class="is-rounded"
+                                                                                                v-bind:src="user.image"
+                                                                                                v-bind:alt="user.name"
+                                                                                                v-cloak>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <span class="icon is-small"
+                                                                                        v-else-if="index === 0">
+                                                                                        <i
+                                                                                            class="fa-solid fa-crown"></i>
+                                                                                    </span>
+                                                                                    <span
+                                                                                        class="is-size-5 has-text-weight-bold">{{
+                                                                                        user.name }}</span>
+                                                                                    <span class="badge">{{ user.count
+                                                                                        }}</span>
+                                                                                    <span><a v-bind:href="user.link"
+                                                                                            target="_blank"
+                                                                                            v-if="'link' in user && user.link !== null"><span
+                                                                                                class="icon is-small"><i
+                                                                                                    class="fa-brands fa-twitter"
+                                                                                                    v-if="user.link.startsWith('https://twitter.com/')"></i><i
+                                                                                                    class="fa-solid fa-link"
+                                                                                                    v-else></i></span></a></span>
+                                                                                </div>
                                                                             </div>
-                                                                            <span class="icon is-small"
-                                                                                v-else-if="index === 0">
-                                                                                <i class="fa-solid fa-crown"></i>
-                                                                            </span>
-                                                                            <span
-                                                                                class="is-size-5 has-text-weight-bold">{{
-                                                                                user.name }}</span>
-                                                                            <span class="badge">{{ user.count }}</span>
-                                                                            <span><a v-bind:href="user.link"
-                                                                                    target="_blank"
-                                                                                    v-if="'link' in user && user.link !== null"><span
-                                                                                        class="icon is-small"><i
-                                                                                            class="fa-brands fa-twitter"
-                                                                                            v-if="user.link.startsWith('https://twitter.com/')"></i><i
-                                                                                            class="fa-solid fa-link"
-                                                                                            v-else></i></span></a></span>
                                                                         </div>
                                                                     </div>
                                                                 </article>
@@ -752,37 +760,44 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="level-item"
-                                                        v-for="(user, index) in take(Object.values(mode.likes.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count), 10)"
-                                                        v-bind:key="user">
+                                                    <div class="level-item">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
                                                                 <article class="media">
                                                                     <div class="media-content">
                                                                         <div class="content">
-                                                                            <div v-if="user.image">
-                                                                                <span class="icon is-small"
-                                                                                    v-if="index === 0">
-                                                                                    <i class="fa-solid fa-crown"></i>
-                                                                                </span>
-                                                                                <span class="image is-32x32">
-                                                                                    <img class="is-rounded"
-                                                                                        v-bind:src="user.image"
-                                                                                        v-bind:alt="user.name" v-cloak>
-                                                                                </span>
+                                                                            <div class="columns is-gapless"
+                                                                                v-for="(user, index) in take(Object.values(mode.likes.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count), 10)"
+                                                                                v-bind:key="user">
+                                                                                <div class="column is-full">
+                                                                                    <div v-if="user.image">
+                                                                                        <span class="icon is-small"
+                                                                                            v-if="index === 0">
+                                                                                            <i
+                                                                                                class="fa-solid fa-crown"></i>
+                                                                                        </span>
+                                                                                        <span class="image is-32x32">
+                                                                                            <img class="is-rounded"
+                                                                                                v-bind:src="user.image"
+                                                                                                v-bind:alt="user.name"
+                                                                                                v-cloak>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <span
+                                                                                        class="is-size-5 has-text-weight-bold">{{
+                                                                                        user.name }}</span>
+                                                                                    <span class="badge">{{ user.count
+                                                                                        }}</span>
+                                                                                    <span><a v-bind:href="user.link"
+                                                                                            target="_blank"
+                                                                                            v-if="'link' in user && user.link !== null"><span
+                                                                                                class="icon is-small"><i
+                                                                                                    class="fa-brands fa-twitter"
+                                                                                                    v-if="user.link.startsWith('https://twitter.com/')"></i><i
+                                                                                                    class="fa-solid fa-link"
+                                                                                                    v-else></i></span></a></span>
+                                                                                </div>
                                                                             </div>
-                                                                            <span
-                                                                                class="is-size-5 has-text-weight-bold">{{
-                                                                                user.name }}</span>
-                                                                            <span class="badge">{{ user.count }}</span>
-                                                                            <span><a v-bind:href="user.link"
-                                                                                    target="_blank"
-                                                                                    v-if="'link' in user && user.link !== null"><span
-                                                                                        class="icon is-small"><i
-                                                                                            class="fa-brands fa-twitter"
-                                                                                            v-if="user.link.startsWith('https://twitter.com/')"></i><i
-                                                                                            class="fa-solid fa-link"
-                                                                                            v-else></i></span></a></span>
                                                                         </div>
                                                                     </div>
                                                                 </article>
