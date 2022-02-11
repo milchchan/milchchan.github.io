@@ -1976,9 +1976,50 @@ label .scrollable > div {
 
                             > .media > .media-content > .content {
                                 display: flex;
-                                flex-direction: row;
+                                flex-direction: column;
                                 justify-content: center;
                                 align-items: center;
+
+                                .columns {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    justify-content: center;
+
+                                    .column {
+                                        display: flex;
+                                        flex-direction: row;
+                                        justify-content: center;
+                                        align-items: center;
+
+                                        > span.icon:first-of-type {
+                                            color: #ffee00;
+                                        }
+
+                                        > span:not(.icon) {
+                                            white-space: nowrap;
+                                            color: var(--main-color);
+                                            transition: 0.5s;
+                                        }
+
+                                        > span:not(:first-of-type),
+                                        > div + span,
+                                        > span + div {
+                                            margin: 0px 0px 0px 16px;
+                                        }
+
+                                        > div {
+                                            display: flex;
+                                            flex-direction: column;
+                                            align-items: center;
+                                            justify-content: center;
+
+                                            > span.icon:first-of-type {
+                                                color: #ffee00;
+                                            }
+                                        }
+                                    }
+                                }
 
                                 .badge {
                                     padding: 4px 8px 4px 8px !important;
@@ -1987,32 +2028,6 @@ label .scrollable > div {
                                     color: #ffffff !important;
                                     font-size: 0.75rem;
                                     line-height: 0.75rem !important;
-                                }
-
-                                > span.icon:first-of-type {
-                                    color: #ffee00;
-                                }
-
-                                > span:not(.icon) {
-                                    color: var(--main-color);
-                                    transition: 0.5s;
-                                }
-
-                                > span:not(:first-of-type),
-                                > div + span,
-                                > span + div {
-                                    margin: 0px 0px 0px 16px;
-                                }
-
-                                > div {
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: center;
-                                    justify-content: center;
-
-                                    > span.icon:first-of-type {
-                                        color: #ffee00;
-                                    }
                                 }
 
                                 a {
