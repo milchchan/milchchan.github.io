@@ -1584,10 +1584,10 @@
                                                         </p>
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
-                                                            ミルヒちゃんのために魔法少女の衣装をつくったよぉ。逃げなくていいよぉ。ミルヒちゃんはメルクといっしょにいるのが一番幸せなのぉ！ミルヒちゃん、お着替えしようね。メルクが着せてあげるね。フヒヒ……。
+                                                            ミルヒちゃんのために魔法少女の衣装をつくったよぉ。逃げなくていいよぉ。ミルヒちゃんはメルクといっしょにいるのが一番幸せなのぉ！ミルヒちゃん、お着替えしようね。メルクが着せてあげるね。フヒヒ。
                                                         </p>
-                                                        <p
-                                                            class="content is-size-5 has-text-weight-bold has-text-justified" v-bind:class="{ 'has-text-transparent': !isDarkMode }">
+                                                        <p class="content is-size-5 has-text-weight-bold has-text-justified"
+                                                            v-bind:class="{ 'has-text-transparent': !isDarkMode }">
                                                             ミルヒちゃんのぱんつ、クンカクンカしよぉ。クンカクンカ！スーハースーハー！いい匂いだよぉ。ミルヒちゃん、つるつるだね。ミルヒちゃん、メルクのぱんつを穿かせてあげるね。ぬぎぬぎ。
                                                         </p>
                                                         <p
@@ -2895,15 +2895,15 @@
             <div class="level-item">
                 <transition name="fade" mode="out-in">
                     <button class="button is-circle" v-if="isRevealed" type="button"
-                        v-bind:disabled="isLoading || isHangingOn"
-                        @click="refresh" key="overlay" v-cloak>
+                        v-bind:disabled="isLoading || isHangingOn" @click="refresh" key="overlay" v-cloak>
                         <span class="icon is-small">
                             <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
                         </span>
                     </button>
                     <button class="button is-circle" type="button"
                         v-bind:disabled="user === null || isLoading || isHangingOn"
-                        @click="isRevealed = true; mode = { collection: null, index: 0, selected: [], disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1));" v-else key="default" v-cloak>
+                        @click="isRevealed = true; mode = { collection: null, index: 0, selected: [], disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1));"
+                        v-else key="default" v-cloak>
                         <transition name="fade" mode="out-in">
                             <span class="icon is-small" v-if="isLoading || isHangingOn" key="processing">
                                 <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
@@ -2912,7 +2912,7 @@
                                 <i class="fas fa-comment"></i>
                             </span>
                         </transition>
-                    </button>                    
+                    </button>
                 </transition>
             </div>
         </div>
