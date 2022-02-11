@@ -113,36 +113,36 @@
                                 <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed"
                                     key="close">
                                     <span class="icon is-small">
-                                        <i class="fas fa-times"></i>
+                                        <i class="fa-solid fa-xmark"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="$refs.text.blur(); isLearning = false;"
                                     v-else-if="isLearning" key="abort">
                                     <span class="icon is-small">
-                                        <i class="fas fa-times"></i>
+                                        <i class="fa-solid fa-xmark"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="word = null" v-else-if="word" key="cancel">
                                     <span class="icon is-small">
-                                        <i class="fas fa-times"></i>
+                                        <i class="fa-solid fa-xmark"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
                                     v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
                                     <span class="icon is-small">
-                                        <i class="fas fa-bars"></i>
+                                        <i class="fa-solid fa-bars"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
                                     v-else-if="typeof(mode) === 'object' && mode.disposable || typeof(mode) === 'string' && mode.startsWith('_')"
                                     key="force">
                                     <span class="icon is-small">
-                                        <i class="fas fa-times"></i>
+                                        <i class="fa-solid fa-xmark"></i>
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="mode = null" v-else key="back">
                                     <span class="icon is-small">
-                                        <i class="fas fa-arrow-left"></i>
+                                        <i class="fa-solid fa-arrow-left"></i>
                                     </span>
                                 </button>
                             </transition>
@@ -153,7 +153,7 @@
                                     @click="mode = '_about'; isRevealed = true;"
                                     v-if="mode === 'about' || mode === '_about'" key="selected">
                                     <div class="icon is-large">
-                                        <i class="fas fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
                                     </div>
                                     <div class="wrap is-size-7 has-text-weight-bold">
                                         <div class="clip">
@@ -167,7 +167,7 @@
                                 <button class="button" type="button" @click="mode = '_about'; isRevealed = true;" v-else
                                     key="unselected">
                                     <div class="icon is-large">
-                                        <i class="fas fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
                                     </div>
                                     <div class="wrap is-size-7 has-text-weight-bold">
                                         <div class="clip">
@@ -494,7 +494,7 @@
                                         <div class="media-content">
                                             <div class="content">
                                                 <span class="icon is-small" v-cloak>
-                                                    <i class="fas fa-spinner updating"></i>
+                                                    <i class="fa-solid fa-spinner updating"></i>
                                                 </span>
                                             </div>
                                         </div>
@@ -561,10 +561,10 @@
                                                                     <transition name="fade" mode="out-in">
                                                                         <span class="icon" v-if="isUploading"
                                                                             key="uploading">
-                                                                            <i class="fas fa-spinner updating"></i>
+                                                                            <i class="fa-solid fa-spinner updating"></i>
                                                                         </span>
                                                                         <span class="icon" v-else key="ready">
-                                                                            <i class="fas fa-cloud-upload-alt"></i>
+                                                                            <i class="fa-solid fa-cloud-arrow-up"></i>
                                                                         </span>
                                                                     </transition>
                                                                 </div>
@@ -576,12 +576,12 @@
                                                                 <transition name="fade" mode="out-in">
                                                                     <span class="icon" v-if="isUploading"
                                                                         key="uploading">
-                                                                        <i class="fas fa-spinner updating"></i>
+                                                                        <i class="fa-solid fa-spinner updating"></i>
                                                                     </span>
                                                                     <span class="icon is-small"
                                                                         style="pointer-events: none;" v-else
                                                                         key="ready">
-                                                                        <i class="fas fa-trash"></i>
+                                                                        <i class="fa-solid fa-trash"></i>
                                                                     </span>
                                                                 </transition>
                                                             </button>
@@ -628,7 +628,7 @@
                                                                 @click="share('image' in word && word.image !== null ? { name: word.name, attributes: word.attributes, image: word.image } : { name: word.name, attributes: word.attributes }); word = null;"
                                                                 v-cloak>
                                                                 <span class="icon is-small is-primary">
-                                                                    <i class="fas fa-check"></i>
+                                                                    <i class="fa-solid fa-check"></i>
                                                                 </span>
                                                             </button>
                                                         </div>
@@ -636,7 +636,7 @@
                                                             <button class="button is-circle" type="button"
                                                                 @click="word = null" v-cloak>
                                                                 <span class="icon is-small is-danger">
-                                                                    <i class="fas fa-times"></i>
+                                                                    <i class="fa-solid fa-xmark"></i>
                                                                 </span>
                                                             </button>
                                                         </div>
@@ -657,7 +657,7 @@
                                                             <div class="media-content">
                                                                 <div class="content">
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-spinner updating"></i>
+                                                                        <i class="fa-solid fa-spinner updating"></i>
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -698,7 +698,7 @@
                                                                         <div class="content">
                                                                             <span class="icon is-small"
                                                                                 v-if="index === 0">
-                                                                                <i class="fas fa-crown"></i>
+                                                                                <i class="fa-solid fa-crown"></i>
                                                                             </span>
                                                                             <span class="badge">{{ user.count }}</span>
                                                                             <span class="image is-32x32"
@@ -714,9 +714,9 @@
                                                                                     target="_blank"
                                                                                     v-if="'link' in user && user.link !== null"><span
                                                                                         class="icon is-small"><i
-                                                                                            class="fab fa-twitter"
+                                                                                            class="fa-brands fa-twitter"
                                                                                             v-if="user.link.startsWith('https://twitter.com/')"></i><i
-                                                                                            class="fas fa-link"
+                                                                                            class="fa-solid fa-link"
                                                                                             v-else></i></span></a></span>
                                                                         </div>
                                                                     </div>
@@ -757,7 +757,7 @@
                                                                         <div class="content">
                                                                             <span class="icon is-small"
                                                                                 v-if="index === 0">
-                                                                                <i class="fas fa-crown"></i>
+                                                                                <i class="fa-solid fa-crown"></i>
                                                                             </span>
                                                                             <span class="badge">{{ user.count }}</span>
                                                                             <span class="image is-32x32"
@@ -773,9 +773,9 @@
                                                                                     target="_blank"
                                                                                     v-if="'link' in user && user.link !== null"><span
                                                                                         class="icon is-small"><i
-                                                                                            class="fab fa-twitter"
+                                                                                            class="fa-brands fa-twitter"
                                                                                             v-if="user.link.startsWith('https://twitter.com/')"></i><i
-                                                                                            class="fas fa-link"
+                                                                                            class="fa-solid fa-link"
                                                                                             v-else></i></span></a></span>
                                                                         </div>
                                                                     </div>
@@ -909,7 +909,7 @@
                                                             <div class="media-content">
                                                                 <div class="content">
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-spinner updating"></i>
+                                                                        <i class="fa-solid fa-spinner updating"></i>
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -942,9 +942,9 @@
                                                                                                     target="_blank"
                                                                                                     v-if="'link' in like.user && like.user.link !== null"><span
                                                                                                         class="icon is-small"><i
-                                                                                                            class="fab fa-twitter"
+                                                                                                            class="fa-brands fa-twitter"
                                                                                                             v-if="like.user.link.startsWith('https://twitter.com/')"></i><i
-                                                                                                            class="fas fa-link"
+                                                                                                            class="fa-solid fa-link"
                                                                                                             v-else></i></span></a></span>
                                                                                         </div>
                                                                                     </div>
@@ -1012,14 +1012,14 @@
                                                                                                                         v-if="isUploading"
                                                                                                                         key="uploading">
                                                                                                                         <i
-                                                                                                                            class="fas fa-spinner updating"></i>
+                                                                                                                            class="fa-solid fa-spinner updating"></i>
                                                                                                                     </span>
                                                                                                                     <span
                                                                                                                         class="icon"
                                                                                                                         v-else
                                                                                                                         key="ready">
                                                                                                                         <i
-                                                                                                                            class="fas fa-cloud-upload-alt"></i>
+                                                                                                                            class="fa-solid fa-cloud-arrow-up"></i>
                                                                                                                     </span>
                                                                                                                 </transition>
                                                                                                             </div>
@@ -1039,7 +1039,7 @@
                                                                                                                     v-if="isUploading"
                                                                                                                     key="uploading">
                                                                                                                     <i
-                                                                                                                        class="fas fa-spinner updating"></i>
+                                                                                                                        class="fa-solid fa-spinner updating"></i>
                                                                                                                 </span>
                                                                                                                 <span
                                                                                                                     class="icon is-small"
@@ -1047,7 +1047,7 @@
                                                                                                                     v-else
                                                                                                                     key="ready">
                                                                                                                     <i
-                                                                                                                        class="fas fa-trash"></i>
+                                                                                                                        class="fa-solid fa-trash"></i>
                                                                                                                 </span>
                                                                                                             </transition>
                                                                                                         </button>
@@ -1069,21 +1069,21 @@
                                                                                                                     v-if="typeof(isTweeting) === 'object'"
                                                                                                                     key="tweeted">
                                                                                                                     <i
-                                                                                                                        class="fas fa-check"></i>
+                                                                                                                        class="fa-solid fa-check"></i>
                                                                                                                 </span>
                                                                                                                 <span
                                                                                                                     class="icon"
                                                                                                                     v-else-if="isTweeting === true"
                                                                                                                     key="tweeting">
                                                                                                                     <i
-                                                                                                                        class="fas fa-spinner updating"></i>
+                                                                                                                        class="fa-solid fa-spinner updating"></i>
                                                                                                                 </span>
                                                                                                                 <span
                                                                                                                     class="icon"
                                                                                                                     v-else
                                                                                                                     key="ready">
                                                                                                                     <i
-                                                                                                                        class="fab fa-twitter"></i>
+                                                                                                                        class="fa-brands fa-twitter"></i>
                                                                                                                 </span>
                                                                                                             </transition>
                                                                                                         </button>
@@ -1109,7 +1109,7 @@
                                                                     @click="previous('likes', mode.indexes.pop().timestamp, 1)"
                                                                     v-cloak>
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-chevron-left"></i>
+                                                                        <i class="fa-solid fa-chevron-left"></i>
                                                                     </span>
                                                                 </button>
                                                             </div>
@@ -1119,7 +1119,7 @@
                                                                     @click="next('likes', mode.next.timestamp, 1)"
                                                                     v-cloak>
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-chevron-right"></i>
+                                                                        <i class="fa-solid fa-chevron-right"></i>
                                                                     </span>
                                                                 </button>
                                                             </div>
@@ -1136,7 +1136,7 @@
                                                             <div class="media-content">
                                                                 <div class="content">
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-spinner updating"></i>
+                                                                        <i class="fa-solid fa-spinner updating"></i>
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -1239,7 +1239,7 @@
                                                                     @click="previous('words', mode.indexes.pop().timestamp)"
                                                                     v-cloak>
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-chevron-left"></i>
+                                                                        <i class="fa-solid fa-chevron-left"></i>
                                                                     </span>
                                                                 </button>
                                                             </div>
@@ -1248,7 +1248,7 @@
                                                                     v-bind:disabled="mode.next === null"
                                                                     @click="next('words', mode.next.timestamp)" v-cloak>
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-chevron-right"></i>
+                                                                        <i class="fa-solid fa-chevron-right"></i>
                                                                     </span>
                                                                 </button>
                                                             </div>
@@ -1265,7 +1265,7 @@
                                                             <div class="media-content">
                                                                 <div class="content">
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-spinner updating"></i>
+                                                                        <i class="fa-solid fa-spinner updating"></i>
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -1279,7 +1279,7 @@
                                                             <div class="media-content">
                                                                 <div class="content">
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                                        <i class="fa-solid fa-triangle-exclamation"></i>
                                                                     </span>
                                                                     <span>N/A</span>
                                                                 </div>
@@ -1336,14 +1336,14 @@
                                                                                                             v-if="isUploading"
                                                                                                             key="uploading">
                                                                                                             <i
-                                                                                                                class="fas fa-spinner updating"></i>
+                                                                                                                class="fa-solid fa-spinner updating"></i>
                                                                                                         </span>
                                                                                                         <span
                                                                                                             class="icon"
                                                                                                             v-else
                                                                                                             key="ready">
                                                                                                             <i
-                                                                                                                class="fas fa-cloud-upload-alt"></i>
+                                                                                                                class="fa-solid fa-cloud-arrow-up"></i>
                                                                                                         </span>
                                                                                                     </transition>
                                                                                                 </div>
@@ -1360,7 +1360,7 @@
                                                                                                         v-if="isUploading"
                                                                                                         key="uploading">
                                                                                                         <i
-                                                                                                            class="fas fa-spinner updating"></i>
+                                                                                                            class="fa-solid fa-spinner updating"></i>
                                                                                                     </span>
                                                                                                     <span
                                                                                                         class="icon is-small"
@@ -1368,7 +1368,7 @@
                                                                                                         v-else
                                                                                                         key="ready">
                                                                                                         <i
-                                                                                                            class="fas fa-trash"></i>
+                                                                                                            class="fa-solid fa-trash"></i>
                                                                                                     </span>
                                                                                                 </transition>
                                                                                             </button>
@@ -1423,7 +1423,7 @@
                                                                     v-bind:disabled="mode.index === 0"
                                                                     @click="mode.index--" v-cloak>
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-chevron-left"></i>
+                                                                        <i class="fa-solid fa-chevron-left"></i>
                                                                     </span>
                                                                 </button>
                                                             </div>
@@ -1437,10 +1437,10 @@
                                                                         <span class="icon"
                                                                             v-if="isBlinded || isLoading || isHangingOn"
                                                                             key="processing">
-                                                                            <i class="fas fa-spinner updating"></i>
+                                                                            <i class="fa-solid fa-spinner updating"></i>
                                                                         </span>
                                                                         <span class="icon" v-else key="ready">
-                                                                            <i class="fas fa-comment"></i>
+                                                                            <i class="fa-solid fa-comment"></i>
                                                                         </span>
                                                                     </transition>
                                                                 </button>
@@ -1450,7 +1450,7 @@
                                                                     v-bind:disabled="mode.index === mode.collection.length - 1"
                                                                     @click="mode.index++" v-cloak>
                                                                     <span class="icon is-small">
-                                                                        <i class="fas fa-chevron-right"></i>
+                                                                        <i class="fa-solid fa-chevron-right"></i>
                                                                     </span>
                                                                 </button>
                                                             </div>
@@ -1470,7 +1470,7 @@
                                                         <button class="button is-rounded is-size-7" type="button"
                                                             @click="signIn('google.com')">
                                                             <span class="icon">
-                                                                <i class="fab fa-google"></i>
+                                                                <i class="fa-brands fa-google"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -1492,7 +1492,7 @@
                                                         <button class="button is-rounded is-size-7" type="button"
                                                             @click="signIn('facebook.com')">
                                                             <span class="icon">
-                                                                <i class="fab fa-facebook"></i>
+                                                                <i class="fa-brands fa-facebook"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -1514,7 +1514,7 @@
                                                         <button class="button is-rounded is-size-7" type="button"
                                                             @click="signIn('twitter.com')">
                                                             <span class="icon">
-                                                                <i class="fab fa-twitter"></i>
+                                                                <i class="fa-brands fa-twitter"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -1790,7 +1790,7 @@
                                                 <div class="media-content">
                                                     <div class="content">
                                                         <span class="icon is-large">
-                                                            <i class="fas fa-cog fa-2x"></i>
+                                                            <i class="fa-solid fa-gear fa-2x"></i>
                                                         </span>
                                                         <h2 class="has-text-weight-bold is-uppercase has-text-centered">
                                                             Settings</h2>
@@ -1816,7 +1816,7 @@
                                                                     key="disabled" v-cloak>
                                                                     <span class="icon is-small"
                                                                         style="pointer-events: none;">
-                                                                        <i class="fas fa-eye"></i>
+                                                                        <i class="fa-solid fa-eye"></i>
                                                                     </span>
                                                                 </button>
                                                                 <button class="button is-circle" type="button"
@@ -1824,7 +1824,7 @@
                                                                     v-cloak>
                                                                     <span class="icon is-small"
                                                                         style="pointer-events: none;">
-                                                                        <i class="fas fa-eye-slash"></i>
+                                                                        <i class="fa-solid fa-eye-slash"></i>
                                                                     </span>
                                                                 </button>
                                                             </transition>
@@ -1836,7 +1836,7 @@
                                                                     key="disabled" v-cloak>
                                                                     <span class="icon is-small"
                                                                         style="pointer-events: none;">
-                                                                        <i class="fas fa-volume-mute"></i>
+                                                                        <i class="fa-solid fa-volume-xmark"></i>
                                                                     </span>
                                                                 </button>
                                                                 <button class="button is-circle" type="button"
@@ -1844,7 +1844,7 @@
                                                                     v-cloak>
                                                                     <span class="icon is-small"
                                                                         style="pointer-events: none;">
-                                                                        <i class="fas fa-volume-up"></i>
+                                                                        <i class="fa-solid fa-volume-high"></i>
                                                                     </span>
                                                                 </button>
                                                             </transition>
@@ -1855,14 +1855,14 @@
                                                                     @click="mode = 'sign-in'" v-if="user === null"
                                                                     key="signedout" v-cloak>
                                                                     <span class="icon">
-                                                                        <i class="fas fa-sign-in-alt"></i>
+                                                                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
                                                                     </span>
                                                                 </button>
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="user === null" @click="signOut()"
                                                                     v-else key="signedin" v-cloak>
                                                                     <span class="icon">
-                                                                        <i class="fas fa-sign-out-alt"></i>
+                                                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
                                                                     </span>
                                                                 </button>
                                                             </transition>
@@ -1926,7 +1926,7 @@
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
                                                             ゲージがたまるとランダムでミルヒちゃんにお話しして貰える言葉が手に入るよぉ。ゲージはかわいいミルヒちゃんを眺めながら1分間待つかミルヒちゃんに言葉を教えてあげるかお話をお気に入りすることでたまるよ。手に入った言葉の中からミルヒちゃんにお話しして貰う言葉を選んでね。言葉を選んだら<span
                                                                 class="icon marker"><i
-                                                                    class="fas fa-comment"></i></span>でミルヒちゃんにお話しして貰えるよぉ。ミルヒちゃんのお話しをいっぱい楽しんでね。
+                                                                    class="fa-solid fa-comment"></i></span>でミルヒちゃんにお話しして貰えるよぉ。ミルヒちゃんのお話しをいっぱい楽しんでね。
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1946,9 +1946,9 @@
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
                                                             ミルヒちゃんに教えてあげる言葉を入力してね。入力したら<span class="icon marker"><i
-                                                                    class="fas fa-arrow-right"></i></span>で今度は言葉の意味を選んでね。言葉の意味を選び終えたら<span
+                                                                    class="fa-solid fa-arrow-right"></i></span>で今度は言葉の意味を選んでね。言葉の意味を選び終えたら<span
                                                                 class="icon marker"><i
-                                                                    class="fas fa-check"></i></span>で言葉を教えてあげられるよぉ。ミルヒちゃんにあんなことやこんなことを教えてあげてね。
+                                                                    class="fa-solid fa-check"></i></span>で言葉を教えてあげられるよぉ。ミルヒちゃんにあんなことやこんなことを教えてあげてね。
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1968,9 +1968,9 @@
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
                                                             ミルヒちゃんがお話ししている時に<span class="icon marker"><i
-                                                                    class="fas fa-heart"></i></span>でお話しをメルクのお気に入りに出来るよぉ。お気に入りにしたお話しはいつでも見ることが出来るよぉ。かわいいミルヒちゃんをいっぱいお気に入りにしてね。それとね、Twitterアカウントでサインインしていると<span
+                                                                    class="fa-solid fa-heart"></i></span>でお話しをメルクのお気に入りに出来るよぉ。お気に入りにしたお話しはいつでも見ることが出来るよぉ。かわいいミルヒちゃんをいっぱいお気に入りにしてね。それとね、Twitterアカウントでサインインしていると<span
                                                                 class="icon marker"><i
-                                                                    class="fab fa-twitter"></i></span>でお話をツイートできるよぉ。みんなでミルヒちゃんを有名にしてあげてね。
+                                                                    class="fa-brands fa-twitter"></i></span>でお話をツイートできるよぉ。みんなでミルヒちゃんを有名にしてあげてね。
                                                         </p>
                                                     </div>
                                                 </div>
@@ -2005,7 +2005,7 @@
                                                             <button class="button is-rounded is-size-7" type="button"
                                                                 @click="mode = 'help'">
                                                                 <span class="icon">
-                                                                    <i class="fas fa-question"></i>
+                                                                    <i class="fa-solid fa-question"></i>
                                                                 </span>
                                                                 <!--<span class="wrap has-text-weight-bold has-text-black">
                                                                     <div class="clip">
@@ -2189,7 +2189,7 @@
                                                             type="button" @click="mode = 'sign-in'"
                                                             v-if="user === null">
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2205,7 +2205,7 @@
                                                             @click="mode = { collection: null, index: 0, selected: [], disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1));"
                                                             v-else>
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2228,7 +2228,7 @@
                                                             type="button" @click="mode = 'sign-in'"
                                                             v-if="user === null">
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2243,7 +2243,7 @@
                                                             type="button"
                                                             @click="isLearning = true; isRevealed = false;" v-else>
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2266,7 +2266,7 @@
                                                             type="button" @click="mode = 'sign-in'"
                                                             v-if="user === null">
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2282,7 +2282,7 @@
                                                             @click="mode = { words: null, next: null, indexes: [], selected: [], disposable: false }; next('words', mode.next);"
                                                             v-else>
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2305,7 +2305,7 @@
                                                             type="button" @click="mode = 'sign-in'"
                                                             v-if="user === null">
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2322,10 +2322,10 @@
                                                             <transition name="fade" mode="out-in">
                                                                 <span class="icon" v-if="isDiscovering"
                                                                     key="discovering">
-                                                                    <i class="fas fa-spinner updating"></i>
+                                                                    <i class="fa-solid fa-spinner updating"></i>
                                                                 </span>
                                                                 <span class="icon" v-else key="ready">
-                                                                    <i class="fas fa-star"></i>
+                                                                    <i class="fa-solid fa-star"></i>
                                                                 </span>
                                                             </transition>
                                                             <span class="wrap has-text-weight-bold">
@@ -2349,7 +2349,7 @@
                                                             type="button"
                                                             @click="mode = { likes: null, next: null, indexes: [], disposable: false }; next('likes', mode.next, 1);">
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2372,7 +2372,7 @@
                                                             type="button"
                                                             @click="mode = { stats: null, words: null, likes: null, disposable: false }; next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null); next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);">
                                                             <span class="icon">
-                                                                <i class="fas fa-star"></i>
+                                                                <i class="fa-solid fa-star"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2403,10 +2403,10 @@
                                                                 <transition name="fade" mode="out-in">
                                                                     <span class="icon" v-if="isUploading"
                                                                         key="uploading">
-                                                                        <i class="fas fa-spinner updating"></i>
+                                                                        <i class="fa-solid fa-spinner updating"></i>
                                                                     </span>
                                                                     <span class="icon" v-else key="ready">
-                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fa-solid fa-star"></i>
                                                                     </span>
                                                                 </transition>
                                                                 <span class="file-label wrap">
@@ -2447,7 +2447,7 @@
                                                                 </div>
                                                             </span>
                                                             <span class="icon">
-                                                                <i class="fas fa-chevron-right"></i>
+                                                                <i class="fa-solid fa-chevron-right"></i>
                                                             </span>
                                                         </button>
                                                     </div>
@@ -2478,7 +2478,7 @@
                                                                 </div>
                                                             </span>
                                                             <span class="icon">
-                                                                <i class="fas fa-chevron-right"></i>
+                                                                <i class="fa-solid fa-chevron-right"></i>
                                                             </span>
                                                         </button>
                                                     </div>
@@ -2500,7 +2500,7 @@
                                                                 </div>
                                                             </span>
                                                             <span class="icon">
-                                                                <i class="fas fa-chevron-right"></i>
+                                                                <i class="fa-solid fa-chevron-right"></i>
                                                             </span>
                                                         </button>
                                                     </div>
@@ -2535,7 +2535,7 @@
                                                                 </div>
                                                             </span>
                                                             <span class="icon">
-                                                                <i class="fas fa-external-link-alt"></i>
+                                                                <i class="fa-solid fa-up-right-from-square"></i>
                                                             </span>
                                                         </a>
                                                     </div>
@@ -2561,7 +2561,7 @@
                                                                 </div>
                                                             </span>
                                                             <span class="icon">
-                                                                <i class="fas fa-external-link-alt"></i>
+                                                                <i class="fa-solid fa-up-right-from-square"></i>
                                                             </span>
                                                         </a>
                                                     </div>
@@ -2575,7 +2575,7 @@
                                                         <a class="button is-rounded is-size-7"
                                                             href="//clock.milchchan.com/" target="_blank">
                                                             <span class="icon">
-                                                                <i class="fas fa-globe"></i>
+                                                                <i class="fa-solid fa-globe"></i>
                                                             </span>
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
@@ -2586,7 +2586,7 @@
                                                                 </div>
                                                             </span>
                                                             <span class="icon">
-                                                                <i class="fas fa-external-link-alt"></i>
+                                                                <i class="fa-solid fa-up-right-from-square"></i>
                                                             </span>
                                                         </a>
                                                     </div>
@@ -2608,7 +2608,7 @@
                                                             <a class="button is-circle"
                                                                 href="https://twitter.com/milchchan"
                                                                 target="_blank"><span class="icon is-small"><i
-                                                                        class="fab fa-twitter"></i></span></a>
+                                                                        class="fa-brands fa-twitter"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
                                                             <a class="button is-circle"
@@ -2751,7 +2751,7 @@
                                                                 v-if="user === null" key="disable" v-cloak>
                                                                 <span class="icon is-small"
                                                                     style="pointer-events: none;">
-                                                                    <i class="fas fa-heart"></i>
+                                                                    <i class="fa-solid fa-heart"></i>
                                                                 </span>
                                                             </button>
                                                             <button class="button is-circle" type="button"
@@ -2759,7 +2759,7 @@
                                                                 v-else key="enable" v-cloak>
                                                                 <span class="icon is-small"
                                                                     style="pointer-events: none;">
-                                                                    <i class="fas fa-heart"></i>
+                                                                    <i class="fa-solid fa-heart"></i>
                                                                 </span>
                                                             </button>
                                                         </transition>
@@ -2769,7 +2769,7 @@
                                             <div class="level-item">
                                                 <button class="button" type="button" @click="isPopup = false" v-cloak>
                                                     <span class="icon is-small" style="pointer-events: none;">
-                                                        <i class="fas fa-times"></i>
+                                                        <i class="fa-solid fa-xmark"></i>
                                                     </span>
                                                 </button>
                                             </div>
@@ -2815,7 +2815,7 @@
                                                     v-bind:disabled="user === null"
                                                     @click="input = input.slice( 0, -1)"><span class="icon is-small"
                                                         v-cloak>
-                                                        <i class="fas fa-backspace"></i>
+                                                        <i class="fa-solid fa-delete-left"></i>
                                                     </span>
                                                 </button>
                                             </div>
@@ -2829,7 +2829,7 @@
                                                     v-bind:class="{ 'is-static': word !== null }"
                                                     v-bind:disabled="user === null" @click="send()"><span
                                                         class="icon is-small" v-cloak>
-                                                        <i class="fas fa-arrow-right"></i>
+                                                        <i class="fa-solid fa-arrow-right"></i>
                                                     </span>
                                                 </button>
                                             </div>
@@ -2838,7 +2838,7 @@
                                                     v-bind:disabled="user === null"
                                                     @click="$refs.text.blur(); isLearning = false;"><span
                                                         class="icon is-small" v-cloak>
-                                                        <i class="fas fa-times"></i>
+                                                        <i class="fa-solid fa-xmark"></i>
                                                     </span>
                                                 </button>
                                             </div>-->
@@ -2857,36 +2857,36 @@
                 <button class="button is-circle" type="button" @click="isOverlayed = false" v-if="isOverlayed"
                     key="close">
                     <span class="icon is-small">
-                        <i class="fas fa-times"></i>
+                        <i class="fa-solid fa-xmark"></i>
                     </span>
                 </button>
                 <button class="button is-circle" type="button" @click="$refs.text.blur(); isLearning = false;"
                     v-else-if="isLearning" key="abort">
                     <span class="icon is-small">
-                        <i class="fas fa-times"></i>
+                        <i class="fa-solid fa-xmark"></i>
                     </span>
                 </button>
                 <button class="button is-circle" type="button" @click="word = null" v-else-if="word" key="cancel">
                     <span class="icon is-small">
-                        <i class="fas fa-times"></i>
+                        <i class="fa-solid fa-xmark"></i>
                     </span>
                 </button>
                 <button class="button is-circle" type="button" @click="isRevealed = !isRevealed; mode = null;"
                     v-else-if="mode === null || user !== null && mode === 'sign-in'" key="humberger">
                     <span class="icon is-small">
-                        <i class="fas fa-bars"></i>
+                        <i class="fa-solid fa-bars"></i>
                     </span>
                 </button>
                 <button class="button is-circle" type="button" @click="isRevealed = !isRevealed; mode = null;"
                     v-else-if="typeof(mode) === 'object' && mode.disposable || mode === '_sign-in' || mode === '_about' || mode === '_milch' || mode === '_merku'"
                     key="force">
                     <span class="icon is-small">
-                        <i class="fas fa-times"></i>
+                        <i class="fa-solid fa-xmark"></i>
                     </span>
                 </button>
                 <button class="button is-circle" type="button" @click="mode = null" v-else key="back">
                     <span class="icon is-small">
-                        <i class="fas fa-arrow-left"></i>
+                        <i class="fa-solid fa-arrow-left"></i>
                     </span>
                 </button>
             </transition>
@@ -2897,7 +2897,7 @@
                     <button class="button is-circle" v-if="isRevealed" type="button"
                         v-bind:disabled="isLoading || isHangingOn" @click="refresh" key="overlay" v-cloak>
                         <span class="icon is-small">
-                            <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                            <i class="fa-solid fa-arrows-rotate" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
                         </span>
                     </button>
                     <button class="button is-circle" type="button"
@@ -2906,10 +2906,10 @@
                         v-else key="default" v-cloak>
                         <transition name="fade" mode="out-in">
                             <span class="icon is-small" v-if="isLoading || isHangingOn" key="processing">
-                                <i class="fas fa-sync" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                                <i class="fa-solid fa-arrows-rotate" v-bind:class="{ loading: isLoading || isHangingOn }"></i>
                             </span>
                             <span class="icon" v-else key="ready">
-                                <i class="fas fa-comment"></i>
+                                <i class="fa-solid fa-comment"></i>
                             </span>
                         </transition>
                     </button>
