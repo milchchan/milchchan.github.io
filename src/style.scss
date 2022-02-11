@@ -258,6 +258,7 @@ label .scrollable > div {
 .media > .media-content > .wrap {
     display: flex;
     justify-content: flex-start;
+    align-items: center;
     overflow: hidden;
 
     > picture {
@@ -712,6 +713,8 @@ label .scrollable > div {
 
                     div.wrap {
                         display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
                         margin: 0;
                         height: calc(0.75rem * 1.5);
                     }
@@ -1363,6 +1366,9 @@ label .scrollable > div {
                                                 }
 
                                                 .wrap {
+                                                    display: flex;
+                                                    justify-content: flex-start;
+                                                    align-items: center;
                                                     color: var(--main-color) !important;
                                                     transition: 0.5s;
                                                 }
@@ -1546,6 +1552,9 @@ label .scrollable > div {
                                                     }
 
                                                     .wrap {
+                                                        display: flex;
+                                                        justify-content: flex-start;
+                                                        align-items: center;
                                                         color: var(--main-color) !important;
                                                         transition: 0.5s;
                                                     }
@@ -1923,7 +1932,7 @@ label .scrollable > div {
 
                                     .badge {
                                         padding: 4px 8px 4px 8px !important;
-                                        border-radius: 500px 500px 500px 500px;
+                                        border-radius: 290486px;
                                         background: #ffee00;
                                         color: #ffffff !important;
                                         font-size: 0.75rem;
@@ -1932,6 +1941,12 @@ label .scrollable > div {
 
                                     span:last-of-type {
                                         height: calc(0.75rem * 1.5);
+                                    }
+
+                                    .wrap {
+                                        display: flex;
+                                        justify-content: flex-start;
+                                        align-items: center;
                                     }
 
                                     .clip {
@@ -1967,7 +1982,7 @@ label .scrollable > div {
 
                                 .badge {
                                     padding: 4px 8px 4px 8px !important;
-                                    border-radius: 500px 500px 500px 500px;
+                                    border-radius: 290486px;
                                     background: #ffee00;
                                     color: #ffffff !important;
                                     font-size: 0.75rem;
@@ -1983,8 +1998,21 @@ label .scrollable > div {
                                     transition: 0.5s;
                                 }
 
-                                span:not(:first-of-type) {
+                                > span:not(:first-of-type),
+                                > div + span,
+                                > span + div {
                                     margin: 0px 0px 0px 16px;
+                                }
+
+                                > div {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: center;
+
+                                    > span.icon:first-of-type {
+                                        color: #ffee00;
+                                    }
                                 }
 
                                 a {
@@ -2377,7 +2405,7 @@ label .scrollable > div {
 
                                         .badge {
                                             padding: 4px 8px 4px 8px !important;
-                                            border-radius: 500px 500px 500px 500px;
+                                            border-radius: 290486px;
                                             background: #ffee00;
                                             color: #ffffff !important;
                                             font-size: 0.75rem;
@@ -2386,6 +2414,12 @@ label .scrollable > div {
 
                                         span:last-of-type {
                                             height: calc(0.75rem * 1.5);
+                                        }
+
+                                        .wrap {
+                                            display: flex;
+                                            justify-content: flex-start;
+                                            align-items: center;
                                         }
 
                                         .clip {
