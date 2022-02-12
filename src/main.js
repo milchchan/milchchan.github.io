@@ -4203,7 +4203,7 @@ window.addEventListener("load", event => {
             const capturesStorageItem = localStorage.getItem("captures");
             const credentialStorageItem = localStorage.getItem("credential");
             let credential = null;
-            const characters = [{ path: "/assets/milch.json", probability: 0.99 }, { path: "/assets/merku.json", probability: 0.01 }];
+            const characters = window.location.hostname.endsWith("merkuchan.com") ? [{ path: "/assets/merku.json", probability: 0.99 }, { path: "/assets/milch.json", probability: 0.01 }] : [{ path: "/assets/milch.json", probability: 0.99 }, { path: "/assets/merku.json", probability: 0.01 }];
             const loader = new GLTFLoader();
 
             if (window.location.pathname === "/about") {
