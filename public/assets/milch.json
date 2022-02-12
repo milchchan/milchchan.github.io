@@ -507,6 +507,27 @@
                     "name": "Say"
                 }
             ]
+        },        
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "メルクちゃんといっしょに",
+                        [
+                            "場所"
+                        ],
+                        "に行ったよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
         },
         {
             "name": "Activate",
