@@ -152,7 +152,7 @@
         },
         {
             "name": "Liked",
-            "sequence": [                
+            "sequence": [
                 {
                     "type": "Animation",
                     "frames": [
@@ -557,6 +557,27 @@
                             "する事"
                         ],
                         "したいよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "ミルヒちゃんといっしょに",
+                        [
+                            "場所"
+                        ],
+                        "に行ったよぉ"
                     ]
                 },
                 {
