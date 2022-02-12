@@ -215,6 +215,7 @@ window.addEventListener("load", event => {
                 uptime: 0,
                 points: 0,
                 animatedPoints: 0,
+                maxPoints: 600,
                 captures: { _resolve: async () => await Object.values(app.captures).filter(x => typeof (x) !== "function" && "image" in x).forEach(async x => x["image"]["url"] = await getDownloadURL(storageRef(storage, x.image.path))) },
                 user: null,
                 input: "",
@@ -294,11 +295,13 @@ window.addEventListener("load", event => {
                     complete: () => {
                         if (newValue === null) {
                             self.animatedProgress = 0;
+                        } else {
+                            self.animatedProgress = newValue;
                         }
                     }
                 });
             },
-            points(newValue, oldValue) {
+            points(newValue) {
                 const self = this;
                 const obj = { count: this.animatedPoints };
 
@@ -310,6 +313,9 @@ window.addEventListener("load", event => {
                     easing: "linear",
                     update: () => {
                         self.animatedPoints = obj.count;
+                    },
+                    complete: () => {
+                        self.animatedPoints = newValue;
                     }
                 });
             },
@@ -949,13 +955,11 @@ window.addEventListener("load", event => {
                                 }
                             }
 
-                            for (let i = parseInt(this.points) + 1, length = this.points + 60; i <= length; i++) {
-                                if (i % 60 === 0) {
-                                    this.retain(Object.assign({ name: word.name }, dictionary));
-                                }
+                            if (this.points < this.maxPoints) {
+                                this.retain(Object.assign({ name: word.name }, dictionary));
+                                this.points = Math.min(this.points + 60, this.maxPoints);
                             }
 
-                            this.points += 60;
                             this.isStared = true;
 
                             window.setTimeout(() => {
@@ -1077,13 +1081,17 @@ window.addEventListener("load", event => {
                             }
                         }
 
-                        for (let i = parseInt(this.points) + 1, length = this.points + 30; i <= length; i++) {
-                            if (i % 60 === 0) {
-                                this.retain();
-                            }
-                        }
+                        if (this.points < this.maxPoints) {
+                            const nextPoints = Math.min(this.points + 30, this.maxPoints);
 
-                        this.points += 30;
+                            for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
+                                if (i % 60 === 0) {
+                                    this.retain();
+                                }
+                            }
+
+                            this.points = nextPoints;
+                        }
 
                         if (!this.isMuted) {
                             this.$refs.like.play();
@@ -1209,6 +1217,8 @@ window.addEventListener("load", event => {
                         }
                     }
                 }
+
+                this.points -= 60 * words.length;
             },
             next: async function (key, offset, limit = 5) {
                 const temp = this.mode[key];
@@ -4045,14 +4055,16 @@ window.addEventListener("load", event => {
                     if (!this.isRevealed) {
                         const points = parseInt(this.uptime + deltaTime) - parseInt(this.uptime);
 
-                        if (points > 0 && points < 60) {
-                            for (let i = parseInt(this.points) + 1, length = this.points + points; i <= length; i++) {
+                        if (points > 0 && points < 60 && this.points < this.maxPoints) {
+                            const nextPoints = Math.min(this.points + points, this.maxPoints);
+
+                            for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
                                 if (i % 60 === 0) {
                                     this.retain();
                                 }
                             }
 
-                            this.points += points;
+                            this.points = nextPoints;
                         }
 
                         this.uptime += deltaTime;
@@ -4256,6 +4268,8 @@ window.addEventListener("load", event => {
                                 this.captures[capture.name] = capture;
                             }
                         }
+
+                        this.points = Object.values(this.captures).reduce((x, y) => x + (typeof (y) === "function" ? 0 : y.count), 0) * 60;
                     }
                 } catch (e) {
                     localStorage.removeItem("captures");
