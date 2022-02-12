@@ -2684,7 +2684,7 @@
                                 <div class="level-item has-text-centered">
                                     <div class="progress" v-cloak>
                                         <div class="bar"
-                                            v-bind:style="{width: String(Math.floor(100.0 * (animatedPoints % 60) / 59)) + '%'}">
+                                            v-bind:style="{width: String(animatedPoints < maxPoints ? Math.floor(100.0 * (animatedPoints % 60) / 59) : 100) + '%'}">
                                         </div>
                                     </div>
                                 </div>
