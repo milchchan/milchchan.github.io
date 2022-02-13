@@ -919,6 +919,80 @@
                                                             </div>
                                                         </article>
                                                     </div>
+                                                    <div class="level-item">
+                                                        <div class="level">
+                                                            <div class="level-item">
+                                                                <div class="level">
+                                                                    <div class="level-item">
+                                                                        <div class="level">
+                                                                            <div class="level-item">
+                                                                                <div class="level">
+                                                                                    <div class="level-item">
+                                                                                        <article class="media">
+                                                                                            <div class="media-content">
+                                                                                                <div class="content">
+                                                                                                    <button
+                                                                                                        class="button is-rounded is-size-7"
+                                                                                                        type="button"
+                                                                                                        @click="mode = 'sign-in'"
+                                                                                                        v-if="user === null">
+                                                                                                        <span
+                                                                                                            class="wrap has-text-weight-bold has-text-black">
+                                                                                                            <div
+                                                                                                                class="clip">
+                                                                                                                <div
+                                                                                                                    class="scrollable">
+                                                                                                                    <div>
+                                                                                                                        教えた言葉
+                                                                                                                    </div>
+                                                                                                                    <div>
+                                                                                                                        教えた言葉
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </span>
+                                                                                                        <span
+                                                                                                            class="icon">
+                                                                                                            <i class="fa-solid fa-arrow-right"></i>
+                                                                                                        </span>
+                                                                                                    </button>
+                                                                                                    <button
+                                                                                                        class="button is-rounded is-size-7"
+                                                                                                        type="button"
+                                                                                                        @click="mode = { words: null, next: null, indexes: [], selected: [], disposable: true }; next('words', mode.next);"
+                                                                                                        v-else>
+                                                                                                        <span
+                                                                                                            class="wrap has-text-weight-bold has-text-black">
+                                                                                                            <div
+                                                                                                                class="clip">
+                                                                                                                <div
+                                                                                                                    class="scrollable">
+                                                                                                                    <div>
+                                                                                                                        教えた言葉
+                                                                                                                    </div>
+                                                                                                                    <div>
+                                                                                                                        教えた言葉
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </span>
+                                                                                                        <span
+                                                                                                            class="icon">
+                                                                                                            <i class="fa-solid fa-arrow-right"></i>
+                                                                                                        </span>
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </article>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </transition>
                                         </div>
@@ -1441,7 +1515,8 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <span class="is-size-5 has-text-weight-bold" v-text="String(Object.values(captures).reduce((x, y) => x + (typeof (y) === 'function' ? 0 : y.count), 0)) + '/' + String(Math.floor(maxPoints / 60))"></span>
+                                                                    <span class="is-size-5 has-text-weight-bold"
+                                                                        v-text="String(Object.values(captures).reduce((x, y) => x + (typeof (y) === 'function' ? 0 : y.count), 0)) + '/' + String(Math.floor(maxPoints / 60))"></span>
                                                                 </div>
                                                             </div>
                                                         </article>
@@ -2303,8 +2378,8 @@
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
-                                                                        <div>教えた言葉</div>
-                                                                        <div>教えた言葉</div>
+                                                                        <div>言葉</div>
+                                                                        <div>言葉</div>
                                                                     </div>
                                                                 </div>
                                                             </span>
@@ -2319,8 +2394,8 @@
                                                             <span class="wrap has-text-weight-bold has-text-black">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
-                                                                        <div>教えた言葉</div>
-                                                                        <div>教えた言葉</div>
+                                                                        <div>言葉</div>
+                                                                        <div>言葉</div>
                                                                     </div>
                                                                 </div>
                                                             </span>
