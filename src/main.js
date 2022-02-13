@@ -23,7 +23,8 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
 import { getDatabase, ref as databaseRef, query, orderByChild, limitToFirst, limitToLast, startAt, endAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
-import { initializeAnalytics } from 'firebase/analytics';
+import { initializeAnalytics } from "firebase/analytics";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
@@ -41,6 +42,13 @@ const database = getDatabase(firebaseApp);
 const storage = getStorage(firebaseApp);
 
 initializeAnalytics(firebaseApp);
+initializeAppCheck(firebaseApp, {
+    provider: new ReCaptchaV3Provider("6LdFDHYeAAAAAPlZYl6TB1vpjPNQPltkuKHLyRJi"),
+
+    // Optional argument. If true, the SDK automatically refreshes App Check
+    // tokens as needed.
+    isTokenAutoRefreshEnabled: true
+});
 
 const debug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
 const databaseRoot = "bot";
