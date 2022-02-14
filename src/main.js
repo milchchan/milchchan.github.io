@@ -215,6 +215,7 @@ window.addEventListener("load", event => {
                 isStared: false,
                 isLocked: false,
                 isDiscovering: false,
+                isPosting: false,
                 isTweeting: false,
                 mode: null,
                 sequenceQueue: [],
@@ -2509,6 +2510,37 @@ window.addEventListener("load", event => {
                 }
 
                 this.isTweeting = false;
+            },
+            mail: async function (text, author) {
+                const user = 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
+                const timestamp = Math.floor(new Date() / 1000);
+
+                this.isPosting = true;
+
+                try {
+                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/mails/${push(child(databaseRef(database), `${databaseRoot}/mails`)).key}`), current => {
+                        return { text: text, author: author, user: user, timestamp: timestamp };
+                    });
+
+                    if (result.committed && result.snapshot.exists()) {
+                        const self = this;
+
+                        this.isPosting = result.snapshot.val();
+
+                        setTimeout(function () {
+                            self.isPosting = false;
+                        }, 3000);
+
+                        return true;
+                    }
+                } catch (error) {
+                    this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
+                    console.error(error);
+                }
+
+                this.isPosting = false;
+
+                return false;
             },
             getThumbnail: async function (url, length) {
                 try {
