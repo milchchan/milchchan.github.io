@@ -179,7 +179,7 @@ label .scrollable > div {
     margin: 0px;
     padding: 16px 32px 16px 32px;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 500px 500px 500px 500px;
+    border-radius: 290486px;
     background: rgba(255, 255, 255, 0.75) !important;
     background-clip: padding-box;
     height: initial;
@@ -545,7 +545,7 @@ label .scrollable > div {
                     margin: 0px;
                     padding: 8px 16px 8px 16px;
                     border: 2px solid rgba(255, 255, 255, 1) !important;
-                    border-radius: 500px 500px 500px 500px;
+                    border-radius: 290486px;
                     background: transparent !important;
                     background-clip: padding-box;
                     height: initial;
@@ -1085,7 +1085,7 @@ label .scrollable > div {
                 align-items: center;
                 justify-content: center;
                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                border-radius: 500px 500px 500px 500px;
+                border-radius: 290486px;
                 padding: 12px 24px 12px 24px;
                 background: rgba(255, 255, 255, 0.75) !important;
                 background-clip: padding-box;
@@ -1921,7 +1921,7 @@ label .scrollable > div {
                                     margin: 0;
                                     padding: 16px 32px 16px 32px;
                                     border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                    border-radius: 500px 500px 500px 500px;
+                                    border-radius: 290486px;
                                     background: rgba(255, 255, 255, 0.75) !important;
                                     background-clip: padding-box;
                                     height: fit-content;
@@ -2172,7 +2172,7 @@ label .scrollable > div {
                         margin: 0;
                         padding: 16px 32px 16px 32px;
                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                        border-radius: 500px 500px 500px 500px;
+                        border-radius: 290486px;
                         background: rgba(255, 255, 255, 0.75) !important;
                         background-clip: padding-box;
                         height: fit-content;
@@ -2409,7 +2409,7 @@ label .scrollable > div {
                                         margin: 0;
                                         padding: 16px 32px 16px 32px;
                                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                        border-radius: 500px 500px 500px 500px;
+                                        border-radius: 290486px;
                                         background: rgba(255, 255, 255, 0.75) !important;
                                         background-clip: padding-box;
                                         height: fit-content;
@@ -2466,6 +2466,56 @@ label .scrollable > div {
 
                         .columns:not(:first-of-type) {
                             padding: 16px 0px 0px 0px;
+                        }
+
+                        > form > .field {
+                            display: flex;
+                            margin: 0;
+                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            border-radius: 290486px;
+                            padding: 8px 16px 8px 16px;
+                            background: rgba(255, 255, 255, 0.75) !important;
+                            background-clip: padding-box;
+                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                            backdrop-filter: blur(4px);
+                            -webkit-backdrop-filter: blur(4px);
+
+                            .control {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+
+                                input {
+                                    border: 0px solid transparent;
+                                    padding-top: 8px;
+                                    padding-bottom: 8px;
+                                    background-color: transparent;
+                                    box-shadow: none;
+                                    backface-visibility: hidden;
+                                    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                                    color: var(--main-color);
+                                    transition: 0.5s;
+                                    transform: rotate(0.03deg);
+                                    overflow-x: auto;
+                                    overflow-y: hidden;
+                                }
+
+                                input::placeholder {
+                                    color: var(--placeholder-color);
+                                    font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+                                    transform: rotate(0.03deg);
+                                }
+
+                                button {
+                                    padding: 16px !important;
+
+                                    > span {
+                                        margin: 0 !important;
+                                        width: 1rem !important;
+                                        height: 1rem !important;
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -2798,12 +2848,10 @@ label .scrollable > div {
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            border-radius: 500px 500px 500px 500px;
+                            border-radius: 290486px;
                             padding: 8px 16px 8px 16px;
                             background: var(--background-image) 50% 50% repeat;
                             background-size: 24px 24px;
-                            /*box-shadow: 10px 10px 30px #d0d0d0,
-                                            -10px -10px 30px #ffffff;*/
                             touch-action: none;
                             -webkit-user-select: none;
                             user-select: none;
@@ -2875,7 +2923,7 @@ label .scrollable > div {
     form .field {
         margin: 0px;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 500px 500px 500px 500px;
+        border-radius: 290486px;
         padding: 8px 16px 8px 16px;
         background: rgba(255, 255, 255, 0.75) !important;
         background-clip: padding-box;
