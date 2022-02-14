@@ -953,7 +953,8 @@
                                                                                                         </span>
                                                                                                         <span
                                                                                                             class="icon">
-                                                                                                            <i class="fa-solid fa-arrow-right"></i>
+                                                                                                            <i
+                                                                                                                class="fa-solid fa-arrow-right"></i>
                                                                                                         </span>
                                                                                                     </button>
                                                                                                     <button
@@ -978,7 +979,8 @@
                                                                                                         </span>
                                                                                                         <span
                                                                                                             class="icon">
-                                                                                                            <i class="fa-solid fa-arrow-right"></i>
+                                                                                                            <i
+                                                                                                                class="fa-solid fa-arrow-right"></i>
                                                                                                         </span>
                                                                                                     </button>
                                                                                                 </div>
@@ -2052,7 +2054,7 @@
                                                     <div class="content">
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
-                                                            ミルヒちゃんに教えてあげる言葉を入力してね。入力したら<span class="icon marker"><i
+                                                            ミルヒちゃんに教えてあげる言葉を入れてね。言葉を入れたら<span class="icon marker"><i
                                                                     class="fa-solid fa-arrow-right"></i></span>で今度は言葉の意味を選んでね。言葉の意味を選び終えたら<span
                                                                 class="icon marker"><i
                                                                     class="fa-solid fa-check"></i></span>で言葉を教えてあげられるよぉ。ミルヒちゃんにあんなことやこんなことを教えてあげてね。
@@ -2097,6 +2099,96 @@
                                                         <p
                                                             class="content is-size-5 has-text-weight-bold has-text-justified">
                                                             お気に入りのミルヒちゃんのお話しの中から注目の言葉と今日投稿された言葉の数や過去7日間で投稿された言葉の数の平均や標準偏差がみれるよぉ。ミルヒちゃんをいっぱい愛でてね。フヒヒ……。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="mode == 'mail'" key="mail">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content is-superellips">
+                                                        <figure>
+                                                            <picture class="image is-64x64">
+                                                                <source
+                                                                    srcset="/images/Merku-Headshot2-64.png 1x,/images/Merku-Headshot2-128.png 2x,/images/Merku-Headshot2-192.png 3x"
+                                                                    media="(prefers-color-scheme: dark)">
+                                                                <img class="is-animatable"
+                                                                    src="/images/Merku-Headshot1-64.png"
+                                                                    srcset="/images/Merku-Headshot1-64.png 1x,/images/Merku-Headshot1-128.png 2x,/images/Merku-Headshot1-192.png 3x"
+                                                                    width="64" height="64" alt="About">
+                                                            </picture>
+                                                        </figure>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            ミルヒちゃんにメール</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            Mail</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <hr>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <form onsubmit="return false;" v-cloak>
+                                                            <div class="field has-addons">
+                                                                <div class="control">
+                                                                    <input class="input" type="text"
+                                                                        placeholder="セリフ" ref="mail">
+                                                                </div>
+                                                                <div class="control">
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="submit"
+                                                                        @click="mail($refs.mail.value, character.name).then(x => $refs.mail.value = x ? '' : $refs.mail.value)">
+                                                                        <transition name="fade" mode="out-in">
+                                                                            <span class="icon"
+                                                                                v-if="typeof(isPosting) === 'object'"
+                                                                                key="posted">
+                                                                                <i class="fa-solid fa-check"></i>
+                                                                            </span>
+                                                                            <span class="icon" v-else-if="isPosting === true"
+                                                                                key="posting">
+                                                                                <i
+                                                                                    class="fa-solid fa-spinner updating"></i>
+                                                                            </span>
+                                                                            <span class="icon" v-else key="ready">
+                                                                                <i class="fa-solid fa-paper-plane"></i>
+                                                                            </span>
+                                                                        </transition>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <p
+                                                            class="content is-size-5 has-text-weight-bold has-text-justified">
+                                                            {{ character.name }}に喋って貰いたいセリフを入れて送ってね。
                                                         </p>
                                                     </div>
                                                 </div>
@@ -2486,6 +2578,43 @@
                                                                     <div class="scrollable">
                                                                         <div>活動記録</div>
                                                                         <div>活動記録</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" @click="mode = 'sign-in'"
+                                                            v-if="user === null">
+                                                            <span class="icon">
+                                                                <i class="fa-solid fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>ミルヒちゃんにメール</div>
+                                                                        <div>ミルヒちゃんにメール</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" @click="mode = 'mail'" v-else>
+                                                            <span class="icon">
+                                                                <i class="fa-solid fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>ミルヒちゃんにメール</div>
+                                                                        <div>ミルヒちゃんにメール</div>
                                                                     </div>
                                                                 </div>
                                                             </span>
