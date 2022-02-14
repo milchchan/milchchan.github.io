@@ -2359,6 +2359,7 @@ window.addEventListener("load", event => {
                         if (filteredDocuments.length < limit) {
                             const min = Math.max(documents.length - limit, 0);
 
+                            documents.sort((x, y) => x.timestamp - y.timestamp);
                             filteredDocuments.splice(0);
 
                             for (let i = documents.length - 1; i >= min; i--) {
