@@ -4586,7 +4586,7 @@ window.addEventListener("load", event => {
                             self.recentImages.splice(100, self.recentImages.length - 100);
                         }
 
-                        self.update(self.recentImages, self.maxTags);
+                        //self.update(self.recentImages, self.maxTags);
                         self.isBlinded = true;
                     }
                 }
