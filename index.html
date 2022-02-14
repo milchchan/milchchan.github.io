@@ -2158,6 +2158,7 @@
                                                                     <button
                                                                         class="button is-rounded is-size-7 is-primary"
                                                                         type="submit"
+                                                                        v-bind:disabled="user === null || isPosting === true"
                                                                         @click="mail($refs.mail.value, character.name).then(x => $refs.mail.value = x ? '' : $refs.mail.value)">
                                                                         <transition name="fade" mode="out-in">
                                                                             <span class="icon"
