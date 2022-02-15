@@ -258,13 +258,13 @@ label .scrollable > div {
 .media > .media-content > .wrap {
     display: flex;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     overflow: hidden;
 
     > picture {
         margin-left: 0%;
         width: auto;
-        height: auto;
+        height: 100%;
         animation: frame 1.33s steps(4) infinite;
 
         > img {
