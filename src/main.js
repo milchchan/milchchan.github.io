@@ -377,6 +377,9 @@ window.addEventListener("load", event => {
                     easing: "linear",
                     update: () => {
                         self.animatedTickerWidth = obj.width;
+                    },
+                    complete: () => {
+                        self.animatedTickerWidth = newValue;
                     }
                 });
             },
@@ -433,6 +436,7 @@ window.addEventListener("load", event => {
                 deep: true
             },
             popupTextHeight(newValue) {
+                const self = this;
                 const obj = { height: this.animatedPopupTextHeight };
 
                 anime({
@@ -442,7 +446,10 @@ window.addEventListener("load", event => {
                     duration: 500,
                     easing: "linear",
                     update: () => {
-                        this.animatedPopupTextHeight = obj.height
+                        self.animatedPopupTextHeight = obj.height
+                    },
+                    complete: () => {
+                        self.animatedPopupTextHeight = newValue;
                     }
                 });
             },
@@ -455,6 +462,7 @@ window.addEventListener("load", event => {
                 deep: true
             },
             notificationHeight(newValue) {
+                const self = this;
                 const obj = { height: this.animatedNotificationHeight };
 
                 anime({
@@ -464,11 +472,15 @@ window.addEventListener("load", event => {
                     duration: 500,
                     easing: "linear",
                     update: () => {
-                        this.animatedNotificationHeight = obj.height
+                        self.animatedNotificationHeight = obj.height
+                    },
+                    complete: () => {
+                        self.animatedNotificationHeight = newValue;
                     }
                 });
             },
             stars(newValue) {
+                const self = this;
                 const obj = { count: this.animatedStars };
 
                 anime({
@@ -478,7 +490,10 @@ window.addEventListener("load", event => {
                     duration: 500,
                     easing: "linear",
                     update: () => {
-                        this.animatedStars = obj.count
+                        self.animatedStars = obj.count
+                    },
+                    complete: () => {
+                        self.animatedStars = newValue;
                     }
                 });
             },
@@ -495,6 +510,9 @@ window.addEventListener("load", event => {
                             easing: "linear",
                             update: () => {
                                 app.animatedInputLength = obj.count
+                            },
+                            complete: () => {
+                                app.animatedInputLength = app.input.length;
                             }
                         });
                     });
