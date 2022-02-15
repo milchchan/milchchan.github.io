@@ -270,7 +270,7 @@ window.addEventListener("load", event => {
                 alternative: null,
                 wordDictionary: {},
                 reverseWordDictionary: {},
-                attributes: ["名前", "組織", "時間", "場所", "する事", "生き物", "食べ物", "飲み物", "聞くもの", "見るもの", "読むもの", "使う物", "身につけるもの", "乗り物", "部位", "病気"]
+                attributes: ["名前", "組織", "時間", "場所", "する事", "生き物", "食べ物", "飲み物", "聞くもの", "見るもの", "読むもの", "使うもの", "身につけるもの", "乗り物", "部位", "病気"]
             }
         },
         watch: {
