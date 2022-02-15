@@ -3041,7 +3041,7 @@ window.addEventListener("load", event => {
 
                         if (this.sequenceQueue.length == 0) {
                             if (activateTime >= activateThreshold) {
-                                if (this.recentImages.length > 0) {
+                                if (this.recentImages.length > 0 && !this.isLearning) {
                                     this.isBlinded = true;
                                 }
 
