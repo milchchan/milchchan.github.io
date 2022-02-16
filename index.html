@@ -1194,6 +1194,32 @@
                                                                                                         </button>
                                                                                                     </div>
                                                                                                 </transition>
+                                                                                                <transition name="fade">
+                                                                                                    <div class="level-item"
+                                                                                                        v-if="user !== null && 'user' in like && user.uid === like.user.id">
+                                                                                                        <button
+                                                                                                            class="button is-circle is-size-7"
+                                                                                                            type="button"
+                                                                                                            v-bind:disabled="user === null"
+                                                                                                            @click="like.locked = true; unlike(like).then(x => { if (x) { if (mode.indexes.length === 0) { mode.likes = null; mode.next = null; next('likes', mode.next, 1); } else { previous('likes', mode.indexes.pop().timestamp, 1); } } like.locked = false; })">
+                                                                                                            <transition
+                                                                                                                name="fade"
+                                                                                                                mode="out-in">
+                                                                                                                <span
+                                                                                                                    class="icon"
+                                                                                                                    v-if="'locked' in like && like.locked"
+                                                                                                                    key="locked">
+                                                                                                                    <i
+                                                                                                                        class="fa-solid fa-spinner updating"></i>
+                                                                                                                </span>
+                                                                                                                <span
+                                                                                                                    class="icon" v-else key="unlocked">
+                                                                                                                    <i class="fa-solid fa-heart-crack"></i>
+                                                                                                                </span>
+                                                                                                            </transition>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </transition>                                                                                                
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
