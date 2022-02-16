@@ -640,7 +640,7 @@ window.addEventListener("load", event => {
                         const tags = this.input.split(/\s/);
                         const keys = [];
 
-                        for (const image of this.backgroundImages) {
+                        for (const image of this.background.images) {
                             if (!keys.includes(image.id)) {
                                 keys.push(image.id);
                             }
@@ -660,12 +660,6 @@ window.addEventListener("load", event => {
                             this.learn({ name: this.input });
                             this.input = "";
                             this.isLearning = false;
-                        }
-                    } else {
-                        for (const image of this.backgroundImages) {
-                            this.input = image.id;
-
-                            break;
                         }
                     }
                 } else if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
