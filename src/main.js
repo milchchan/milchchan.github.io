@@ -1123,6 +1123,27 @@ window.addEventListener("load", event => {
                     console.error(e);
                 }
             },
+            unlike: async function(message) {
+                try {
+                    const self = this;
+                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${message.author}&${typeof(message.text) === 'string' ? message.text : Object.keys(message.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(message.text[y]) === 'string' ? message.text[y] : message.text[y].name), '')}`)}`), current => {
+                        if (current && "user" in current && current.user.id === self.user.uid) {
+                            return null;
+                        }
+
+                        return undefined;
+                    });
+
+                    if (result.committed) {
+                        return true;
+                    }
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
+                }
+
+                return false;
+            },
             retain: async function (word = null) {
                 if (word === null) {
                     const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
