@@ -719,6 +719,41 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": "ミルヒちゃんを食べちゃいたいよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "を食べちゃいたいよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },        
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "愚者は己を賢いと思っているけど、賢者は己が愚かなことを知っているよぉ"
                 },
                 {
