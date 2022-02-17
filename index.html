@@ -291,7 +291,7 @@
                             <div class="bar animating" v-bind:style="{ width: String(100.0 * animatedProgress) + '%' }">
                             </div>
                         </div>
-                    </transition>                    
+                    </transition>
                     <div class="columns is-desktop" ref="ticker">
                         <div class="column is-full is-mobile has-content-centered">
                             <div class="control has-text-centered">
@@ -456,11 +456,10 @@
             </transition>
             <transition name="fade">
                 <div class="sunrise" v-show="isStared" v-cloak>
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                        version="1.1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 586.016 575.146"
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                        x="0px" y="0px" width="100%" height="100%" viewBox="0 0 586.016 575.146"
                         enable-background="new 0 0 586.016 575.146" xml:space="preserve" ref="sunrise" v-cloak>
-                        <radialGradient id="SVGID_2_" cx="293" cy="287.6" r="288.2"
-                            gradientUnits="userSpaceOnUse">
+                        <radialGradient id="SVGID_2_" cx="293" cy="287.6" r="288.2" gradientUnits="userSpaceOnUse">
                             <stop offset="0" style="stop-color:#FFFFFF;stop-opacity:0.15" />
                             <stop offset="1" style="stop-color:#FFFFFF;stop-opacity:0" />
                         </radialGradient>
@@ -938,7 +937,8 @@
                                                                                                         v-if="user === null">
                                                                                                         <span
                                                                                                             class="icon">
-                                                                                                            <i class="fa-solid fa-clock-rotate-left"></i>
+                                                                                                            <i
+                                                                                                                class="fa-solid fa-clock-rotate-left"></i>
                                                                                                         </span>
                                                                                                         <span
                                                                                                             class="wrap has-text-weight-bold has-text-black">
@@ -968,7 +968,8 @@
                                                                                                         v-else>
                                                                                                         <span
                                                                                                             class="icon">
-                                                                                                            <i class="fa-solid fa-clock-rotate-left"></i>
+                                                                                                            <i
+                                                                                                                class="fa-solid fa-clock-rotate-left"></i>
                                                                                                         </span>
                                                                                                         <span
                                                                                                             class="wrap has-text-weight-bold has-text-black">
@@ -1213,13 +1214,16 @@
                                                                                                                         class="fa-solid fa-spinner updating"></i>
                                                                                                                 </span>
                                                                                                                 <span
-                                                                                                                    class="icon" v-else key="unlocked">
-                                                                                                                    <i class="fa-solid fa-heart-crack"></i>
+                                                                                                                    class="icon"
+                                                                                                                    v-else
+                                                                                                                    key="unlocked">
+                                                                                                                    <i
+                                                                                                                        class="fa-solid fa-heart-crack"></i>
                                                                                                                 </span>
                                                                                                             </transition>
                                                                                                         </button>
                                                                                                     </div>
-                                                                                                </transition>                                                                                                
+                                                                                                </transition>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -2185,8 +2189,8 @@
                                                         <form onsubmit="return false;" v-cloak>
                                                             <div class="field has-addons">
                                                                 <div class="control is-expanded">
-                                                                    <input class="input" type="text"
-                                                                        placeholder="セリフ" ref="mail">
+                                                                    <input class="input" type="text" placeholder="セリフ"
+                                                                        ref="mail">
                                                                 </div>
                                                                 <div class="control">
                                                                     <button
@@ -2200,7 +2204,8 @@
                                                                                 key="posted">
                                                                                 <i class="fa-solid fa-check"></i>
                                                                             </span>
-                                                                            <span class="icon" v-else-if="isPosting === true"
+                                                                            <span class="icon"
+                                                                                v-else-if="isPosting === true"
                                                                                 key="posting">
                                                                                 <i
                                                                                     class="fa-solid fa-spinner updating"></i>
@@ -2228,6 +2233,84 @@
                                                     </div>
                                                 </div>
                                             </article>
+                                        </div>
+                                    </nav>
+                                    <nav class="level" v-else-if="mode == 'support'" key="mail">
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content is-superellips">
+                                                        <figure>
+                                                            <picture class="image is-64x64">
+                                                                <source
+                                                                    srcset="/images/Merku-Headshot2-64.png 1x,/images/Merku-Headshot2-128.png 2x,/images/Merku-Headshot2-192.png 3x"
+                                                                    media="(prefers-color-scheme: dark)">
+                                                                <img class="is-animatable"
+                                                                    src="/images/Merku-Headshot1-64.png"
+                                                                    srcset="/images/Merku-Headshot1-64.png 1x,/images/Merku-Headshot1-128.png 2x,/images/Merku-Headshot1-192.png 3x"
+                                                                    width="64" height="64" alt="About">
+                                                            </picture>
+                                                        </figure>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <h1 class="has-text-weight-bold has-text-centered">
+                                                            ミルヒちゃんを応援</h1>
+                                                        <h2 class="has-text-weight-bold is-uppercase has-text-centered">
+                                                            Support</h2>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <hr>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <p
+                                                            class="content is-size-5 has-text-weight-bold has-text-justified">
+                                                            ミルヒちゃんを応援して貰えると嬉しいよぉ。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <div class="level is-mobile">
+                                                <div class="level-item">
+                                                    <div class="level is-mobile">
+                                                        <div class="level-item">
+                                                            <a class="button is-circle"
+                                                                href="https://twitter.com/milchchan"
+                                                                target="_blank"><span class="icon is-small"><i
+                                                                        class="fa-brands fa-twitter"></i></span></a>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <a class="button is-circle"
+                                                                href="https://www.amazon.jp/hz/wishlist/ls/2SUAMV3SUFL3H?ref_=wl_share"
+                                                                target="_blank"><span class="icon is-small"><i
+                                                                        class="fa-brands fa-amazon"></i></i></span></a>
+                                                        </div>
+                                                        <div class="level-item">
+                                                            <a class="button is-circle"
+                                                                href="https://milchchan.fanbox.cc/"
+                                                                target="_blank"><span class="icon is-small"><i
+                                                                        class="fa-solid fa-coin"></i></span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </nav>
                                     <nav class="level" v-else key="main">
@@ -2425,7 +2508,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>お話し</div>
@@ -2441,7 +2524,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>お話し</div>
@@ -2464,7 +2547,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>教える</div>
@@ -2479,7 +2562,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>教える</div>
@@ -2502,7 +2585,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>言葉</div>
@@ -2518,7 +2601,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>言葉</div>
@@ -2541,7 +2624,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>探す</div>
@@ -2608,7 +2691,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>活動記録</div>
@@ -2631,7 +2714,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>ミルヒちゃんにメール</div>
@@ -2645,7 +2728,7 @@
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
                                                             </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
+                                                            <span class="wrap has-text-weight-bold">
                                                                 <div class="clip">
                                                                     <div class="scrollable">
                                                                         <div>ミルヒちゃんにメール</div>
@@ -2690,6 +2773,28 @@
                                                                 </span>
                                                             </div>
                                                         </label>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-rounded is-size-7 is-primary"
+                                                            type="button" @click="mode = 'support'">
+                                                            <span class="icon">
+                                                                <i class="fa-solid fa-star"></i>
+                                                            </span>
+                                                            <span class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>ミルヒちゃんを支援</div>
+                                                                        <div>ミルヒちゃんを支援</div>
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </article>
