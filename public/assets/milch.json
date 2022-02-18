@@ -192,8 +192,7 @@
                     "speed": 50,
                     "duration": 5,
                     "text": "お気に入りにしたよ！"
-                },               
-                
+                },
                 {
                     "type": "Sequence",
                     "name": "Say"
@@ -507,7 +506,7 @@
                     "name": "Say"
                 }
             ]
-        },        
+        },
         {
             "name": "Activate",
             "sequence": [
@@ -714,6 +713,68 @@
                     "speed": 50,
                     "duration": 5,
                     "text": [
+                        "メルクちゃん",
+                        "は",
+                        [
+                            "する事",
+                            "食べ物",
+                            "飲み物"
+                        ],
+                        "が",
+                        "好き",
+                        "なん",
+                        "だっ",
+                        "て"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "この",
+                        "前",
+                        "、",
+                        "メルクちゃん",
+                        "と",
+                        [
+                            "場所"
+                        ],
+                        "に",
+                        "行っ",
+                        "て",
+                        "パフェ",
+                        "を",
+                        "食べ",
+                        "て",
+                        "き",
+                        "た",
+                        "よ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
                         [
                             "名前"
                         ],
@@ -900,6 +961,157 @@
                         "たいん",
                         "だっ",
                         "て"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "ミルヒちゃんを食べちゃいたいってメルクちゃんが言ってたよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "名前"
+                        ],
+                        "を食べちゃいたいってメルクちゃんが言ってたよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "息を吸うように",
+                        [
+                            "する事"
+                        ],
+                        "してるってメルクちゃんが言ってたよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "する事"
+                        ],
+                        "は食事と同じだってメルクちゃんが言ってたよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "出るまで回せば確率100%だってメルクちゃんが言ってたよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "裸のミルヒちゃんが服着て踊ってるってメルクちゃんが言ってたよ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "裸の",
+                        [
+                            "名前"
+                        ],
+                        "が服着て踊ってるってメルクちゃんが言ってたよ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "状態"
+                        ],
+                        "の",
+                        [
+                            "名前"
+                        ],
+                        "が服着て踊ってるってメルクちゃんが言ってたよ"
                     ]
                 },
                 {
