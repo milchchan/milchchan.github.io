@@ -609,6 +609,27 @@
                     "speed": 50,
                     "duration": 5,
                     "text": [
+                        "ミルヒちゃんといっしょに秋葉原に行って",
+                        [
+                            "食べ物"
+                        ],
+                        "を食べたよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
                         "ミルヒちゃんといっしょに",
                         [
                             "場所"
@@ -746,7 +767,154 @@
                     "name": "Say"
                 }
             ]
-        },        
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "息を吸うように",
+                        [
+                            "する事"
+                        ],
+                        "してるよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "する事"
+                        ],
+                        "は食事と同じだよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "出るまで回せば確率100%だよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "裸のミルヒちゃんが服着て踊ってるよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "ねぇ見てよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                },
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "裸の",
+                        [
+                            "名前"
+                        ],
+                        "が服着て踊ってるよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        "裸の",
+                        [
+                            "名前"
+                        ],
+                        "が服着て踊ってるよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "状態"
+                        ],
+                        "の",
+                        [
+                            "名前"
+                        ],
+                        "が服着て踊ってるよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
         {
             "name": "Activate",
             "sequence": [
