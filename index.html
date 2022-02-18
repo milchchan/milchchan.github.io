@@ -1304,32 +1304,44 @@
                                                                             <div class="card-content">
                                                                                 <div class="content">
                                                                                     <div class="field">
-                                                                                        <button
-                                                                                            class="button is-rounded is-size-7"
-                                                                                            type="button"
-                                                                                            v-bind:disabled="user === null"
-                                                                                            @click="learn('image' in word && word.image !== null ? { name: word.id, attributes: word.attributes, image: word.image } : { name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
-                                                                                            v-cloak>
-                                                                                            <span class="image is-24x24"
-                                                                                                v-if="'user' in word && 'image' in word.user && word.user.image != null">
-                                                                                                <img class="is-rounded"
-                                                                                                    v-bind:src="word.user.image"
-                                                                                                    v-bind:alt="word.user.name"
-                                                                                                    v-cloak>
-                                                                                            </span>
-                                                                                            <span
-                                                                                                class="wrap has-text-weight-bold has-text-black">
-                                                                                                <div class="clip">
-                                                                                                    <div
-                                                                                                        class="scrollable">
-                                                                                                        <div>{{ word.id
-                                                                                                            }}</div>
-                                                                                                        <div>{{ word.id
-                                                                                                            }}</div>
+                                                                                        <div class="control">
+                                                                                            <button
+                                                                                                class="button is-rounded is-size-7"
+                                                                                                type="button"
+                                                                                                v-bind:disabled="user === null"
+                                                                                                @click="learn('image' in word && word.image !== null ? { name: word.id, attributes: word.attributes, image: word.image } : { name: word.id, attributes: word.attributes }); isRevealed = false; mode = null;"
+                                                                                                v-cloak>
+                                                                                                <span
+                                                                                                    class="image is-24x24"
+                                                                                                    v-if="'user' in word && 'image' in word.user && word.user.image != null">
+                                                                                                    <img class="is-rounded"
+                                                                                                        v-bind:src="word.user.image"
+                                                                                                        v-bind:alt="word.user.name"
+                                                                                                        v-cloak>
+                                                                                                </span>
+                                                                                                <span
+                                                                                                    class="wrap has-text-weight-bold has-text-black">
+                                                                                                    <div class="clip">
+                                                                                                        <div
+                                                                                                            class="scrollable">
+                                                                                                            <div>{{
+                                                                                                                word.id
+                                                                                                                }}</div>
+                                                                                                            <div>{{
+                                                                                                                word.id
+                                                                                                                }}</div>
+                                                                                                        </div>
                                                                                                     </div>
-                                                                                                </div>
-                                                                                            </span>
-                                                                                        </button>
+                                                                                                </span>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                        <div class="control">
+                                                                                            <a class="button is-circle"
+                                                                                                v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.id + '&tag=milchchan-22')"
+                                                                                                target="_blank"><span
+                                                                                                    class="icon is-small"><i
+                                                                                                        class="fa-brands fa-amazon"></i></span></a>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -1358,6 +1370,13 @@
                                                                                         </div>
                                                                                     </span>
                                                                                 </button>
+                                                                            </div>
+                                                                            <div class="level-item">
+                                                                                <a class="button is-circle"
+                                                                                    v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.id + '&tag=milchchan-22')"
+                                                                                    target="_blank"><span
+                                                                                        class="icon is-small"><i
+                                                                                            class="fa-brands fa-amazon"></i></span></a>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -1512,36 +1531,49 @@
                                                                                 </div>
                                                                                 <div class="content">
                                                                                     <div class="field">
-                                                                                        <label class="checkbox">
-                                                                                            <input type="checkbox"
-                                                                                                @change="mode.selected.some(x => x.name === word.name) ? mode.selected = mode.selected.filter(x => x.name !== word.name) : mode.selected.push(word)"
-                                                                                                v-bind:checked="mode.selected.some(x => x.name === word.name)">
-                                                                                            <span class="custom"></span>
-                                                                                            <span class="image is-24x24"
-                                                                                                v-if="'user' in word && 'image' in word.user && word.user.image != null">
-                                                                                                <img class="is-rounded"
-                                                                                                    v-bind:src="word.user.image"
-                                                                                                    v-bind:alt="word.user.name"
-                                                                                                    v-cloak>
-                                                                                            </span>
-                                                                                            <span
-                                                                                                class="wrap is-size-7 has-text-weight-bold">
-                                                                                                <div class="clip">
-                                                                                                    <div
-                                                                                                        class="scrollable">
-                                                                                                        <div>{{
-                                                                                                            word.name }}
-                                                                                                        </div>
-                                                                                                        <div>{{
-                                                                                                            word.name }}
+                                                                                        <div class="control">
+                                                                                            <label class="checkbox">
+                                                                                                <input type="checkbox"
+                                                                                                    @change="mode.selected.some(x => x.name === word.name) ? mode.selected = mode.selected.filter(x => x.name !== word.name) : mode.selected.push(word)"
+                                                                                                    v-bind:checked="mode.selected.some(x => x.name === word.name)">
+                                                                                                <span
+                                                                                                    class="custom"></span>
+                                                                                                <span
+                                                                                                    class="image is-24x24"
+                                                                                                    v-if="'user' in word && 'image' in word.user && word.user.image != null">
+                                                                                                    <img class="is-rounded"
+                                                                                                        v-bind:src="word.user.image"
+                                                                                                        v-bind:alt="word.user.name"
+                                                                                                        v-cloak>
+                                                                                                </span>
+                                                                                                <span
+                                                                                                    class="wrap is-size-7 has-text-weight-bold">
+                                                                                                    <div class="clip">
+                                                                                                        <div
+                                                                                                            class="scrollable">
+                                                                                                            <div>{{
+                                                                                                                word.name
+                                                                                                                }}
+                                                                                                            </div>
+                                                                                                            <div>{{
+                                                                                                                word.name
+                                                                                                                }}
+                                                                                                            </div>
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                </div>
-                                                                                            </span>
-                                                                                            <span class="badge">{{
-                                                                                                word.count
-                                                                                                }}</span>
-                                                                                        </label>
+                                                                                                </span>
+                                                                                                <span class="badge">{{
+                                                                                                    word.count
+                                                                                                    }}</span>
+                                                                                            </label>
+                                                                                        </div>
+                                                                                        <div class="control">
+                                                                                            <a class="button is-circle"
+                                                                                                v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.name + '&tag=milchchan-22')"
+                                                                                                target="_blank"><span
+                                                                                                    class="icon is-small"><i
+                                                                                                        class="fa-brands fa-amazon"></i></span></a>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -2317,8 +2349,10 @@
                                                                     class="content is-size-5 has-text-weight-bold has-text-justified">
                                                                     ミルヒちゃんを気に入って貰えたら応援してね。応援して貰えると開発する元気が出るよぉ。</p>
                                                                 <p
-                                                                class="content is-size-5 has-text-weight-bold has-text-justified">
-                                                                    ミルヒちゃんのことはハッシュタグ <span class="highlight">#milchchan</span> をつけて投稿してね。</p>
+                                                                    class="content is-size-5 has-text-weight-bold has-text-justified">
+                                                                    ミルヒちゃんのことはハッシュタグ <span
+                                                                        class="highlight">#milchchan</span> をつけて投稿してね。
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </article>
@@ -2339,13 +2373,13 @@
                                                             <a class="button is-circle"
                                                                 href="https://www.amazon.jp/hz/wishlist/ls/2SUAMV3SUFL3H?ref_=wl_share"
                                                                 target="_blank"><span class="icon is-small"><i
-                                                                        class="fa-solid fa-life-ring"></i></span></a>
+                                                                        class="fa-brands fa-amazon"></i></span></a>
                                                         </div>
                                                         <div class="level-item">
                                                             <a class="button is-circle"
                                                                 href="https://milchchan.fanbox.cc/"
                                                                 target="_blank"><span class="icon is-small"><i
-                                                                        class="fa-solid fa-coin"></i></span></a>
+                                                                        class="fa-solid fa-life-ring"></i></span></a>
                                                         </div>
                                                     </div>
                                                 </div>
