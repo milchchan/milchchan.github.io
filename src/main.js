@@ -247,7 +247,7 @@ window.addEventListener("load", event => {
                 animatedNotificationHeight: 0,
                 recentImages: [],
                 backgroundQueue: [],
-                background: { color: null, images: [], tags: null },
+                background: { color: null, images: [], stars: [], shootingStars: [], tags: null },
                 isUploading: false,
                 animations: null,
                 currentAnimations: [],
@@ -1081,6 +1081,14 @@ window.addEventListener("load", event => {
                     }
 
                     if (result.committed && result.snapshot.exists()) {
+                        function _random(min, max) {
+                            min = Math.ceil(min);
+                            max = Math.floor(max);
+
+                            return Math.floor(Math.random() * (max - min)) + min;
+                        }
+
+                        const self = this;
                         /*const sequence = [];
 
                         for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
@@ -1114,6 +1122,25 @@ window.addEventListener("load", event => {
                             this.points = nextPoints;
                         }
 
+                        const start = this.background.shootingStars.length;
+                        const length = 1;
+
+                        for (let i = 0; i < length; i++) {
+                            this.background.shootingStars.push({ url: "/images/favicon.png", y: 0, opacity: 0, rotate: _random(0, 90) - 45, delay: _random(0, 1000), duration: _random(500, 1000), state: "running" });
+                        }
+
+                        anime({
+                            targets: this.background.shootingStars,
+                            y: [{ value: 50, easing: "linear" }, { value: 100, delay: 0, easing: "linear" }],
+                            opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
+                            delay: (el, i) => self.background.shootingStars[i].delay,
+                            duration: (el, i) => self.background.shootingStars[i].duration,
+                            round: 100,
+                            complete: () => {
+                                self.background.shootingStars.splice(start, length);
+                            }
+                        });
+
                         if (!this.isMuted) {
                             this.$refs.like.play();
                         }
@@ -1123,10 +1150,10 @@ window.addEventListener("load", event => {
                     console.error(e);
                 }
             },
-            unlike: async function(message) {
+            unlike: async function (message) {
                 try {
                     const self = this;
-                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${message.author}&${typeof(message.text) === 'string' ? message.text : Object.keys(message.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(message.text[y]) === 'string' ? message.text[y] : message.text[y].name), '')}`)}`), current => {
+                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${message.author}&${typeof (message.text) === 'string' ? message.text : Object.keys(message.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (message.text[y]) === 'string' ? message.text[y] : message.text[y].name), '')}`)}`), current => {
                         if (current && "user" in current && current.user.id === self.user.uid) {
                             return null;
                         }
@@ -4634,7 +4661,7 @@ window.addEventListener("load", event => {
                     self.stars = count;
                 }
             });
-            onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)), snapshot => {
+            onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(100)), snapshot => {
                 if (snapshot.exists()) {
                     const words = snapshot.val();
                     let isUpdated = false;
@@ -4665,22 +4692,46 @@ window.addEventListener("load", event => {
                     }
 
                     if (isUpdated) {
+                        const timestamp = Math.floor(new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).getTime() / 1000);
+                        let count = 0;
+
                         for (let i = self.words.length - 1; i >= 0; i--) {
-                            if ("timestamp" in self.words[i] === false) {
+                            if ("timestamp" in self.words[i]) {
+                                if (self.words[i].timestamp > timestamp) {
+                                    count++;
+                                }
+                            } else {
                                 self.words.splice(i, 1);
                             }
                         }
 
                         self.words.sort((x, y) => y.timestamp - x.timestamp);
 
-                        if (self.words.length > 10) {
+                        /*if (self.words.length > 10) {
                             self.words.splice(10, self.words.length - 10);
-                        }
+                        }*/
 
-                        for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), 10)) {
+                        for (const obj of self.prepare(self.character.sequences.filter((x) => x.name === "Alert"), self.words.length)) {
                             if (obj.type === "Message") {
                                 self.words.splice(0, 0, { name: obj.text, image: self.character.image });
                             }
+                        }
+
+                        if (count > self.background.stars.length) {
+                            function _random(min, max) {
+                                min = Math.ceil(min);
+                                max = Math.floor(max);
+
+                                return Math.floor(Math.random() * (max - min)) + min;
+                            }
+
+                            const images = ["/images/Star1-Light.png", "/images/Star2-Light.png", "/images/Star3-Light.png", "/images/Star4-Light.png", "/images/Star1-Dark.png", "/images/Star2-Dark.png", "/images/Star3-Dark.png", "/images/Star4-Dark.png"];
+
+                            for (let i = self.background.stars.length; i < count; i++) {
+                                self.background.stars.push({ url: images[_random(0, images.length)], x: Math.random(), y: Math.random(), delay: _random(0, 1000), duration: _random(1000, 5000), state: 'running' });
+                            }
+                        } else if (count < self.background.stars.length) {
+                            self.background.stars.splice(count);
                         }
                     }
                 }
