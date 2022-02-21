@@ -281,8 +281,8 @@
                             </div>
                         </div>
                     </div>
-                    <transition-group name="sky-item-list" class="sky" tag="div">
-                        <div class="sky" v-cloak>
+                    <div class="sky" v-cloak>
+                        <transition-group name="sky-item-list" class="sky" tag="div">
                             <div class="star" alt="Star"
                                 v-bind:style="{ left: String(Math.floor(100.0 * star.x)) + '%', top: String(Math.floor(100.0 * star.y)) + '%', animationDelay: String(star.delay) + 'ms', animationDuration: String(star.duration) + 'ms', animationPlayState: star.state }"
                                 v-for="star in background.stars" v-bind:key="star">
@@ -297,8 +297,8 @@
                                         v-bind:style="{ animationDelay: String(star.delay) + 'ms', animationPlayState: star.state }">
                                 </div>
                             </div>
-                        </div>
-                    </transition-group>
+                        </transition-group>
+                    </div>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
                         v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
