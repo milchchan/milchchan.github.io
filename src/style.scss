@@ -813,7 +813,7 @@ label .scrollable > div {
     height: 100%;
 
     > .wrap > .frame {
-        background: linear-gradient(0deg, var(--accent-color), var(--highlight-color));
+        background: linear-gradient(0deg, var(--accent-color), var(--main-color));
         
         > .columns:last-of-type {
             position: absolute;
