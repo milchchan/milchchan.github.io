@@ -1127,7 +1127,7 @@ window.addEventListener("load", event => {
                         }
 
                         
-                        const response = await fetch("/images/favicon.png", {
+                        const response = await fetch("/images/ShootingStar.svg", {
                             method: "GET"
                         });
 
