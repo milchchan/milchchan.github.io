@@ -4743,7 +4743,7 @@ window.addEventListener("load", event => {
                                 return Math.floor(Math.random() * (max - min)) + min;
                             }
 
-                            const images = ["/images/Star1-Light.png", "/images/Star2-Light.png", "/images/Star3-Light.png", "/images/Star4-Light.png", "/images/Star1-Dark.png", "/images/Star2-Dark.png", "/images/Star3-Dark.png", "/images/Star4-Dark.png"];
+                            const images = ["/images/Star1-Light.svg", "/images/Star2-Light.svg", "/images/Star3-Light.svg", "/images/Star4-Light.svg", "/images/Star1-Dark.svg", "/images/Star2-Dark.svg", "/images/Star3-Dark.svg", "/images/Star4-Dark.svg"];
                             const imageDictionary = {};
                             
                             for (let i = self.background.stars.length; i < count; i++) {
@@ -4769,7 +4769,7 @@ window.addEventListener("load", event => {
                                             reader.readAsDataURL(await response.blob());
                                         });
 
-                                        imageDictionary[uri] = dataURL;
+                                        imageDictionary[url] = dataURL;
                                         self.background.stars.push({ url: dataURL, x: Math.random(), y: Math.random(), delay: _random(0, 1000), duration: _random(1000, 5000), state: 'running' });
                                     }
                                 }
