@@ -1122,27 +1122,45 @@ window.addEventListener("load", event => {
                             this.points = nextPoints;
                         }
 
-                        const start = this.background.shootingStars.length;
-                        const length = 1;
-
-                        for (let i = 0; i < length; i++) {
-                            this.background.shootingStars.push({ url: "/images/favicon.png", y: 0, opacity: 0, rotate: _random(0, 90) - 45, delay: _random(0, 1000), duration: _random(500, 1000), state: "running" });
-                        }
-
-                        anime({
-                            targets: this.background.shootingStars,
-                            y: [{ value: 50, easing: "linear" }, { value: 100, delay: 0, easing: "linear" }],
-                            opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
-                            delay: (el, i) => self.background.shootingStars[i].delay,
-                            duration: (el, i) => self.background.shootingStars[i].duration,
-                            round: 100,
-                            complete: () => {
-                                self.background.shootingStars.splice(start, length);
-                            }
-                        });
-
                         if (!this.isMuted) {
                             this.$refs.like.play();
+                        }
+
+                        
+                        const response = await fetch("/images/favicon.png", {
+                            method: "GET"
+                        });
+
+                        if (response.ok) {
+                            const dataURL = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(reader.error);
+                                };
+                                reader.readAsDataURL(await response.blob());
+                            });
+                            const start = this.background.shootingStars.length;
+                            const length = 1;
+
+                            for (let i = 0; i < length; i++) {
+                                this.background.shootingStars.push({ url: dataURL, y: 0, opacity: 0, rotate: _random(0, 90) - 45, delay: _random(0, 1000), duration: _random(500, 1000), state: "running" });
+                            }
+
+                            anime({
+                                targets: this.background.shootingStars,
+                                y: [{ value: 50, easing: "linear" }, { value: 100, delay: 0, easing: "linear" }],
+                                opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
+                                delay: (el, i) => self.background.shootingStars[i].delay,
+                                duration: (el, i) => self.background.shootingStars[i].duration,
+                                round: 100,
+                                complete: () => {
+                                    self.background.shootingStars.splice(start, length);
+                                }
+                            });
                         }
                     }
                 } catch (e) {
@@ -4661,7 +4679,7 @@ window.addEventListener("load", event => {
                     self.stars = count;
                 }
             });
-            onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(100)), snapshot => {
+            onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(100)), async snapshot => {
                 if (snapshot.exists()) {
                     const words = snapshot.val();
                     let isUpdated = false;
@@ -4726,9 +4744,35 @@ window.addEventListener("load", event => {
                             }
 
                             const images = ["/images/Star1-Light.png", "/images/Star2-Light.png", "/images/Star3-Light.png", "/images/Star4-Light.png", "/images/Star1-Dark.png", "/images/Star2-Dark.png", "/images/Star3-Dark.png", "/images/Star4-Dark.png"];
-
+                            const imageDictionary = {};
+                            
                             for (let i = self.background.stars.length; i < count; i++) {
-                                self.background.stars.push({ url: images[_random(0, images.length)], x: Math.random(), y: Math.random(), delay: _random(0, 1000), duration: _random(1000, 5000), state: 'running' });
+                                const url = images[_random(0, images.length)]
+
+                                if (url in imageDictionary) {
+                                    self.background.stars.push({ url: imageDictionary[url], x: Math.random(), y: Math.random(), delay: _random(0, 1000), duration: _random(1000, 5000), state: 'running' });
+                                } else {
+                                    const response = await fetch(url, {
+                                        method: "GET"
+                                    });
+    
+                                    if (response.ok) {
+                                        const dataURL = await new Promise(async (resolve, reject) => {
+                                            const reader = new FileReader();
+    
+                                            reader.onload = () => {
+                                                resolve(reader.result);
+                                            };
+                                            reader.onerror = () => {
+                                                reject(reader.error);
+                                            };
+                                            reader.readAsDataURL(await response.blob());
+                                        });
+
+                                        imageDictionary[uri] = dataURL;
+                                        self.background.stars.push({ url: dataURL, x: Math.random(), y: Math.random(), delay: _random(0, 1000), duration: _random(1000, 5000), state: 'running' });
+                                    }
+                                }
                             }
                         } else if (count < self.background.stars.length) {
                             self.background.stars.splice(count);
