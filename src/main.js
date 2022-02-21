@@ -1081,14 +1081,6 @@ window.addEventListener("load", event => {
                     }
 
                     if (result.committed && result.snapshot.exists()) {
-                        function _random(min, max) {
-                            min = Math.ceil(min);
-                            max = Math.floor(max);
-
-                            return Math.floor(Math.random() * (max - min)) + min;
-                        }
-
-                        const self = this;
                         /*const sequence = [];
 
                         for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
@@ -1124,43 +1116,6 @@ window.addEventListener("load", event => {
 
                         if (!this.isMuted) {
                             this.$refs.like.play();
-                        }
-
-                        
-                        const response = await fetch("/images/ShootingStar.svg", {
-                            method: "GET"
-                        });
-
-                        if (response.ok) {
-                            const dataURL = await new Promise(async (resolve, reject) => {
-                                const reader = new FileReader();
-
-                                reader.onload = () => {
-                                    resolve(reader.result);
-                                };
-                                reader.onerror = () => {
-                                    reject(reader.error);
-                                };
-                                reader.readAsDataURL(await response.blob());
-                            });
-                            const start = this.background.shootingStars.length;
-                            const length = 1;
-
-                            for (let i = 0; i < length; i++) {
-                                this.background.shootingStars.push({ url: dataURL, y: 0, opacity: 0, rotate: _random(0, 90) - 45, delay: _random(0, 1000), duration: _random(500, 1000), state: "running" });
-                            }
-
-                            anime({
-                                targets: this.background.shootingStars,
-                                y: [{ value: 50, easing: "linear" }, { value: 100, delay: 0, easing: "linear" }],
-                                opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
-                                delay: (el, i) => self.background.shootingStars[i].delay,
-                                duration: (el, i) => self.background.shootingStars[i].duration,
-                                round: 100,
-                                complete: () => {
-                                    self.background.shootingStars.splice(start, length);
-                                }
-                            });
                         }
                     }
                 } catch (e) {
@@ -4673,12 +4628,61 @@ window.addEventListener("load", event => {
                     }
                 }
             });
-            onValue(databaseRef(database, databaseRoot + "/stars"), snapshot => {
+            onValue(databaseRef(database, databaseRoot + "/stars"), async (snapshot) => {
                 const count = snapshot.val();
 
                 if (count === null) {
                     self.stars = 0;
                 } else {
+                    if (self.stars >= 0) {
+                        const length = count - self.stars;
+
+                        if (length > 0) {
+                            function _random(min, max) {
+                                min = Math.ceil(min);
+                                max = Math.floor(max);
+
+                                return Math.floor(Math.random() * (max - min)) + min;
+                            }
+
+                            const self = this;
+                            const response = await fetch("/images/ShootingStar.svg", {
+                                method: "GET"
+                            });
+
+                            if (response.ok) {
+                                const dataURL = await new Promise(async (resolve, reject) => {
+                                    const reader = new FileReader();
+
+                                    reader.onload = () => {
+                                        resolve(reader.result);
+                                    };
+                                    reader.onerror = () => {
+                                        reject(reader.error);
+                                    };
+                                    reader.readAsDataURL(await response.blob());
+                                });
+                                const start = this.background.shootingStars.length;
+
+                                for (let i = 0; i < length; i++) {
+                                    this.background.shootingStars.push({ url: dataURL, y: 0, opacity: 0, rotate: _random(0, 90) - 45, delay: _random(0, 1000), duration: _random(500, 1000), state: "running" });
+                                }
+
+                                anime({
+                                    targets: this.background.shootingStars,
+                                    y: [{ value: 50, easing: "linear" }, { value: 100, delay: 0, easing: "linear" }],
+                                    opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
+                                    delay: (el, i) => self.background.shootingStars[i].delay,
+                                    duration: (el, i) => self.background.shootingStars[i].duration,
+                                    round: 100,
+                                    complete: () => {
+                                        self.background.shootingStars.splice(start, length);
+                                    }
+                                });
+                            }
+                        }
+                    }
+
                     self.stars = count;
                 }
             });
@@ -4748,7 +4752,7 @@ window.addEventListener("load", event => {
 
                             const images = ["/images/Star1-Light.svg", "/images/Star2-Light.svg", "/images/Star3-Light.svg", "/images/Star4-Light.svg", "/images/Star1-Dark.svg", "/images/Star2-Dark.svg", "/images/Star3-Dark.svg", "/images/Star4-Dark.svg"];
                             const imageDictionary = {};
-                            
+
                             for (let i = self.background.stars.length; i < count; i++) {
                                 const url = images[_random(0, images.length)]
 
@@ -4758,11 +4762,11 @@ window.addEventListener("load", event => {
                                     const response = await fetch(url, {
                                         method: "GET"
                                     });
-    
+
                                     if (response.ok) {
                                         const dataURL = await new Promise(async (resolve, reject) => {
                                             const reader = new FileReader();
-    
+
                                             reader.onload = () => {
                                                 resolve(reader.result);
                                             };
