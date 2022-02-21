@@ -4628,61 +4628,12 @@ window.addEventListener("load", event => {
                     }
                 }
             });
-            onValue(databaseRef(database, databaseRoot + "/stars"), async (snapshot) => {
+            onValue(databaseRef(database, databaseRoot + "/stars"), snapshot => {
                 const count = snapshot.val();
 
                 if (count === null) {
                     self.stars = 0;
                 } else {
-                    if (self.stars >= 0) {
-                        const length = count - self.stars;
-
-                        if (length > 0) {
-                            function _random(min, max) {
-                                min = Math.ceil(min);
-                                max = Math.floor(max);
-
-                                return Math.floor(Math.random() * (max - min)) + min;
-                            }
-
-                            const self = this;
-                            const response = await fetch("/images/ShootingStar.svg", {
-                                method: "GET"
-                            });
-
-                            if (response.ok) {
-                                const dataURL = await new Promise(async (resolve, reject) => {
-                                    const reader = new FileReader();
-
-                                    reader.onload = () => {
-                                        resolve(reader.result);
-                                    };
-                                    reader.onerror = () => {
-                                        reject(reader.error);
-                                    };
-                                    reader.readAsDataURL(await response.blob());
-                                });
-                                const start = this.background.shootingStars.length;
-
-                                for (let i = 0; i < length; i++) {
-                                    this.background.shootingStars.push({ url: dataURL, y: 0, opacity: 0, rotate: _random(0, 90) - 45, delay: _random(0, 1000), duration: _random(500, 1000), state: "running" });
-                                }
-
-                                anime({
-                                    targets: this.background.shootingStars,
-                                    y: [{ value: 50, easing: "linear" }, { value: 100, delay: 0, easing: "linear" }],
-                                    opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
-                                    delay: (el, i) => self.background.shootingStars[i].delay,
-                                    duration: (el, i) => self.background.shootingStars[i].duration,
-                                    round: 100,
-                                    complete: () => {
-                                        self.background.shootingStars.splice(start, length);
-                                    }
-                                });
-                            }
-                        }
-                    }
-
                     self.stars = count;
                 }
             });
@@ -4787,10 +4738,10 @@ window.addEventListener("load", event => {
                     }
                 }
             });
-            onValue(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(100)), snapshot => {
+            onValue(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(100)), async snapshot => {
                 if (snapshot.exists()) {
                     const likes = snapshot.val();
-                    let isUpdated = false;
+                    let updated = 0;
 
                     for (const key in likes) {
                         const index = self.likes.findIndex(x => x.id === key);
@@ -4805,7 +4756,7 @@ window.addEventListener("load", event => {
 
                         likes[key]["id"] = key;
                         self.likes.push(likes[key]);
-                        isUpdated = true;
+                        updated++;
                     }
 
                     /*for (let i = self.likes.length - 1; i >= 0; i--) {
@@ -4815,7 +4766,16 @@ window.addEventListener("load", event => {
                         }
                     }*/
 
-                    if (isUpdated) {
+                    if (updated > 0) {
+                        function _random(min, max) {
+                            min = Math.ceil(min);
+                            max = Math.floor(max);
+
+                            return Math.floor(Math.random() * (max - min)) + min;
+                        }
+
+                        const self = this;
+
                         self.likes.sort((x, y) => y.timestamp - x.timestamp);
 
                         if (self.likes.length > 100) {
@@ -4823,6 +4783,41 @@ window.addEventListener("load", event => {
                         }
 
                         self.update(self.likes, self.maxTags);
+                        
+                        const response = await fetch("/images/ShootingStar.svg", {
+                            method: "GET"
+                        });
+
+                        if (response.ok) {
+                            const dataURL = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(reader.error);
+                                };
+                                reader.readAsDataURL(await response.blob());
+                            });
+                            const start = this.background.shootingStars.length;
+
+                            for (let i = 0; i < updated; i++) {
+                                this.background.shootingStars.push({ url: dataURL, y: 0, opacity: 0, rotate: _random(0, 90) - 45, delay: _random(0, 1000), duration: _random(500, 1000), state: "running" });
+                            }
+
+                            anime({
+                                targets: this.background.shootingStars,
+                                y: [{ value: 50, easing: "linear" }, { value: 100, delay: 0, easing: "linear" }],
+                                opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
+                                delay: (el, i) => self.background.shootingStars[i].delay,
+                                duration: (el, i) => self.background.shootingStars[i].duration,
+                                round: 100,
+                                complete: () => {
+                                    self.background.shootingStars.splice(start, updated);
+                                }
+                            });
+                        }
                     }
                 }
             });
