@@ -281,24 +281,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="sky" v-cloak>
-                        <transition-group name="sky-item-list" class="sky" tag="div">
-                            <div class="star" alt="Star"
-                                v-bind:style="{ left: String(Math.floor(100.0 * star.x)) + '%', top: String(Math.floor(100.0 * star.y)) + '%', animationDelay: String(star.delay) + 'ms', animationDuration: String(star.duration) + 'ms', animationPlayState: star.state }"
-                                v-for="star in background.stars" v-bind:key="star">
-                                <img v-bind:src="star.url" alt="Star">
+                    <transition-group name="sky-item-list" class="sky" tag="div">
+                        <div class="star" alt="Star"
+                            v-bind:style="{ left: String(Math.floor(100.0 * star.x)) + '%', top: String(Math.floor(100.0 * star.y)) + '%', animationDelay: String(star.delay) + 'ms', animationDuration: String(star.duration) + 'ms', animationPlayState: star.state }"
+                            v-for="star in background.stars" v-bind:key="star">
+                            <img v-bind:src="star.url" alt="Star">
+                        </div>
+                        <div class="wrap" v-for="star in background.shootingStars"
+                            v-bind:style="{ transform: 'rotate(' + String(star.rotate) + 'deg)' }" v-bind:key="star">
+                            <div class="shootingstar"
+                                v-bind:style="{ top: String(star.y) + '%', opacity: String(star.opacity) }">
+                                <img alt="Shooting Star" v-bind:src="star.url"
+                                    v-bind:style="{ animationDelay: String(star.delay) + 'ms', animationPlayState: star.state }">
                             </div>
-                            <div class="wrap" v-for="star in background.shootingStars"
-                                v-bind:style="{ transform: 'rotate(' + String(star.rotate) + 'deg)' }"
-                                v-bind:key="star">
-                                <div class="shootingstar"
-                                    v-bind:style="{ top: String(star.y) + '%', opacity: String(star.opacity) }">
-                                    <img alt="Shooting Star" v-bind:src="star.url"
-                                        v-bind:style="{ animationDelay: String(star.delay) + 'ms', animationPlayState: star.state }">
-                                </div>
-                            </div>
-                        </transition-group>
-                    </div>
+                        </div>
+                    </transition-group>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
                         v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
