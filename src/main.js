@@ -2223,7 +2223,7 @@ window.addEventListener("load", event => {
                 this.notifications.unshift(data);
             },
             blinded: async function () {
-                if (this.backgroundQueue.length == 0) {
+                if (this.backgroundQueue.length === 0) {
                     function shuffle(array) {
                         function _random(min, max) {
                             min = Math.ceil(min);
@@ -2250,19 +2250,21 @@ window.addEventListener("load", event => {
                     }
 
                     for (const image of shuffle(this.recentImages)) {
-                        this.backgroundQueue.push(image);
+                        //this.backgroundQueue.push(image);
                     }
+
+                    this.backgroundQueue.push({});
                 }
 
                 const background = this.backgroundQueue.shift();
 
                 this.background.images.splice(0);
 
-                if ('color' in background) {
+                /*if ('color' in background) {
                     this.background.color = background.color;
                 } else {
                     this.background.color = null;
-                }
+                }*/
 
                 if ('images' in background) {
                     for (const image of background.images) {
@@ -2372,6 +2374,7 @@ window.addEventListener("load", event => {
                     });
                     this.activate(background.tags.filter((x) => x.indexOf(this.character.name) === -1), 0.0);
                 } else {
+                    this.activate();
                     this.background.tags = null;
                 }
 
