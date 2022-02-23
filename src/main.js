@@ -247,7 +247,7 @@ window.addEventListener("load", event => {
                 animatedNotificationHeight: 0,
                 recentImages: [],
                 backgroundQueue: [],
-                background: { color: null, images: [], stars: [], shootingStars: [], tags: null },
+                background: { color: null, images: [], stars: [], shootingStars: {}, tags: null },
                 isUploading: false,
                 animations: null,
                 currentAnimations: [],
@@ -4668,7 +4668,7 @@ window.addEventListener("load", event => {
                     }
 
                     if (isUpdated) {
-                        const timestamp = Math.floor(new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).getTime() / 1000);
+                        const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
                         let count = 0;
 
                         for (let i = self.words.length - 1; i >= 0; i--) {
@@ -4738,10 +4738,10 @@ window.addEventListener("load", event => {
                     }
                 }
             });
-            onValue(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(100)), async snapshot => {
+            onValue(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(25)), async snapshot => {
                 if (snapshot.exists()) {
                     const likes = snapshot.val();
-                    let updated = 0;
+                    const updated = [];
 
                     for (const key in likes) {
                         const index = self.likes.findIndex(x => x.id === key);
@@ -4756,7 +4756,7 @@ window.addEventListener("load", event => {
 
                         likes[key]["id"] = key;
                         self.likes.push(likes[key]);
-                        updated++;
+                        updated.push(likes[key]);
                     }
 
                     /*for (let i = self.likes.length - 1; i >= 0; i--) {
@@ -4766,7 +4766,7 @@ window.addEventListener("load", event => {
                         }
                     }*/
 
-                    if (updated > 0) {
+                    if (updated.length > 0) {
                         function _random(min, max) {
                             min = Math.ceil(min);
                             max = Math.floor(max);
@@ -4783,7 +4783,7 @@ window.addEventListener("load", event => {
                         }
 
                         self.update(self.likes, self.maxTags);
-                        
+
                         const response = await fetch("/images/ShootingStar.svg", {
                             method: "GET"
                         });
@@ -4800,23 +4800,31 @@ window.addEventListener("load", event => {
                                 };
                                 reader.readAsDataURL(await response.blob());
                             });
-                            const start = this.background.shootingStars.length;
+                            const degrees = -45;
 
-                            for (let i = 0; i < updated; i++) {
-                                this.background.shootingStars.push({ url: dataURL, y: 0, opacity: 0, rotate: _random(0, 90) - 45, delay: _random(0, 1000), duration: _random(500, 1000), state: "running" });
-                            }
+                            for (let i = 0; i < updated.length; i++) {
+                                const id = updated[i].id;
 
-                            anime({
-                                targets: this.background.shootingStars,
-                                y: [{ value: 50, easing: "linear" }, { value: 100, delay: 0, easing: "linear" }],
-                                opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
-                                delay: (el, i) => self.background.shootingStars[i].delay,
-                                duration: (el, i) => self.background.shootingStars[i].duration,
-                                round: 100,
-                                complete: () => {
-                                    self.background.shootingStars.splice(start, updated);
+                                if (id in this.background.shootingStars === false) {
+                                    const offset = _random(-100, 100);
+                                    const text = typeof (updated[i].text) === "string" ? updated[i].text : Object.keys(updated[i].text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (updated[i].text[y]) === "string" ? updated[i].text[y] : updated[i].text[y].name), "");
+
+                                    this.background.shootingStars[id] = { text: text, author: updated[i].author, url: dataURL, offset: offset, x: 100, y: 0, opacity: 0, rotation: degrees, delay: _random(0, 1000), duration: text.length * 1000, state: "running" };
+
+                                    anime({
+                                        targets: this.background.shootingStars[id],
+                                        x: [{ value: 0, delay: 0, easing: "linear" }],
+                                        y: [{ value: 100, delay: 0, easing: "linear" }],
+                                        opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
+                                        delay: _random(0, 1000),
+                                        duration: text.length * 1000,
+                                        round: 100,
+                                        complete: () => {
+                                            delete self.background.shootingStars[id];
+                                        }
+                                    });
                                 }
-                            });
+                            }
                         }
                     }
                 }
