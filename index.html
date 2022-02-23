@@ -287,13 +287,12 @@
                             v-for="star in background.stars" v-bind:key="star">
                             <img v-bind:src="star.url" alt="Star">
                         </div>
-                        <div class="wrap" v-for="star in background.shootingStars"
-                            v-bind:style="{ transform: 'rotate(' + String(star.rotate) + 'deg)' }" v-bind:key="star">
-                            <div class="shootingstar"
-                                v-bind:style="{ top: String(star.y) + '%', opacity: String(star.opacity) }">
-                                <img alt="Shooting Star" v-bind:src="star.url"
-                                    v-bind:style="{ animationDelay: String(star.delay) + 'ms', animationPlayState: star.state }">
-                            </div>
+                        <div class="shootingstar" v-for="star in Object.values(background.shootingStars)"
+                            v-bind:style="{ left: String(star.offset + star.x) + '%', top: String(star.y) + '%', transform: 'rotate(' + String(star.rotation) + 'deg)', opacity: String(star.opacity) }"
+                            v-bind:key="star">
+                            <img alt="Shooting Star" v-bind:src="star.url"
+                                v-bind:style="{ animationDelay: String(star.delay) + 'ms', animationPlayState: star.state }" v-cloak>
+                            <span class="has-text-weight-bold is-uppercase" v-text="star.text"></span>
                         </div>
                     </transition-group>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
