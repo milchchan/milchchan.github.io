@@ -515,7 +515,6 @@ label .scrollable > div {
         top: 0%;
         width: fit-content;
         height: fit-content;
-        transform: rotate(0.03deg);
         animation-name: twinkle;
         animation-delay: 0s;
         animation-duration: 1s;
@@ -524,30 +523,44 @@ label .scrollable > div {
         animation-play-state: paused;
     }
 
-    .wrap {
+    .shootingstar {
         position: absolute;
         display: flex;
         flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
-        width: 100%;
-        height: 100%;
-        transform-origin: 50% 0%;
+        justify-content: flex-start;
+        align-items: center;
+        opacity: 1;
+        width: fit-content;
+        height: fit-content;
+        transform-origin: 0% 50%;
 
-        .shootingstar {
-            position: absolute;
-            opacity: 0;
-            width: fit-content;
+        > img {
+            animation-name: glow;
+            animation-delay: 0s;
+            animation-duration: 1s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-play-state: paused;
+        }
+
+        > span {
+            margin: 0;
+            padding: 0px 0px 0px 8px;
+            font-family: "Ropa Sans", "M PLUS Rounded 1c", sans-serif;
+            font-size: 1rem;
+            transform: rotate(0.03deg);
+            line-height: 1rem !important;
             height: fit-content;
+            color: #ffffff;
+        }
 
-            > img {
-                animation-name: glow;
-                animation-delay: 0s;
-                animation-duration: 1s;
-                animation-timing-function: linear;
-                animation-iteration-count: infinite;
-                animation-play-state: paused;
-            }
+        /*> span:first-of-type {
+                -webkit-mask-image: linear-gradient(to right, black 75%, rgba(0, 0, 0, 0.5));
+                mask-image: linear-gradient(to right, black 75%, rgba(0, 0, 0, 0.5));
+            }*/
+
+        > span + span:last-of-type {
+            opacity: 0.5;
         }
     }
 }
@@ -814,7 +827,7 @@ label .scrollable > div {
 
     > .wrap > .frame {
         background: linear-gradient(0deg, var(--accent-color), var(--main-color));
-        
+
         > .columns:last-of-type {
             position: absolute;
             bottom: 0;
