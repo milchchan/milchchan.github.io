@@ -565,7 +565,7 @@ label .scrollable > div {
     }
 }
 
-.sky::after {
+/*.sky::after {
     pointer-events: none;
     display: block;
     position: absolute;
@@ -577,7 +577,7 @@ label .scrollable > div {
     background-size: auto;
     content: "";
     overflow: hidden;
-}
+}*/
 
 .background {
     position: absolute;
