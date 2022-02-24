@@ -631,7 +631,12 @@ window.addEventListener("load", event => {
                 }
             },
             refresh: function (event) {
-                this.isBlinded = true;
+                if (this.likes.some(x => typeof (x.text) === "object" && Object.values(x.text).some(x => typeof (x) === "object"))) {
+                    this.isBlinded = true;
+                } else {
+                    this.activate();
+                }
+
                 activateTime = 0.0;
             },
             send: async function (event) {
@@ -2206,7 +2211,9 @@ window.addEventListener("load", event => {
                         }
 
                         for (const like of shuffle(this.likes)) {
-                            this.backgroundQueue.push(like);
+                            if (typeof (like.text) === "object" && Object.values(like.text).some(x => typeof (x) === "object")) {
+                                this.backgroundQueue.push(like);
+                            }
                         }
                     } else {
                         this.backgroundQueue.push({});
@@ -3134,8 +3141,12 @@ window.addEventListener("load", event => {
 
                         if (this.sequenceQueue.length == 0) {
                             if (activateTime >= activateThreshold) {
-                                if (this.likes.length > 0 && !this.isRevealed && !this.isLearning) {
-                                    this.isBlinded = true;
+                                if (!this.isRevealed && !this.isLearning) {
+                                    if (this.likes.some(x => typeof (x.text) === "object" && Object.values(x.text).some(x => typeof (x) === "object"))) {
+                                        this.isBlinded = true;
+                                    } else {
+                                        this.activate();
+                                    }
                                 }
 
                                 idleTime = activateTime = 0.0;
@@ -4801,21 +4812,19 @@ window.addEventListener("load", event => {
                     const updated = [];
 
                     for (const key in likes) {
-                        if (typeof (likes[key].text) === "object" && Object.values(likes[key].text).some(x => typeof (x) === "object")) {
-                            const index = self.likes.findIndex(x => x.id === key);
+                        const index = self.likes.findIndex(x => x.id === key);
 
-                            if (index >= 0) {
-                                if (self.likes[index].timestamp < likes[key].timestamp) {
-                                    self.likes.splice(index, 1);
-                                } else {
-                                    continue;
-                                }
+                        if (index >= 0) {
+                            if (self.likes[index].timestamp < likes[key].timestamp) {
+                                self.likes.splice(index, 1);
+                            } else {
+                                continue;
                             }
-
-                            likes[key]["id"] = key;
-                            self.likes.push(likes[key]);
-                            updated.push(likes[key]);
                         }
+
+                        likes[key]["id"] = key;
+                        self.likes.push(likes[key]);
+                        updated.push(likes[key]);
                     }
 
                     /*for (let i = self.likes.length - 1; i >= 0; i--) {
