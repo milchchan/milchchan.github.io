@@ -2179,36 +2179,38 @@ window.addEventListener("load", event => {
             },
             blinded: async function () {
                 if (this.backgroundQueue.length === 0) {
-                    function shuffle(array) {
-                        function _random(min, max) {
-                            min = Math.ceil(min);
-                            max = Math.floor(max);
+                    if (this.likes.length > 0) {
+                        function shuffle(array) {
+                            function _random(min, max) {
+                                min = Math.ceil(min);
+                                max = Math.floor(max);
 
-                            return Math.floor(Math.random() * (max - min)) + min;
+                                return Math.floor(Math.random() * (max - min)) + min;
+                            }
+
+                            let a = [].concat(array);
+                            let n = array.length;
+
+                            while (n > 1) {
+                                const k = _random(0, n);
+
+                                n--;
+
+                                const temp = a[n];
+
+                                a[n] = a[k];
+                                a[k] = temp;
+                            }
+
+                            return a;
                         }
 
-                        let a = [].concat(array);
-                        let n = array.length;
-
-                        while (n > 1) {
-                            const k = _random(0, n);
-
-                            n--;
-
-                            const temp = a[n];
-
-                            a[n] = a[k];
-                            a[k] = temp;
+                        for (const like of shuffle(this.likes)) {
+                            this.backgroundQueue.push(like);
                         }
-
-                        return a;
+                    } else {
+                        this.backgroundQueue.push({});
                     }
-
-                    for (const image of shuffle(this.recentImages)) {
-                        //this.backgroundQueue.push(image);
-                    }
-
-                    this.backgroundQueue.push({});
                 }
 
                 const background = this.backgroundQueue.shift();
@@ -2317,7 +2319,63 @@ window.addEventListener("load", event => {
                     }
                 }
 
-                if ("tags" in background) {
+                if ("text" in background) {
+                    function _random(min, max) {
+                        min = Math.ceil(min);
+                        max = Math.floor(max);
+
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+
+                    const response = await fetch("/images/ShootingStar.svg", {
+                        method: "GET"
+                    });
+
+                    if (response.ok) {
+                        const dataURL = await new Promise(async (resolve, reject) => {
+                            const reader = new FileReader();
+
+                            reader.onload = () => {
+                                resolve(reader.result);
+                            };
+                            reader.onerror = () => {
+                                reject(reader.error);
+                            };
+                            reader.readAsDataURL(await response.blob());
+                        });
+
+                        if (background.id in this.background.shootingStars === false) {
+                            const self = this;
+                            const offset = _random(-100, 100);
+                            const degrees = -45;
+                            const text = typeof (background.text) === "string" ? background.text : Object.keys(background.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (background.text[y]) === "string" ? background.text[y] : background.text[y].name), "");
+
+                            this.background.shootingStars[background.id] = { text: text, author: background.author, url: dataURL, offset: offset, x: 100, y: 0, opacity: 0, rotation: degrees, delay: _random(0, 1000), duration: text.length * 1000, state: "running" };
+
+                            anime({
+                                targets: self.background.shootingStars[background.id],
+                                x: [{ value: 0, delay: 0, easing: "linear" }],
+                                y: [{ value: 100, delay: 0, easing: "linear" }],
+                                opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
+                                delay: _random(0, 1000),
+                                duration: text.length * 1000,
+                                round: 100,
+                                complete: () => {
+                                    delete self.background.shootingStars[background.id];
+                                }
+                            });
+                        }
+                    }
+
+                    this.background.tags = background.text.reduce((x, y) => {
+                        if (typeof (y) === "object") {
+                            x.push(y.name);
+                        }
+
+                        return x;
+                    }, []);
+                    this.activate(this.background.tags.filter((x) => x.indexOf(this.character.name) === -1), 0.0);
+                } else if ("tags" in background) {
                     this.background.tags = background.tags.sort((x, y) => {
                         if (x > y) {
                             return 1;
@@ -2329,7 +2387,6 @@ window.addEventListener("load", event => {
                     });
                     this.activate(background.tags.filter((x) => x.indexOf(this.character.name) === -1), 0.0);
                 } else {
-                    this.activate();
                     this.background.tags = null;
                 }
 
@@ -3077,7 +3134,7 @@ window.addEventListener("load", event => {
 
                         if (this.sequenceQueue.length == 0) {
                             if (activateTime >= activateThreshold) {
-                                if (this.recentImages.length > 0 && !this.isRevealed && !this.isLearning) {
+                                if (this.likes.length > 0 && !this.isRevealed && !this.isLearning) {
                                     this.isBlinded = true;
                                 }
 
@@ -4624,7 +4681,7 @@ window.addEventListener("load", event => {
                         }
 
                         //self.update(self.recentImages, self.maxTags);
-                        self.isBlinded = true;
+                        //self.isBlinded = true;
                     }
                 }
             });
@@ -4738,25 +4795,27 @@ window.addEventListener("load", event => {
                     }
                 }
             });
-            onValue(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(25)), async snapshot => {
+            onValue(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(100)), async snapshot => {
                 if (snapshot.exists()) {
                     const likes = snapshot.val();
                     const updated = [];
 
                     for (const key in likes) {
-                        const index = self.likes.findIndex(x => x.id === key);
+                        if (typeof (likes[key].text) === "object" && Object.values(likes[key].text).some(x => typeof (x) === "object")) {
+                            const index = self.likes.findIndex(x => x.id === key);
 
-                        if (index >= 0) {
-                            if (self.likes[index].timestamp < likes[key].timestamp) {
-                                self.likes.splice(index, 1);
-                            } else {
-                                continue;
+                            if (index >= 0) {
+                                if (self.likes[index].timestamp < likes[key].timestamp) {
+                                    self.likes.splice(index, 1);
+                                } else {
+                                    continue;
+                                }
                             }
-                        }
 
-                        likes[key]["id"] = key;
-                        self.likes.push(likes[key]);
-                        updated.push(likes[key]);
+                            likes[key]["id"] = key;
+                            self.likes.push(likes[key]);
+                            updated.push(likes[key]);
+                        }
                     }
 
                     /*for (let i = self.likes.length - 1; i >= 0; i--) {
@@ -4767,14 +4826,8 @@ window.addEventListener("load", event => {
                     }*/
 
                     if (updated.length > 0) {
-                        function _random(min, max) {
-                            min = Math.ceil(min);
-                            max = Math.floor(max);
-
-                            return Math.floor(Math.random() * (max - min)) + min;
-                        }
-
-                        const self = this;
+                        const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
+                        const recent = updated.filter(x => x.timestamp > timestamp);
 
                         self.likes.sort((x, y) => y.timestamp - x.timestamp);
 
@@ -4784,45 +4837,54 @@ window.addEventListener("load", event => {
 
                         self.update(self.likes, self.maxTags);
 
-                        const response = await fetch("/images/ShootingStar.svg", {
-                            method: "GET"
-                        });
+                        if (recent.length > 0) {
+                            function _random(min, max) {
+                                min = Math.ceil(min);
+                                max = Math.floor(max);
 
-                        if (response.ok) {
-                            const dataURL = await new Promise(async (resolve, reject) => {
-                                const reader = new FileReader();
+                                return Math.floor(Math.random() * (max - min)) + min;
+                            }
 
-                                reader.onload = () => {
-                                    resolve(reader.result);
-                                };
-                                reader.onerror = () => {
-                                    reject(reader.error);
-                                };
-                                reader.readAsDataURL(await response.blob());
+                            const response = await fetch("/images/ShootingStar.svg", {
+                                method: "GET"
                             });
-                            const degrees = -45;
 
-                            for (let i = 0; i < updated.length; i++) {
-                                const id = updated[i].id;
+                            if (response.ok) {
+                                const dataURL = await new Promise(async (resolve, reject) => {
+                                    const reader = new FileReader();
 
-                                if (id in this.background.shootingStars === false) {
-                                    const offset = _random(-100, 100);
-                                    const text = typeof (updated[i].text) === "string" ? updated[i].text : Object.keys(updated[i].text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (updated[i].text[y]) === "string" ? updated[i].text[y] : updated[i].text[y].name), "");
+                                    reader.onload = () => {
+                                        resolve(reader.result);
+                                    };
+                                    reader.onerror = () => {
+                                        reject(reader.error);
+                                    };
+                                    reader.readAsDataURL(await response.blob());
+                                });
+                                const degrees = -45;
 
-                                    this.background.shootingStars[id] = { text: text, author: updated[i].author, url: dataURL, offset: offset, x: 100, y: 0, opacity: 0, rotation: degrees, delay: _random(0, 1000), duration: text.length * 1000, state: "running" };
+                                for (let i = 0; i < recent.length; i++) {
+                                    const id = recent[i].id;
 
-                                    anime({
-                                        targets: this.background.shootingStars[id],
-                                        x: [{ value: 0, delay: 0, easing: "linear" }],
-                                        y: [{ value: 100, delay: 0, easing: "linear" }],
-                                        opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
-                                        delay: _random(0, 1000),
-                                        duration: text.length * 1000,
-                                        round: 100,
-                                        complete: () => {
-                                            delete self.background.shootingStars[id];
-                                        }
-                                    });
+                                    if (id in self.background.shootingStars === false) {
+                                        const offset = _random(-100, 100);
+                                        const text = typeof (recent[i].text) === "string" ? recent[i].text : Object.keys(recent[i].text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (recent[i].text[y]) === "string" ? recent[i].text[y] : recent[i].text[y].name), "");
+
+                                        self.background.shootingStars[id] = { text: text, author: recent[i].author, url: dataURL, offset: offset, x: 100, y: 0, opacity: 0, rotation: degrees, delay: _random(0, 1000), duration: text.length * 1000, state: "running" };
+
+                                        anime({
+                                            targets: self.background.shootingStars[id],
+                                            x: [{ value: 0, delay: 0, easing: "linear" }],
+                                            y: [{ value: 100, delay: 0, easing: "linear" }],
+                                            opacity: [{ value: 1, easing: "easeOutSine" }, { value: 0, delay: 0, easing: "easeInSine" }],
+                                            delay: _random(0, 1000),
+                                            duration: text.length * 1000,
+                                            round: 100,
+                                            complete: () => {
+                                                delete self.background.shootingStars[id];
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         }
