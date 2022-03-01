@@ -67,10 +67,10 @@ renderer.outputEncoding = sRGBEncoding;
 //renderer.autoClear = false;
 
 const CAMERA_FOV = 60.0;
-const CAMERA_Z = 1.25;
+const CAMERA_Z = 1.5;
 const camera = new PerspectiveCamera(CAMERA_FOV, renderer.domElement.width / renderer.domElement.height, 0.1, 1000);
 
-camera.position.set(0.0, 1.25, CAMERA_Z);
+camera.position.set(0.0, 1.1, CAMERA_Z);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
