@@ -428,6 +428,27 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": [
+                        "ミルヒちゃんもいっしょに",
+                        [
+                            "する事"
+                        ],
+                        "しようね"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "ミルヒちゃんのぱんつクンカクンカしよぉ"
                 },
                 {
@@ -464,7 +485,7 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
-                    "text": "ミルヒちゃんのレモネード飲みたいよぉ"
+                    "text": "ミルヒちゃんのレモネードを飲みたいよぉ"
                 },
                 {
                     "type": "Sequence",
