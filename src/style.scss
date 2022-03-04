@@ -1301,7 +1301,6 @@ label .scrollable > div {
     > .level:first-child {
         display: flex;
         flex-direction: column;
-        overflow: hidden;
 
         > .level-item:nth-child(1) {
             padding: 16px 16px 16px 16px;
