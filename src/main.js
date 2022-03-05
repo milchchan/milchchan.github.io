@@ -4927,11 +4927,11 @@ window.addEventListener("load", event => {
         app.canvasSize.alternative.height = app.character.alternative.height;
         app.canvasSize.alternative.deviceWidth = app.character.alternative.width * window.devicePixelRatio;
         app.canvasSize.alternative.deviceHeight = app.character.alternative.height * window.devicePixelRatio;
-        app.animationQueue.unshift({ character: app.character, images: [].concat(app.cachedSprites) });
+        /*app.animationQueue.unshift({ character: app.character, images: [].concat(app.cachedSprites) });
 
         if (app.alternative !== null) {
             app.animationQueue.unshift({ character: app.character.alternative, images: [].concat(app.alternativeCachedSprites) });
-        }
+        }*/
 
         //app.$refs.ticker.style.width = document.body.querySelector("#input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(1) form").getBoundingClientRect().width + 'px';
 
