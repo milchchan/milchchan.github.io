@@ -157,23 +157,6 @@
                     "type": "Animation",
                     "frames": [
                         {
-                            "type": "Animation",
-                            "frames": [
-                                {
-                                    "iterations": 1,
-                                    "images": [
-                                        {
-                                            "x": 0,
-                                            "y": 0,
-                                            "width": 304,
-                                            "height": 480,
-                                            "source": "/images/Milchchan.png"
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
                             "iterations": 1,
                             "images": [
                                 {
