@@ -291,7 +291,8 @@
                             v-bind:style="{ left: String(star.offset + star.x) + '%', top: String(star.y) + '%', transform: 'rotate(' + String(star.rotation) + 'deg)', opacity: String(star.opacity) }"
                             v-bind:key="star">
                             <img alt="Shooting Star" v-bind:src="star.url"
-                                v-bind:style="{ animationDelay: String(star.delay) + 'ms', animationPlayState: star.state }" v-cloak>
+                                v-bind:style="{ animationDelay: String(star.delay) + 'ms', animationPlayState: star.state }"
+                                v-cloak>
                             <span class="has-text-weight-bold is-uppercase" v-text="star.text"></span>
                         </div>
                     </transition-group>
@@ -451,7 +452,7 @@
                     ref="three" v-show="isVisible"></div>
             </transition>
             <transition name="slide">
-                <div id="character" oncontextmenu="return false;"
+                <div id="character" @contextmenu.prevent
                     v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto', width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
                     @click="activate()" v-show="character !== null && character.visible">
                     <canvas v-bind:width="canvasSize.deviceWidth" v-bind:height="canvasSize.deviceHeight"
@@ -460,7 +461,7 @@
                 </div>
             </transition>
             <transition name="alternative">
-                <div id="alternative" oncontextmenu="return false;"
+                <div id="alternative" @contextmenu.prevent
                     v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto', width: canvasSize.alternative.width + 'px', height: canvasSize.alternative.height + 'px' }"
                     v-show="alternative !== null">
                     <canvas v-bind:width="canvasSize.alternative.deviceWidth"
@@ -2262,7 +2263,7 @@
                                             <article class="media">
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <form onsubmit="return false;" v-cloak>
+                                                        <form @submit.prevent v-cloak>
                                                             <div class="field has-addons">
                                                                 <div class="control is-expanded">
                                                                     <input class="input" type="text" placeholder="セリフ"
@@ -3265,7 +3266,7 @@
                             <transition name="popup" v-on:after-enter="$refs.text.focus();"
                                 v-on:before-leave="/*$refs.text.blur();*/">
                                 <nav class="level" v-if="isLearning">
-                                    <form onsubmit="return false;" v-cloak>
+                                    <form @submit.prevent v-cloak>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
                                                 <input class="input is-rounded" type="text" placeholder="教える言葉"
