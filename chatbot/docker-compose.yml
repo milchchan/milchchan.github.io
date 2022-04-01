@@ -1,0 +1,13 @@
+version: '3'
+services:
+  chatbot:
+    container_name: "chatbot"
+    build: .
+    restart: always
+    tty: true
+    volumes:
+      - logs:/app/logs
+    ports:
+      - 8000:8000
+volumes:
+  logs:

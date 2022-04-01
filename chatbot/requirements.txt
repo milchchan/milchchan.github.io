@@ -1,0 +1,9 @@
+uvicorn
+fastapi
+#numpy
+transformers==4.17.0
+sentencepiece==0.1.96
+--find-links https://download.pytorch.org/whl/cpu
+torch==1.11.0
+#torchvision
+#torchaudio
