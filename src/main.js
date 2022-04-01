@@ -4381,9 +4381,6 @@ window.addEventListener("load", event => {
                 this.next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
                 this.next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
                 this.isRevealed = true;
-            } else if (window.location.pathname !== "/") {
-                console.log(window.location.pathname);
-                window.location.assign(window.location.pathname);
             }
 
             if (characterStorageItem) {
