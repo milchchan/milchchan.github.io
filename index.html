@@ -96,9 +96,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/src/style.scss">
 </head>
 
@@ -260,12 +260,12 @@
         <div class="container">
             <div class="wrap">
                 <div class="frame">
-                    <div class="background"
+                    <div class="background is-hidden"
                         v-bind:style="{ backgroundColor: background.color === null ? 'transparent' : background.color }">
                         <div v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }"
                             v-for="image in background.images" v-bind:key="image" v-cloak></div>
                     </div>
-                    <div class="background" v-if="background.tags">
+                    <div class="background is-hidden" v-if="background.tags">
                         <div class="columns is-centered"
                             v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
                             <div class="column is-half is-mobile">
@@ -281,7 +281,29 @@
                             </div>
                         </div>
                     </div>
-                    <transition-group name="sky-item-list" class="sky" tag="div">
+                    <div class="wall">
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
+                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                    </div>
+                    <transition-group name="sky-item-list" class="sky is-hidden" tag="div">
                         <div class="star" alt="Star"
                             v-bind:style="{ left: String(Math.floor(100.0 * star.x)) + '%', top: String(Math.floor(100.0 * star.y)) + '%', animationDelay: String(star.delay) + 'ms', animationDuration: String(star.duration) + 'ms', animationPlayState: star.state }"
                             v-for="star in background.stars" v-bind:key="star">
@@ -308,7 +330,7 @@
                             </div>
                         </div>
                     </transition>
-                    <div class="columns is-desktop" ref="ticker">
+                    <div class="columns is-desktop is-hidden" ref="ticker">
                         <div class="column is-full is-mobile has-content-centered">
                             <div class="control has-text-centered">
                                 <nav class="level">
