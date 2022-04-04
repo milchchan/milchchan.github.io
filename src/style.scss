@@ -2,9 +2,22 @@
 @import "@fortawesome/fontawesome-free/css/all.css";
 
 $primary: #68e6ff;
-$family-sans-serif: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", BlinkMacSystemFont, -apple-system,
-    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica",
-    "Arial", sans-serif;
+$family-sans-serif: "Hiragino Kaku Gothic ProN",
+"Hiragino Sans",
+"Noto Sans JP",
+BlinkMacSystemFont,
+-apple-system,
+"Segoe UI",
+"Roboto",
+"Oxygen",
+"Ubuntu",
+"Cantarell",
+"Fira Sans",
+"Droid Sans",
+"Helvetica Neue",
+"Helvetica",
+"Arial",
+sans-serif;
 
 @import "bulma/bulma";
 
@@ -103,8 +116,8 @@ label.checkbox .custom {
     font-size: 1rem;
 }
 
-label.checkbox input[type="checkbox"] + .custom:before,
-label.checkbox input[type="radio"] + .custom:before {
+label.checkbox input[type="checkbox"]+.custom:before,
+label.checkbox input[type="radio"]+.custom:before {
     font-weight: 900;
     font-family: "Font Awesome 6 Free";
     content: "\f00c";
@@ -112,8 +125,8 @@ label.checkbox input[type="radio"] + .custom:before {
     text-shadow: none;
 }
 
-label.checkbox input[type="checkbox"]:checked + .custom:before,
-label.checkbox input[type="radio"]:checked + .custom:before {
+label.checkbox input[type="checkbox"]:checked+.custom:before,
+label.checkbox input[type="radio"]:checked+.custom:before {
     color: var(--accent-color);
     text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
     transition: 0.5s;
@@ -139,9 +152,9 @@ label .scrollable:hover {
     transition: 0.5s ease-out;
 }
 
-a .scrollable > div,
-button .scrollable > div,
-label .scrollable > div {
+a .scrollable>div,
+button .scrollable>div,
+label .scrollable>div {
     box-sizing: content-box;
     vertical-align: middle;
 }
@@ -170,12 +183,12 @@ label .scrollable > div {
 .columns {
     margin: 0 !important;
 
-    > .column {
+    >.column {
         padding: 0 !important;
     }
 }
 
-.tags > .tag {
+.tags>.tag {
     margin: 0px;
     padding: 16px 32px 16px 32px;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -237,12 +250,12 @@ label .scrollable > div {
     align-items: flex-start;
     justify-content: center !important;
 
-    > .control {
+    >.control {
         margin: 0 !important;
         padding: 8px 8px 8px 8px;
     }
 
-    button > .clip {
+    button>.clip {
         display: inline-block;
         overflow: hidden;
         box-sizing: content-box;
@@ -250,24 +263,24 @@ label .scrollable > div {
     }
 }
 
-.level > .level-item > .tags {
+.level>.level-item>.tags {
     margin: -8px;
     padding: 0;
 }
 
-.media > .media-content > .wrap {
+.media>.media-content>.wrap {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     overflow: hidden;
 
-    > picture {
+    >picture {
         margin-left: 0%;
         width: auto;
         height: 100%;
         animation: frame 1.33s steps(4) infinite;
 
-        > img {
+        >img {
             object-fit: none;
             object-position: 0% 0%;
             width: 100%;
@@ -285,11 +298,11 @@ label .scrollable > div {
 .is-superellips {
     transform: rotate(-19deg);
 
-    > figure {
+    >figure {
         border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
         overflow: hidden !important;
 
-        > picture {
+        >picture {
             transform: rotate(19deg);
         }
     }
@@ -325,7 +338,7 @@ label .scrollable > div {
         padding: 0;
         max-height: 10vmin;
 
-        g > path {
+        g>path {
             fill: #ffffff;
             fill-opacity: 0;
             stroke: #ffffff !important;
@@ -351,7 +364,7 @@ label .scrollable > div {
     justify-content: center;
     align-items: center;
 
-    > svg {
+    >svg {
         position: relative;
         object-fit: cover;
         width: 100%;
@@ -359,12 +372,12 @@ label .scrollable > div {
         height: 100%;
         animation: loading 30s linear infinite;
 
-        > radialGradient > stop {
+        >radialGradient>stop {
             stop-color: rgb(255, 255, 255) !important;
         }
     }
 
-    > .media {
+    >.media {
         position: absolute;
     }
 }
@@ -385,7 +398,7 @@ label .scrollable > div {
     background: transparent;
     touch-action: none;
 
-    > .bar {
+    >.bar {
         position: relative;
         margin: 0;
         border: 0px solid transparent;
@@ -405,7 +418,7 @@ label .scrollable > div {
         animation-play-state: paused;
     }
 
-    > .animating {
+    >.animating {
         animation-play-state: running;
     }
 }
@@ -457,8 +470,8 @@ label .scrollable > div {
     align-items: center;
 }
 
-#character > canvas,
-#alternative > canvas {
+#character>canvas,
+#alternative>canvas {
     position: absolute;
     display: block;
     background-color: transparent;
@@ -500,6 +513,29 @@ label .scrollable > div {
     }
 }
 
+.wall {
+    position: absolute;
+    top: calc(calc(100% - 100vh) / 2);
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    background: transparent;
+    overflow: hidden;
+
+    .line {
+        height: fit-content;
+
+        span {
+            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+            font-size: 10vh;
+            line-height: 10vh;
+            color: rgb(255, 255, 255);
+            text-shadow: none;
+            vertical-align: middle;
+        }
+    }
+}
+
 .sky {
     position: absolute;
     width: 100%;
@@ -534,7 +570,7 @@ label .scrollable > div {
         height: fit-content;
         transform-origin: 0% 0%;
 
-        > img {
+        >img {
             animation-name: glow;
             animation-delay: 0s;
             animation-duration: 1s;
@@ -543,7 +579,7 @@ label .scrollable > div {
             animation-play-state: paused;
         }
 
-        > span {
+        >span {
             margin: 0;
             padding: 0px 0px 0px 8px;
             font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
@@ -559,7 +595,7 @@ label .scrollable > div {
                 mask-image: linear-gradient(to right, black 75%, rgba(0, 0, 0, 0.5));
             }*/
 
-        > span + span:last-of-type {
+        >span+span:last-of-type {
             opacity: 0.5;
         }
     }
@@ -594,7 +630,7 @@ label .scrollable > div {
     background-repeat: no-repeat;
     overflow: hidden;
 
-    > div {
+    >div {
         display: block;
         position: relative;
         background-color: transparent;
@@ -607,20 +643,20 @@ label .scrollable > div {
         overflow: hidden;
     }
 
-    > .columns {
+    >.columns {
         display: flex;
         width: 100%;
         background: transparent !important;
         justify-content: center;
         align-items: center;
 
-        > .column {
+        >.column {
             padding: 16px !important;
 
-            > .tags {
+            >.tags {
                 margin: -8px;
 
-                > .control > .tags > .tag {
+                >.control>.tags>.tag {
                     margin: 0px;
                     padding: 8px 16px 8px 16px;
                     border: 2px solid rgba(255, 255, 255, 1) !important;
@@ -637,7 +673,7 @@ label .scrollable > div {
         }
     }
 
-    > div::before {
+    >div::before {
         display: block;
         position: absolute;
         left: 0;
@@ -647,7 +683,7 @@ label .scrollable > div {
         content: "";
     }
 
-    > img {
+    >img {
         position: absolute;
         object-fit: cover;
         width: 100%;
@@ -671,13 +707,12 @@ label .scrollable > div {
 
 .sidebar {
     position: relative;
-    padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px)
-        calc(env(safe-area-inset-left, 0px) + 16px);
+    padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 16px);
     width: fit-content;
     height: 100%;
     background: #ffffff;
 
-    > .level {
+    >.level {
         display: flex;
         margin: 0;
         padding: 0;
@@ -686,7 +721,7 @@ label .scrollable > div {
         align-items: center;
         justify-content: flex-start;
 
-        > .level-item:first-child {
+        >.level-item:first-child {
             display: flex;
             top: 0;
             margin: 0;
@@ -695,7 +730,7 @@ label .scrollable > div {
             align-items: flex-start;
             justify-content: flex-start;
 
-            > .level {
+            >.level {
                 display: flex;
                 margin: 0;
                 padding: 0;
@@ -703,11 +738,11 @@ label .scrollable > div {
                 align-items: center;
                 justify-content: flex-start;
 
-                > .level-item:first-child {
+                >.level-item:first-child {
                     margin: 0;
                     padding: 0;
 
-                    > button {
+                    >button {
                         margin: 0px;
                         border: 0px solid transparent;
                         border-radius: 290486px;
@@ -719,7 +754,7 @@ label .scrollable > div {
                         color: var(--accent-color) !important;
                         transition: 0.5s;
 
-                        > span {
+                        >span {
                             margin: 0 !important;
                             width: 1rem !important;
                             height: 1rem !important;
@@ -727,7 +762,7 @@ label .scrollable > div {
                     }
                 }
 
-                > .level-item:not(:first-child) {
+                >.level-item:not(:first-child) {
                     margin: 0;
                     padding: 32px 0px 0px 0px;
 
@@ -775,7 +810,7 @@ label .scrollable > div {
                             justify-content: center;
                         }
 
-                        .icon + .wrap {
+                        .icon+.wrap {
                             margin: 8px 0px 0px 0px !important;
                             color: var(--main-color);
                             transition: 0.5s;
@@ -801,13 +836,13 @@ label .scrollable > div {
             }
         }
 
-        > .level-item:last-child:not(:first-child) {
+        >.level-item:last-child:not(:first-child) {
             position: absolute;
             bottom: 0;
             margin: 0;
             padding: 0px 0px 32px 0px;
 
-            .image > button {
+            .image>button {
                 margin: 0;
                 border: 0px solid transparent;
                 padding: 0;
@@ -825,10 +860,10 @@ label .scrollable > div {
     max-width: 100% !important;
     height: 100%;
 
-    > .wrap > .frame {
-        background: linear-gradient(0deg, var(--accent-color), var(--main-color));
+    >.wrap>.frame {
+        background: transparent;
 
-        > .columns:last-of-type {
+        >.columns:last-of-type {
             position: absolute;
             bottom: 0;
             margin: 0;
@@ -840,7 +875,7 @@ label .scrollable > div {
             line-height: 0.75rem !important;
             transition: 0.5s;
 
-            > .column > .control {
+            >.column>.control {
                 pointer-events: none;
                 margin: 0;
                 margin: 4px 16px 4px 16px;
@@ -925,7 +960,7 @@ label .scrollable > div {
     position: relative;
     margin: 0;
     padding: 0;
-    border-radius: 16px;
+    border-radius: 0px;
     width: 100%;
     max-width: 100% !important;
     height: 100%;
@@ -941,7 +976,7 @@ label .scrollable > div {
     min-height: 100%;
     overflow: hidden;
 
-    > canvas {
+    >canvas {
         position: relative;
         display: block;
         overflow: hidden;
@@ -977,10 +1012,10 @@ label .scrollable > div {
     align-items: flex-start;
     justify-content: flex-start;
 
-    > .container > .wrap {
+    >.container>.wrap {
         position: absolute;
         margin: 0;
-        padding: 16px;
+        padding: 0px;
         width: 100%;
         height: 100%;
         min-height: 100%;
@@ -1009,14 +1044,14 @@ label .scrollable > div {
         color: var(--main-color) !important;
         transition: 0.5s;
 
-        > span {
+        >span {
             margin: 0 !important;
             width: 1rem !important;
             height: 1rem !important;
         }
     }
 
-    > .level {
+    >.level {
         display: flex;
         margin: 0;
         padding: 0;
@@ -1025,21 +1060,21 @@ label .scrollable > div {
         justify-content: center;
         width: fit-content;
 
-        > .level-item {
+        >.level-item {
             margin: 0;
             padding: 0;
 
-            > .control {
+            >.control {
                 margin: 0;
                 padding: 24px 0px 0px 0px;
 
-                > .level {
+                >.level {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: flex-start;
 
-                    > .level-item:first-child {
+                    >.level-item:first-child {
                         pointer-events: none;
                         margin: 0px 0px 8px 0px;
                         touch-action: none;
@@ -1047,7 +1082,7 @@ label .scrollable > div {
                         user-select: none;
                     }
 
-                    > .level-item:nth-child(2) {
+                    >.level-item:nth-child(2) {
                         pointer-events: none;
                         margin: 8px 0px 8px 0px;
                         touch-action: none;
@@ -1065,7 +1100,7 @@ label .scrollable > div {
                             backdrop-filter: blur(4px);
                             -webkit-backdrop-filter: blur(4px);
 
-                            > .bar {
+                            >.bar {
                                 position: relative;
                                 border-radius: 290486px;
                                 width: 128px;
@@ -1076,15 +1111,15 @@ label .scrollable > div {
                         }
                     }
 
-                    > .level-item {
-                        > .level {
+                    >.level-item {
+                        >.level {
                             margin: 0px -8px 0px -8px;
                             display: flex;
                             flex-direction: row;
                             align-items: flex-start;
                             justify-content: center;
 
-                            > .level-item {
+                            >.level-item {
                                 margin: 0px 8px 0px 8px;
                             }
                         }
@@ -1126,7 +1161,7 @@ label .scrollable > div {
             justify-content: center;
             align-items: flex-start;
 
-            .wrap > .control,
+            .wrap>.control,
             .control {
                 display: flex;
                 margin: 0;
@@ -1135,7 +1170,7 @@ label .scrollable > div {
                 height: fit-content;
                 justify-content: center;
 
-                > .level {
+                >.level {
                     display: flex;
                     margin: -8px 0px -8px 0px;
                     padding: 16px 0px 0px 0px;
@@ -1145,7 +1180,7 @@ label .scrollable > div {
                     justify-content: center;
                     align-items: center;
 
-                    > .level-item {
+                    >.level-item {
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -1180,11 +1215,11 @@ label .scrollable > div {
                     margin: 0px 8px 0px 0px !important;
                     flex-direction: row;
 
-                    > span:first-child:not(:last-child) {
+                    >span:first-child:not(:last-child) {
                         margin: 0 !important;
                     }
 
-                    > span:not(:first-child) {
+                    >span:not(:first-child) {
                         margin: 0px 0px 0px 8px !important;
                     }
                 }
@@ -1226,6 +1261,7 @@ label .scrollable > div {
 
 .left,
 .right {
+
     button,
     .button {
         margin: 0px;
@@ -1246,7 +1282,7 @@ label .scrollable > div {
         border-radius: 290486px !important;
         padding: 16px !important;
 
-        > span {
+        >span {
             margin: 0 !important;
             width: 1rem !important;
             height: 1rem !important;
@@ -1268,7 +1304,7 @@ label .scrollable > div {
     overflow-x: hidden;
     overflow-y: auto;
 
-    > .columns {
+    >.columns {
         display: flex;
         top: 0;
         margin: 0;
@@ -1280,88 +1316,88 @@ label .scrollable > div {
         overflow-x: hidden;
         overflow-y: auto;
 
-        > .column {
+        >.column {
             flex: none;
             margin: auto !important;
             overflow-x: hidden;
             overflow-y: auto;
             width: 100%;
 
-            .tags > .control > .tags > .tag {
+            .tags>.control>.tags>.tag {
                 color: var(--main-color);
             }
         }
     }
 }
 
-#menu > .columns > .column > .control {
+#menu>.columns>.column>.control {
     margin: 0;
     padding: 0px 16px 0px 16px;
 
-    > .level:first-child {
+    >.level:first-child {
         display: flex;
         flex-direction: column;
 
-        > .level-item:nth-child(1) {
+        >.level-item:nth-child(1) {
             padding: 16px 16px 16px 16px;
         }
 
-        > .level-item {
+        >.level-item {
             margin: 0;
             padding: 0px 16px 16px 16px;
             width: 100%;
 
-            > .level {
+            >.level {
                 margin: -8px -8px -8px -8px;
                 flex-direction: column;
 
-                > .level-item {
+                >.level-item {
                     margin: 0;
                     padding: 8px 8px 8px 8px;
 
-                    > .level {
+                    >.level {
                         margin: -8px -8px -8px -8px;
                         flex-direction: row;
 
-                        > .level-item {
+                        >.level-item {
                             margin: 0;
                             padding: 8px 8px 8px 8px;
 
-                            > .level {
+                            >.level {
                                 margin: -8px -8px -8px -8px;
                                 flex-direction: column;
 
-                                > .level-item {
+                                >.level-item {
                                     margin: 0;
                                     padding: 8px 8px 8px 8px;
 
-                                    > .level {
+                                    >.level {
                                         margin: -8px -8px -8px -8px;
                                         flex-direction: row;
 
-                                        > .level-item {
+                                        >.level-item {
                                             margin: 0;
                                             padding: 8px 8px 8px 8px;
 
-                                            > .level {
+                                            >.level {
                                                 margin: -8px -8px -8px -8px;
                                                 flex-direction: column;
 
-                                                > .level-item {
+                                                >.level-item {
                                                     margin: 0;
                                                     padding: 8px 8px 8px 8px;
 
-                                                    > .level {
+                                                    >.level {
                                                         margin: -8px -8px -8px -8px;
                                                         flex-direction: row;
 
-                                                        > .level-item {
+                                                        >.level-item {
                                                             margin: 0;
                                                             padding: 8px 8px 8px 8px;
                                                         }
                                                     }
 
-                                                    > .media > .media-content > .content {
+                                                    >.media>.media-content>.content {
                                                         display: flex;
                                                         flex-direction: row;
                                                         justify-content: center;
@@ -1375,7 +1411,7 @@ label .scrollable > div {
                                                 }
                                             }
 
-                                            > .media > .media-content > .content {
+                                            >.media>.media-content>.content {
                                                 display: flex;
                                                 flex-direction: row;
                                                 justify-content: center;
@@ -1399,7 +1435,7 @@ label .scrollable > div {
                                                     background-clip: padding-box;
                                                     height: initial;
 
-                                                    > .icon {
+                                                    >.icon {
                                                         margin: 0 !important;
                                                         width: 1rem !important;
                                                         height: 1rem !important;
@@ -1454,7 +1490,7 @@ label .scrollable > div {
                                                     transition: 0.5s;
                                                 }
 
-                                                span:first-child + .wrap {
+                                                span:first-child+.wrap {
                                                     margin: 0px 0px 0px 8px !important;
                                                 }
 
@@ -1476,8 +1512,8 @@ label .scrollable > div {
                                         }
                                     }
 
-                                    > button,
-                                    > .button {
+                                    >button,
+                                    >.button {
                                         margin: 0px;
                                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
                                         padding: 16px 32px 16px 32px;
@@ -1489,8 +1525,8 @@ label .scrollable > div {
                                         -webkit-backdrop-filter: blur(4px);
                                     }
 
-                                    > button.is-circle,
-                                    > .button.is-circle {
+                                    >button.is-circle,
+                                    >.button.is-circle {
                                         border-radius: 290486px;
                                         padding: 16px !important;
 
@@ -1502,8 +1538,8 @@ label .scrollable > div {
                                         }
                                     }
 
-                                    > button.is-primary,
-                                    > .button.is-primary {
+                                    >button.is-primary,
+                                    >.button.is-primary {
                                         background-color: var(--primary-background-color) !important;
                                         transition: 0.5s;
 
@@ -1513,7 +1549,7 @@ label .scrollable > div {
                                         }
                                     }
 
-                                    > .card {
+                                    >.card {
                                         position: relative;
                                         display: flex;
                                         border-radius: 16px;
@@ -1525,7 +1561,7 @@ label .scrollable > div {
                                         box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%),
                                             0 0px 0 1px rgb(10 10 10 / 2%);
 
-                                        > .card-image {
+                                        >.card-image {
                                             position: absolute;
                                             width: 100%;
                                             height: 100%;
@@ -1547,7 +1583,7 @@ label .scrollable > div {
                                             }
                                         }
 
-                                        > .card-content {
+                                        >.card-content {
                                             z-index: 1;
                                             position: relative;
                                             display: block;
@@ -1555,7 +1591,8 @@ label .scrollable > div {
                                             margin: 0 auto;
                                             width: fit-content;
 
-                                            .media > .media-content {
+                                            .media>.media-content {
+
                                                 button,
                                                 .button {
                                                     margin: 0px;
@@ -1594,7 +1631,7 @@ label .scrollable > div {
                                                 }
                                             }
 
-                                            > .content > .field {
+                                            >.content>.field {
                                                 margin: -8px;
                                                 padding: 0;
                                                 display: flex;
@@ -1652,12 +1689,12 @@ label .scrollable > div {
                                                             transition: 0.5s;
                                                         }
 
-                                                        span.wrap + .icon:last-of-type {
+                                                        span.wrap+.icon:last-of-type {
                                                             color: var(--main-color);
                                                             transition: 0.5s;
                                                         }
 
-                                                        .icon:first-child + div {
+                                                        .icon:first-child+div {
                                                             margin: 0px 8px 0px 0px;
                                                         }
 
@@ -1696,7 +1733,7 @@ label .scrollable > div {
                                         }
                                     }
 
-                                    > .media {
+                                    >.media {
                                         position: relative;
                                         margin: 0px 0px 16px 0px;
                                         border: 0px solid rgba(255, 255, 255, 0.1) !important;
@@ -1708,13 +1745,13 @@ label .scrollable > div {
                                         width: 100%;
                                         height: fit-content;
 
-                                        > .media-content {
+                                        >.media-content {
                                             position: relative;
                                             display: flex;
                                             border-radius: 16px;
                                             overflow: hidden !important;
 
-                                            > .content {
+                                            >.content {
                                                 display: flex;
                                                 flex-direction: column;
                                                 justify-content: center;
@@ -1722,11 +1759,11 @@ label .scrollable > div {
                                                 padding: 16px;
                                             }
 
-                                            > figure {
+                                            >figure {
                                                 position: relative;
                                                 width: 100%;
 
-                                                > picture {
+                                                >picture {
                                                     position: absolute;
                                                     width: 100%;
                                                     height: 100%;
@@ -1739,7 +1776,7 @@ label .scrollable > div {
                                                     }
                                                 }
 
-                                                > div {
+                                                >div {
                                                     display: flex;
                                                     width: 100%;
                                                     height: 100%;
@@ -1748,7 +1785,7 @@ label .scrollable > div {
                                                     justify-content: center;
                                                     align-items: center;
 
-                                                    > div:first-child {
+                                                    >div:first-child {
                                                         display: flex;
                                                         margin: 0;
                                                         padding: 16px;
@@ -1760,7 +1797,7 @@ label .scrollable > div {
                                                         justify-content: center;
                                                         align-items: center;
 
-                                                        > div {
+                                                        >div {
                                                             display: flex;
                                                             top: 0;
                                                             width: 256px;
@@ -1771,7 +1808,7 @@ label .scrollable > div {
                                                             justify-content: center;
                                                             align-items: center;
 
-                                                            > div {
+                                                            >div {
                                                                 top: 0;
                                                                 margin: auto !important;
                                                                 overflow-x: hidden;
@@ -1779,10 +1816,10 @@ label .scrollable > div {
                                                                 width: 100%;
                                                                 height: fit-content;
 
-                                                                > div {
+                                                                >div {
                                                                     transform: rotate(0.03deg);
 
-                                                                    > span {
+                                                                    >span {
                                                                         color: var(--main-color);
                                                                         font-family: "Barlow", "M PLUS Rounded 1c",
                                                                             sans-serif;
@@ -1790,13 +1827,13 @@ label .scrollable > div {
                                                                     }
                                                                 }
 
-                                                                > div:first-child {
+                                                                >div:first-child {
                                                                     margin: 0;
                                                                     padding: 0;
                                                                     text-align: center;
                                                                 }
 
-                                                                > div:last-child {
+                                                                >div:last-child {
                                                                     margin: 0;
                                                                     padding: 8px 0px 0px 0px;
                                                                     display: flex;
@@ -1804,7 +1841,7 @@ label .scrollable > div {
                                                                     align-items: center;
                                                                     line-height: 1rem;
 
-                                                                    > span {
+                                                                    >span {
                                                                         color: var(--accent-color);
                                                                     }
                                                                 }
@@ -1812,15 +1849,15 @@ label .scrollable > div {
                                                         }
                                                     }
 
-                                                    > div:last-child:not(:first-child) {
+                                                    >div:last-child:not(:first-child) {
                                                         margin: 0;
                                                         padding: 0;
 
-                                                        > .level {
+                                                        >.level {
                                                             margin: -8px -8px -8px -8px;
                                                             flex-direction: row;
 
-                                                            > .level-item {
+                                                            >.level-item {
                                                                 margin: 0;
                                                                 padding: 8px 8px 24px 8px;
                                                             }
@@ -1854,9 +1891,7 @@ label .scrollable > div {
 
                                                         button.is-primary,
                                                         .button.is-primary {
-                                                            background-color: var(
-                                                                --primary-background-color
-                                                            ) !important;
+                                                            background-color: var(--primary-background-color) !important;
                                                             transition: 0.5s;
 
                                                             span.wrap,
@@ -1868,7 +1903,7 @@ label .scrollable > div {
                                                 }
                                             }
 
-                                            > .level {
+                                            >.level {
                                                 z-index: 1;
                                                 position: absolute;
                                                 display: flex;
@@ -1878,7 +1913,7 @@ label .scrollable > div {
                                                 width: 256px;
                                                 height: 256px;
 
-                                                > .level-item:first-child:not(:last-child) {
+                                                >.level-item:first-child:not(:last-child) {
                                                     display: flex;
                                                     margin: 0;
                                                     padding: 16px 16px 0px 16px;
@@ -1887,21 +1922,21 @@ label .scrollable > div {
                                                     align-items: center;
                                                     width: 100%;
 
-                                                    > .level {
+                                                    >.level {
                                                         display: flex;
                                                         flex-direction: row;
                                                         justify-content: space-between;
                                                         align-items: center;
                                                         width: 100%;
 
-                                                        > .level-item:first-child {
+                                                        >.level-item:first-child {
                                                             display: flex;
                                                             flex-direction: column;
                                                             justify-content: flex-start;
                                                             align-items: flex-start;
                                                         }
 
-                                                        > .level-item:last-child {
+                                                        >.level-item:last-child {
                                                             display: flex;
                                                             flex-direction: column;
                                                             justify-content: flex-start;
@@ -1936,7 +1971,7 @@ label .scrollable > div {
                                                     }
                                                 }
 
-                                                > .level-item:last-child {
+                                                >.level-item:last-child {
                                                     display: flex;
                                                     margin: 0px 0px 16px 0px;
                                                     flex-direction: column;
@@ -1972,7 +2007,7 @@ label .scrollable > div {
                                                             color: var(--accent-color);
                                                         }
 
-                                                        span.wrap + .icon:last-of-type {
+                                                        span.wrap+.icon:last-of-type {
                                                             color: var(--accent-color);
                                                         }
 
@@ -1989,7 +2024,7 @@ label .scrollable > div {
                                         }
                                     }
 
-                                    > .media:before {
+                                    >.media:before {
                                         content: "";
                                         z-index: 1;
                                         position: absolute;
@@ -2068,7 +2103,7 @@ label .scrollable > div {
                                 }
                             }
 
-                            > .media > .media-content > .content {
+                            >.media>.media-content>.content {
                                 display: flex;
                                 flex-direction: column;
                                 justify-content: center;
@@ -2086,29 +2121,29 @@ label .scrollable > div {
                                         justify-content: center;
                                         align-items: center;
 
-                                        > span.icon:first-of-type {
+                                        >span.icon:first-of-type {
                                             color: #ffee00;
                                         }
 
-                                        > span:not(.icon) {
+                                        >span:not(.icon) {
                                             white-space: nowrap;
                                             color: var(--main-color);
                                             transition: 0.5s;
                                         }
 
-                                        > span:not(:first-of-type),
-                                        > div + span,
-                                        > span + div {
+                                        >span:not(:first-of-type),
+                                        >div+span,
+                                        >span+div {
                                             margin: 0px 0px 0px 16px;
                                         }
 
-                                        > div {
+                                        >div {
                                             display: flex;
                                             flex-direction: column;
                                             align-items: center;
                                             justify-content: center;
 
-                                            > span.icon:first-of-type {
+                                            >span.icon:first-of-type {
                                                 color: #ffee00;
                                             }
                                         }
@@ -2133,7 +2168,7 @@ label .scrollable > div {
                                     background-clip: padding-box;
                                     height: initial;
 
-                                    > .icon {
+                                    >.icon {
                                         margin: 0 !important;
                                         width: 1rem !important;
                                         height: 1rem !important;
@@ -2142,7 +2177,7 @@ label .scrollable > div {
                                 }
                             }
 
-                            > button {
+                            >button {
                                 margin: 0px;
                                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
                                 padding: 16px 32px 16px 32px;
@@ -2154,8 +2189,8 @@ label .scrollable > div {
                                 -webkit-backdrop-filter: blur(4px);
                             }
 
-                            > button.is-circle,
-                            > .button.is-circle {
+                            >button.is-circle,
+                            >.button.is-circle {
                                 border-radius: 290486px;
                                 padding: 16px !important;
 
@@ -2167,8 +2202,8 @@ label .scrollable > div {
                                 }
                             }
 
-                            > button.is-primary,
-                            > .button.is-primary {
+                            >button.is-primary,
+                            >.button.is-primary {
                                 background-color: var(--primary-background-color) !important;
                                 transition: 0.5s;
 
@@ -2180,7 +2215,7 @@ label .scrollable > div {
                         }
                     }
 
-                    > .media > .media-content > .content {
+                    >.media>.media-content>.content {
                         display: flex;
                         flex-direction: rows;
                         align-items: center;
@@ -2201,7 +2236,7 @@ label .scrollable > div {
                     }
                 }
 
-                > .level-item:last-child:not(:first-child) > .level > .level-item {
+                >.level-item:last-child:not(:first-child)>.level>.level-item {
                     button {
                         margin: 0px;
                         border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -2240,15 +2275,15 @@ label .scrollable > div {
                 }
             }
 
-            > .media > .media-content {
-                > .image > button {
+            >.media>.media-content {
+                >.image>button {
                     margin: 0;
                     border: 0px solid transparent;
                     padding: 0;
                     background: transparent;
                 }
 
-                > .content {
+                >.content {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -2259,8 +2294,8 @@ label .scrollable > div {
                         transition: 0.5s;
                     }
 
-                    > button,
-                    > .button {
+                    >button,
+                    >.button {
                         display: flex;
                         align-items: center;
                         margin: 0;
@@ -2297,12 +2332,12 @@ label .scrollable > div {
                             color: var(--accent-color);
                         }
 
-                        span.wrap + .icon:last-of-type {
+                        span.wrap+.icon:last-of-type {
                             color: var(--main-color);
                             transition: 0.5s;
                         }
 
-                        .icon:first-child + div {
+                        .icon:first-child+div {
                             margin: 0px 8px 0px 0px;
                         }
 
@@ -2311,8 +2346,8 @@ label .scrollable > div {
                         }
                     }
 
-                    > button.is-primary,
-                    > .button.is-primary {
+                    >button.is-primary,
+                    >.button.is-primary {
                         background-color: var(--primary-background-color) !important;
                         transition: 0.5s;
 
@@ -2322,12 +2357,12 @@ label .scrollable > div {
                         }
                     }
 
-                    > .balloon {
+                    >.balloon {
                         margin: -16px 0px 0px calc(100% + 64px);
                         transform: translate3d(0px, 16px, 0px);
 
-                        > button,
-                        > .button {
+                        >button,
+                        >.button {
                             display: flex;
                             align-items: center;
                             margin: 0;
@@ -2364,12 +2399,12 @@ label .scrollable > div {
                                 color: var(--accent-color);
                             }
 
-                            span.wrap + .icon:last-of-type {
+                            span.wrap+.icon:last-of-type {
                                 color: var(--main-color);
                                 transition: 0.5s;
                             }
 
-                            .icon:first-child + div {
+                            .icon:first-child+div {
                                 margin: 0px 4px 0px 0px;
                             }
 
@@ -2378,8 +2413,8 @@ label .scrollable > div {
                             }
                         }
 
-                        > button.is-primary,
-                        > .button.is-primary {
+                        >button.is-primary,
+                        >.button.is-primary {
                             background-color: var(--primary-background-color) !important;
                             transition: 0.5s;
 
@@ -2562,10 +2597,10 @@ label .scrollable > div {
                             padding: 16px 0px 0px 0px;
                         }
 
-                        > form {
+                        >form {
                             width: 100%;
 
-                            > .field {
+                            >.field {
                                 display: flex;
                                 margin: 0;
                                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -2606,7 +2641,7 @@ label .scrollable > div {
                                     button {
                                         padding: 16px !important;
 
-                                        > span {
+                                        >span {
                                             margin: 0 !important;
                                             width: 1rem !important;
                                             height: 1rem !important;
@@ -2633,20 +2668,20 @@ label .scrollable > div {
                         box-shadow: 20px 20px 60px #d0d0d0,
                             -20px -20px 60px #ffffff;*/
 
-                        > p {
+                        >p {
                             line-height: 1.25rem;
                         }
                     }
 
-                    .level:nth-last-of-type(1) > .level-item {
+                    .level:nth-last-of-type(1)>.level-item {
                         margin: 16px 0px 0px 0px;
                         padding: 0;
 
-                        > .level {
+                        >.level {
                             margin: -8px -8px -8px -8px;
                             padding: 0;
 
-                            > .level-item {
+                            >.level-item {
                                 margin: 8px 8px 8px 8px;
                                 padding: 0;
                             }
@@ -2696,7 +2731,7 @@ label .scrollable > div {
             }
         }
 
-        .level-item > .level > .level-item a.button.is-circle {
+        .level-item>.level>.level-item a.button.is-circle {
             margin: 0px;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 290486px !important;
@@ -2749,27 +2784,27 @@ label .scrollable > div {
             transform: rotate(0.03deg);
         }
 
-        h1 + h2 {
+        h1+h2 {
             margin: 12px 0px 0px 0px;
         }
 
-        span.icon + h2 {
+        span.icon+h2 {
             margin: 12px 0px 0px 0px;
         }
 
         svg g {
-            > g:nth-child(odd) > path {
+            >g:nth-child(odd)>path {
                 fill: var(--accent-color);
                 transition: 0.5s;
             }
 
-            > g:nth-child(even) > path {
+            >g:nth-child(even)>path {
                 fill: var(--main-color);
                 transition: 0.5s;
             }
         }
 
-        svg + h2 {
+        svg+h2 {
             margin: 8px 0px 0px 0px;
         }
 
@@ -2815,23 +2850,23 @@ label .scrollable > div {
                 margin: 0;
             }
 
-            span.icon + span.wrap {
+            span.icon+span.wrap {
                 margin: 0px 0px 0px 8px;
             }
         }
     }
 }
 
-.hud > .columns > .column {
-    > .level > .level-item > .media > .media-content > .content {
+.hud>.columns>.column {
+    >.level>.level-item>.media>.media-content>.content {
         overflow: hidden;
 
-        > .icon {
+        >.icon {
             color: var(--accent-color);
         }
     }
 
-    > .field {
+    >.field {
         margin: 0;
         padding: 16px 32px 16px 32px;
     }
@@ -2845,11 +2880,11 @@ label .scrollable > div {
     width: 100%;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));
 
-    .columns > .column > .control:last-child {
+    .columns>.column>.control:last-child {
         margin: 0;
         padding: 0;
 
-        > .level {
+        >.level {
             display: flex;
             margin: 0;
             padding: 0;
@@ -2857,12 +2892,12 @@ label .scrollable > div {
             align-items: flex-start;
             justify-content: flex-start;
 
-            > .level-item:nth-last-of-type(2) {
+            >.level-item:nth-last-of-type(2) {
                 margin: 0;
                 padding: 16px 32px 16px 32px;
                 width: 100%;
 
-                > .level {
+                >.level {
                     display: flex;
                     margin: 0;
                     padding: 0;
@@ -2871,7 +2906,7 @@ label .scrollable > div {
                     justify-content: space-between;
                     width: 100%;
 
-                    > .level-item:first-child {
+                    >.level-item:first-child {
                         display: flex;
                         margin: 0;
                         padding: 0;
@@ -2880,7 +2915,7 @@ label .scrollable > div {
                         justify-content: flex-start;
                     }
 
-                    > .level-item:last-child:not(:first-child) {
+                    >.level-item:last-child:not(:first-child) {
                         display: flex;
                         margin: 0;
                         padding: 0;
@@ -2889,11 +2924,11 @@ label .scrollable > div {
                         justify-content: flex-end;
                     }
 
-                    > .level-item {
+                    >.level-item {
                         margin: 0;
                         padding: 0;
 
-                        > .level {
+                        >.level {
                             display: flex;
                             margin: 0px -8px 0px -8px;
                             padding: 0;
@@ -2901,7 +2936,7 @@ label .scrollable > div {
                             align-items: center;
                             justify-content: flex-start;
 
-                            > .level-item {
+                            >.level-item {
                                 margin: 0;
                                 padding: 0px 8px 0px 8px;
 
@@ -2918,7 +2953,7 @@ label .scrollable > div {
                                     -webkit-backdrop-filter: blur(4px);
                                     color: var(--accent-color) !important;
 
-                                    > span {
+                                    >span {
                                         margin: 0 !important;
                                         width: 1rem !important;
                                         height: 1rem !important;
@@ -2927,7 +2962,7 @@ label .scrollable > div {
                             }
                         }
 
-                        > button {
+                        >button {
                             margin: 0px;
                             border: 0px solid rgba(255, 255, 255, 0.5);
                             border-radius: 290486px;
@@ -2938,7 +2973,7 @@ label .scrollable > div {
                             height: initial;
                             color: #ffffff !important;
 
-                            > span {
+                            >span {
                                 margin: 0 !important;
                                 width: 1rem !important;
                                 height: 1rem !important;
@@ -2978,7 +3013,7 @@ label .scrollable > div {
                 }
             }
 
-            > .level-item:nth-last-of-type(1) {
+            >.level-item:nth-last-of-type(1) {
                 display: block;
                 margin: 0;
                 padding: 0px 32px 16px 32px;
@@ -3017,7 +3052,7 @@ label .scrollable > div {
     display: flex;
     flex-direction: column;
 
-    > .columns > .column > .control:last-child .level .level-item {
+    >.columns>.column>.control:last-child .level .level-item {
         margin: 0;
         padding: 0;
     }
@@ -3108,7 +3143,7 @@ label .scrollable > div {
         }
     }
 
-    > .columns:last-of-type {
+    >.columns:last-of-type {
         margin: 0;
         padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px !important;
         height: 16px;
@@ -3494,8 +3529,9 @@ label .scrollable > div {
     }
 }
 
-@media screen and (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
-    .progress > .bar {
+@media screen and (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 2dppx) {
+    .progress>.bar {
         background: #ffee00 var(--background-image-2x) 0% 0% repeat;
         background-size: 24px 24px;
     }
@@ -3510,14 +3546,15 @@ label .scrollable > div {
         background-size: 24px 24px;
     }
 
-    #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
+    #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
         background: var(--background-image-2x) 50% 50% repeat;
         background-size: 24px 24px;
     }
 }
 
-@media screen and (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx) {
-    .progress > .bar {
+@media screen and (-webkit-min-device-pixel-ratio: 3),
+(min-resolution: 3dppx) {
+    .progress>.bar {
         background: #ffee00 var(--background-image-3x) 0% 0% repeat;
         background-size: 24px 24px;
     }
@@ -3532,7 +3569,7 @@ label .scrollable > div {
         background-size: 24px 24px;
     }
 
-    #popup .columns > .column > .control:first-child .level:nth-last-of-type(2) .media {
+    #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
         background: var(--background-image-3x) 50% 50% repeat;
         background-size: 24px 24px;
     }
