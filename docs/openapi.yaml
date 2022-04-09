@@ -9,6 +9,8 @@ paths:
   /recent:
     get:
       summary: Returns a list of likes
+      tags:
+      - Social
       parameters:
       - name: offset
         in: query
@@ -36,23 +38,41 @@ paths:
   /share:
     post:
       summary: Upsert like
+      tags:
+      - Social
       requestBody:
         description: Data
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Like'
+              allOf:
+                - $ref: '#/components/schemas/Like'
+                - type: object
+                  properties:
+                    image:
+                      type: string
+                      readOnly: false
+                      writeOnly: true
       responses:
         200:
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Like'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  timestamp:
+                    type: integer
+                    format: int64
   /share/{id}:
     delete:
       summary: Delete like by identifier
+      tags:
+      - Social
       parameters:
       - name: id
         in: path
@@ -84,6 +104,7 @@ components:
         image:
           type: string
           format: uri
+          readOnly: true
         location:
           type: object
           properties:
@@ -104,3 +125,5 @@ components:
         - id
         - text
         - timestamp
+tags:
+  - name: Social
