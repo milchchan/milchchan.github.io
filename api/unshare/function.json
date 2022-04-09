@@ -6,9 +6,9 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "unshare",
+      "route": "share/{id}",
       "methods": [
-        "post"
+        "delete"
       ]
     },
     {
