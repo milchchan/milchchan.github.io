@@ -26,6 +26,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install netlify-cli --save-dev
+    #- run: npm run build
     #- run: npm install && npm run build
     #- run: npm test
     - run: npx netlify-cli deploy --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }} --dir=./public/clock
