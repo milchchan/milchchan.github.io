@@ -33,23 +33,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 except Exception:
                     return func.HttpResponse(status_code=403, mimetype='', charset='')
 
-        if req.headers.get('Content-Type') == 'application/json':
-            data = req.get_json()
-            id = data.get('id')
+        id = req.route_params['id']
+        client = CosmosClient.from_connection_string(
+            os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
+        database = client.get_database_client('Wonderland')
+        container = database.get_container_client('Likes')
+        container.delete_item(id, id)
 
-        else:
-            id = req.params.get('id')
-
-        if id is not None:
-            client = CosmosClient.from_connection_string(
-                os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
-            database = client.get_database_client('Wonderland')
-            container = database.get_container_client('Likes')
-            container.delete_item(id, id)
-
-            return func.HttpResponse(json.dumps({'id': id, 'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
-
-        return func.HttpResponse(status_code=400, mimetype='', charset='')
+        return func.HttpResponse(json.dumps({'id': id, 'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
 
     except Exception as e:
         logging.error(f'{e}')
