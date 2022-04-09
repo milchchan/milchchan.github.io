@@ -117,6 +117,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 item['timestamp'] = int(datetime.utcfromtimestamp(datetime.fromisoformat(
                     item['timestamp'].replace('Z', '+00:00')).timestamp()).timestamp())
 
+                del item['pk']
+
                 return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
