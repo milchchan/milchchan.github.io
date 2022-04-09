@@ -41,11 +41,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             data = req.get_json()
 
             if 'text' in data and data['text'] is not None and len(data['text']) > 0:
-                id = data['id'] if 'id' in data and data['id'] is not None and len(
-                    data['id']) > 0 else str(uuid4())
+                client = CosmosClient.from_connection_string(
+                    os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
+                database = client.get_database_client('Wonderland')
+                container = database.get_container_client('Likes')
+
+                if 'id' in data and data['id'] is not None and len(data['id']) > 0:
+                    id = None
+                    item = container.read_item(data['id'], partition_key=data['id'])
+                    item['text'] = data['text']
+
+                else:
+                    id = str(uuid4())
+                    item = {'id': id, 'pk': id, 'text': data['text']}
+                    
                 author = data.get('author')
                 image = data.get('image')
-                item = {'id': id, 'pk': id, 'text': data['text']}
 
                 if author is not None:
                     item['author'] = author
@@ -108,10 +119,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 item['timestamp'] = datetime.fromtimestamp(
                     time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-                client = CosmosClient.from_connection_string(
-                    os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
-                database = client.get_database_client('Wonderland')
-                container = database.get_container_client('Likes')
+                
                 container.upsert_item(item)
 
                 item['timestamp'] = int(datetime.utcfromtimestamp(datetime.fromisoformat(
@@ -119,7 +127,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 del item['pk']
 
-                return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps(item), status_code=200 if id is None else 201, mimetype='application/json', charset='utf-8')
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
