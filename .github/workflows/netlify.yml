@@ -2,9 +2,9 @@ name: Netlify
 
 on:
   push:
-    branches-ignore:
-      - '**'
-    #branches: [ master ]
+    #branches-ignore:
+    #  - '**'
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -34,7 +34,7 @@ jobs:
     - name: Publish
       uses: netlify/actions/cli@master
       with:
-        args: deploy --dir=./dist
+        args: deploy --dir=./public/clock
       env:
         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
