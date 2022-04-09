@@ -1,0 +1,106 @@
+openapi: 3.0.0
+info:
+  title: milchchan.com API
+  description: milchchan.com API specification
+  version: 1.0.0
+servers:
+  - url: https://milchchan.com/api
+paths:
+  /recent:
+    get:
+      summary: Returns a list of likes
+      parameters:
+      - name: offset
+        in: query
+        description: Offset
+        required: false
+        schema:
+          type: integer
+          example: 0
+      - name: limit
+        in: query
+        description: Limit
+        required: false
+        schema:
+          type: integer
+          example: 10
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+  /share:
+    post:
+      summary: Upsert like
+      requestBody:
+        description: Data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Like'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+  /share/{id}:
+    delete:
+      summary: Delete like by identifier
+      parameters:
+      - name: id
+        in: path
+        description: Identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+components:
+  schemas:
+    Like:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        text:
+          type: string
+        author:
+          type: string
+        image:
+          type: string
+          format: uri
+        location:
+          type: object
+          properties:
+            type:
+              type: string
+              example: Point
+            coordinates:
+              type: array
+              items:
+                type: number
+                format: double
+              example: [139.209378, 35.5090627]
+        timestamp:
+          type: integer
+          format: int64
+          readOnly: true
+      required:
+        - id
+        - text
+        - timestamp
