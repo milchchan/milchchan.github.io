@@ -48,13 +48,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 if 'id' in data and data['id'] is not None and len(data['id']) > 0:
                     id = None
-                    item = container.read_item(data['id'], partition_key=data['id'])
+                    item = container.read_item(
+                        data['id'], partition_key=data['id'])
                     item['text'] = data['text']
 
                 else:
                     id = str(uuid4())
                     item = {'id': id, 'pk': id, 'text': data['text']}
-                    
+
                 author = data.get('author')
                 image = data.get('image')
 
@@ -119,7 +120,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 item['timestamp'] = datetime.fromtimestamp(
                     time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-                
                 container.upsert_item(item)
 
                 item['timestamp'] = int(datetime.utcfromtimestamp(datetime.fromisoformat(
