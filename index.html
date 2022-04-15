@@ -282,26 +282,13 @@
                         </div>
                     </div>
                     <div class="wall">
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
-                        <div class="line"><span class="has-text-weight-bold is-uppercase">H</span><span
-                                class="has-text-weight-bold is-uppercase">ELLO, WORLD</span></div>
+                        <div class="line" v-for="line in wall" v-bind:key="line">
+                            <div class="inline"
+                                v-bind:style="{ height: String(line.height) + 'vh', fontSize: String(line.height) + 'vh', lineHeight: String(line.height) + 'vh' }"><span
+                                    class="has-text-weight-bold is-uppercase"
+                                    v-bind:class="{ break: character.value === '\n' }" v-for="character in line.characters"
+                                    v-bind:key="character.key" v-text="character.value"></span></div>
+                        </div>
                     </div>
                     <transition-group name="sky-item-list" class="sky is-hidden" tag="div">
                         <div class="star" alt="Star"
@@ -3272,9 +3259,9 @@
                                                 v-bind:style="{ height: animatedPopupTextHeight + 'px' }">
                                                 <div class="content has-text-left" ref="popupText">
                                                     <span class="has-text-weight-bold has-text-white"
-                                                        v-bind:class="{ break: character.value == '\n' }"
-                                                        v-for="character in text" v-bind:key="character.key" v-cloak>{{
-                                                        character.value }}</span>
+                                                        v-bind:class="{ break: character.value === '\n' }"
+                                                        v-for="character in text" v-bind:key="character.key"
+                                                        v-text="character.value" v-cloak></span>
                                                 </div>
                                             </div>
                                         </article>
