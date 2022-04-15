@@ -248,6 +248,7 @@ window.addEventListener("load", event => {
                 recentImages: [],
                 backgroundQueue: [],
                 background: { color: null, images: [], stars: [], shootingStars: {}, tags: null },
+                wall: [],
                 isUploading: false,
                 animations: null,
                 currentAnimations: [],
@@ -3672,6 +3673,128 @@ window.addEventListener("load", event => {
                             activateTime += deltaTime;
                         }*/
                     }
+                    if (!this.wall.some(x => x.type.elapsed >= 0) && this.likes.length > 0) {
+                        this.wall.splice(0);
+
+                        for (const like of this.likes) {
+                            const text = typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), '');
+                        
+                            this.wall.push({ time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, characters: [] });
+                        }
+                        
+                        for (const line of this.wall) {
+                            line["height"] = 100 / this.likes.length;
+                        }
+                    }
+
+                    for (const line of this.wall) {
+                        if (line.type.reverse) {
+                            if (line.type.count > 0) {
+                                line.type.elapsed += deltaTime * 2;
+
+                                if (line.type.elapsed >= 1.0 / line.type.speed) {
+                                    let index = line.type.count - 1;
+
+                                    if (index < line.text.length) {
+                                        let width = Math.floor(line.text.length / 2);
+
+                                        if (line.type.buffer.length <= width && line.type.count > 0) {
+                                            line.type.count -= 1;
+                                        }
+
+                                        if (line.type.buffer.length > 0) {
+                                            line.type.buffer = line.type.buffer.substring(0, line.type.buffer.length - 1);
+                                        }
+                                    }
+
+                                    line.type.elapsed = 0;
+                                }
+                            } else {
+                                //line.time = 0;
+                                //line.type.elapsed = -1;
+                                //line.type.reverse = false;
+                            }
+                        } else if (line.type.buffer.length < line.text.length) {
+                            if (line.type.elapsed >= 0) {
+                                line.type.elapsed += deltaTime;
+                            } else if (!this.isAnimating) {
+                                if (this.isPopup) {
+                                    line.type.elapsed = deltaTime;
+                                } else {
+                                    this.isPopup = true;
+                                }
+                            }
+
+                            if (line.type.elapsed >= 1.0 / line.type.speed) {
+                                let index = line.type.buffer.length;
+                                let width = Math.floor(line.text.length / 2);
+                                let length = line.text.length;
+
+                                if (line.type.count >= width) {
+                                    line.type.buffer += line.text.charAt(index);
+                                }
+
+                                if (line.type.count < length) {
+                                    line.type.count += 1;
+                                }
+
+                                line.type.elapsed = 0;
+                            }
+                        } else {
+                            line.time += deltaTime;
+
+                            if (line.time >= line.duration) {
+                                line.type.reverse = true;
+                            }
+                        }
+
+                        if (line.text.length === line.type.buffer.length) {
+                            const characters = line.text.split("");
+
+                            line.characters.splice(0);
+
+                            for (let i = 0; i < characters.length; i++) {
+                                line.characters.push({ key: i, value: characters[i] });
+                            }
+                        } else {
+                            const charArray = new Array();
+                            let randomBuffer = "";
+
+                            for (let i = 0; i < line.text.length; i++) {
+                                if (charArray.indexOf(line.text.charAt(i)) === -1 && line.text.charAt(i) !== "\n" && line.text.charAt(i).match(/\s/) === null) {
+                                    charArray.push(line.text.charAt(i));
+                                }
+                            }
+
+                            if (charArray.length > 0) {
+                                for (let i = 0; i < line.type.count; i++) {
+                                    if (line.text.charAt(i) === "\n") {
+                                        randomBuffer += "\n";
+                                    } else {
+                                        randomBuffer += charArray[~~_random(0, charArray.length)];
+                                    }
+                                }
+                            }
+
+                            if (randomBuffer.length > line.type.buffer.length) {
+                                const characters = (line.type.buffer + randomBuffer.substring(line.type.buffer.length, randomBuffer.length)).split("");
+
+                                line.characters.splice(0);
+
+                                for (let i = 0; i < characters.length; i++) {
+                                    line.characters.push({ key: i, value: characters[i] });
+                                }
+                            } else if (line.characters.length !== line.type.buffer.length) {
+                                const characters = line.type.buffer.split("");
+
+                                line.characters.splice(0);
+
+                                for (let i = 0; i < characters.length; i++) {
+                                    line.characters.push({ key: i, value: characters[i] });
+                                }
+                            }
+                        }
+                    }
 
                     if (this.message !== null) {
                         if (this.message.type.reverse) {
@@ -3741,18 +3864,18 @@ window.addEventListener("load", event => {
                                 this.text.push({ key: i, value: characters[i] });
                             }
                         } else {
-                            let charArray = new Array();
+                            const charArray = new Array();
                             let randomBuffer = "";
 
                             for (let i = 0; i < this.message.text.length; i++) {
-                                if (charArray.indexOf(this.message.text.charAt(i)) == -1 && this.message.text.charAt(i) != "\n" && this.message.text.charAt(i).match(/\s/) == null) {
+                                if (charArray.indexOf(this.message.text.charAt(i)) === -1 && this.message.text.charAt(i) !== "\n" && this.message.text.charAt(i).match(/\s/) === null) {
                                     charArray.push(this.message.text.charAt(i));
                                 }
                             }
 
                             if (charArray.length > 0) {
                                 for (let i = 0; i < this.message.type.count; i++) {
-                                    if (this.message.text.charAt(i) == "\n") {
+                                    if (this.message.text.charAt(i) === "\n") {
                                         randomBuffer += "\n";
                                     } else {
                                         randomBuffer += charArray[~~_random(0, charArray.length)];
