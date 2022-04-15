@@ -522,16 +522,30 @@ label .scrollable>div {
     background: transparent;
     overflow: hidden;
 
-    .line {
+    >.line {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        width: fit-content;
         height: fit-content;
 
-        span {
-            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-            font-size: 10vh;
-            line-height: 10vh;
-            color: rgb(255, 255, 255);
-            text-shadow: none;
-            vertical-align: middle;
+        .inline {
+            margin: 0px 8px 0px 8px;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            width: fit-content;
+            height: fit-content;
+
+            span {
+                font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                color: rgb(255, 255, 255);
+                text-shadow: none;
+                vertical-align: middle;
+                white-space: nowrap;
+            }
         }
     }
 }
