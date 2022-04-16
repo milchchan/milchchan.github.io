@@ -282,12 +282,38 @@
                         </div>
                     </div>
                     <div class="wall">
-                        <div class="line" v-for="line in wall" v-bind:key="line">
-                            <div class="inline"
-                                v-bind:style="{ height: String(line.height) + 'vh', fontSize: String(line.height) + 'vh', lineHeight: String(line.height) + 'vh' }"><span
-                                    class="has-text-weight-bold is-uppercase"
-                                    v-bind:class="{ break: character.value === '\n' }" v-for="character in line.characters"
-                                    v-bind:key="character.key" v-text="character.value"></span></div>
+                        <div class="line" v-for="block in wall" v-bind:key="block"
+                            v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.75)) + 'vh', lineHeight: String(block.height) + 'vh' }">
+                            <div class="back">
+                                <div class="block">
+                                    <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
+                                        <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
+                                        <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="front">
+                                <div class="block">
+                                    <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
+                                        <span class="has-text-weight-bold is-uppercase"
+                                            v-bind:class="{ break: character.value === '\n' }"
+                                            v-for="character in inline.characters" v-bind:key="character.key"
+                                            v-text="character.value"></span>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
+                                        <span class="has-text-weight-bold is-uppercase"
+                                            v-bind:class="{ break: character.value === '\n' }"
+                                            v-for="character in inline.characters" v-bind:key="character.key"
+                                            v-text="character.value"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <transition-group name="sky-item-list" class="sky is-hidden" tag="div">
