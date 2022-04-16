@@ -249,6 +249,7 @@ window.addEventListener("load", event => {
                 backgroundQueue: [],
                 background: { color: null, images: [], stars: [], shootingStars: {}, tags: null },
                 wall: [],
+                refreshRequired: false,
                 isUploading: false,
                 animations: null,
                 currentAnimations: [],
@@ -632,13 +633,15 @@ window.addEventListener("load", event => {
                 }
             },
             refresh: function (event) {
+                this.refreshRequired = true;
+                /*
                 if (this.likes.some(x => typeof (x.text) === "object" && Object.values(x.text).some(x => typeof (x) === "object"))) {
                     this.isBlinded = true;
                 } else {
                     this.activate();
                 }
 
-                activateTime = 0.0;
+                activateTime = 0.0;*/
             },
             send: async function (event) {
                 if (this.isDebug) {
@@ -3144,7 +3147,7 @@ window.addEventListener("load", event => {
                             if (activateTime >= activateThreshold) {
                                 if (!this.isRevealed && !this.isLearning) {
                                     if (this.likes.some(x => typeof (x.text) === "object" && Object.values(x.text).some(x => typeof (x) === "object"))) {
-                                        this.isBlinded = true;
+                                        //this.isBlinded = true;
                                     } else {
                                         this.activate();
                                     }
@@ -3673,126 +3676,190 @@ window.addEventListener("load", event => {
                             activateTime += deltaTime;
                         }*/
                     }
-                    if (!this.wall.some(x => x.type.elapsed >= 0) && this.likes.length > 0) {
-                        this.wall.splice(0);
 
-                        for (const like of this.likes) {
-                            const text = typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), '');
-                        
-                            this.wall.push({ time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, characters: [] });
+                    if (this.refreshRequired) {
+                        for (const block of this.wall) {
+                            let index = -1;
+
+                            for (let i = block.inlines.length - 1; i >= 0; i--) {
+                                if (block.inlines[i].running) {
+                                    block.inlines[i].type.reverse = true;
+                                    index = i;
+
+                                    break;
+                                }
+                            }
+
+                            if (index === -1) {
+                                block.inlines[block.inlines.length - 1].running = true;
+                            }
                         }
-                        
-                        for (const line of this.wall) {
-                            line["height"] = 100 / this.likes.length;
-                        }
+
+                        this.refreshRequired = false;
                     }
 
-                    for (const line of this.wall) {
-                        if (line.type.reverse) {
-                            if (line.type.count > 0) {
-                                line.type.elapsed += deltaTime * 2;
+                    if (!this.wall.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && this.likes.length > 0) {
+                        function _random(min, max) {
+                            min = Math.ceil(min);
+                            max = Math.floor(max);
 
-                                if (line.type.elapsed >= 1.0 / line.type.speed) {
-                                    let index = line.type.count - 1;
-
-                                    if (index < line.text.length) {
-                                        let width = Math.floor(line.text.length / 2);
-
-                                        if (line.type.buffer.length <= width && line.type.count > 0) {
-                                            line.type.count -= 1;
-                                        }
-
-                                        if (line.type.buffer.length > 0) {
-                                            line.type.buffer = line.type.buffer.substring(0, line.type.buffer.length - 1);
-                                        }
-                                    }
-
-                                    line.type.elapsed = 0;
-                                }
-                            } else {
-                                //line.time = 0;
-                                //line.type.elapsed = -1;
-                                //line.type.reverse = false;
-                            }
-                        } else if (line.type.buffer.length < line.text.length) {
-                            if (line.type.elapsed >= 0) {
-                                line.type.elapsed += deltaTime;
-                            } else if (!this.isAnimating) {
-                                if (this.isPopup) {
-                                    line.type.elapsed = deltaTime;
-                                } else {
-                                    this.isPopup = true;
-                                }
-                            }
-
-                            if (line.type.elapsed >= 1.0 / line.type.speed) {
-                                let index = line.type.buffer.length;
-                                let width = Math.floor(line.text.length / 2);
-                                let length = line.text.length;
-
-                                if (line.type.count >= width) {
-                                    line.type.buffer += line.text.charAt(index);
-                                }
-
-                                if (line.type.count < length) {
-                                    line.type.count += 1;
-                                }
-
-                                line.type.elapsed = 0;
-                            }
-                        } else {
-                            line.time += deltaTime;
-
-                            if (line.time >= line.duration) {
-                                line.type.reverse = true;
-                            }
+                            return Math.floor(Math.random() * (max - min)) + min;
                         }
 
-                        if (line.text.length === line.type.buffer.length) {
-                            const characters = line.text.split("");
+                        this.wall.splice(0);
 
-                            line.characters.splice(0);
+                        const samples = this.take(this.likes, _random(25, 50));
 
-                            for (let i = 0; i < characters.length; i++) {
-                                line.characters.push({ key: i, value: characters[i] });
+                        for (const like of samples) {
+                            const text = typeof (like.text) === "string" ? like.text.replace("\n", "") : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (like.text[y]) === "string" ? like.text[y] : like.text[y].name), "").replace("\n", "");
+
+                            this.wall.push({
+                                height: 100 / samples.length,
+                                inlines: [
+                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, characters: [] },
+                                    { running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, characters: [] }
+                                ]
+                            });
+                        }
+
+                        app.$nextTick(() => {
+                            const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.wall>.line");
+                            
+                            for (const element of elements) {
+                                element.animate([{ transform: "translate3d(0%, 0, 0)" }, { transform: "translate3d(-50%, 0, 0)" }], {
+                                    fill: 'forwards',
+                                    easing: 'linear',
+                                    duration: 60000,
+                                    iterations: Infinity
+                                });
                             }
-                        } else {
-                            const charArray = new Array();
-                            let randomBuffer = "";
+                        });
+                    }
 
-                            for (let i = 0; i < line.text.length; i++) {
-                                if (charArray.indexOf(line.text.charAt(i)) === -1 && line.text.charAt(i) !== "\n" && line.text.charAt(i).match(/\s/) === null) {
-                                    charArray.push(line.text.charAt(i));
-                                }
-                            }
+                    for (const block of this.wall) {
+                        let index = 0;
 
-                            if (charArray.length > 0) {
-                                for (let i = 0; i < line.type.count; i++) {
-                                    if (line.text.charAt(i) === "\n") {
-                                        randomBuffer += "\n";
+                        for (const inline of block.inlines) {
+                            if (inline.running) {
+                                if (inline.type.reverse) {
+                                    if (inline.type.count > 0) {
+                                        inline.type.elapsed += deltaTime * 2;
+
+                                        if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                                            let index = inline.type.count - 1;
+
+                                            if (index < inline.text.length) {
+                                                let width = Math.floor(inline.text.length / 2);
+
+                                                if (inline.type.buffer.length <= width && inline.type.count > 0) {
+                                                    inline.type.count -= 1;
+                                                }
+
+                                                if (inline.type.buffer.length > 0) {
+                                                    inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
+                                                }
+                                            }
+
+                                            inline.type.elapsed = 0;
+                                        }
                                     } else {
-                                        randomBuffer += charArray[~~_random(0, charArray.length)];
+                                        inline.time = 0;
+                                        inline.type.elapsed = -1;
+                                        inline.type.reverse = false;
+                                        inline.running = false;
+
+                                        if (index - 1 >= 0) {
+                                            block.inlines[index - 1].running = true;
+                                        }
+                                    }
+                                } else if (inline.type.buffer.length < inline.text.length) {
+                                    if (inline.type.elapsed >= 0) {
+                                        inline.type.elapsed += deltaTime;
+                                    } else if (!this.isAnimating) {
+                                        if (this.isPopup) {
+                                            inline.type.elapsed = deltaTime;
+                                        } else {
+                                            this.isPopup = true;
+                                        }
+                                    }
+
+                                    if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                                        let index = inline.type.buffer.length;
+                                        let width = Math.floor(inline.text.length / 2);
+                                        let length = inline.text.length;
+
+                                        if (inline.type.count >= width) {
+                                            inline.type.buffer += inline.text.charAt(index);
+                                        }
+
+                                        if (inline.type.count < length) {
+                                            inline.type.count += 1;
+                                        }
+
+                                        inline.type.elapsed = 0;
+                                    }
+                                } else {
+                                    inline.time += deltaTime;
+
+                                    if (inline.time >= inline.duration) {
+                                        inline.type.reverse = true;
+                                        inline.running = false;
+
+                                        if (index + 1 < block.inlines.length) {
+                                            block.inlines[index + 1].running = true;
+                                        }
+                                    }
+                                }
+
+                                if (inline.text.length === inline.type.buffer.length) {
+                                    const characters = inline.text.split("");
+
+                                    inline.characters.splice(0);
+
+                                    for (let i = 0; i < characters.length; i++) {
+                                        inline.characters.push({ key: i, value: characters[i] });
+                                    }
+                                } else {
+                                    const charArray = new Array();
+                                    let randomBuffer = "";
+
+                                    for (let i = 0; i < inline.text.length; i++) {
+                                        if (charArray.indexOf(inline.text.charAt(i)) === -1 && inline.text.charAt(i) !== "\n" && inline.text.charAt(i).match(/\s/) === null) {
+                                            charArray.push(inline.text.charAt(i));
+                                        }
+                                    }
+
+                                    if (charArray.length > 0) {
+                                        for (let i = 0; i < inline.type.count; i++) {
+                                            if (inline.text.charAt(i) === "\n") {
+                                                randomBuffer += "\n";
+                                            } else {
+                                                randomBuffer += charArray[~~_random(0, charArray.length)];
+                                            }
+                                        }
+                                    }
+
+                                    if (randomBuffer.length > inline.type.buffer.length) {
+                                        const characters = (inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length)).split("");
+
+                                        inline.characters.splice(0);
+
+                                        for (let i = 0; i < characters.length; i++) {
+                                            inline.characters.push({ key: i, value: characters[i] });
+                                        }
+                                    } else if (inline.characters.length !== inline.type.buffer.length) {
+                                        const characters = inline.type.buffer.split("");
+
+                                        inline.characters.splice(0);
+
+                                        for (let i = 0; i < characters.length; i++) {
+                                            inline.characters.push({ key: i, value: characters[i] });
+                                        }
                                     }
                                 }
                             }
 
-                            if (randomBuffer.length > line.type.buffer.length) {
-                                const characters = (line.type.buffer + randomBuffer.substring(line.type.buffer.length, randomBuffer.length)).split("");
-
-                                line.characters.splice(0);
-
-                                for (let i = 0; i < characters.length; i++) {
-                                    line.characters.push({ key: i, value: characters[i] });
-                                }
-                            } else if (line.characters.length !== line.type.buffer.length) {
-                                const characters = line.type.buffer.split("");
-
-                                line.characters.splice(0);
-
-                                for (let i = 0; i < characters.length; i++) {
-                                    line.characters.push({ key: i, value: characters[i] });
-                                }
-                            }
+                            index++;
                         }
                     }
 
