@@ -260,7 +260,7 @@
         <div class="container">
             <div class="wrap">
                 <div class="frame">
-                    <div class="background is-hidden"
+                    <!--<div class="background is-hidden"
                         v-bind:style="{ backgroundColor: background.color === null ? 'transparent' : background.color }">
                         <div v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }"
                             v-for="image in background.images" v-bind:key="image" v-cloak></div>
@@ -280,7 +280,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="wall">
                         <div class="line" v-for="block in wall" v-bind:key="block"
                             v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.75)) + 'vh', lineHeight: String(block.height) + 'vh' }">
@@ -316,6 +316,7 @@
                             </div>
                         </div>
                     </div>
+                    <!--
                     <transition-group name="sky-item-list" class="sky is-hidden" tag="div">
                         <div class="star" alt="Star"
                             v-bind:style="{ left: String(Math.floor(100.0 * star.x)) + '%', top: String(Math.floor(100.0 * star.y)) + '%', animationDelay: String(star.delay) + 'ms', animationDuration: String(star.duration) + 'ms', animationPlayState: star.state }"
@@ -331,6 +332,7 @@
                             <span class="has-text-weight-bold is-uppercase" v-text="star.text"></span>
                         </div>
                     </transition-group>
+                    -->
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
                         v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
@@ -1128,8 +1130,7 @@
                                                                                             <div>
                                                                                                 <div>
                                                                                                     <div><span
-                                                                                                            class="is-size-4 has-text-weight-bold"
-                                                                                                            v-text="typeof(like.text) === 'string' ? like.text : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof(like.text[y]) === 'string' ? like.text[y] : like.text[y].name), '')"></span>
+                                                                                                            class="is-size-4 has-text-weight-bold" v-for="(item, index) in typeof(like.text) === 'string' ? Array({ text: like.text, highlight: false }) : Object.keys(like.text).sort((x, y) => x - y).map(x => (typeof(like.text[x]) === 'string' ? { text: like.text[x], highlight: false } : { text: like.text[x].name, highlight: true }))" v-bind:class="{ highlight: item.highlight }" v-text="item.text" key="index"></span>
                                                                                                     </div>
                                                                                                     <div><span
                                                                                                             class="is-size-7 has-text-weight-bold">{{
@@ -3332,7 +3333,7 @@
                                             <div class="media-content"
                                                 v-bind:style="{ height: animatedPopupTextHeight + 'px' }">
                                                 <div class="content has-text-left" ref="popupText">
-                                                    <span class="has-text-weight-bold has-text-white"
+                                                    <span class="has-text-weight-bold"
                                                         v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
                                                         v-for="character in text" v-bind:key="character.key"
                                                         v-text="character.value" v-cloak></span>
