@@ -383,8 +383,8 @@ label .scrollable>div {
 }
 
 .progress {
-    z-index: 1;
     pointer-events: none;
+    z-index: 1;
     position: absolute;
     margin: 0 !important;
     border: 0px solid transparent;
@@ -587,7 +587,7 @@ label .scrollable>div {
     }
 }
 
-.sky {
+/*.sky {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -646,11 +646,11 @@ label .scrollable>div {
                 mask-image: linear-gradient(to right, black 75%, rgba(0, 0, 0, 0.5));
             }*/
 
-        >span+span:last-of-type {
+        /*>span+span:last-of-type {
             opacity: 0.5;
         }
     }
-}
+}*/
 
 /*.sky::after {
     pointer-events: none;
@@ -667,11 +667,9 @@ label .scrollable>div {
 }*/
 
 .background {
+    pointer-events: none;
+    z-index: 1;
     position: absolute;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     height: 100%;
     min-height: 100%;
@@ -683,7 +681,7 @@ label .scrollable>div {
 
     >div {
         display: block;
-        position: relative;
+        position: absolute;
         background-color: transparent;
         background-attachment: scroll;
         background-position: 50% 25%;
@@ -742,8 +740,9 @@ label .scrollable>div {
     }
 }
 
-.background:first-child::after {
+.background::after {
     pointer-events: none;
+    z-index: 1;
     display: block;
     position: absolute;
     left: 0;
@@ -1039,6 +1038,7 @@ label .scrollable>div {
 }
 
 .blind {
+    pointer-events: none;
     z-index: 1;
     position: absolute;
     top: 0;
@@ -1047,7 +1047,7 @@ label .scrollable>div {
     min-height: 100%;
     transform: translate3d(0, 0%, 0);
     overflow: hidden;
-    background: var(--main-color);
+    background: var(--main-color) !important;
     transition: 0.5s;
 }
 
@@ -3596,7 +3596,7 @@ label .scrollable>div {
         background-size: 24px 24px;
     }
 
-    .background:first-child::after {
+    .background::after {
         background: var(--background-image-2x) repeat;
         background-size: 2px 2px;
     }
@@ -3619,7 +3619,7 @@ label .scrollable>div {
         background-size: 24px 24px;
     }
 
-    .background:first-child::after {
+    .background::after {
         background: var(--background-image-3x) repeat;
         background-size: 2px 2px;
     }
