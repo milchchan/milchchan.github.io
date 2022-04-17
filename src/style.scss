@@ -1876,6 +1876,10 @@ label .scrollable>div {
                                                                             sans-serif;
                                                                         transition: 0.5s;
                                                                     }
+
+                                                                    >span.highlight {
+                                                                        color: var(--accent-color);
+                                                                    }
                                                                 }
 
                                                                 >div:first-child {
@@ -3085,6 +3089,7 @@ label .scrollable>div {
                         font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
                         line-height: 2rem;
                         vertical-align: middle;
+                        color: #ffffff;
                     }
 
                     span.break {
