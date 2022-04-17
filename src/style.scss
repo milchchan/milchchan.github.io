@@ -577,6 +577,10 @@ label .scrollable>div {
                         vertical-align: middle;
                         white-space: nowrap;
                     }
+
+                    span.highlight {
+                        color: var(--accent-color) !important;
+                    }
                 }
             }
         }
@@ -3086,6 +3090,10 @@ label .scrollable>div {
                     span.break {
                         display: block;
                         margin: 0;
+                    }
+
+                    span.highlight {
+                        color: var(--accent-color) !important;
                     }
                 }
             }
