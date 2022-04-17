@@ -333,18 +333,6 @@
                         </div>
                     </transition-group>
                     -->
-                    <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
-                        v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
-                        v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
-                        <div class="blind" v-if="isBlinded" v-cloak></div>
-                    </transition>
-                    <transition name="fade">
-                        <div class="progress" v-if="animatedProgress > 0" v-cloak>
-                            <div class="bar animating"
-                                v-bind:style="{ width: String(Math.floor(100.0 * animatedProgress)) + '%' }">
-                            </div>
-                        </div>
-                    </transition>
                     <!--
                     <div class="columns is-desktop is-hidden" ref="ticker">
                         <div class="column is-full is-mobile has-content-centered">
@@ -483,8 +471,25 @@
                     </svg>
                 </div>
             </transition>
+            <transition name="fade" v-on:after-enter="isBlinded = true">
+                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak>
+                    <div class="background" v-if="background.images.length > 0 && (isRevealed || isOverlayed)" v-cloak>
+                        <div v-bind:style="{ backgroundImage: image === null ? 'none' : 'url(' + image + ')' }"
+                            v-for="(image, index) in background.images" v-bind:key="index" v-cloak></div>
+                    </div>
+                    <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
+                        v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
+                        v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
+                        <div class="blind" v-if="isBlinded" v-cloak></div>
+                    </transition>
+                </div>
+            </transition>
             <transition name="fade">
-                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
+                <div class="progress" v-if="animatedProgress > 0" v-cloak>
+                    <div class="bar animating"
+                        v-bind:style="{ width: String(Math.floor(100.0 * animatedProgress)) + '%' }">
+                    </div>
+                </div>
             </transition>
             <transition name="fade">
                 <div id="three" v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto' }"
@@ -1132,7 +1137,11 @@
                                                                                             <div>
                                                                                                 <div>
                                                                                                     <div><span
-                                                                                                            class="is-size-4 has-text-weight-bold" v-for="(item, index) in typeof(like.text) === 'string' ? Array({ text: like.text, highlight: false }) : Object.keys(like.text).sort((x, y) => x - y).map(x => (typeof(like.text[x]) === 'string' ? { text: like.text[x], highlight: false } : { text: like.text[x].name, highlight: true }))" v-bind:class="{ highlight: item.highlight }" v-text="item.text" key="index"></span>
+                                                                                                            class="is-size-4 has-text-weight-bold"
+                                                                                                            v-for="(item, index) in typeof(like.text) === 'string' ? Array({ text: like.text, highlight: false }) : Object.keys(like.text).sort((x, y) => x - y).map(x => (typeof(like.text[x]) === 'string' ? { text: like.text[x], highlight: false } : { text: like.text[x].name, highlight: true }))"
+                                                                                                            v-bind:class="{ highlight: item.highlight }"
+                                                                                                            v-text="item.text"
+                                                                                                            v-bind:key="index"></span>
                                                                                                     </div>
                                                                                                     <div><span
                                                                                                             class="is-size-7 has-text-weight-bold">{{
