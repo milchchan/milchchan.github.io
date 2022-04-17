@@ -247,7 +247,7 @@ window.addEventListener("load", event => {
                 animatedNotificationHeight: 0,
                 recentImages: [],
                 backgroundQueue: [],
-                background: { color: null, images: [], stars: [], shootingStars: {}, tags: null },
+                background: { images: [ '/images/Omr.png' ], caches: {} },
                 wall: [],
                 refreshRequired: false,
                 isUploading: false,
@@ -644,7 +644,7 @@ window.addEventListener("load", event => {
                 activateTime = 0.0;*/
             },
             send: async function (event) {
-                if (this.isDebug) {
+                /*if (this.isDebug) {
                     if (this.input.length > 0) {
                         const tags = this.input.split(/\s/);
                         const keys = [];
@@ -671,7 +671,7 @@ window.addEventListener("load", event => {
                             this.isLearning = false;
                         }
                     }
-                } else if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
+                } else*/ if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
                     this.learn({ name: this.input });
                     this.input = "";
                     this.isLearning = false;
@@ -2187,7 +2187,7 @@ window.addEventListener("load", event => {
                 this.notifications.unshift(data);
             },
             blinded: async function () {
-                if (this.backgroundQueue.length === 0) {
+                /*if (this.backgroundQueue.length === 0) {
                     if (this.likes.length > 0) {
                         function shuffle(array) {
                             function _random(min, max) {
@@ -2226,7 +2226,7 @@ window.addEventListener("load", event => {
 
                 const background = this.backgroundQueue.shift();
 
-                this.background.images.splice(0);
+                this.background.images.splice(0);*/
 
                 /*if ('color' in background) {
                     this.background.color = background.color;
@@ -2234,7 +2234,7 @@ window.addEventListener("load", event => {
                     this.background.color = null;
                 }*/
 
-                if ('images' in background) {
+                /*if ('images' in background) {
                     for (const image of background.images) {
                         try {
                             const metadata = await getMetadata(storageRef(storage, image.path));
@@ -2399,7 +2399,7 @@ window.addEventListener("load", event => {
                     this.activate(background.tags.filter((x) => x.indexOf(this.character.name) === -1), 0.0);
                 } else {
                     this.background.tags = null;
-                }
+                }*/
 
                 this.isBlinded = false;
             },
@@ -3723,7 +3723,16 @@ window.addEventListener("load", event => {
 
                         this.wall.splice(0);
 
-                        const samples = this.take(this.likes, _random(25, 50));
+                        const length = _random(25, 50);
+                        let start = this.likes.length - length;
+                        let samples;
+
+                        if (start >= 0) {
+                            start = _random(0, start);                            
+                            samples = this.likes.slice(start, start + length);
+                        } else {
+                            samples = this.likes;
+                        }
 
                         for (const like of samples) {
                             let text;
