@@ -264,8 +264,8 @@ window.addEventListener("load", event => {
                 text: [],
                 popupTextHeight: 0,
                 animatedPopupTextHeight: 0,
-                tickerWidth: 0,
-                animatedTickerWidth: 0,
+                //tickerWidth: 0,
+                //animatedTickerWidth: 0,
                 message: null,
                 states: {},
                 character: null,
@@ -330,7 +330,7 @@ window.addEventListener("load", event => {
                     }
                 });
             },
-            words: {
+            /*words: {
                 handler: () => {
                     app.$nextTick(() => {
                         for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
@@ -348,7 +348,7 @@ window.addEventListener("load", event => {
                     });
                 },
                 deep: true
-            },
+            },*/
             captures: {
                 handler: (newValue) => {
                     if (Object.keys(newValue).length > 0) {
@@ -367,7 +367,7 @@ window.addEventListener("load", event => {
                 },
                 deep: true
             },
-            tickerWidth(newValue) {
+            /*tickerWidth(newValue) {
                 const self = this;
                 const obj = { width: this.animatedTickerWidth };
 
@@ -384,7 +384,7 @@ window.addEventListener("load", event => {
                         self.animatedTickerWidth = newValue;
                     }
                 });
-            },
+            },*/
             /*background: {
                 handler: () => {
                     app.$nextTick(() => {
@@ -2766,7 +2766,7 @@ window.addEventListener("load", event => {
 
                 this.isAnimating = false;
             },
-            tickerUpdated: function (el) {
+            /*tickerUpdated: function (el) {
                 const self = this;
 
                 this.$nextTick(() => {
@@ -2783,7 +2783,7 @@ window.addEventListener("load", event => {
                         }
                     }
                 });
-            },
+            },*/
             range: function (date, days) {
                 const collection = [];
 
@@ -4511,7 +4511,7 @@ window.addEventListener("load", event => {
             //document.body.querySelector("#heading>.columns>.column>.columns:first-child>.column>.columns:last-child .level:first-child .level-item .field .ticker").style.width = "100%";
             /*this.$refs.ticker.style.width = document.body.querySelector("#input .columns>.column .control:nth-last-of-type(1) .level:nth-last-of-type(1) form").getBoundingClientRect().width + 'px';
             */
-            for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
+            /*for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                 let width = 0;
 
                 for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
@@ -4522,7 +4522,7 @@ window.addEventListener("load", event => {
                     this.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
                     clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
                 }
-            }
+            }*/
         },
         mounted: async function () {
             function choice(collection, func) {
@@ -5175,7 +5175,7 @@ window.addEventListener("load", event => {
         composer.setPixelRatio(window.devicePixelRatio);
         composer.setSize(width, height);*/
 
-        app.$nextTick(() => {
+        /*app.$nextTick(() => {
             for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
                 let width = 0;
 
@@ -5188,7 +5188,7 @@ window.addEventListener("load", event => {
                     clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
                 }
             }
-        });
+        });*/
     });
     window.addEventListener("click", event => {
         if (app.isVisible) {
