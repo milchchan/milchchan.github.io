@@ -5107,6 +5107,8 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
+
+                        self.refreshRequired = true;
                     }
                 }
             });
