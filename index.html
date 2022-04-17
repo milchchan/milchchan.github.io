@@ -300,7 +300,7 @@
                                 <div class="block">
                                     <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
                                         <span class="has-text-weight-bold is-uppercase"
-                                            v-bind:class="{ break: character.value === '\n' }"
+                                            v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
                                             v-for="character in inline.characters" v-bind:key="character.key"
                                             v-text="character.value"></span>
                                     </div>
@@ -308,7 +308,7 @@
                                 <div class="block">
                                     <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
                                         <span class="has-text-weight-bold is-uppercase"
-                                            v-bind:class="{ break: character.value === '\n' }"
+                                            v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
                                             v-for="character in inline.characters" v-bind:key="character.key"
                                             v-text="character.value"></span>
                                     </div>
@@ -1500,7 +1500,8 @@
                                                             <div class="level-item">
                                                                 <div class="level is-mobile">
                                                                     <div class="level-item">
-                                                                        <div class="card">
+                                                                        <div class="card"
+                                                                            v-if="'image' in word && word.image !== null">
                                                                             <div class="card-image">
                                                                                 <figure class="image">
                                                                                     <transition name="fade">
@@ -1627,6 +1628,53 @@
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="level is-mobile" v-else>
+                                                                            <div class="level-item">
+                                                                                <div class="field">
+                                                                                    <div class="control">
+                                                                                        <label class="checkbox">
+                                                                                            <input type="checkbox"
+                                                                                                @change="mode.selected.some(x => x.name === word.name) ? mode.selected = mode.selected.filter(x => x.name !== word.name) : mode.selected.push(word)"
+                                                                                                v-bind:checked="mode.selected.some(x => x.name === word.name)">
+                                                                                            <span class="custom"></span>
+                                                                                            <span class="image is-24x24"
+                                                                                                v-if="'user' in word && 'image' in word.user && word.user.image != null">
+                                                                                                <img class="is-rounded"
+                                                                                                    v-bind:src="word.user.image"
+                                                                                                    v-bind:alt="word.user.name"
+                                                                                                    v-cloak>
+                                                                                            </span>
+                                                                                            <span
+                                                                                                class="wrap is-size-7 has-text-weight-bold">
+                                                                                                <div class="clip">
+                                                                                                    <div
+                                                                                                        class="scrollable">
+                                                                                                        <div>{{
+                                                                                                            word.name
+                                                                                                            }}
+                                                                                                        </div>
+                                                                                                        <div>{{
+                                                                                                            word.name
+                                                                                                            }}
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </span>
+                                                                                            <span class="badge">{{
+                                                                                                word.count
+                                                                                                }}</span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="level-item">
+                                                                                <a class="button is-circle"
+                                                                                    v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.name + '&tag=milchchan-22')"
+                                                                                    target="_blank"><span
+                                                                                        class="icon is-small"><i
+                                                                                            class="fa-brands fa-amazon"></i></span></a>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -3285,7 +3333,7 @@
                                                 v-bind:style="{ height: animatedPopupTextHeight + 'px' }">
                                                 <div class="content has-text-left" ref="popupText">
                                                     <span class="has-text-weight-bold has-text-white"
-                                                        v-bind:class="{ break: character.value === '\n' }"
+                                                        v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
                                                         v-for="character in text" v-bind:key="character.key"
                                                         v-text="character.value" v-cloak></span>
                                                 </div>
