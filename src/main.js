@@ -3301,7 +3301,7 @@ window.addEventListener("load", event => {
 
                                 for (const inline of sequence[0].text) {
                                     if (typeof (inline) === 'object') {
-                                        attributes.push({ start: text.length, end: text.length + inline.name });
+                                        attributes.push({ start: text.length, end: text.length + inline.name.length });
                                         text += inline.name;
                                         words.push(inline);
                                     } else {
