@@ -3146,10 +3146,23 @@ window.addEventListener("load", event => {
                         if (this.sequenceQueue.length == 0) {
                             if (activateTime >= activateThreshold) {
                                 if (!this.isRevealed && !this.isLearning) {
-                                    if (this.likes.some(x => typeof (x.text) === "object" && Object.values(x.text).some(x => typeof (x) === "object"))) {
-                                        //this.isBlinded = true;
-                                    } else {
+                                    function _random(min, max) {
+                                        min = Math.ceil(min);
+                                        max = Math.floor(max);
+
+                                        return Math.floor(Math.random() * (max - min)) + min;
+                                    }
+
+                                    //if (this.likes.some(x => typeof (x.text) === "object" && Object.values(x.text).some(x => typeof (x) === "object"))) {
+                                    //    this.isBlinded = true;
+                                    //} else {
+                                    //    this.activate();
+                                    //}
+
+                                    if (~~_random(0, 10) % 2 === 0) {
                                         this.activate();
+                                    } else {
+                                        this.refreshRequired = true;
                                     }
                                 }
 
