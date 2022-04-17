@@ -3297,9 +3297,11 @@ window.addEventListener("load", event => {
                             } else if (sequence[0].type == "Message" && this.message === null && !isAnimating && !isDeforming && this.animationQueue.length === 0) {
                                 let text = "";
                                 const words = [];
+                                const attributes = [];
 
                                 for (const inline of sequence[0].text) {
                                     if (typeof (inline) === 'object') {
+                                        attributes.push({ start: text.length, end: text.length + inline.name });
                                         text += inline.name;
                                         words.push(inline);
                                     } else {
@@ -3308,9 +3310,9 @@ window.addEventListener("load", event => {
                                 }
 
                                 if ("character" in sequence[0]) {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words, original: sequence[0].text };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words, original: sequence[0].text, attributes: attributes };
                                 } else {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words, original: sequence[0].text };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words, original: sequence[0].text, attributes: attributes };
                                 }
 
                                 lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
@@ -3711,20 +3713,38 @@ window.addEventListener("load", event => {
                         const samples = this.take(this.likes, _random(25, 50));
 
                         for (const like of samples) {
-                            const text = typeof (like.text) === "string" ? like.text.replace("\n", "") : Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (like.text[y]) === "string" ? like.text[y] : like.text[y].name), "").replace("\n", "");
+                            let text;
+                            const attributes = [];
+
+                            if (typeof (like.text) === "string") {
+                                text = like.text.replace("\n", "");
+                            } else {
+                                text = Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => {
+                                    if (typeof (like.text[y]) === "string") {
+                                        x.text += like.text[y].replace("\n", "");
+                                    } else {
+                                        const text = like.text[y].name.replace("\n", "");
+
+                                        x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
+                                        x.text += text;
+                                    }
+
+                                    return x;
+                                }, { text: "", attributes: attributes }).text;
+                            }
 
                             this.wall.push({
                                 height: 100 / samples.length,
                                 inlines: [
-                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, characters: [] },
-                                    { running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, characters: [] }
+                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] },
+                                    { running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
                                 ]
                             });
                         }
 
                         app.$nextTick(() => {
                             const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.wall>.line");
-                            
+
                             for (const element of elements) {
                                 element.animate([{ transform: "translate3d(0%, 0, 0)" }, { transform: "translate3d(-50%, 0, 0)" }], {
                                     fill: 'forwards',
@@ -3817,7 +3837,7 @@ window.addEventListener("load", event => {
                                     inline.characters.splice(0);
 
                                     for (let i = 0; i < characters.length; i++) {
-                                        inline.characters.push({ key: i, value: characters[i] });
+                                        inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
                                     }
                                 } else {
                                     const charArray = new Array();
@@ -3845,7 +3865,7 @@ window.addEventListener("load", event => {
                                         inline.characters.splice(0);
 
                                         for (let i = 0; i < characters.length; i++) {
-                                            inline.characters.push({ key: i, value: characters[i] });
+                                            inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
                                         }
                                     } else if (inline.characters.length !== inline.type.buffer.length) {
                                         const characters = inline.type.buffer.split("");
@@ -3853,7 +3873,7 @@ window.addEventListener("load", event => {
                                         inline.characters.splice(0);
 
                                         for (let i = 0; i < characters.length; i++) {
-                                            inline.characters.push({ key: i, value: characters[i] });
+                                            inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
                                         }
                                     }
                                 }
@@ -3928,7 +3948,7 @@ window.addEventListener("load", event => {
                             this.text.splice(0);
 
                             for (let i = 0; i < characters.length; i++) {
-                                this.text.push({ key: i, value: characters[i] });
+                                this.text.push({ key: i, value: characters[i], highlight: this.message.attributes.some(x => i >= x.start && i < x.end) });
                             }
                         } else {
                             const charArray = new Array();
@@ -3956,7 +3976,7 @@ window.addEventListener("load", event => {
                                 this.text.splice(0);
 
                                 for (let i = 0; i < characters.length; i++) {
-                                    this.text.push({ key: i, value: characters[i] });
+                                    this.text.push({ key: i, value: characters[i], highlight: this.message.attributes.some(x => i >= x.start && i < x.end) });
                                 }
                             } else if (this.text.length !== this.message.type.buffer.length) {
                                 const characters = this.message.type.buffer.split("");
@@ -3964,7 +3984,7 @@ window.addEventListener("load", event => {
                                 this.text.splice(0);
 
                                 for (let i = 0; i < characters.length; i++) {
-                                    this.text.push({ key: i, value: characters[i] });
+                                    this.text.push({ key: i, value: characters[i], highlight: this.message.attributes.some(x => i >= x.start && i < x.end) });
                                 }
                             }
                         }
