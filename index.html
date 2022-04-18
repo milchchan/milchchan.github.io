@@ -471,16 +471,17 @@
                     </svg>
                 </div>
             </transition>
-            <transition name="fade" v-on:after-enter="isBlinded = true">
+            <transition name="fade" v-on:after-enter="preload" v-on:before-leave="background.nonce = null">
                 <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak>
-                    <div class="background" v-if="background.images.length > 0 && (isRevealed || isOverlayed)" v-cloak>
-                        <div v-bind:style="{ backgroundImage: image === null ? 'none' : 'url(' + image + ')' }"
-                            v-for="(image, index) in background.images" v-bind:key="index" v-cloak></div>
-                    </div>
+                    <transition name="fade">
+                        <div class="background"
+                            v-bind:style="{ backgroundImage: background.image === null || background.image === undefined ? 'none' : 'url(' + background.image + ')' }"
+                            v-cloak></div>
+                    </transition>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
                         v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
-                        <div class="blind" v-if="isBlinded" v-cloak></div>
+                        <div class="blind" v-if="background.nonce !== null" v-cloak></div>
                     </transition>
                 </div>
             </transition>
@@ -3368,7 +3369,7 @@
                                     <form @submit.prevent v-cloak>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
-                                                <input class="input is-rounded" type="text" placeholder="教える言葉"
+                                                <input class="input is-rounded has-text-weight-bold" type="text" placeholder="教える言葉"
                                                     v-bind:class="{ 'is-danger': inputHasError }"
                                                     v-bind:disabled="word !== null" v-model="input" @input="change"
                                                     ref="text" v-cloak>
@@ -3459,20 +3460,20 @@
             <div class="level-item">
                 <transition name="fade" mode="out-in">
                     <button class="button is-circle" v-if="isRevealed" type="button"
-                        v-bind:disabled="isLoading || isHangingOn" @click="refresh" key="overlay" v-cloak>
+                        v-bind:disabled="isLoading || background.nonce !== null" @click="refresh" key="overlay" v-cloak>
                         <span class="icon is-small">
                             <i class="fa-solid fa-arrows-rotate"
-                                v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                                v-bind:class="{ loading: isLoading || background.nonce !== null }"></i>
                         </span>
                     </button>
                     <button class="button is-circle" type="button"
-                        v-bind:disabled="user === null || isLoading || isHangingOn"
+                        v-bind:disabled="user === null || isLoading || background.nonce !== null"
                         @click="isRevealed = true; mode = { collection: null, index: 0, selected: [], disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 5));"
                         v-else key="default" v-cloak>
                         <transition name="fade" mode="out-in">
-                            <span class="icon is-small" v-if="isLoading || isHangingOn" key="processing">
+                            <span class="icon is-small" v-if="isLoading || background.nonce !== null" key="processing">
                                 <i class="fa-solid fa-arrows-rotate"
-                                    v-bind:class="{ loading: isLoading || isHangingOn }"></i>
+                                    v-bind:class="{ loading: isLoading || background.nonce !== null }"></i>
                             </span>
                             <span class="icon" v-else key="ready">
                                 <i class="fa-solid fa-comment"></i>
