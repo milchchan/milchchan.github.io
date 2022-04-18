@@ -613,7 +613,7 @@
                                                                 v-if="'image' in word === false || word.image === null"
                                                                 key="add">
                                                                 <input class="file-input" type="file" name="upload"
-                                                                    accept="image/apng, image/png, image/jpeg, image/webp"
+                                                                    accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
                                                                     style="pointer-events: none;"
                                                                     v-bind:disabled="isUploading"
                                                                     @change="upload($event, Object.assign(word, { id: word.name, type: null }))">
@@ -2939,7 +2939,7 @@
                                                             <input class="file-input" type="button"
                                                                 @click="mode = 'sign-in'" v-if="user === null">
                                                             <input class="file-input" type="file" name="upload"
-                                                                accept="image/apng, image/png, image/jpeg, image/webp"
+                                                                accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
                                                                 multiple v-bind:disabled="isUploading" @change="upload"
                                                                 v-else>
                                                             <div class="file-cta_">
