@@ -3838,7 +3838,7 @@ window.addEventListener("load", event => {
                                             let index = inline.type.count - 1;
 
                                             if (index < inline.text.length) {
-                                                let width = Math.floor(inline.text.length / 2);
+                                                const width = Math.floor(inline.text.length / 2);
 
                                                 if (inline.type.buffer.length <= width && inline.type.count > 0) {
                                                     inline.type.count -= 1;
@@ -3873,9 +3873,9 @@ window.addEventListener("load", event => {
                                     }
 
                                     if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                                        let index = inline.type.buffer.length;
-                                        let width = Math.floor(inline.text.length / 2);
-                                        let length = inline.text.length;
+                                        const index = inline.type.buffer.length;
+                                        const width = Math.floor(inline.text.length / 2);
+                                        const length = inline.text.length;
 
                                         if (inline.type.count >= width) {
                                             inline.type.buffer += inline.text.charAt(index);
@@ -3961,7 +3961,7 @@ window.addEventListener("load", event => {
                                     let index = this.message.type.count - 1;
 
                                     if (index < this.message.text.length) {
-                                        let width = Math.floor(this.message.text.length / 2);
+                                        const width = Math.floor(this.message.text.length / 2);
 
                                         if (this.message.type.buffer.length <= width && this.message.type.count > 0) {
                                             this.message.type.count -= 1;
@@ -3989,9 +3989,9 @@ window.addEventListener("load", event => {
                             }
 
                             if (this.message.type.elapsed >= 1.0 / this.message.type.speed) {
-                                let index = this.message.type.buffer.length;
-                                let width = Math.floor(this.message.text.length / 2);
-                                let length = this.message.text.length;
+                                const index = this.message.type.buffer.length;
+                                const width = Math.floor(this.message.text.length / 2);
+                                const length = this.message.text.length;
 
                                 if (this.message.type.count >= width) {
                                     this.message.type.buffer += this.message.text.charAt(index);
