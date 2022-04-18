@@ -3770,7 +3770,7 @@ window.addEventListener("load", event => {
 
                         this.wall.splice(0);
 
-                        const length = _random(25, 50);
+                        const length = _random(10, 25);
                         let start = this.likes.length - length;
                         let samples;
 
@@ -3806,7 +3806,7 @@ window.addEventListener("load", event => {
                                 height: 100 / samples.length,
                                 inlines: [
                                     { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] },
-                                    { running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
+                                    //{ running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
                                 ]
                             });
                         }
