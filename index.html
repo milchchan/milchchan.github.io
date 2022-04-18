@@ -283,7 +283,7 @@
                     </div>-->
                     <div class="wall">
                         <div class="line" v-for="block in wall" v-bind:key="block"
-                            v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.75)) + 'vh', lineHeight: String(block.height) + 'vh' }">
+                            v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.5)) + 'vh', lineHeight: String(block.height) + 'vh' }">
                             <div class="back">
                                 <div class="block">
                                     <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
