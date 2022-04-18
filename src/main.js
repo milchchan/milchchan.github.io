@@ -699,7 +699,7 @@ window.addEventListener("load", event => {
                             });
 
                             if (data === null) {
-                                await runTransaction(databaseRef(database, `${databaseRoot}/images/${push(child(databaseRef(database), `${databaseRoot}/images`)).key}`), current => {
+                                await runTransaction(databaseRef(database, `${databaseRoot}/backgrounds/${push(child(databaseRef(database), `${databaseRoot}/backgrounds`)).key}`), current => {
                                     return { image: { path: path, type: file.type }, random: Math.random(), timestamp: timestamp };
                                 });
                             } else if (data.type === null) {
@@ -2116,7 +2116,7 @@ window.addEventListener("load", event => {
                 const nonce = this.background.nonce;
 
                 try {
-                    const snapshot = await get(query(databaseRef(database, `${databaseRoot}/images`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+                    const snapshot = await get(query(databaseRef(database, `${databaseRoot}/backgrounds`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
 
                     if (snapshot.exists()) {
                         function choice(collection, func) {
@@ -4935,7 +4935,7 @@ window.addEventListener("load", event => {
                 }
             });
 
-            onValue(query(databaseRef(database, databaseRoot + "/backgrounds"), orderByChild("timestamp"), limitToLast(100)), snapshot => {
+            /*onValue(query(databaseRef(database, databaseRoot + "/backgrounds"), orderByChild("timestamp"), limitToLast(100)), snapshot => {
                 if (snapshot.exists()) {
                     const backgrounds = snapshot.val();
                     let isUpdated = false;
@@ -4956,12 +4956,12 @@ window.addEventListener("load", event => {
                         isUpdated = true;
                     }
 
-                    /*for (let i = self.recentImages.length - 1; i >= 0; i--) {
-                        if (self.recentImages[i].id in backgrounds === false) {
-                            self.recentImages.splice(i, 1);
-                            isUpdated = true;
-                        }
-                    }*/
+                    //for (let i = self.recentImages.length - 1; i >= 0; i--) {
+                    //    if (self.recentImages[i].id in backgrounds === false) {
+                    //        self.recentImages.splice(i, 1);
+                    //        isUpdated = true;
+                    //    }
+                    //}
 
                     if (isUpdated) {
                         self.recentImages.sort((x, y) => y.timestamp - x.timestamp);
@@ -4974,7 +4974,7 @@ window.addEventListener("load", event => {
                         //self.isBlinded = true;
                     }
                 }
-            });
+            });*/
             onValue(databaseRef(database, databaseRoot + "/stars"), snapshot => {
                 const count = snapshot.val();
 
@@ -5128,7 +5128,7 @@ window.addEventListener("load", event => {
 
                         self.update(self.likes, self.maxTags);
 
-                        if (recent.length > 0) {
+                        /*if (recent.length > 0) {
                             function _random(min, max) {
                                 min = Math.ceil(min);
                                 max = Math.floor(max);
@@ -5178,7 +5178,7 @@ window.addEventListener("load", event => {
                                     }
                                 }
                             }
-                        }
+                        }*/
 
                         self.refreshRequired = true;
                     }
@@ -5191,7 +5191,7 @@ window.addEventListener("load", event => {
                 vrmModel = null;
             }
 
-            off(query(databaseRef(database, databaseRoot + "/images"), limitToLast(100)));
+            //off(query(databaseRef(database, databaseRoot + "/images"), limitToLast(100)));
             off(databaseRef(database, databaseRoot + "/stars"));
             off(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)));
             off(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(100)));
