@@ -247,7 +247,7 @@ window.addEventListener("load", event => {
                 animatedNotificationHeight: 0,
                 recentImages: [],
                 backgroundQueue: [],
-                background: { images: [ '/images/Omr.png' ], caches: {} },
+                background: { image: null, timestamp: 0, nonce: null },
                 wall: [],
                 refreshRequired: false,
                 isUploading: false,
@@ -264,8 +264,6 @@ window.addEventListener("load", event => {
                 text: [],
                 popupTextHeight: 0,
                 animatedPopupTextHeight: 0,
-                //tickerWidth: 0,
-                //animatedTickerWidth: 0,
                 message: null,
                 states: {},
                 character: null,
@@ -330,25 +328,6 @@ window.addEventListener("load", event => {
                     }
                 });
             },
-            /*words: {
-                handler: () => {
-                    app.$nextTick(() => {
-                        for (const clip of document.body.querySelectorAll(".container>.wrap>.frame .clip")) {
-                            let width = 0;
-
-                            for (const element of clip.querySelectorAll(":scope .ticker-wrap .ticker .item")) {
-                                width += element.getBoundingClientRect().width;
-                            }
-
-                            if (width > 0) {
-                                app.tickerWidth = Math.min(width / 2, document.body.querySelector(".container>.wrap>.frame .level").getBoundingClientRect().width);
-                                clip.querySelector(":scope .ticker-wrap .ticker").style.width = width + "px";
-                            }
-                        }
-                    });
-                },
-                deep: true
-            },*/
             captures: {
                 handler: (newValue) => {
                     if (Object.keys(newValue).length > 0) {
@@ -367,66 +346,6 @@ window.addEventListener("load", event => {
                 },
                 deep: true
             },
-            /*tickerWidth(newValue) {
-                const self = this;
-                const obj = { width: this.animatedTickerWidth };
-
-                anime({
-                    targets: obj,
-                    width: newValue,
-                    round: 1,
-                    duration: 500,
-                    easing: "linear",
-                    update: () => {
-                        self.animatedTickerWidth = obj.width;
-                    },
-                    complete: () => {
-                        self.animatedTickerWidth = newValue;
-                    }
-                });
-            },*/
-            /*background: {
-                handler: () => {
-                    app.$nextTick(() => {
-                        const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.background>div:not(.columns)");
-
-                        if (elements.length > 1) {
-                            const offset = elements.length - 1;
-                            const frameRate = 15;
-                            let index = 0;
-                            let startTime = null;
-
-                            for (const element of elements) {
-                                const keyframes = [];
-
-                                for (let i = 0; i < elements.length; i++) {
-                                    if (i === index) {
-                                        keyframes.push({ visibility: "visible" });
-                                    } else {
-                                        keyframes.push({ visibility: "hidden" });
-                                    }
-                                }
-
-                                const animation = element.animate(keyframes, {
-                                    fill: 'forwards',
-                                    easing: 'steps(' + offset + ')',
-                                    duration: 1000 / frameRate * elements.length,
-                                    iterations: Infinity
-                                });
-
-                                if (startTime === null) {
-                                    startTime = animation.startTime;
-                                } else {
-                                    animation.startTime = startTime;
-                                }
-
-                                index++;
-                            }
-                        }
-                    });
-                },
-                deep: true
-            },*/
             text: {
                 handler: () => {
                     app.$nextTick(() => {
@@ -633,7 +552,8 @@ window.addEventListener("load", event => {
                 }
             },
             refresh: function (event) {
-                this.refreshRequired = true;
+                this.background.nonce = this.generateNonce(8);
+                //this.refreshRequired = true;
                 /*
                 if (this.likes.some(x => typeof (x.text) === "object" && Object.values(x.text).some(x => typeof (x) === "object"))) {
                     this.isBlinded = true;
@@ -779,8 +699,8 @@ window.addEventListener("load", event => {
                             });
 
                             if (data === null) {
-                                await runTransaction(databaseRef(database, `${databaseRoot}/backgrounds/${push(child(databaseRef(database), `${databaseRoot}/backgrounds`)).key}`), current => {
-                                    return { image: { path: path, type: file.type }, timestamp: timestamp };
+                                await runTransaction(databaseRef(database, `${databaseRoot}/images/${push(child(databaseRef(database), `${databaseRoot}/images`)).key}`), current => {
+                                    return { image: { path: path, type: file.type }, random: Math.random(), timestamp: timestamp };
                                 });
                             } else if (data.type === null) {
                                 data["image"] = { path: path, url: await getDownloadURL(storageRef(storage, path)), type: file.type };
@@ -935,6 +855,7 @@ window.addEventListener("load", event => {
                                     }
 
                                     c["user"] = user;
+                                    c["random"] = current["random"];
                                     c["timestamp"] = timestamp - 1;
 
                                     return c;
@@ -2186,7 +2107,123 @@ window.addEventListener("load", event => {
 
                 this.notifications.unshift(data);
             },
+            preload: function () {
+                if (Math.floor(new Date() / 1000) - this.background.timestamp >= 60) {
+                    this.background.nonce = this.generateNonce(8);
+                }
+            },
             blinded: async function () {
+                const nonce = this.background.nonce;
+
+                try {
+                    const snapshot = await get(query(databaseRef(database, `${databaseRoot}/images`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+
+                    if (snapshot.exists()) {
+                        function choice(collection, func) {
+                            const r = Math.random();
+                            let sum = 0.0;
+                            let index = 0;
+
+                            for (let item of collection) {
+                                const probability = func(item);
+
+                                if (sum <= r && r < sum + probability) {
+                                    break;
+                                }
+
+                                sum += probability;
+                                index++;
+                            }
+
+                            return collection[index];
+                        }
+
+                        function softmax(x, func1, func2) {
+                            let y = [].concat(x);
+                            let max = Number.MIN_VALUE;
+                            let sum = 0.0;
+
+                            for (let i = 0; i < x.length; i++) {
+                                if (func1(x[i]) > max) {
+                                    max = func1(x[i]);
+                                }
+                            }
+
+                            for (let i = 0; i < x.length; i++) {
+                                sum += Math.exp(func1(x[i]) - max);
+                            }
+
+                            for (let i = 0; i < x.length; i++) {
+                                func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                            }
+
+                            return y;
+                        }
+
+                        const dictionary = snapshot.val();
+                        const images = [];
+
+                        for (const key in dictionary) {
+                            dictionary[key]["probability"] = 1;
+
+                            images.push(dictionary[key]);
+                        }
+
+                        const path = choice(softmax(images, x => x.probability, (x, y) => x.probability = y), x => x.probability).image.path;
+                        const metadata = await getMetadata(storageRef(storage, path));
+
+                        if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
+                            try {
+                                const blob = await this.download(await getDownloadURL(storageRef(storage, path)));
+
+                                if (blob !== null && this.background.nonce === nonce) {
+                                    this.background.image = await new Promise(async (resolve, reject) => {
+                                        const reader = new FileReader();
+
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    });
+                                    this.background.timestamp = Math.floor(new Date() / 1000);
+                                    this.background.nonce = null;
+
+                                    return;
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        } else if (this.background.nonce === nonce) {
+                            this.background.image = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(reader.error);
+                                };
+                                reader.readAsDataURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)));
+                            });
+                            this.background.timestamp = Math.floor(new Date() / 1000);
+                            this.background.nonce = null;
+
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
+                }
+
+                if (this.background.nonce === nonce) {
+                    this.background.image = undefined;
+                    this.background.timestamp = 0;
+                    this.background.nonce = null;
+                }
                 /*if (this.backgroundQueue.length === 0) {
                     if (this.likes.length > 0) {
                         function shuffle(array) {
@@ -2401,7 +2438,7 @@ window.addEventListener("load", event => {
                     this.background.tags = null;
                 }*/
 
-                this.isBlinded = false;
+                //this.isBlinded = false;
             },
             update: async function (data, max) {
                 this.isUpdating = true;
@@ -2749,6 +2786,16 @@ window.addEventListener("load", event => {
                 const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
 
                 return hashHex;
+            },
+            generateNonce: function (length) {
+                let text = "";
+                const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+                for (let i = 0; i < length; i++) {
+                    text += characters.charAt(Math.floor(Math.random() * characters.length));
+                }
+
+                return text;
             },
             animationStart: function (el) {
                 this.isAnimating = true;
@@ -3728,7 +3775,7 @@ window.addEventListener("load", event => {
                         let samples;
 
                         if (start >= 0) {
-                            start = _random(0, start);                            
+                            start = _random(0, start);
                             samples = this.likes.slice(start, start + length);
                         } else {
                             samples = this.likes;
@@ -4969,16 +5016,19 @@ window.addEventListener("load", event => {
 
                     if (isUpdated) {
                         const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
-                        let count = 0;
+                        //let count = 0;
 
                         for (let i = self.words.length - 1; i >= 0; i--) {
-                            if ("timestamp" in self.words[i]) {
+                            if ("timestamp" in self.words[i] === false) {
+                                self.words.splice(i, 1);
+                            }
+                            /*if ("timestamp" in self.words[i]) {
                                 if (self.words[i].timestamp > timestamp) {
                                     count++;
                                 }
                             } else {
                                 self.words.splice(i, 1);
-                            }
+                            }*/
                         }
 
                         self.words.sort((x, y) => y.timestamp - x.timestamp);
@@ -4993,7 +5043,7 @@ window.addEventListener("load", event => {
                             }
                         }
 
-                        if (count > self.background.stars.length) {
+                        /*if (count > self.background.stars.length) {
                             function _random(min, max) {
                                 min = Math.ceil(min);
                                 max = Math.floor(max);
@@ -5034,7 +5084,7 @@ window.addEventListener("load", event => {
                             }
                         } else if (count < self.background.stars.length) {
                             self.background.stars.splice(count);
-                        }
+                        }*/
                     }
                 }
             });
