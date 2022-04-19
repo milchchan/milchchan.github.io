@@ -3209,7 +3209,7 @@ window.addEventListener("load", event => {
                                     if (~~_random(0, 10) % 2 === 0) {
                                         this.activate();
                                     } else {
-                                        this.refreshRequired = true;
+                                        //this.refreshRequired = true;
                                     }
                                 }
 
@@ -3812,7 +3812,7 @@ window.addEventListener("load", event => {
                         }
 
                         app.$nextTick(() => {
-                            const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.wall>.line");
+                            const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.wall>.wrap>.line");
 
                             for (const element of elements) {
                                 element.animate([{ transform: "translate3d(0%, 0, 0)" }, { transform: "translate3d(-50%, 0, 0)" }], {
