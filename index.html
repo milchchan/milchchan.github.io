@@ -281,36 +281,38 @@
                             </div>
                         </div>
                     </div>-->
-                    <div class="wall">
-                        <div class="line" v-for="block in wall" v-bind:key="block"
-                            v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.5)) + 'vh', lineHeight: String(block.height) + 'vh' }">
-                            <div class="back">
-                                <div class="block">
-                                    <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
-                                        <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
+                    <div class="wall" ref="wall">
+                        <div class="wrap" v-for="(block, index) in wall" v-bind:key="block"
+                            v-bind:style="{ width: $refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back') === null ? '0px' : String(Math.ceil($refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back').getBoundingClientRect().width / 2)) + 'px' }">
+                            <div class="line" v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.5)) + 'vh', lineHeight: String(block.height) + 'vh' }">
+                                <div class="back">
+                                    <div class="block">
+                                        <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
+                                            <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
+                                        </div>
+                                    </div>
+                                    <div class="block">
+                                        <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
+                                            <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="block">
-                                    <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
-                                        <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
+                                <div class="front">
+                                    <div class="block">
+                                        <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
+                                            <span class="has-text-weight-bold is-uppercase"
+                                                v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
+                                                v-for="character in inline.characters" v-bind:key="character.key"
+                                                v-text="character.value"></span>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="front">
-                                <div class="block">
-                                    <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
-                                        <span class="has-text-weight-bold is-uppercase"
-                                            v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
-                                            v-for="character in inline.characters" v-bind:key="character.key"
-                                            v-text="character.value"></span>
-                                    </div>
-                                </div>
-                                <div class="block">
-                                    <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
-                                        <span class="has-text-weight-bold is-uppercase"
-                                            v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
-                                            v-for="character in inline.characters" v-bind:key="character.key"
-                                            v-text="character.value"></span>
+                                    <div class="block">
+                                        <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
+                                            <span class="has-text-weight-bold is-uppercase"
+                                                v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
+                                                v-for="character in inline.characters" v-bind:key="character.key"
+                                                v-text="character.value"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -3369,8 +3371,8 @@
                                     <form @submit.prevent v-cloak>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
-                                                <input class="input is-rounded has-text-weight-bold" type="text" placeholder="教える言葉"
-                                                    v-bind:class="{ 'is-danger': inputHasError }"
+                                                <input class="input is-rounded has-text-weight-bold" type="text"
+                                                    placeholder="教える言葉" v-bind:class="{ 'is-danger': inputHasError }"
                                                     v-bind:disabled="word !== null" v-model="input" @input="change"
                                                     ref="text" v-cloak>
                                             </div>
