@@ -521,29 +521,16 @@ label .scrollable>div {
     background: transparent;
     overflow: hidden;
 
-    >.line {
+    >.wrap {
         margin: 0;
         padding: 0;
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
         width: fit-content;
-        transform-origin: 0% 0%;
-        transform: translate3d(0%, 0, 0);
-        
-        .back {
-            position: relative;
-            color: transparent !important;
-        }
+        height: fit-content;
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(to right, black 0%, black 95%, transparent);
+        mask-image: linear-gradient(to right, black 0%, black 95%, transparent);
 
-        .front {
-            position: absolute;
-            color: rgba(255, 255, 255, 1) !important;
-        }
-
-        .back,
-        .front {
+        >.line {
             margin: 0;
             padding: 0;
             display: flex;
@@ -551,8 +538,21 @@ label .scrollable>div {
             justify-content: flex-start;
             align-items: center;
             width: fit-content;
+            transform-origin: 0% 0%;
+            transform: translate3d(0%, 0, 0);
 
-            .block {
+            .back {
+                position: relative;
+                color: transparent !important;
+            }
+
+            .front {
+                position: absolute;
+                color: rgba(255, 255, 255, 1) !important;
+            }
+
+            .back,
+            .front {
                 margin: 0;
                 padding: 0;
                 display: flex;
@@ -561,8 +561,8 @@ label .scrollable>div {
                 align-items: center;
                 width: fit-content;
 
-                .inline {
-                    margin: 0px 8px 0px 8px;
+                .block {
+                    margin: 0;
                     padding: 0;
                     display: flex;
                     flex-direction: row;
@@ -570,15 +570,25 @@ label .scrollable>div {
                     align-items: center;
                     width: fit-content;
 
-                    span {
-                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                        text-shadow: none;
-                        vertical-align: middle;
-                        white-space: nowrap;
-                    }
+                    .inline {
+                        margin: 0px 8px 0px 8px;
+                        padding: 0;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-start;
+                        align-items: center;
+                        width: fit-content;
 
-                    span.highlight {
-                        color: var(--accent-color) !important;
+                        span {
+                            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                            text-shadow: none;
+                            vertical-align: middle;
+                            white-space: nowrap;
+                        }
+
+                        span.highlight {
+                            color: var(--accent-color) !important;
+                        }
                     }
                 }
             }
