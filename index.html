@@ -286,19 +286,19 @@
                             v-bind:style="{ width: $refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back') === null ? '0px' : String(Math.ceil($refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back').getBoundingClientRect().width / 2)) + 'px' }">
                             <div class="line" v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.5)) + 'vh', lineHeight: String(block.height) + 'vh' }">
                                 <div class="back">
-                                    <div class="block">
+                                    <div class="block" v-for="_ in Array(block.iterations)">
                                         <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
                                             <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
                                         </div>
                                     </div>
-                                    <div class="block">
+                                    <div class="block" v-for="_ in Array(block.iterations)">
                                         <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
                                             <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="front">
-                                    <div class="block">
+                                    <div class="block" v-for="_ in Array(block.iterations)">
                                         <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
                                             <span class="has-text-weight-bold is-uppercase"
                                                 v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
@@ -306,7 +306,7 @@
                                                 v-text="character.value"></span>
                                         </div>
                                     </div>
-                                    <div class="block">
+                                    <div class="block" v-for="_ in Array(block.iterations)">
                                         <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
                                             <span class="has-text-weight-bold is-uppercase"
                                                 v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
