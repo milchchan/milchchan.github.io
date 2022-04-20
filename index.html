@@ -291,21 +291,8 @@
                                             <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
                                         </div>
                                     </div>
-                                    <div class="block" v-for="_ in Array(block.iterations)">
-                                        <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
-                                            <span class="has-text-weight-bold is-uppercase" v-text="inline.text"></span>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="front">
-                                    <div class="block" v-for="_ in Array(block.iterations)">
-                                        <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
-                                            <span class="has-text-weight-bold is-uppercase"
-                                                v-bind:class="{ break: character.value === '\n', highlight: character.highlight }"
-                                                v-for="character in inline.characters" v-bind:key="character.key"
-                                                v-text="character.value"></span>
-                                        </div>
-                                    </div>
                                     <div class="block" v-for="_ in Array(block.iterations)">
                                         <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
                                             <span class="has-text-weight-bold is-uppercase"
