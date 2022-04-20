@@ -3209,7 +3209,7 @@ window.addEventListener("load", event => {
                                     if (~~_random(0, 10) % 2 === 0) {
                                         this.activate();
                                     } else {
-                                        //this.refreshRequired = true;
+                                        this.refreshRequired = true;
                                     }
                                 }
 
