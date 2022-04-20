@@ -1,5 +1,5 @@
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
-import { WebGLRenderer, Scene, DirectionalLight, PerspectiveCamera, Clock, Raycaster, Object3D, Vector2, Vector3, LinearToneMapping, sRGBEncoding } from 'three/build/three.module.js';
+import { WebGLRenderer, Scene, DirectionalLight, PerspectiveCamera, Clock, Raycaster, Object3D, Vector2, Vector3, LinearToneMapping, sRGBEncoding } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -88,11 +88,11 @@ controls.target.set(0.0, 1.0, 0.0);
 controls.update();
 
 const scene = new Scene();
-const light = new DirectionalLight(0xffffff);
+const light = new DirectionalLight(0xffffff, 0.99);
 //const hemisphereLight = new THREE.HemisphereLight(0xd7fbff, 0x7e94a8, 0.7);
 
-light.intensity = 0.9;
-light.position.set(0.0, 10.0, 10.0).normalize();
+//light.intensity = 0.9;
+light.position.set(0.0, 1.0, 1.0).normalize();
 
 scene.add(light);
 //scene.add(hemisphereLight);
@@ -116,14 +116,14 @@ var rgbShift = new ShaderPass(RGBShiftShader);
 var fxaaShader = new ShaderPass(FXAAShader);
 
 bloomPass.renderToScreen = true;
-bloomPass.threshold = 0.5;
+bloomPass.threshold = 0.9;
 bloomPass.strength = 0.1;
-bloomPass.radius = 0.1;
+bloomPass.radius = 0.25;
 
-//hueSaturation.uniforms.hue.value = -0.025;
+//hueSaturation.uniforms.hue.value = 0.01;
 hueSaturation.uniforms.saturation.value = 0.5;
-brightnessContrastShader.uniforms.brightness.value = 0.5;
-brightnessContrastShader.uniforms.contrast.value = -0.1;
+brightnessContrastShader.uniforms.brightness.value = 0.1;
+brightnessContrastShader.uniforms.contrast.value = 0.1;
 colorCorrection.uniforms.mulRGB.value = new Vector3(0.95, 0.95, 0.95);
 colorCorrection.uniforms.powRGB.value = new Vector3(1, 1, 1);
 rgbShift.uniforms.amount.value = 0.0001;
