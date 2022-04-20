@@ -3808,7 +3808,7 @@ window.addEventListener("load", event => {
                                     { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] },
                                     //{ running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
                                 ],
-                                iterations: ~~Math.ceil(50 / text.length)
+                                iterations: ~~Math.ceil(50 / text.length) * 2
                             });
                         }
 
