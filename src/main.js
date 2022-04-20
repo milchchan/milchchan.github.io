@@ -3770,7 +3770,7 @@ window.addEventListener("load", event => {
 
                         this.wall.splice(0);
 
-                        const length = _random(10, 25);
+                        const length = _random(8, 16);
                         let start = this.likes.length - length;
                         let samples;
 
