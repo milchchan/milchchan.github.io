@@ -3865,12 +3865,8 @@ window.addEventListener("load", event => {
                                 } else if (inline.type.buffer.length < inline.text.length) {
                                     if (inline.type.elapsed >= 0) {
                                         inline.type.elapsed += deltaTime;
-                                    } else if (!this.isAnimating) {
-                                        if (this.isPopup) {
-                                            inline.type.elapsed = deltaTime;
-                                        } else {
-                                            this.isPopup = true;
-                                        }
+                                    } else {
+                                        inline.type.elapsed = deltaTime;
                                     }
 
                                     if (inline.type.elapsed >= 1.0 / inline.type.speed) {
