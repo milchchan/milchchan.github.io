@@ -32,7 +32,7 @@ sans-serif;
     --accent-color: #fecde2;
     --highlight-color: #c1aee6;
     --placeholder-color: rgba(104, 230, 255, 0.25);
-    --primary-background-color: rgba(104, 230, 255, 0.75);
+    --primary-background-color: rgb(104, 230, 255);
     --background-image: url("/images/Stripes.png");
     --background-image-2x: url("/images/Background@2x.png");
     --background-image-3x: url("/images/Background@3x.png");
@@ -44,7 +44,7 @@ sans-serif;
         --highlight-color: #{$primary};
         --placeholder-color: rgba(193, 174, 230, 0.25);
         /*--primary-background-color: rgba(254, 205, 226, 0.75);*/
-        --primary-background-color: rgba(193, 174, 230, 0.75);
+        --primary-background-color: rgb(193, 174, 230);
     }
 }
 
@@ -191,14 +191,16 @@ label .scrollable>div {
 .tags>.tag {
     margin: 0px;
     padding: 16px 32px 16px 32px;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
     border-radius: 290486px;
-    background: rgba(255, 255, 255, 0.75) !important;
+    /*background: rgba(255, 255, 255, 0.75) !important;*/
+    border: 0px none transparent !important;
+    background: rgb(255, 255, 255);
     background-clip: padding-box;
     height: initial;
-    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+    /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
     backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);*/
 }
 
 .file-input,
@@ -1037,14 +1039,16 @@ label .scrollable>div {
 
                         .progress {
                             position: relative;
-                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                             border-radius: 290486px;
-                            background: rgba(255, 255, 255, 0.75) !important;
+                            /*background: rgba(255, 255, 255, 0.75) !important;*/
+                            border: 0px none transparent !important;
+                            background: rgb(255, 255, 255);
                             width: 128px;
                             height: 10px;
-                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                             backdrop-filter: blur(4px);
-                            -webkit-backdrop-filter: blur(4px);
+                            -webkit-backdrop-filter: blur(4px);*/
 
                             >.bar {
                                 position: relative;
@@ -1092,7 +1096,7 @@ label .scrollable>div {
                                 font-size: 4rem !important;
                                 line-height: 4rem !important;
                                 color: var(--main-color);
-                                text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+                                /*text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);*/
                                 transition: 0.5s;
                             }
                         }
@@ -1147,15 +1151,17 @@ label .scrollable>div {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                 border-radius: 290486px;
                 padding: 12px 24px 12px 24px;
-                background: rgba(255, 255, 255, 0.75) !important;
+                /*background: rgba(255, 255, 255, 0.75) !important;*/
+                border: 0px none transparent !important;
+                background: rgb(255, 255, 255);
                 background-clip: padding-box;
                 color: #000000;
-                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                 backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);*/
 
                 .media-left {
                     display: flex;
@@ -1212,12 +1218,14 @@ label .scrollable>div {
     button,
     .button {
         margin: 0px;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
+        border: 0px none transparent;
         padding: 16px 32px 16px 32px;
-        background: rgba(255, 255, 255, 0.75) !important;
-        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        background: rgb(255, 255, 255) !important;
+        /*background: rgba(255, 255, 255, 0.75) !important;
+        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);*/
+        /*backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);*/
         background-clip: padding-box;
         height: initial;
         color: var(--accent-color) !important;
@@ -1397,16 +1405,18 @@ label .scrollable>div {
                                                 align-items: center;
                                                 margin: 0;
                                                 padding: 16px 32px 16px 32px;
-                                                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                                background: rgba(255, 255, 255, 0.75) !important;
+                                                /*border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                                background: rgba(255, 255, 255, 0.75) !important;*/
+                                                border: 0px none transparent !important;
+                                                background: rgb(255, 255, 255);
                                                 background-clip: padding-box;
                                                 height: fit-content;
                                                 line-height: calc(0.75rem * 1.5);
                                                 backface-visibility: hidden;
                                                 color: #000000;
-                                                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                                                /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                                 backdrop-filter: blur(4px) !important;
-                                                -webkit-backdrop-filter: blur(4px) !important;
+                                                -webkit-backdrop-filter: blur(4px) !important;*/
 
                                                 .clip {
                                                     display: inline-block;
@@ -1462,14 +1472,16 @@ label .scrollable>div {
                                     >button,
                                     >.button {
                                         margin: 0px;
-                                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                        /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                         padding: 16px 32px 16px 32px;
-                                        background: rgba(255, 255, 255, 0.75) !important;
+                                        /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                        border: 0px none transparent !important;
+                                        background: rgb(255, 255, 255);
                                         background-clip: padding-box;
                                         height: initial;
-                                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                        /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                         backdrop-filter: blur(4px);
-                                        -webkit-backdrop-filter: blur(4px);
+                                        -webkit-backdrop-filter: blur(4px);*/
                                     }
 
                                     >button.is-circle,
@@ -1543,14 +1555,16 @@ label .scrollable>div {
                                                 button,
                                                 .button {
                                                     margin: 0px;
-                                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                                    /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                                     padding: 16px 32px 16px 32px;
-                                                    background: rgba(255, 255, 255, 0.75) !important;
+                                                    /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                                    border: 0px none transparent !important;
+                                                    background: rgb(255, 255, 255);
                                                     background-clip: padding-box;
                                                     height: initial;
-                                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                                    /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                                     backdrop-filter: blur(4px);
-                                                    -webkit-backdrop-filter: blur(4px);
+                                                    -webkit-backdrop-filter: blur(4px);*/
                                                 }
 
                                                 button.is-circle,
@@ -1596,15 +1610,17 @@ label .scrollable>div {
                                                         align-items: center;
                                                         margin: 0;
                                                         padding: 16px 32px 16px 32px;
-                                                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                                                        background: rgba(255, 255, 255, 0.75) !important;
+                                                        /*border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                                        background: rgba(255, 255, 255, 0.75) !important;*/
+                                                        border: 0px none transparent !important;
+                                                        background: rgb(255, 255, 255);
                                                         background-clip: padding-box;
                                                         height: fit-content;
                                                         line-height: calc(0.75rem * 1.5);
                                                         backface-visibility: hidden;
-                                                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                                                        /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                                         backdrop-filter: blur(4px) !important;
-                                                        -webkit-backdrop-filter: blur(4px) !important;
+                                                        -webkit-backdrop-filter: blur(4px) !important;*/
 
                                                         .clip {
                                                             display: inline-block;
@@ -1817,14 +1833,16 @@ label .scrollable>div {
                                                         button,
                                                         .button {
                                                             margin: 0px;
-                                                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                                            /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                                             padding: 16px 32px 16px 32px;
-                                                            background: rgba(255, 255, 255, 0.75) !important;
+                                                            /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                                            border: 0px none transparent !important;
+                                                            background: rgb(255, 255, 255);
                                                             background-clip: padding-box !important;
                                                             height: initial !important;
-                                                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                                                            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                                             backdrop-filter: blur(4px) !important;
-                                                            -webkit-backdrop-filter: blur(4px) !important;
+                                                            -webkit-backdrop-filter: blur(4px) !important;*/
                                                         }
 
                                                         button.is-circle,
@@ -1896,14 +1914,16 @@ label .scrollable>div {
                                                             button,
                                                             .button {
                                                                 margin: 0px;
-                                                                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                                                /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                                                 padding: 16px 32px 16px 32px;
-                                                                background: rgba(255, 255, 255, 0.75) !important;
+                                                                /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                                                border: 0px none transparent !important;
+                                                                background: rgb(255, 255, 255);
                                                                 background-clip: padding-box !important;
                                                                 height: initial !important;
-                                                                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                                                                /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                                                                 backdrop-filter: blur(4px) !important;
-                                                                -webkit-backdrop-filter: blur(4px) !important;
+                                                                -webkit-backdrop-filter: blur(4px) !important;*/
                                                             }
 
                                                             button.is-circle,
@@ -2000,15 +2020,17 @@ label .scrollable>div {
                                     align-items: center;
                                     margin: 0;
                                     padding: 16px 32px 16px 32px;
-                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                    /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                     border-radius: 290486px;
-                                    background: rgba(255, 255, 255, 0.75) !important;
+                                    /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                    border: 0px none transparent !important;
+                                    background: rgb(255, 255, 255);
                                     background-clip: padding-box;
                                     height: fit-content;
                                     line-height: calc(0.75rem * 1.5);
-                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                    /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                     backdrop-filter: blur(4px);
-                                    -webkit-backdrop-filter: blur(4px);
+                                    -webkit-backdrop-filter: blur(4px);*/
 
                                     .badge {
                                         padding: 4px 8px 4px 8px !important;
@@ -2130,14 +2152,16 @@ label .scrollable>div {
 
                             >button {
                                 margin: 0px;
-                                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                 padding: 16px 32px 16px 32px;
-                                background: rgba(255, 255, 255, 0.75) !important;
+                                /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                border: 0px none transparent !important;
+                                background: rgb(255, 255, 255);
                                 background-clip: padding-box;
                                 height: initial;
-                                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                 backdrop-filter: blur(4px);
-                                -webkit-backdrop-filter: blur(4px);
+                                -webkit-backdrop-filter: blur(4px);*/
                             }
 
                             >button.is-circle,
@@ -2190,14 +2214,16 @@ label .scrollable>div {
                 >.level-item:last-child:not(:first-child)>.level>.level-item {
                     button {
                         margin: 0px;
-                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                        /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                         padding: 16px 32px 16px 32px;
-                        background: rgba(255, 255, 255, 0.75) !important;
+                        /*background: rgba(255, 255, 255, 0.75) !important;*/
+                        border: 0px none transparent !important;
+                        background: rgb(255, 255, 255);
                         background-clip: padding-box;
                         height: initial;
-                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                        /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                         backdrop-filter: blur(4px);
-                        -webkit-backdrop-filter: blur(4px);
+                        -webkit-backdrop-filter: blur(4px);*/
                     }
 
                     button.is-circle,
@@ -2251,17 +2277,19 @@ label .scrollable>div {
                         align-items: center;
                         margin: 0;
                         padding: 16px 32px 16px 32px;
-                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                        /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                         border-radius: 290486px;
-                        background: rgba(255, 255, 255, 0.75) !important;
+                        /*background: rgba(255, 255, 255, 0.75) !important;*/
+                        border: 0px none transparent !important;
+                        background: rgb(255, 255, 255);
                         background-clip: padding-box;
                         height: fit-content;
                         line-height: calc(0.75rem * 1.5);
                         backface-visibility: hidden;
                         color: #000000;
-                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                        /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                         backdrop-filter: blur(4px) !important;
-                        -webkit-backdrop-filter: blur(4px) !important;
+                        -webkit-backdrop-filter: blur(4px) !important;*/
 
                         .clip {
                             display: inline-block;
@@ -2318,17 +2346,19 @@ label .scrollable>div {
                             align-items: center;
                             margin: 0;
                             padding: 12px 12px 12px 12px;
-                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                             border-radius: 500px 500px 500px 0px;
-                            background: rgba(255, 255, 255, 0.75) !important;
+                            /*background: rgba(255, 255, 255, 0.75) !important;*/
+                            border: 0px none transparent !important;
+                            background: rgb(255, 255, 255);
                             background-clip: padding-box;
                             height: fit-content;
                             line-height: calc(0.75rem * 1.5);
                             backface-visibility: hidden;
                             color: #000000;
-                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
                             backdrop-filter: blur(4px) !important;
-                            -webkit-backdrop-filter: blur(4px) !important;
+                            -webkit-backdrop-filter: blur(4px) !important;*/
 
                             .clip {
                                 display: inline-block;
@@ -2425,15 +2455,17 @@ label .scrollable>div {
                     button,
                     .button {
                         margin: 0px;
-                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                        /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                         padding: 16px 32px 16px 32px;
-                        background: rgba(255, 255, 255, 0.75) !important;
+                        /*background: rgba(255, 255, 255, 0.75) !important;*/
+                        border: 0px none transparent !important;
+                        background: rgb(255, 255, 255);
                         background-clip: padding-box;
                         width: fit-content;
                         height: initial;
-                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                        /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                         backdrop-filter: blur(4px);
-                        -webkit-backdrop-filter: blur(4px);
+                        -webkit-backdrop-filter: blur(4px);*/
                     }
 
                     button.is-circle,
@@ -2488,15 +2520,17 @@ label .scrollable>div {
                                         align-items: center;
                                         margin: 0;
                                         padding: 16px 32px 16px 32px;
-                                        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                        /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                         border-radius: 290486px;
-                                        background: rgba(255, 255, 255, 0.75) !important;
+                                        /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                        border: 0px none transparent !important;
+                                        background: rgb(255, 255, 255);
                                         background-clip: padding-box;
                                         height: fit-content;
                                         line-height: calc(0.75rem * 1.5);
-                                        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                        /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                         backdrop-filter: blur(4px);
-                                        -webkit-backdrop-filter: blur(4px);
+                                        -webkit-backdrop-filter: blur(4px);*/
 
                                         .badge {
                                             padding: 4px 8px 4px 8px !important;
@@ -2554,14 +2588,16 @@ label .scrollable>div {
                             >.field {
                                 display: flex;
                                 margin: 0;
-                                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                 border-radius: 290486px;
                                 padding: 8px 16px 8px 16px;
-                                background: rgba(255, 255, 255, 0.75) !important;
+                                /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                border: 0px none transparent !important;
+                                background: rgb(255, 255, 255);
                                 background-clip: padding-box;
-                                box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                 backdrop-filter: blur(4px);
-                                -webkit-backdrop-filter: blur(4px);
+                                -webkit-backdrop-filter: blur(4px);*/
 
                                 .control {
                                     display: flex;
@@ -2640,14 +2676,16 @@ label .scrollable>div {
 
                         button {
                             margin: 0px;
-                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                             padding: 16px 32px 16px 32px;
-                            background: rgba(255, 255, 255, 0.75) !important;
+                            /*background: rgba(255, 255, 255, 0.75) !important;*/
+                            border: 0px none transparent !important;
+                            background: rgb(255, 255, 255);
                             background-clip: padding-box;
                             height: initial;
-                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                             backdrop-filter: blur(4px);
-                            -webkit-backdrop-filter: blur(4px);
+                            -webkit-backdrop-filter: blur(4px);*/
                         }
 
                         button.is-circle,
@@ -2684,15 +2722,17 @@ label .scrollable>div {
 
         .level-item>.level>.level-item a.button.is-circle {
             margin: 0px;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
             border-radius: 290486px !important;
             padding: 16px !important;
-            background: rgba(255, 255, 255, 0.75) !important;
+            /*background: rgba(255, 255, 255, 0.75) !important;*/
+            border: 0px none transparent !important;
+            background: rgb(255, 255, 255);
             background-clip: padding-box;
             height: initial;
-            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);*/
 
             .icon {
                 margin: 0 !important;
@@ -2893,15 +2933,17 @@ label .scrollable>div {
 
                                 button {
                                     margin: 0px;
-                                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                                    /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                     border-radius: 290486px;
                                     padding: 10px;
-                                    background: rgba(255, 255, 255, 0.75) !important;
+                                    /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                    border: 0px none transparent !important;
+                                    background: rgb(255, 255, 255);
                                     background-clip: padding-box;
                                     height: initial;
-                                    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                                    /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                                     backdrop-filter: blur(4px);
-                                    -webkit-backdrop-filter: blur(4px);
+                                    -webkit-backdrop-filter: blur(4px);*/
                                     color: var(--accent-color) !important;
 
                                     >span {
@@ -3015,14 +3057,16 @@ label .scrollable>div {
 
     form .field {
         margin: 0px;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
+        border: 0px none transparent !important;
+        background: rgb(255, 255, 255);
         border-radius: 290486px;
         padding: 8px 16px 8px 16px;
-        background: rgba(255, 255, 255, 0.75) !important;
+        /*background: rgba(255, 255, 255, 0.75) !important;*/
         background-clip: padding-box;
-        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+        /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
         backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);*/
 
         .control:nth-of-type(1) {
             input {
