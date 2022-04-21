@@ -83,7 +83,7 @@ input,
 button,
 a {
     font-family: #{$family-sans-serif};
-    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+    /*text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);*/
 }
 
 figure {
@@ -128,7 +128,7 @@ label.checkbox input[type="radio"]+.custom:before {
 label.checkbox input[type="checkbox"]:checked+.custom:before,
 label.checkbox input[type="radio"]:checked+.custom:before {
     color: var(--accent-color);
-    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+    /*text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);*/
     transition: 0.5s;
 }
 
@@ -1042,7 +1042,7 @@ label .scrollable>div {
                             background: rgba(255, 255, 255, 0.75) !important;
                             width: 128px;
                             height: 10px;
-                            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+                            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);*/
                             backdrop-filter: blur(4px);
                             -webkit-backdrop-filter: blur(4px);
 
