@@ -1699,10 +1699,12 @@ label .scrollable>div {
                                     >.media {
                                         position: relative;
                                         margin: 0px 0px 16px 0px;
-                                        border: 0px solid rgba(255, 255, 255, 0.1) !important;
+                                        /*border: 0px solid rgba(255, 255, 255, 0.1) !important;*/
+                                        border: 0px none transparent !important;
                                         border-radius: 16px;
                                         padding: 16px;
-                                        background: rgba(255, 255, 255, 0.75);
+                                        /*background: rgba(255, 255, 255, 0.75);*/
+                                        background: rgb(255, 255, 255);
                                         justify-content: center;
                                         align-items: center;
                                         width: 100%;
@@ -2003,7 +2005,8 @@ label .scrollable>div {
                                         left: 50%;
                                         margin-left: -16px;
                                         border: 16px solid transparent;
-                                        border-top: 16px solid rgba(255, 255, 255, 0.75);
+                                        /*border-top: 16px solid rgba(255, 255, 255, 0.75);*/
+                                        border-top: 16px solid rgb(255, 255, 255);
                                     }
                                 }
                             }
