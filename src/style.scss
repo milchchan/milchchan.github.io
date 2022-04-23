@@ -1045,7 +1045,7 @@ label .scrollable>div {
                             border: 0px none transparent !important;
                             background: rgb(255, 255, 255);
                             width: 128px;
-                            height: 10px;
+                            height: fit-content;
                             /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
                             backdrop-filter: blur(4px);
                             -webkit-backdrop-filter: blur(4px);*/
