@@ -1696,7 +1696,7 @@
                                                     </div>
                                                     <div class="level-item">
                                                         <div class="level is-mobile">
-                                                            <div class="level-item">
+                                                            <div class="level-item" v-if="mode.index === 0 && mode.index === mode.collection.length - 1" v-cloak>
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.index === 0"
                                                                     @click="mode.index--" v-cloak>
@@ -1723,7 +1723,7 @@
                                                                     </transition>
                                                                 </button>
                                                             </div>
-                                                            <div class="level-item">
+                                                            <div class="level-item" v-if="mode.index === 0 && mode.index === mode.collection.length - 1" v-cloak>
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.index === mode.collection.length - 1"
                                                                     @click="mode.index++" v-cloak>
@@ -2697,7 +2697,7 @@
                                                         </button>
                                                         <button class="button is-rounded is-size-7 is-primary"
                                                             type="button"
-                                                            @click="mode = { collection: null, index: 0, selected: [], disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 5));"
+                                                            @click="mode = { collection: null, index: 0, selected: [], disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 10));"
                                                             v-else>
                                                             <span class="icon">
                                                                 <i class="fa-solid fa-star"></i>
@@ -3457,7 +3457,7 @@
                     </button>
                     <button class="button is-circle" type="button"
                         v-bind:disabled="user === null || isLoading || background.nonce !== null"
-                        @click="isRevealed = true; mode = { collection: null, index: 0, selected: [], disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 5));"
+                        @click="isRevealed = true; mode = { collection: null, index: 0, selected: [], disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 10));"
                         v-else key="default" v-cloak>
                         <transition name="fade" mode="out-in">
                             <span class="icon is-small" v-if="isLoading || background.nonce !== null" key="processing">
