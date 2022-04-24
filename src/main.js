@@ -205,7 +205,6 @@ window.addEventListener("load", event => {
                 isRevealed: false,
                 isOverlayed: false,
                 isUpdating: false,
-                isBlinded: false,
                 isPopup: false,
                 isExpanded: false,
                 isLearning: false,
