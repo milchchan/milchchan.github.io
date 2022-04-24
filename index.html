@@ -1708,12 +1708,12 @@
                                                             <div class="level-item">
                                                                 <button class="button is-primary is-circle"
                                                                     type="button"
-                                                                    v-bind:disabled="mode.selected.length === 0 || isBlinded || isLoading || isHangingOn"
+                                                                    v-bind:disabled="mode.selected.length === 0 || isLoading || isHangingOn"
                                                                     @click="release(mode.selected); activate(mode.selected.map(x => x.name), 0.0);/*backgroundQueue.unshift(mode.selected.some(x => 'image' in x) ? { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name), images: mode.selected.filter(x => 'image' in x).map(x => x.image) } : { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name) });*/ isRevealed = false; mode = null;/* refresh();*/"
                                                                     v-cloak>
                                                                     <transition name="fade" mode="out-in">
                                                                         <span class="icon"
-                                                                            v-if="isBlinded || isLoading || isHangingOn"
+                                                                            v-if="isLoading || isHangingOn"
                                                                             key="processing">
                                                                             <i class="fa-solid fa-spinner updating"></i>
                                                                         </span>
