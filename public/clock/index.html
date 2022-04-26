@@ -27,6 +27,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Roboto:wght@700&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
     <style type="text/css">
         :root {
             --background-color: #f5f5f5;
@@ -49,7 +50,7 @@
 
         body {
             color: var(--foreground-color);
-            font-family: "Segoe UI", "Helvetica", "Arial", sans-serif;
+            font-family: "Roboto Condensed", "Segoe UI", "Helvetica", "Arial", sans-serif;
             height: 100%;
             overflow: hidden;
             margin: 0;
@@ -218,7 +219,7 @@
             float: right;
             color: var(--foreground-color);
             margin: 4px 8px 4px 4px;
-            font-family: "Roboto Condensed", "Segoe UI", "Helvetica", "Arial", sans-serif;
+            font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
             font-size: 8px;
             font-weight: bold;
             line-height: 8px;
@@ -278,7 +279,7 @@
             font-weight: bold;
             text-decoration: underline;
             transition: .5s;
-        }        
+        }
 
         @keyframes loop {
             0% {
@@ -309,7 +310,7 @@
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-313424-1"></script>
-    
+
 </head>
 
 <body>
@@ -319,9 +320,10 @@
         </div>
     </div>
     <script type="text/javascript">
+        const scale = [...new URLSearchParams(window.location.search).entries()].reduce((x, y) => y[0] === "scale" ? y[1] : x, 1);
         const digits = [[3240, 0, 360, 640], [2880, 0, 360, 640], [2520, 0, 360, 640], [2160, 0, 360, 640], [1800, 0, 360, 640], [1440, 0, 360, 640], [1080, 0, 360, 640], [720, 0, 360, 640], [360, 0, 360, 640], [0, 0, 360, 640]];
-        const maxWidth = 120.0 * window.devicePixelRatio;
-        const maxHeight = 320.0 * window.devicePixelRatio;
+        const maxWidth = 120.0 * scale;
+        const maxHeight = 320.0 * scale;
         const clockQueue = new Array();
         const xArray = new Array(10);
         const yArray = new Array(10);
@@ -344,7 +346,7 @@
         let lastDate = new Date();
         let isPaused = false;
         let clocks = [{ source: "images/Digits1.png", digits: digits }, { source: "images/Digits2.png", digits: digits }];
-        
+
         function shuffle(array) {
             function _random(min, max) {
                 min = Math.ceil(min);
@@ -1254,7 +1256,7 @@
         });
         window.addEventListener("blur", event => {
             isPaused = true;
-        });        
+        });
 
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
