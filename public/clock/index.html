@@ -320,8 +320,8 @@
     </div>
     <script type="text/javascript">
         const digits = [[3240, 0, 360, 640], [2880, 0, 360, 640], [2520, 0, 360, 640], [2160, 0, 360, 640], [1800, 0, 360, 640], [1440, 0, 360, 640], [1080, 0, 360, 640], [720, 0, 360, 640], [360, 0, 360, 640], [0, 0, 360, 640]];
-        const maxWidth = 120.0;
-        const maxHeight = 320.0;
+        const maxWidth = 120.0 * window.devicePixelRatio;
+        const maxHeight = 320.0 * window.devicePixelRatio;
         const clockQueue = new Array();
         const xArray = new Array(10);
         const yArray = new Array(10);
@@ -750,7 +750,7 @@
         }
 
         window.addEventListener("load", async event => {
-            const width = 130 * 14;
+            const width = (maxWidth + 10) * 14;
             const container = document.body.querySelector("#container");
             const wrap = document.body.querySelector("#wrap");
 
@@ -778,6 +778,8 @@
 
                     digitElement.className = "digit";
                     digitElement.style.visibility = "hidden";
+                    digitElement.style.width = `${maxWidth}px`;
+                    digitElement.style.height = `${maxHeight}px`;
 
                     image.onload = () => {
                         digitElement.style.visibility = "visible";
@@ -861,7 +863,7 @@
 
             animate();
 
-            if (container.clientWidth >= 130 * 14) {
+            if (container.clientWidth >= (maxWidth + 10) * 14) {
                 wrap.style.marginLeft = (-width / 2).toString() + "px";
                 wrap.style.width = width + "px";
                 wrap.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
@@ -869,8 +871,8 @@
                 attach(clock, true, 23, 8, 'Year', 4);
                 attach(clock, true, 32, 8, 'Month', 2);
                 attach(clock, true, 17, 8, 'Day', 2);
-            } else if (container.clientWidth >= 130 * 10) {
-                wrap.style.marginLeft = ((-width - 130 * 4) / 2).toString() + "px";
+            } else if (container.clientWidth >= (maxWidth + 10) * 10) {
+                wrap.style.marginLeft = ((-width - (maxWidth + 10) * 4) / 2).toString() + "px";
                 wrap.style.width = width + "px";
                 wrap.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
 
@@ -878,18 +880,21 @@
                 attach(clock, true, 32, 8, 'Month', 2);
                 attach(clock, true, 17, 8, 'Day', 2);
             } else {
-                wrap.style.marginLeft = ((-width - 130 * 8) / 2).toString() + "px";
+                wrap.style.marginLeft = ((-width - (maxWidth + 10) * 8) / 2).toString() + "px";
                 wrap.style.width = width + "px";
                 wrap.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
 
-                if (container.clientWidth < 130 * 6) {
-                    wrap.style.transform = `scale(${(container.clientWidth / (130 * 6)).toString()})`;
+                if (container.clientWidth < (maxWidth + 10) * 6) {
+                    wrap.style.transform = `scale(${(container.clientWidth / ((maxWidth + 10) * 6)).toString()})`;
                 }
 
                 attach(clock, false, 23, 8, 'Year', 4);
                 attach(clock, false, 32, 8, 'Month', 2);
                 attach(clock, false, 17, 8, 'Day', 2);
             }
+
+            wrap.style.marginTop = `${-(maxHeight + 18) / 2}px`;
+            wrap.style.height = `${maxHeight + 18}px`;
 
             attach(clock, true, 26, 8, 'Hour', 2);
             attach(clock, true, 34, 8, 'Minute', 2);
@@ -913,6 +918,8 @@
                         const loadingElement = document.createElement("div");
 
                         loadingElement.className = "loading";
+                        loadingElement.style.width = `${maxWidth}px`;
+                        loadingElement.style.height = `${maxHeight}px`;
                         loadingElement.style.transform = "translate3d(0px, 100%, 0)";
 
                         element.parentElement.parentElement.appendChild(loadingElement);
@@ -1138,7 +1145,7 @@
             const container = document.body.querySelector("#container");
             const wrap = document.body.querySelector("#wrap");
 
-            if (container.clientWidth >= 130 * 14) {
+            if (container.clientWidth >= (maxWidth + 10) * 14) {
                 wrap.style.transform = "scale(1.0)";
                 wrap.animate([
                     {
@@ -1163,11 +1170,11 @@
                         easing: "ease-out"
                     });
                 }
-            } else if (container.clientWidth >= 130 * 10) {
+            } else if (container.clientWidth >= (maxWidth + 10) * 10) {
                 wrap.style.transform = "scale(1.0)";
                 wrap.animate([
                     {
-                        marginLeft: ((-wrap.clientWidth - 130 * 4) / 2).toString() + "px"
+                        marginLeft: ((-wrap.clientWidth - (maxWidth + 10) * 4) / 2).toString() + "px"
                     }
                 ], {
                     fill: "forwards",
@@ -1202,11 +1209,11 @@
                     });
                 }
             } else {
-                if (container.clientWidth < 130 * 6) {
-                    wrap.style.transform = "scale(" + (container.clientWidth / (130 * 6)).toString() + ")";
+                if (container.clientWidth < (maxWidth + 10) * 6) {
+                    wrap.style.transform = "scale(" + (container.clientWidth / ((maxWidth + 10) * 6)).toString() + ")";
                     wrap.animate([
                         {
-                            marginLeft: (((-wrap.clientWidth - 130 * 8) / 2)).toString() + "px"
+                            marginLeft: (((-wrap.clientWidth - (maxWidth + 10) * 8) / 2)).toString() + "px"
                         }
                     ], {
                         fill: "forwards",
@@ -1218,7 +1225,7 @@
                     wrap.style.transform = "scale(1.0)";
                     wrap.animate([
                         {
-                            marginLeft: ((-wrap.clientWidth - 130 * 8) / 2).toString() + "px"
+                            marginLeft: ((-wrap.clientWidth - (maxWidth + 10) * 8) / 2).toString() + "px"
                         }
                     ], {
                         fill: "forwards",
