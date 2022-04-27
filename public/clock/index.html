@@ -60,17 +60,34 @@
         #container {
             position: absolute;
             overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
             left: 0px;
             top: 0px;
             right: 0px;
             bottom: 0px;
-            margin: calc(16px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px));
+            margin: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
             padding: 0;
             background: transparent;
             transition: .5s;
         }
 
-        #container>.frame {
+        #container>.wrap {
+            box-sizing: border-box;
+            position: relative;
+            margin: 0;
+            border-radius: 0px;
+            padding: 16px;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        #container>.wrap>.frame {
+            box-sizing: border-box;
             position: relative;
             margin: 0;
             border-radius: 16px;
@@ -81,7 +98,7 @@
             overflow: hidden;
         }
 
-        #wrap {
+        .clock {
             position: absolute;
             left: 50%;
             top: 50%;
@@ -315,12 +332,11 @@
 
 <body>
     <div id="container">
-        <div class="frame">
-            <div id="wrap"></div>
-        </div>
     </div>
     <script type="text/javascript">
-        const scale = [...new URLSearchParams(window.location.search).entries()].reduce((x, y) => y[0] === "scale" ? y[1] : x, 1);
+        const query = [...new URLSearchParams(window.location.search).entries()];
+        const scale = query.reduce((x, y) => y[0] === "scale" ? y[1] : x, 1);
+        const split = query.reduce((x, y) => y[0] === "split" ? y[1] : x, "1").split(":");
         const digits = [[3240, 0, 360, 640], [2880, 0, 360, 640], [2520, 0, 360, 640], [2160, 0, 360, 640], [1800, 0, 360, 640], [1440, 0, 360, 640], [1080, 0, 360, 640], [720, 0, 360, 640], [360, 0, 360, 640], [0, 0, 360, 640]];
         const maxWidth = 120.0 * scale;
         const maxHeight = 320.0 * scale;
@@ -420,7 +436,7 @@
 
             for (const element of document.body.querySelectorAll("div.digit > img.digit")) {
                 if (element.parentElement.style.visibility === "visible") {
-                    if (i === 0 && newYear4 !== oldYear4) {
+                    if (i % 14 === 0 && newYear4 !== oldYear4) {
                         year4Step += 1 / (frameRate / 2);
 
                         if (year4Step >= 1) {
@@ -443,7 +459,7 @@
                         }
 
                         renderDigit(element, newYear4, year4X, year4Y, year4Width, year4Height, year4Step);
-                    } else if (i === 1 && newYear3 !== oldYear3) {
+                    } else if (i % 14 === 1 && newYear3 !== oldYear3) {
                         year3Step += 1 / (frameRate / 2);
 
                         if (year3Step >= 1) {
@@ -466,7 +482,7 @@
                         }
 
                         renderDigit(element, newYear3, year3X, year3Y, year3Width, year3Height, year3Step);
-                    } else if (i === 2 && newYear2 !== oldYear2) {
+                    } else if (i % 14 === 2 && newYear2 !== oldYear2) {
                         year2Step += 1 / (frameRate / 2);
 
                         if (year2Step >= 1) {
@@ -489,7 +505,7 @@
                         }
 
                         renderDigit(element, newYear2, year2X, year2Y, year2Width, year2Height, year2Step);
-                    } else if (i === 3 && newYear1 !== oldYear1) {
+                    } else if (i % 14 === 3 && newYear1 !== oldYear1) {
                         year1Step += 1 / (frameRate / 2);
 
                         if (year1Step >= 1) {
@@ -512,7 +528,7 @@
                         }
 
                         renderDigit(element, newYear1, year1X, year1Y, year1Width, year1Height, year1Step);
-                    } else if (i === 4 && newMonth2 !== oldMonth2) {
+                    } else if (i % 14 === 4 && newMonth2 !== oldMonth2) {
                         month2Step += 1 / (frameRate / 2);
 
                         if (month2Step >= 1) {
@@ -535,7 +551,7 @@
                         }
 
                         renderDigit(element, newMonth2, month2X, month2Y, month2Width, month2Height, month2Step);
-                    } else if (i === 5 && newMonth1 !== oldMonth1) {
+                    } else if (i % 14 === 5 && newMonth1 !== oldMonth1) {
                         month1Step += 1 / (frameRate / 2);
 
                         if (month1Step >= 1) {
@@ -558,7 +574,7 @@
                         }
 
                         renderDigit(element, newMonth1, month1X, month1Y, month1Width, month1Height, month1Step);
-                    } else if (i === 6 && newDay2 !== oldDay2) {
+                    } else if (i % 14 === 6 && newDay2 !== oldDay2) {
                         day2Step += 1 / (frameRate / 2);
 
                         if (day2Step >= 1) {
@@ -581,7 +597,7 @@
                         }
 
                         renderDigit(element, newDay2, day2X, day2Y, day2Width, day2Height, day2Step);
-                    } else if (i === 7 && newDay1 !== oldDay1) {
+                    } else if (i % 14 === 7 && newDay1 !== oldDay1) {
                         day1Step += 1 / (frameRate / 2);
 
                         if (day1Step >= 1) {
@@ -604,7 +620,7 @@
                         }
 
                         renderDigit(element, newDay1, day1X, day1Y, day1Width, day1Height, day1Step);
-                    } else if (i === 8 && newHour2 !== oldHour2) {
+                    } else if (i % 14 === 8 && newHour2 !== oldHour2) {
                         hour2Step += 1 / (frameRate / 2);
 
                         if (hour2Step >= 1) {
@@ -627,7 +643,7 @@
                         }
 
                         renderDigit(element, newHour2, hour2X, hour2Y, hour2Width, hour2Height, hour2Step);
-                    } else if (i === 9 && newHour1 !== oldHour1) {
+                    } else if (i % 14 === 9 && newHour1 !== oldHour1) {
                         hour1Step += 1 / (frameRate / 2);
 
                         if (hour1Step >= 1) {
@@ -650,7 +666,7 @@
                         }
 
                         renderDigit(element, newHour1, hour1X, hour1Y, hour1Width, hour1Height, hour1Step);
-                    } else if (i === 10 && newMinute2 !== oldMinute2) {
+                    } else if (i % 14 === 10 && newMinute2 !== oldMinute2) {
                         minute2Step += 1 / (frameRate / 2);
 
                         if (minute2Step >= 1) {
@@ -673,7 +689,7 @@
                         }
 
                         renderDigit(element, newMinute2, minute2X, minute2Y, minute2Width, minute2Height, minute2Step);
-                    } else if (i === 11 && newMinute1 !== oldMinute1) {
+                    } else if (i % 14 === 11 && newMinute1 !== oldMinute1) {
                         minute1Step += 1 / (frameRate / 2);
 
                         if (minute1Step >= 1) {
@@ -696,7 +712,7 @@
                         }
 
                         renderDigit(element, newMinute1, minute1X, minute1Y, minute1Width, minute1Height, minute1Step);
-                    } else if (i === 12 && newSecond2 !== oldSecond2) {
+                    } else if (i % 14 === 12 && newSecond2 !== oldSecond2) {
                         second2Step += 1 / (frameRate / 2);
 
                         if (second2Step >= 1) {
@@ -719,7 +735,7 @@
                         }
 
                         renderDigit(element, newSecond2, second2X, second2Y, second2Width, second2Height, second2Step);
-                    } else if (i === 13 && newSecond1 !== oldSecond1) {
+                    } else if (i % 14 === 13 && newSecond1 !== oldSecond1) {
                         second1Step += 1 / (frameRate / 2);
 
                         if (second1Step >= 1) {
@@ -753,14 +769,14 @@
 
         window.addEventListener("load", async event => {
             const width = (maxWidth + 10) * 14;
+            const sum = split.reduce((x, y) => x + Number(y), 0);
             const container = document.body.querySelector("#container");
-            const wrap = document.body.querySelector("#wrap");
 
             function random(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             }
 
-            function attach(clock, visible, width, height, alt, length) {
+            function attach(clock, data, visible, width, height, alt, length) {
                 for (let i = 0; i < length; i++) {
                     const contentElement = document.createElement("div");
                     const frameElement = document.createElement("div");
@@ -797,7 +813,7 @@
                         });
                     };
                     image.className = "digit";
-                    image.src = clock.source;
+                    image.src = data.source;
                     image.alt = "Digit";
 
                     digitElement.appendChild(image);
@@ -824,8 +840,24 @@
                         });
                     }
 
-                    wrap.appendChild(contentElement);
+                    clock.appendChild(contentElement);
                 }
+            }
+
+            for (const factor of split)
+            {
+                const wrapElement = document.createElement("div");
+                const frameElement = document.createElement("div");
+                const clockElement = document.createElement("div");
+
+                wrapElement.className = "wrap";
+                wrapElement.style.width = `${factor / sum * 100}%`;
+                frameElement.className = "frame";
+                clockElement.className = "clock";
+                
+                frameElement.appendChild(clockElement);
+                wrapElement.appendChild(frameElement);
+                container.appendChild(wrapElement);
             }
 
             try {
@@ -854,9 +886,9 @@
                 clockQueue.push(clock);
             }
 
-            const clock = clockQueue.shift();
+            const data = clockQueue.shift();
 
-            for (let i = 0; i < clock.digits.length; i++) {
+            for (let i = 0; i < data.digits.length; i++) {
                 xArray[i] = digits[i][0];
                 yArray[i] = digits[i][1];
                 widthArray[i] = digits[i][2];
@@ -865,42 +897,46 @@
 
             animate();
 
-            if (container.clientWidth >= (maxWidth + 10) * 14) {
-                wrap.style.marginLeft = (-width / 2).toString() + "px";
-                wrap.style.width = width + "px";
-                wrap.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
+            for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
+                const clock = frame.querySelector(":scope > .clock");
 
-                attach(clock, true, 23, 8, 'Year', 4);
-                attach(clock, true, 32, 8, 'Month', 2);
-                attach(clock, true, 17, 8, 'Day', 2);
-            } else if (container.clientWidth >= (maxWidth + 10) * 10) {
-                wrap.style.marginLeft = ((-width - (maxWidth + 10) * 4) / 2).toString() + "px";
-                wrap.style.width = width + "px";
-                wrap.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
+                if (frame.clientWidth >= (maxWidth + 10) * 14) {
+                    clock.style.marginLeft = (-width / 2).toString() + "px";
+                    clock.style.width = width + "px";
+                    clock.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
 
-                attach(clock, false, 23, 8, 'Year', 4);
-                attach(clock, true, 32, 8, 'Month', 2);
-                attach(clock, true, 17, 8, 'Day', 2);
-            } else {
-                wrap.style.marginLeft = ((-width - (maxWidth + 10) * 8) / 2).toString() + "px";
-                wrap.style.width = width + "px";
-                wrap.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
+                    attach(clock, data, true, 23, 8, 'Year', 4);
+                    attach(clock, data, true, 32, 8, 'Month', 2);
+                    attach(clock, data, true, 17, 8, 'Day', 2);
+                } else if (frame.clientWidth >= (maxWidth + 10) * 10) {
+                    clock.style.marginLeft = ((-width - (maxWidth + 10) * 4) / 2).toString() + "px";
+                    clock.style.width = width + "px";
+                    clock.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
 
-                if (container.clientWidth < (maxWidth + 10) * 6) {
-                    wrap.style.transform = `scale(${(container.clientWidth / ((maxWidth + 10) * 6)).toString()})`;
+                    attach(clock, data, false, 23, 8, 'Year', 4);
+                    attach(clock, data, true, 32, 8, 'Month', 2);
+                    attach(clock, data, true, 17, 8, 'Day', 2);
+                } else {
+                    clock.style.marginLeft = ((-width - (maxWidth + 10) * 8) / 2).toString() + "px";
+                    clock.style.width = width + "px";
+                    clock.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
+
+                    if (frame.clientWidth < (maxWidth + 10) * 6) {
+                        clock.style.transform = `scale(${(frame.clientWidth / ((maxWidth + 10) * 6)).toString()})`;
+                    }
+
+                    attach(clock, data, false, 23, 8, 'Year', 4);
+                    attach(clock, data, false, 32, 8, 'Month', 2);
+                    attach(clock, data, false, 17, 8, 'Day', 2);
                 }
 
-                attach(clock, false, 23, 8, 'Year', 4);
-                attach(clock, false, 32, 8, 'Month', 2);
-                attach(clock, false, 17, 8, 'Day', 2);
+                clock.style.marginTop = `${-(maxHeight + 18) / 2}px`;
+                clock.style.height = `${maxHeight + 18}px`;
+
+                attach(clock, data, true, 26, 8, 'Hour', 2);
+                attach(clock, data, true, 34, 8, 'Minute', 2);
+                attach(clock, data, true, 36, 8, 'Second', 2);
             }
-
-            wrap.style.marginTop = `${-(maxHeight + 18) / 2}px`;
-            wrap.style.height = `${maxHeight + 18}px`;
-
-            attach(clock, true, 26, 8, 'Hour', 2);
-            attach(clock, true, 34, 8, 'Minute', 2);
-            attach(clock, true, 36, 8, 'Second', 2);
 
             setTimeout(function tick() {
                 function update(data) {
@@ -1145,25 +1181,40 @@
 
         window.addEventListener("resize", event => {
             const container = document.body.querySelector("#container");
-            const wrap = document.body.querySelector("#wrap");
 
-            if (container.clientWidth >= (maxWidth + 10) * 14) {
-                wrap.style.transform = "scale(1.0)";
-                wrap.animate([
-                    {
-                        marginLeft: -wrap.clientWidth / 2 + "px"
+            for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
+                const clock = frame.querySelector(":scope > .clock");
+
+                if (frame.clientWidth >= (maxWidth + 10) * 14) {
+                    clock.style.transform = "scale(1.0)";
+                    clock.animate([
+                        {
+                            marginLeft: -clock.clientWidth / 2 + "px"
+                        }
+                    ], {
+                        fill: "forwards",
+                        duration: 500,
+                        iterations: 1,
+                        easing: "ease-out"
+                    });
+
+                    for (let i = 0; i < 8; i++) {
+                        clock.children[i].animate([
+                            {
+                                opacity: "1"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
                     }
-                ], {
-                    fill: "forwards",
-                    duration: 500,
-                    iterations: 1,
-                    easing: "ease-out"
-                });
-
-                for (let i = 0; i < 8; i++) {
-                    wrap.children[i].animate([
+                } else if (frame.clientWidth >= (maxWidth + 10) * 10) {
+                    clock.style.transform = "scale(1.0)";
+                    clock.animate([
                         {
-                            opacity: "1"
+                            marginLeft: ((-clock.clientWidth - (maxWidth + 10) * 4) / 2).toString() + "px"
                         }
                     ], {
                         fill: "forwards",
@@ -1171,83 +1222,71 @@
                         iterations: 1,
                         easing: "ease-out"
                     });
-                }
-            } else if (container.clientWidth >= (maxWidth + 10) * 10) {
-                wrap.style.transform = "scale(1.0)";
-                wrap.animate([
-                    {
-                        marginLeft: ((-wrap.clientWidth - (maxWidth + 10) * 4) / 2).toString() + "px"
+
+                    for (let i = 0; i < 4; i++) {
+                        clock.children[i].animate([
+                            {
+                                opacity: "0"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-in"
+                        });
                     }
-                ], {
-                    fill: "forwards",
-                    duration: 500,
-                    iterations: 1,
-                    easing: "ease-out"
-                });
 
-                for (let i = 0; i < 4; i++) {
-                    wrap.children[i].animate([
-                        {
-                            opacity: "0"
-                        }
-                    ], {
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-in"
-                    });
-                }
-
-                for (let i = 4; i < 8; i++) {
-                    wrap.children[i].animate([
-                        {
-                            opacity: "1"
-                        }
-                    ], {
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-out"
-                    });
-                }
-            } else {
-                if (container.clientWidth < (maxWidth + 10) * 6) {
-                    wrap.style.transform = "scale(" + (container.clientWidth / ((maxWidth + 10) * 6)).toString() + ")";
-                    wrap.animate([
-                        {
-                            marginLeft: (((-wrap.clientWidth - (maxWidth + 10) * 8) / 2)).toString() + "px"
-                        }
-                    ], {
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-out"
-                    });
+                    for (let i = 4; i < 8; i++) {
+                        clock.children[i].animate([
+                            {
+                                opacity: "1"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    }
                 } else {
-                    wrap.style.transform = "scale(1.0)";
-                    wrap.animate([
-                        {
-                            marginLeft: ((-wrap.clientWidth - (maxWidth + 10) * 8) / 2).toString() + "px"
-                        }
-                    ], {
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-out"
-                    });
-                }
+                    if (frame.clientWidth < (maxWidth + 10) * 6) {
+                        clock.style.transform = "scale(" + (frame.clientWidth / ((maxWidth + 10) * 6)).toString() + ")";
+                        clock.animate([
+                            {
+                                marginLeft: (((-clock.clientWidth - (maxWidth + 10) * 8) / 2)).toString() + "px"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    } else {
+                        clock.style.transform = "scale(1.0)";
+                        clock.animate([
+                            {
+                                marginLeft: ((-clock.clientWidth - (maxWidth + 10) * 8) / 2).toString() + "px"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    }
 
-                for (let i = 0; i < 8; i++) {
-                    wrap.children[i].animate([
-                        {
-                            opacity: "0"
-                        }
-                    ], {
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-in"
-                    });
+                    for (let i = 0; i < 8; i++) {
+                        clock.children[i].animate([
+                            {
+                                opacity: "0"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-in"
+                        });
+                    }
                 }
             }
         });
