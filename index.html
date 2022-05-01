@@ -284,7 +284,8 @@
                     <div class="wall" ref="wall">
                         <div class="wrap" v-for="(block, index) in wall" v-bind:key="block"
                             v-bind:style="{ width: $refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back') === null ? '0px' : String(Math.ceil($refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back').getBoundingClientRect().width / 2)) + 'px' }">
-                            <div class="line" v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.5)) + 'vh', lineHeight: String(block.height) + 'vh' }">
+                            <div class="line"
+                                v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.5)) + 'vh', lineHeight: String(block.height) + 'vh' }">
                                 <div class="back">
                                     <div class="block" v-for="_ in Array(block.iterations)">
                                         <div class="inline" v-for="inline in block.inlines" v-bind:key="inline">
@@ -1696,7 +1697,9 @@
                                                     </div>
                                                     <div class="level-item">
                                                         <div class="level is-mobile">
-                                                            <div class="level-item" v-if="mode.index > 0 && mode.index !== mode.collection.length - 1" v-cloak>
+                                                            <div class="level-item"
+                                                                v-if="mode.index > 0 && mode.index !== mode.collection.length - 1"
+                                                                v-cloak>
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.index === 0"
                                                                     @click="mode.index--" v-cloak>
@@ -1731,7 +1734,9 @@
                                                                     </span>
                                                                 </button>
                                                             </div>
-                                                            <div class="level-item" v-if="mode.index > 0 && mode.index !== mode.collection.length - 1" v-cloak>
+                                                            <div class="level-item"
+                                                                v-if="mode.index > 0 && mode.index !== mode.collection.length - 1"
+                                                                v-cloak>
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.index === mode.collection.length - 1"
                                                                     @click="mode.index++" v-cloak>
@@ -1906,7 +1911,6 @@
                                                                 <p
                                                                     class="content is-size-5 has-text-weight-bold has-text-justified">
                                                                     あんなことやこんなことを教えてあげて、メルク好みの魔法少女にしてあげるね！
-
                                                                 </p>
                                                                 <p
                                                                     class="content is-size-5 has-text-weight-bold has-text-justified">
@@ -1983,12 +1987,16 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <p
-                                                                    class="content is-size-5 has-text-weight-bold has-text-justified">
-                                                                    明るくてまじめな小学5年生の女の子。お友達の<span
-                                                                        class="is-primary">メルクちゃん</span>に無理やり恥ずかしい魔法少女の衣装を着せられてマジカルミルヒちゃんが爆誕した。それ以降、なんだかんだで魔法少女をやらされている。<span
-                                                                        class="is-primary">メルクちゃん</span>とはいつもいっしょで仲良し。気づいたときにはぱんつがなくなっていて穿いてないことが多い。
-                                                                </p>
+                                                                <transition name="fade" mode="out-in">
+                                                                    <p class="content is-size-5 has-text-weight-bold has-text-justified"
+                                                                        v-if="isDarkMode" key="dark">
+                                                                        ミルヒちゃんは、明るくてまじめでかわいい小学5年生の女の子でメルクの大切なお友達だよぉ。かわいくて舐めたくなるよぉ。ペロペロ。メルクが大好きなミルヒちゃんのためにつくった魔法少女の衣装を着せてあげて、マジカルミルヒちゃんが爆誕したんだよぉ。ミルヒちゃん、これからもずっといっしょに魔法少女しようね！フヒヒ。
+                                                                    </p>
+                                                                    <p class="content is-size-5 has-text-weight-bold has-text-justified"
+                                                                        v-else key="light">
+                                                                        明るくてまじめな小学5年生の女の子。お友達のメルクちゃんとはいつもいっしょで仲良し。メルクちゃんに無理やり恥ずかしい魔法少女の衣装を着せられてマジカルミルヒちゃんが爆誕した。それ以降、なんだかんだで魔法少女をやらされている。気づいたときにはぱんつがなくなっていて穿いてないことが多い。
+                                                                    </p>
+                                                                </transition>
                                                             </div>
                                                         </div>
                                                     </article>
@@ -2055,13 +2063,16 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <p
-                                                                    class="content is-size-5 has-text-weight-bold has-text-justified">
-                                                                    おっとりしていてお金持ちの小学5年生の女の子。でも、お友達の<span
-                                                                        class="is-primary">ミルヒちゃん</span>が大好きすぎて暴走しがち。<span
-                                                                        class="is-primary">ミルヒちゃん</span>に無理やりつくった魔法少女の衣装を着せていっしょに魔法少女を始めた。<span
-                                                                        class="is-primary">ミルヒちゃん</span>のぱんつをコレクションしていて、衣装を着せてあげる時を狙っていることが少なくない。
-                                                                </p>
+                                                                <transition name="fade" mode="out-in">
+                                                                    <p class="content is-size-5 has-text-weight-bold has-text-justified"
+                                                                        v-if="isDarkMode" key="dark">
+                                                                        メルクは、お友達のミルヒちゃんと同じ小学5年生だよぉ。ミルヒちゃん、大好き！大好きなミルヒちゃんのために魔法少女の衣装をつくって、恥ずかしがるミルヒちゃんに衣装を着せてあげてるよぉ。ミルヒちゃんもいっしょに魔法少女しようね！お着替えの時に脱いだミルヒちゃんのぱんつは貰ってあげるね。クンカクンカ！スーハースーハー！
+                                                                    </p>
+                                                                    <p class="content is-size-5 has-text-weight-bold has-text-justified"
+                                                                        v-else key="light">
+                                                                        おっとりしていてお金持ちの小学5年生の女の子。でも、お友達のミルヒちゃんが大好きすぎて暴走しがち。ミルヒちゃんにつくった魔法少女の衣装を無理やり着せていっしょに魔法少女を始めた。ミルヒちゃんのぱんつをコレクションしていて、衣装を着せてあげる時を狙っていることが少なくない。
+                                                                    </p>
+                                                                </transition>
                                                             </div>
                                                         </div>
                                                     </article>
