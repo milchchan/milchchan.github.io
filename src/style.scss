@@ -2252,6 +2252,39 @@ label .scrollable>div {
                             color: #ffffff !important;
                         }
                     }
+                    
+                    .clip {
+                        display: inline-block;
+                        overflow: hidden;
+                        box-sizing: content-box;
+                        height: calc(0.75rem * 1.5);
+
+                        .scrollable div {
+                            display: flex;
+                            align-items: center;
+                            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                            transform: rotate(0.03deg);
+                            line-height: 0.75rem !important;
+                            height: calc(0.75rem * 1.5);
+                        }
+                    }
+
+                    .icon {
+                        color: var(--accent-color);
+                    }
+
+                    span.wrap+.icon:last-of-type {
+                        color: var(--main-color);
+                        transition: 0.5s;
+                    }
+
+                    .icon:first-child+div {
+                        margin: 0px 8px 0px 0px;
+                    }
+
+                    span:not(:first-child) {
+                        margin: 0px 0px 0px 8px;
+                    }
                 }
             }
 
