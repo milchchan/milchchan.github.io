@@ -280,6 +280,38 @@
             ]
         },
         {
+            "name": "Talk",
+            "sequence": [
+                {
+                    "type": "Animation",
+                    "frames": [
+                        {
+                            "iterations": 1,
+                            "images": [
+                                {
+                                    "x": 0,
+                                    "y": 14,
+                                    "width": 310,
+                                    "height": 466,
+                                    "source": "/images/Merkuchan.png"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": "言葉を選んでお話ししてね"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
             "name": "TouchStart",
             "state": "body_skirt",
             "sequence": [
