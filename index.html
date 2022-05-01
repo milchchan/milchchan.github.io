@@ -1696,7 +1696,7 @@
                                                     </div>
                                                     <div class="level-item">
                                                         <div class="level is-mobile">
-                                                            <div class="level-item" v-if="mode.index === 0 && mode.index === mode.collection.length - 1" v-cloak>
+                                                            <div class="level-item" v-if="mode.index > 0 && mode.index !== mode.collection.length - 1" v-cloak>
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.index === 0"
                                                                     @click="mode.index--" v-cloak>
@@ -1706,7 +1706,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="level-item">
-                                                                <button class="button is-primary is-circle"
+                                                                <button class="button is-primary is-rounded"
                                                                     type="button"
                                                                     v-bind:disabled="mode.selected.length === 0 || isLoading || isHangingOn"
                                                                     @click="release(mode.selected); activate(mode.selected.map(x => x.name), 0.0);/*backgroundQueue.unshift(mode.selected.some(x => 'image' in x) ? { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name), images: mode.selected.filter(x => 'image' in x).map(x => x.image) } : { color: isDarkMode ? '#c1aee6' : '#68e6ff', tags: mode.selected.map(x => x.name) });*/ isRevealed = false; mode = null;/* refresh();*/"
@@ -1721,9 +1721,17 @@
                                                                             <i class="fa-solid fa-comment"></i>
                                                                         </span>
                                                                     </transition>
+                                                                    <span class="wrap is-size-7 has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>お話しする</div>
+                                                                                <div>お話しする</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
                                                                 </button>
                                                             </div>
-                                                            <div class="level-item" v-if="mode.index === 0 && mode.index === mode.collection.length - 1" v-cloak>
+                                                            <div class="level-item" v-if="mode.index > 0 && mode.index !== mode.collection.length - 1" v-cloak>
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.index === mode.collection.length - 1"
                                                                     @click="mode.index++" v-cloak>
