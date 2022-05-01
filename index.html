@@ -347,13 +347,6 @@
                     </svg>
                 </div>
             </transition>
-            <transition name="fade">
-                <div class="progress" v-if="animatedProgress > 0" v-cloak>
-                    <div class="bar animating"
-                        v-bind:style="{ width: String(Math.floor(100.0 * animatedProgress)) + '%' }">
-                    </div>
-                </div>
-            </transition>
             <transition name="slide">
                 <div id="character" @contextmenu.prevent
                     v-bind:style="{ pointerEvents: isRevealed || isOverlayed ? 'none' : 'auto', width: canvasSize.width + 'px', height: canvasSize.height + 'px' }"
@@ -498,6 +491,13 @@
                         v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
                         <div class="blind" v-if="background.nonce !== null" v-cloak></div>
                     </transition>
+                </div>
+            </transition>            
+            <transition name="fade">
+                <div class="progress" v-if="animatedProgress > 0" v-cloak>
+                    <div class="bar animating"
+                        v-bind:style="{ width: String(Math.floor(100.0 * animatedProgress)) + '%' }">
+                    </div>
                 </div>
             </transition>
             <transition name="fade">
