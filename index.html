@@ -504,7 +504,7 @@
                 <div class="hud" v-if="isOverlayed">
                     <div class="columns is-centered"
                         v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
-                        <div class="column is-half is-mobile" v-if="isUpdating" key="updating">
+                        <div class="column is-half-tablet" v-if="isUpdating" key="updating">
                             <div class="level">
                                 <div class="level-item">
                                     <article class="media">
@@ -519,7 +519,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-half is-mobile" v-else key="updated">
+                        <div class="column is-half-tablet" v-else key="updated">
                             <transition-group name="tagcloud-list"
                                 class="tags are-medium field is-grouped is-grouped-multiline" tag="div">
                                 <div class="control tagcloud-list-item" v-for="tag in tags" v-bind:key="tag.index">
@@ -546,7 +546,7 @@
                 <div id="menu" v-if="isRevealed && !isOverlayed || word" ref="menu">
                     <div class="columns is-centered"
                         v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
-                        <div class="column is-half is-mobile">
+                        <div class="column is-half-tablet">
                             <div class="control" v-cloak>
                                 <transition name="fade" mode="out-in" v-on:before-leave="$refs.menu.scroll(0, 0)">
                                     <nav class="level" v-if="word" key="learn">
@@ -1833,7 +1833,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -1891,7 +1891,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -1950,7 +1950,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -1972,7 +1972,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -2026,7 +2026,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -2048,7 +2048,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -2202,7 +2202,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -2227,7 +2227,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -2254,7 +2254,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -2280,7 +2280,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -2376,7 +2376,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
@@ -2432,7 +2432,7 @@
                                         </div>
                                         <div class="level-item">
                                             <div class="columns is-mobile is-centered">
-                                                <div class="column is-half is-mobile">
+                                                <div class="column is-half-tablet">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
