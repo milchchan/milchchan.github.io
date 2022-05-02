@@ -298,6 +298,7 @@ label .scrollable>div {
 }
 
 .is-superellips {
+    z-index: 1;
     transform: rotate(-19deg);
 
     >figure {
