@@ -20,7 +20,7 @@ import anime from 'animejs/lib/anime.es.js';
 import { TinySegmenter } from './tiny-segmenter.js';
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
+import { getAuth, signInWithRedirect, getRedirectResult, signInWithCredential, signOut, updateProfile, onAuthStateChanged, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
 import { getDatabase, ref as databaseRef, query, orderByChild, limitToFirst, limitToLast, startAt, endAt, get, push, child, runTransaction, onValue, off } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from "firebase/analytics";
@@ -448,7 +448,8 @@ window.addEventListener("load", event => {
                     provider.addScope("profile");
                     provider.addScope("email");
 
-                    try {
+                    signInWithRedirect(auth, provider);
+                    /*try {
                         const result = await signInWithPopup(auth, provider);
                         const credential = GoogleAuthProvider.credentialFromResult(result);
 
@@ -472,13 +473,14 @@ window.addEventListener("load", event => {
                         }
                     } catch (error) {
                         console.error(error.code, error.message);
-                    }
+                    }*/
                 } else if (event === FacebookAuthProvider.PROVIDER_ID) {
                     const provider = new FacebookAuthProvider();
 
                     provider.addScope("public_profile");
 
-                    try {
+                    signInWithRedirect(auth, provider);
+                    /*try {
                         const result = await signInWithPopup(auth, provider);
                         const credential = FacebookAuthProvider.credentialFromResult(result);
 
@@ -502,9 +504,10 @@ window.addEventListener("load", event => {
                         }
                     } catch (error) {
                         console.error(error.code, error.message);
-                    }
+                    }*/
                 } else if (event === TwitterAuthProvider.PROVIDER_ID) {
-                    const provider = new TwitterAuthProvider();
+                    signInWithRedirect(auth, new TwitterAuthProvider());
+                    /*const provider = new TwitterAuthProvider();
 
                     try {
                         const result = await signInWithPopup(auth, provider);
@@ -534,7 +537,7 @@ window.addEventListener("load", event => {
                         }
                     } catch (error) {
                         console.error(error.code, error.message);
-                    }
+                    }*/
                 }
             },
             signOut: async function (event) {
@@ -4890,7 +4893,92 @@ window.addEventListener("load", event => {
                 (error) => console.error(error)
             );
 
-            if (credential !== null) {
+            if (credential === null) {
+                try {
+                    const result = await getRedirectResult(auth);
+
+                    if (result !== null && result.user !== null) {
+                        if (result.providerId === GoogleAuthProvider.PROVIDER_ID) {
+                            const credential = GoogleAuthProvider.credentialFromResult(result);
+
+                            for (const data of result.user.providerData) {
+                                try {
+                                    await updateProfile(result.user, {
+                                        displayName: data.displayName,
+                                        photoURL: data.photoURL
+                                    });
+                                } catch (e) {
+                                    console.error(e.code, e.message);
+                                }
+
+                                break;
+                            }
+
+                            try {
+                                localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, idToken: credential.idToken }));
+                            } catch (e) {
+                                localStorage.removeItem("credential");
+                            }
+
+                            signInWithCredential(auth, GoogleAuthProvider.credential(credential.idToken));
+                        } else if (result.providerId === FacebookAuthProvider.PROVIDER_ID) {
+                            const credential = FacebookAuthProvider.credentialFromResult(result);
+
+                            for (const data of result.user.providerData) {
+                                try {
+                                    await updateProfile(result.user, {
+                                        displayName: data.displayName,
+                                        photoURL: data.photoURL
+                                    });
+                                } catch (e) {
+                                    console.error(e.code, e.message);
+                                }
+
+                                break;
+                            }
+
+                            try {
+                                localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken }));
+                            } catch (e) {
+                                localStorage.removeItem("credential");
+                            }
+
+                            signInWithCredential(auth, FacebookAuthProvider.credential(credential.accessToken));
+                        } else if (result.providerId === TwitterAuthProvider.PROVIDER_ID) {
+                            const credential = TwitterAuthProvider.credentialFromResult(result);
+
+                            for (const data of result.user.providerData) {
+                                const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
+
+                                try {
+                                    await updateProfile(result.user, {
+                                        displayName: data.displayName,
+                                        photoURL: photoUrl
+                                    });
+                                } catch (e) {
+                                    console.error(e.code, e.message);
+                                }
+
+                                break;
+                            }
+
+                            try {
+                                localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, secret: credential.secret }));
+                            } catch (e) {
+                                localStorage.removeItem("credential");
+                            }
+
+                            const r = await signInWithCredential(auth, TwitterAuthProvider.credential(credential.accessToken, credential.secret));
+
+                            this.user = r.user;
+                            this.user['link'] = `https://twitter.com/${r._tokenResponse.screenName}`;
+                        }
+                    }
+                } catch (e) {
+                    self.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e.code, e.message);
+                }
+            } else {
                 if (credential.providerId === GoogleAuthProvider.PROVIDER_ID) {
                     try {
                         signInWithCredential(auth, GoogleAuthProvider.credential(credential.idToken));
