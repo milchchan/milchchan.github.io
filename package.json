@@ -24,7 +24,7 @@
     "@pixiv/three-vrm": "^0.6.11",
     "animejs": "^3.2.1",
     "bulma": "^0.9.3",
-    "firebase": "^9.7.0",
+    "firebase": "^9.8.0",
     "stats.js": "^0.17.0",
     "three": "^0.140.0",
     "vue": "^3.2.33"
