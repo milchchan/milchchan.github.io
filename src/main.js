@@ -95,8 +95,6 @@ light.position.set(0.0, 1.0, 1.0).normalize();
 
 scene.add(light);
 //scene.add(hemisphereLight);
-//scene.add(new THREE.GridHelper(10, 10));
-//scene.add(new THREE.AxesHelper(5));
 
 const lookAtTarget = new Object3D();
 
