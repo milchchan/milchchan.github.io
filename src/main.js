@@ -1,5 +1,5 @@
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
-import { WebGLRenderer, Scene, DirectionalLight, PerspectiveCamera, Clock, Raycaster, Object3D, Vector2, Vector3, LinearToneMapping, sRGBEncoding } from 'three';
+import { WebGLRenderer, Scene, DirectionalLight, PerspectiveCamera, Clock, Raycaster, Object3D, Vector2, Vector3, LinearToneMapping, sRGBEncoding, GridHelper, AxesHelper } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -74,7 +74,6 @@ camera.position.set(0.0, 1.1, CAMERA_Z);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-controls.enabled = false;
 controls.enableKeys = false;
 controls.screenSpacePanning = false;
 controls.enableDamping = true;
@@ -154,7 +153,13 @@ stats.domElement.style.bottom = "0";
 stats.domElement.style.left = "auto";
 stats.domElement.style.right = "0";
 
-if (!debug) {
+if (debug) {
+    renderer.setClearColor(0x000000, 1);
+    scene.add(new GridHelper(10, 10));
+    scene.add(new AxesHelper(5));
+    controls.enabled = true;
+} else {
+    controls.enabled = false;
     stats.domElement.classList.add("is-hidden");
 }
 
@@ -5384,12 +5389,14 @@ window.addEventListener("load", event => {
         }
     });
     window.addEventListener("keydown", event => {
-        if (event.ctrlKey) {
+        if (!app.isDebug || event.ctrlKey) {
             controls.enabled = true;
         }
     });
     window.addEventListener("keyup", event => {
-        controls.enabled = false;
+        if (!app.isDebug) {
+            controls.enabled = false;
+        }
     });
     window.addEventListener("mousedown", event => {
         if (app.isVisible && !controls.enabled && event.button === 0 && !isTouching) {
