@@ -35,7 +35,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         raise Exception
 
                 except Exception:
-                    return func.HttpResponse(status_code=403, mimetype='', charset='')
+                    return func.HttpResponse(status_code=401, mimetype='', charset='')
 
         if req.headers.get('Content-Type') == 'application/json':
             data = req.get_json()
