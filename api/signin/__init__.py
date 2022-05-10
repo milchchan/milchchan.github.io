@@ -14,7 +14,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             email = data.get('email')
             password = data.get('password')
             response = urlopen(Request(
-                    f'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={os.environ.get("FIREBASE_API_KEY")}',
+                    f'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={os.environ["FIREBASE_API_KEY"]}',
                     headers={'Content-Type': 'application/json'},
                     data=json.dumps({'email': email, 'password': password, 'returnSecureToken': True}).encode('utf-8'),
                     method='POST'))

@@ -24,7 +24,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if json.loads(b64decode(jwt[0] + '=' * (-len(jwt[0]) % 4)))['typ'] == 'JWT' and json.loads(b64decode(jwt[1] + '=' * (-len(jwt[1]) % 4)))['iss'] == 'https://securetoken.google.com/milchchan':
                 try:
                     response = urlopen(Request(
-                        f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
+                        f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ["FIREBASE_API_KEY"]}',
                         headers={'Content-Type': 'application/json'},
                         data=json.dumps({'idToken': req.headers['Authorization']}).encode('utf-8')))
 
@@ -51,7 +51,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             geohash = req.params['geohash'] if 'geohash' in req.params else None
 
         client = CosmosClient.from_connection_string(
-            os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
+            os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
         database = client.get_database_client('Wonderland')
         container = database.get_container_client('Likes')
 
@@ -127,16 +127,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         for item in items:
             if 'image' in item:
                 credentials = service_account.Credentials.from_service_account_info({
-                    'type': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TYPE'),
-                    'project_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'),
-                    'private_key_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY_ID'),
-                    'private_key': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY').replace('\\n', '\n'),
-                    'client_email': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_EMAIL'),
-                    'client_id': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_ID'),
-                    'auth_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'),
-                    'token_uri': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'),
-                    'auth_provider_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
-                    'client_x509_cert_url': os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL')
+                    'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
+                    'project_id': os.environ['GOOGLE_APPLICATION_CREDENTIALS_PROJECT_ID'],
+                    'private_key_id': os.environ['GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY_ID'],
+                    'private_key': os.environ['GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
+                    'client_email': os.environ['GOOGLE_APPLICATION_CREDENTIALS_CLIENT_EMAIL'],
+                    'client_id': os.environ['GOOGLE_APPLICATION_CREDENTIALS_CLIENT_ID'],
+                    'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
+                    'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
+                    'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
+                    'client_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_CLIENT_X509_CERT_URL']
                 })
                 scoped_credentials = credentials.with_scopes(
                     ['https://www.googleapis.com/auth/cloud-platform'])

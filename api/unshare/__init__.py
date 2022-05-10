@@ -23,7 +23,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if json.loads(b64decode(jwt[0] + '=' * (-len(jwt[0]) % 4)))['typ'] == 'JWT' and json.loads(b64decode(jwt[1] + '=' * (-len(jwt[1]) % 4)))['iss'] == 'https://securetoken.google.com/milchchan':
                 try:
                     response = urlopen(Request(
-                        f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
+                        f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ["FIREBASE_API_KEY"]}',
                         headers={'Content-Type': 'application/json'},
                         data=json.dumps({'idToken': req.headers['Authorization']}).encode('utf-8')))
 
@@ -34,8 +34,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(status_code=401, mimetype='', charset='')
 
         id = req.route_params['id']
-        client = CosmosClient.from_connection_string(
-            os.environ.get('AZURE_COSMOS_DB_CONNECTION_STRING'))
+        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
         database = client.get_database_client('Wonderland')
         container = database.get_container_client('Likes')
         container.delete_item(id, id)

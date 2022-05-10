@@ -23,7 +23,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if json.loads(b64decode(jwt[0] + '=' * (-len(jwt[0]) % 4)))['typ'] == 'JWT' and json.loads(b64decode(jwt[1] + '=' * (-len(jwt[1]) % 4)))['iss'] == 'https://securetoken.google.com/milchchan':
                     try:
                         response = urlopen(Request(
-                            f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ.get("FIREBASE_API_KEY")}',
+                            f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={os.environ["FIREBASE_API_KEY"]}',
                             headers={'Content-Type': 'application/json'},
                             data=json.dumps({'idToken': req.headers['Authorization']}).encode('utf-8')))
 
@@ -37,15 +37,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 data = req.get_json()
 
                 if 'status' in data:
-                    access_token = data['access_token'] if 'access_token' in data else os.environ.get(
-                        "TWITTER_OAUTH_TOKEN")
-                    secret = data['secret'] if 'secret' in data else os.environ.get(
-                        "TWITTER_OAUTH_TOKEN_SECRET")
+                    access_token = data['access_token'] if 'access_token' in data else os.environ['TWITTER_OAUTH_TOKEN']
+                    secret = data['secret'] if 'secret' in data else os.environ['TWITTER_OAUTH_TOKEN_SECRET']
                     status = data['status']
                     image = data.get('image')
 
-                    CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
-                    CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
+                    CONSUMER_KEY = os.environ['TWITTER_CONSUMER_KEY']
+                    CONSUMER_SECRET = os.environ['TWITTER_CONSUMER_SECRET']
 
                     timestamp = int(datetime.utcfromtimestamp(
                         datetime.now(timezone.utc).timestamp()).timestamp())
@@ -160,24 +158,20 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         elif req.method == 'GET':
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
-                access_token = data['access_token'] if 'access_token' in data else os.environ.get(
-                    "TWITTER_OAUTH_TOKEN")
-                secret = data['secret'] if 'secret' in data else os.environ.get(
-                    "TWITTER_OAUTH_TOKEN_SECRET")
+                access_token = data['access_token'] if 'access_token' in data else os.environ['TWITTER_OAUTH_TOKEN']
+                secret = data['secret'] if 'secret' in data else os.environ['TWITTER_OAUTH_TOKEN_SECRET']
                 query = data['query'] if 'query' in data else '#milchchan'
                 count = data['count'] if 'count' in data else 100
 
             else:
-                access_token = req.params['access_token'] if 'access_token' in req.params else os.environ.get(
-                    "TWITTER_OAUTH_TOKEN")
-                secret = req.params['secret'] if 'secret' in req.params else os.environ.get(
-                    "TWITTER_OAUTH_TOKEN_SECRET")
+                access_token = req.params['access_token'] if 'access_token' in req.params else os.environ['TWITTER_OAUTH_TOKEN']
+                secret = req.params['secret'] if 'secret' in req.params else os.environ['TWITTER_OAUTH_TOKEN_SECRET']
                 query = req.params['query'] if 'query' in req.params else '#milchchan'
                 count = int(req.params['count']
                             ) if 'count' in req.params else 100
 
-            CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
-            CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
+            CONSUMER_KEY = os.environ['TWITTER_CONSUMER_KEY']
+            CONSUMER_SECRET = os.environ['TWITTER_CONSUMER_SECRET']
 
             timestamp = int(datetime.utcfromtimestamp(
                 datetime.now(timezone.utc).timestamp()).timestamp())
@@ -222,7 +216,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             data.append(item)
 
                 return func.HttpResponse(json.dumps(data), status_code=200, headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None, mimetype='application/json', charset='utf-8')
-            
+
             return func.HttpResponse(status_code=400, headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None, mimetype='', charset='')
 
         elif req.method == 'OPTIONS':
@@ -245,6 +239,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 'type': type(e).__name__}
         }),
             status_code=400,
-            headers={'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None,
+            headers={
+                'Access-Control-Allow-Origin': req.headers['Origin']} if 'Origin' in req.headers else None,
             mimetype='application/json',
             charset='utf-8')
