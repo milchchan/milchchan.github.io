@@ -31,7 +31,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         raise Exception
 
                 except Exception:
-                    return func.HttpResponse(status_code=403, mimetype='', charset='')
+                    return func.HttpResponse(status_code=401, mimetype='', charset='')
 
         id = req.route_params['id']
         client = CosmosClient.from_connection_string(
