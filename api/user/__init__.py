@@ -26,7 +26,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             raise Exception
 
                     except Exception:
-                        return func.HttpResponse(status_code=403, mimetype='', charset='')
+                        return func.HttpResponse(status_code=401, mimetype='', charset='')
 
                 data = req.get_json()
                 response = urlopen(Request(
@@ -63,7 +63,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         raise Exception
 
                 except Exception:
-                    return func.HttpResponse(status_code=403, mimetype='', charset='')
+                    return func.HttpResponse(status_code=401, mimetype='', charset='')
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
