@@ -3,21 +3,21 @@
 
 $primary: #68e6ff;
 $family-sans-serif: "Hiragino Kaku Gothic ProN",
-"Hiragino Sans",
-"Noto Sans JP",
-BlinkMacSystemFont,
--apple-system,
-"Segoe UI",
-"Roboto",
-"Oxygen",
-"Ubuntu",
-"Cantarell",
-"Fira Sans",
-"Droid Sans",
-"Helvetica Neue",
-"Helvetica",
-"Arial",
-sans-serif;
+    "Hiragino Sans",
+    "Noto Sans JP",
+    BlinkMacSystemFont,
+    -apple-system,
+    "Segoe UI",
+    "Roboto",
+    "Oxygen",
+    "Ubuntu",
+    "Cantarell",
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    "Helvetica",
+    "Arial",
+    sans-serif;
 
 @import "bulma/bulma";
 
@@ -27,7 +27,8 @@ sans-serif;
 
 :root {
     --background-color: rgba(255, 255, 255, 0.75);
-    --foreground-color: #ffffff;/*#777777;*/
+    --foreground-color: #ffffff;
+    /*#777777;*/
     --main-color: #{$primary};
     --accent-color: #fecde2;
     --highlight-color: #c1aee6;
@@ -653,6 +654,7 @@ label .scrollable>div {
     background-size: 2px 2px;
     content: "";
     overflow: hidden;
+    backface-visibility: hidden;
 }
 
 .sidebar {
@@ -1316,6 +1318,132 @@ label .scrollable>div {
                     >.level {
                         margin: -8px -8px -8px -8px;
                         flex-direction: row;
+
+                        >.level-left,
+                        >.level-right {
+                            >.level-item>.level {
+                                display: flex;
+                                align-items: flex-end;
+                                justify-content: flex-start;
+
+                                >.level-item:not(:last-child) {
+                                    margin-bottom: 0;
+                                    margin-right: 16px;
+                                }
+                            }
+                        }
+
+                        >.level-left {
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: flex-start;
+                            align-items: center;
+                            margin: 0;
+                            padding: 8px 8px 8px 8px;
+                            max-width: 100%;
+
+                            >.level-item {
+                                margin: 0;
+                                padding: 0;
+                                max-width: 100%;
+
+                                >.level>.level-item>.level {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    justify-content: flex-start;
+
+                                    .level-item:not(:last-child) {
+                                        margin-bottom: 8px;
+                                        margin-right: 0;
+
+                                        h3 {
+                                            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                            font-size: 0.75rem;
+                                            line-height: 0.75rem;
+                                            white-space: nowrap;
+                                        }
+                                    }
+                                }
+
+                                .balloon {
+                                    z-index: 1;
+                                    position: relative;
+                                    padding: 12px 24px 12px 24px;
+                                    border-radius: 0px 500px 500px 500px;
+                                    background: var(--background-image) 50% 50% repeat;
+                                    background-color: var(--primary-background-color);
+                                    background-size: 24px 24px;
+                                    overflow: hidden;
+                                    backface-visibility: hidden;
+
+                                    >p {
+                                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                        word-wrap: break-word;
+                                        font-size: 1.0rem;
+                                        line-height: 2.0rem;
+                                    }
+                                }
+                            }
+                        }
+
+                        >.level-right {
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: flex-end;
+                            align-items: center;
+                            margin: 0;
+                            padding: 8px 8px 8px 8px;
+                            width: 100%;
+
+                            >.level-item {
+                                display: flex;
+                                flex-direction: row;
+                                justify-content: flex-end;
+                                align-items: center;
+                                margin: 0;
+                                padding: 0;
+                                max-width: 100%;
+
+                                >.level>.level-item>.level {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-end;
+                                    justify-content: flex-start;
+
+                                    .level-item:not(:last-child) {
+                                        margin-bottom: 8px;
+                                        margin-right: 0;
+
+                                        h3 {
+                                            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                            font-size: 0.75rem;
+                                            line-height: 0.75rem;
+                                            white-space: nowrap;
+                                        }
+                                    }
+                                }
+
+                                .balloon {
+                                    z-index: 1;
+                                    position: relative;
+                                    padding: 12px 24px 12px 24px;
+                                    border-radius: 500px 500px 0px 500px;
+                                    background: var(--background-image) 50% 50% repeat;
+                                    background-color: var(--primary-background-color);
+                                    background-size: 24px 24px;
+                                    overflow: hidden;
+                                    backface-visibility: hidden;
+
+                                    >p {
+                                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                        word-wrap: break-word;
+                                        font-size: 1.0rem;
+                                        line-height: 2.0rem;
+                                    }
+                                }
+                            }
+                        }
 
                         >.level-item {
                             margin: 0;
@@ -2255,7 +2383,7 @@ label .scrollable>div {
                             color: #ffffff !important;
                         }
                     }
-                    
+
                     .clip {
                         display: inline-block;
                         overflow: hidden;
@@ -2289,6 +2417,10 @@ label .scrollable>div {
                         margin: 0px 0px 0px 8px;
                     }
                 }
+            }
+
+            .is-fullwidth {
+                width: 100%;
             }
 
             >.media>.media-content {
@@ -3024,6 +3156,8 @@ label .scrollable>div {
                             touch-action: none;
                             -webkit-user-select: none;
                             user-select: none;
+                            overflow: hidden;
+                            backface-visibility: hidden;
 
                             .media-left {
                                 margin: 0px 8px 0px 0px !important;
@@ -3580,7 +3714,8 @@ label .scrollable>div {
         background-size: 2px 2px;
     }
 
-    #container .columns .column .media .media-content .has-text-left .balloon {
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-left>.level-item .balloon,
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-right>.level-item .balloon {
         background: var(--background-image-2x) 50% 50% repeat;
         background-size: 24px 24px;
     }
@@ -3603,7 +3738,8 @@ label .scrollable>div {
         background-size: 2px 2px;
     }
 
-    #container .columns .column .media .media-content .has-text-left .balloon {
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-left>.level-item .balloon,
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-right>.level-item .balloon {
         background: var(--background-image-3x) 50% 50% repeat;
         background-size: 24px 24px;
     }
