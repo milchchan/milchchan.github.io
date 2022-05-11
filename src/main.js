@@ -240,6 +240,7 @@ window.addEventListener("load", event => {
                 likes: [],
                 tags: [],
                 maxTags: 10,
+                logs: [],
                 scrollTimeoutID: undefined,
                 stars: -1,
                 animatedStars: 0,
@@ -1510,7 +1511,10 @@ window.addEventListener("load", event => {
                     this.sequenceQueue.push(sequence);
                 }
             },
-            activate: async function (tokens = [], threshold = 0.5) {
+            activate: async function (tokens = [], threshold = 0.5, logging = false) {
+                let successful;
+                let sequence;
+
                 idleTime = activateTime = 0.0;
 
                 if (Math.random() < threshold) {
@@ -1551,16 +1555,44 @@ window.addEventListener("load", event => {
                             }
                         }
 
-                        if (!await this.talk(selectedTokens.concat(tokens.filter((x) => x.indexOf(this.character.name) === -1)))) {
-                            this.talk();
+                        [successful, sequence] = await this.talk(selectedTokens.concat(tokens.filter((x) => x.indexOf(this.character.name) === -1)));
+
+                        if (!successful) {
+                            [successful, sequence] = this.talk();
+                        }
+
+                        if (logging) {
+                            for (const token of tokens) {
+                                await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
+                            }
+                            
+                            for (const obj of sequence) {
+                                if (obj.type === "Message") {
+                                    await this.log(obj.text, { name: this.character.name, accent: this.character.accent, image: this.character.image });
+                                }
+                            }
                         }
 
                         return;
                     }
                 }
 
-                if (!await this.talk(tokens.filter((x) => x.indexOf(this.character.name) === -1))) {
-                    this.talk();
+                [successful, sequence] = await this.talk(tokens.filter((x) => x.indexOf(this.character.name) === -1))
+
+                if (!successful) {
+                    [successful, sequence] = this.talk();
+                }
+
+                if (logging) {
+                    for (const token of tokens) {
+                        await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
+                    }
+                    
+                    for (const obj of sequence) {
+                        if (obj.type === "Message") {
+                            await this.log(obj.text, { name: this.character.name, accent: this.character.accent, image: this.character.image });
+                        }
+                    }
                 }
             },
             talk: async function (tokens = []) {
@@ -1676,7 +1708,7 @@ window.addEventListener("load", event => {
 
                                         this.isLoading = false;
 
-                                        return true;
+                                        return [true, sequence];
                                     } else if (token.length > 1 && !regex.test(token) && !tokenSet.includes(token)) {
                                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                             const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
@@ -1727,7 +1759,7 @@ window.addEventListener("load", event => {
 
                                                 this.isLoading = false;
 
-                                                return true;
+                                                return [true, sequence];
                                             }
                                         }
 
@@ -1748,7 +1780,7 @@ window.addEventListener("load", event => {
 
                     this.isLoading = false;
 
-                    return false;
+                    return [false, null];
                 }
 
                 for (const obj of this.prepare(sequences)) {
@@ -1758,7 +1790,7 @@ window.addEventListener("load", event => {
                         if (temp === null) {
                             this.isLoading = false;
 
-                            return false;
+                            return [false, null];
                         } else {
                             let text;
                             let cache;
@@ -1776,12 +1808,12 @@ window.addEventListener("load", event => {
                     this.sequenceQueue.push(sequence);
                     this.isLoading = false;
 
-                    return true;
+                    return [true, sequence];
                 }
 
                 this.isLoading = false;
 
-                return false;
+                return [false, null];
             },
             generate: async function (message, hints = []) {
                 function choice(probabilities) {
@@ -2688,6 +2720,20 @@ window.addEventListener("load", event => {
                 this.isPosting = false;
 
                 return false;
+            },
+            log: async function (text, user) {
+                const timestamp = Math.floor(new Date() / 1000);
+
+                try {
+                    await runTransaction(databaseRef(database, `${databaseRoot}/logs/${push(child(databaseRef(database), `${databaseRoot}/logs`)).key}`), current => {
+                        return { text: text, user: user, timestamp: timestamp };
+                    });
+                } catch (error) {
+                    this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
+                    console.error(error);
+                }
+
+                return;
             },
             getThumbnail: async function (url, length) {
                 try {
@@ -4662,6 +4708,9 @@ window.addEventListener("load", event => {
                 this.next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
                 this.next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
                 this.isRevealed = true;
+            } else if (window.location.pathname === "/logs") {
+                this.mode = { logs: this.logs, disposable: true };
+                this.isRevealed = true;
             }
 
             if (characterStorageItem) {
@@ -5204,8 +5253,8 @@ window.addEventListener("load", event => {
                     }*/
 
                     if (updated.length > 0) {
-                        const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
-                        const recent = updated.filter(x => x.timestamp > timestamp);
+                        //const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
+                        //const recent = updated.filter(x => x.timestamp > timestamp);
 
                         self.likes.sort((x, y) => y.timestamp - x.timestamp);
 
@@ -5271,6 +5320,36 @@ window.addEventListener("load", event => {
                     }
                 }
             });
+            onValue(query(databaseRef(database, databaseRoot + "/logs"), orderByChild("timestamp"), limitToLast(100)), async snapshot => {
+                if (snapshot.exists()) {
+                    const logs = snapshot.val();
+                    let updated = false;
+
+                    for (const key in logs) {
+                        const index = self.logs.findIndex(x => x.id === key);
+
+                        if (index >= 0) {
+                            if (self.logs[index].timestamp < logs[key].timestamp) {
+                                self.logs.splice(index, 1);
+                            } else {
+                                continue;
+                            }
+                        }
+
+                        logs[key]["id"] = key;
+                        self.logs.push(logs[key]);
+                        updated = true;
+                    }
+
+                    if (updated) {
+                        self.logs.sort((x, y) => x.timestamp - y.timestamp);
+
+                        if (self.logs.length > 100) {
+                            self.logs.splice(0, self.logs.length - 100);
+                        }
+                    }
+                }
+            });
         },
         unmounted: function () {
             if (vrmModel !== null) {
@@ -5282,6 +5361,7 @@ window.addEventListener("load", event => {
             off(databaseRef(database, databaseRoot + "/stars"));
             off(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(10)));
             off(query(databaseRef(database, databaseRoot + "/likes"), orderByChild("timestamp"), limitToLast(100)));
+            off(query(databaseRef(database, databaseRoot + "/logs"), orderByChild("timestamp"), limitToLast(100)));
         }
     }).mount("#app");
 
