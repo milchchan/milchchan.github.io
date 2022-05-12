@@ -1744,44 +1744,77 @@
                                                 <div class="level is-mobile is-fullwidth" v-else key="loaded">
                                                     <div class="level-item is-fullwidth" v-for="log in mode.logs"
                                                         v-bind:key="log">
-                                                        <article class="media">
+                                                        <article class="media is-fullwidth" v-if="'id' in log.user">
+                                                            <div class="media-content">
+                                                                <div class="content has-text-right">
+                                                                    <div class="balloon">
+                                                                        <p class="has-text-weight-bold">
+                                                                            {{ log.text }}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="level">
+                                                                    <div class="level-right">
+                                                                        <div class="level-item">
+                                                                            <span
+                                                                                class="is-size-7 has-text-weight-bold">{{
+                                                                                log.user.name }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <figure class="media-right" v-if="'image' in log.user">
+                                                                <div class="level">
+                                                                    <div class="level-item">
+                                                                        <picture class="image is-64x64 is-rounded"
+                                                                            v-if="'image' in log.user">
+                                                                            <img v-bind:src="log.user.image" width="64"
+                                                                                height="64" v-bind:alt="log.user.name">
+                                                                        </picture>
+                                                                    </div>
+                                                                </div>
+                                                            </figure>
+                                                        </article>
+                                                        <article class="media is-fullwidth" v-else>
                                                             <figure class="media-left">
-                                                                <picture class="image is-64x64 is-rounded">
-                                                                    <img class="is-animatable"
-                                                                        src="/images/Merku-Headshot1-64.png"
-                                                                        srcset="/images/Merku-Headshot1-64.png 1x,/images/Merku-Headshot1-128.png 2x,/images/Merku-Headshot1-192.png 3x"
-                                                                        width="64" height="64" alt="About">
-                                                                </picture>
+                                                                <div class="level">
+                                                                    <div class="level-item">
+                                                                        <picture class="image is-64x64 is-rounded"
+                                                                            v-if="'image' in log.user">
+                                                                            <img v-bind:src="log.user.image" width="64"
+                                                                                height="64" v-bind:alt="log.user.name">
+                                                                        </picture>
+                                                                    </div>
+                                                                </div>
                                                             </figure>
                                                             <div class="media-content">
-                                                                <div class="content" v-if="'accent' in log.user">
-                                                                    <div class="balloon" v-bind:style="{ backgroundColor: log.user.accent }">
-                                                                        <p
-                                                                            class="is-size-6 has-text-weight-bold">
-                                                                            {{ log.text }}</p>
+                                                                <div class="content has-text-left">
+                                                                    <div class="balloon"
+                                                                        v-bind:style="{ backgroundColor: log.user.accent }">
+                                                                        <p class="has-text-weight-bold" v-if="Array.isArray(log.text)">
+                                                                            <span v-for="item in log.text.map(x => typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })" v-bind:class="{ highlight: item.highlight }">
+                                                                                {{ item.text }}
+                                                                            </span>
+                                                                        </p>
+                                                                        <p class="has-text-weight-bold" v-else>
+                                                                            <span
+                                                                                v-bind:class="{ 'is-hidden': log.text }">
+                                                                                <i class="fas fa-spinner updating"></i>
+                                                                            </span>
+                                                                            {{ log.text }}
+                                                                        </p>
                                                                     </div>
                                                                 </div>
-                                                                <div class="content" v-else>
-                                                                    <div class="balloon">
-                                                                        <p
-                                                                            class="is-size-6 has-text-weight-bold">
-                                                                            {{ log.text }}</p>
-                                                                    </div>
-                                                                </div>
-                                                                <nav class="level is-mobile">
+                                                                <div class="level">
                                                                     <div class="level-left">
-                                                                        <h3>ミルヒ</h3>
+                                                                        <div class="level-item">
+                                                                            <span
+                                                                                class="is-size-7 has-text-weight-bold">{{
+                                                                                log.user.name }}</span>
+                                                                        </div>
                                                                     </div>
-                                                                </nav>
+                                                                </div>
                                                             </div>
-                                                            <figure class="media-right">
-                                                                <picture class="image is-64x64 is-rounded">
-                                                                    <img class="is-animatable"
-                                                                        src="/images/Merku-Headshot1-64.png"
-                                                                        srcset="/images/Merku-Headshot1-64.png 1x,/images/Merku-Headshot1-128.png 2x,/images/Merku-Headshot1-192.png 3x"
-                                                                        width="64" height="64" alt="About">
-                                                                </picture>
-                                                            </figure>
                                                         </article>
                                                     </div>
                                                 </div>
