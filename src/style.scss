@@ -1086,9 +1086,8 @@ label .scrollable>div {
                             justify-content: flex-start;
 
                             picture.icon {
+                                z-index: 1;
                                 margin: 0px 4px 0px 0px;
-                                color: var(--main-color);
-                                transition: 0.5s;
 
                                 svg path {
                                     fill: var(--main-color);
