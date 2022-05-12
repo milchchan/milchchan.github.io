@@ -1319,132 +1319,6 @@ label .scrollable>div {
                         margin: -8px -8px -8px -8px;
                         flex-direction: row;
 
-                        >.level-left,
-                        >.level-right {
-                            >.level-item>.level {
-                                display: flex;
-                                align-items: flex-end;
-                                justify-content: flex-start;
-
-                                >.level-item:not(:last-child) {
-                                    margin-bottom: 0;
-                                    margin-right: 16px;
-                                }
-                            }
-                        }
-
-                        >.level-left {
-                            display: flex;
-                            flex-direction: row;
-                            justify-content: flex-start;
-                            align-items: center;
-                            margin: 0;
-                            padding: 8px 8px 8px 8px;
-                            max-width: 100%;
-
-                            >.level-item {
-                                margin: 0;
-                                padding: 0;
-                                max-width: 100%;
-
-                                >.level>.level-item>.level {
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: flex-start;
-                                    justify-content: flex-start;
-
-                                    .level-item:not(:last-child) {
-                                        margin-bottom: 8px;
-                                        margin-right: 0;
-
-                                        h3 {
-                                            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                                            font-size: 0.75rem;
-                                            line-height: 0.75rem;
-                                            white-space: nowrap;
-                                        }
-                                    }
-                                }
-
-                                .balloon {
-                                    z-index: 1;
-                                    position: relative;
-                                    padding: 12px 24px 12px 24px;
-                                    border-radius: 0px 500px 500px 500px;
-                                    background: var(--background-image) 50% 50% repeat;
-                                    background-color: var(--primary-background-color);
-                                    background-size: 24px 24px;
-                                    overflow: hidden;
-                                    backface-visibility: hidden;
-
-                                    >p {
-                                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                                        word-wrap: break-word;
-                                        font-size: 1.0rem;
-                                        line-height: 2.0rem;
-                                    }
-                                }
-                            }
-                        }
-
-                        >.level-right {
-                            display: flex;
-                            flex-direction: row;
-                            justify-content: flex-end;
-                            align-items: center;
-                            margin: 0;
-                            padding: 8px 8px 8px 8px;
-                            width: 100%;
-
-                            >.level-item {
-                                display: flex;
-                                flex-direction: row;
-                                justify-content: flex-end;
-                                align-items: center;
-                                margin: 0;
-                                padding: 0;
-                                max-width: 100%;
-
-                                >.level>.level-item>.level {
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: flex-end;
-                                    justify-content: flex-start;
-
-                                    .level-item:not(:last-child) {
-                                        margin-bottom: 8px;
-                                        margin-right: 0;
-
-                                        h3 {
-                                            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                                            font-size: 0.75rem;
-                                            line-height: 0.75rem;
-                                            white-space: nowrap;
-                                        }
-                                    }
-                                }
-
-                                .balloon {
-                                    z-index: 1;
-                                    position: relative;
-                                    padding: 12px 24px 12px 24px;
-                                    border-radius: 500px 500px 0px 500px;
-                                    background: var(--background-image) 50% 50% repeat;
-                                    background-color: var(--primary-background-color);
-                                    background-size: 24px 24px;
-                                    overflow: hidden;
-                                    backface-visibility: hidden;
-
-                                    >p {
-                                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                                        word-wrap: break-word;
-                                        font-size: 1.0rem;
-                                        line-height: 2.0rem;
-                                    }
-                                }
-                            }
-                        }
-
                         >.level-item {
                             margin: 0;
                             padding: 8px 8px 8px 8px;
@@ -2324,23 +2198,182 @@ label .scrollable>div {
                         }
                     }
 
-                    >.media>.media-content>.content {
-                        display: flex;
-                        flex-direction: rows;
-                        align-items: center;
-                        justify-content: start;
+                    >.media {
+                        >.media-left {
+                            margin: 0px 8px 0px 0px !important;
 
-                        span {
-                            color: var(--main-color);
-                            transition: 0.5s;
+                            >.level {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: flex-start;
+                                justify-content: flex-start;
+
+                                picture.is-rounded {
+                                    z-index: 1;
+                                    position: relative;
+                                    border-radius: 290486px;
+                                    overflow: hidden;
+                                }
+
+                                >.level-item span {
+                                    font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                    font-size: 0.75rem;
+                                    transform: rotate(0.03deg);
+                                    line-height: 0.75rem !important;
+                                    color: var(--foreground-color);
+                                }
+
+                                >.level-item:not(:last-child) {
+                                    margin-bottom: 8px;
+                                    margin-right: 0;
+                                }
+                            }
                         }
 
-                        span:not(:first-child) {
-                            margin: 0px 0px 0px 8px;
+                        >.media-right {
+                            margin: 0px 0px 0px 8px !important;
+
+                            >.level {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: flex-end;
+                                justify-content: flex-start;
+
+                                picture.is-rounded {
+                                    z-index: 1;
+                                    position: relative;
+                                    border-radius: 290486px;
+                                    overflow: hidden;
+                                }
+
+                                >.level-item span {
+                                    font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                    font-size: 0.75rem;
+                                    transform: rotate(0.03deg);
+                                    line-height: 0.75rem !important;
+                                    color: var(--foreground-color);
+                                }
+
+                                >.level-item:not(:last-child) {
+                                    margin-bottom: 8px;
+                                    margin-right: 0;
+                                }
+                            }
                         }
 
-                        .icon {
-                            color: var(--accent-color);
+                        >.media-content {
+                            >.content {
+                                display: flex;
+                                flex-direction: rows;
+                                align-items: center;
+                                justify-content: flex-start;
+
+                                span {
+                                    color: var(--main-color);
+                                    transition: 0.5s;
+                                }
+
+                                span:not(:first-child) {
+                                    margin: 0px 0px 0px 8px;
+                                }
+
+                                .icon {
+                                    color: var(--accent-color);
+                                    transition: 0.5s;
+                                }
+                            }
+
+                            .has-text-left+.level {
+                                display: flex;
+                                flex-direction: row;
+                                align-items: center;
+                                justify-content: flex-start;
+                                margin: 8px 0px 0px 0px;
+
+                                span {
+                                    font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                    font-size: 0.75rem;
+                                    transform: rotate(0.03deg);
+                                    line-height: 0.75rem !important;
+                                    color: var(--foreground-color);
+                                }
+                            }
+
+                            .has-text-right+.level {
+                                display: flex;
+                                flex-direction: row;
+                                align-items: center;
+                                justify-content: flex-end;
+                                margin: 8px 0px 0px 0px;
+
+                                span {
+                                    font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                    font-size: 0.75rem;
+                                    transform: rotate(0.03deg);
+                                    line-height: 0.75rem !important;
+                                    color: var(--foreground-color);
+                                }
+                            }
+
+                            .has-text-left {
+                                display: flex;
+                                align-items: flex-start;
+                                justify-content: flex-start;
+                            }
+
+                            .has-text-right {
+                                display: flex;
+                                align-items: flex-start;
+                                justify-content: flex-end;
+                            }
+
+                            .has-text-left .balloon {
+                                display: inline-block;
+                                padding: 8px 16px 8px 16px;
+                                border-radius: 0px 500px 500px 500px;
+                                background-image: url('/images/Stripes.png');
+                                background-color: var(--primary-background-color);
+                                background-position: 50% 50%;
+                                background-repeat: repeat;
+                                background-size: 24px 24px;
+                                transition: 0.5s;
+                            }
+
+                            .has-text-right .balloon {
+                                display: inline-block;
+                                padding: 8px 16px 8px 16px;
+                                border-radius: 500px 500px 0px 500px;
+                                background-image: url('/images/Stripes.png');
+                                background-color: var(--primary-background-color);
+                                background-position: 50% 50%;
+                                background-repeat: repeat;
+                                background-size: 24px 24px;
+                                transition: 0.5s;
+                            }
+
+                            .balloon p {
+                                font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                font-size: 1.0rem;
+                                line-height: 2.0rem;
+                                transform: rotate(0.03deg);
+                                word-wrap: break-word;
+                                white-space: normal;
+
+                                span {
+                                    font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                    font-size: 1.0rem;
+                                    line-height: 2.0rem;
+                                    transform: rotate(0.03deg);
+                                    word-wrap: break-word;
+                                    white-space: normal;
+                                    color: var(--foreground-color);
+                                }
+
+                                span.highlight {
+                                    color: var(--accent-color) !important;
+                                    transition: 0.5s;
+                                }
+                            }
                         }
                     }
                 }
@@ -3714,9 +3747,9 @@ label .scrollable>div {
         background-size: 2px 2px;
     }
 
-    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-left>.level-item .balloon,
-    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-right>.level-item .balloon {
-        background: var(--background-image-2x) 50% 50% repeat;
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
+        background-image: var(--background-image-2x);
         background-size: 24px 24px;
     }
 
@@ -3738,9 +3771,9 @@ label .scrollable>div {
         background-size: 2px 2px;
     }
 
-    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-left>.level-item .balloon,
-    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.level>.level-right>.level-item .balloon {
-        background: var(--background-image-3x) 50% 50% repeat;
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
+        background-image: var(--background-image-3x);
         background-size: 24px 24px;
     }
 
