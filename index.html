@@ -1458,8 +1458,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="level is-mobile is-fullwidth"
-                                                    v-else-if="mode.collection[0].length === 0" key="empty">
-                                                    <div class="level-item is-fullwidth" v-for="log in take(logs.slice().reverse(), 10).reverse()"
+                                                    v-else-if="mode.collection.reduce((x, y) => x + y.length, 0) === 0" key="empty">
+                                                    <div class="level-item is-fullwidth"
+                                                        v-for="log in take(logs.slice().reverse(), 10).reverse()"
                                                         v-bind:key="log">
                                                         <article class="media is-fullwidth" v-if="'id' in log.user">
                                                             <div class="media-content">
@@ -1552,8 +1553,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="level is-mobile is-fullwidth" v-else
-                                                    v-bind:key="mode.collection.length">
-                                                    <div class="level-item is-fullwidth" v-for="log in take(logs.slice().reverse(), 10).reverse()"
+                                                    v-bind:key="mode.collection.reduce((x, y) => x + y.length, 0)">
+                                                    <div class="level-item is-fullwidth"
+                                                        v-for="log in take(logs.slice().reverse(), 10).reverse()"
                                                         v-bind:key="log">
                                                         <article class="media is-fullwidth" v-if="'id' in log.user">
                                                             <div class="media-content">
@@ -1797,7 +1799,7 @@
                                                                                                                 <button
                                                                                                                     class="button is-circle is-danger"
                                                                                                                     type="button"
-                                                                                                                    @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1);">
+                                                                                                                    @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1); [...Array(mode.collection.length).keys()].reverse().filter(x => mode.collection[x].length === 0).forEach(x => { mode.collection.splice(x, 1); mode.index--; }); mode.index = Math.max(mode.index, 0);">
                                                                                                                     <span
                                                                                                                         class="icon is-small"
                                                                                                                         style="pointer-events: none;">
@@ -1873,7 +1875,7 @@
                                                                                                             <button
                                                                                                                 class="button is-circle is-danger"
                                                                                                                 type="button"
-                                                                                                                @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1);">
+                                                                                                                @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1); [...Array(mode.collection.length).keys()].reverse().filter(x => mode.collection[x].length === 0).forEach(x => { mode.collection.splice(x, 1); mode.index--; }); mode.index = Math.max(mode.index, 0);">
                                                                                                                 <span
                                                                                                                     class="icon is-small"
                                                                                                                     style="pointer-events: none;">
@@ -1889,17 +1891,6 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="level-item">
-                                                                            <article class="media">
-                                                                                <div class="media-content">
-                                                                                    <div class="content">
-                                                                                        <span
-                                                                                            class="is-size-7 has-text-weight-bold"
-                                                                                            v-text="String(Object.values(captures).reduce((x, y) => x + (typeof (y) === 'function' ? 0 : y.count), 0)) + '/' + String(Math.floor(maxPoints / 60))"></span>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </article>
                                                                         </div>
                                                                         <div class="level-item">
                                                                             <div class="level is-mobile">
@@ -3552,6 +3543,12 @@
                                         <div class="bar"
                                             v-bind:style="{width: String(animatedPoints < maxPoints ? Math.floor(100.0 * (animatedPoints % 60) / 59) : 100) + '%'}">
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="level-item has-text-centered">
+                                    <div class="field">
+                                        <span class="is-size-7 has-text-weight-bold"
+                                            v-text="String(Object.values(captures).reduce((x, y) => x + (typeof (y) === 'function' ? 0 : y.count), 0))"></span>
                                     </div>
                                 </div>
                             </nav>
