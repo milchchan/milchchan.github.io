@@ -1204,7 +1204,7 @@ label .scrollable>div {
                         margin: 0 !important;
                     }
 
-                    >span:not(:first-child) {
+                    >span:not(:first-of-type) {
                         margin: 0px 0px 0px 8px !important;
                     }
                 }
@@ -1483,7 +1483,7 @@ label .scrollable>div {
                                                     margin: 0px 0px 0px 8px !important;
                                                 }
 
-                                                span:not(:first-child) {
+                                                span:not(:first-of-type) {
                                                     margin: 0px 0px 0px 8px !important;
                                                 }
                                             }
@@ -1717,7 +1717,7 @@ label .scrollable>div {
                                                             margin: 0px 8px 0px 0px;
                                                         }
 
-                                                        span:not(:first-child) {
+                                                        span:not(:first-of-type) {
                                                             margin: 0px 0px 0px 8px;
                                                         }
                                                     }
@@ -2041,7 +2041,7 @@ label .scrollable>div {
                                                             color: var(--accent-color);
                                                         }
 
-                                                        span:not(:first-child) {
+                                                        span:not(:first-of-type) {
                                                             margin: 0px 0px 0px 8px;
                                                         }
 
@@ -2325,7 +2325,7 @@ label .scrollable>div {
                                     transition: 0.5s;
                                 }
 
-                                span:not(:first-child) {
+                                span:not(:first-of-type) {
                                     margin: 0px 0px 0px 8px;
                                 }
 
@@ -2501,7 +2501,7 @@ label .scrollable>div {
                         margin: 0px 8px 0px 0px;
                     }
 
-                    span:not(:first-child) {
+                    span:not(:first-of-type) {
                         margin: 0px 0px 0px 8px;
                     }
                 }
@@ -2579,7 +2579,7 @@ label .scrollable>div {
                             margin: 0px 8px 0px 0px;
                         }
 
-                        span:not(:first-child) {
+                        span:not(:first-of-type) {
                             margin: 0px 0px 0px 8px;
                         }
                     }
@@ -2648,7 +2648,7 @@ label .scrollable>div {
                                 margin: 0px 4px 0px 0px;
                             }
 
-                            span:not(:first-child) {
+                            span:not(:first-of-type) {
                                 margin: 0px 0px 0px 4px;
                             }
                         }
