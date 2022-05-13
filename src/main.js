@@ -4524,7 +4524,7 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    if (!this.isRevealed) {
+                    if (!this.isLearning) {
                         const points = parseInt(this.uptime + deltaTime) - parseInt(this.uptime);
 
                         if (points > 0 && points < 60 && this.points < this.maxPoints) {
