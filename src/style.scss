@@ -1033,6 +1033,15 @@ label .scrollable>div {
                         touch-action: none;
                         -webkit-user-select: none;
                         user-select: none;
+
+                        .field span:last-child {
+                            font-family: "Alata", sans-serif;
+                            font-size: 4rem !important;
+                            line-height: 4rem !important;
+                            color: var(--main-color);
+                            /*text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);*/
+                            transition: 0.5s;
+                        }
                     }
 
                     >.level-item:nth-child(2) {
@@ -1066,6 +1075,33 @@ label .scrollable>div {
                         }
                     }
 
+                    >.level-item:nth-child(3) {
+                        pointer-events: none;
+                        margin: 0px 0px 8px 0px;
+                        touch-action: none;
+                        -webkit-user-select: none;
+                        user-select: none;
+
+                        .field {
+                            border-radius: 290486px !important;
+                            padding: 8px;
+                            background-color: var(--main-color);
+                            overflow: hidden;                                
+
+                            span:last-child {
+                                margin: 0;
+                                padding: 0;
+                                width: 0.75rem !important;
+                                height: 0.75rem !important;
+                                font-family: "Alata", sans-serif;
+                                font-size: 0.75rem !important;
+                                line-height: 0.75rem !important;
+                                color: var(--foreground-color);
+                                transition: 0.5s;
+                            }
+                        }
+                    }
+
                     >.level-item {
                         >.level {
                             margin: 0px -8px 0px -8px;
@@ -1094,15 +1130,6 @@ label .scrollable>div {
                                     fill: var(--main-color);
                                     transition: 0.5s;
                                 }
-                            }
-
-                            span:last-child {
-                                font-family: "Alata", sans-serif;
-                                font-size: 4rem !important;
-                                line-height: 4rem !important;
-                                color: var(--main-color);
-                                /*text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);*/
-                                transition: 0.5s;
                             }
                         }
                     }
