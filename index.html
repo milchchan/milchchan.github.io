@@ -293,9 +293,9 @@
             </transition>
             <transition name="fade">
                 <div class="logo" v-if="progress !== null && animations === null">
-                    <svg width="100%" height="100%" viewBox="0 0 408 49" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-                        xmlns:serif="http://www.serif.com/"
+                    <svg width="100%" height="100%" viewBox="0 0 408 49" version="1.1"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        xml:space="preserve" xmlns:serif="http://www.serif.com/"
                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" v-cloak>
                         <g transform="matrix(1,0,0,1,-60.914,-457.659)">
                             <g transform="matrix(1,0,0,1,450.634,463.965)">
@@ -1473,7 +1473,7 @@
                                                 </div>
                                                 <div class="level is-mobile" v-else
                                                     v-bind:key="mode.collection[mode.index][0]">
-                                                    <div class="level-item" v-for="word in mode.collection[mode.index]"
+                                                    <div class="level-item" v-for="(word, index) in mode.collection[mode.index]"
                                                         v-bind:key="word">
                                                         <div class="level is-mobile">
                                                             <div class="level-item">
@@ -1605,6 +1605,19 @@
                                                                                                     class="icon is-small"><i
                                                                                                         class="fa-brands fa-amazon"></i></span></a>
                                                                                         </div>
+                                                                                        <div class="control">
+                                                                                            <button
+                                                                                                class="button is-circle is-danger"
+                                                                                                type="button"
+                                                                                                @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1);">
+                                                                                                <span
+                                                                                                    class="icon is-small"
+                                                                                                    style="pointer-events: none;">
+                                                                                                    <i
+                                                                                                        class="fa-solid fa-trash"></i>
+                                                                                                </span>
+                                                                                            </button>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -1654,6 +1667,21 @@
                                                                                     target="_blank"><span
                                                                                         class="icon is-small"><i
                                                                                             class="fa-brands fa-amazon"></i></span></a>
+                                                                            </div>
+                                                                            <div class="level-item">
+                                                                                <div class="field">
+                                                                                    <div class="control">
+                                                                                        <button class="button is-circle is-danger"
+                                                                                            type="button"
+                                                                                            @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1);">
+                                                                                            <span class="icon is-small"
+                                                                                                style="pointer-events: none;">
+                                                                                                <i
+                                                                                                    class="fa-solid fa-trash"></i>
+                                                                                            </span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -1766,7 +1794,7 @@
                                                             <figure class="media-right" v-if="'image' in log.user">
                                                                 <div class="level">
                                                                     <div class="level-item">
-                                                                        <picture class="image is-64x64 is-rounded"
+                                                                        <picture class="image is-64x64 is-circle"
                                                                             v-if="'image' in log.user">
                                                                             <img v-bind:src="log.user.image" width="64"
                                                                                 height="64" v-bind:alt="log.user.name">
@@ -1779,7 +1807,7 @@
                                                             <figure class="media-left">
                                                                 <div class="level">
                                                                     <div class="level-item">
-                                                                        <picture class="image is-64x64 is-rounded"
+                                                                        <picture class="image is-64x64 is-circle"
                                                                             v-if="'image' in log.user">
                                                                             <img v-bind:src="log.user.image" width="64"
                                                                                 height="64" v-bind:alt="log.user.name">
@@ -1791,8 +1819,11 @@
                                                                 <div class="content has-text-left">
                                                                     <div class="balloon"
                                                                         v-bind:style="{ backgroundColor: log.user.accent }">
-                                                                        <p class="has-text-weight-bold" v-if="Array.isArray(log.text)">
-                                                                            <span v-for="item in log.text.map(x => typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })" v-bind:class="{ highlight: item.highlight }">
+                                                                        <p class="has-text-weight-bold"
+                                                                            v-if="Array.isArray(log.text)">
+                                                                            <span
+                                                                                v-for="item in log.text.map(x => typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })"
+                                                                                v-bind:class="{ highlight: item.highlight }">
                                                                                 {{ item.text }}
                                                                             </span>
                                                                         </p>
@@ -3313,7 +3344,8 @@
                                 <div class="level-item has-text-centered">
                                     <div class="field is-grouped is-vcentered">
                                         <picture class="icon is-small">
-                                            <svg width="100%" height="100%" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                            <svg width="100%" height="100%" viewBox="0 0 34 34" version="1.1"
+                                                xmlns="http://www.w3.org/2000/svg"
                                                 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
                                                 xmlns:serif="http://www.serif.com/"
                                                 style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
