@@ -1457,103 +1457,7 @@
                                                         </article>
                                                     </div>
                                                 </div>
-                                                <div class="level is-mobile is-fullwidth"
-                                                    v-else-if="mode.collection.reduce((x, y) => x + y.length, 0) === 0" key="empty">
-                                                    <div class="level-item is-fullwidth"
-                                                        v-for="log in take(logs.slice().reverse(), 10).reverse()"
-                                                        v-bind:key="log">
-                                                        <article class="media is-fullwidth" v-if="'id' in log.user">
-                                                            <div class="media-content">
-                                                                <div class="content has-text-right">
-                                                                    <div class="balloon">
-                                                                        <p class="has-text-weight-bold">
-                                                                            {{ log.text }}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="level">
-                                                                    <div class="level-right">
-                                                                        <div class="level-item">
-                                                                            <span
-                                                                                class="is-size-7 has-text-weight-bold">{{
-                                                                                log.user.name }}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <figure class="media-right" v-if="'image' in log.user">
-                                                                <div class="level">
-                                                                    <div class="level-item">
-                                                                        <picture class="image is-64x64 is-circle"
-                                                                            v-if="'image' in log.user">
-                                                                            <img v-bind:src="log.user.image" width="64"
-                                                                                height="64" v-bind:alt="log.user.name">
-                                                                        </picture>
-                                                                    </div>
-                                                                </div>
-                                                            </figure>
-                                                        </article>
-                                                        <article class="media is-fullwidth" v-else>
-                                                            <figure class="media-left">
-                                                                <div class="level">
-                                                                    <div class="level-item">
-                                                                        <picture class="image is-64x64 is-circle"
-                                                                            v-if="'image' in log.user">
-                                                                            <img v-bind:src="log.user.image" width="64"
-                                                                                height="64" v-bind:alt="log.user.name">
-                                                                        </picture>
-                                                                    </div>
-                                                                </div>
-                                                            </figure>
-                                                            <div class="media-content">
-                                                                <div class="content has-text-left">
-                                                                    <div class="balloon"
-                                                                        v-bind:style="{ backgroundColor: log.user.accent }">
-                                                                        <p class="has-text-weight-bold"
-                                                                            v-if="Array.isArray(log.text)">
-                                                                            <span
-                                                                                v-for="item in log.text.map(x => typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })"
-                                                                                v-bind:class="{ highlight: item.highlight }"
-                                                                                v-bind:style="{ backgroundColor: item.highlight ? log.user.accent : 'transparent' }">
-                                                                                {{ item.text }}
-                                                                            </span>
-                                                                        </p>
-                                                                        <p class="has-text-weight-bold" v-else>
-                                                                            <span
-                                                                                v-bind:class="{ 'is-hidden': log.text }">
-                                                                                <i class="fas fa-spinner updating"></i>
-                                                                            </span>
-                                                                            {{ log.text }}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="level">
-                                                                    <div class="level-left">
-                                                                        <div class="level-item">
-                                                                            <span
-                                                                                class="is-size-7 has-text-weight-bold">{{
-                                                                                log.user.name }}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </article>
-                                                    </div>
-                                                    <div class="level-item">
-                                                        <article class="media">
-                                                            <div class="media-content">
-                                                                <div class="content">
-                                                                    <span class="icon is-small">
-                                                                        <i class="fa-solid fa-triangle-exclamation"></i>
-                                                                    </span>
-                                                                    <span>N/A</span>
-                                                                </div>
-                                                            </div>
-                                                        </article>
-                                                    </div>
-                                                </div>
-                                                <div class="level is-mobile is-fullwidth" v-else
-                                                    v-bind:key="mode.collection.reduce((x, y) => x + y.length, 0)">
+                                                <div class="level is-mobile is-fullwidth" v-else key="loaded">
                                                     <div class="level-item is-fullwidth"
                                                         v-for="log in take(logs.slice().reverse(), 10).reverse()"
                                                         v-bind:key="log">
@@ -1635,8 +1539,8 @@
                                                         </article>
                                                     </div>
                                                     <transition name="fade" mode="out-in">
-                                                        <div class="level-item"
-                                                            v-bind:key="mode.collection[mode.index][0]">
+                                                        <div class="level-item" v-if="mode.collection.length > 0"
+                                                            v-bind:key="mode.collection[mode.index][0].name">
                                                             <div class="level">
                                                                 <div class="level-item">
                                                                     <div class="level">
