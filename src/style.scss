@@ -1736,7 +1736,6 @@ label .scrollable>div {
                                         background: rgb(255, 255, 255);
                                         justify-content: center;
                                         align-items: center;
-                                        width: 100%;
                                         height: fit-content;
 
                                         >.media-content {
@@ -1751,6 +1750,8 @@ label .scrollable>div {
                                                 justify-content: center;
                                                 align-items: center;
                                                 padding: 16px;
+                                                color: var(--main-color);
+                                                transition: 0.5s;
                                             }
 
                                             >figure {
@@ -2394,7 +2395,10 @@ label .scrollable>div {
                                 }
 
                                 span.highlight {
-                                    color: var(--accent-color) !important;
+                                    background-color: var(--accent-color);
+                                    color: var(--foreground-color) !important;
+                                    border-radius: 4px;
+                                    padding: 4px 8px 4px 8px;
                                     transition: 0.5s;
                                 }
                             }
@@ -3037,7 +3041,7 @@ label .scrollable>div {
 
             .marker {
                 background-color: var(--highlight-color);
-                color: #ffffff !important;
+                color: var(--foreground-color) !important;
                 border-radius: 4px;
                 padding: 4px 8px 4px 8px;
                 transition: 0.5s;
