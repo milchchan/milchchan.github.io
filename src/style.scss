@@ -1093,7 +1093,7 @@ label .scrollable>div {
                             height: 0.75rem !important;
                             font-family: "Alata", sans-serif;
                             font-size: 0.75rem !important;
-                            line-height: 0.75rem !important;
+                            line-height: 100% !important;
                             color: var(--main-color);
                             transition: 0.5s;
                             box-sizing: content-box;
@@ -2100,7 +2100,7 @@ label .scrollable>div {
                                         color: #ffffff !important;
                                         font-family: "Alata", sans-serif;
                                         font-size: 0.75rem;
-                                        line-height: 0.75rem !important;
+                                        line-height: 100% !important;
                                         color: var(--foreground-color);
                                         overflow: hidden;
                                         box-sizing: content-box;
@@ -2198,7 +2198,7 @@ label .scrollable>div {
                                     color: #ffffff !important;
                                     font-family: "Alata", sans-serif;
                                     font-size: 0.75rem;
-                                    line-height: 0.75rem !important;
+                                    line-height: 100% !important;
                                     color: var(--foreground-color);
                                     overflow: hidden;
                                     box-sizing: content-box;
@@ -2813,7 +2813,7 @@ label .scrollable>div {
                                             color: #ffffff !important;
                                             font-family: "Alata", sans-serif;
                                             font-size: 0.75rem;
-                                            line-height: 0.75rem !important;
+                                            line-height: 100% !important;
                                             color: var(--foreground-color);
                                             overflow: hidden;
                                             box-sizing: content-box;
