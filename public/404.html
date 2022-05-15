@@ -102,20 +102,6 @@
       transition: 0.5s;
     }
 
-    .frame::before {
-      z-index: 0;
-      display: block;
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      min-height: 100%;
-      overflow: hidden;
-      background: url('/images/Overlay.png') repeat;
-      background-size: 2px 2px;
-      content: "";
-    }
-
     #message {
       z-index: 0;
       position: absolute;
@@ -128,9 +114,6 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      background: var(--background-color);
-      -webkit-backdrop-filter: blur(8px);
-      backdrop-filter: blur(8px);
     }
 
     @keyframes fade {
@@ -162,22 +145,6 @@
       to {
         opacity: 1;
         transform: scale3d(1.0, 1.0, 1.0);
-      }
-    }
-
-    @media screen and (-webkit-min-device-pixel-ratio:2),
-    (min-resolution: 2dppx) {
-      .frame::before {
-        background: url('/images/Overlay@2x.png') repeat;
-        background-size: 2px 2px;
-      }
-    }
-
-    @media screen and (-webkit-min-device-pixel-ratio:3),
-    (min-resolution: 3dppx) {
-      .frame::before {
-        background: url('/images/Overlay@3x.png') repeat;
-        background-size: 2px 2px;
       }
     }
   </style>
