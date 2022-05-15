@@ -901,9 +901,13 @@ window.addEventListener("load", event => {
                                     return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                                 }
 
-                                runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
+                                const result = await runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
                                     return (count || 0) + 1;
                                 });
+
+                                if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0) {
+                                    this.background.image = undefined;
+                                }
 
                                 for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learned"))) {
                                     if (obj.type === "Message") {
@@ -1049,6 +1053,8 @@ window.addEventListener("load", event => {
 
                             this.points = nextPoints;
                         }
+
+                        this.background.image = undefined;
 
                         if (!this.isMuted) {
                             this.$refs.like.play();
@@ -2476,6 +2482,11 @@ window.addEventListener("load", event => {
                 }*/
 
                 //this.isBlinded = false;
+            },
+            timeout: function (duration, func) {
+                window.setTimeout(() => {
+                    func();
+                }, duration);
             },
             update: async function (data, max) {
                 this.isUpdating = true;
