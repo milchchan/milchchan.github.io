@@ -285,6 +285,17 @@
                             </div>
                         </div>
                     </div>
+                    <transition name="fade" v-on:after-enter="preload" v-on:before-leave="background.nonce = null">
+                        <div class="background"
+                            v-bind:style="{ backgroundImage: background.image === undefined ? 'none' : 'url(' + background.image + ')' }"
+                            v-if="background.image !== null" v-cloak>
+                        </div>
+                    </transition>
+                    <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
+                        v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
+                        v-on:after-leave="isHangingOn = false; timeout(3000, () => background.image = null);" v-on:leave-cancelled="isHangingOn = false; timeout(3000, () => background.image = null);">
+                        <div class="blind" v-if="background.nonce !== null" v-cloak></div>
+                    </transition>
                 </div>
             </div>
             <transition name="fade">
@@ -488,19 +499,8 @@
                     </article>
                 </div>
             </transition>
-            <transition name="fade" v-on:after-enter="preload" v-on:before-leave="background.nonce = null">
-                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak>
-                    <transition name="fade">
-                        <div class="background"
-                            v-bind:style="{ backgroundImage: background.image === null || background.image === undefined ? 'none' : 'url(' + background.image + ')' }"
-                            v-cloak></div>
-                    </transition>
-                    <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
-                        v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
-                        v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
-                        <div class="blind" v-if="background.nonce !== null" v-cloak></div>
-                    </transition>
-                </div>
+            <transition name="fade">
+                <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
             </transition>
             <transition name="fade">
                 <div class="progress" v-if="animatedProgress > 0" v-cloak>
