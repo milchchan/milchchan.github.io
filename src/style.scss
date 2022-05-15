@@ -641,7 +641,7 @@ label .scrollable>div {
     }
 }
 
-.background::after {
+/*.background::after {
     pointer-events: none;
     z-index: 1;
     display: block;
@@ -655,7 +655,7 @@ label .scrollable>div {
     content: "";
     overflow: hidden;
     backface-visibility: hidden;
-}
+}*/
 
 .sidebar {
     position: relative;
@@ -3817,10 +3817,10 @@ label .scrollable>div {
         background-size: 24px 24px;
     }
 
-    .background::after {
+    /*.background::after {
         background: rgba(0, 0, 0, 0.1);
         background-size: 2px 2px;
-    }
+    }*/
 
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
@@ -3841,10 +3841,10 @@ label .scrollable>div {
         background-size: 24px 24px;
     }
 
-    .background::after {
+    /*.background::after {
         background: rgba(0, 0, 0, 0.1);
         background-size: 2px 2px;
-    }
+    }*/
 
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
