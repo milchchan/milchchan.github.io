@@ -293,7 +293,8 @@
                     </transition>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
-                        v-on:after-leave="isHangingOn = false; timeout(3000, () => background.image = null);" v-on:leave-cancelled="isHangingOn = false; timeout(3000, () => background.image = null);">
+                        v-on:after-leave="isHangingOn = false; timeout(3000, () => background.image = null);"
+                        v-on:leave-cancelled="isHangingOn = false; timeout(3000, () => background.image = null);">
                         <div class="blind" v-if="background.nonce !== null" v-cloak></div>
                     </transition>
                 </div>
@@ -3598,7 +3599,20 @@
         </div>
         <div class="right" v-cloak>
             <div class="level-item">
-                <transition name="fade" mode="out-in">
+                <button class="button is-circle" type="button" v-bind:disabled="mode !== null && typeof(mode) === 'object' && 'collection' in mode"
+                    @click="isRevealed = true; user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
+                    v-cloak>
+                    <transition name="fade" mode="out-in">
+                        <span class="icon is-small" v-if="isLoading || background.nonce !== null" key="processing">
+                            <i class="fa-solid fa-arrows-rotate"
+                                v-bind:class="{ loading: isLoading || background.nonce !== null }"></i>
+                        </span>
+                        <span class="icon" v-else key="ready">
+                            <i class="fa-solid fa-comment"></i>
+                        </span>
+                    </transition>
+                </button>
+                <!--<transition name="fade" mode="out-in">
                     <button class="button is-circle" v-if="isRevealed" type="button"
                         v-bind:disabled="isLoading || background.nonce !== null" @click="refresh" key="overlay" v-cloak>
                         <span class="icon is-small">
@@ -3620,7 +3634,7 @@
                             </span>
                         </transition>
                     </button>
-                </transition>
+                </transition>-->
             </div>
         </div>
         <audio preload="auto" ref="like">
