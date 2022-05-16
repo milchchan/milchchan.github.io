@@ -26,7 +26,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
 }
 
 :root {
-    --background-color: rgba(255, 255, 255, 0.75);
+    --background-color: rgba(255, 255, 255, 0.5);
     --foreground-color: #ffffff;
     /*#777777;*/
     --main-color: #{$primary};
@@ -58,7 +58,7 @@ html {
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
-    background: #f5f5f5;
+    background: #ffffff;
     transition: 0.5s;
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
@@ -84,10 +84,6 @@ input,
 button,
 a {
     font-family: #{$family-sans-serif};
-}
-
-p {
-    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 figure {
@@ -557,7 +553,8 @@ label .scrollable>div {
 
             .front {
                 position: absolute;
-                color: rgba(255, 255, 255, 1) !important;
+                opacity: 0.5;
+                color: var(--main-color) !important;
             }
 
             .back,
@@ -1575,8 +1572,8 @@ label .scrollable>div {
                                         align-items: flex-end;
                                         justify-content: center;
                                         overflow: hidden;
-                                        box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%),
-                                            0 0px 0 1px rgb(10 10 10 / 2%);
+                                        /*box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%),
+                                            0 0px 0 1px rgb(10 10 10 / 2%);*/
 
                                         >.card-image {
                                             position: absolute;
@@ -2364,6 +2361,7 @@ label .scrollable>div {
                                     transform: rotate(0.03deg);
                                     line-height: 0.75rem !important;
                                     color: var(--foreground-color);
+                                    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
                                 }
                             }
 
@@ -2380,6 +2378,7 @@ label .scrollable>div {
                                     transform: rotate(0.03deg);
                                     line-height: 0.75rem !important;
                                     color: var(--foreground-color);
+                                    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
                                 }
                             }
 
@@ -2396,6 +2395,8 @@ label .scrollable>div {
                             }
 
                             .has-text-left .balloon {
+                                z-index: 1;
+                                position: relative;
                                 display: inline-block;
                                 padding: 8px 16px 8px 16px;
                                 border-radius: 0px 500px 500px 500px;
@@ -2408,6 +2409,8 @@ label .scrollable>div {
                             }
 
                             .has-text-right .balloon {
+                                z-index: 1;
+                                position: relative;
                                 display: inline-block;
                                 padding: 8px 16px 8px 16px;
                                 border-radius: 500px 500px 0px 500px;
@@ -2426,6 +2429,7 @@ label .scrollable>div {
                                 transform: rotate(0.03deg);
                                 word-wrap: break-word;
                                 white-space: normal;
+                                text-shadow: none;
 
                                 span {
                                     font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
@@ -2617,6 +2621,8 @@ label .scrollable>div {
 
                         >button,
                         >.button {
+                            z-index: 1;
+                            position: relative;
                             display: flex;
                             align-items: center;
                             margin: 0;
@@ -2631,9 +2637,9 @@ label .scrollable>div {
                             line-height: calc(0.75rem * 1.5);
                             backface-visibility: hidden;
                             color: #000000;
-                            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                            backdrop-filter: blur(4px) !important;
+                            /*backdrop-filter: blur(4px) !important;
                             -webkit-backdrop-filter: blur(4px) !important;*/
+                            overflow: hidden;
 
                             .clip {
                                 display: inline-block;
@@ -2927,21 +2933,6 @@ label .scrollable>div {
                         white-space: normal;
                     }
 
-                    .has-text-left .balloon {
-                        display: inline-block;
-                        padding: 12px 24px 12px 24px;
-                        border-radius: 500px 500px 500px 0px;
-                        background: var(--background-image) 50% 50% repeat;
-                        background-size: 24px 24px;
-                        /*background: #f5f5f5;
-                        box-shadow: 20px 20px 60px #d0d0d0,
-                            -20px -20px 60px #ffffff;*/
-
-                        >p {
-                            line-height: 1.25rem;
-                        }
-                    }
-
                     .level:nth-last-of-type(1)>.level-item {
                         margin: 16px 0px 0px 0px;
                         padding: 0;
@@ -3055,6 +3046,7 @@ label .scrollable>div {
             color: var(--foreground-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
+            text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
         }
 
         h1+h2 {
@@ -3088,6 +3080,7 @@ label .scrollable>div {
             color: var(--foreground-color);
             transition: 0.5s;
             transform: rotate(0.03deg);
+            text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
 
             .marker {
                 background-color: var(--highlight-color);
