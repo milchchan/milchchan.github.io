@@ -390,7 +390,7 @@ label .scrollable>div {
 .progress {
     pointer-events: none;
     z-index: 1;
-    position: absolute;
+    position: relative;
     margin: 0 !important;
     border: 0px solid transparent;
     padding: 0;
@@ -1051,6 +1051,7 @@ label .scrollable>div {
                         user-select: none;
 
                         .progress {
+                            z-index: 1;
                             position: relative;
                             /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                             border-radius: 290486px;
