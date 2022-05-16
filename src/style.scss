@@ -2221,6 +2221,11 @@ label .scrollable>div {
                                         color: var(--accent-color);
                                     }
                                 }
+
+                                span {
+                                    color: var(--main-color);
+                                    transition: 0.5s;
+                                }
                             }
 
                             >button {
