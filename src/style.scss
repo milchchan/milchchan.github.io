@@ -601,6 +601,22 @@ label .scrollable>div {
     }
 }
 
+.wall::after {
+    pointer-events: none;
+    z-index: 1;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    min-height: 100%;
+    background: url("/images/Overlay.png") repeat;
+    background-size: 2px 2px;
+    content: "";
+    overflow: hidden;
+    backface-visibility: hidden;
+}
+
 .background {
     pointer-events: none;
     z-index: 1;
@@ -3823,6 +3839,11 @@ label .scrollable>div {
         background-size: 2px 2px;
     }*/
 
+    .wall::after {
+        background: url("/images/Overlay.png@2x") repeat;
+        background-size: 2px 2px;
+    }
+
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
         background-image: var(--background-image-2x);
@@ -3846,6 +3867,11 @@ label .scrollable>div {
         background: rgba(0, 0, 0, 0.1);
         background-size: 2px 2px;
     }*/
+
+    .wall::after {
+        background: url("/images/Overlay.png@3x") repeat;
+        background-size: 2px 2px;
+    }
 
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
