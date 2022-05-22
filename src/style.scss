@@ -526,6 +526,7 @@ label .scrollable>div {
     min-height: calc(100% + 16px);
     background: transparent;
     overflow: hidden;
+    transform: translate3d(env(safe-area-inset-top, 0px), 0, 0);
 
     >.wrap {
         margin: 0;
