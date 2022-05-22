@@ -526,7 +526,6 @@ label .scrollable>div {
     min-height: calc(100% + 16px);
     background: transparent;
     overflow: hidden;
-    transform: translate3d(env(safe-area-inset-top, 0px), 0, 0);
 
     >.wrap {
         margin: 0;
@@ -536,6 +535,7 @@ label .scrollable>div {
         overflow: hidden;
         -webkit-mask-image: linear-gradient(to right, black 0%, black 95%, transparent);
         mask-image: linear-gradient(to right, black 0%, black 95%, transparent);
+        transform: translate3d(env(safe-area-inset-top, 0px), 0, 0);
 
         >.line {
             margin: 0;
