@@ -522,8 +522,8 @@ label .scrollable>div {
     position: absolute;
     top: calc(-16px - env(safe-area-inset-top, 0px));
     width: 100%;
-    height: calc(100% + 16px + env(safe-area-inset-top, 0px));
-    min-height: calc(100% + 16px + env(safe-area-inset-top, 0px));
+    height: calc(100% + 16px + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+    min-height: calc(100% + 16px + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
     background: transparent;
     overflow: hidden;
 
