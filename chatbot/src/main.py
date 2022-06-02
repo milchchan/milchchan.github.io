@@ -8,6 +8,7 @@ from fastapi import FastAPI, Header, Request, Response, HTTPException
 from fastapi.responses import JSONResponse
 from starlette.types import ASGIApp
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.cors import CORSMiddleware
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 from normalizer import normalize_text
 import torch
@@ -36,7 +37,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         try:
             return await asyncio.wait_for(call_next(request), timeout=self.timeout)
-            
+
         except asyncio.TimeoutError:
             return JSONResponse(content={'detail': 'Processing time limit exceeded'}, status_code=HTTP_504_GATEWAY_TIMEOUT)
 
@@ -55,6 +56,8 @@ model = None
 
 app = FastAPI()
 app.add_middleware(TimeoutMiddleware, timeout=TIMEOUT)
+app.add_middleware(CORSMiddleware, allow_origins=[
+                   '*'], allow_credentials=True, allow_methods=['*'], allow_headers=['*'])
 
 
 @app.on_event("startup")
