@@ -88,7 +88,7 @@ def generate(response: Response, input: str, do_sample: bool = False, num_beams:
             top_p=top_p,
             repetition_penalty=repetition_penalty,
             num_return_sequences=num_return_sequences,
-            max_time=TIMEOUT
+            max_time=float(TIMEOUT)
         )
         end = datetime.now(timezone.utc).timestamp()
 
