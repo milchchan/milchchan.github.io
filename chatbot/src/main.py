@@ -82,11 +82,13 @@ def generate(response: Response, input: str, do_sample: bool = False, num_beams:
             input_ids=batch['input_ids'], attention_mask=batch['attention_mask'],
             max_length=MAX_OUTPUT_LENGTH,
             do_sample=do_sample,
+            early_stopping=True,
             num_beams=num_beams,
             top_k=top_k,
             top_p=top_p,
             repetition_penalty=repetition_penalty,
-            num_return_sequences=num_return_sequences
+            num_return_sequences=num_return_sequences,
+            max_time=TIMEOUT
         )
         end = datetime.now(timezone.utc).timestamp()
 
