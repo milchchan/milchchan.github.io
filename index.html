@@ -260,7 +260,7 @@
         <div class="container">
             <div class="wrap">
                 <div class="frame">
-                    <div class="wall" ref="wall">
+                    <div class="wall" @contextmenu.prevent ref="wall">
                         <div class="wrap" v-for="(block, index) in wall" v-bind:key="block"
                             v-bind:style="{ width: $refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back') === null ? '0px' : String(Math.ceil($refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back').getBoundingClientRect().width / 2)) + 'px' }">
                             <div class="line"
