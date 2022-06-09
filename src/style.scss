@@ -2102,11 +2102,16 @@ label .scrollable>div {
                             }
 
                             .field {
-                                margin: 0;
-                                padding: 0px -8px 0px -8px;
+                                margin: 0px -8px 0px -8px;
+                                padding: 0;
                                 display: flex;
                                 align-items: center;
-                                justify-content: start;
+                                justify-content: center;
+
+                                >.control {
+                                    margin: 0;
+                                    padding: 0px 8px 0px 8px;
+                                }
 
                                 label.checkbox {
                                     display: flex;
