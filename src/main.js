@@ -251,7 +251,7 @@ window.addEventListener("load", event => {
                 recentImages: [],
                 backgroundQueue: [],
                 background: { image: null, timestamp: 0, nonce: null },
-                wall: [],
+                wall: { canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 }, blocks: [] },
                 refreshRequired: false,
                 isUploading: false,
                 animations: null,
@@ -1571,7 +1571,7 @@ window.addEventListener("load", event => {
                             for (const token of tokens) {
                                 await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
                             }
-                            
+
                             for (const obj of sequence) {
                                 if (obj.type === "Message") {
                                     await this.log(obj.text, { name: this.character.name, accent: this.character.accent, image: this.character.image });
@@ -1593,7 +1593,7 @@ window.addEventListener("load", event => {
                     for (const token of tokens) {
                         await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
                     }
-                    
+
                     for (const obj of sequence) {
                         if (obj.type === "Message") {
                             await this.log(obj.text, { name: this.character.name, accent: this.character.accent, image: this.character.image });
@@ -3802,7 +3802,7 @@ window.addEventListener("load", event => {
                     }
 
                     if (this.refreshRequired) {
-                        for (const block of this.wall) {
+                        for (const block of this.wall.blocks) {
                             let index = -1;
 
                             for (let i = block.inlines.length - 1; i >= 0; i--) {
@@ -3822,7 +3822,7 @@ window.addEventListener("load", event => {
                         this.refreshRequired = false;
                     }
 
-                    if (!this.wall.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && this.likes.length > 0) {
+                    if (!this.wall.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && this.likes.length > 0) {
                         function _random(min, max) {
                             min = Math.ceil(min);
                             max = Math.floor(max);
@@ -3830,7 +3830,7 @@ window.addEventListener("load", event => {
                             return Math.floor(Math.random() * (max - min)) + min;
                         }
 
-                        this.wall.splice(0);
+                        this.wall.blocks.splice(0);
 
                         const length = _random(8, 16);
                         let start = this.likes.length - length;
@@ -3864,17 +3864,19 @@ window.addEventListener("load", event => {
                                 }, { text: "", attributes: attributes }).text;
                             }
 
-                            this.wall.push({
+                            this.wall.blocks.push({
                                 height: 100 / samples.length,
+                                colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--main-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--accent-color") },
                                 inlines: [
                                     { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] },
                                     //{ running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
                                 ],
-                                iterations: ~~Math.ceil(50 / text.length) * 2
+                                iterations: ~~Math.ceil(50 / text.length) * 2,
+                                elapsed: 0,
                             });
                         }
 
-                        app.$nextTick(() => {
+                        /*app.$nextTick(() => {
                             const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.wall>.wrap>.line");
 
                             for (const element of elements) {
@@ -3885,10 +3887,10 @@ window.addEventListener("load", event => {
                                     iterations: Infinity
                                 });
                             }
-                        });
+                        });*/
                     }
 
-                    for (const block of this.wall) {
+                    for (const block of this.wall.blocks) {
                         let index = 0;
 
                         for (const inline of block.inlines) {
@@ -4009,8 +4011,12 @@ window.addEventListener("load", event => {
 
                             index++;
                         }
+
+                        block.elapsed += deltaTime;
                     }
 
+                    this.renderBackground();
+                    
                     if (this.message !== null) {
                         if (this.message.type.reverse) {
                             if (this.message.type.count > 0) {
@@ -4519,14 +4525,14 @@ window.addEventListener("load", event => {
                                 this.character["visible"] = true;
                                 this.cachedSprites.splice(0);
 
-                                for (const sprite of this.render(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, animation.images)) {
+                                for (const sprite of this.renderForeground(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, animation.images)) {
                                     this.cachedSprites.push(sprite);
                                 }
                             } else {
                                 this.alternative = this.character.alternative;
                                 this.alternativeCachedSprites.splice(0);
 
-                                for (const sprite of this.render(this.$refs.alternative.getContext("2d"), this.alternativeCanvasWidth, this.alternativeCanvasHeight, animation.images)) {
+                                for (const sprite of this.renderForeground(this.$refs.alternative.getContext("2d"), this.alternativeCanvasWidth, this.alternativeCanvasHeight, animation.images)) {
                                     this.alternativeCachedSprites.push(sprite);
                                 }
                             }
@@ -4580,7 +4586,88 @@ window.addEventListener("load", event => {
 
                 stats.end();
             },
-            render: function (ctx, width, height, animation) {
+            renderBackground: function () {
+                const backCanvas = document.createElement("canvas");
+
+                backCanvas.width = this.$refs.background.width;
+                backCanvas.height = this.$refs.background.height;
+
+                const backContext = backCanvas.getContext("2d");
+                const frontContext = this.$refs.background.getContext("2d");
+                const margin = 4;
+                const lineHeight = backCanvas.height / this.wall.blocks.length;
+                let index = 0;
+
+                backContext.imageSmoothingEnabled = true;
+                backContext.imageSmoothingQuality = "high";
+                backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+                backContext.textAlign = "left";
+                backContext.textBaseline = "top";
+                backContext.save();
+
+                for (const block of this.wall.blocks) {
+                    for (const inline of block.inlines) {
+                        if (inline.characters.length > 0) {
+                            const line = [{ text: inline.characters[0].value, highlight: inline.characters[0].highlight }];
+                            let x = 0;
+                            let width = 0;
+
+                            for (let i = 1; i < inline.characters.length; i++) {
+                                if (inline.characters[i].highlight) {
+                                    if (line[line.length - 1].highlight) {
+                                        line[line.length - 1].text += inline.characters[i].value;
+                                    } else {
+                                        line.push({ text: inline.characters[i].value, highlight: true });
+                                    }
+                                } else if (line[line.length - 1].highlight) {
+                                    line.push({ text: inline.characters[i].value, highlight: false });
+                                } else {
+                                    line[line.length - 1].text += inline.characters[i].value;
+                                }
+                            }
+
+                            backContext.save();
+                            backContext.font = `bold ${Math.floor(block.height * 0.5)}vh "Barlow", "M PLUS Rounded 1c", sans-serif`;
+
+                            do {
+                                for (const segment of line) {
+                                    width += backContext.measureText(segment.text).width + margin;
+                                }
+                            } while (width - margin < backCanvas.width);
+
+                            backContext.translate(block.elapsed % 30 / 30 * -width, 0);
+
+                            do {
+                                for (let i = 0; i < 2; i++) {
+                                    for (const segment of line) {
+                                        if (segment.highlight) {
+                                            backContext.fillStyle = `${block.colors.accent}`;
+                                        } else {
+                                            backContext.fillStyle = `${block.colors.main}`;
+                                        }
+
+                                        backContext.fillText(segment.text, Math.round(x), Math.round(lineHeight * index + (lineHeight - lineHeight / 2) / 2));
+
+                                        x += backContext.measureText(segment.text).width + margin;
+                                    }
+                                }
+                            } while (x - margin < backCanvas.width * 2);
+
+                            backContext.restore();
+                        }
+                    }
+
+                    index++;
+                }
+
+                backContext.restore();
+
+                frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+                frontContext.drawImage(backCanvas, 0, 0);
+
+                backCanvas.width = backCanvas.height = 0;
+            },
+            renderForeground: function (ctx, width, height, animation) {
                 const offscreenCanvas = document.createElement("canvas");
 
                 offscreenCanvas.width = ctx.canvas.width;
@@ -4770,6 +4857,13 @@ window.addEventListener("load", event => {
                 }
             }
 
+            const rect = this.$refs.wall.getBoundingClientRect();
+
+            this.wall.canvasSize.width = rect.width;
+            this.wall.canvasSize.height = rect.height;
+            this.wall.canvasSize.deviceWidth = rect.width * window.devicePixelRatio;
+            this.wall.canvasSize.deviceHeight = rect.height * window.devicePixelRatio;
+
             this.$refs.three.appendChild(renderer.domElement);
             this.$refs.three.after(stats.domElement);
 
@@ -4871,7 +4965,7 @@ window.addEventListener("load", event => {
 
                             this.cachedSprites.splice(0);
 
-                            for (const sprite of this.render(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, images)) {
+                            for (const sprite of this.renderForeground(this.$refs.canvas.getContext("2d"), this.canvasWidth, this.canvasHeight, images)) {
                                 this.cachedSprites.push(sprite);
                             }
                         }
@@ -5378,6 +5472,12 @@ window.addEventListener("load", event => {
 
     window.addEventListener("resize", event => {
         //let container = app.$refs.container;
+        const rect = app.$refs.wall.getBoundingClientRect();
+
+        app.wall.canvasSize.width = rect.width;
+        app.wall.canvasSize.height = rect.height;
+        app.wall.canvasSize.deviceWidth = rect.width * window.devicePixelRatio;
+        app.wall.canvasSize.deviceHeight = rect.height * window.devicePixelRatio;
 
         app.insetTop = app.$refs.indicator.getBoundingClientRect().height;
         app.insetBottom = app.$refs.blank.getBoundingClientRect().height;
@@ -5389,6 +5489,10 @@ window.addEventListener("load", event => {
         app.canvasSize.alternative.height = app.character.alternative.height;
         app.canvasSize.alternative.deviceWidth = app.character.alternative.width * window.devicePixelRatio;
         app.canvasSize.alternative.deviceHeight = app.character.alternative.height * window.devicePixelRatio;
+
+        app.$nextTick(() => {
+            app.renderBackground();
+        });
         /*app.animationQueue.unshift({ character: app.character, images: [].concat(app.cachedSprites) });
 
         if (app.alternative !== null) {
