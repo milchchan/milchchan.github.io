@@ -4627,7 +4627,7 @@ window.addEventListener("load", event => {
                             }
 
                             backContext.save();
-                            backContext.font = `bold ${Math.floor(block.height * 0.5)}vh "Barlow", "M PLUS Rounded 1c", sans-serif`;
+                            backContext.font = `bold ${Math.floor(block.height / 2 * window.devicePixelRatio)}vh "Barlow", "M PLUS Rounded 1c", sans-serif`;
 
                             do {
                                 for (const segment of line) {
