@@ -390,7 +390,7 @@ label .scrollable>div {
 .progress {
     pointer-events: none;
     z-index: 1;
-    position: relative;
+    position: absolute;
     margin: 0 !important;
     border: 0px solid transparent;
     padding: 0;
