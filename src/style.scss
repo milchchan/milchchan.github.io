@@ -129,7 +129,6 @@ label.checkbox input[type="checkbox"]:checked+.custom:before,
 label.checkbox input[type="radio"]:checked+.custom:before {
     color: var(--accent-color);
     /*text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);*/
-    transition: 0.5s;
 }
 
 a .scrollable,
@@ -294,7 +293,6 @@ label .scrollable>div {
 .is-danger {
     background-color: transparent !important;
     color: var(--accent-color) !important;
-    transition: 0.5s;
 }
 
 .is-superellips {
@@ -560,6 +558,7 @@ label .scrollable>div {
             .front {
                 position: absolute;
                 color: var(--main-color) !important;
+                transition: 0.5s;
             }
 
             .back,
@@ -725,7 +724,6 @@ label .scrollable>div {
                         box-shadow: none;
                         height: initial;
                         color: var(--accent-color) !important;
-                        transition: 0.5s;
 
                         >span {
                             margin: 0 !important;
@@ -1282,7 +1280,6 @@ label .scrollable>div {
         background-clip: padding-box;
         height: initial;
         color: var(--accent-color) !important;
-        transition: 0.5s;
     }
 
     button.is-circle,
@@ -1333,6 +1330,7 @@ label .scrollable>div {
 
             .tags>.control>.tags>.tag {
                 color: var(--main-color);
+                transition: 0.5s;
             }
         }
     }
@@ -1536,7 +1534,6 @@ label .scrollable>div {
                                             button.is-danger,
                                             .button.is-danger {
                                                 background-color: var(--accent-color) !important;
-                                                transition: 0.5s;
 
                                                 span.wrap,
                                                 .icon {
@@ -2371,7 +2368,6 @@ label .scrollable>div {
 
                                 .icon {
                                     color: var(--accent-color);
-                                    transition: 0.5s;
                                 }
                             }
 
@@ -2473,7 +2469,6 @@ label .scrollable>div {
                                     color: var(--foreground-color) !important;
                                     border-radius: 4px;
                                     padding: 4px 8px 4px 8px;
-                                    transition: 0.5s;
                                 }
                             }
                         }
@@ -3060,7 +3055,6 @@ label .scrollable>div {
             font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
             line-height: 0.75rem;
             color: var(--accent-color);
-            transition: 0.5s;
             transform: rotate(0.03deg);
         }
 
@@ -3087,7 +3081,6 @@ label .scrollable>div {
         svg g {
             >g:nth-child(odd)>path {
                 fill: var(--accent-color);
-                transition: 0.5s;
             }
 
             >g:nth-child(even)>path {
@@ -3135,7 +3128,6 @@ label .scrollable>div {
             height: 4px;
             background-color: var(--accent-color);
             text-align: center !important;
-            transition: 0.5s;
         }
 
         .button {
@@ -3171,7 +3163,7 @@ label .scrollable>div {
     margin: 0;
     padding: 0;
     width: 100%;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));
+    /*background: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));*/
 
     .columns>.column>.control:last-child {
         margin: 0;
@@ -3179,15 +3171,23 @@ label .scrollable>div {
 
         >.level {
             display: flex;
-            margin: 0;
+            margin: 0px 32px 16px 32px;
+            /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
+            border-radius: 16px;
             padding: 0;
             flex-direction: column;
             align-items: flex-start;
             justify-content: flex-start;
+            overflow: hidden;
+            background: #ffffff;
+            /*background: rgba(255, 255, 255, 0.75) !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);*/
 
             >.level-item:nth-last-of-type(2) {
                 margin: 0;
-                padding: 16px 32px 16px 32px;
+                padding: 16px 16px 16px 16px;
                 width: 100%;
 
                 >.level {
@@ -3261,12 +3261,12 @@ label .scrollable>div {
                             margin: 0px;
                             border: 0px solid rgba(255, 255, 255, 0.5);
                             border-radius: 290486px;
-                            padding: 16px;
+                            padding: 10px;
                             background: transparent !important;
                             background-clip: padding-box;
                             box-shadow: none;
                             height: initial;
-                            color: #ffffff !important;
+                            color: var(--accent-color) !important;
 
                             >span {
                                 margin: 0 !important;
@@ -3313,7 +3313,7 @@ label .scrollable>div {
             >.level-item:nth-last-of-type(1) {
                 display: block;
                 margin: 0;
-                padding: 0px 32px 16px 32px;
+                padding: 0px 16px 16px 16px;
                 width: 100%;
 
                 .media {
@@ -3331,7 +3331,8 @@ label .scrollable>div {
                         font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
                         line-height: 2rem;
                         vertical-align: middle;
-                        color: #ffffff;
+                        color: var(--main-color);
+                        transition: 0.5s;
                     }
 
                     span.break {
@@ -3403,7 +3404,6 @@ label .scrollable>div {
             span {
                 color: var(--accent-color);
                 font-family: "Alata", sans-serif;
-                transition: 0.5s;
             }
         }
 
@@ -3415,7 +3415,6 @@ label .scrollable>div {
                 padding: 8px 16px 8px 16px;
                 background-color: transparent;
                 color: var(--accent-color);
-                transition: 0.5s;
 
                 span {
                     margin: 0;
@@ -3424,6 +3423,7 @@ label .scrollable>div {
 
             button.is-primary {
                 color: var(--main-color) !important;
+                transition: 0.5s;
             }
         }
     }
