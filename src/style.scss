@@ -519,12 +519,15 @@ label .scrollable>div {
 }
 
 .wall {
-    position: absolute;
-    /*top: calc(-16px);*/
-    padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) 0px;
+    /*position: absolute;
+    top: calc(-16px);
+    padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) 0px;*/
+    position: relative;
+    padding: 0;
     width: 100%;
-    height: 100vh;
-    min-height: 100vh;
+    height: 100%;
+    /*height: 100vh;
+    min-height: 100vh;*/
     background: transparent;
     overflow: hidden;
 
