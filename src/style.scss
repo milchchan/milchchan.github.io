@@ -530,6 +530,10 @@ label .scrollable>div {
     background: transparent;
     overflow: hidden;
 
+    >canvas {
+        background: transparent;
+    }
+
     >.wrap {
         margin: 0;
         padding: 0;
@@ -606,7 +610,18 @@ label .scrollable>div {
     }
 }
 
-.wall::after {
+.wall::before {
+    z-index: -1;
+    pointer-events: none;
+    position: absolute;
+    opacity: 0.25;
+    background: var(--highlight-color);
+    width: 100%;
+    min-height: 100%;
+    content: "";
+}
+
+/*.wall::after {
     pointer-events: none;
     z-index: 1;
     display: block;
@@ -620,7 +635,7 @@ label .scrollable>div {
     content: "";
     overflow: hidden;
     backface-visibility: hidden;
-}
+}*/
 
 .background {
     pointer-events: none;
@@ -3845,10 +3860,10 @@ label .scrollable>div {
         background-size: 2px 2px;
     }*/
 
-    .wall::after {
+    /*.wall::after {
         background: url("/images/Overlay@2x.png") repeat;
         background-size: 2px 2px;
-    }
+    }*/
 
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
@@ -3874,10 +3889,10 @@ label .scrollable>div {
         background-size: 2px 2px;
     }*/
 
-    .wall::after {
+    /*.wall::after {
         background: url("/images/Overlay@3x.png") repeat;
         background-size: 2px 2px;
-    }
+    }*/
 
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
     #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
