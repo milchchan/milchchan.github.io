@@ -4596,6 +4596,7 @@ window.addEventListener("load", event => {
                 const frontContext = this.$refs.background.getContext("2d");
                 const margin = 4;
                 const lineHeight = backCanvas.height / this.wall.blocks.length;
+                const fontSize = Math.floor(lineHeight / 2);
                 let index = 0;
 
                 backContext.imageSmoothingEnabled = true;
@@ -4627,7 +4628,7 @@ window.addEventListener("load", event => {
                             }
 
                             backContext.save();
-                            backContext.font = `bold ${Math.floor(lineHeight / 2)}px "Barlow", "M PLUS Rounded 1c", sans-serif`;
+                            backContext.font = `bold ${fontSize}px "Barlow", "M PLUS Rounded 1c", sans-serif`;
 
                             do {
                                 for (const segment of line) {
@@ -4646,7 +4647,7 @@ window.addEventListener("load", event => {
                                             backContext.fillStyle = `${block.colors.main}`;
                                         }
 
-                                        backContext.fillText(segment.text, Math.round(x), Math.round(lineHeight * index + (lineHeight - lineHeight / 2) / 2));
+                                        backContext.fillText(segment.text, Math.round(x), Math.round(lineHeight * index + (lineHeight - fontSize) / 2));
 
                                         x += backContext.measureText(segment.text).width + margin;
                                     }
