@@ -1700,7 +1700,7 @@
                                                                                                                 <button
                                                                                                                     class="button is-circle is-danger"
                                                                                                                     type="button"
-                                                                                                                    @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1); [...Array(mode.collection.length).keys()].reverse().filter(x => mode.collection[x].length === 0).forEach(x => { mode.collection.splice(x, 1); mode.index--; }); mode.index = Math.max(mode.index, 0);">
+                                                                                                                    @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1); [...Array(mode.collection.length).keys()].reverse().filter(x => mode.collection[x].length === 0).forEach(x => { mode.collection.splice(x, 1); mode.index--; }); mode.index = Math.max(mode.index, 0); points = Math.max(0, points - 60);">
                                                                                                                     <span
                                                                                                                         class="icon is-small"
                                                                                                                         style="pointer-events: none;">
@@ -1776,7 +1776,7 @@
                                                                                                             <button
                                                                                                                 class="button is-circle is-danger"
                                                                                                                 type="button"
-                                                                                                                @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1); [...Array(mode.collection.length).keys()].reverse().filter(x => mode.collection[x].length === 0).forEach(x => { mode.collection.splice(x, 1); mode.index--; }); mode.index = Math.max(mode.index, 0);">
+                                                                                                                @click="mode.selected = mode.selected.filter(x => x.name !== word.name); delete captures[word.name]; mode.collection[mode.index].splice(index, 1); [...Array(mode.collection.length).keys()].reverse().filter(x => mode.collection[x].length === 0).forEach(x => { mode.collection.splice(x, 1); mode.index--; }); mode.index = Math.max(mode.index, 0); points = Math.max(0, points - 60);">
                                                                                                                 <span
                                                                                                                     class="icon is-small"
                                                                                                                     style="pointer-events: none;">
