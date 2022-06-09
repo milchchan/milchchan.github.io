@@ -261,7 +261,10 @@
             <div class="wrap">
                 <div class="frame">
                     <div class="wall" @contextmenu.prevent ref="wall">
-                        <div class="wrap" v-for="(block, index) in wall" v-bind:key="block"
+                        <canvas v-bind:width="wall.canvasSize.deviceWidth" v-bind:height="wall.canvasSize.deviceHeight"
+                            v-bind:style="{ width: wall.canvasSize.width + 'px', height: wall.canvasSize.height + 'px' }"
+                            ref="background"></canvas>
+                        <!--<div class="wrap" v-for="(block, index) in wall.blocks" v-bind:key="block"
                             v-bind:style="{ width: $refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back') === null ? '0px' : String(Math.ceil($refs.wall.querySelector(':scope>.wrap:nth-child(' + String(index + 1) + ')>.line>.back').getBoundingClientRect().width / 2)) + 'px' }">
                             <div class="line"
                                 v-bind:style="{ height: String(block.height) + 'vh', fontSize: String(Math.floor(block.height * 0.5)) + 'vh', lineHeight: String(block.height) + 'vh' }">
@@ -283,7 +286,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                     <transition name="fade" v-on:after-enter="preload" v-on:before-leave="background.nonce = null">
                         <div class="background"
@@ -502,13 +505,6 @@
             </transition>
             <transition name="fade">
                 <div class="overlay" v-if="isRevealed || isOverlayed" v-cloak></div>
-            </transition>
-            <transition name="fade">
-                <div class="progress" v-if="animatedProgress > 0" v-cloak>
-                    <div class="bar animating"
-                        v-bind:style="{ width: String(Math.floor(100.0 * animatedProgress)) + '%' }">
-                    </div>
-                </div>
             </transition>
             <transition name="fade">
                 <div class="hud" v-if="isOverlayed">
@@ -3599,13 +3595,13 @@
         </div>
         <div class="right" v-cloak>
             <div class="level-item">
-                <button class="button is-circle" type="button" v-bind:disabled="isLoading || mode !== null && typeof(mode) === 'object' && 'collection' in mode"
+                <button class="button is-circle" type="button"
+                    v-bind:disabled="isLoading || mode !== null && typeof(mode) === 'object' && 'collection' in mode"
                     @click="isRevealed = true; user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
                     v-cloak>
                     <transition name="fade" mode="out-in">
                         <span class="icon is-small" v-if="isLoading" key="loading">
-                            <i class="fa-solid fa-arrows-rotate"
-                                v-bind:class="{ loading: isLoading }"></i>
+                            <i class="fa-solid fa-arrows-rotate" v-bind:class="{ loading: isLoading }"></i>
                         </span>
                         <span class="icon" v-else key="loaded">
                             <i class="fa-solid fa-comment"></i>
@@ -3636,7 +3632,13 @@
                     </button>
                 </transition>-->
             </div>
-        </div>
+        </div>        
+        <transition name="fade">
+            <div class="progress" v-if="animatedProgress > 0" v-cloak>
+                <div class="bar animating" v-bind:style="{ width: String(Math.floor(100.0 * animatedProgress)) + '%' }">
+                </div>
+            </div>
+        </transition>
         <audio preload="auto" ref="like">
             <source src="/sounds/float_001.mp3" type="audio/mpeg" />
             <source src="/sounds/float_001.wav" type="audio/wav" />
