@@ -3876,7 +3876,7 @@ window.addEventListener("load", event => {
                             });
                         }
 
-                        /*app.$nextTick(() => {
+                        /*this.$nextTick(() => {
                             const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.wall>.wrap>.line");
 
                             for (const element of elements) {
