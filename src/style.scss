@@ -50,6 +50,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
 }
 
 html {
+    touch-action: manipulation;
     margin: 0;
     padding: 0;
     width: 100%;
