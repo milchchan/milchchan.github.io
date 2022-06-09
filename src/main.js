@@ -1564,7 +1564,7 @@ window.addEventListener("load", event => {
                         [successful, sequence] = await this.talk(selectedTokens.concat(tokens.filter((x) => x.indexOf(this.character.name) === -1)));
 
                         if (!successful) {
-                            [successful, sequence] = this.talk();
+                            [successful, sequence] = await this.talk();
                         }
 
                         if (logging) {
@@ -1586,7 +1586,7 @@ window.addEventListener("load", event => {
                 [successful, sequence] = await this.talk(tokens.filter((x) => x.indexOf(this.character.name) === -1))
 
                 if (!successful) {
-                    [successful, sequence] = this.talk();
+                    [successful, sequence] = await this.talk();
                 }
 
                 if (logging) {
