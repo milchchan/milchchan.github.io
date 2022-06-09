@@ -3866,7 +3866,7 @@ window.addEventListener("load", event => {
 
                             this.wall.blocks.push({
                                 height: 100 / samples.length,
-                                colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--main-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--accent-color") },
+                                colors: { main: "#ffffff", accent: window.getComputedStyle(document.documentElement).getPropertyValue("--accent-color") },
                                 inlines: [
                                     { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] },
                                     //{ running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
