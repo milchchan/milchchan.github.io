@@ -4605,7 +4605,7 @@ window.addEventListener("load", event => {
 
                 const backContext = backCanvas.getContext("2d");
                 const frontContext = this.$refs.background.getContext("2d");
-                const margin = 4;
+                const margin = 8;
                 const lineHeight = backCanvas.height / this.wall.blocks.length;
                 const fontSize = Math.floor(lineHeight / 2);
                 let index = 0;
