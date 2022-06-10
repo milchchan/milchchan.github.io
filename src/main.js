@@ -3846,29 +3846,40 @@ window.addEventListener("load", event => {
                         for (const like of samples) {
                             let text;
                             const attributes = [];
+                            const source = [];
 
                             if (typeof (like.text) === "string") {
                                 text = like.text.replace("\n", "");
+                                source.push(text);
                             } else {
                                 text = Object.keys(like.text).sort((x, y) => x - y).reduce((x, y) => {
                                     if (typeof (like.text[y]) === "string") {
-                                        x.text += like.text[y].replace("\n", "");
+                                        const s = like.text[y].replace("\n", "");
+
+                                        x.text += s;
+
+                                        if (x.source.length > 0 && typeof (x.source[x.source.length - 1]) === "string") {
+                                            x.source[x.source.length - 1] += s;
+                                        } else {
+                                            x.source.push(s);
+                                        }
                                     } else {
                                         const text = like.text[y].name.replace("\n", "");
 
                                         x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
                                         x.text += text;
+                                        x.source.push(text);
                                     }
 
                                     return x;
-                                }, { text: "", attributes: attributes }).text;
+                                }, { text: "", attributes: attributes, source: source }).text;
                             }
 
                             this.wall.blocks.push({
                                 height: 100 / samples.length,
                                 colors: { main: "#ffffff", accent: window.getComputedStyle(document.documentElement).getPropertyValue("--accent-color") },
                                 inlines: [
-                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] },
+                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source },
                                     //{ running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
                                 ],
                                 iterations: ~~Math.ceil(50 / text.length) * 2,
@@ -4016,7 +4027,7 @@ window.addEventListener("load", event => {
                     }
 
                     this.renderBackground();
-                    
+
                     if (this.message !== null) {
                         if (this.message.type.reverse) {
                             if (this.message.type.count > 0) {
@@ -4610,8 +4621,8 @@ window.addEventListener("load", event => {
                     for (const inline of block.inlines) {
                         if (inline.characters.length > 0) {
                             const line = [{ text: inline.characters[0].value, highlight: inline.characters[0].highlight }];
-                            let x = 0;
                             let width = 0;
+                            let offset = 0;
 
                             for (let i = 1; i < inline.characters.length; i++) {
                                 if (inline.characters[i].highlight) {
@@ -4631,15 +4642,17 @@ window.addEventListener("load", event => {
                             backContext.font = `bold ${fontSize}px "Barlow", "M PLUS Rounded 1c", sans-serif`;
 
                             do {
-                                for (const segment of line) {
-                                    width += backContext.measureText(segment.text).width + margin;
+                                for (const s of inline.source) {
+                                    width += backContext.measureText(s).width + margin;
                                 }
                             } while (width - margin < backCanvas.width);
 
-                            backContext.translate(block.elapsed % 30 / 30 * -width, 0);
+                            backContext.translate(block.elapsed % 60 / 60 * (margin - width), 0);
 
                             do {
                                 for (let i = 0; i < 2; i++) {
+                                    let x = 0;
+
                                     for (const segment of line) {
                                         if (segment.highlight) {
                                             backContext.fillStyle = `${block.colors.accent}`;
@@ -4647,12 +4660,16 @@ window.addEventListener("load", event => {
                                             backContext.fillStyle = `${block.colors.main}`;
                                         }
 
-                                        backContext.fillText(segment.text, Math.round(x), Math.round(lineHeight * index + (lineHeight - fontSize) / 2));
+                                        backContext.fillText(segment.text, Math.round(offset + x), Math.round(lineHeight * index + (lineHeight - fontSize) / 2));
 
                                         x += backContext.measureText(segment.text).width + margin;
                                     }
+
+                                    for (const s of inline.source) {
+                                        offset += backContext.measureText(s).width + margin;
+                                    }
                                 }
-                            } while (x - margin < backCanvas.width * 2);
+                            } while (offset - margin < backCanvas.width * 2);
 
                             backContext.restore();
                         }
