@@ -4598,7 +4598,7 @@ window.addEventListener("load", event => {
                 stats.end();
             },
             renderBackground: function () {
-                const backCanvas = document.createElement("canvas");
+                const backCanvas = this.$refs.background.canvas;
 
                 backCanvas.width = this.$refs.background.width;
                 backCanvas.height = this.$refs.background.height;
@@ -4682,8 +4682,6 @@ window.addEventListener("load", event => {
 
                 frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
                 frontContext.drawImage(backCanvas, 0, 0);
-
-                backCanvas.width = backCanvas.height = 0;
             },
             renderForeground: function (ctx, width, height, animation) {
                 const offscreenCanvas = document.createElement("canvas");
@@ -4881,6 +4879,8 @@ window.addEventListener("load", event => {
             this.wall.canvasSize.height = rect.height;
             this.wall.canvasSize.deviceWidth = rect.width * window.devicePixelRatio;
             this.wall.canvasSize.deviceHeight = rect.height * window.devicePixelRatio;
+
+            this.$refs.background["canvas"] = document.createElement("canvas");
 
             this.$refs.three.appendChild(renderer.domElement);
             this.$refs.three.after(stats.domElement);
