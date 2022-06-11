@@ -3869,7 +3869,7 @@ window.addEventListener("load", event => {
 
                                         x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
                                         x.text += text;
-                                        x.source.push(text);
+                                        x.source.push({ name: text });
                                     }
 
                                     return x;
@@ -4608,9 +4608,10 @@ window.addEventListener("load", event => {
 
                 const backContext = backCanvas.getContext("2d");
                 const frontContext = this.$refs.background.getContext("2d");
-                const margin = 8;
+                const margin = 16;
                 const lineHeight = backCanvas.height / this.wall.blocks.length;
                 const fontSize = Math.floor(lineHeight / 2);
+                const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
                 let index = 0;
 
                 backContext.imageSmoothingEnabled = true;
@@ -4642,15 +4643,15 @@ window.addEventListener("load", event => {
                             }
 
                             backContext.save();
-                            backContext.font = `bold ${fontSize}px "Barlow", "M PLUS Rounded 1c", sans-serif`;
+                            backContext.font = `${fontSize}px ${fontFamily}`;
 
-                            do {
-                                for (const s of inline.source) {
-                                    width += backContext.measureText(s).width + margin;
-                                }
-                            } while (width - margin < backCanvas.width);
+                            for (const s of inline.source) {
+                                const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
 
-                            backContext.translate(block.elapsed % 60 / 60 * (margin - width), 0);
+                                width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                            }
+
+                            backContext.translate(block.elapsed % 60 / 60 * -width, 0);
 
                             do {
                                 for (let i = 0; i < 2; i++) {
@@ -4663,13 +4664,17 @@ window.addEventListener("load", event => {
                                             backContext.fillStyle = `${block.colors.main}`;
                                         }
 
-                                        backContext.fillText(segment.text, Math.round(offset + x), Math.round(lineHeight * index + (lineHeight - fontSize) / 2));
+                                        const textMetrics = backContext.measureText(segment.text);
 
-                                        x += backContext.measureText(segment.text).width + margin;
+                                        backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2));
+                                        
+                                        x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
                                     }
 
                                     for (const s of inline.source) {
-                                        offset += backContext.measureText(s).width + margin;
+                                        const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+
+                                        offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
                                     }
                                 }
                             } while (offset - margin < backCanvas.width * 2);
