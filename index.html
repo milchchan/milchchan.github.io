@@ -397,7 +397,9 @@
                     <div class="navbar-item is-expanded columns is-desktop">
                         <div class="column is-half-desktop has-content-centered">
                             <div class="control" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
-                                <nav class="level is-mobile">
+                                <nav class="level is-mobile" @mouseenter="isPaused = true"
+                                    @mouseleave="isPaused = false" @touchstart.prevent="isPaused = true"
+                                    @touchend.prevent="isPaused = false">
                                     <div class="level-item">
                                         <nav class="level is-mobile"
                                             v-if="message !== null && 'character' in message && message.character !== null">
@@ -3632,7 +3634,7 @@
                     </button>
                 </transition>-->
             </div>
-        </div>        
+        </div>
         <transition name="fade">
             <div class="progress" v-if="animatedProgress > 0" v-cloak>
                 <div class="bar animating" v-bind:style="{ width: String(Math.floor(100.0 * animatedProgress)) + '%' }">
