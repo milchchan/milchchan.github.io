@@ -397,9 +397,9 @@
                     <div class="navbar-item is-expanded columns is-desktop">
                         <div class="column is-half-desktop has-content-centered">
                             <div class="control" v-bind:style="{ paddingBottom: insetBottom + 'px' }">
-                                <nav class="level is-mobile" @mouseenter="isPaused = true"
-                                    @mouseleave="isPaused = false" @touchstart.prevent="isPaused = true"
-                                    @touchend.prevent="isPaused = false">
+                                <nav class="level is-mobile" @mouseenter.stop="isPaused = true"
+                                    @mouseleave.stop="isPaused = false" @touchstart.stop="isPaused = true"
+                                    @touchend.stop="isPaused = false">
                                     <div class="level-item">
                                         <nav class="level is-mobile"
                                             v-if="message !== null && 'character' in message && message.character !== null">
