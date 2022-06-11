@@ -219,6 +219,7 @@ window.addEventListener("load", event => {
                 isDiscovering: false,
                 isPosting: false,
                 isTweeting: false,
+                isPaused: false,
                 mode: null,
                 sequenceQueue: [],
                 progress: null,
@@ -4080,7 +4081,9 @@ window.addEventListener("load", event => {
                                 this.message.type.elapsed = 0;
                             }
                         } else {
-                            this.message.time += deltaTime;
+                            if (!this.isPaused) {
+                                this.message.time += deltaTime;
+                            }
 
                             if (this.message.time >= this.message.duration) {
                                 this.message.type.reverse = true;
