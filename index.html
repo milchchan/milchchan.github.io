@@ -289,7 +289,7 @@
                             </div>
                         </div>-->
                     </div>
-                    <transition name="fade" v-on:after-enter="preload" v-on:before-leave="background.nonce = null">
+                    <transition name="cut-in" v-on:after-enter="preload" v-on:before-leave="background.nonce = null">
                         <div class="background"
                             v-bind:style="{ backgroundImage: background.image === undefined ? 'none' : 'url(' + background.image + ')' }"
                             v-if="background.image !== null" v-cloak>
