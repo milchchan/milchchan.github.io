@@ -613,6 +613,70 @@ window.addEventListener("load", event => {
                     this.inputHasError = true;
                 }
             },
+            resizeImage: async function (dataURL, length) {
+                try {
+                    return await new Promise(async (resolve1, reject1) => {
+                        const i = new Image();
+
+                        i.onload = () => {
+                            const canvas = document.createElement("canvas");
+
+                            if (i.width > i.height) {
+                                if (i.width > length) {
+                                    canvas.width = length * window.devicePixelRatio;
+                                    canvas.height =
+                                        Math.floor((length / i.width) * i.height) *
+                                        window.devicePixelRatio;
+                                } else {
+                                    canvas.width = i.width * window.devicePixelRatio;
+                                    canvas.height = i.height * window.devicePixelRatio;
+                                }
+                            } else if (i.height > length) {
+                                canvas.width =
+                                    Math.floor((length / i.height) * i.width) * window.devicePixelRatio;
+                                canvas.height = length * window.devicePixelRatio;
+                            } else {
+                                canvas.width = i.width * window.devicePixelRatio;
+                                canvas.height = i.height * window.devicePixelRatio;
+                            }
+
+                            const ctx = canvas.getContext("2d");
+
+                            ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
+                            ctx.canvas.toBlob(async (blob) => {
+                                try {
+                                    resolve1(
+                                        await new Promise(async (resolve2, reject2) => {
+                                            const reader = new FileReader();
+
+                                            reader.onload = () => {
+                                                resolve2(reader.result);
+                                            };
+                                            reader.onerror = () => {
+                                                reject2(reader.error);
+                                            };
+                                            reader.readAsDataURL(blob);
+                                        })
+                                    );
+                                } catch (e) {
+                                    reject1(e);
+                                }
+
+                                ctx.canvas.width = ctx.canvas.height = 0;
+                            }, "image/jpeg");
+                        };
+                        i.onerror = (error) => {
+                            reject1(error);
+                        };
+                        i.crossOrigin = "anonymous";
+                        i.src = dataURL;
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
+
+                return null;
+            },
             download: async function (url) {
                 try {
                     const response = await fetch(url);
