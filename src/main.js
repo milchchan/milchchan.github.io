@@ -251,7 +251,7 @@ window.addEventListener("load", event => {
                 animatedNotificationHeight: 0,
                 recentImages: [],
                 backgroundQueue: [],
-                background: { image: null, timestamp: 0, nonce: null },
+                background: { width: 0, height: 0, image: null, timestamp: 0, nonce: null },
                 wall: { canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 }, blocks: [] },
                 refreshRequired: false,
                 isUploading: false,
@@ -2221,17 +2221,28 @@ window.addEventListener("load", event => {
                                 const blob = await this.download(await getDownloadURL(storageRef(storage, path)));
 
                                 if (blob !== null && this.background.nonce === nonce) {
-                                    this.background.image = await new Promise(async (resolve, reject) => {
+                                    const [image, width, height] = await new Promise(async (resolve, reject) => {
                                         const reader = new FileReader();
 
                                         reader.onload = () => {
-                                            resolve(reader.result);
+                                            const image = new Image();
+
+                                            image.src = reader.result;
+                                            image.onload = () => {
+                                                resolve([reader.result, image.width, image.height]);
+                                            };
+                                            image.onerror = (e) => {
+                                                reject(e);
+                                            };
                                         };
                                         reader.onerror = () => {
                                             reject(reader.error);
                                         };
                                         reader.readAsDataURL(blob);
                                     });
+                                    this.background.image = image;
+                                    this.background.width = width;
+                                    this.background.height = height;
                                     this.background.timestamp = Math.floor(new Date() / 1000);
                                     this.background.nonce = null;
 
@@ -4667,7 +4678,7 @@ window.addEventListener("load", event => {
                                         const textMetrics = backContext.measureText(segment.text);
 
                                         backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2));
-                                        
+
                                         x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
                                     }
 
