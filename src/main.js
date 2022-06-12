@@ -641,7 +641,9 @@ window.addEventListener("load", event => {
                             }
 
                             const ctx = canvas.getContext("2d");
-
+                            
+                            ctx.imageSmoothingEnabled = true;
+                            ctx.imageSmoothingQuality = "high";
                             ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
                             ctx.canvas.toBlob(async (blob) => {
                                 try {
@@ -663,7 +665,7 @@ window.addEventListener("load", event => {
                                 }
 
                                 ctx.canvas.width = ctx.canvas.height = 0;
-                            }, "image/jpeg");
+                            }, "image/png");
                         };
                         i.onerror = (error) => {
                             reject1(error);
@@ -1312,7 +1314,27 @@ window.addEventListener("load", event => {
                         dictionary[id]["date"] = new Date(dictionary[id].timestamp * 1000);
 
                         if ("image" in dictionary[id]) {
-                            dictionary[id]["image"]["url"] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
+                            try {
+                                const response = await fetch(await getDownloadURL(storageRef(storage, dictionary[id].image.path)));
+
+                                if (response.ok) {
+                                    const blob = await response.blob();
+
+                                    dictionary[id]["image"]["url"] = await this.resizeImage(await new Promise(async (resolve, reject) => {
+                                        const reader = new FileReader();
+
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    }), 512);
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            }
                         }
 
                         data.push(dictionary[id]);
@@ -1356,7 +1378,27 @@ window.addEventListener("load", event => {
                         dictionary[id]["id"] = id;
 
                         if ("image" in dictionary[id]) {
-                            dictionary[id]["image"]["url"] = await getDownloadURL(storageRef(storage, dictionary[id].image.path));
+                            try {
+                                const response = await fetch(await getDownloadURL(storageRef(storage, dictionary[id].image.path)));
+
+                                if (response.ok) {
+                                    const blob = await response.blob();
+
+                                    dictionary[id]["image"]["url"] = await this.resizeImage(await new Promise(async (resolve, reject) => {
+                                        const reader = new FileReader();
+
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    }), 512);
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            }
                         }
 
                         data.push(dictionary[id]);
