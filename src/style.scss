@@ -1431,6 +1431,22 @@ label .scrollable>div {
                                                             transition: 0.5s;
                                                         }
                                                     }
+
+                                                    >.card {
+                                                        border-radius: 16px;
+                                                        box-shadow: none;
+
+                                                        >.card-image {
+                                                            display: flex;
+                                                            position: relative;
+                                                            justify-content: center;
+                                                            align-items: center;
+
+                                                            >figure.image {
+                                                                width: 256px;
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
 
@@ -1608,6 +1624,7 @@ label .scrollable>div {
                                         align-items: flex-end;
                                         justify-content: center;
                                         overflow: hidden;
+                                        box-shadow: none;
                                         /*box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%),
                                             0 0px 0 1px rgb(10 10 10 / 2%);*/
 
