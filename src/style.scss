@@ -522,7 +522,7 @@ label .scrollable>div {
     /*position: absolute;
     top: calc(-16px);
     padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) 0px;*/
-    position: relative;
+    position: absolute;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -652,7 +652,6 @@ label .scrollable>div {
     background-position: 50% 25%;
     background-size: cover;
     background-repeat: no-repeat;
-    overflow: hidden;
 
     >div {
         display: block;
@@ -3560,6 +3559,23 @@ label .scrollable>div {
 .alternative-leave-from {
     opacity: 1;
     transform: translate3d(0%, 0, 0);
+}
+
+.cut-in-enter-active,
+.cut-in-leave-active {
+    transition: all 1s ease;
+}
+
+.cut-in-enter-from,
+.cut-in-leave-to {
+    opacity: 0;
+    background-position: 50% -200%;
+}
+
+.cut-in-enter-to,
+.cut-in-leave-from {
+    opacity: 1;
+    background-position: 50% 25%;
 }
 
 .reveal-enter-active,
