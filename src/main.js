@@ -251,7 +251,7 @@ window.addEventListener("load", event => {
                 animatedNotificationHeight: 0,
                 recentImages: [],
                 backgroundQueue: [],
-                background: { width: 0, height: 0, image: null, timestamp: 0, nonce: null },
+                background: { image: null, width: 0, height: 0, timestamp: 0, timeout: { id: null, duration: 10000 }, nonce: null },
                 wall: { canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 }, blocks: [] },
                 refreshRequired: false,
                 isUploading: false,
@@ -641,7 +641,7 @@ window.addEventListener("load", event => {
                             }
 
                             const ctx = canvas.getContext("2d");
-                            
+
                             ctx.imageSmoothingEnabled = true;
                             ctx.imageSmoothingQuality = "high";
                             ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
@@ -974,6 +974,7 @@ window.addEventListener("load", event => {
 
                                 if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0) {
                                     this.background.image = undefined;
+                                    this.preload();
                                 }
 
                                 for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learned"))) {
@@ -1017,6 +1018,11 @@ window.addEventListener("load", event => {
                 this.isSubmitting = false;
             },
             like: async function (message, canvas) {
+                this.background.image = undefined;
+                this.preload();
+
+                return;
+
                 const user = 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
                 const timestamp = Math.floor(new Date() / 1000);
 
@@ -1122,6 +1128,7 @@ window.addEventListener("load", event => {
                         }
 
                         this.background.image = undefined;
+                        this.preload();
 
                         if (!this.isMuted) {
                             this.$refs.like.play();
@@ -2263,128 +2270,144 @@ window.addEventListener("load", event => {
                 }
             },
             blinded: async function () {
-                const nonce = this.background.nonce;
+                if (this.background.timeout.id === null) {
+                    const nonce = this.background.nonce;
 
-                try {
-                    const snapshot = await get(query(databaseRef(database, `${databaseRoot}/backgrounds`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+                    try {
+                        const snapshot = await get(query(databaseRef(database, `${databaseRoot}/backgrounds`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
 
-                    if (snapshot.exists()) {
-                        function choice(collection, func) {
-                            const r = Math.random();
-                            let sum = 0.0;
-                            let index = 0;
+                        if (snapshot.exists()) {
+                            function choice(collection, func) {
+                                const r = Math.random();
+                                let sum = 0.0;
+                                let index = 0;
 
-                            for (let item of collection) {
-                                const probability = func(item);
+                                for (let item of collection) {
+                                    const probability = func(item);
 
-                                if (sum <= r && r < sum + probability) {
-                                    break;
+                                    if (sum <= r && r < sum + probability) {
+                                        break;
+                                    }
+
+                                    sum += probability;
+                                    index++;
                                 }
 
-                                sum += probability;
-                                index++;
+                                return collection[index];
                             }
 
-                            return collection[index];
-                        }
+                            function softmax(x, func1, func2) {
+                                let y = [].concat(x);
+                                let max = Number.MIN_VALUE;
+                                let sum = 0.0;
 
-                        function softmax(x, func1, func2) {
-                            let y = [].concat(x);
-                            let max = Number.MIN_VALUE;
-                            let sum = 0.0;
-
-                            for (let i = 0; i < x.length; i++) {
-                                if (func1(x[i]) > max) {
-                                    max = func1(x[i]);
+                                for (let i = 0; i < x.length; i++) {
+                                    if (func1(x[i]) > max) {
+                                        max = func1(x[i]);
+                                    }
                                 }
+
+                                for (let i = 0; i < x.length; i++) {
+                                    sum += Math.exp(func1(x[i]) - max);
+                                }
+
+                                for (let i = 0; i < x.length; i++) {
+                                    func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                                }
+
+                                return y;
                             }
 
-                            for (let i = 0; i < x.length; i++) {
-                                sum += Math.exp(func1(x[i]) - max);
+                            const dictionary = snapshot.val();
+                            const images = [];
+
+                            for (const key in dictionary) {
+                                dictionary[key]["probability"] = 1;
+
+                                images.push(dictionary[key]);
                             }
 
-                            for (let i = 0; i < x.length; i++) {
-                                func2(y[i], Math.exp(func1(x[i]) - max) / sum);
-                            }
+                            const path = choice(softmax(images, x => x.probability, (x, y) => x.probability = y), x => x.probability).image.path;
+                            const metadata = await getMetadata(storageRef(storage, path));
 
-                            return y;
-                        }
+                            if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
+                                try {
+                                    const blob = await this.download(await getDownloadURL(storageRef(storage, path)));
 
-                        const dictionary = snapshot.val();
-                        const images = [];
+                                    if (blob !== null && this.background.nonce === nonce) {
+                                        const [image, width, height] = await new Promise(async (resolve, reject) => {
+                                            const reader = new FileReader();
 
-                        for (const key in dictionary) {
-                            dictionary[key]["probability"] = 1;
+                                            reader.onload = () => {
+                                                const image = new Image();
 
-                            images.push(dictionary[key]);
-                        }
-
-                        const path = choice(softmax(images, x => x.probability, (x, y) => x.probability = y), x => x.probability).image.path;
-                        const metadata = await getMetadata(storageRef(storage, path));
-
-                        if (metadata.contentType === 'image/apng' || metadata.contentType === 'image/gif' || metadata.contentType === 'image/webp') {
-                            try {
-                                const blob = await this.download(await getDownloadURL(storageRef(storage, path)));
-
-                                if (blob !== null && this.background.nonce === nonce) {
-                                    const [image, width, height] = await new Promise(async (resolve, reject) => {
-                                        const reader = new FileReader();
-
-                                        reader.onload = () => {
-                                            const image = new Image();
-
-                                            image.src = reader.result;
-                                            image.onload = () => {
-                                                resolve([reader.result, image.width, image.height]);
+                                                image.src = reader.result;
+                                                image.onload = () => {
+                                                    resolve([reader.result, image.width, image.height]);
+                                                };
+                                                image.onerror = (e) => {
+                                                    reject(e);
+                                                };
                                             };
-                                            image.onerror = (e) => {
-                                                reject(e);
+                                            reader.onerror = () => {
+                                                reject(reader.error);
                                             };
-                                        };
-                                        reader.onerror = () => {
-                                            reject(reader.error);
-                                        };
-                                        reader.readAsDataURL(blob);
-                                    });
-                                    this.background.image = image;
-                                    this.background.width = width;
-                                    this.background.height = height;
-                                    this.background.timestamp = Math.floor(new Date() / 1000);
-                                    this.background.nonce = null;
+                                            reader.readAsDataURL(blob);
+                                        });
+                                        this.background.image = image;
+                                        this.background.width = width;
+                                        this.background.height = height;
+                                        this.background.timestamp = Math.floor(new Date() / 1000);
+                                        this.background.nonce = null;
 
-                                    return;
+                                        const timeout = window.setTimeout(() => {
+                                            this.background.timeout.id = timeout;
+                                        }, this.background.timeout.duration);
+
+                                        return;
+                                    }
+                                } catch (e) {
+                                    console.error(e);
                                 }
-                            } catch (e) {
-                                console.error(e);
+                            } else if (this.background.nonce === nonce) {
+                                this.background.image = await new Promise(async (resolve, reject) => {
+                                    const reader = new FileReader();
+
+                                    reader.onload = () => {
+                                        resolve(reader.result);
+                                    };
+                                    reader.onerror = () => {
+                                        reject(reader.error);
+                                    };
+                                    reader.readAsDataURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)));
+                                });
+                                this.background.timestamp = Math.floor(new Date() / 1000);
+                                this.background.nonce = null;
+
+                                const timeout = window.setTimeout(() => {
+                                    this.background.timeout.id = timeout;
+                                }, this.background.timeout.duration);
+
+                                return;
                             }
-                        } else if (this.background.nonce === nonce) {
-                            this.background.image = await new Promise(async (resolve, reject) => {
-                                const reader = new FileReader();
-
-                                reader.onload = () => {
-                                    resolve(reader.result);
-                                };
-                                reader.onerror = () => {
-                                    reject(reader.error);
-                                };
-                                reader.readAsDataURL(await this.getThumbnail(await getDownloadURL(storageRef(storage, path)), Math.max(window.screen.width, window.screen.height)));
-                            });
-                            this.background.timestamp = Math.floor(new Date() / 1000);
-                            this.background.nonce = null;
-
-                            return;
                         }
+                    } catch (e) {
+                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e);
                     }
-                } catch (e) {
-                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                    console.error(e);
-                }
 
-                if (this.background.nonce === nonce) {
-                    this.background.image = undefined;
+                    if (this.background.nonce === nonce) {
+                        this.background.image = undefined;
+                        this.background.timestamp = 0;
+                        this.background.nonce = null;
+                    }
+                } else {
+                    this.background.image = null;
                     this.background.timestamp = 0;
+                    this.background.timeout.id = null;
                     this.background.nonce = null;
                 }
+
                 /*if (this.backgroundQueue.length === 0) {
                     if (this.likes.length > 0) {
                         function shuffle(array) {
