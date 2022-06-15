@@ -313,7 +313,7 @@
         },
         {
             "name": "TouchStart",
-            "state": "body_skirt",
+            "state": "breast|body_skirt",
             "sequence": [
                 {
                     "type": "Sequence",
