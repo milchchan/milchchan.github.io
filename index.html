@@ -289,17 +289,23 @@
                             </div>
                         </div>-->
                     </div>
-                    <transition name="cut-in" v-on:after-enter="preload" v-on:before-leave="background.nonce = null">
+                    <!--<transition name="cut-in" v-on:after-enter="preload" v-on:before-leave="background.nonce = null">
                         <div class="background"
                             v-bind:style="{ backgroundImage: background.image === undefined ? 'none' : 'url(' + background.image + ')' }"
                             v-if="background.image !== null" v-cloak>
                         </div>
-                    </transition>
+                    </transition>-->
+                    <div class="background"
+                        v-bind:style="{ backgroundImage: background.image === undefined ? 'none' : 'url(' + background.image + ')' }"
+                        v-if="background.image !== null" v-cloak>
+                    </div>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
-                        v-on:after-leave="isHangingOn = false; timeout(3000, () => background.image = null);"
-                        v-on:leave-cancelled="isHangingOn = false; timeout(3000, () => background.image = null);">
-                        <div class="blind" v-if="background.nonce !== null" v-cloak></div>
+                        v-on:after-leave="isHangingOn = false"
+                        v-on:leave-cancelled="isHangingOn = false">
+                        <div class="blind"
+                            v-if="background.nonce !== null || background.timeout.id !== null"
+                            v-cloak></div>
                     </transition>
                 </div>
             </div>
