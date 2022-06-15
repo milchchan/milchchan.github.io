@@ -975,6 +975,41 @@
                     "type": "Message",
                     "speed": 50,
                     "duration": 5,
+                    "text": "疑いは知のはじまりだよぉ"
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
+                    "text": [
+                        [
+                            "する事"
+                        ],
+                        "は知のはじまりだよぉ"
+                    ]
+                },
+                {
+                    "type": "Sequence",
+                    "name": "Say"
+                }
+            ]
+        },
+        {
+            "name": "Activate",
+            "sequence": [
+                {
+                    "type": "Message",
+                    "speed": 50,
+                    "duration": 5,
                     "text": "愚者は己を賢いと思っているけど、賢者は己が愚かなことを知っているよぉ"
                 },
                 {
