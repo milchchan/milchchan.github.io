@@ -26,13 +26,14 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
 }
 
 :root {
-    --background-color: rgba(255, 255, 255, 0.5);
+    --background-color: #ffffff;
     --foreground-color: #ffffff;
     /*#777777;*/
     --main-color: #{$primary};
     --accent-color: #fecde2;
     --highlight-color: #c1aee6;
     --placeholder-color: rgba(104, 230, 255, 0.25);
+    --menu-background-color: rgba(255, 255, 255, 0.5);
     --primary-background-color: rgb(104, 230, 255);
     --background-image: url("/images/Stripes.png");
     --background-image-2x: url("/images/Background@2x.png");
@@ -42,10 +43,12 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
 
 @media (prefers-color-scheme: dark) {
     :root {
+        --background-color: #000000;
         --main-color: #c1aee6;
         --highlight-color: #{$primary};
         --placeholder-color: rgba(193, 174, 230, 0.25);
         /*--primary-background-color: rgba(254, 205, 226, 0.75);*/
+        --menu-background-color: rgba(0, 0, 0, 0.5);
         --primary-background-color: rgb(193, 174, 230);
     }
 }
@@ -60,7 +63,7 @@ html {
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
-    background: #ffffff;
+    background: var(--background-color);
     transition: 0.5s;
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
@@ -436,7 +439,7 @@ label .scrollable>div {
     width: 100%;
     min-height: 100%;
     overflow: hidden;
-    background: var(--background-color);
+    background: var(--menu-background-color);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     transition: 0.5s;
@@ -698,7 +701,8 @@ label .scrollable>div {
     padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 16px);
     width: fit-content;
     height: 100%;
-    background: #ffffff;
+    background: var(--background-color);
+    transition: 0.5s;
 
     >.level {
         display: flex;
@@ -735,7 +739,7 @@ label .scrollable>div {
                         border: 0px solid transparent;
                         border-radius: 290486px;
                         padding: 16px;
-                        background: #ffffff !important;
+                        background: transparent !important;
                         background-clip: padding-box;
                         box-shadow: none;
                         height: initial;
@@ -759,8 +763,8 @@ label .scrollable>div {
                         align-items: center;
                         margin: 0;
                         padding: 0;
-                        border: 0px solid rgba(255, 255, 255, 0.5);
-                        background: #ffffff;
+                        border: 0px solid transparent;
+                        background: transparent;
                         background-clip: padding-box;
                         height: fit-content;
                         line-height: calc(0.75rem * 1.5);
@@ -1281,14 +1285,13 @@ label .scrollable>div {
 
 .left,
 .right {
-
     button,
     .button {
         margin: 0px;
         /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
         border: 0px none transparent;
         padding: 16px 32px 16px 32px;
-        background: rgb(255, 255, 255) !important;
+        background: #ffffff;
         /*background: rgba(255, 255, 255, 0.75) !important;
         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);*/
         /*backdrop-filter: blur(4px);
