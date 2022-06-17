@@ -73,7 +73,8 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui" />
     <meta name="description" content="ミルヒちゃんもいっしょに魔法少女しようね">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#68e6ff">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#c1aee6">
     <meta property="og:title" content="ミルヒちゃんドットコム">
     <meta property="og:description" content="ミルヒちゃんもいっしょに魔法少女しようね">
     <meta property="og:type" content="website">
@@ -301,11 +302,9 @@
                     </div>
                     <transition name="blind" v-on:before-enter="isHangingOn = true" v-on:after-enter="blinded"
                         v-on:enter-cancelled="isHangingOn = false" v-on:before-leave
-                        v-on:after-leave="isHangingOn = false"
-                        v-on:leave-cancelled="isHangingOn = false">
-                        <div class="blind"
-                            v-if="background.nonce !== null || background.timeout.id !== null"
-                            v-cloak></div>
+                        v-on:after-leave="isHangingOn = false" v-on:leave-cancelled="isHangingOn = false">
+                        <div class="blind" v-if="background.nonce !== null || background.timeout.id !== null" v-cloak>
+                        </div>
                     </transition>
                 </div>
             </div>
