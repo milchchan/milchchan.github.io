@@ -3228,11 +3228,11 @@ label .scrollable>div {
             align-items: flex-start;
             justify-content: flex-start;
             overflow: hidden;
-            background: #ffffff;
-            /*background: rgba(255, 255, 255, 0.75) !important;
-            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+            /*background: #ffffff;*/
+            background: rgba(255, 255, 255, 0.75) !important;
+            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);*/
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);*/
+            -webkit-backdrop-filter: blur(4px);
 
             >.level-item:nth-last-of-type(2) {
                 margin: 0;
