@@ -532,7 +532,7 @@ label .scrollable>div {
     height: 100%;
     /*height: 100vh;
     min-height: 100vh;*/
-    background: #ffffff;
+    background: transparent;
     overflow: hidden;
 
     >canvas {
@@ -852,7 +852,7 @@ label .scrollable>div {
     height: 100%;
 
     >.wrap>.frame {
-        background: transparent;
+        background: #ffffff;
 
         >.columns:last-of-type {
             position: absolute;
