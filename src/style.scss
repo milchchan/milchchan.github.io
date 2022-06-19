@@ -33,7 +33,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
     --accent-color: #fecde2;
     --highlight-color: #c1aee6;
     --placeholder-color: rgba(104, 230, 255, 0.25);
-    --menu-background-color: rgba(255, 255, 255, 0.5);
+    --backdrop-color: rgba(255, 255, 255, 0.75);
     --primary-background-color: rgb(104, 230, 255);
     --background-image: url("/images/Stripes.png");
     --background-image-2x: url("/images/Background@2x.png");
@@ -48,7 +48,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
         --highlight-color: #{$primary};
         --placeholder-color: rgba(193, 174, 230, 0.25);
         /*--primary-background-color: rgba(254, 205, 226, 0.75);*/
-        --menu-background-color: rgba(0, 0, 0, 0.5);
+        --backdrop-color: rgba(0, 0, 0, 0.75);
         --primary-background-color: rgb(193, 174, 230);
     }
 }
@@ -439,7 +439,7 @@ label .scrollable>div {
     width: 100%;
     min-height: 100%;
     overflow: hidden;
-    background: var(--menu-background-color);
+    background: var(--backdrop-color);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     transition: 0.5s;
@@ -3229,7 +3229,7 @@ label .scrollable>div {
             justify-content: flex-start;
             overflow: hidden;
             /*background: #ffffff;*/
-            background: rgba(255, 255, 255, 0.75) !important;
+            background: var(--backdrop-color) !important;
             /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);*/
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
