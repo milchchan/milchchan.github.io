@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "mocha test/ --require babel-register --reporter spec"
+    "test": "mocha test/ --reporter spec"
   },
   "repository": {
     "type": "git",
