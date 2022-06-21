@@ -28,9 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Test
-        run: |
-          python -m unittest discover -s test -p "test_*.py"
-          cd ..
+        run: cd api && python -m unittest discover -s test -p "test_*.py"
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
