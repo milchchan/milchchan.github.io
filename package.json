@@ -24,7 +24,7 @@
     "@pixiv/three-vrm": "^0.6.11",
     "animejs": "^3.2.1",
     "bulma": "^0.9.4",
-    "firebase": "^9.9.1",
+    "firebase": "^9.9.2",
     "mocha": "^10.0.0",
     "sinon": "^14.0.0",
     "stats.js": "^0.17.0",
@@ -32,8 +32,8 @@
     "vue": "^3.2.37"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.3.3",
-    "sass": "^1.54.0",
-    "vite": "^2.9.14"
+    "@vitejs/plugin-vue": "^2.3.4",
+    "sass": "^1.54.4",
+    "vite": "^2.9.15"
   }
 }
