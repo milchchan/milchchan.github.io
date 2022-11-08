@@ -150,68 +150,87 @@
                             </transition>
                         </div>
                         <div class="level-item">
-                            <transition name="fade" mode="out-in">
-                                <button class="button is-selected" type="button"
-                                    @click="mode = '_about'; isRevealed = true;"
-                                    v-if="mode === 'about' || mode === '_about'" key="selected">
-                                    <div class="icon is-large">
-                                        <i class="fa-solid fa-star"></i>
+                            <div class="rotation-wrapper-outer">
+                                <div class="rotation-wrapper-inner">
+                                    <div class="rotate">
+                                        <transition name="fade" mode="out-in">
+                                            <button class="button is-selected" type="button"
+                                                @click="mode = '_about'; isRevealed = true;"
+                                                v-if="mode === 'about' || mode === '_about'" key="selected">
+                                                <div class="wrap is-size-7 has-text-weight-bold">
+                                                    <div class="clip">
+                                                        <div class="scrollable">
+                                                            <div>milchchan.com</div>
+                                                            <div>milchchan.com</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="icon is-large">
+                                                    <i class="fa-solid fa-star"></i>
+                                                </div>
+                                            </button>
+                                            <button class="button" type="button"
+                                                @click="mode = '_about'; isRevealed = true;" v-else key="unselected">
+                                                <div class="wrap is-size-7 has-text-weight-bold">
+                                                    <div class="clip">
+                                                        <div class="scrollable">
+                                                            <div>milchchan.com</div>
+                                                            <div>milchchan.com</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="icon is-large">
+                                                    <i class="fa-solid fa-star"></i>
+                                                </div>
+                                            </button>
+                                        </transition>
                                     </div>
-                                    <div class="wrap is-size-7 has-text-weight-bold">
-                                        <div class="clip">
-                                            <div class="scrollable">
-                                                <div>milchchan.com</div>
-                                                <div>milchchan.com</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </button>
-                                <button class="button" type="button" @click="mode = '_about'; isRevealed = true;" v-else
-                                    key="unselected">
-                                    <div class="icon is-large">
-                                        <i class="fa-solid fa-star"></i>
-                                    </div>
-                                    <div class="wrap is-size-7 has-text-weight-bold">
-                                        <div class="clip">
-                                            <div class="scrollable">
-                                                <div>milchchan.com</div>
-                                                <div>milchchan.com</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </button>
-                            </transition>
+                                </div>
+                            </div>
                         </div>
                         <div class="level-item">
-                            <a class="button" href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q" target="_blank">
-                                <div class="icon">
-                                    <i class="fab fa-windows"></i>
-                                </div>
-                                <div class="wrap is-size-7 has-text-weight-bold">
-                                    <div class="clip">
-                                        <div class="scrollable">
-                                            <div>Apricot</div>
-                                            <div>Apricot</div>
-                                        </div>
+                            <div class="rotation-wrapper-outer">
+                                <div class="rotation-wrapper-inner">
+                                    <div class="rotate">
+                                        <a class="button" href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q"
+                                            target="_blank">
+                                            <div class="wrap is-size-7 has-text-weight-bold">
+                                                <div class="clip">
+                                                    <div class="scrollable">
+                                                        <div>Apricot</div>
+                                                        <div>Apricot</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fab fa-windows"></i>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div class="level-item">
-                            <a class="button" href="https://apps.apple.com/jp/app/id1130755997"
-                                target="_blank">
-                                <div class="icon">
-                                    <i class="fab fa-apple"></i>
-                                </div>
-                                <div class="wrap is-size-7 has-text-weight-bold">
-                                    <div class="clip">
-                                        <div class="scrollable">
-                                            <div>Wonderland</div>
-                                            <div>Wonderland</div>
-                                        </div>
+                            <div class="rotation-wrapper-outer">
+                                <div class="rotation-wrapper-inner">
+                                    <div class="rotate">
+                                        <a class="button" href="https://apps.apple.com/jp/app/id1130755997"
+                                            target="_blank">
+                                            <div class="wrap is-size-7 has-text-weight-bold">
+                                                <div class="clip">
+                                                    <div class="scrollable">
+                                                        <div>Wonderland</div>
+                                                        <div>Wonderland</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fab fa-apple"></i>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                     </div>
                 </div>
