@@ -620,7 +620,7 @@ label .scrollable>div {
     z-index: -1;
     pointer-events: none;
     position: absolute;
-    opacity: 0.25;
+    opacity: 1;
     background: var(--accent-color);
     width: 100%;
     min-height: 100%;
@@ -699,7 +699,7 @@ label .scrollable>div {
 
 .sidebar {
     position: relative;
-    padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 16px);
+    padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 16px);
     width: fit-content;
     height: 100%;
     background: var(--background-color);
@@ -713,6 +713,9 @@ label .scrollable>div {
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        flex-shrink: 0;
+        flex-grow: 0;
+        flex-wrap: nowrap;
 
         >.level-item:first-child {
             display: flex;
@@ -722,18 +725,25 @@ label .scrollable>div {
             flex-direction: column;
             align-items: flex-start;
             justify-content: flex-start;
+            flex-shrink: 0;
+            flex-grow: 0;
+            flex-wrap: nowrap;
 
             >.level {
                 display: flex;
                 margin: 0;
                 padding: 0;
+                width: 48px;
                 flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
+                align-items: flex-start;
+                justify-content: center;
+                flex-wrap: nowrap;
 
                 >.level-item:first-child {
                     margin: 0;
                     padding: 0;
+                    flex-shrink: 0;
+                    flex-grow: 0;
 
                     >button {
                         margin: 0px;
@@ -757,6 +767,26 @@ label .scrollable>div {
                 >.level-item:not(:first-child) {
                     margin: 0;
                     padding: 32px 0px 0px 0px;
+                    white-space: nowrap;
+                    flex-shrink: 0;
+                    flex-grow: 0;
+
+                    .rotation-wrapper-outer {
+                        display: table;
+
+                        .rotation-wrapper-inner {
+                            padding: 50% 0;
+                            height: 0;
+
+                            .rotate {
+                                display: block;
+                                transform-origin: top left;
+                                transform: rotate(-90deg) translate(-100%);
+                                margin-top: -50%;
+                                white-space: nowrap;
+                            }
+                        }
+                    }
 
                     button,
                     .button {
@@ -771,10 +801,11 @@ label .scrollable>div {
                         line-height: calc(0.75rem * 1.5);
                         backface-visibility: hidden;
                         color: #000000;
-                        flex-direction: column;
+                        flex-direction: row;
                         align-items: center;
-                        justify-content: flex-start;
-                        width: 64px;
+                        justify-content: center;
+                        width: fit-content;
+                        height: fit-content;
 
                         .clip {
                             display: inline-block;
@@ -800,10 +831,17 @@ label .scrollable>div {
                             height: 48px;
                             align-items: center;
                             justify-content: center;
+                            transform: rotate(90deg);
                         }
 
-                        .icon+.wrap {
-                            margin: 8px 0px 0px 0px !important;
+                        .wrap+.icon {
+                            margin: 0px 0px 0px 0px !important;
+                            color: var(--accent-color);
+                            transition: 0.5s;
+                        }
+
+                        .wrap {
+                            margin: 0px 0px 0px 0px !important;
                             color: var(--main-color);
                             transition: 0.5s;
                         }
@@ -1125,13 +1163,12 @@ label .scrollable>div {
                         user-select: none;
 
                         .field span:last-child {
-                            border-radius: 290486px !important;
-                            padding: 4px !important;
-                            background-color: var(--background-color);
-                            overflow: hidden;
+                            /*border-radius: 290486px !important;*/
+                            padding: 0px !important;
+                            background-color: transparent;
+                            /*overflow: hidden;*/
                             margin: 0;
-                            padding: 0;
-                            width: 0.75rem !important;
+                            /*width: 0.75rem !important;*/
                             height: 0.75rem !important;
                             font-family: "Alata", sans-serif;
                             font-size: 0.75rem !important;
@@ -1289,6 +1326,7 @@ label .scrollable>div {
 
 .left,
 .right {
+
     button,
     .button {
         margin: 0px;
@@ -2170,7 +2208,7 @@ label .scrollable>div {
                                     backdrop-filter: blur(4px);
                                     -webkit-backdrop-filter: blur(4px);*/
                                     transition: 0.5s;
-                                    
+
                                     .badge {
                                         padding: 4px !important;
                                         border-radius: 290486px;
@@ -2802,13 +2840,13 @@ label .scrollable>div {
                         border-radius: 16px;
                         width: 128px;
                         aspect-ratio: 1 / 2;
-                        background: var(--background-color);   
+                        background: var(--background-color);
                         align-items: center;
                         justify-content: center;
                         overflow: hidden;
                         /*box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0px 0 1px rgb(10 10 10 / 2%);*/
                         transition: 0.5s;
-                        
+
                         picture {
                             position: absolute;
                             width: 100%;
@@ -2829,7 +2867,7 @@ label .scrollable>div {
                         padding: 16px 32px 16px 32px;
                         /*background: rgba(255, 255, 255, 0.75) !important;*/
                         border: 0px none transparent !important;
-                        background: var(--background-color); 
+                        background: var(--background-color);
                         background-clip: padding-box;
                         width: fit-content;
                         height: initial;
@@ -2972,7 +3010,7 @@ label .scrollable>div {
                                 padding: 8px 16px 8px 16px;
                                 /*background: rgba(255, 255, 255, 0.75) !important;*/
                                 border: 0px none transparent !important;
-                                background: var(--background-color);    
+                                background: var(--background-color);
                                 background-clip: padding-box;
                                 transition: 0.5s;
                                 /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
