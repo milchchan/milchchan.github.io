@@ -14,7 +14,7 @@ import { ColorCorrectionShader } from 'three/examples/jsm/shaders/ColorCorrectio
 import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
-import { VRM } from '@pixiv/three-vrm';
+import { VRMLoaderPlugin } from '@pixiv/three-vrm';
 import Stats from 'stats.js'
 import anime from 'animejs/lib/anime.es.js';
 import { TinySegmenter } from './tiny-segmenter.js';
@@ -3359,18 +3359,18 @@ window.addEventListener("load", event => {
 
                                 if (blendShapeAnimation.time >= blendShapeAnimation.duration) {
                                     if (blendShapeAnimation.name == "blink") {
-                                        vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, 0.1 * blinkOffset + (1 - 0.1) * Math.abs(Math.sin(blendShapeAnimation.end / 2 * Math.PI)));
+                                        vrmModel.expressionManager.setValue(blendShapeAnimation.name, 0.1 * blinkOffset + (1 - 0.1) * Math.abs(Math.sin(blendShapeAnimation.end / 2 * Math.PI)));
                                         blinkRequired = false;
                                     } else {
-                                        vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.end / 2 * Math.PI)));
+                                        vrmModel.expressionManager.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.end / 2 * Math.PI)));
                                     }
 
                                     this.blendShapeAnimations.splice(i, 1);
                                 } else if (blendShapeAnimation.name == "blink") {
-                                    vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, 0.1 * blinkOffset + (1 - 0.1) * Math.abs(Math.sin((blendShapeAnimation.time / blendShapeAnimation.duration * (blendShapeAnimation.end - blendShapeAnimation.start) + blendShapeAnimation.start) / 2 * Math.PI)));
+                                    vrmModel.expressionManager.setValue(blendShapeAnimation.name, 0.1 * blinkOffset + (1 - 0.1) * Math.abs(Math.sin((blendShapeAnimation.time / blendShapeAnimation.duration * (blendShapeAnimation.end - blendShapeAnimation.start) + blendShapeAnimation.start) / 2 * Math.PI)));
                                     blinkRequired = false;
                                 } else {
-                                    vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin((blendShapeAnimation.time / blendShapeAnimation.duration * (blendShapeAnimation.end - blendShapeAnimation.start) + blendShapeAnimation.start) / 2 * Math.PI)));
+                                    vrmModel.expressionManager.setValue(blendShapeAnimation.name, Math.abs(Math.sin((blendShapeAnimation.time / blendShapeAnimation.duration * (blendShapeAnimation.end - blendShapeAnimation.start) + blendShapeAnimation.start) / 2 * Math.PI)));
                                 }
 
                                 isDeforming = true;
@@ -3381,7 +3381,7 @@ window.addEventListener("load", event => {
                     }
 
                     if (blinkRequired) {
-                        vrmModel.blendShapeProxy.setValue("blink", 0.1 * blinkOffset);
+                        vrmModel.expressionManager.setValue("blink", 0.1 * blinkOffset);
                     }
 
                     if (this.sequenceQueue.length > 0 && Array.isArray(this.sequenceQueue[0])) {
@@ -3544,7 +3544,7 @@ window.addEventListener("load", event => {
                                                 let blendShapeAnimation = this.blendShapeAnimations[i];
 
                                                 if (!nameSet.includes(blendShapeAnimation.name)) {
-                                                    vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.start / 2 * Math.PI)));
+                                                    vrmModel.expressionManager.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.start / 2 * Math.PI)));
                                                     nameSet.push(blendShapeAnimation.name);
                                                 }
                                             }
@@ -3678,7 +3678,7 @@ window.addEventListener("load", event => {
                                 } else if (app.isBlinded && !isActive) {
                                     if ('morphs' in suggestion) {
                                         for (let blendShape of suggestion.morphs.defaults) {
-                                            vrmModel.blendShapeProxy.setValue(blendShape.name, Math.abs(Math.sin(blendShape.weight / 2 * Math.PI)));
+                                            vrmModel.expressionManager.setValue(blendShape.name, Math.abs(Math.sin(blendShape.weight / 2 * Math.PI)));
                                         }
                                     }
      
@@ -3721,7 +3721,7 @@ window.addEventListener("load", event => {
                                             let nameSet = [];
      
                                             for (let blendShape of suggestion.morphs.defaults) {
-                                                vrmModel.blendShapeProxy.setValue(blendShape.name, Math.abs(Math.sin(blendShape.weight / 2 * Math.PI)));
+                                                vrmModel.expressionManager.setValue(blendShape.name, Math.abs(Math.sin(blendShape.weight / 2 * Math.PI)));
                                             }
      
                                             for (let blendShapeAnimation of suggestion.morphs.animations) {
@@ -3732,7 +3732,7 @@ window.addEventListener("load", event => {
                                                 let blendShapeAnimation = app.blendShapeAnimations[i];
      
                                                 if (!nameSet.includes(blendShapeAnimation.name)) {
-                                                    vrmModel.blendShapeProxy.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.start / 2 * Math.PI)));
+                                                    vrmModel.expressionManager.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.start / 2 * Math.PI)));
                                                     nameSet.push(blendShapeAnimation.name);
                                                 }
                                             }
@@ -4489,12 +4489,11 @@ window.addEventListener("load", event => {
                             }
 
                             if (animation.bone && animation.rotation.length == 4) {
-                                try {
-                                    vrmModel.humanoid.getBoneNode(animation.bone).position.set(animation.position[0], animation.position[1], -animation.position[2]);
-                                    vrmModel.humanoid.getBoneNode(animation.bone).quaternion.set(-animation.rotation[0], -animation.rotation[1], animation.rotation[2], animation.rotation[3]);
-                                } catch (e) {
-                                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                                    console.error(e);
+                                const boneNode = vrmModel.humanoid.getNormalizedBoneNode(animation.bone);
+
+                                if (boneNode !== null) {
+                                    boneNode.position.set(animation.position[0], animation.position[1], -animation.position[2]);
+                                    boneNode.quaternion.set(-animation.rotation[0], -animation.rotation[1], animation.rotation[2], animation.rotation[3]);
                                 }
                             }
                         }
@@ -4524,14 +4523,12 @@ window.addEventListener("load", event => {
                             let bonePosition = null;
                             let springBoneIndex = 0;
 
-                            for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                                for (const springBone of springBoneGroup) {
-                                    if (springBoneIndex === draggableBone.index) {
-                                        bonePosition = springBone.bone.getWorldPosition(new Vector3());
-                                    }
-
-                                    springBoneIndex++;
+                            for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                                if (springBoneIndex === draggableBone.index) {
+                                    bonePosition = springBoneJoint.bone.getWorldPosition(new Vector3());
                                 }
+
+                                springBoneIndex++;
                             }
 
                             if (bonePosition !== null) {
@@ -4540,15 +4537,13 @@ window.addEventListener("load", event => {
                                 springBoneIndex = 0;
                                 draggingBones = { time: 0, duration: 0.5, center: bonePosition, bones: {} };
 
-                                for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                                    for (const springBone of springBoneGroup) {
-                                        if (bonePosition.distanceTo(springBone.bone.getWorldPosition(new Vector3())) <= range) {
-                                            draggingBones.bones[springBoneIndex] = { direction: new Vector3(draggableBone.direction.x, draggableBone.direction.y, 0), base: springBone.gravityPower - vrmSpringBones[springBoneIndex].gravityPower, source: 0, target: -Math.min(0.01 * draggableBone.distance * Math.cos(bonePosition.distanceTo(springBone.bone.getWorldPosition(new Vector3())) / range), 5) };
-                                            mergedBoneAnimationDictionary[springBoneIndex] = { direction: draggingBones.bones[springBoneIndex].direction, force: draggingBones.bones[springBoneIndex].source };
-                                        }
-
-                                        springBoneIndex++;
+                                for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                                    if (bonePosition.distanceTo(springBoneJoint.bone.getWorldPosition(new Vector3())) <= range) {
+                                        draggingBones.bones[springBoneIndex] = { direction: new Vector3(draggableBone.direction.x, draggableBone.direction.y, 0), base: springBoneJoint.settings.gravityPower - vrmSpringBones[springBoneIndex].gravityPower, source: 0, target: -Math.min(0.01 * draggableBone.distance * Math.cos(bonePosition.distanceTo(springBoneJoint.bone.getWorldPosition(new Vector3())) / range), 5) };
+                                        mergedBoneAnimationDictionary[springBoneIndex] = { direction: draggingBones.bones[springBoneIndex].direction, force: draggingBones.bones[springBoneIndex].source };
                                     }
+
+                                    springBoneIndex++;
                                 }
                             }
                         } else {
@@ -4564,16 +4559,14 @@ window.addEventListener("load", event => {
 
                                 draggingBones.time = 0;
 
-                                for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                                    for (const springBone of springBoneGroup) {
-                                        if (springBoneIndex in draggingBones.bones) {
-                                            draggingBones.bones[springBoneIndex].direction = new Vector3(draggableBone.direction.x, draggableBone.direction.y, 0);
-                                            draggingBones.bones[springBoneIndex].source = draggingBones.bones[springBoneIndex].target;
-                                            draggingBones.bones[springBoneIndex].target = -Math.min(0.01 * draggableBone.distance * Math.cos(draggingBones.center.distanceTo(springBone.bone.getWorldPosition(new Vector3())) / range), 5);
-                                        }
-
-                                        springBoneIndex++;
+                                for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                                    if (springBoneIndex in draggingBones.bones) {
+                                        draggingBones.bones[springBoneIndex].direction = new Vector3(draggableBone.direction.x, draggableBone.direction.y, 0);
+                                        draggingBones.bones[springBoneIndex].source = draggingBones.bones[springBoneIndex].target;
+                                        draggingBones.bones[springBoneIndex].target = -Math.min(0.01 * draggableBone.distance * Math.cos(draggingBones.center.distanceTo(springBoneJoint.bone.getWorldPosition(new Vector3())) / range), 5);
                                     }
+
+                                    springBoneIndex++;
                                 }
                             } else {
                                 for (const key in draggingBones.bones) {
@@ -4587,14 +4580,12 @@ window.addEventListener("load", event => {
 
                             randomWind = { time: 0, duration: 1.0, direction: new Vector3(1, 0, 0), force: 0.01 * (Math.random() - 0.5), sources: {} };
 
-                            for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                                for (const springBone of springBoneGroup) {
-                                    if (springBoneIndex in mergedBoneAnimationDictionary === false) {
-                                        randomWind.sources[springBoneIndex] = springBone.gravityPower - vrmSpringBones[springBoneIndex].gravityPower;
-                                    }
-
-                                    springBoneIndex++;
+                            for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                                if (springBoneIndex in mergedBoneAnimationDictionary === false) {
+                                    randomWind.sources[springBoneIndex] = springBoneJoint.settings.gravityPower - vrmSpringBones[springBoneIndex].gravityPower;
                                 }
+
+                                springBoneIndex++;
                             }
                         } else {
                             randomWind.time += deltaTime;
@@ -4616,17 +4607,15 @@ window.addEventListener("load", event => {
                             }
                         }
 
-                        for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                            for (const springBone of springBoneGroup) {
-                                if (index in mergedBoneAnimationDictionary) {
-                                    const vector = new Vector3(vrmSpringBones[index].gravityDir.x + mergedBoneAnimationDictionary[index].direction.x, vrmSpringBones[index].gravityDir.y + mergedBoneAnimationDictionary[index].direction.y, vrmSpringBones[index].gravityDir.z + mergedBoneAnimationDictionary[index].direction.z);
+                        for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                            if (index in mergedBoneAnimationDictionary) {
+                                const vector = new Vector3(vrmSpringBones[index].gravityDir.x + mergedBoneAnimationDictionary[index].direction.x, vrmSpringBones[index].gravityDir.y + mergedBoneAnimationDictionary[index].direction.y, vrmSpringBones[index].gravityDir.z + mergedBoneAnimationDictionary[index].direction.z);
 
-                                    springBone.gravityDir = vector.normalize();
-                                    springBone.gravityPower = vrmSpringBones[index].gravityPower + mergedBoneAnimationDictionary[index].force;
-                                }
-
-                                index++;
+                                springBoneJoint.settings.gravityDir = vector.normalize();
+                                springBoneJoint.settings.gravityPower = vrmSpringBones[index].gravityPower + mergedBoneAnimationDictionary[index].force;
                             }
+
+                            index++;
                         }
                     }
 
@@ -5148,72 +5137,72 @@ window.addEventListener("load", event => {
                 console.error(e);
             }
 
+            loader.register((parser) => {
+                return new VRMLoaderPlugin(parser);
+            });
             loader.crossOrigin = "anonymous";
             loader.load(
                 await getDownloadURL(storageRef(storage, this.character.model)),
-                (gltf) => {
-                    VRM.from(gltf).then(async (vrm) => {
-                        const urls = {
-                            idle1: "/assets/animation-idle1.json",
-                            idle2: "/assets/animation-idle2.json",
-                            //idle3: "/assets/animation-idle3.json",
-                            //idle4: "/assets/animation-idle4.json",
-                            jump: "/assets/animation-jump.json",
-                            lose: "/assets/animation-lose.json",
-                            //run: "/assets/animation-run.json",
-                            //walk: "/assets/animation-walk.json",
-                            win: "/assets/animation-win.json"
-                        };
-                        let animationDictionary = {};
+                async (gltf) => {
+                    const vrm = gltf.userData.vrm;
+                    const urls = {
+                        idle1: "/assets/animation-idle1.json",
+                        idle2: "/assets/animation-idle2.json",
+                        //idle3: "/assets/animation-idle3.json",
+                        //idle4: "/assets/animation-idle4.json",
+                        jump: "/assets/animation-jump.json",
+                        lose: "/assets/animation-lose.json",
+                        //run: "/assets/animation-run.json",
+                        //walk: "/assets/animation-walk.json",
+                        win: "/assets/animation-win.json"
+                    };
+                    let animationDictionary = {};
 
-                        try {
-                            for (let key in urls) {
-                                const response3 = await fetch(encodeURI(urls[key]), {
-                                    mode: "cors",
-                                    method: "GET",
-                                    headers: {
-                                        "Content-Type": "application/x-www-form-urlencoded"
-                                    }
-                                });
-
-                                if (response3.ok) {
-                                    const json = await response3.json();
-
-                                    animationDictionary[key] = json.data;
+                    try {
+                        for (let key in urls) {
+                            const response3 = await fetch(encodeURI(urls[key]), {
+                                mode: "cors",
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/x-www-form-urlencoded"
                                 }
-                                else {
-                                    throw new Error(response3.statusText);
-                                }
+                            });
+
+                            if (response3.ok) {
+                                const json = await response3.json();
+
+                                animationDictionary[key] = json.data;
                             }
-
-                            self.animations = animationDictionary;
-                            vrmModel = vrm;
-
-                            scene.add(vrm.scene);
-
-                            vrm.scene.rotation.y = Math.PI;
-                            vrm.lookAt.target = lookAtTarget;
-
-                            vrmSpringBones.splice(0);
-
-                            for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                                for (const springBone of springBoneGroup) {
-                                    vrmSpringBones.push({ gravityDir: springBone.gravityDir.clone(), gravityPower: springBone.gravityPower });
-                                }
+                            else {
+                                throw new Error(response3.statusText);
                             }
-
-                            //vrm.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).rotation.y = Math.PI;
-                            //currentMixer = prepareAnimation(vrm);                            
-                        } catch (e) {
-                            self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
-                            console.error(e);
                         }
 
-                        self.progress = null;
-                    });
+                        self.animations = animationDictionary;
+                        vrmModel = vrm;
+
+                        scene.add(vrm.scene);
+
+                        vrm.scene.rotation.y = Math.PI;
+                        vrm.lookAt.target = lookAtTarget;
+
+                        vrmSpringBones.splice(0);
+
+                        for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                            vrmSpringBones.push({ gravityDir: springBoneJoint.settings.gravityDir.clone(), gravityPower: springBoneJoint.settings.gravityPower });
+                        }
+
+                        //vrm.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).rotation.y = Math.PI;
+                        //currentMixer = prepareAnimation(vrm);                            
+                    } catch (e) {
+                        self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
+                        console.error(e);
+                    }
+
+                    self.progress = null;
                 },
                 (progress) => self.progress = progress.loaded / progress.total,
-                (error) => console.error(error)
+                (error) => console.error(error),
             );
 
             if (credential === null) {
@@ -5785,17 +5774,15 @@ window.addEventListener("load", event => {
                 draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
                 minDistance = Number.MAX_SAFE_INTEGER;
 
-                for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                    for (const springBone of springBoneGroup) {
-                        const distance = springBone.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
+                for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                    const distance = springBoneJoint.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
 
-                        if (distance < minDistance) {
-                            draggableBone.index = springBoneIndex;
-                            minDistance = distance;
-                        }
-
-                        springBoneIndex++;
+                    if (distance < minDistance) {
+                        draggableBone.index = springBoneIndex;
+                        minDistance = distance;
                     }
+
+                    springBoneIndex++;
                 }
 
                 if (app.character !== null) {
@@ -5882,17 +5869,15 @@ window.addEventListener("load", event => {
                     draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
                     minDistance = Number.MAX_SAFE_INTEGER;
 
-                    for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                        for (const springBone of springBoneGroup) {
-                            const distance = springBone.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
+                    for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                        const distance = springBoneJoint.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
 
-                            if (distance < minDistance) {
-                                draggableBone.index = springBoneIndex;
-                                minDistance = distance;
-                            }
-
-                            springBoneIndex++;
+                        if (distance < minDistance) {
+                            draggableBone.index = springBoneIndex;
+                            minDistance = distance;
                         }
+
+                        springBoneIndex++;
                     }
 
                     if (app.character !== null) {
@@ -5971,32 +5956,33 @@ window.addEventListener("load", event => {
                 reader.addEventListener("load", (e) => {
                     const loader = new GLTFLoader();
 
+                    loader.register((parser) => {
+                        return new VRMLoaderPlugin(parser);
+                    });
                     loader.crossOrigin = "anonymous";
                     loader.load(
                         e.target.result,
                         (gltf) => {
-                            VRM.from(gltf).then((vrm) => {
-                                if (vrmModel !== null) {
-                                    scene.remove(vrmModel.scene);
-                                }
+                            const vrm = gltf.userData.vrm;
 
-                                vrmModel = vrm;
+                            if (vrmModel !== null) {
+                                scene.remove(vrmModel.scene);
+                            }
 
-                                scene.add(vrm.scene);
+                            vrmModel = vrm;
 
-                                vrm.scene.rotation.y = Math.PI;
-                                vrm.lookAt.target = lookAtTarget;
+                            scene.add(vrm.scene);
 
-                                vrmSpringBones.splice(0);
+                            vrm.scene.rotation.y = Math.PI;
+                            vrm.lookAt.target = lookAtTarget;
 
-                                for (const springBoneGroup of vrmModel.springBoneManager.springBoneGroupList) {
-                                    for (const springBone of springBoneGroup) {
-                                        vrmSpringBones.push({ gravityDir: springBone.gravityDir.clone(), gravityPower: springBone.gravityPower });
-                                    }
-                                }
+                            vrmSpringBones.splice(0);
 
-                                app.progress = null;
-                            });
+                            for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                                vrmSpringBones.push({ gravityDir: springBoneJoint.settings.gravityDir.clone(), gravityPower: springBoneJoint.settings.gravityPower });
+                            }
+
+                            app.progress = null;
                         },
                         (progress) => app.progress = progress.loaded / progress.total,
                         (error) => console.error(error)
