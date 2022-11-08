@@ -713,9 +713,6 @@ label .scrollable>div {
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        flex-shrink: 0;
-        flex-grow: 0;
-        flex-wrap: nowrap;
 
         >.level-item:first-child {
             display: flex;
@@ -725,9 +722,6 @@ label .scrollable>div {
             flex-direction: column;
             align-items: flex-start;
             justify-content: flex-start;
-            flex-shrink: 0;
-            flex-grow: 0;
-            flex-wrap: nowrap;
 
             >.level {
                 display: flex;
@@ -737,13 +731,10 @@ label .scrollable>div {
                 flex-direction: column;
                 align-items: flex-start;
                 justify-content: center;
-                flex-wrap: nowrap;
 
                 >.level-item:first-child {
                     margin: 0;
                     padding: 0;
-                    flex-shrink: 0;
-                    flex-grow: 0;
 
                     >button {
                         margin: 0px;
@@ -767,9 +758,6 @@ label .scrollable>div {
                 >.level-item:not(:first-child) {
                     margin: 0;
                     padding: 32px 0px 0px 0px;
-                    white-space: nowrap;
-                    flex-shrink: 0;
-                    flex-grow: 0;
 
                     .rotation-wrapper-outer {
                         display: table;
