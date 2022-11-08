@@ -4018,7 +4018,7 @@ window.addEventListener("load", event => {
 
                             this.wall.blocks.push({
                                 height: 100 / samples.length,
-                                colors: { main: "#ffffff", accent: window.getComputedStyle(document.documentElement).getPropertyValue("--accent-color") },
+                                colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
                                 inlines: [
                                     { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source },
                                     //{ running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
@@ -4792,8 +4792,10 @@ window.addEventListener("load", event => {
 
                                     for (const segment of line) {
                                         if (segment.highlight) {
+                                            backContext.globalAlpha = 1.0;
                                             backContext.fillStyle = `${block.colors.accent}`;
                                         } else {
+                                            backContext.globalAlpha = 0.5;
                                             backContext.fillStyle = `${block.colors.main}`;
                                         }
 
