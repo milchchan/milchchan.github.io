@@ -4489,7 +4489,11 @@ window.addEventListener("load", event => {
                             }
 
                             if (animation.bone && animation.rotation.length == 4) {
-                                const boneNode = vrmModel.humanoid.getNormalizedBoneNode(animation.bone);
+                                let boneNode = vrmModel.humanoid.getNormalizedBoneNode(animation.bone);
+
+                                if (boneNode === null) {
+                                    boneNode = vrmModel.humanoid.getRawBoneNode(animation.bone);
+                                }
 
                                 if (boneNode !== null) {
                                     boneNode.position.set(animation.position[0], animation.position[1], -animation.position[2]);
