@@ -70,7 +70,7 @@ const CAMERA_FOV = 60.0;
 const CAMERA_Z = 1.5;
 const camera = new PerspectiveCamera(CAMERA_FOV, renderer.domElement.width / renderer.domElement.height, 0.1, 1000);
 
-camera.position.set(0.0, 1.1, CAMERA_Z);
+camera.position.set(0.0, 1.1, -CAMERA_Z);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -91,7 +91,7 @@ const light = new DirectionalLight(0xffffff, 0.99);
 //const hemisphereLight = new THREE.HemisphereLight(0xd7fbff, 0x7e94a8, 0.7);
 
 //light.intensity = 0.9;
-light.position.set(0.0, 1.0, 1.0).normalize();
+light.position.set(0.0, 1.0, -1.0).normalize();
 
 scene.add(light);
 //scene.add(hemisphereLight);
@@ -167,7 +167,7 @@ const mouse = new Vector2();
 let vrmModel = null;
 let vrmSpringBones = [];
 let animationIndex = 0;
-const animationSkipFrames = 3;
+const animationSkipFrames = 2;
 let idleTime = 0.0;
 const blinkThreshold = 5.0;
 let waitTime = 0.0;
@@ -4497,7 +4497,7 @@ window.addEventListener("load", event => {
 
                                 if (boneNode !== null) {
                                     boneNode.position.set(animation.position[0], animation.position[1], -animation.position[2]);
-                                    boneNode.quaternion.set(-animation.rotation[0], -animation.rotation[1], animation.rotation[2], animation.rotation[3]);
+                                    boneNode.quaternion.set(animation.rotation[0], -animation.rotation[1], -animation.rotation[2], animation.rotation[3]);
                                 }
                             }
                         }
