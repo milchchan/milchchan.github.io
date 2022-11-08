@@ -2729,8 +2729,8 @@ label .scrollable>div {
                     }
 
                     >.balloon {
-                        margin: -16px 0px 0px calc(50% + 64px);
-                        transform: translate3d(0px, 16px, 0px);
+                        margin: -16px 0px 0px calc(50% + 128px);
+                        transform: translate3d(-50%, 16px, 0px);
 
                         >button,
                         >.button {
@@ -3169,11 +3169,11 @@ label .scrollable>div {
         }
 
         h1+h2 {
-            margin: 12px 0px 0px 0px;
+            margin: 12px 0px 16px 0px;
         }
 
         span.icon+h2 {
-            margin: 12px 0px 0px 0px;
+            margin: 12px 0px 16px 0px;
         }
 
         svg g {
@@ -3188,7 +3188,7 @@ label .scrollable>div {
         }
 
         svg+h2 {
-            margin: 8px 0px 0px 0px;
+            margin: 8px 0px 16px 0px;
         }
 
         p {
