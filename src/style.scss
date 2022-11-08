@@ -800,15 +800,17 @@ label .scrollable>div {
                             overflow: hidden;
                             box-sizing: content-box;
                             height: calc(0.75rem * 1.5);
-
+                            transform: translate(0px, -1px);
+                            
                             .scrollable div {
                                 display: flex;
                                 align-items: center;
                                 font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                                font-size: 0.75rem;
-                                transform: rotate(0.03deg);
+                                font-size: 0.75rem !important;
+                                transform: rotate(0.03deg) !important;
                                 line-height: 0.75rem !important;
                                 height: calc(0.75rem * 1.5);
+                                vertical-align: middle;
                             }
                         }
 
