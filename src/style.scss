@@ -30,7 +30,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
     --foreground-color: #777777;
     --main-color: #{$primary};
     --accent-color: #fecde2;
-    --highlight-color: #c1aee6;
+    --highlight-color: #fecde2;
     --placeholder-color: rgba(104, 230, 255, 0.25);
     --backdrop-color: rgba(255, 255, 255, 0.75);
     --primary-background-color: rgb(104, 230, 255);
@@ -45,7 +45,7 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
         --background-color: #ffffff;
         --foreground-color: #777777;
         --main-color: #c1aee6;
-        --highlight-color: #{$primary};
+        --highlight-color: #fecde2;
         --placeholder-color: rgba(193, 174, 230, 0.25);
         /*--primary-background-color: rgba(254, 205, 226, 0.75);
         --backdrop-color: rgba(0, 0, 0, 0.75);*/
@@ -3202,7 +3202,7 @@ label .scrollable>div {
 
             .marker {
                 background-color: var(--highlight-color);
-                color: var(--foreground-color) !important;
+                color: var(--background-color) !important;
                 border-radius: 4px;
                 padding: 4px 8px 4px 8px;
                 transition: 0.5s;
