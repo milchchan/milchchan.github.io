@@ -28,7 +28,7 @@ import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
-    authDomain: "milchchan.firebaseapp.com",
+    authDomain: "auth.milchchan.com",
     databaseURL: "https://milchchan.firebaseio.com",
     projectId: "milchchan",
     storageBucket: "milchchan.appspot.com",
