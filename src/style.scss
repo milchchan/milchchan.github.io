@@ -2570,6 +2570,7 @@ label .scrollable>div {
                                 word-wrap: break-word;
                                 white-space: normal;
                                 text-shadow: none;
+                                color: var(--background-color);
 
                                 span {
                                     margin: 0 !important;
@@ -2579,7 +2580,6 @@ label .scrollable>div {
                                     transform: rotate(0.03deg);
                                     word-wrap: break-word;
                                     white-space: normal;
-                                    color: var(--background-color);
                                 }
 
                                 span.highlight {
