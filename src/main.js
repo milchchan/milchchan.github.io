@@ -453,96 +453,111 @@ window.addEventListener("load", event => {
                     provider.addScope("profile");
                     provider.addScope("email");
 
-                    await signInWithRedirect(auth, provider);
-                    /*try {
-                        const result = await signInWithPopup(auth, provider);
-                        const credential = GoogleAuthProvider.credentialFromResult(result);
-
-                        for (const data of result.user.providerData) {
-                            try {
-                                await updateProfile(this.user, {
-                                    displayName: data.displayName,
-                                    photoURL: data.photoURL
-                                });
-                            } catch (e) {
-                                console.error(e.code, e.message);
-                            }
-
-                            break;
-                        }
-
-                        try {
-                            localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, idToken: credential.idToken }));
-                        } catch (e) {
-                            localStorage.removeItem("credential");
-                        }
+                    try {
+                        await signInWithRedirect(auth, provider);
                     } catch (error) {
                         console.error(error.code, error.message);
-                    }*/
+
+                        try {
+                            const result = await signInWithPopup(auth, provider);
+                            const credential = GoogleAuthProvider.credentialFromResult(result);
+    
+                            for (const data of result.user.providerData) {
+                                try {
+                                    await updateProfile(this.user, {
+                                        displayName: data.displayName,
+                                        photoURL: data.photoURL
+                                    });
+                                } catch (e) {
+                                    console.error(e.code, e.message);
+                                }
+    
+                                break;
+                            }
+    
+                            try {
+                                localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, idToken: credential.idToken }));
+                            } catch (e) {
+                                localStorage.removeItem("credential");
+                            }
+                        } catch (error) {
+                            console.error(error.code, error.message);
+                        }
+                    }
                 } else if (event === FacebookAuthProvider.PROVIDER_ID) {
                     const provider = new FacebookAuthProvider();
 
                     provider.addScope("public_profile");
 
-                    await signInWithRedirect(auth, provider);
-                    /*try {
-                        const result = await signInWithPopup(auth, provider);
-                        const credential = FacebookAuthProvider.credentialFromResult(result);
-
-                        for (const data of result.user.providerData) {
-                            try {
-                                await updateProfile(this.user, {
-                                    displayName: data.displayName,
-                                    photoURL: data.photoURL
-                                });
-                            } catch (e) {
-                                console.error(e.code, e.message);
-                            }
-
-                            break;
-                        }
-
-                        try {
-                            localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken }));
-                        } catch (e) {
-                            localStorage.removeItem("credential");
-                        }
+                    try {
+                        await signInWithRedirect(auth, provider);
                     } catch (error) {
                         console.error(error.code, error.message);
-                    }*/
+
+                        try {
+                            const result = await signInWithPopup(auth, provider);
+                            const credential = FacebookAuthProvider.credentialFromResult(result);
+
+                            for (const data of result.user.providerData) {
+                                try {
+                                    await updateProfile(this.user, {
+                                        displayName: data.displayName,
+                                        photoURL: data.photoURL
+                                    });
+                                } catch (e) {
+                                    console.error(e.code, e.message);
+                                }
+
+                                break;
+                            }
+
+                            try {
+                                localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken }));
+                            } catch (e) {
+                                localStorage.removeItem("credential");
+                            }
+                        } catch (error) {
+                            console.error(error.code, error.message);
+                        }
+                    }
                 } else if (event === TwitterAuthProvider.PROVIDER_ID) {
-                    await signInWithRedirect(auth, new TwitterAuthProvider());
-                    /*const provider = new TwitterAuthProvider();
+                    const provider = new TwitterAuthProvider();
 
                     try {
-                        const result = await signInWithPopup(auth, provider);
-                        const credential = TwitterAuthProvider.credentialFromResult(result);
-
-                        for (const data of result.user.providerData) {
-                            const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
-
-                            try {
-                                await updateProfile(this.user, {
-                                    displayName: data.displayName,
-                                    photoURL: photoUrl
-                                });
-                            } catch (e) {
-                                console.error(e.code, e.message);
-                            }
-
-                            break;
-                        }
-
-                        this.user['link'] = `https://twitter.com/${result._tokenResponse.screenName}`;
-
-                        try {
-                            localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, secret: credential.secret }));
-                        } catch (e) {
-                            localStorage.removeItem("credential");
-                        }
+                        await signInWithRedirect(auth, provider);
                     } catch (error) {
                         console.error(error.code, error.message);
-                    }*/
+
+                        try {
+                            const result = await signInWithPopup(auth, provider);
+                            const credential = TwitterAuthProvider.credentialFromResult(result);
+
+                            for (const data of result.user.providerData) {
+                                const photoUrl = data.photoURL.replace(/_normal\.jpg$/, '.jpg');
+
+                                try {
+                                    await updateProfile(this.user, {
+                                        displayName: data.displayName,
+                                        photoURL: photoUrl
+                                    });
+                                } catch (e) {
+                                    console.error(e.code, e.message);
+                                }
+
+                                break;
+                            }
+
+                            this.user['link'] = `https://twitter.com/${result._tokenResponse.screenName}`;
+
+                            try {
+                                localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, secret: credential.secret }));
+                            } catch (e) {
+                                localStorage.removeItem("credential");
+                            }
+                        } catch (error) {
+                            console.error(error.code, error.message);
+                        }
+                    }
                 }
             },
             signOut: async function (event) {
