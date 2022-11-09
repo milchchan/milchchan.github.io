@@ -163,6 +163,12 @@ label .scrollable>div {
     vertical-align: middle;
 }
 
+.sidebar a .scrollable:hover,
+.sidebar button .scrollable:hover,
+.sidebar label .scrollable:hover {
+    transform: translate3d(-100%, 0%, 0);
+}
+
 .button:focus:not(:active),
 .button.is-focused:not(:active) {
     box-shadow: none;
@@ -785,7 +791,6 @@ label .scrollable>div {
                         border: 0px solid transparent;
                         background: transparent;
                         background-clip: padding-box;
-                        height: fit-content;
                         line-height: calc(0.75rem * 1.5);
                         backface-visibility: hidden;
                         color: #000000;
@@ -796,21 +801,37 @@ label .scrollable>div {
                         height: fit-content;
 
                         .clip {
-                            display: inline-block;
+                            position: relative;
+                            display: flex;
                             overflow: hidden;
                             box-sizing: content-box;
                             height: calc(0.75rem * 1.5);
                             transform: translate(0px, -1px);
-                            
-                            .scrollable div {
+                            box-sizing: border-box;
+
+                            .scrollable {
                                 display: flex;
+                                flex-direction: row;
                                 align-items: center;
-                                font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                                font-size: 0.75rem !important;
-                                transform: rotate(0.03deg) !important;
-                                line-height: 0.75rem !important;
-                                height: calc(0.75rem * 1.5);
-                                vertical-align: middle;
+                                justify-content: flex-start;
+                                margin: 0px -4px 0px -4px !important;
+
+                                div {
+                                    display: flex;
+                                    align-items: center;
+                                    margin: 0px 4px 0px 4px !important;
+                                    font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                    font-size: 0.75rem !important;
+                                    transform: rotate(0.03deg) !important;
+                                    line-height: 0.75rem !important;
+                                    height: calc(0.75rem * 1.5);
+                                    vertical-align: middle;
+                                }
+
+                                div:last-child:not(:first-child) {
+                                    position: absolute;
+                                    left: 100%;
+                                }
                             }
                         }
 
@@ -831,9 +852,15 @@ label .scrollable>div {
                         }
 
                         .wrap {
+                            position: relative;
                             margin: 0px 0px 0px 0px !important;
                             color: var(--main-color);
                             transition: 0.5s;
+                            width: fit-content;
+                            height: fit-content;
+                            min-height: fit-content;
+                            box-sizing: border-box;
+                            overflow: hidden;
                         }
                     }
 
