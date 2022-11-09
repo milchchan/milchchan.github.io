@@ -1989,70 +1989,77 @@
                                         v-else-if="user === null && (mode === 'sign-in' || mode === '_sign-in')"
                                         key="sign-in">
                                         <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
-                                                            @click="signIn('google.com')">
-                                                            <span class="icon">
-                                                                <i class="fa-brands fa-google"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>Googleでサインイン</div>
-                                                                        <div>Googleでサインイン</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                            <nav class="panel">
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7"
+                                                                    type="button" @click="signIn('google.com')">
+                                                                    <span class="icon">
+                                                                        <i class="fa-brands fa-google"></i>
+                                                                    </span>
+                                                                    <span
+                                                                        class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>Googleでサインイン</div>
+                                                                                <div>Googleでサインイン</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
-                                                            @click="signIn('facebook.com')">
-                                                            <span class="icon">
-                                                                <i class="fa-brands fa-facebook"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>Facebookでサインイン</div>
-                                                                        <div>Facebookでサインイン</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7"
+                                                                    type="button" @click="signIn('facebook.com')">
+                                                                    <span class="icon">
+                                                                        <i class="fa-brands fa-facebook"></i>
+                                                                    </span>
+                                                                    <span
+                                                                        class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>Facebookでサインイン</div>
+                                                                                <div>Facebookでサインイン</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
-                                                            @click="signIn('twitter.com')">
-                                                            <span class="icon">
-                                                                <i class="fa-brands fa-twitter"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>Twitterでサインイン</div>
-                                                                        <div>Twitterでサインイン</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7"
+                                                                    type="button" @click="signIn('twitter.com')">
+                                                                    <span class="icon">
+                                                                        <i class="fa-brands fa-twitter"></i>
+                                                                    </span>
+                                                                    <span
+                                                                        class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>Twitterでサインイン</div>
+                                                                                <div>Twitterでサインイン</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
+                                            </nav>
                                         </div>
                                     </nav>
                                     <nav class="level" v-else-if="mode == 'about' || mode == '_about'" key="about">
@@ -2930,305 +2937,309 @@
                                             </article>
                                         </div>
                                         <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'sign-in'"
-                                                            v-if="user === null">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>お話し</div>
-                                                                        <div>お話し</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button"
-                                                            @click="mode = { collection: null, index: 0, selected: [], disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
-                                                            v-else>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>お話し</div>
-                                                                        <div>お話し</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'sign-in'"
-                                                            v-if="user === null">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>教える</div>
-                                                                        <div>教える</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button"
-                                                            @click="isLearning = true; isRevealed = false;" v-else>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>教える</div>
-                                                                        <div>教える</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'sign-in'"
-                                                            v-if="user === null">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>言葉</div>
-                                                                        <div>言葉</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button"
-                                                            @click="mode = { words: null, next: null, indexes: [], selected: [], disposable: false }; next('words', mode.next);"
-                                                            v-else>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>言葉</div>
-                                                                        <div>言葉</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item" v-if="isDebug">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'sign-in'"
-                                                            v-if="user === null">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>探す</div>
-                                                                        <div>探す</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" v-bind:disabled="user === null"
-                                                            @click="discover(); isRevealed = false;" v-else>
-                                                            <transition name="fade" mode="out-in">
-                                                                <span class="icon" v-if="isDiscovering"
-                                                                    key="discovering">
-                                                                    <i class="fa-solid fa-spinner updating"></i>
-                                                                </span>
-                                                                <span class="icon" v-else key="ready">
-                                                                    <i class="fa-solid fa-star"></i>
-                                                                </span>
-                                                            </transition>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>探す</div>
-                                                                        <div>探す</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button"
-                                                            @click="mode = { likes: null, next: null, indexes: [], disposable: false }; next('likes', mode.next, 1);">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>お気に入り</div>
-                                                                        <div>お気に入り</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button"
-                                                            @click="mode = { stats: null, words: null, likes: null, disposable: false }; next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null); next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>活動記録</div>
-                                                                        <div>活動記録</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'sign-in'"
-                                                            v-if="user === null">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>ミルヒちゃんにメール</div>
-                                                                        <div>ミルヒちゃんにメール</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'mail'" v-else>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>ミルヒちゃんにメール</div>
-                                                                        <div>ミルヒちゃんにメール</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item" v-if="isDebug">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <label
-                                                            class="file-label file button is-rounded is-size-7 is-primary has-text-weight-bold">
-                                                            <input class="file-input" type="button"
-                                                                @click="mode = 'sign-in'" v-if="user === null">
-                                                            <input class="file-input" type="file" name="upload"
-                                                                accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
-                                                                multiple v-bind:disabled="isUploading" @change="upload"
-                                                                v-else>
-                                                            <div class="file-cta_">
-                                                                <transition name="fade" mode="out-in">
-                                                                    <span class="icon" v-if="isUploading"
-                                                                        key="uploading">
-                                                                        <i class="fa-solid fa-spinner updating"></i>
-                                                                    </span>
-                                                                    <span class="icon" v-else key="ready">
+                                            <nav class="panel is-primary">
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" @click="mode = 'sign-in'"
+                                                                    v-if="user === null">
+                                                                    <span class="icon">
                                                                         <i class="fa-solid fa-star"></i>
                                                                     </span>
-                                                                </transition>
-                                                                <span class="file-label wrap">
-                                                                    <div class="clip">
-                                                                        <div class="scrollable">
-                                                                            <div>背景をアップロード</div>
-                                                                            <div>背景をアップロード</div>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>お話し</div>
+                                                                                <div>お話し</div>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                </span>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button"
+                                                                    @click="mode = { collection: null, index: 0, selected: [], disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
+                                                                    v-else>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>お話し</div>
+                                                                                <div>お話し</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
                                                             </div>
-                                                        </label>
-                                                    </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7 is-primary"
-                                                            type="button" @click="mode = 'support'">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-star"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>ミルヒちゃんを応援</div>
-                                                                        <div>ミルヒちゃんを応援</div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" @click="mode = 'sign-in'"
+                                                                    v-if="user === null">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>教える</div>
+                                                                                <div>教える</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button"
+                                                                    @click="isLearning = true; isRevealed = false;" v-else>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>教える</div>
+                                                                                <div>教える</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" @click="mode = 'sign-in'"
+                                                                    v-if="user === null">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>言葉</div>
+                                                                                <div>言葉</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button"
+                                                                    @click="mode = { words: null, next: null, indexes: [], selected: [], disposable: false }; next('words', mode.next);"
+                                                                    v-else>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>言葉</div>
+                                                                                <div>言葉</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block" v-if="isDebug">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" @click="mode = 'sign-in'"
+                                                                    v-if="user === null">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>探す</div>
+                                                                                <div>探す</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" v-bind:disabled="user === null"
+                                                                    @click="discover(); isRevealed = false;" v-else>
+                                                                    <transition name="fade" mode="out-in">
+                                                                        <span class="icon" v-if="isDiscovering"
+                                                                            key="discovering">
+                                                                            <i class="fa-solid fa-spinner updating"></i>
+                                                                        </span>
+                                                                        <span class="icon" v-else key="ready">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                    </transition>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>探す</div>
+                                                                                <div>探す</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button"
+                                                                    @click="mode = { likes: null, next: null, indexes: [], disposable: false }; next('likes', mode.next, 1);">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold has-text-black">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>お気に入り</div>
+                                                                                <div>お気に入り</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button"
+                                                                    @click="mode = { stats: null, words: null, likes: null, disposable: false }; next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null); next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>活動記録</div>
+                                                                                <div>活動記録</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" @click="mode = 'sign-in'"
+                                                                    v-if="user === null">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>ミルヒちゃんにメール</div>
+                                                                                <div>ミルヒちゃんにメール</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" @click="mode = 'mail'" v-else>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>ミルヒちゃんにメール</div>
+                                                                                <div>ミルヒちゃんにメール</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block" v-if="isDebug">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <label
+                                                                    class="file-label file button is-rounded is-size-7 is-primary has-text-weight-bold">
+                                                                    <input class="file-input" type="button"
+                                                                        @click="mode = 'sign-in'" v-if="user === null">
+                                                                    <input class="file-input" type="file" name="upload"
+                                                                        accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
+                                                                        multiple v-bind:disabled="isUploading" @change="upload"
+                                                                        v-else>
+                                                                    <div class="file-cta_">
+                                                                        <transition name="fade" mode="out-in">
+                                                                            <span class="icon" v-if="isUploading"
+                                                                                key="uploading">
+                                                                                <i class="fa-solid fa-spinner updating"></i>
+                                                                            </span>
+                                                                            <span class="icon" v-else key="ready">
+                                                                                <i class="fa-solid fa-star"></i>
+                                                                            </span>
+                                                                        </transition>
+                                                                        <span class="file-label wrap">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>背景をアップロード</div>
+                                                                                    <div>背景をアップロード</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </span>
                                                                     </div>
-                                                                </div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" @click="mode = 'support'">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>ミルヒちゃんを応援</div>
+                                                                                <div>ミルヒちゃんを応援</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                            </nav>
                                         </div>
                                         <div class="level-item">
                                             <article class="media">
@@ -3240,26 +3251,30 @@
                                             </article>
                                         </div>
                                         <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
-                                                            @click="mode = 'about'">
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>ミルヒちゃんもいっしょに魔法少女しようね！</div>
-                                                                        <div>ミルヒちゃんもいっしょに魔法少女しようね！</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-chevron-right"></i>
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                            <nav class="panel">
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7" type="button"
+                                                                    @click="mode = 'about'">
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>ミルヒちゃんもいっしょに魔法少女しようね！</div>
+                                                                                <div>ミルヒちゃんもいっしょに魔法少女しようね！</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-chevron-right"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
+                                            </nav>
                                         </div>
                                         <div class="level-item">
                                             <article class="media">
@@ -3271,48 +3286,52 @@
                                             </article>
                                         </div>
                                         <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
-                                                            @click="mode = 'milch'">
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>ミルヒちゃん</div>
-                                                                        <div>ミルヒちゃん</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-chevron-right"></i>
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                            <nav class="panel">
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7" type="button"
+                                                                    @click="mode = 'milch'">
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>ミルヒちゃん</div>
+                                                                                <div>ミルヒちゃん</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-chevron-right"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <button class="button is-rounded is-size-7" type="button"
-                                                            @click="mode = 'merku'">
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>メルクちゃん</div>
-                                                                        <div>メルクちゃん</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-chevron-right"></i>
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7" type="button"
+                                                                    @click="mode = 'merku'">
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>メルクちゃん</div>
+                                                                                <div>メルクちゃん</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-chevron-right"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
+                                            </nav>
                                         </div>
                                         <div class="level-item">
                                             <article class="media">
@@ -3324,81 +3343,85 @@
                                             </article>
                                         </div>
                                         <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <a class="button is-rounded is-size-7"
-                                                            href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q"
-                                                            target="_blank">
-                                                            <span class="icon">
-                                                                <i class="fab fa-windows"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>Apricot</div>
-                                                                        <div>Apricot</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-up-right-from-square"></i>
-                                                            </span>
-                                                        </a>
-                                                    </div>
+                                            <nav class="panel">
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <a class="button is-rounded is-size-7"
+                                                                    href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q"
+                                                                    target="_blank">
+                                                                    <span class="icon">
+                                                                        <i class="fab fa-windows"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>Apricot</div>
+                                                                                <div>Apricot</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-up-right-from-square"></i>
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <a class="button is-rounded is-size-7"
-                                                            href="https://apps.apple.com/jp/app/id1130755997"
-                                                            target="_blank">
-                                                            <span class="icon">
-                                                                <i class="fab fa-apple"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>Wonderland</div>
-                                                                        <div>Wonderland</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-up-right-from-square"></i>
-                                                            </span>
-                                                        </a>
-                                                    </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <a class="button is-rounded is-size-7"
+                                                                    href="https://apps.apple.com/jp/app/id1130755997"
+                                                                    target="_blank">
+                                                                    <span class="icon">
+                                                                        <i class="fab fa-apple"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>Wonderland</div>
+                                                                                <div>Wonderland</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-up-right-from-square"></i>
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
-                                        </div>
-                                        <div class="level-item">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="content">
-                                                        <a class="button is-rounded is-size-7"
-                                                            href="//clock.milchchan.com/" target="_blank">
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-globe"></i>
-                                                            </span>
-                                                            <span class="wrap has-text-weight-bold has-text-black">
-                                                                <div class="clip">
-                                                                    <div class="scrollable">
-                                                                        <div>ミルヒちゃんクロック</div>
-                                                                        <div>ミルヒちゃんクロック</div>
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                            <span class="icon">
-                                                                <i class="fa-solid fa-up-right-from-square"></i>
-                                                            </span>
-                                                        </a>
-                                                    </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <a class="button is-rounded is-size-7"
+                                                                    href="//clock.milchchan.com/" target="_blank">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-globe"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>ミルヒちゃんクロック</div>
+                                                                                <div>ミルヒちゃんクロック</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-up-right-from-square"></i>
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </article>
                                                 </div>
-                                            </article>
+                                            </nav>
                                         </div>
                                         <div class="level-item">
                                             <article class="media">
