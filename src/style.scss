@@ -2759,8 +2759,8 @@ label .scrollable>div {
                     }
 
                     >.balloon {
-                        margin: -16px 0px 0px calc(50% + 128px);
-                        transform: translate3d(-50%, 16px, 0px);
+                        margin: -16px 0px 0px 0px;
+                        transform: translate(calc(96px - 100%), 16px);
 
                         >button,
                         >.button {
