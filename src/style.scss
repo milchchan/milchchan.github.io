@@ -2746,11 +2746,13 @@ label .scrollable>div {
 
                             .icon {
                                 color: var(--accent-color);
+                                justify-content: flex-start;
                             }
 
                             span.wrap+.icon:last-of-type {
                                 color: var(--main-color);
                                 transition: 0.5s;
+                                justify-content: flex-end !important;
                             }
 
                             .icon:first-child+div {
