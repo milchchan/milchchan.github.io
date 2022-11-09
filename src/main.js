@@ -453,11 +453,7 @@ window.addEventListener("load", event => {
                     provider.addScope("profile");
                     provider.addScope("email");
 
-                    try {
-                        await signInWithRedirect(auth, provider);
-                    } catch (error) {
-                        console.error(error.code, error.message);
-
+                    if (window.navigator.userAgent.indexOf("Safari") > -1 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                         try {
                             const result = await signInWithPopup(auth, provider);
                             const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -483,17 +479,17 @@ window.addEventListener("load", event => {
                         } catch (error) {
                             console.error(error.code, error.message);
                         }
+                    } else {
+                        signInWithRedirect(auth, provider);
                     }
                 } else if (event === FacebookAuthProvider.PROVIDER_ID) {
                     const provider = new FacebookAuthProvider();
 
                     provider.addScope("public_profile");
 
-                    try {
-                        await signInWithRedirect(auth, provider);
-                    } catch (error) {
-                        console.error(error.code, error.message);
-
+                    if (window.navigator.userAgent.indexOf("Safari") > -1 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                        signInWithRedirect(auth, provider);
+                    } else {
                         try {
                             const result = await signInWithPopup(auth, provider);
                             const credential = FacebookAuthProvider.credentialFromResult(result);
@@ -523,11 +519,7 @@ window.addEventListener("load", event => {
                 } else if (event === TwitterAuthProvider.PROVIDER_ID) {
                     const provider = new TwitterAuthProvider();
 
-                    try {
-                        await signInWithRedirect(auth, provider);
-                    } catch (error) {
-                        console.error(error.code, error.message);
-
+                    if (window.navigator.userAgent.indexOf("Safari") > -1 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                         try {
                             const result = await signInWithPopup(auth, provider);
                             const credential = TwitterAuthProvider.credentialFromResult(result);
@@ -557,6 +549,8 @@ window.addEventListener("load", event => {
                         } catch (error) {
                             console.error(error.code, error.message);
                         }
+                    } else {
+                        signInWithRedirect(auth, provider);
                     }
                 }
             },
