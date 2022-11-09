@@ -106,11 +106,11 @@
 
 <body>
     <div id="app">
-        <div class="sidebar is-hidden-mobile" v-cloak>
+        <div class="sidebar is-hidden-mobile">
             <div class="level">
                 <div class="level-item">
                     <div class="level">
-                        <div class="level-item">
+                        <div class="level-item" v-cloak>
                             <transition name="fade" mode="out-in">
                                 <button class="button" type="button" @click="isOverlayed = false" v-if="isOverlayed"
                                     key="close">
@@ -149,7 +149,7 @@
                                 </button>
                             </transition>
                         </div>
-                        <div class="level-item">
+                        <div class="level-item" v-cloak>
                             <div class="rotation-wrapper-outer">
                                 <div class="rotation-wrapper-inner">
                                     <div class="rotate">
@@ -188,7 +188,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="level-item">
+                        <div class="level-item" v-cloak>
                             <div class="rotation-wrapper-outer">
                                 <div class="rotation-wrapper-inner">
                                     <div class="rotate">
@@ -210,7 +210,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="level-item">
+                        <div class="level-item" v-cloak>
                             <div class="rotation-wrapper-outer">
                                 <div class="rotation-wrapper-inner">
                                     <div class="rotate">
