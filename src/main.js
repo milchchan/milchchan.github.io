@@ -453,7 +453,7 @@ window.addEventListener("load", event => {
                     provider.addScope("profile");
                     provider.addScope("email");
 
-                    signInWithRedirect(auth, provider);
+                    await signInWithRedirect(auth, provider);
                     /*try {
                         const result = await signInWithPopup(auth, provider);
                         const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -484,7 +484,7 @@ window.addEventListener("load", event => {
 
                     provider.addScope("public_profile");
 
-                    signInWithRedirect(auth, provider);
+                    await signInWithRedirect(auth, provider);
                     /*try {
                         const result = await signInWithPopup(auth, provider);
                         const credential = FacebookAuthProvider.credentialFromResult(result);
@@ -511,7 +511,7 @@ window.addEventListener("load", event => {
                         console.error(error.code, error.message);
                     }*/
                 } else if (event === TwitterAuthProvider.PROVIDER_ID) {
-                    signInWithRedirect(auth, new TwitterAuthProvider());
+                    await signInWithRedirect(auth, new TwitterAuthProvider());
                     /*const provider = new TwitterAuthProvider();
 
                     try {
