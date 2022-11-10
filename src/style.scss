@@ -1068,11 +1068,11 @@ label .scrollable>div {
     min-height: 100%;
     transform: translate3d(0, 0%, 0);
     overflow: hidden;
-    background: url('/images/Background.png') 50% 50% repeat, var(--main-color) !important;
+    background: url('/images/Background.png') 0 0 repeat !important;
+    background-color: var(--main-color) !important;
     background-size: 100px 100px;
-    animation: loop 10s linear infinite;
+    animation: loop 10s linear infinite forwards;
     transition: .5s;
-    will-change: transform;
 }
 
 #app {
@@ -4122,7 +4122,8 @@ label .scrollable>div {
     }
 
     .blind {
-        background: url('/images/Background@2x.png') 50% 50% repeat, var(--foreground-color);
+        background: url('/images/Background@2x.png') 0 0 repeat !important;
+        background-color: var(--main-color) !important;
         background-size: 100px 100px;
     }
 
@@ -4155,6 +4156,12 @@ label .scrollable>div {
         background-size: 24px 24px;
     }
 
+    .blind {
+        background: url('/images/Background@3x.png') 0 0 repeat !important;
+        background-color: var(--main-color) !important;
+        background-size: 100px 100px;
+    }
+
     /*.background::after {
         background: rgba(0, 0, 0, 0.1);
         background-size: 2px 2px;
@@ -4174,11 +4181,6 @@ label .scrollable>div {
     #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
         background: var(--background-image-3x) 50% 50% repeat;
         background-size: 24px 24px;
-    }
-
-    .blind {
-        background: url('/images/Background@3x.png') 50% 50% repeat, var(--foreground-color);
-        background-size: 100px 100px;
     }
 }
 
