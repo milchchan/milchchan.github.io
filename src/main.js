@@ -457,7 +457,7 @@ window.addEventListener("load", event => {
                         try {
                             const result = await signInWithPopup(auth, provider);
                             const credential = GoogleAuthProvider.credentialFromResult(result);
-    
+
                             for (const data of result.user.providerData) {
                                 try {
                                     await updateProfile(this.user, {
@@ -467,10 +467,10 @@ window.addEventListener("load", event => {
                                 } catch (e) {
                                     console.error(e.code, e.message);
                                 }
-    
+
                                 break;
                             }
-    
+
                             try {
                                 localStorage.setItem("credential", JSON.stringify({ providerId: credential.providerId, accessToken: credential.accessToken, idToken: credential.idToken }));
                             } catch (e) {
@@ -981,7 +981,7 @@ window.addEventListener("load", event => {
                                     return (count || 0) + 1;
                                 });
 
-                                if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0) {
+                                if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0 && this.background.nonce === null) {
                                     this.background.image = undefined;
                                     this.preload();
                                 }
@@ -1027,8 +1027,10 @@ window.addEventListener("load", event => {
                 this.isSubmitting = false;
             },
             like: async function (message, canvas) {
-                this.background.image = undefined;
-                this.preload();
+                if (this.background.nonce === null) {
+                    this.background.image = undefined;
+                    this.preload();
+                }
 
                 return;
 
@@ -2279,6 +2281,7 @@ window.addEventListener("load", event => {
                 }
             },
             blinded: async function () {
+                return;
                 if (this.background.timeout.id === null) {
                     const nonce = this.background.nonce;
 

@@ -1065,14 +1065,17 @@ label .scrollable>div {
     top: 0;
     left: 0;
     width: 100%;
+    height: 100%;
     min-height: 100%;
     transform: translate3d(0, 0%, 0);
     overflow: hidden;
-    background: url('/images/Background.png') 0 0 repeat !important;
-    background-color: var(--main-color) !important;
+    background: url('/images/Background.png') 0 0 repeat;
+    background-color: var(--main-color);
     background-size: 100px 100px;
     animation: loop 10s linear forwards infinite;
     transition: .5s;
+    backface-visibility: hidden;
+    perspective: 1000;
 }
 
 #app {
@@ -4122,8 +4125,8 @@ label .scrollable>div {
     }
 
     .blind {
-        background: url('/images/Background@2x.png') 0 0 repeat !important;
-        background-color: var(--main-color) !important;
+        background: url('/images/Background@2x.png') 0 0 repeat;
+        background-color: var(--main-color);
         background-size: 100px 100px;
     }
 
@@ -4157,8 +4160,8 @@ label .scrollable>div {
     }
 
     .blind {
-        background: url('/images/Background@3x.png') 0 0 repeat !important;
-        background-color: var(--main-color) !important;
+        background: url('/images/Background@3x.png') 0 0 repeat;
+        background-color: var(--main-color);
         background-size: 100px 100px;
     }
 
