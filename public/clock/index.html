@@ -158,12 +158,11 @@
             padding: 0px 0px 0px 0px;
             width: 120px;
             height: 320px;
-            background: #ffffff;
-            background: url('/images/Background.png') 50% 50% repeat, var(--foreground-color);
+            background: url('/images/Background.png') 0 0 repeat;
+            background-color: var(--foreground-color);
             background-size: 100px 100px;
-            animation: loop 10s linear infinite;
+            animation: loop 10s linear infinite forwards;
             transition: .5s;
-            will-change: transform;
         }
 
         div.left {
@@ -313,7 +312,8 @@
         @media screen and (-webkit-min-device-pixel-ratio:2),
         (min-resolution: 2dppx) {
             div.loading {
-                background: url('/images/Background@2x.png') 50% 50% repeat, var(--foreground-color);
+                background: url('/images/Background@2x.png') repeat;
+                background-color: var(--foreground-color);
                 background-size: 100px 100px;
             }
         }
@@ -321,7 +321,8 @@
         @media screen and (-webkit-min-device-pixel-ratio:3),
         (min-resolution: 3dppx) {
             div.loading {
-                background: url('/images/Background@3x.png') 50% 50% repeat, var(--foreground-color);
+                background: url('/images/Background@3x.png') repeat;
+                background-color: var(--foreground-color);
                 background-size: 100px 100px;
             }
         }
@@ -1144,7 +1145,7 @@
                                     console.error(e);
                                 }
 
-                                const a2 = loadingElement.animate([
+                                /*const a2 = loadingElement.animate([
                                     {
                                         transform: "translate3d(0px, -100%, 0)"
                                     }
@@ -1157,7 +1158,7 @@
 
                                 a2.onfinish = () => {
                                     loadingElement.remove();
-                                }
+                                }*/
                             }
                         }
                     }
