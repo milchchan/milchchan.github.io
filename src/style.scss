@@ -763,7 +763,26 @@ label .scrollable>div {
 
                 >.level-item:not(:first-child) {
                     margin: 0;
-                    padding: 32px 0px 0px 0px;
+                    padding: 0;
+
+                    >.wrapper {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: flex-start;
+                        justify-content: center;
+                        width: 48px;
+                        height: fit-content;
+
+                        >hr {
+                            border-width: 0;
+                            margin: 32px 0px 32px 0px;
+                            padding: 0;
+                            width: 16px;
+                            height: 1px;
+                            background-color: var(--accent-color);
+                            text-align: center !important;
+                        }
+                    }
 
                     .rotation-wrapper-outer {
                         display: table;
@@ -798,7 +817,7 @@ label .scrollable>div {
                         align-items: center;
                         justify-content: center;
                         width: fit-content;
-                        height: fit-content;
+                        height: 48px;
 
                         .clip {
                             position: relative;
@@ -838,9 +857,9 @@ label .scrollable>div {
                         .icon {
                             margin: 0 !important;
                             color: var(--accent-color);
-                            width: 48px;
-                            height: 48px;
-                            align-items: center;
+                            width: 32px;
+                            height: 32px;
+                            align-items: flex-start;
                             justify-content: center;
                             transform: rotate(90deg);
                         }
@@ -879,6 +898,11 @@ label .scrollable>div {
                         margin: 0;
                         height: calc(0.75rem * 1.5);
                     }
+                }
+
+                >.level-item:nth-child(2) {
+                    margin: 0;
+                    padding: 32px 0px 0px 0px;
                 }
             }
         }
@@ -2674,10 +2698,11 @@ label .scrollable>div {
                 width: 100%;
             }
 
-            >.panel.is-primary{
+            >.panel.is-primary {
                 background: var(--main-color) !important;
 
-                .panel-tabs:not(:last-child), .panel-block:not(:last-child) {
+                .panel-tabs:not(:last-child),
+                .panel-block:not(:last-child) {
                     border-bottom: 1px solid rgba(255, 255, 255, 10%);
                 }
             }
@@ -2688,7 +2713,8 @@ label .scrollable>div {
                 box-shadow: none;
                 /*box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);*/
 
-                .panel-tabs:not(:last-child), .panel-block:not(:last-child) {
+                .panel-tabs:not(:last-child),
+                .panel-block:not(:last-child) {
                     border-bottom: 1px solid rgba(119, 119, 119, 5%);
                 }
 

@@ -189,6 +189,11 @@
                             </div>
                         </div>
                         <div class="level-item" v-cloak>
+                            <div class="wrapper">
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="level-item" v-cloak>
                             <div class="rotation-wrapper-outer">
                                 <div class="rotation-wrapper-inner">
                                     <div class="rotate">
@@ -208,6 +213,11 @@
                                         </a>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="level-item" v-cloak>
+                            <div class="wrapper">
+                                <hr>
                             </div>
                         </div>
                         <div class="level-item" v-cloak>
@@ -1999,8 +2009,7 @@
                                                                     <span class="icon">
                                                                         <i class="fa-brands fa-google"></i>
                                                                     </span>
-                                                                    <span
-                                                                        class="wrap has-text-weight-bold">
+                                                                    <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
                                                                                 <div>Googleでサインイン</div>
@@ -2022,8 +2031,7 @@
                                                                     <span class="icon">
                                                                         <i class="fa-brands fa-facebook"></i>
                                                                     </span>
-                                                                    <span
-                                                                        class="wrap has-text-weight-bold">
+                                                                    <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
                                                                                 <div>Facebookでサインイン</div>
@@ -2045,8 +2053,7 @@
                                                                     <span class="icon">
                                                                         <i class="fa-brands fa-twitter"></i>
                                                                     </span>
-                                                                    <span
-                                                                        class="wrap has-text-weight-bold">
+                                                                    <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
                                                                                 <div>Twitterでサインイン</div>
@@ -2998,7 +3005,8 @@
                                                                 </button>
                                                                 <button class="button is-rounded is-size-7 is-primary"
                                                                     type="button"
-                                                                    @click="isLearning = true; isRevealed = false;" v-else>
+                                                                    @click="isLearning = true; isRevealed = false;"
+                                                                    v-else>
                                                                     <span class="icon">
                                                                         <i class="fa-solid fa-star"></i>
                                                                     </span>
@@ -3108,7 +3116,8 @@
                                                                     <span class="icon">
                                                                         <i class="fa-solid fa-star"></i>
                                                                     </span>
-                                                                    <span class="wrap has-text-weight-bold has-text-black">
+                                                                    <span
+                                                                        class="wrap has-text-weight-bold has-text-black">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
                                                                                 <div>お気に入り</div>
@@ -3191,13 +3200,14 @@
                                                                         @click="mode = 'sign-in'" v-if="user === null">
                                                                     <input class="file-input" type="file" name="upload"
                                                                         accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
-                                                                        multiple v-bind:disabled="isUploading" @change="upload"
-                                                                        v-else>
+                                                                        multiple v-bind:disabled="isUploading"
+                                                                        @change="upload" v-else>
                                                                     <div class="file-cta_">
                                                                         <transition name="fade" mode="out-in">
                                                                             <span class="icon" v-if="isUploading"
                                                                                 key="uploading">
-                                                                                <i class="fa-solid fa-spinner updating"></i>
+                                                                                <i
+                                                                                    class="fa-solid fa-spinner updating"></i>
                                                                             </span>
                                                                             <span class="icon" v-else key="ready">
                                                                                 <i class="fa-solid fa-star"></i>
@@ -3256,8 +3266,8 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <button class="button is-rounded is-size-7" type="button"
-                                                                    @click="mode = 'about'">
+                                                                <button class="button is-rounded is-size-7"
+                                                                    type="button" @click="mode = 'about'">
                                                                     <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
@@ -3291,8 +3301,8 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <button class="button is-rounded is-size-7" type="button"
-                                                                    @click="mode = 'milch'">
+                                                                <button class="button is-rounded is-size-7"
+                                                                    type="button" @click="mode = 'milch'">
                                                                     <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
@@ -3313,8 +3323,8 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <button class="button is-rounded is-size-7" type="button"
-                                                                    @click="mode = 'merku'">
+                                                                <button class="button is-rounded is-size-7"
+                                                                    type="button" @click="mode = 'merku'">
                                                                     <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
