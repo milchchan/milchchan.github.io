@@ -3,8 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#68e6ff">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#c1aee6">
   <title>404</title>
@@ -16,6 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
   <style media="screen">
     :root {
       --background-color: #ffffff;
@@ -57,22 +57,14 @@
       z-index: 1;
       margin: 0;
       padding: 0;
-      color: transparent;
-      font-family: 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
+      color: var(--foreground-color) !important;
+      font-family: 'Barlow', 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
       font-size: 50vmin;
       font-weight: bold;
       line-height: 50vmin;
-      transition: 0.5s;
-      animation: fade 0.5s ease-out;
-    }
-
-    h1>span:nth-child(odd) {
-      color: var(--accent-color);
-    }
-
-    h1>span:nth-child(even) {
-      color: var(--foreground-color);
-      transition: 0.5s;
+      animation: fade 0.5s ease-out forwards;
+      transition: color 0.5s;
+      backface-visibility: hidden;
     }
 
     .wrap {
@@ -84,9 +76,11 @@
       min-height: 100%;
       overflow: hidden;
       box-sizing: border-box;
+      backface-visibility: hidden;
     }
 
     .frame {
+      z-index: 0;
       position: relative;
       margin: 0;
       padding: 0;
@@ -95,16 +89,29 @@
       max-width: 100% !important;
       height: 100%;
       overflow: hidden;
+      background: var(--accent-color);
+    }
+
+    .frame::before {
+      z-index: 0;
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100% !important;
+      height: 100%;
       background: var(--background-image) 50% 50% no-repeat;
       background-attachment: scroll;
       background-size: cover;
       transform-origin: 50% 50%;
-      animation: load 0.5s ease-out;
-      transition: 0.5s;
+      content: "";
+      animation: load 0.5s ease-out forwards;
+      backface-visibility: hidden;
+      overflow: hidden;
+      will-change: transform;
     }
 
     #message {
-      z-index: 0;
       position: absolute;
       display: flex;
       top: 0;
@@ -139,23 +146,22 @@
 
     @keyframes load {
       from {
-        opacity: 0;
         transform: scale3d(1.1, 1.1, 1.0);
       }
 
       to {
-        opacity: 1;
         transform: scale3d(1.0, 1.0, 1.0);
       }
     }
   </style>
+  <script>[].forEach(x => console.log(x));</script>
 </head>
 
 <body>
   <div class="wrap">
     <div class="frame">
       <div id="message">
-        <h1><span>4</span><span>0</span><span>4</span></h1>
+        <h1>404</h1>
       </div>
     </div>
   </div>
