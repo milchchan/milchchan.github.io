@@ -30,13 +30,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
     <style type="text/css">
         :root {
-            --background-color: #f5f5f5;
-            --foreground-color: rgba(0, 0, 0, 0.75);
+            --background-color: #ffffff;
+            --foreground-color: #68e6ff;
+            --accent-color: #fecde2;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --foreground-color: rgba(255, 255, 255, 0.75);
+                --foreground-color: #c1aee6;
             }
         }
 
@@ -49,7 +50,7 @@
         }
 
         body {
-            color: var(--foreground-color);
+            color: var(--background-color);
             font-family: "Roboto Condensed", "Segoe UI", "Helvetica", "Arial", sans-serif;
             height: 100%;
             overflow: hidden;
@@ -94,7 +95,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background: var(--background-color);
+            background: var(--foreground-color);
             overflow: hidden;
         }
 
@@ -131,7 +132,7 @@
             left: 0px;
             top: 0px;
             margin: 0px 4px 0px 4px;
-            border: 1px solid var(--foreground-color);
+            border: 1px solid var(--accent-color);
             background: #ffffff;
             overflow: hidden;
             transition: .5s;
@@ -158,7 +159,7 @@
             width: 120px;
             height: 320px;
             background: #ffffff;
-            background: url('/images/Background.png') 50% 50% repeat, var(--background-color);
+            background: url('/images/Background.png') 50% 50% repeat, var(--accent-color);
             background-size: 100px 100px;
             animation: loop 10s linear infinite;
             transition: .5s;
@@ -234,7 +235,7 @@
         span.caption {
             user-select: none;
             float: right;
-            color: var(--foreground-color);
+            color: var(--accent-color);
             margin: 4px 8px 4px 4px;
             font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
             font-size: 0.5rem;
@@ -255,7 +256,7 @@
         }
 
         img.control {
-            border: 1px solid var(--foreground-color);
+            border: 1px solid var(--accent-color);
             margin: 0px 0px 0px 0px;
             padding: 1px 1px 1px 1px;
             vertical-align: top;
