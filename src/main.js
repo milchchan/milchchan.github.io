@@ -1027,125 +1027,122 @@ window.addEventListener("load", event => {
                 this.isSubmitting = false;
             },
             like: async function (message, canvas) {
-                if (this.background.nonce === null) {
-                    this.background.image = undefined;
-                    this.preload();
+                const user = 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
+                const timestamp = Math.floor(new Date() / 1000);
 
-                    const user = 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
-                    const timestamp = Math.floor(new Date() / 1000);
+                try {
+                    let result;
 
-                    try {
-                        let result;
+                    if (canvas === null) {
+                        result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
+                            if (current) {
+                                return undefined;
+                            }
 
-                        if (canvas === null) {
+                            return { text: message.original, author: this.character.name, user: user, timestamp: timestamp };
+                        });
+                    } else {
+                        function generateUuid() {
+                            // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
+                            // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+                            let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
+
+                            for (let i = 0, len = chars.length; i < len; i++) {
+                                switch (chars[i]) {
+                                    case "x":
+                                        chars[i] = Math.floor(Math.random() * 16).toString(16);
+                                        break;
+                                    case "y":
+                                        chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
+                                        break;
+                                }
+                            }
+
+                            return chars.join("");
+                        }
+
+                        const self = this;
+                        const type = "image/png";
+                        const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), await new Promise(resolve => {
+                            canvas.toBlob(blob => {
+                                resolve(blob);
+                            }, type);
+                        }), {
+                            contentType: type
+                        });
+
+                        try {
+                            const path = await new Promise((resolve, reject) => {
+                                uploadTask.on("state_changed", snapshot => {
+                                    self.progress = snapshot.bytesTransferred / snapshot.totalBytes;
+                                }, (error) => {
+                                    reject(error);
+                                }, () => {
+                                    resolve(uploadTask.snapshot.ref.fullPath);
+                                });
+                            });
+
                             result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
                                 if (current) {
-                                    return undefined;
+                                    current["image"] = { path: path, type: type };
+                                    current["timestamp"] = timestamp;
+
+                                    return current;
                                 }
 
-                                return { text: message.original, author: this.character.name, user: user, timestamp: timestamp };
+                                return { text: message.original, author: this.character.name, image: { path: path, type: type }, user: user, timestamp: timestamp };
                             });
-                        } else {
-                            function generateUuid() {
-                                // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
-                                // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-                                let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
+                        } finally {
+                            this.progress = null;
+                        }
+                    }
 
-                                for (let i = 0, len = chars.length; i < len; i++) {
-                                    switch (chars[i]) {
-                                        case "x":
-                                            chars[i] = Math.floor(Math.random() * 16).toString(16);
-                                            break;
-                                        case "y":
-                                            chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
-                                            break;
-                                    }
-                                }
-
-                                return chars.join("");
+                    if (result.committed && result.snapshot.exists()) {
+                        /*const sequence = [];
+ 
+                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
+                            if (obj.type === "Message") {
+                                sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: obj.text });
+                            } else {
+                                obj["character"] = this.character.alternative;
+                                sequence.push(obj);
                             }
+                        }
+ 
+                        if (sequence.length > 0) {
+                            this.sequenceQueue.push(sequence);
+                        }*/
 
-                            const self = this;
-                            const type = "image/png";
-                            const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), await new Promise(resolve => {
-                                canvas.toBlob(blob => {
-                                    resolve(blob);
-                                }, type);
-                            }), {
-                                contentType: type
-                            });
-
-                            try {
-                                const path = await new Promise((resolve, reject) => {
-                                    uploadTask.on("state_changed", snapshot => {
-                                        self.progress = snapshot.bytesTransferred / snapshot.totalBytes;
-                                    }, (error) => {
-                                        reject(error);
-                                    }, () => {
-                                        resolve(uploadTask.snapshot.ref.fullPath);
-                                    });
-                                });
-
-                                result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${this.character.name}&${message.text}`)}`), current => {
-                                    if (current) {
-                                        current["image"] = { path: path, type: type };
-                                        current["timestamp"] = timestamp;
-
-                                        return current;
-                                    }
-
-                                    return { text: message.original, author: this.character.name, image: { path: path, type: type }, user: user, timestamp: timestamp };
-                                });
-                            } finally {
-                                this.progress = null;
+                        for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
+                            if (obj.type === "Message") {
+                                this.notify({ text: obj.text, accent: this.character.alternative.accent, image: this.character.alternative.image });
                             }
                         }
 
-                        if (result.committed && result.snapshot.exists()) {
-                            /*const sequence = [];
-    
-                            for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
-                                if (obj.type === "Message") {
-                                    sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, character: this.character.alternative, text: obj.text });
-                                } else {
-                                    obj["character"] = this.character.alternative;
-                                    sequence.push(obj);
-                                }
-                            }
-    
-                            if (sequence.length > 0) {
-                                this.sequenceQueue.push(sequence);
-                            }*/
+                        if (this.points < this.maxPoints) {
+                            const nextPoints = Math.min(this.points + 30, this.maxPoints);
 
-                            for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Liked"), null, this.character.alternative.sequences)) {
-                                if (obj.type === "Message") {
-                                    this.notify({ text: obj.text, accent: this.character.alternative.accent, image: this.character.alternative.image });
+                            for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
+                                if (i % 60 === 0) {
+                                    this.retain();
                                 }
                             }
 
-                            if (this.points < this.maxPoints) {
-                                const nextPoints = Math.min(this.points + 30, this.maxPoints);
+                            this.points = nextPoints;
+                        }
 
-                                for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
-                                    if (i % 60 === 0) {
-                                        this.retain();
-                                    }
-                                }
-
-                                this.points = nextPoints;
-                            }
-
+                        if (this.background.nonce === null) {
                             this.background.image = undefined;
                             this.preload();
-
-                            if (!this.isMuted) {
-                                this.$refs.like.play();
-                            }
                         }
-                    } catch (e) {
-                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
-                        console.error(e);
+
+                        if (!this.isMuted) {
+                            this.$refs.like.play();
+                        }
                     }
+                } catch (e) {
+                    this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                    console.error(e);
                 }
             },
             unlike: async function (message) {
