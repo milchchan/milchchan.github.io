@@ -255,7 +255,17 @@ window.addEventListener("load", event => {
                 wall: { canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 }, blocks: [] },
                 refreshRequired: false,
                 isUploading: false,
-                animations: null,
+                animations: {
+                    idle1: { url: "/assets/animation-idle1.json" },
+                    idle2: { url: "/assets/animation-idle2.json" },
+                    idle3: { url: "/assets/animation-idle3.json" },
+                    idle4: { url: "/assets/animation-idle4.json" },
+                    jump: { url: "/assets/animation-jump.json" },
+                    lose: { url: "/assets/animation-lose.json" },
+                    run: { url: "/assets/animation-run.json" },
+                    walk: { url: "/assets/animation-walk.json" },
+                    win: { url: "/assets/animation-win.json" }
+                },
                 currentAnimations: [],
                 blendShapeAnimations: [],
                 animationQueue: [],
@@ -3478,6 +3488,78 @@ window.addEventListener("load", event => {
                                         }
 
                                         if (!isDependency || !isAnimating) {
+                                            if ("data" in this.animations[sequence[0].name]) {
+                                                this.currentAnimations.splice(0);
+
+                                                for (const animation of this.animations[sequence[0].name].data) {
+                                                    this.currentAnimations.push(animation);
+                                                }
+
+                                                this.animations[sequence[0].name]["timestamp"] = Math.floor(new Date() / 1000);
+
+                                                sequence.shift();
+
+                                                animationIndex = 0;
+                                                animationData = this.currentAnimations[animationIndex];
+                                                animationIndex += animationSkipFrames;
+                                            } else {
+                                                try {
+                                                    const response = await fetch(encodeURI(this.animations[sequence[0].name].url), {
+                                                        mode: "cors",
+                                                        method: "GET",
+                                                        headers: {
+                                                            "Content-Type": "application/x-www-form-urlencoded"
+                                                        }
+                                                    });
+
+                                                    if (response.ok) {
+                                                        const json = await response.json();
+
+                                                        this.currentAnimations.splice(0);
+
+                                                        for (const animation of json.data) {
+                                                            this.currentAnimations.push(animation);
+                                                        }
+
+                                                        this.animations[sequence[0].name]["data"] = json.data;
+                                                        this.animations[sequence[0].name]["timestamp"] = Math.floor(new Date() / 1000);
+
+                                                        const self = this;
+                                                        const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
+
+                                                        Object.keys(this.animations).forEach(function (key) {
+                                                            if ("timestamp" in self.animations[key] && self.animations[key].timestamp <= timestamp) {
+                                                                delete self.animations[key].data;
+                                                                delete self.animations[key].timestamp;
+                                                            }
+                                                        });
+
+                                                        const maxLength = 2;
+                                                        const keys = Object.keys(this.animations).filter(x => "timestamp" in self.animations[x]).sort((x, y) => self.animations[y].timestamp - self.animations[x].timestamp);
+
+                                                        if (keys.length > maxLength) {
+                                                            keys.splice(maxLength, keys.length - maxLength).forEach(function (key) {
+                                                                delete self.animations[key].data;
+                                                                delete self.animations[key].timestamp;
+
+                                                                console.log(key);
+                                                            });
+                                                        }
+                                                    }
+                                                    else {
+                                                        throw new Error(response.statusText);
+                                                    }
+
+                                                    sequence.shift();
+
+                                                    animationIndex = 0;
+                                                    animationData = this.currentAnimations[animationIndex];
+                                                    animationIndex += animationSkipFrames;
+                                                } catch (e) {
+                                                    console.error(e);
+                                                }
+                                            }
+
                                             /*const skipFrames = 60 / 12;
                                             let animations = this.animations[suggestion.animation];
                                             let maxFrames = Math.min(animations.length, 60);
@@ -3493,18 +3575,6 @@ window.addEventListener("load", event => {
                                             for (let i = this.currentAnimations.length - 1; i >= 0; i--) {
                                                 this.currentAnimations.push(animations[offset + i]);
                                             }*/
-
-                                            this.currentAnimations.splice(0);
-
-                                            for (let animation of this.animations[sequence[0].name]) {
-                                                this.currentAnimations.push(animation);
-                                            }
-
-                                            sequence.shift();
-
-                                            animationIndex = 0;
-                                            animationData = this.currentAnimations[animationIndex];
-                                            animationIndex += animationSkipFrames;
                                         }
                                     } else {
                                         let isDependency = false;
@@ -5157,59 +5227,22 @@ window.addEventListener("load", event => {
                 await getDownloadURL(storageRef(storage, this.character.model)),
                 async (gltf) => {
                     const vrm = gltf.userData.vrm;
-                    const urls = {
-                        idle1: "/assets/animation-idle1.json",
-                        idle2: "/assets/animation-idle2.json",
-                        //idle3: "/assets/animation-idle3.json",
-                        //idle4: "/assets/animation-idle4.json",
-                        jump: "/assets/animation-jump.json",
-                        lose: "/assets/animation-lose.json",
-                        //run: "/assets/animation-run.json",
-                        //walk: "/assets/animation-walk.json",
-                        win: "/assets/animation-win.json"
-                    };
-                    let animationDictionary = {};
 
-                    try {
-                        for (let key in urls) {
-                            const response3 = await fetch(encodeURI(urls[key]), {
-                                mode: "cors",
-                                method: "GET",
-                                headers: {
-                                    "Content-Type": "application/x-www-form-urlencoded"
-                                }
-                            });
+                    vrmModel = vrm;
 
-                            if (response3.ok) {
-                                const json = await response3.json();
+                    scene.add(vrm.scene);
 
-                                animationDictionary[key] = json.data;
-                            }
-                            else {
-                                throw new Error(response3.statusText);
-                            }
-                        }
+                    vrm.scene.rotation.y = Math.PI;
+                    vrm.lookAt.target = lookAtTarget;
 
-                        self.animations = animationDictionary;
-                        vrmModel = vrm;
+                    vrmSpringBones.splice(0);
 
-                        scene.add(vrm.scene);
-
-                        vrm.scene.rotation.y = Math.PI;
-                        vrm.lookAt.target = lookAtTarget;
-
-                        vrmSpringBones.splice(0);
-
-                        for (const springBoneJoint of vrmModel.springBoneManager.joints) {
-                            vrmSpringBones.push({ gravityDir: springBoneJoint.settings.gravityDir.clone(), gravityPower: springBoneJoint.settings.gravityPower });
-                        }
-
-                        //vrm.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).rotation.y = Math.PI;
-                        //currentMixer = prepareAnimation(vrm);                            
-                    } catch (e) {
-                        self.notify({ text: e.message, accent: self.character.accent, image: self.character.image });
-                        console.error(e);
+                    for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                        vrmSpringBones.push({ gravityDir: springBoneJoint.settings.gravityDir.clone(), gravityPower: springBoneJoint.settings.gravityPower });
                     }
+
+                    //vrm.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).rotation.y = Math.PI;
+                    //currentMixer = prepareAnimation(vrm);   
 
                     self.progress = null;
                 },
@@ -5423,7 +5456,7 @@ window.addEventListener("load", event => {
                     }
 
                     if (isUpdated) {
-                        const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
+                        //const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
                         //let count = 0;
 
                         for (let i = self.words.length - 1; i >= 0; i--) {
