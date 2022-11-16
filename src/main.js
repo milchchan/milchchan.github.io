@@ -256,7 +256,7 @@ window.addEventListener("load", event => {
                 refreshRequired: false,
                 isUploading: false,
                 animations: {
-                    idle1: { url: "/assets/animation-idle1.json" },
+                    /*idle1: { url: "/assets/animation-idle1.json" },
                     idle2: { url: "/assets/animation-idle2.json" },
                     idle3: { url: "/assets/animation-idle3.json" },
                     idle4: { url: "/assets/animation-idle4.json" },
@@ -264,7 +264,7 @@ window.addEventListener("load", event => {
                     lose: { url: "/assets/animation-lose.json" },
                     run: { url: "/assets/animation-run.json" },
                     walk: { url: "/assets/animation-walk.json" },
-                    win: { url: "/assets/animation-win.json" }
+                    win: { url: "/assets/animation-win.json" }*/
                 },
                 currentAnimations: [],
                 blendShapeAnimations: [],
@@ -3474,7 +3474,7 @@ window.addEventListener("load", event => {
 
                                     sequence.shift();
                                 } else if ("name" in sequence[0] && ("character" in sequence[0] === false || sequence[0].character.name === this.character.name)) {
-                                    if (sequence[0].name in this.animations) {
+                                    if ("resource" in sequence[0]) {
                                         let isDependency = false;
 
                                         if ("dependencies" in sequence[0]) {
@@ -3488,7 +3488,9 @@ window.addEventListener("load", event => {
                                         }
 
                                         if (!isDependency || !isAnimating) {
-                                            if ("data" in this.animations[sequence[0].name]) {
+                                            const hash = await this.digestMessage(`${sequence[0].name}&${sequence[0].resource}`);
+
+                                            if (hash in this.animations) {
                                                 this.currentAnimations.splice(0);
 
                                                 for (const animation of this.animations[sequence[0].name].data) {
@@ -3504,7 +3506,7 @@ window.addEventListener("load", event => {
                                                 animationIndex += animationSkipFrames;
                                             } else {
                                                 try {
-                                                    const response = await fetch(encodeURI(this.animations[sequence[0].name].url), {
+                                                    const response = await fetch(encodeURI(sequence[0].resource), {
                                                         mode: "cors",
                                                         method: "GET",
                                                         headers: {
@@ -3521,16 +3523,15 @@ window.addEventListener("load", event => {
                                                             this.currentAnimations.push(animation);
                                                         }
 
-                                                        this.animations[sequence[0].name]["data"] = json.data;
-                                                        this.animations[sequence[0].name]["timestamp"] = Math.floor(new Date() / 1000);
+                                                        this.animations[hash]["data"] = json.data;
+                                                        this.animations[hash]["timestamp"] = Math.floor(new Date() / 1000);
 
                                                         const self = this;
                                                         const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
 
                                                         Object.keys(this.animations).forEach(function (key) {
                                                             if ("timestamp" in self.animations[key] && self.animations[key].timestamp <= timestamp) {
-                                                                delete self.animations[key].data;
-                                                                delete self.animations[key].timestamp;
+                                                                delete self.animations[key];
                                                             }
                                                         });
 
@@ -3539,10 +3540,7 @@ window.addEventListener("load", event => {
 
                                                         if (keys.length > maxLength) {
                                                             keys.splice(maxLength, keys.length - maxLength).forEach(function (key) {
-                                                                delete self.animations[key].data;
-                                                                delete self.animations[key].timestamp;
-
-                                                                console.log(key);
+                                                                delete self.animations[key];
                                                             });
                                                         }
                                                     }
