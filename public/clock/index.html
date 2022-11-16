@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>ミルヒちゃんクロック</title>
     <meta name="description" content="milchchan.com">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#ffffff">
     <meta property="og:title" content="ミルヒちゃんクロック">
     <meta property="og:description" content="milchchan.com">
     <meta property="og:type" content="website">
@@ -847,8 +848,7 @@
                 }
             }
 
-            for (const factor of split)
-            {
+            for (const factor of split) {
                 const wrapElement = document.createElement("div");
                 const frameElement = document.createElement("div");
                 const clockElement = document.createElement("div");
@@ -857,7 +857,7 @@
                 wrapElement.style.width = `${factor / sum * 100}%`;
                 frameElement.className = "frame";
                 clockElement.className = "clock";
-                
+
                 frameElement.appendChild(clockElement);
                 wrapElement.appendChild(frameElement);
                 container.appendChild(wrapElement);
@@ -942,8 +942,24 @@
             }
 
             setTimeout(function tick() {
-                function update(data) {
+                async function update(data) {
                     const elements = document.body.querySelectorAll("div.digit > img.digit");
+
+                    try {
+                        await new Promise((resolve, reject) => {
+                            const i = new Image();
+
+                            i.onload = () => {
+                                resolve();
+                            };
+                            i.onerror = (e) => {
+                                reject(e);
+                            };
+                            i.src = window.devicePixelRatio > 1 ? `/images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "/images/Background.png";
+                        });
+                    } catch (e) {
+                        console.error(e);
+                    }
 
                     for (const element of elements) {
                         const animation = element.animate([

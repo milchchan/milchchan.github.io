@@ -992,6 +992,22 @@ window.addEventListener("load", event => {
                                 });
 
                                 if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0 && this.background.nonce === null) {
+                                    try {
+                                        await new Promise((resolve, reject) => {
+                                            const i = new Image();
+                
+                                            i.onload = () => {
+                                                resolve();
+                                            };
+                                            i.onerror = (e) => {
+                                                reject(e);
+                                            };
+                                            i.src = window.devicePixelRatio > 1 ? `/images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "/images/Background.png";
+                                        });
+                                    } catch (e) {
+                                        console.error(e);
+                                    }
+                                    
                                     this.background.image = undefined;
                                     this.preload();
                                 }
@@ -1142,6 +1158,22 @@ window.addEventListener("load", event => {
                         }
 
                         if (this.background.nonce === null) {
+                            try {
+                                await new Promise((resolve, reject) => {
+                                    const i = new Image();
+        
+                                    i.onload = () => {
+                                        resolve();
+                                    };
+                                    i.onerror = (e) => {
+                                        reject(e);
+                                    };
+                                    i.src = window.devicePixelRatio > 1 ? `/images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "/images/Background.png";
+                                });
+                            } catch (e) {
+                                console.error(e);
+                            }
+
                             this.background.image = undefined;
                             this.preload();
                         }
