@@ -16,7 +16,8 @@
                     "sequence": [
                         {
                             "type": "Animation",
-                            "name": "jump"
+                            "name": "jump",
+                            "resource": "/assets/animation-jump.json"
                         },
                         {
                             "type": "Message",
@@ -47,7 +48,8 @@
                     "sequence": [
                         {
                             "type": "Animation",
-                            "name": "jump"
+                            "name": "jump",
+                            "resource": "/assets/animation-jump.json"
                         },
                         {
                             "type": "Message",
@@ -1679,7 +1681,8 @@
             "sequence": [
                 {
                     "type": "Animation",
-                    "name": "idle1"
+                    "name": "idle1",
+                    "resource": "/assets/animation-idle1.json"
                 },
                 {
                     "type": "Animation",
@@ -1728,7 +1731,8 @@
             "sequence": [
                 {
                     "type": "Animation",
-                    "name": "idle1"
+                    "name": "idle1",
+                    "resource": "/assets/animation-idle1.json"
                 },
                 {
                     "type": "Animation",
