@@ -2019,31 +2019,31 @@
             "sequence": [
                 {
                     "type": "Animation",
-                    "name": "a",
+                    "name": "aa",
                     "duration": 0.1,
                     "start": 1.0,
                     "end": 1.0,
                     "dependencies": [
                         "joy",
-                        "i",
-                        "u",
-                        "e",
-                        "o"
+                        "ih",
+                        "ou",
+                        "ee",
+                        "oh"
                     ]
                 },
                 {
                     "type": "Animation",
-                    "name": "a",
+                    "name": "aa",
                     "duration": 0.0,
                     "start": 0.0,
                     "end": 0.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "i",
-                        "u",
-                        "e",
-                        "o"
+                        "aa",
+                        "ih",
+                        "ou",
+                        "ee",
+                        "oh"
                     ]
                 }
             ]
@@ -2053,31 +2053,31 @@
             "sequence": [
                 {
                     "type": "Animation",
-                    "name": "i",
+                    "name": "ih",
                     "duration": 0.1,
                     "start": 1.0,
                     "end": 1.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "u",
-                        "e",
-                        "o"
+                        "aa",
+                        "ou",
+                        "ee",
+                        "oh"
                     ]
                 },
                 {
                     "type": "Animation",
-                    "name": "i",
+                    "name": "ih",
                     "duration": 0.0,
                     "start": 0.0,
                     "end": 0.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "i",
-                        "u",
-                        "e",
-                        "o"
+                        "aa",
+                        "ih",
+                        "ou",
+                        "ee",
+                        "oh"
                     ]
                 }
             ]
@@ -2087,31 +2087,31 @@
             "sequence": [
                 {
                     "type": "Animation",
-                    "name": "u",
+                    "name": "ou",
                     "duration": 0.1,
                     "start": 1.0,
                     "end": 1.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "i",
-                        "e",
-                        "o"
+                        "aa",
+                        "ih",
+                        "ee",
+                        "oh"
                     ]
                 },
                 {
                     "type": "Animation",
-                    "name": "u",
+                    "name": "ou",
                     "duration": 0.0,
                     "start": 0.0,
                     "end": 0.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "i",
-                        "u",
-                        "e",
-                        "o"
+                        "aa",
+                        "ih",
+                        "ou",
+                        "ee",
+                        "oh"
                     ]
                 }
             ]
@@ -2121,31 +2121,31 @@
             "sequence": [
                 {
                     "type": "Animation",
-                    "name": "e",
+                    "name": "ee",
                     "duration": 0.1,
                     "start": 1.0,
                     "end": 1.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "i",
-                        "u",
-                        "o"
+                        "aa",
+                        "ih",
+                        "ou",
+                        "oh"
                     ]
                 },
                 {
                     "type": "Animation",
-                    "name": "e",
+                    "name": "ee",
                     "duration": 0.0,
                     "start": 0.0,
                     "end": 0.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "i",
-                        "u",
-                        "e",
-                        "o"
+                        "aa",
+                        "ih",
+                        "ou",
+                        "ee",
+                        "oh"
                     ]
                 }
             ]
@@ -2155,31 +2155,31 @@
             "sequence": [
                 {
                     "type": "Animation",
-                    "name": "o",
+                    "name": "oh",
                     "duration": 0.1,
                     "start": 1.0,
                     "end": 1.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "i",
-                        "u",
-                        "e"
+                        "aa",
+                        "ih",
+                        "ou",
+                        "ee"
                     ]
                 },
                 {
                     "type": "Animation",
-                    "name": "o",
+                    "name": "oh",
                     "duration": 0.0,
                     "start": 0.0,
                     "end": 0.0,
                     "dependencies": [
                         "joy",
-                        "a",
-                        "i",
-                        "u",
-                        "e",
-                        "o"
+                        "aa",
+                        "ih",
+                        "ou",
+                        "ee",
+                        "oh"
                     ]
                 }
             ]
