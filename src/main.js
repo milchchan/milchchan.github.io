@@ -1,5 +1,5 @@
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
-import { WebGLRenderer, Scene, DirectionalLight, PerspectiveCamera, Clock, Raycaster, Object3D, Vector2, Vector3, LinearToneMapping, sRGBEncoding, GridHelper, AxesHelper } from 'three';
+import { WebGLRenderer, Scene, AmbientLight, DirectionalLight, PerspectiveCamera, Clock, Raycaster, Object3D, Vector2, Vector3, LinearToneMapping, ReinhardToneMapping, sRGBEncoding, GridHelper, AxesHelper } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -61,10 +61,14 @@ const renderer = new WebGLRenderer({
 //renderer.setSize(window.innerWidth, window.outerHeight);
 //renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0xffffff, 0);
-renderer.toneMappingExposure = 1;
-renderer.toneMapping = LinearToneMapping;
+//renderer.toneMappingExposure = 1;
+//renderer.toneMapping = LinearToneMapping;
 renderer.outputEncoding = sRGBEncoding;
 //renderer.autoClear = false;
+renderer.toneMapping = ReinhardToneMapping;
+renderer.toneMappingExposure = 2; //Math.pow(1.75, 4.0);
+
+console.log(Math.pow(1.75, 4.0));
 
 const CAMERA_FOV = 60.0;
 const CAMERA_Z = 1.5;
@@ -79,21 +83,22 @@ controls.screenSpacePanning = false;
 controls.enableDamping = true;
 controls.minPolarAngle = 0 * Math.PI / 180;
 controls.maxPolarAngle = 180 * Math.PI / 180;
-controls.minAzimuthAngle = -180 * Math.PI / 180;
-controls.maxAzimuthAngle = 180 * Math.PI / 180;
+//controls.minAzimuthAngle = -180 * Math.PI / 180;
+//controls.maxAzimuthAngle = 180 * Math.PI / 180;
 controls.minDistance = 0.75;
 controls.maxDistance = 5;
 controls.target.set(0.0, 1.0, 0.0);
 controls.update();
 
 const scene = new Scene();
-const light = new DirectionalLight(0xffffff, 0.99);
+const directionallight = new DirectionalLight(0xffffff, 1.0);
 //const hemisphereLight = new THREE.HemisphereLight(0xd7fbff, 0x7e94a8, 0.7);
 
 //light.intensity = 0.9;
-light.position.set(0.0, 1.0, -1.0).normalize();
+directionallight.position.set(0.0, 0.0, -1.0).normalize();
 
-scene.add(light);
+scene.add(new AmbientLight(0xFFFFFF, 0.25));
+scene.add(directionallight);
 //scene.add(hemisphereLight);
 
 const lookAtTarget = new Object3D();
@@ -102,7 +107,7 @@ camera.add(lookAtTarget);
 
 const composer = new EffectComposer(renderer);
 
-var bloomPass = new UnrealBloomPass(new Vector2(renderer.domElement.width, renderer.domElement.height), 1.5, 0.5, 0.75);
+var bloomPass = new UnrealBloomPass(new Vector2(renderer.domElement.width, renderer.domElement.height), 0.25, 0.25, 0.75);
 var hueSaturation = new ShaderPass(HueSaturationShader);
 var brightnessContrastShader = new ShaderPass(BrightnessContrastShader);
 var gammaCorrectionShader = new ShaderPass(GammaCorrectionShader);
@@ -113,20 +118,20 @@ var rgbShift = new ShaderPass(RGBShiftShader);
 var fxaaShader = new ShaderPass(FXAAShader);
 
 bloomPass.renderToScreen = true;
-bloomPass.threshold = 0.75;
-bloomPass.strength = 0.25;
-bloomPass.radius = 0.25;
+bloomPass.strength = 0.5;
+bloomPass.radius = 0.1;
+bloomPass.threshold = 0.5;
 
-//hueSaturation.uniforms.hue.value = 0.01;
-hueSaturation.uniforms.saturation.value = 0.25;
+//hueSaturation.uniforms.hue.value = 0.1;
+hueSaturation.uniforms.saturation.value = 0.5;
 brightnessContrastShader.uniforms.brightness.value = 0.1;
 brightnessContrastShader.uniforms.contrast.value = 0.1;
 colorCorrection.uniforms.mulRGB.value = new Vector3(0.95, 0.95, 0.95);
 colorCorrection.uniforms.powRGB.value = new Vector3(1, 1, 1);
 rgbShift.uniforms.amount.value = 0.0001;
 rgbShift.uniforms.angle.value = 0;
-vignette.uniforms.darkness.value = 1.0;
-vignette.uniforms.offset.value = 0.0
+vignette.uniforms.darkness.value = 5.0;
+vignette.uniforms.offset.value = 0.1;
 effectCopy.renderToScreen = true;
 fxaaShader.uniforms.resolution.value.set(1 / (renderer.domElement.width * window.devicePixelRatio), 1 / (renderer.domElement.height * window.devicePixelRatio));
 
@@ -137,7 +142,7 @@ composer.addPass(bloomPass);
 composer.addPass(hueSaturation);
 //composer.addPass(brightnessContrastShader);
 //composer.addPass(colorCorrection);
-//composer.addPass(rgbShift);
+composer.addPass(rgbShift);
 //composer.addPass(vignette);
 //composer.addPass(gammaCorrectionShader);
 //composer.addPass(fxaaShader);
