@@ -4508,7 +4508,7 @@ window.addEventListener("load", event => {
                                     animation.bone = "leftThumbDistal";
                                     break;
                                 case "thumb_intermediate.L":
-                                    //animation.bone = "leftThumbIntermediate";
+                                    animation.bone = "leftThumbIntermediate";
                                     break;
                                 case "thumb_proximal.L":
                                     animation.bone = "leftThumbProximal";
@@ -4580,7 +4580,7 @@ window.addEventListener("load", event => {
                                     animation.bone = "rightThumbDistal";
                                     break;
                                 case "thumb_intermediate.R":
-                                    //animation.bone = "rightThumbIntermediate";
+                                    animation.bone = "rightThumbIntermediate";
                                     break;
                                 case "thumb_proximal.R":
                                     animation.bone = "rightThumbProximal";
@@ -4602,12 +4602,7 @@ window.addEventListener("load", event => {
                             }
 
                             if (animation.bone && animation.rotation.length == 4) {
-                                let boneNode = vrmModel.humanoid.getNormalizedBoneNode(animation.bone);
-
-                                if (boneNode === null) {
-                                    //console.log(animation.bone);
-                                    //boneNode = vrmModel.humanoid.getRawBoneNode(animation.bone);
-                                }
+                                const boneNode = vrmModel.humanoid.getNormalizedBoneNode(animation.bone);
 
                                 if (boneNode !== null) {
                                     boneNode.position.set(animation.position[0], animation.position[1], -animation.position[2]);
