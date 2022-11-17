@@ -102,7 +102,7 @@ camera.add(lookAtTarget);
 
 const composer = new EffectComposer(renderer);
 
-var bloomPass = new UnrealBloomPass(new Vector2(renderer.domElement.width, renderer.domElement.height), 1.5, 0.4, 0.85);
+var bloomPass = new UnrealBloomPass(new Vector2(renderer.domElement.width, renderer.domElement.height), 1.5, 0.5, 0.75);
 var hueSaturation = new ShaderPass(HueSaturationShader);
 var brightnessContrastShader = new ShaderPass(BrightnessContrastShader);
 var gammaCorrectionShader = new ShaderPass(GammaCorrectionShader);
@@ -113,12 +113,12 @@ var rgbShift = new ShaderPass(RGBShiftShader);
 var fxaaShader = new ShaderPass(FXAAShader);
 
 bloomPass.renderToScreen = true;
-bloomPass.threshold = 0.9;
-bloomPass.strength = 0.1;
+bloomPass.threshold = 0.75;
+bloomPass.strength = 0.25;
 bloomPass.radius = 0.25;
 
 //hueSaturation.uniforms.hue.value = 0.01;
-hueSaturation.uniforms.saturation.value = 0.5;
+hueSaturation.uniforms.saturation.value = 0.25;
 brightnessContrastShader.uniforms.brightness.value = 0.1;
 brightnessContrastShader.uniforms.contrast.value = 0.1;
 colorCorrection.uniforms.mulRGB.value = new Vector3(0.95, 0.95, 0.95);
