@@ -886,7 +886,12 @@ label .scrollable>div {
                     button.is-selected,
                     .button.is-selected {
                         .icon {
-                            color: var(--highlight-color) !important;
+                            color: var(--accent-color) !important;
+                            transition: 0.5s;
+                        }
+
+                        .wrap {
+                            color: var(--accent-color) !important;;
                             transition: 0.5s;
                         }
                     }
