@@ -68,8 +68,6 @@ renderer.outputEncoding = sRGBEncoding;
 renderer.toneMapping = ReinhardToneMapping;
 renderer.toneMappingExposure = 2; //Math.pow(1.75, 4.0);
 
-console.log(Math.pow(1.75, 4.0));
-
 const CAMERA_FOV = 60.0;
 const CAMERA_Z = 1.5;
 const camera = new PerspectiveCamera(CAMERA_FOV, renderer.domElement.width / renderer.domElement.height, 0.1, 1000);
