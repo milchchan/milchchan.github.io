@@ -155,8 +155,23 @@
                                     <div class="rotate">
                                         <transition name="fade" mode="out-in">
                                             <button class="button is-selected" type="button"
-                                                @click="mode = '_about'; isRevealed = true;"
-                                                v-if="mode === 'about' || mode === '_about'" key="selected">
+                                                @click="mode = null"
+                                                v-if="mode === 'about'" key="selected">
+                                                <div class="wrap is-size-7 has-text-weight-bold">
+                                                    <div class="clip">
+                                                        <div class="scrollable">
+                                                            <div>milchchan.com</div>
+                                                            <div>milchchan.com</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="icon is-large">
+                                                    <i class="fa-solid fa-star"></i>
+                                                </div>
+                                            </button>
+                                            <button class="button is-selected" type="button"
+                                                @click="isRevealed = false; mode = null;"
+                                                v-else-if="mode === '_about'" key="selected">
                                                 <div class="wrap is-size-7 has-text-weight-bold">
                                                     <div class="clip">
                                                         <div class="scrollable">
