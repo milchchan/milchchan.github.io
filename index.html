@@ -156,7 +156,7 @@
                                         <transition name="fade" mode="out-in">
                                             <button class="button is-selected" type="button"
                                                 @click="mode = null"
-                                                v-if="mode === 'about'" key="selected">
+                                                v-if="mode === 'about'" v-bind:key="mode">
                                                 <div class="wrap is-size-7 has-text-weight-bold">
                                                     <div class="clip">
                                                         <div class="scrollable">
@@ -171,7 +171,7 @@
                                             </button>
                                             <button class="button is-selected" type="button"
                                                 @click="isRevealed = false; mode = null;"
-                                                v-else-if="mode === '_about'" key="_selected">
+                                                v-else-if="mode === '_about'" v-bind:key="mode">
                                                 <div class="wrap is-size-7 has-text-weight-bold">
                                                     <div class="clip">
                                                         <div class="scrollable">
