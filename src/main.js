@@ -167,6 +167,7 @@ const clock = new Clock();
 const raycaster = new Raycaster();
 const mouse = new Vector2();
 let vrmModel = null;
+let modelIsReady = false;
 const vrmSpringBones = [];
 let animationIndex = 0;
 const animationSkipFrames = 2;
@@ -3747,319 +3748,6 @@ window.addEventListener("load", event => {
                             this.character["visible"] = false;
                             this.alternative = null;
                         }
-                        /*} else if (app.suggestionQueue.length > 0) {
-                            const suggestion = app.suggestionQueue[0];
-                            const message = suggestion.messages[0];
-                            let loopRequired = true;
-     
-                            if (message.type.reverse) {
-                                if (message.type.count > 0) {
-                                    message.type.elapsed += deltaTime;
-     
-                                    if (message.type.elapsed >= message.type.speed / 1000.0) {
-                                        let index = message.type.count - 1;
-     
-                                        if (index < message.text.length) {
-                                            let width = Math.floor(message.text.length / 2);
-     
-                                            if (message.type.buffer.length <= width) {
-                                                message.type.count -= 1;
-                                            }
-     
-                                            if (message.type.buffer.length > 0) {
-                                                message.type.buffer = message.type.buffer.substring(message.type.buffer.length - 2, message.type.buffer.length - 1);
-                                            }
-                                        }
-     
-                                        message.type.elapsed = 0;
-                                    }
-                                } else if (app.isSuggested) {
-                                    if (suggestion.messages.length > 1) {
-                                        suggestion.messages.shift();
-                                    } else {
-                                        app.suggestionQueue.shift();
-     
-                                        if (app.suggestionQueue.length > 0 && 'highlight' in app.suggestionQueue[0]) {
-                                            if ('text' in app.suggestionQueue[0].highlight) {
-                                                app.highlight = app.suggestionQueue[0].highlight.text;
-                                            } else {
-                                                app.highlight = null;
-                                            }
-     
-                                            if ('image' in app.suggestionQueue[0].highlight) {
-                                                app.cover = app.suggestionQueue[0].highlight.image;
-                                            } else {
-                                                app.cover = app;
-                                            }
-                                        }
-     
-                                        app.isBlinded = true;
-                                    }
-                                } else if (app.isBlinded && !isActive) {
-                                    if ('morphs' in suggestion) {
-                                        for (let blendShape of suggestion.morphs.defaults) {
-                                            vrmModel.expressionManager.setValue(blendShape.name, Math.abs(Math.sin(blendShape.weight / 2 * Math.PI)));
-                                        }
-                                    }
-     
-                                    app.suggestionQueue.splice(0);
-                                    app.isBlinded = false;
-                                    loopRequired = false;
-                                }
-                            } else if (message.type.buffer.length < message.text.length) {
-                                if (message.type.elapsed >= 0) {
-                                    message.type.elapsed += deltaTime;
-                                } else if (!isActive) {
-                                    if (!app.isPreloading) {
-                                        waitTime += deltaTime;
-                                    }
-     
-                                    if (app.highlight === null && app.cover === null || waitTime >= waitThreshold) {
-                                        message.type.elapsed = deltaTime;
-                                        app.isBlinded = false;
-                                        app.currentAnimations.splice(0);
-     
-                                        if ('animation' in suggestion && suggestion.animation in app.animations) {
-                                            const skipFrames = 60 / 12;
-                                            let animations = app.animations[suggestion.animation];
-                                            let maxFrames = Math.min(animations.length, 60);
-                                            let offset = Math.floor(Math.max(0, _random(0, animations.length - maxFrames)) / 2);
-                                            let length = Math.round(90 / 24);
-     
-                                            for (let i = 0; i < maxFrames; i += skipFrames) {
-                                                for (let j = 0; j < length; j++) {
-                                                    app.currentAnimations.push(animations[offset + i]);
-                                                }
-                                            }
-     
-                                            for (let i = app.currentAnimations.length - 1; i >= 0; i--) {
-                                                app.currentAnimations.push(animations[offset + i]);
-                                            }
-                                        }
-     
-                                        if ('morphs' in suggestion) {
-                                            let nameSet = [];
-     
-                                            for (let blendShape of suggestion.morphs.defaults) {
-                                                vrmModel.expressionManager.setValue(blendShape.name, Math.abs(Math.sin(blendShape.weight / 2 * Math.PI)));
-                                            }
-     
-                                            for (let blendShapeAnimation of suggestion.morphs.animations) {
-                                                app.blendShapeAnimations.unshift(blendShapeAnimation);
-                                            }
-     
-                                            for (let i = app.blendShapeAnimations.length - 1; i >= 0; i--) {
-                                                let blendShapeAnimation = app.blendShapeAnimations[i];
-     
-                                                if (!nameSet.includes(blendShapeAnimation.name)) {
-                                                    vrmModel.expressionManager.setValue(blendShapeAnimation.name, Math.abs(Math.sin(blendShapeAnimation.start / 2 * Math.PI)));
-                                                    nameSet.push(blendShapeAnimation.name);
-                                                }
-                                            }
-                                        }
-     
-                                        waitTime = 0.0;
-                                    } else {
-                                        loopRequired = false;
-                                    }
-                                }
-     
-                                if (message.type.elapsed >= message.type.speed / 1000.0) {
-                                    let index = message.type.buffer.length;
-                                    let width = Math.floor(message.text.length / 2);
-                                    let length = message.text.length;
-     
-                                    if (message.type.count >= width) {
-                                        message.type.buffer += message.text.charAt(index);
-                                    }
-     
-                                    if (message.type.count < length) {
-                                        message.type.count += 1;
-                                    }
-     
-                                    message.type.elapsed = 0;
-                                }
-                            } else {
-                                message.time += deltaTime;
-     
-                                if (message.time >= message.duration) {
-                                    message.type.reverse = true;
-                                }
-                            }
-     
-                            if (message.text.length === message.type.buffer.length) {
-                                const characters = message.text.split("");
-     
-                                app.text.splice(0);
-     
-                                for (let i = 0; i < characters.length; i++) {
-                                    app.text.push({ key: i, value: characters[i] });
-                                }
-                            } else {
-                                let charArray = new Array();
-                                let randomBuffer = "";
-     
-                                for (let i = 0; i < message.text.length; i++) {
-                                    if (charArray.indexOf(message.text.charAt(i)) == -1 && message.text.charAt(i) != "\n" && message.text.charAt(i).match(/\s/) == null) {
-                                        charArray.push(message.text.charAt(i));
-                                    }
-                                }
-     
-                                for (let i = 0; i < message.type.count; i++) {
-                                    if (charArray.length > 0) {
-                                        randomBuffer += charArray[~~_random(0, charArray.length)];
-                                    }
-                                }
-     
-                                if (randomBuffer.length > message.type.buffer.length) {
-                                    const characters = (message.type.buffer + randomBuffer.substring(message.type.buffer.length, randomBuffer.length)).split("");
-     
-                                    app.text.splice(0);
-     
-                                    for (let i = 0; i < characters.length; i++) {
-                                        app.text.push({ key: i, value: characters[i] });
-                                    }
-                                } else if (app.text.length !== message.type.buffer.length) {
-                                    const characters = message.type.buffer.split("");
-     
-                                    app.text.splice(0);
-     
-                                    for (let i = 0; i < characters.length; i++) {
-                                        app.text.push({ key: i, value: characters[i] });
-                                    }
-                                }
-                            }
-     
-                            if (loopRequired && animationData === null) {
-                                animationIndex = 0;
-                                animationData = app.currentAnimations[animationIndex];
-                                animationIndex += animationSkipFrames;
-                            }*/
-                        //} else {
-                        /*if (app.isSuggested && app.suggestionQueue.length == 0 && !app.isComputing) {
-                            const tempMessages1 = [].concat(app.messages);
-                            const tempTags = [].concat(app.tags);
-     
-                            app.isComputing = true;
-     
-                            new Promise(resolve => {
-                                let segmenter = new TinySegmenter();
-                                const presets = [{ animation: 'idle2', name: THREE.VRMSchema.BlendShapePresetName.Fun },
-                                { animation: 'jump', name: THREE.VRMSchema.BlendShapePresetName.Joy },
-                                { animation: 'win', name: THREE.VRMSchema.BlendShapePresetName.Joy },
-                                { animation: 'lose', name: THREE.VRMSchema.BlendShapePresetName.Sorrow }];
-                                let suggestions = [];
-                                let tempMessages2 = [];
-                                let ids1 = [];
-                                let ids2 = [];
-     
-                                for (let tag of tempTags.sort((x, y) => y.score - x.score)) {
-                                    for (let message of tempMessages1.reverse()) {
-                                        if (!ids1.includes(message.id) && segmenter.segment(message.text).includes(tag.name)) {
-                                            let thread = null;
-     
-                                            if ('thread' in message) {
-                                                for (let m of tempMessages1) {
-                                                    if (message.thread == m.id) {
-                                                        thread = m;
-     
-                                                        break;
-                                                    }
-                                                }
-                                            }
-     
-                                            if (thread === null) {
-                                                tempMessages2.push(message);
-                                            } else {
-                                                const item = presets[_random(0, 2)];
-     
-                                                suggestions.push({ highlight: { text: '今日の' + document.title, image: '/images/Cover.png' }, messages: [{ time: 0, duration: 5, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: thread.text }, { time: 0, duration: 5, type: { elapsed: 0, speed: 50, reverse: false, buffer: "", count: 0 }, text: message.text }], animation: item.animation, morphs: { animations: [{ name: item.name, time: 0.0, duration: 1.0, start: 1.0, end: 1.0 }], defaults: [{ name: THREE.VRMSchema.BlendShapePresetName.Joy, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Sorrow, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Fun, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Blink, weight: 0.0 }] } });
-     
-                                                if (!ids2.includes(thread.id)) {
-                                                    ids2.push(thread.id);
-                                                }
-                                            }
-     
-                                            ids1.push(message.id);
-                                        }
-                                    }
-                                }
-     
-                                for (const message of tempMessages2) {
-                                    if (!ids2.includes(message.id)) {
-                                        const item = presets[_random(0, 2)];
-     
-                                        suggestions.push({ highlight: { text: '今日の' + document.title, image: '/images/Cover.png' }, messages: [{ time: 0, duration: 5, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: message.text }], animation: item.animation, morphs: { animations: [{ name: item.name, time: 0.0, duration: 1.0, start: 1.0, end: 1.0 }], defaults: [{ name: THREE.VRMSchema.BlendShapePresetName.Joy, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Sorrow, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Fun, weight: 0.0 }, { name: THREE.VRMSchema.BlendShapePresetName.Blink, weight: 0.0 }] } });
-                                    }
-                                }
-     
-                                resolve(suggestions);
-                            }).then((result) => {
-                                if (app.isSuggested && result.length > 0) {
-                                    for (const suggestion of result) {
-                                        app.suggestionQueue.push(suggestion);
-                                    }
-     
-                                    if ('highlight' in app.suggestionQueue[0]) {
-                                        if ('text' in app.suggestionQueue[0].highlight) {
-                                            app.highlight = app.suggestionQueue[0].highlight.text;
-                                        } else {
-                                            app.highlight = null;
-                                        }
-     
-                                        if ('image' in app.suggestionQueue[0].highlight) {
-                                            app.cover = app.suggestionQueue[0].highlight.image;
-                                        } else {
-                                            app.cover = null;
-                                        }
-                                    }
-                                }
-     
-                                app.isComputing = false;
-                            });
-                        }*/
-
-                        /*if (animationData === null) {
-                            if (app.sequenceQueue.length > 0) {
-                                idleTime = activateTime = 0.0;
-                            } else {
-                                idleTime += deltaTime;
-                                activateTime += deltaTime;
-     
-                                if (activateTime >= activateThreshold) {
-                                    app.talk();
-     
-                                    idleTime = activateTime = 0.0;
-                                } else if (idleTime >= blinkThreshold) {
-                                    let sequences = [];
-     
-                                    for (const sequence of this.character.sequences) {
-                                        if (sequence.name == "Idle") {
-                                            sequences.push(sequence);
-                                        }
-                                    }
-     
-                                    this.sequenceQueue.push(this.prepare(sequences));
-     
-                                    idleTime = 0.0;
-                                }
-                            }
-     
-                            app.currentAnimations.splice(0);
-     
-                            for (let animation of app.animations["idle1"]) {
-                                app.currentAnimations.push(animation);
-                            }
-     
-                            animationIndex = 0;
-                            animationData = app.currentAnimations[animationIndex];
-                            animationIndex += animationSkipFrames;
-                        } else if (app.sequenceQueue.length > 0) {
-                            idleTime = activateTime = 0.0;
-                        } else {
-                            idleTime += deltaTime;
-                            activateTime += deltaTime;
-                        }*/
                     }
 
                     if (this.refreshRequired) {
@@ -4614,6 +4302,7 @@ window.addEventListener("load", event => {
                                 if (boneNode !== null) {
                                     boneNode.position.set(animation.position[0], animation.position[1], -animation.position[2]);
                                     boneNode.quaternion.set(animation.rotation[0], -animation.rotation[1], -animation.rotation[2], animation.rotation[3]);
+                                    modelIsReady = true;
                                 }
                             }
                         }
@@ -4739,10 +4428,9 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    vrmModel.update(deltaTime);
-                    /*if (currentMixer) {
-                        currentMixer.update(deltaTime);
-                    }*/
+                    if (modelIsReady) {
+                        vrmModel.update(deltaTime);
+                    }
 
                     if (this.animationQueue.length > 0) {
                         const animation = this.animationQueue[0];
@@ -5266,16 +4954,11 @@ window.addEventListener("load", event => {
             loader.load(
                 await getDownloadURL(storageRef(storage, this.character.model)),
                 async (gltf) => {
-                    const vrm = gltf.userData.vrm;
+                    vrmModel = gltf.userData.vrm;
+                    vrmModel.scene.rotation.y = Math.PI;
 
-                    vrmModel = vrm;
-
-                    scene.add(vrm.scene);
-
-                    vrm.scene.rotation.y = Math.PI;
-
-                    if (vrm.lookAt !== undefined) {
-                        vrm.lookAt.target = lookAtTarget;
+                    if (vrmModel.lookAt !== undefined) {
+                        vrmModel.lookAt.target = lookAtTarget;
                     }
 
                     vrmSpringBones.splice(0);
@@ -5286,9 +4969,7 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    //vrm.humanoid.getBoneNode(THREE.VRMSchema.HumanoidBoneName.Hips).rotation.y = Math.PI;
-                    //currentMixer = prepareAnimation(vrm);   
-
+                    scene.add(vrmModel.scene);
                     self.progress = null;
                 },
                 (progress) => self.progress = progress.loaded / progress.total,
@@ -6053,17 +5734,13 @@ window.addEventListener("load", event => {
                     loader.load(
                         e.target.result,
                         (gltf) => {
-                            const vrm = gltf.userData.vrm;
-
                             if (vrmModel !== null) {
                                 scene.remove(vrmModel.scene);
                             }
 
-                            vrmModel = vrm;
-
-                            scene.add(vrm.scene);
-
-                            vrm.scene.rotation.y = Math.PI;
+                            modelIsReady = false;
+                            vrmModel = gltf.userData.vrm;
+                            vrmModel.scene.rotation.y = Math.PI;
 
                             if (vrm.lookAt !== undefined) {
                                 vrm.lookAt.target = lookAtTarget;
@@ -6077,6 +5754,7 @@ window.addEventListener("load", event => {
                                 }
                             }
 
+                            scene.add(vrm.scene);
                             app.progress = null;
                         },
                         (progress) => app.progress = progress.loaded / progress.total,
