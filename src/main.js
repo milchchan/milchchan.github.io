@@ -104,20 +104,19 @@ const lookAtTarget = new Object3D();
 camera.add(lookAtTarget);
 
 const composer = new EffectComposer(renderer);
-
-var bloomPass = new UnrealBloomPass(new Vector2(renderer.domElement.width, renderer.domElement.height), 0.25, 0.25, 0.75);
-var hueSaturation = new ShaderPass(HueSaturationShader);
+const bloomPass = new UnrealBloomPass(new Vector2(renderer.domElement.width, renderer.domElement.height), 0.5, 0.0, 0.5);
+const hueSaturation = new ShaderPass(HueSaturationShader);
 var brightnessContrastShader = new ShaderPass(BrightnessContrastShader);
 var gammaCorrectionShader = new ShaderPass(GammaCorrectionShader);
-var effectCopy = new ShaderPass(CopyShader);
+const effectCopy = new ShaderPass(CopyShader);
 var vignette = new ShaderPass(VignetteShader);
 var colorCorrection = new ShaderPass(ColorCorrectionShader);
-var rgbShift = new ShaderPass(RGBShiftShader);
+const rgbShift = new ShaderPass(RGBShiftShader);
 var fxaaShader = new ShaderPass(FXAAShader);
 
 bloomPass.renderToScreen = true;
 bloomPass.strength = 0.5;
-bloomPass.radius = 0.0001;
+bloomPass.radius = 0.0;
 bloomPass.threshold = 0.5;
 
 //hueSaturation.uniforms.hue.value = 0.1;
@@ -126,7 +125,7 @@ brightnessContrastShader.uniforms.brightness.value = 0.1;
 brightnessContrastShader.uniforms.contrast.value = 0.1;
 colorCorrection.uniforms.mulRGB.value = new Vector3(0.95, 0.95, 0.95);
 colorCorrection.uniforms.powRGB.value = new Vector3(1, 1, 1);
-rgbShift.uniforms.amount.value = 0.00025;
+rgbShift.uniforms.amount.value = 0.0001;
 rgbShift.uniforms.angle.value = 0;
 vignette.uniforms.darkness.value = 5.0;
 vignette.uniforms.offset.value = 0.1;
