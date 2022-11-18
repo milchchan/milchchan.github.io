@@ -167,7 +167,6 @@ const clock = new Clock();
 const raycaster = new Raycaster();
 const mouse = new Vector2();
 let vrmModel = null;
-let modelIsReady = false;
 const vrmSpringBones = [];
 let animationIndex = 0;
 const animationSkipFrames = 2;
@@ -4302,7 +4301,10 @@ window.addEventListener("load", event => {
                                 if (boneNode !== null) {
                                     boneNode.position.set(animation.position[0], animation.position[1], -animation.position[2]);
                                     boneNode.quaternion.set(animation.rotation[0], -animation.rotation[1], -animation.rotation[2], animation.rotation[3]);
-                                    modelIsReady = true;
+
+                                    if (!vrmModel.scene.visible) {
+                                        vrmModel.scene.visible = true;
+                                    }
                                 }
                             }
                         }
@@ -4428,10 +4430,8 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    if (modelIsReady) {
-                        vrmModel.update(deltaTime);
-                    }
-
+                    vrmModel.update(deltaTime);
+                    
                     if (this.animationQueue.length > 0) {
                         const animation = this.animationQueue[0];
 
@@ -4955,6 +4955,7 @@ window.addEventListener("load", event => {
                 await getDownloadURL(storageRef(storage, this.character.model)),
                 async (gltf) => {
                     vrmModel = gltf.userData.vrm;
+                    vrmModel.scene.visible = false;
                     vrmModel.scene.rotation.y = Math.PI;
 
                     if (vrmModel.lookAt !== undefined) {
@@ -5738,8 +5739,8 @@ window.addEventListener("load", event => {
                                 scene.remove(vrmModel.scene);
                             }
 
-                            modelIsReady = false;
                             vrmModel = gltf.userData.vrm;
+                            vrmModel.visible = false;
                             vrmModel.scene.rotation.y = Math.PI;
 
                             if (vrm.lookAt !== undefined) {
@@ -5754,7 +5755,7 @@ window.addEventListener("load", event => {
                                 }
                             }
 
-                            scene.add(vrm.scene);
+                            scene.add(vrmModel.scene);
                             app.progress = null;
                         },
                         (progress) => app.progress = progress.loaded / progress.total,
