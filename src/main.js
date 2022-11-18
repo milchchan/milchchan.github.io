@@ -117,7 +117,7 @@ var fxaaShader = new ShaderPass(FXAAShader);
 
 bloomPass.renderToScreen = true;
 bloomPass.strength = 0.5;
-bloomPass.radius = 0.1;
+bloomPass.radius = 0.0001;
 bloomPass.threshold = 0.5;
 
 //hueSaturation.uniforms.hue.value = 0.1;
@@ -126,7 +126,7 @@ brightnessContrastShader.uniforms.brightness.value = 0.1;
 brightnessContrastShader.uniforms.contrast.value = 0.1;
 colorCorrection.uniforms.mulRGB.value = new Vector3(0.95, 0.95, 0.95);
 colorCorrection.uniforms.powRGB.value = new Vector3(1, 1, 1);
-rgbShift.uniforms.amount.value = 0.0001;
+rgbShift.uniforms.amount.value = 0.00025;
 rgbShift.uniforms.angle.value = 0;
 vignette.uniforms.darkness.value = 5.0;
 vignette.uniforms.offset.value = 0.1;
