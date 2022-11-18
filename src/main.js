@@ -222,6 +222,7 @@ window.addEventListener("load", event => {
                 isPosting: false,
                 isTweeting: false,
                 isPaused: false,
+                isPreparing: false,
                 mode: null,
                 sequenceQueue: [],
                 progress: null,
@@ -3479,7 +3480,7 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    if (this.sequenceQueue.length > 0) {
+                    if (!this.isPreparing && this.sequenceQueue.length > 0) {
                         const sequence = Array.isArray(this.sequenceQueue[0]) ? this.sequenceQueue[0] : this.sequenceQueue[0].sequences;
 
                         if (sequence.length > 0) {
@@ -3527,6 +3528,8 @@ window.addEventListener("load", event => {
                                         }
 
                                         if (!isDependency || !isAnimating) {
+                                            this.isPreparing = true;
+
                                             const hash = await this.digestMessage(`${sequence[0].name}&${sequence[0].resource}`);
 
                                             if (hash in this.animations) {
@@ -3611,6 +3614,8 @@ window.addEventListener("load", event => {
                                             for (let i = this.currentAnimations.length - 1; i >= 0; i--) {
                                                 this.currentAnimations.push(animations[offset + i]);
                                             }*/
+
+                                            this.isPreparing = false;
                                         }
                                     } else {
                                         let isDependency = false;
