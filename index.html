@@ -107,7 +107,7 @@
 <body>
     <div id="app">
         <div class="sidebar is-hidden-mobile">
-            <div class="level">
+            <div class="level" v-bind:style="{ paddingRight: isDebug ? '16px' : '0px' }">
                 <div class="level-item">
                     <div class="level">
                         <div class="level-item" v-cloak>
