@@ -4555,7 +4555,7 @@ window.addEventListener("load", event => {
                 backContext.imageSmoothingQuality = "high";
                 backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
                 backContext.textAlign = "left";
-                backContext.textBaseline = "top";
+                backContext.textBaseline = "alphabetic";
                 backContext.save();
 
                 for (const block of this.wall.blocks) {
@@ -4605,7 +4605,7 @@ window.addEventListener("load", event => {
 
                                         const textMetrics = backContext.measureText(segment.text);
 
-                                        backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2));
+                                        backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize - textMetrics.actualBoundingBoxDescent));
 
                                         x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
                                     }
