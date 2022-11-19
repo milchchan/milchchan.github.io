@@ -4555,7 +4555,7 @@ window.addEventListener("load", event => {
                 backContext.imageSmoothingQuality = "high";
                 backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
                 backContext.textAlign = "left";
-                backContext.textBaseline = "bottom";
+                backContext.textBaseline = "middle";
                 backContext.save();
 
                 for (const block of this.wall.blocks) {
@@ -4605,15 +4605,20 @@ window.addEventListener("load", event => {
 
                                         const textMetrics = backContext.measureText(segment.text);
 
-                                        backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
+                                        backContext.save();
+                                        backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
 
                                         x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                        backContext.restore();
                                     }
 
                                     for (const s of inline.source) {
+                                        backContext.save();
+
                                         const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
 
                                         offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                        backContext.restore();
                                     }
                                 }
                             } while (offset - margin < backCanvas.width * 2);
