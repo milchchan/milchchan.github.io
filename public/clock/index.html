@@ -912,32 +912,15 @@
                 const wrapElement = document.createElement("div");
                 const frameElement = document.createElement("div");
                 const clockElement = document.createElement("div");
-                const creditsElement = document.createElement("div");
-                const linkElement = document.createElement("a");
-                const clipElement = document.createElement("div");
-                const scrollableElement = document.createElement("div");
-                const contentElement1 = document.createElement("div");
-                const contentElement2 = document.createElement("div");
 
                 wrapElement.className = "wrap";
                 wrapElement.style.width = `${factor / sum * 100}%`;
                 frameElement.className = "frame";
                 clockElement.className = "clock";
-                creditsElement.className = "credits";
-                linkElement.href = "https://milchchan.com/";
-                clipElement.className = "clip";
-                scrollableElement.className = "scrollable";
-                contentElement1.innerText = contentElement2.innerText = "milchchan.com";
 
                 frameElement.appendChild(clockElement);
                 wrapElement.appendChild(frameElement);
                 container.appendChild(wrapElement);
-                frameElement.appendChild(creditsElement);
-                creditsElement.appendChild(linkElement);
-                linkElement.appendChild(clipElement);
-                clipElement.appendChild(scrollableElement);
-                scrollableElement.appendChild(contentElement1);
-                scrollableElement.appendChild(contentElement2);
             }
 
             try {
@@ -967,6 +950,40 @@
             }
 
             const data = clockQueue.shift();
+
+            for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
+                const creditsElement = document.createElement("div");
+                const linkElement = document.createElement("a");
+                const clipElement = document.createElement("div");
+                const scrollableElement = document.createElement("div");
+                const contentElement1 = document.createElement("div");
+                const contentElement2 = document.createElement("div");
+
+                creditsElement.className = "credits";
+                creditsElement.style.opacity = "0";
+                linkElement.href = data.url;
+                clipElement.className = "clip";
+                scrollableElement.className = "scrollable";
+                contentElement1.innerText = contentElement2.innerText = data.name;
+
+                frame.appendChild(creditsElement);
+                creditsElement.appendChild(linkElement);
+                linkElement.appendChild(clipElement);
+                clipElement.appendChild(scrollableElement);
+                scrollableElement.appendChild(contentElement1);
+                scrollableElement.appendChild(contentElement2);
+
+                creditsElement.animate([
+                    {
+                        opacity: "1"
+                    }
+                ], {
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out"
+                });
+            }
 
             for (let i = 0; i < data.digits.length; i++) {
                 xArray[i] = digits[i][0];
@@ -1036,6 +1053,72 @@
                         });
                     } catch (e) {
                         console.error(e);
+                    }
+
+                    for (const frame of document.body.querySelectorAll("#container > .wrap > .frame")) {
+                        let updateRequired = false;
+
+                        for (const credits of frame.querySelectorAll(":scope > div.credits")) {
+                            const link = credits.querySelector(":scope > a");
+                            const div = link.querySelector(":scope > .clip > .scrollable > div:first-child");
+
+                            if (div.innerText === data.name) {
+                                if (link.href !== data.url) {
+                                    link.href = data.url;
+                                }
+                            } else {
+                                const animation = credits.animate([
+                                    {
+                                        opacity: "0"
+                                    }
+                                ], {
+                                    fill: "forwards",
+                                    duration: 500,
+                                    iterations: 1,
+                                    easing: "ease-in"
+                                });
+
+                                animation.onfinish = () => {
+                                    credits.remove();
+                                };
+
+                                updateRequired = true;
+                            }
+                        }
+
+                        if (updateRequired) {
+                            const creditsElement = document.createElement("div");
+                            const linkElement = document.createElement("a");
+                            const clipElement = document.createElement("div");
+                            const scrollableElement = document.createElement("div");
+                            const contentElement1 = document.createElement("div");
+                            const contentElement2 = document.createElement("div");
+
+                            creditsElement.className = "credits";
+                            creditsElement.style.opacity = "0";
+                            linkElement.href = data.url;
+                            clipElement.className = "clip";
+                            scrollableElement.className = "scrollable";
+                            contentElement1.innerText = contentElement2.innerText = data.name;
+
+                            frame.appendChild(creditsElement);
+                            creditsElement.appendChild(linkElement);
+                            linkElement.appendChild(clipElement);
+                            clipElement.appendChild(scrollableElement);
+                            scrollableElement.appendChild(contentElement1);
+                            scrollableElement.appendChild(contentElement2);
+
+                            creditsElement.animate([
+                                {
+                                    opacity: "1"
+                                }
+                            ], {
+                                fill: "forwards",
+                                duration: 500,
+                                iterations: 1,
+                                easing: "ease-out"
+                            });
+                        }
                     }
 
                     for (const element of elements) {
