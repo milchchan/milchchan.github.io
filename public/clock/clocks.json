@@ -1,5 +1,7 @@
 [
     {
+        "name": "milchchan.com",
+        "url": "https://milchchan.com/",
         "source": "images/Digits1.png",
         "digits": [
             [
@@ -65,6 +67,8 @@
         ]
     },
     {
+        "name": "milchchan.com",
+        "url": "https://milchchan.com/",
         "source": "images/Digits2.png",
         "digits": [
             [
