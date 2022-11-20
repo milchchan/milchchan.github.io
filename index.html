@@ -70,8 +70,7 @@
                                       ~.     `           `   _`
                                           .....       .....`        
     -->
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="ミルヒちゃんもいっしょに魔法少女しようね">
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#ffffff">
@@ -154,8 +153,7 @@
                                 <div class="rotation-wrapper-inner">
                                     <div class="rotate">
                                         <transition name="fade" mode="out-in">
-                                            <button class="button is-selected" type="button"
-                                                @click="mode = null"
+                                            <button class="button is-selected" type="button" @click="mode = null"
                                                 v-if="mode === 'about'" key="about">
                                                 <div class="wrap is-size-7 has-text-weight-bold">
                                                     <div class="clip">
@@ -170,8 +168,8 @@
                                                 </div>
                                             </button>
                                             <button class="button is-selected" type="button"
-                                                @click="isRevealed = false; mode = null;"
-                                                v-else-if="mode === '_about'" key="_about">
+                                                @click="isRevealed = false; mode = null;" v-else-if="mode === '_about'"
+                                                key="_about">
                                                 <div class="wrap is-size-7 has-text-weight-bold">
                                                     <div class="clip">
                                                         <div class="scrollable">
@@ -1331,6 +1329,127 @@
                                                                 <button class="button is-circle" type="button"
                                                                     v-bind:disabled="mode.next === null"
                                                                     @click="next('likes', mode.next.timestamp, 1)"
+                                                                    v-cloak>
+                                                                    <span class="icon is-small">
+                                                                        <i class="fa-solid fa-chevron-right"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </transition>
+                                        </div>
+                                        <div class="level-item" v-else-if="'backgrounds' in mode" v-cloak>
+                                            <transition name="fade" mode="out-in">
+                                                <div class="level" v-if="mode.backgrounds === null" key="loading">
+                                                    <div class="level-item">
+                                                        <article class="media">
+                                                            <div class="media-content">
+                                                                <div class="content">
+                                                                    <span class="icon is-small">
+                                                                        <i class="fa-solid fa-spinner updating"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                </div>
+                                                <div class="level is-mobile" v-else key="loaded">
+                                                    <div class="level-item" v-for="background in mode.backgrounds"
+                                                        v-bind:key="background">
+                                                        <div class="level is-mobile">
+                                                            <div class="level-item">
+                                                                <div class="level is-mobile">
+                                                                    <div class="level-item">
+                                                                        <div class="card">
+                                                                            <div class="card-image">
+                                                                                <figure class="image">
+                                                                                    <transition name="fade">
+                                                                                        <picture class="image has-ratio"
+                                                                                            style="pointer-events: none;"
+                                                                                            v-if="'image' in background && background.image !== null">
+                                                                                            <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
+                                                                                                v-bind:src="background.image.url"
+                                                                                                v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
+                                                                                                v-bind:alt="background.id">
+                                                                                        </picture>
+                                                                                    </transition>
+                                                                                </figure>
+                                                                            </div>
+                                                                            <div class="card-content">
+                                                                                <div class="media">
+                                                                                    <div class="media-content">
+                                                                                        <button class="button is-circle"
+                                                                                            type="button"
+                                                                                            v-bind:disabled="isUploading"
+                                                                                            @click="upload($event, Object.assign(background, { id: background.id, type: 'backgrounds' })).then(() => next('backgrounds', mode.backgrounds[0].timestamp));">
+                                                                                            <transition name="fade"
+                                                                                                mode="out-in">
+                                                                                                <span class="icon"
+                                                                                                    v-if="isUploading"
+                                                                                                    key="uploading">
+                                                                                                    <i
+                                                                                                        class="fa-solid fa-spinner updating"></i>
+                                                                                                </span>
+                                                                                                <span
+                                                                                                    class="icon is-small"
+                                                                                                    style="pointer-events: none;"
+                                                                                                    v-else key="ready">
+                                                                                                    <i
+                                                                                                        class="fa-solid fa-trash"></i>
+                                                                                                </span>
+                                                                                            </transition>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="content"
+                                                                                    v-if="'user' in background">
+                                                                                    <span class="image is-24x24"
+                                                                                        v-if="'image' in background.user && background.user.image != null">
+                                                                                        <img class="is-rounded"
+                                                                                            v-bind:src="background.user.image"
+                                                                                            v-bind:alt="background.user.name"
+                                                                                            v-cloak>
+                                                                                    </span>
+                                                                                    <span
+                                                                                        class="wrap is-size-7 has-text-weight-bold">
+                                                                                        {{ background.user.name }}
+                                                                                    </span>
+                                                                                    <span class="image"
+                                                                                        v-if="'link' in background.user && background.user.link !== null"><a class="button is-circle"
+                                                                                            v-bind:href="background.user.link"
+                                                                                            target="_blank"><span
+                                                                                                class="icon is-small"><i
+                                                                                                    class="fa-brands fa-twitter"
+                                                                                                    v-if="background.user.link.startsWith('https://twitter.com/')"></i><i
+                                                                                                    class="fa-solid fa-link"
+                                                                                                    v-else></i></span></a></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="level-item"
+                                                        v-if="mode.backgrounds.length > 0 && 'next' in mode && 'indexes' in mode">
+                                                        <div class="level is-mobile">
+                                                            <div class="level-item">
+                                                                <button class="button is-circle" type="button"
+                                                                    v-bind:disabled="mode.indexes.length === 0"
+                                                                    @click="previous('backgrounds', mode.indexes.pop().timestamp)"
+                                                                    v-cloak>
+                                                                    <span class="icon is-small">
+                                                                        <i class="fa-solid fa-chevron-left"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="level-item">
+                                                                <button class="button is-circle" type="button"
+                                                                    v-bind:disabled="mode.next === null"
+                                                                    @click="next('backgrounds', mode.next.timestamp)"
                                                                     v-cloak>
                                                                     <span class="icon is-small">
                                                                         <i class="fa-solid fa-chevron-right"></i>
@@ -3126,6 +3245,82 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button" @click="mode = 'sign-in'"
+                                                                    v-if="user === null">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>イラスト</div>
+                                                                                <div>イラスト</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button"
+                                                                    @click="mode = { backgrounds: null, next: null, indexes: [], selected: [], disposable: false }; next('backgrounds', mode.next);"
+                                                                    v-else>
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span class="wrap has-text-weight-bold">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>イラスト</div>
+                                                                                <div>イラスト</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <label
+                                                                    class="file-label file button is-rounded is-size-7 is-primary has-text-weight-bold">
+                                                                    <input class="file-input" type="button"
+                                                                        @click="mode = 'sign-in'" v-if="user === null">
+                                                                    <input class="file-input" type="file" name="upload"
+                                                                        accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
+                                                                        multiple v-bind:disabled="isUploading"
+                                                                        @change="isDebug ? upload : upload($event, { type: 'backgrounds' })" v-else>
+                                                                    <div class="file-cta_">
+                                                                        <transition name="fade" mode="out-in">
+                                                                            <span class="icon" v-if="isUploading"
+                                                                                key="uploading">
+                                                                                <i
+                                                                                    class="fa-solid fa-spinner updating"></i>
+                                                                            </span>
+                                                                            <span class="icon" v-else key="ready">
+                                                                                <i class="fa-solid fa-star"></i>
+                                                                            </span>
+                                                                        </transition>
+                                                                        <span class="file-label wrap">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>イラストを投稿</div>
+                                                                                    <div>イラストを投稿</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
                                                                     type="button"
                                                                     @click="mode = { likes: null, next: null, indexes: [], disposable: false }; next('likes', mode.next, 1);">
                                                                     <span class="icon">
@@ -3201,43 +3396,6 @@
                                                                         </div>
                                                                     </span>
                                                                 </button>
-                                                            </div>
-                                                        </div>
-                                                    </article>
-                                                </div>
-                                                <div class="panel-block" v-if="isDebug">
-                                                    <article class="media">
-                                                        <div class="media-content">
-                                                            <div class="content">
-                                                                <label
-                                                                    class="file-label file button is-rounded is-size-7 is-primary has-text-weight-bold">
-                                                                    <input class="file-input" type="button"
-                                                                        @click="mode = 'sign-in'" v-if="user === null">
-                                                                    <input class="file-input" type="file" name="upload"
-                                                                        accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
-                                                                        multiple v-bind:disabled="isUploading"
-                                                                        @change="upload" v-else>
-                                                                    <div class="file-cta_">
-                                                                        <transition name="fade" mode="out-in">
-                                                                            <span class="icon" v-if="isUploading"
-                                                                                key="uploading">
-                                                                                <i
-                                                                                    class="fa-solid fa-spinner updating"></i>
-                                                                            </span>
-                                                                            <span class="icon" v-else key="ready">
-                                                                                <i class="fa-solid fa-star"></i>
-                                                                            </span>
-                                                                        </transition>
-                                                                        <span class="file-label wrap">
-                                                                            <div class="clip">
-                                                                                <div class="scrollable">
-                                                                                    <div>背景をアップロード</div>
-                                                                                    <div>背景をアップロード</div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </span>
-                                                                    </div>
-                                                                </label>
                                                             </div>
                                                         </div>
                                                     </article>
