@@ -28,6 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Roboto:wght@700&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
     <style type="text/css">
         :root {
@@ -133,10 +134,9 @@
             left: 0px;
             top: 0px;
             margin: 0px 4px 0px 4px;
-            border: 1px solid var(--foreground-color);
+            border: 1px solid var(--background-color);
             background: #ffffff;
             overflow: hidden;
-            transition: .5s;
         }
 
         div.digit {
@@ -160,10 +160,9 @@
             width: 120px;
             height: 320px;
             background: url('/images/Background.png') 0 0 repeat;
-            background-color: var(--foreground-color);
+            background-color: var(--accent-color);
             background-size: 100px 100px;
             animation: loop 10s linear forwards infinite;
-            transition: .5s;
         }
 
         div.left {
@@ -190,6 +189,46 @@
             margin: 0px 8px 4px 8px;
             padding: 0px 0px 0px 0px;
             line-height: 0px;
+        }
+
+        div.credits {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            padding: 0px 16px 8px 16px;
+            transform: translateX(-50%);
+            width: fit-content;
+            height: fit-content;
+        }
+
+        div.credits>a {
+            margin: 0;
+            padding: 0;
+            height: calc(0.75rem * 1.5);
+            background-clip: padding-box;
+            line-height: calc(0.75rem * 1.5);
+            backface-visibility: hidden;
+        }
+
+        div.credits>a>.clip {
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
+        }
+
+        div.credits>a>.clip>.scrollable>div {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            vertical-align: baseline;
+            font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+            font-size: 0.75rem;
+            font-weight: bold;
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+            color: var(--foreground-color);
+            transform: rotate(0.03deg);
+            transition: .5s;
         }
 
         div.legal {
@@ -236,14 +275,13 @@
         span.caption {
             user-select: none;
             float: right;
-            color: var(--foreground-color);
+            color: var(--background-color);
             margin: 4px 8px 4px 4px;
             font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
             font-size: 0.5rem;
             font-weight: bold;
             line-height: 8px;
             text-transform: uppercase;
-            transition: .5s;
         }
 
         img.digit {
@@ -257,12 +295,11 @@
         }
 
         img.control {
-            border: 1px solid var(--foreground-color);
+            border: 1px solid var(--background-color);
             margin: 0px 0px 0px 0px;
             padding: 1px 1px 1px 1px;
             vertical-align: top;
             opacity: 0.5;
-            transition: .5s;
         }
 
         img {
@@ -300,6 +337,27 @@
             transition: .5s;
         }
 
+        a .scrollable {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, 0%, 0);
+            transition: 0.5s ease-in;
+        }
+
+        a .scrollable:hover {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, -50%, 0);
+            transition: 0.5s ease-out;
+        }
+
+        a .scrollable>div {
+            box-sizing: content-box;
+            vertical-align: middle;
+        }
+
         @keyframes loop {
             0% {
                 background-position: 0 0;
@@ -314,7 +372,7 @@
         (min-resolution: 2dppx) {
             div.loading {
                 background: url('/images/Background@2x.png') repeat;
-                background-color: var(--foreground-color);
+                background-color: var(--accent-color);
                 background-size: 100px 100px;
             }
         }
@@ -323,7 +381,7 @@
         (min-resolution: 3dppx) {
             div.loading {
                 background: url('/images/Background@3x.png') repeat;
-                background-color: var(--foreground-color);
+                background-color: var(--accent-color);
                 background-size: 100px 100px;
             }
         }
@@ -854,15 +912,32 @@
                 const wrapElement = document.createElement("div");
                 const frameElement = document.createElement("div");
                 const clockElement = document.createElement("div");
+                const creditsElement = document.createElement("div");
+                const linkElement = document.createElement("a");
+                const clipElement = document.createElement("div");
+                const scrollableElement = document.createElement("div");
+                const contentElement1 = document.createElement("div");
+                const contentElement2 = document.createElement("div");
 
                 wrapElement.className = "wrap";
                 wrapElement.style.width = `${factor / sum * 100}%`;
                 frameElement.className = "frame";
                 clockElement.className = "clock";
+                creditsElement.className = "credits";
+                linkElement.href = "https://milchchan.com/";
+                clipElement.className = "clip";
+                scrollableElement.className = "scrollable";
+                contentElement1.innerText = contentElement2.innerText = "milchchan.com";
 
                 frameElement.appendChild(clockElement);
                 wrapElement.appendChild(frameElement);
                 container.appendChild(wrapElement);
+                frameElement.appendChild(creditsElement);
+                creditsElement.appendChild(linkElement);
+                linkElement.appendChild(clipElement);
+                clipElement.appendChild(scrollableElement);
+                scrollableElement.appendChild(contentElement1);
+                scrollableElement.appendChild(contentElement2);
             }
 
             try {
