@@ -1378,7 +1378,7 @@
                                                                                 </figure>
                                                                             </div>
                                                                             <div class="card-content">
-                                                                                <div class="media">
+                                                                                <div class="media" v-if="isDebug">
                                                                                     <div class="media-content">
                                                                                         <button class="button is-circle"
                                                                                             type="button"
@@ -3245,6 +3245,30 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <button class="button is-rounded is-size-7 is-primary"
+                                                                    type="button"
+                                                                    @click="mode = { likes: null, next: null, indexes: [], disposable: false }; next('likes', mode.next, 1);">
+                                                                    <span class="icon">
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                    </span>
+                                                                    <span
+                                                                        class="wrap has-text-weight-bold has-text-black">
+                                                                        <div class="clip">
+                                                                            <div class="scrollable">
+                                                                                <div>お気に入り</div>
+                                                                                <div>お気に入り</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                                <div class="panel-block">
+                                                    <article class="media">
+                                                        <div class="media-content">
+                                                            <div class="content">
+                                                                <button class="button is-rounded is-size-7 is-primary"
                                                                     type="button" @click="mode = 'sign-in'"
                                                                     v-if="user === null">
                                                                     <span class="icon">
@@ -3312,30 +3336,6 @@
                                                                         </span>
                                                                     </div>
                                                                 </label>
-                                                            </div>
-                                                        </div>
-                                                    </article>
-                                                </div>
-                                                <div class="panel-block">
-                                                    <article class="media">
-                                                        <div class="media-content">
-                                                            <div class="content">
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button"
-                                                                    @click="mode = { likes: null, next: null, indexes: [], disposable: false }; next('likes', mode.next, 1);">
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span
-                                                                        class="wrap has-text-weight-bold has-text-black">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>お気に入り</div>
-                                                                                <div>お気に入り</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </button>
                                                             </div>
                                                         </div>
                                                     </article>
