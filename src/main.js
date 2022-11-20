@@ -800,6 +800,10 @@ window.addEventListener("load", event => {
                             } else if (data.type === null) {
                                 data["image"] = { path: path, url: await getDownloadURL(storageRef(storage, path)), type: file.type };
                                 data["timestamp"] = timestamp;
+                            } else if (data.type === "backgrounds") {
+                                await runTransaction(databaseRef(database, `${databaseRoot}/backgrounds/${push(child(databaseRef(database), `${databaseRoot}/backgrounds`)).key}`), current => {
+                                    return { image: { path: path, type: file.type }, user: 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL }, random: Math.random(), timestamp: timestamp };
+                                });
                             } else {
                                 const result = await runTransaction(databaseRef(database, `${databaseRoot}/${data.type}/${data.id}`), current => {
                                     if (current) {
@@ -838,6 +842,15 @@ window.addEventListener("load", event => {
                 } else if (data.type === null) {
                     data["image"] = null;
                     data["timestamp"] = timestamp;
+                } else if (data.type === "backgrounds") {
+                    try {
+                        await runTransaction(databaseRef(database, `${databaseRoot}/${data.type}/${data.id}`), current => {
+                            return null;
+                        });
+                    } catch (e) {
+                        this.notify({ text: e.message, accent: this.character.accent, image: this.character.image });
+                        console.error(e);
+                    }
                 } else {
                     try {
                         const result = await runTransaction(databaseRef(database, `${databaseRoot}/${data.type}/${data.id}`), current => {
