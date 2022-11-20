@@ -3592,7 +3592,7 @@ label .scrollable>div {
                     padding: 0px 16px 0px 16px;
 
                     .media-content {
-                        overflow: hidden;
+                        overflow: hidden !important;
                         transform: rotate(0.03deg);
                     }
 
