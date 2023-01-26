@@ -35,8 +35,8 @@ $family-sans-serif: "Hiragino Kaku Gothic ProN",
     --backdrop-color: rgba(255, 255, 255, 0.75);
     --primary-background-color: rgb(104, 230, 255);
     --background-image: url("/images/Stripes.png");
-    --background-image-2x: url("/images/Background@2x.png");
-    --background-image-3x: url("/images/Background@3x.png");
+    --background-image-2x: url("/images/Stripes@2x.png");
+    --background-image-3x: url("/images/Stripes@3x.png");
     --background-font-family: "Dela Gothic One", cursive;
 }
 
@@ -403,6 +403,7 @@ label .scrollable>div {
     position: absolute;
     margin: 0 !important;
     border: 0px solid transparent;
+    border-radius: 0px;
     padding: 0;
     width: 100%;
     height: fit-content;
@@ -414,23 +415,27 @@ label .scrollable>div {
     touch-action: none;
 
     >.bar {
+        pointer-events: none;
+        z-index: 1;
         position: relative;
-        margin: 0;
-        border: 0px solid transparent;
-        padding: 0;
-        border-radius: 0px;
-        width: 100%;
-        height: 2px;
         top: 0;
         left: 0;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        border-radius: 0px;
+        width: 100%;
+        height: 16px;
+        transform: translate3d(0, 0%, 0);
         overflow: hidden;
-        background: #ffee00 var(--background-image) 0% 0% repeat;
+        background: url('/images/Background.png') 0 0 repeat;
+        background-color: #ffee00;
         background-size: 24px 24px;
-        backface-visibility: hidden;
-        overflow: hidden;
-        animation: progress 1s linear 0s infinite;
-        animation-fill-mode: forwards;
+        animation: progress 1s linear forwards infinite;
         animation-play-state: paused;
+        transition: .5s;
+        backface-visibility: hidden;
+        perspective: 1000;
     }
 
     >.animating {
@@ -1189,7 +1194,7 @@ label .scrollable>div {
                             border-radius: 290486px;
                             /*background: rgba(255, 255, 255, 0.75) !important;*/
                             border: 0px none transparent !important;
-                            background: var(--background-color);
+                            background-color: var(--background-color);
                             width: 128px;
                             height: fit-content;
                             /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
@@ -1812,7 +1817,7 @@ label .scrollable>div {
                                                 flex-direction: row;
                                                 justify-content: flex-start;
                                                 align-items: center;
-                                                
+
                                                 >span.image:first-child:not(:last-child) {
                                                     margin: 0px 8px 0px 0px !important;
                                                     flex-shrink: 0;
@@ -4111,7 +4116,7 @@ label .scrollable>div {
     }
 
     100% {
-        background-position: -20px 0px;
+        background-position: -24px 0px;
     }
 }
 
@@ -4190,7 +4195,8 @@ label .scrollable>div {
 @media screen and (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 2dppx) {
     .progress>.bar {
-        background: #ffee00 var(--background-image-2x) 0% 0% repeat;
+        background: url('/images/Background@2x.png') 0 0 repeat;
+        background-color: #ffee00;
         background-size: 24px 24px;
     }
 
@@ -4225,7 +4231,8 @@ label .scrollable>div {
 @media screen and (-webkit-min-device-pixel-ratio: 3),
 (min-resolution: 3dppx) {
     .progress>.bar {
-        background: #ffee00 var(--background-image-3x) 0% 0% repeat;
+        background: url('/images/Background@3x.png') 0 0 repeat;
+        background-color: #ffee00;
         background-size: 24px 24px;
     }
 
