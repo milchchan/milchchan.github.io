@@ -501,8 +501,6 @@ window.addEventListener("load", event => {
                     provider.addScope("public_profile");
 
                     if (window.navigator.userAgent.indexOf("Safari") > -1 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                        signInWithRedirect(auth, provider);
-                    } else {
                         try {
                             const result = await signInWithPopup(auth, provider);
                             const credential = FacebookAuthProvider.credentialFromResult(result);
@@ -528,6 +526,8 @@ window.addEventListener("load", event => {
                         } catch (error) {
                             console.error(error.code, error.message);
                         }
+                    } else {
+                        signInWithRedirect(auth, provider);
                     }
                 } else if (event === TwitterAuthProvider.PROVIDER_ID) {
                     const provider = new TwitterAuthProvider();
