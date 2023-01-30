@@ -2592,6 +2592,14 @@ label .scrollable>div {
                                 .icon {
                                     color: var(--accent-color);
                                 }
+
+                                >.balloon {
+                                    background-image: url('/images/Stripes.png');
+                                    background-color: var(--primary-background-color);
+                                    background-position: 50% 50%;
+                                    background-repeat: repeat;
+                                    background-size: 24px 24px;
+                                }
                             }
 
                             .has-text-left+.level {
@@ -2644,11 +2652,6 @@ label .scrollable>div {
                                 position: relative;
                                 padding: 8px 16px 8px 16px;
                                 border-radius: 0px 500px 500px 500px;
-                                background-image: url('/images/Stripes.png');
-                                background-color: var(--primary-background-color);
-                                background-position: 50% 50%;
-                                background-repeat: repeat;
-                                background-size: 24px 24px;
                                 transition: 0.5s;
                                 backface-visibility: hidden;
                                 perspective: 1000;
@@ -2660,11 +2663,6 @@ label .scrollable>div {
                                 position: relative;
                                 padding: 8px 16px 8px 16px;
                                 border-radius: 500px 500px 0px 500px;
-                                background-image: url('/images/Stripes.png');
-                                background-color: var(--primary-background-color);
-                                background-position: 50% 50%;
-                                background-repeat: repeat;
-                                background-size: 24px 24px;
                                 transition: 0.5s;
                                 backface-visibility: hidden;
                                 perspective: 1000;
@@ -4220,9 +4218,11 @@ label .scrollable>div {
         background-size: 2px 2px;
     }*/
 
-    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
-    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
-        background-image: var(--background-image-2x);
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content>.content>.balloon {
+        background-image: url('/images/Stripes@2x.png');
+        background-color: var(--primary-background-color);
+        background-position: 50% 50%;
+        background-repeat: repeat;
         background-size: 24px 24px;
     }
 
@@ -4256,9 +4256,8 @@ label .scrollable>div {
         background-size: 2px 2px;
     }*/
 
-    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-left .balloon,
-    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content .has-text-right .balloon {
-        background-image: var(--background-image-3x);
+    #menu>.columns>.column>.control>.level:first-child>.level-item>.level>.level-item>.media>.media-content>.content>.balloon {
+        background-image: url('/images/Stripes@3x.png');
         background-color: var(--primary-background-color);
         background-position: 50% 50%;
         background-repeat: repeat;
