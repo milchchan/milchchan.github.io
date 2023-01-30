@@ -223,6 +223,7 @@ window.addEventListener("load", event => {
                 isTweeting: false,
                 isPaused: false,
                 isPreparing: false,
+                isRetaining: false,
                 mode: null,
                 sequenceQueue: [],
                 progress: null,
@@ -1164,11 +1165,11 @@ window.addEventListener("load", event => {
                         if (this.points < this.maxPoints) {
                             const nextPoints = Math.min(this.points + 30, this.maxPoints);
 
-                            for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
+                            /*for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
                                 if (i % 60 === 0) {
                                     this.retain();
                                 }
-                            }
+                            }*/
 
                             this.points = nextPoints;
                         }
@@ -1226,7 +1227,11 @@ window.addEventListener("load", event => {
             },
             retain: async function (word = null) {
                 if (word === null) {
+                    this.isRetaining = true;
+
                     const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+                    
+                    this.isRetaining = false;
 
                     if (snapshot.exists()) {
                         function choice(collection, func) {
@@ -1328,6 +1333,8 @@ window.addEventListener("load", event => {
                         this.notify({ text: format(obj.text, word.name), accent: this.character.alternative.accent, image: this.character.alternative.image });
                     }
                 }
+
+                this.points = Math.max(0, this.points - 60);
             },
             release: function (words) {
                 for (const word of words) {
@@ -4511,11 +4518,11 @@ window.addEventListener("load", event => {
                         if (points > 0 && points < 60 && this.points < this.maxPoints) {
                             const nextPoints = Math.min(this.points + points, this.maxPoints);
 
-                            for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
+                            /*for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
                                 if (i % 60 === 0) {
                                     this.retain();
                                 }
-                            }
+                            }*/
 
                             this.points = nextPoints;
                         }
@@ -4752,41 +4759,6 @@ window.addEventListener("load", event => {
             const characters = window.location.hostname.endsWith("merkuchan.com") ? [{ path: "/assets/merku.json", probability: 0.99 }, { path: "/assets/milch.json", probability: 0.01 }] : [{ path: "/assets/milch.json", probability: 0.99 }, { path: "/assets/merku.json", probability: 0.01 }];
             const loader = new GLTFLoader();
 
-            if (window.location.pathname === "/about") {
-                this.mode = "_about";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/milch") {
-                this.mode = "_milch";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/merku") {
-                this.mode = "_merku";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/settings") {
-                this.mode = "_settings";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/help") {
-                this.mode = "_help";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/words" || window.location.pathname === "/talk") {
-                this.mode = { words: null, next: null, indexes: [], selected: [], disposable: true };
-                this.next("words", this.mode.next);
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/learn") {
-                this.isLearning = true;
-            } else if (window.location.pathname === "/likes") {
-                this.mode = { likes: null, next: null, indexes: [], disposable: true };
-                this.next("likes", this.mode.next, 1);
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/stats") {
-                this.mode = { stats: null, words: null, likes: null, disposable: true };
-                this.next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
-                this.next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/logs") {
-                this.mode = { logs: this.logs, disposable: true };
-                this.isRevealed = true;
-            }
-
             if (characterStorageItem) {
                 try {
                     const character = JSON.parse(characterStorageItem);
@@ -4831,6 +4803,41 @@ window.addEventListener("load", event => {
                 } catch (e) {
                     localStorage.removeItem("credential");
                 }
+            }
+
+            if (window.location.pathname === "/about") {
+                this.mode = "_about";
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/milch") {
+                this.mode = "_milch";
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/merku") {
+                this.mode = "_merku";
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/settings") {
+                this.mode = "_settings";
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/help") {
+                this.mode = "_help";
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/words") {
+                this.mode = { words: null, next: null, indexes: [], selected: [], disposable: true };
+                this.next("words", this.mode.next);
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/learn") {
+                this.isLearning = true;
+            } else if (window.location.pathname === "/likes") {
+                this.mode = { likes: null, next: null, indexes: [], disposable: true };
+                this.next("likes", this.mode.next, 1);
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/stats") {
+                this.mode = { stats: null, words: null, likes: null, disposable: true };
+                this.next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/logs") {
+                this.mode = { logs: this.logs, disposable: true };
+                this.isRevealed = true;
             }
 
             const rect = this.$refs.wall.getBoundingClientRect();
