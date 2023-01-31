@@ -4948,8 +4948,12 @@ window.addEventListener("load", event => {
                 this.mode = "_help";
                 this.isRevealed = true;
             } else if (window.location.pathname === "/talk") {
-                this.mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: true };
+                this.mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: true, disposable: true };
                 this.isRevealed = true;
+                this.randomize().then((x) => {
+                    this.mode.next = x;
+                    this.mode.reloading = false;
+                });
             } else if (window.location.pathname === "/words") {
                 this.mode = { words: null, next: null, indexes: [], selected: [], disposable: true };
                 this.next("words", this.mode.next);
