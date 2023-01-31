@@ -2694,7 +2694,7 @@ label .scrollable>div {
                                 span.highlight {
                                     background-color: var(--accent-color);
                                     color: var(--background-color) !important;
-                                    border-radius: 4px;
+                                    border-radius: 2px;
                                     padding: 4px 8px 4px 8px;
                                 }
                             }
@@ -3447,7 +3447,7 @@ label .scrollable>div {
             .marker {
                 background-color: var(--highlight-color);
                 color: var(--background-color) !important;
-                border-radius: 4px;
+                border-radius: 2px;
                 padding: 4px 8px 4px 8px;
                 transition: 0.5s;
             }
@@ -3625,13 +3625,14 @@ label .scrollable>div {
                             justify-content: center;
                             border-radius: 290486px;
                             padding: 8px 16px 8px 16px;
-                            background: var(--background-image) 50% 50% repeat;
+                            background: url('/images/Stripes.png') 50% 50% repeat;
                             background-size: 24px 24px;
                             touch-action: none;
                             -webkit-user-select: none;
                             user-select: none;
                             overflow: hidden;
                             backface-visibility: hidden;
+                            perspective: 1000;
 
                             .media-left {
                                 margin: 0px 8px 0px 0px !important;
@@ -4226,8 +4227,8 @@ label .scrollable>div {
         background-size: 24px 24px;
     }
 
-    #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
-        background: var(--background-image-2x) 50% 50% repeat;
+    #popup .columns>.column>.control:last-child .level-item:nth-last-of-type(2) .media {
+        background: url('/images/Stripes@2x.png') 50% 50% repeat;
         background-size: 24px 24px;
     }
 }
@@ -4264,8 +4265,8 @@ label .scrollable>div {
         background-size: 24px 24px;
     }
 
-    #popup .columns>.column>.control:first-child .level:nth-last-of-type(2) .media {
-        background: var(--background-image-3x) 50% 50% repeat;
+    #popup .columns>.column>.control:last-child .level-item:nth-last-of-type(2) .media {
+        background: url('/images/Stripes@3x.png') 50% 50% repeat;
         background-size: 24px 24px;
     }
 }
