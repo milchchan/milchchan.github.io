@@ -1627,7 +1627,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="level is-mobile is-fullwidth" v-else key="loaded">
-                                                    <div class="level-item is-fullwidth"
+                                                    <div class="level-item is-fullwidth is-hidden"
                                                         v-for="log in take(logs.slice().reverse(), 10).reverse()"
                                                         v-bind:key="log">
                                                         <article class="media is-fullwidth" v-if="'id' in log.user">
@@ -1707,6 +1707,19 @@
                                                             </div>
                                                         </article>
                                                     </div>
+                                                    <transition name="fade" mode="out-in">
+                                                        <div class="level-item">
+                                                            <article class="media">
+                                                                <div class="media-content">
+                                                                    <div class="content">
+                                                                        <h1
+                                                                            v-text="mode.word === null ? '' : mode.word.characters.reduce((x, y) => x + y.value, '')">
+                                                                        </h1>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                                    </transition>
                                                     <div class="level-item">
                                                         <div class="level">
                                                             <div class="level-item">
@@ -1718,17 +1731,20 @@
                                                                                     class="button is-primary is-circle"
                                                                                     type="button"
                                                                                     v-bind:disabled="isRetaining"
-                                                                                    @click="mode.reloading = true; retain().then(() => captures._resolve().then(() => { mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1); mode.reloading = false; }));" v-cloak>
+                                                                                    @click="mode.reloading = true; randomize().then((x) => { mode.next = x; mode.reloading = false; });/*retain().then(() => captures._resolve().then(() => { mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1); mode.reloading = false; }));*/"
+                                                                                    v-cloak>
                                                                                     <transition name="fade"
                                                                                         mode="out-in">
                                                                                         <span class="icon"
                                                                                             v-if="isRetaining"
                                                                                             key="processing">
-                                                                                            <i class="fa-solid fa-spinner updating"></i>
+                                                                                            <i
+                                                                                                class="fa-solid fa-spinner updating"></i>
                                                                                         </span>
                                                                                         <span class="icon" v-else
                                                                                             key="ready">
-                                                                                            <i class="fa-solid fa-shuffle"></i>
+                                                                                            <i
+                                                                                                class="fa-solid fa-shuffle"></i>
                                                                                         </span>
                                                                                     </transition>
                                                                                 </button>
@@ -1739,8 +1755,54 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="level-item">
+                                                        <div class="level">
+                                                            <div class="level-item">
+                                                                <div class="level">
+                                                                    <div class="level-item">
+                                                                        <div class="level is-mobile">
+                                                                            <div class="level-item" v-cloak>
+                                                                                <button
+                                                                                    class="button is-primary is-rounded"
+                                                                                    type="button"
+                                                                                    v-bind:disabled="mode.word === null || isLoading || isHangingOn"
+                                                                                    @click="activate([mode.word.text], 0.0, true); isRevealed = false; mode = null;"
+                                                                                    v-cloak>
+                                                                                    <transition name="fade"
+                                                                                        mode="out-in">
+                                                                                        <span class="icon"
+                                                                                            v-if="isLoading || isHangingOn"
+                                                                                            key="processing">
+                                                                                            <i
+                                                                                                class="fa-solid fa-spinner updating"></i>
+                                                                                        </span>
+                                                                                        <span class="icon" v-else
+                                                                                            key="ready">
+                                                                                            <i
+                                                                                                class="fa-solid fa-comment"></i>
+                                                                                        </span>
+                                                                                    </transition>
+                                                                                    <span
+                                                                                        class="wrap is-size-7 has-text-weight-bold">
+                                                                                        <div class="clip">
+                                                                                            <div class="scrollable">
+                                                                                                <div>この言葉でお話し</div>
+                                                                                                <div>この言葉でお話し</div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--
                                                     <transition name="fade" mode="out-in">
-                                                        <div class="level-item" v-if="mode.reloading" v-bind:key="mode.reloading">
+                                                        <div class="level-item" v-if="mode.reloading"
+                                                            v-bind:key="mode.reloading">
                                                             <article class="media">
                                                                 <div class="media-content">
                                                                     <div class="content">
@@ -1751,7 +1813,8 @@
                                                                 </div>
                                                             </article>
                                                         </div>
-                                                        <div class="level-item" v-else-if="mode.collection !== null && mode.index < mode.collection.length && mode.collection[mode.index].length > 0"
+                                                        <div class="level-item"
+                                                            v-else-if="mode.collection !== null && mode.index < mode.collection.length && mode.collection[mode.index].length > 0"
                                                             v-bind:key="(mode.collection !== null && mode.collection.length > 0) ? mode.collection[mode.index][0].name : null">
                                                             <div class="level">
                                                                 <div class="level-item">
@@ -1870,7 +1933,7 @@
                                                                                                                     <span
                                                                                                                         class="custom"></span>
                                                                                                                     <span
-                                                                                                                        class="image is-24x24"
+                                                                                                                        lass="image is-24x24"
                                                                                                                         v-if="'user' in word && 'image' in word.user && word.user.image != null">
                                                                                                                         <img class="is-rounded"
                                                                                                                             v-bind:src="word.user.image"
@@ -2071,6 +2134,7 @@
                                                             </div>
                                                         </div>
                                                     </transition>
+                                                    -->
                                                 </div>
                                             </transition>
                                         </div>
@@ -3144,7 +3208,7 @@
                                                                 </button>
                                                                 <button class="button is-rounded is-size-7 is-primary"
                                                                     type="button"
-                                                                    @click="mode = { collection: null, index: 0, selected: [], reloading: false, disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
+                                                                    @click="mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: false }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
                                                                     v-else>
                                                                     <span class="icon">
                                                                         <i class="fa-solid fa-star"></i>
@@ -3717,14 +3781,14 @@
                                         <span class="is-size-1 is-uppercase">{{ animatedStars }}</span>
                                     </div>
                                 </div>
-                                <div class="level-item has-text-centered">
+                                <div class="level-item has-text-centered is-hidden">
                                     <div class="progress" v-cloak>
                                         <div class="bar"
                                             v-bind:style="{width: String(animatedPoints < maxPoints ? Math.floor(100.0 * (animatedPoints % 60) / 59) : 100) + '%'}">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="level-item has-text-centered">
+                                <div class="level-item has-text-centered is-hidden">
                                     <div class="field">
                                         <span class="is-size-7 has-text-weight-bold"
                                             v-text="String(Object.values(captures).reduce((x, y) => x + (typeof (y) === 'function' ? 0 : y.count), 0))"></span>
@@ -3875,7 +3939,7 @@
             <div class="level-item">
                 <button class="button is-circle" type="button"
                     v-bind:disabled="isLoading || mode !== null && typeof(mode) === 'object' && 'collection' in mode"
-                    @click="isRevealed = true; user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], reloading: false, disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); user === null ? isRevealed = true : prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
+                    @click="isRevealed = true; user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); user === null ? isRevealed = true : prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
                     v-cloak>
                     <transition name="fade" mode="out-in">
                         <span class="icon is-small" v-if="isLoading" key="loading">
@@ -3896,7 +3960,7 @@
                     </button>
                     <button class="button is-circle" type="button"
                         v-bind:disabled="isLoading || background.nonce !== null"
-                        @click="isRevealed = true; user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], reloading: false, disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
+                        @click="isRevealed = true; user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: true }; captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));"
                         v-else key="default" v-cloak>
                         <transition name="fade" mode="out-in">
                             <span class="icon is-small" v-if="isLoading || background.nonce !== null" key="processing">
