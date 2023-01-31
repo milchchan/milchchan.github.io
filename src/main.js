@@ -244,7 +244,7 @@ window.addEventListener("load", event => {
                 words: [],
                 likes: [],
                 tags: [],
-                maxTags: 10,
+                maxTags: 100,
                 logs: [],
                 scrollTimeoutID: undefined,
                 stars: -1,
@@ -1277,7 +1277,7 @@ window.addEventListener("load", event => {
                     const dictionary = snapshot.val();
                     const words = [];
                     const letters = [];
-                    
+
                     for (const key in dictionary) {
                         dictionary[key]["name"] = key;
                         dictionary[key]["probability"] = 1;
@@ -2079,7 +2079,23 @@ window.addEventListener("load", event => {
 
                 return [false, null];
             },
-            generate: async function (message, hints = []) {
+            testtest: async function () {
+                const message = [
+                    "やはり",
+                    [
+                        "する事"
+                    ],
+                    "...！！",
+                    [
+                        "飲み物"
+                    ],
+                    "は全てを解決する...！！ってメルクちゃんが言ってたよ"
+                ];
+
+                console.log(await this.generate(message, ["ペロペロ"]));
+                console.log(await this.generate(["こんにちは"]));
+            },
+            generate: async function (message, hints = [], strict = true) {
                 function choice(probabilities) {
                     const r = Math.random();
                     let sum = 0.0;
@@ -2121,12 +2137,12 @@ window.addEventListener("load", event => {
 
                 const timestamp = Math.floor(new Date() / 1000);
                 const timeout = 60 * 60;
-                let segmenter = new TinySegmenter();
-                let tokens = Array.isArray(message) ? message : segmenter.segment(message);
-                let hintDictionary = {};
-                let tokenSet = [];
+                const segmenter = new TinySegmenter();
+                const tokens = Array.isArray(message) ? message : segmenter.segment(message);
+                const hintDictionary = {};
+                const tokenSet = [];
                 const regex = new RegExp("[.#$\\[\\]]");
-                let cachDictionary = {};
+                const cachDictionary = {};
                 const text = [];
                 let index = 0;
                 const epsilon = Math.pow(10, -6);
@@ -2162,7 +2178,7 @@ window.addEventListener("load", event => {
                 }
 
                 for (const token of tokens) {
-                    if (!tokenSet.includes(token)) {
+                    if (!tokenSet.includes(JSON.stringify(token))) {
                         if (Array.isArray(token)) {
                             const terms = [];
                             const scores = [];
@@ -2170,7 +2186,7 @@ window.addEventListener("load", event => {
                             for (const attribute of token) {
                                 if (attribute in hintDictionary) {
                                     for (const s of hintDictionary[attribute]) {
-                                        if (!terms.includes(s)) {
+                                        if (!terms.some(x => x.name === s)) {
                                             let isNew = true;
 
                                             terms.push({ name: s, attributes: this.wordDictionary[s].attributes });
@@ -2205,107 +2221,24 @@ window.addEventListener("load", event => {
                                     }
 
                                     for (const word of this.reverseWordDictionary[attribute].words) {
-                                        if (tokens.includes(word) && !terms.includes(word)) {
+                                        if (!terms.some(x => x.name === word)) {
                                             let isNew = true;
 
-                                            terms.push({ name: word, attributes: this.wordDictionary[word].attributes });
+                                            if (word in this.wordDictionary === false) {
+                                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + word));
 
-                                            for (const tag of this.tags) {
-                                                if (word == tag.name) {
-                                                    scores.push(tag.score);
-                                                    isNew = false;
+                                                this.wordDictionary[word] = { attributes: [], timestamp: timestamp };
 
-                                                    break;
+                                                if (snapshot.exists()) {
+                                                    const w = snapshot.val();
+
+                                                    for (const a in w.attributes) {
+                                                        if (typeof (w.attributes[a]) === "number" && w.attributes[a] > 0 && this.attributes.includes(a)) {
+                                                            this.wordDictionary[word].attributes.push(a);
+                                                        }
+                                                    }
                                                 }
                                             }
-
-                                            if (isNew) {
-                                                scores.push(epsilon);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (terms.length > 0 && scores.length > 0) {
-                                const probabilities = softmax(scores);
-                                let candidates = [];
-
-                                for (let i = 0; i < sequences.length; i++) {
-                                    for (let j = 0; j < probabilities.length; j++) {
-                                        let sequence = [].concat(sequences[i].sequence);
-
-                                        sequence.push({ index: index, term: terms[j] });
-                                        candidates.push({ sequence: sequence, score: sequences[i].score * probabilities[j] });
-                                    }
-                                }
-
-                                sequences.splice(0);
-
-                                for (const candidate of this.take(candidates.sort((x, y) => y.score - x.score), beamWidth)) {
-                                    sequences.push(candidate);
-                                }
-                            }
-                        } else if (!regex.test(token)) {
-                            const terms = [];
-                            const scores = [];
-
-                            if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
-
-                                this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-
-                                if (snapshot.exists()) {
-                                    const word = snapshot.val();
-
-                                    for (const attribute in word.attributes) {
-                                        if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
-                                            this.wordDictionary[token].attributes.push(attribute);
-                                        }
-                                    }
-                                }
-                            }
-
-                            for (const attribute of this.wordDictionary[token].attributes) {
-                                if (attribute in hintDictionary) {
-                                    for (const key of hintDictionary[attribute]) {
-                                        if (!terms.includes(key)) {
-                                            let isNew = true;
-
-                                            terms.push({ name: key, attributes: this.wordDictionary[key].attributes });
-
-                                            for (const tag of this.tags) {
-                                                if (key === tag.name) {
-                                                    scores.push(tag.score);
-                                                    isNew = false;
-
-                                                    break;
-                                                }
-                                            }
-
-                                            if (isNew) {
-                                                scores.push(epsilon);
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
-                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
-
-                                        this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
-
-                                        if (snapshot.exists()) {
-                                            const words = snapshot.val();
-
-                                            for (let key in words) {
-                                                this.reverseWordDictionary[attribute].words.push(key);
-                                            }
-                                        }
-                                    }
-
-                                    for (const word of this.reverseWordDictionary[attribute].words) {
-                                        if (tokens.includes(word) && !terms.includes(word)) {
-                                            let isNew = true;
 
                                             terms.push({ name: word, attributes: this.wordDictionary[word].attributes });
 
@@ -2347,10 +2280,19 @@ window.addEventListener("load", event => {
                             }
                         }
 
-                        tokenSet.push(token);
+                        tokenSet.push(JSON.stringify(token));
                     }
 
                     index++;
+                }
+
+                if (strict && hints.length > 0) {
+                    sequences = sequences.filter(x => x.sequence.some(y => hints.includes(y.term.name)));
+
+                    if (sequences.length === 0) {
+                        return null;
+                    }
+
                 }
 
                 const s = sequences[choice(softmax(sequences.map(x => x.score)))];
@@ -2784,7 +2726,7 @@ window.addEventListener("load", event => {
                         let termFrequencies = [];
                         let inverseDocumentFrequency = {};
                         const baseTime = new Date().getTime() - 24 * 60 * 60 * 1000;
-                        const limit = 10;
+                        const limit = 100;
                         let scoreDictionary = {};
                         let scores = [];
                         let maxScore = epsilon;
@@ -5004,6 +4946,9 @@ window.addEventListener("load", event => {
                 this.isRevealed = true;
             } else if (window.location.pathname === "/help") {
                 this.mode = "_help";
+                this.isRevealed = true;
+            } else if (window.location.pathname === "/talk") {
+                this.mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: true };
                 this.isRevealed = true;
             } else if (window.location.pathname === "/words") {
                 this.mode = { words: null, next: null, indexes: [], selected: [], disposable: true };
