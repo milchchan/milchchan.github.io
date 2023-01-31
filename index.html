@@ -578,7 +578,7 @@
                         <div class="column is-half-tablet" v-else key="updated">
                             <transition-group name="tagcloud-list"
                                 class="tags are-medium field is-grouped is-grouped-multiline" tag="div">
-                                <div class="control tagcloud-list-item" v-for="tag in tags" v-bind:key="tag.index">
+                                <div class="control tagcloud-list-item" v-for="tag in take(tags.sort((x, y) => y.score - x.score), 10).sort((x, y) => x.name === y.name ? 0 : x.name > y.name ? 1 : -1)" v-bind:key="tag.index">
                                     <div class="tags has-addons" v-cloak>
                                         <button class="button tag is-rounded is-size-7 has-text-weight-bold"
                                             type="button"
@@ -970,7 +970,7 @@
                                                         <transition-group name="tagcloud-list"
                                                             class="tags are-medium field is-grouped is-grouped-multiline"
                                                             tag="div">
-                                                            <div class="control tagcloud-list-item" v-for="tag in tags"
+                                                            <div class="control tagcloud-list-item" v-for="tag in take(tags.sort((x, y) => y.score - x.score), 10).sort((x, y) => x.name === y.name ? 0 : x.name > y.name ? 1 : -1)"
                                                                 v-bind:key="tag.index">
                                                                 <div class="tags has-addons" v-cloak>
                                                                     <button
@@ -1692,7 +1692,7 @@
                                         </div>
                                         <div class="level-item" v-else-if="'collection' in mode" v-cloak>
                                             <transition name="fade" mode="out-in">
-                                                <div class="level" v-if="mode.collection === null || logs === null"
+                                                <div class="level" v-if="/*mode.collection === null || */logs === null"
                                                     key="loading">
                                                     <div class="level-item">
                                                         <article class="media">
@@ -4019,7 +4019,7 @@
             <div class="level-item">
                 <button class="button is-circle" type="button"
                     v-bind:disabled="isLoading || mode !== null && typeof(mode) === 'object' && 'collection' in mode"
-                    @click="isRevealed = true; user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: true }; /*captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); user === null ? isRevealed = true : prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));*/"
+                    @click="isRevealed = true; user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: isRevealed ? false : true }; /*captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); user === null ? isRevealed = true : prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));*/"
                     v-cloak>
                     <transition name="fade" mode="out-in">
                         <span class="icon is-small" v-if="isLoading" key="loading">
