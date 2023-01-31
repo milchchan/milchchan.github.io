@@ -1226,11 +1226,7 @@ window.addEventListener("load", event => {
                 return false;
             },
             randomize: async function () {
-                this.isRetaining = true;
-
                 const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
-
-                this.isRetaining = false;
 
                 if (snapshot.exists()) {
                     function choice(collection, func) {
