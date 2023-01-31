@@ -2580,6 +2580,18 @@ label .scrollable>div {
                                 align-items: center;
                                 justify-content: flex-start;
 
+                                h1 {
+                                    margin: 0px 0px 48px 0px;
+                                    border-radius: 2px;
+                                    padding: 4px 0px 4px 0px;
+                                    height: calc(10vmin + 8px);
+                                    color: #ffffff;
+                                    background-color: var(--accent-color);
+                                    font-size: 10vmin;
+                                    font-weight: bold;
+                                    line-height: 10vmin;
+                                }
+
                                 span {
                                     color: var(--main-color);
                                     transition: 0.5s;
@@ -2695,7 +2707,8 @@ label .scrollable>div {
                                     background-color: var(--accent-color);
                                     color: var(--background-color) !important;
                                     border-radius: 2px;
-                                    padding: 4px 8px 4px 8px;
+                                    margin: 0px 4px 0px 4px !important;
+                                    padding: 4px 0px 4px 0px;
                                 }
                             }
                         }
