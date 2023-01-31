@@ -578,7 +578,9 @@
                         <div class="column is-half-tablet" v-else key="updated">
                             <transition-group name="tagcloud-list"
                                 class="tags are-medium field is-grouped is-grouped-multiline" tag="div">
-                                <div class="control tagcloud-list-item" v-for="tag in take(tags.sort((x, y) => y.score - x.score), 10).sort((x, y) => x.name === y.name ? 0 : x.name > y.name ? 1 : -1)" v-bind:key="tag.index">
+                                <div class="control tagcloud-list-item"
+                                    v-for="tag in take(tags.sort((x, y) => y.score - x.score), 10).sort((x, y) => x.name === y.name ? 0 : x.name > y.name ? 1 : -1)"
+                                    v-bind:key="tag.index">
                                     <div class="tags has-addons" v-cloak>
                                         <button class="button tag is-rounded is-size-7 has-text-weight-bold"
                                             type="button"
@@ -970,7 +972,8 @@
                                                         <transition-group name="tagcloud-list"
                                                             class="tags are-medium field is-grouped is-grouped-multiline"
                                                             tag="div">
-                                                            <div class="control tagcloud-list-item" v-for="tag in take(tags.sort((x, y) => y.score - x.score), 10).sort((x, y) => x.name === y.name ? 0 : x.name > y.name ? 1 : -1)"
+                                                            <div class="control tagcloud-list-item"
+                                                                v-for="tag in take(tags.sort((x, y) => y.score - x.score), 10).sort((x, y) => x.name === y.name ? 0 : x.name > y.name ? 1 : -1)"
                                                                 v-bind:key="tag.index">
                                                                 <div class="tags has-addons" v-cloak>
                                                                     <button
@@ -3294,40 +3297,44 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" @click="mode = 'sign-in'"
-                                                                    v-if="user === null">
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>教える</div>
-                                                                                <div>教える</div>
+                                                                <transition name="fade" mode="out-in">
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button" @click="mode = 'sign-in'"
+                                                                        v-if="user === null" key="sign-in">
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>教える</div>
+                                                                                    <div>教える</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-lock"></i>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button"
-                                                                    @click="isLearning = true; isRevealed = false;"
-                                                                    v-else>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>教える</div>
-                                                                                <div>教える</div>
+                                                                        </span>
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-lock"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button"
+                                                                        @click="isLearning = true; isRevealed = false;"
+                                                                        v-else key="signed-in">
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>教える</div>
+                                                                                    <div>教える</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </button>
+                                                                        </span>
+                                                                    </button>
+                                                                </transition>
                                                             </div>
                                                         </div>
                                                     </article>
@@ -3336,40 +3343,44 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" @click="mode = 'sign-in'"
-                                                                    v-if="user === null">
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>言葉</div>
-                                                                                <div>言葉</div>
+                                                                <transition name="fade" mode="out-in">
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button" @click="mode = 'sign-in'"
+                                                                        v-if="user === null" key="sign-in">
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>言葉</div>
+                                                                                    <div>言葉</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-lock"></i>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button"
-                                                                    @click="mode = { words: null, next: null, indexes: [], selected: [], disposable: false }; next('words', mode.next);"
-                                                                    v-else>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>言葉</div>
-                                                                                <div>言葉</div>
+                                                                        </span>
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-lock"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button"
+                                                                        @click="mode = { words: null, next: null, indexes: [], selected: [], disposable: false }; next('words', mode.next);"
+                                                                        v-else key="signed-in">
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>言葉</div>
+                                                                                    <div>言葉</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </button>
+                                                                        </span>
+                                                                    </button>
+                                                                </transition>
                                                             </div>
                                                         </div>
                                                     </article>
@@ -3378,45 +3389,51 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" @click="mode = 'sign-in'"
-                                                                    v-if="user === null">
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>探す</div>
-                                                                                <div>探す</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </span>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-lock"></i>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" v-bind:disabled="user === null"
-                                                                    @click="discover(); isRevealed = false;" v-else>
-                                                                    <transition name="fade" mode="out-in">
-                                                                        <span class="icon" v-if="isDiscovering"
-                                                                            key="discovering">
-                                                                            <i class="fa-solid fa-spinner updating"></i>
-                                                                        </span>
-                                                                        <span class="icon" v-else key="ready">
+                                                                <transition name="fade" mode="out-in">
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button" @click="mode = 'sign-in'"
+                                                                        v-if="user === null" key="sign-in">
+                                                                        <span class="icon">
                                                                             <i class="fa-solid fa-star"></i>
                                                                         </span>
-                                                                    </transition>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>探す</div>
-                                                                                <div>探す</div>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>探す</div>
+                                                                                    <div>探す</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </button>
+                                                                        </span>
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-lock"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button" v-bind:disabled="user === null"
+                                                                        @click="discover(); isRevealed = false;" v-else
+                                                                        key="signed-in">
+                                                                        <transition name="fade" mode="out-in">
+                                                                            <span class="icon" v-if="isDiscovering"
+                                                                                key="discovering">
+                                                                                <i
+                                                                                    class="fa-solid fa-spinner updating"></i>
+                                                                            </span>
+                                                                            <span class="icon" v-else key="ready">
+                                                                                <i class="fa-solid fa-star"></i>
+                                                                            </span>
+                                                                        </transition>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>探す</div>
+                                                                                    <div>探す</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </span>
+                                                                    </button>
+                                                                </transition>
                                                             </div>
                                                         </div>
                                                     </article>
@@ -3449,40 +3466,44 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" @click="mode = 'sign-in'"
-                                                                    v-if="user === null">
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>イラスト</div>
-                                                                                <div>イラスト</div>
+                                                                <transition name="fade" mode="out-in">
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button" @click="mode = 'sign-in'"
+                                                                        v-if="user === null" key="sign-in">
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>イラスト</div>
+                                                                                    <div>イラスト</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-lock"></i>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button"
-                                                                    @click="mode = { backgrounds: null, next: null, indexes: [], selected: [], disposable: false }; next('backgrounds', mode.next);"
-                                                                    v-else>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>イラスト</div>
-                                                                                <div>イラスト</div>
+                                                                        </span>
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-lock"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button"
+                                                                        @click="mode = { backgrounds: null, next: null, indexes: [], selected: [], disposable: false }; next('backgrounds', mode.next);"
+                                                                        v-else key="signed-in">
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>イラスト</div>
+                                                                                    <div>イラスト</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </button>
+                                                                        </span>
+                                                                    </button>
+                                                                </transition>
                                                             </div>
                                                         </div>
                                                     </article>
@@ -3555,38 +3576,42 @@
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" @click="mode = 'sign-in'"
-                                                                    v-if="user === null">
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>ミルヒちゃんにメール</div>
-                                                                                <div>ミルヒちゃんにメール</div>
+                                                                <transition name="fade" mode="out-in">
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button" @click="mode = 'sign-in'"
+                                                                        v-if="user === null" key="sign-in">
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>ミルヒちゃんにメール</div>
+                                                                                    <div>ミルヒちゃんにメール</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-lock"></i>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" @click="mode = 'mail'" v-else>
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>ミルヒちゃんにメール</div>
-                                                                                <div>ミルヒちゃんにメール</div>
+                                                                        </span>
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-lock"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="button is-rounded is-size-7 is-primary"
+                                                                        type="button" @click="mode = 'mail'" v-else key="signed-in">
+                                                                        <span class="icon">
+                                                                            <i class="fa-solid fa-star"></i>
+                                                                        </span>
+                                                                        <span class="wrap has-text-weight-bold">
+                                                                            <div class="clip">
+                                                                                <div class="scrollable">
+                                                                                    <div>ミルヒちゃんにメール</div>
+                                                                                    <div>ミルヒちゃんにメール</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </button>
+                                                                        </span>
+                                                                    </button>
+                                                                </transition>
                                                             </div>
                                                         </div>
                                                     </article>
