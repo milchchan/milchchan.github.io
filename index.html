@@ -3272,24 +3272,8 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" @click="mode = 'sign-in'"
-                                                                    v-if="user === null">
-                                                                    <span class="icon">
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                    </span>
-                                                                    <span class="wrap has-text-weight-bold">
-                                                                        <div class="clip">
-                                                                            <div class="scrollable">
-                                                                                <div>お話し</div>
-                                                                                <div>お話し</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="button is-rounded is-size-7 is-primary"
                                                                     type="button"
-                                                                    @click="mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: false }; /*captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));*/"
-                                                                    v-else>
+                                                                    @click="mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: true, disposable: false }; randomize().then((x) => { mode.next = x; mode.reloading = false; });/*captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));*/">
                                                                     <span class="icon">
                                                                         <i class="fa-solid fa-star"></i>
                                                                     </span>
@@ -4019,7 +4003,7 @@
             <div class="level-item">
                 <button class="button is-circle" type="button"
                     v-bind:disabled="isLoading || mode !== null && typeof(mode) === 'object' && 'collection' in mode"
-                    @click="user === null ? mode = '_sign-in' : mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: false, disposable: isRevealed ? false : true }; isRevealed = true; /*captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); user === null ? isRevealed = true : prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));*/"
+                    @click="mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: true, disposable: isRevealed ? false : true }; isRevealed = true; randomize().then((x) => { mode.next = x; mode.reloading = false; });/*captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); user === null ? isRevealed = true : prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));*/"
                     v-cloak>
                     <transition name="fade" mode="out-in">
                         <span class="icon is-small" v-if="isLoading" key="loading">
