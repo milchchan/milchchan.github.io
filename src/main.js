@@ -2079,22 +2079,6 @@ window.addEventListener("load", event => {
 
                 return [false, null];
             },
-            testtest: async function () {
-                const message = [
-                    "やはり",
-                    [
-                        "する事"
-                    ],
-                    "...！！",
-                    [
-                        "飲み物"
-                    ],
-                    "は全てを解決する...！！ってメルクちゃんが言ってたよ"
-                ];
-
-                console.log(await this.generate(message, ["ペロペロ"]));
-                console.log(await this.generate(["こんにちは"]));
-            },
             generate: async function (message, hints = [], strict = true) {
                 function choice(probabilities) {
                     const r = Math.random();
