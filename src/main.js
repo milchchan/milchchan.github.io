@@ -4971,7 +4971,7 @@ window.addEventListener("load", event => {
                             if (capture.checksum === [...String(capture.timestamp)].reduce((x, y) => x + y, 0) + [...String(capture.count)].reduce((x, y) => x + y, 0)) {
                                 delete capture["checksum"];
 
-                                this.captures[capture.name] = capture;
+                                //this.captures[capture.name] = capture;
                             }
                         }
 
