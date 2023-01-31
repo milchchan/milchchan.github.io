@@ -1821,14 +1821,16 @@ window.addEventListener("load", event => {
                             [successful, sequence] = await this.talk();
                         }
 
-                        if (logging) {
-                            for (const token of tokens) {
-                                await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
-                            }
+                        if (this.user !== null) {
+                            if (logging) {
+                                for (const token of tokens) {
+                                    await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
+                                }
 
-                            for (const obj of sequence) {
-                                if (obj.type === "Message") {
-                                    await this.log(obj.text, { name: this.character.name, accent: this.character.accent, image: this.character.image });
+                                for (const obj of sequence) {
+                                    if (obj.type === "Message") {
+                                        await this.log(obj.text, { name: this.character.name, accent: this.character.accent, image: this.character.image });
+                                    }
                                 }
                             }
                         }
@@ -1843,14 +1845,16 @@ window.addEventListener("load", event => {
                     [successful, sequence] = await this.talk();
                 }
 
-                if (logging) {
-                    for (const token of tokens) {
-                        await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
-                    }
+                if (this.user !== null) {
+                    if (logging) {
+                        for (const token of tokens) {
+                            await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
+                        }
 
-                    for (const obj of sequence) {
-                        if (obj.type === "Message") {
-                            await this.log(obj.text, { name: this.character.name, accent: this.character.accent, image: this.character.image });
+                        for (const obj of sequence) {
+                            if (obj.type === "Message") {
+                                await this.log(obj.text, { name: this.character.name, accent: this.character.accent, image: this.character.image });
+                            }
                         }
                     }
                 }
@@ -5431,6 +5435,9 @@ window.addEventListener("load", event => {
                     }*/
 
                     if (updated.length > 0) {
+                        const timestamp = Math.floor(new Date() / 1000);
+                        const timeout = 60 * 60;
+
                         //const timestamp = Math.floor(new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000).getTime() / 1000);
                         //const recent = updated.filter(x => x.timestamp > timestamp);
 
@@ -5438,6 +5445,26 @@ window.addEventListener("load", event => {
 
                         if (self.likes.length > 100) {
                             self.likes.splice(100, self.likes.length - 100);
+                        }
+
+                        for (const like of self.likes) {
+                            if ("text" in like && Array.isArray(like.text)) {
+                                for (const word of like.text.reduce((x, y) => {
+                                    if (typeof (y) === "object") {
+                                        x.push(y);
+                                    }
+
+                                    return x;
+                                }, [])) {
+                                    for (const attribute of word.attributes) {
+                                        if (attribute in self.reverseWordDictionary === false || timestamp - self.reverseWordDictionary[attribute].timestamp >= timeout) {
+                                            this.reverseWordDictionary[attribute] = { words: [word.name], timestamp: timestamp };
+                                        } else if (!this.reverseWordDictionary[attribute].words.includes(word.name)) {
+                                            this.reverseWordDictionary[attribute].words.push(word.name);
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         self.update(self.likes, self.maxTags);
