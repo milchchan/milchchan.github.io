@@ -1225,12 +1225,85 @@ window.addEventListener("load", event => {
 
                 return false;
             },
+            randomize: async function () {
+                this.isRetaining = true;
+
+                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+
+                this.isRetaining = false;
+
+                if (snapshot.exists()) {
+                    function choice(collection, func) {
+                        const r = Math.random();
+                        let sum = 0.0;
+                        let index = 0;
+
+                        for (let item of collection) {
+                            const probability = func(item);
+
+                            if (sum <= r && r < sum + probability) {
+                                break;
+                            }
+
+                            sum += probability;
+                            index++;
+                        }
+
+                        return collection[index];
+                    }
+
+                    function softmax(x, func1, func2) {
+                        let y = [].concat(x);
+                        let max = Number.MIN_VALUE;
+                        let sum = 0.0;
+
+                        for (let i = 0; i < x.length; i++) {
+                            if (func1(x[i]) > max) {
+                                max = func1(x[i]);
+                            }
+                        }
+
+                        for (let i = 0; i < x.length; i++) {
+                            sum += Math.exp(func1(x[i]) - max);
+                        }
+
+                        for (let i = 0; i < x.length; i++) {
+                            func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                        }
+
+                        return y;
+                    }
+
+                    const dictionary = snapshot.val();
+                    const words = [];
+                    const letters = [];
+                    
+                    for (const key in dictionary) {
+                        dictionary[key]["name"] = key;
+                        dictionary[key]["probability"] = 1;
+
+                        words.push(dictionary[key]);
+
+                        for (let i = 0; i < key.length; i++) {
+                            if (letters.indexOf(key.charAt(i)) === -1 && key.charAt(i) !== "\n" && key.charAt(i).match(/\s/) === null) {
+                                letters.push(key.charAt(i));
+                            }
+                        }
+                    }
+
+                    const word = choice(softmax(words, x => x.probability, (x, y) => x.probability = y), x => x.probability);
+
+                    return { running: true, time: 0, duration: 0, elapsed: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: word.name, attributes: word.attributes, characters: [], words: words, letters: letters };
+                } else {
+                    return null;
+                }
+            },
             retain: async function (word = null) {
                 if (word === null) {
                     this.isRetaining = true;
 
                     const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
-                    
+
                     this.isRetaining = false;
 
                     if (snapshot.exists()) {
@@ -3996,6 +4069,118 @@ window.addEventListener("load", event => {
 
                     this.renderBackground();
 
+                    if (this.mode !== null && "word" in this.mode && "next" && this.mode) {
+                        if (this.mode.next !== null) {
+                            if (this.mode.word === null || this.mode.word.type.elapsed < 0) {
+                                this.mode.word = this.mode.next;
+                                this.mode.next = null;
+                            } else {
+                                this.mode.word.type.reverse = true;
+                                this.mode.word.running = true;
+                            }
+                        }
+
+                        if (this.mode.word !== null) {
+                            if (this.mode.word.running) {
+                                if (this.mode.word.type.reverse) {
+                                    if (this.mode.word.type.count > 0) {
+                                        this.mode.word.type.elapsed += deltaTime * 2;
+
+                                        if (this.mode.word.type.elapsed >= 1.0 / this.mode.word.type.speed) {
+                                            let index = this.mode.word.type.count - 1;
+
+                                            if (index < this.mode.word.text.length) {
+                                                const width = Math.floor(this.mode.word.text.length / 2);
+
+                                                if (this.mode.word.type.buffer.length <= width && this.mode.word.type.count > 0) {
+                                                    this.mode.word.type.count -= 1;
+                                                }
+
+                                                if (this.mode.word.type.buffer.length > 0) {
+                                                    this.mode.word.type.buffer = this.mode.word.type.buffer.substring(0, this.mode.word.type.buffer.length - 1);
+                                                }
+                                            }
+
+                                            this.mode.word.type.elapsed = 0;
+                                        }
+                                    } else {
+                                        this.mode.word.time = 0;
+                                        this.mode.word.type.elapsed = -1;
+                                        this.mode.word.type.reverse = false;
+                                        this.mode.word.running = false;
+                                    }
+                                } else if (this.mode.word.type.buffer.length < this.mode.word.text.length) {
+                                    if (this.mode.word.type.elapsed >= 0) {
+                                        this.mode.word.type.elapsed += deltaTime;
+                                    } else {
+                                        this.mode.word.type.elapsed = deltaTime;
+                                    }
+
+                                    if (this.mode.word.type.elapsed >= 1.0 / this.mode.word.type.speed) {
+                                        const index = this.mode.word.type.buffer.length;
+                                        const width = Math.floor(this.mode.word.text.length / 2);
+                                        const length = this.mode.word.text.length;
+
+                                        if (this.mode.word.type.count >= width) {
+                                            this.mode.word.type.buffer += this.mode.word.text.charAt(index);
+                                        }
+
+                                        if (this.mode.word.type.count < length) {
+                                            this.mode.word.type.count += 1;
+                                        }
+
+                                        this.mode.word.type.elapsed = 0;
+                                    }
+                                } else {
+                                    this.mode.word.time += deltaTime;
+                                }
+
+                                if (this.mode.word.text.length === this.mode.word.type.buffer.length) {
+                                    const characters = this.mode.word.text.split("");
+
+                                    this.mode.word.characters.splice(0);
+
+                                    for (let i = 0; i < characters.length; i++) {
+                                        this.mode.word.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.word.attributes.some(x => i >= x.start && i < x.end)*/ });
+                                    }
+                                } else {
+                                    const charArray = this.mode.word.letters;
+                                    let randomBuffer = "";
+
+                                    if (charArray.length > 0) {
+                                        for (let i = 0; i < this.mode.word.type.count; i++) {
+                                            if (this.mode.word.text.charAt(i) === "\n") {
+                                                randomBuffer += "\n";
+                                            } else {
+                                                randomBuffer += charArray[~~_random(0, charArray.length)];
+                                            }
+                                        }
+                                    }
+
+                                    if (randomBuffer.length > this.mode.word.type.buffer.length) {
+                                        const characters = (this.mode.word.type.buffer + randomBuffer.substring(this.mode.word.type.buffer.length, randomBuffer.length)).split("");
+
+                                        this.mode.word.characters.splice(0);
+
+                                        for (let i = 0; i < characters.length; i++) {
+                                            this.mode.word.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.word.attributes.some(x => i >= x.start && i < x.end)*/ });
+                                        }
+                                    } else if (this.mode.word.characters.length !== this.mode.word.type.buffer.length) {
+                                        const characters = this.mode.word.type.buffer.split("");
+
+                                        this.mode.word.characters.splice(0);
+
+                                        for (let i = 0; i < characters.length; i++) {
+                                            this.mode.word.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.word.attributes.some(x => i >= x.start && i < x.end)*/ });
+                                        }
+                                    }
+                                }
+                            }
+
+                            this.mode.word.elapsed += deltaTime;
+                        }
+                    }
+
                     if (this.message !== null) {
                         if (this.message.type.reverse) {
                             if (this.message.type.count > 0) {
@@ -4451,7 +4636,7 @@ window.addEventListener("load", event => {
                     }
 
                     vrmModel.update(deltaTime);
-                    
+
                     if (this.animationQueue.length > 0) {
                         const animation = this.animationQueue[0];
 
@@ -4524,7 +4709,7 @@ window.addEventListener("load", event => {
                                 }
                             }*/
 
-                            this.points = nextPoints;
+                            //this.points = nextPoints;
                         }
 
                         this.uptime += deltaTime;
@@ -4790,7 +4975,7 @@ window.addEventListener("load", event => {
                             }
                         }
 
-                        this.points = Object.values(this.captures).reduce((x, y) => x + (typeof (y) === "function" ? 0 : y.count), 0) * 60;
+                        //this.points = Object.values(this.captures).reduce((x, y) => x + (typeof (y) === "function" ? 0 : y.count), 0) * 60;
                     }
                 } catch (e) {
                     localStorage.removeItem("captures");
