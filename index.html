@@ -917,7 +917,7 @@
                                                                                             class="fa-solid fa-crown"></i>
                                                                                     </span>
                                                                                     <span
-                                                                                        class="is-size-5 has-text-weight-bold">{{
+                                                                                        class="is-size-6 has-text-weight-bold">{{
                                                                                         user.name }}</span>
                                                                                     <span class="badge">{{ user.count
                                                                                         }}</span>
@@ -953,7 +953,7 @@
                                                                     <div class="media-content">
                                                                         <div class="content">
                                                                             <span
-                                                                                class="is-size-5 has-text-weight-bold">N/A</span>
+                                                                                class="is-size-6 has-text-weight-bold">N/A</span>
                                                                         </div>
                                                                     </div>
                                                                 </article>
@@ -984,7 +984,7 @@
                                                                                         </span>
                                                                                     </div>
                                                                                     <span
-                                                                                        class="is-size-5 has-text-weight-bold">{{
+                                                                                        class="is-size-6 has-text-weight-bold">{{
                                                                                         user.name }}</span>
                                                                                     <span class="badge">{{ user.count
                                                                                         }}</span>
@@ -1068,7 +1068,7 @@
                                                                                             <div class="media-content">
                                                                                                 <div class="content">
                                                                                                     <span
-                                                                                                        class="is-size-5 has-text-weight-bold"
+                                                                                                        class="is-size-6 has-text-weight-bold"
                                                                                                         v-text="mode.dictionary_words.concat(mode.dictionary_modifiers_words).reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)"></span>
                                                                                                 </div>
                                                                                             </div>
@@ -1095,7 +1095,7 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <span class="is-size-5 has-text-weight-bold"
+                                                                    <span class="is-size-6 has-text-weight-bold"
                                                                         v-text="Math.floor(range(new Date(), [0, -1, -2, -3, -4, -5, -6]).map(day => mode.dictionary_words.concat(mode.dictionary_modifiers_words).reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)).reduce((x, y) => x + y , 0) / 7 * 100) / 100"></span>
                                                                 </div>
                                                             </div>
@@ -1114,7 +1114,7 @@
                                                         <article class="media">
                                                             <div class="media-content">
                                                                 <div class="content">
-                                                                    <span class="is-size-5 has-text-weight-bold"
+                                                                    <span class="is-size-6 has-text-weight-bold"
                                                                         v-text="Math.floor(standardDeviation([].concat(range(new Date(), [0, -1, -2, -3, -4, -5, -6]).map(day => mode.dictionary_words.concat(mode.dictionary_modifiers_words).reduce((x, y) => day.getFullYear() === y.date.getFullYear() && day.getMonth() === y.date.getMonth() && day.getDate() === y.date.getDate() ? x + 1 : x, 0)))) * 100) / 100"></span>
                                                                 </div>
                                                             </div>
