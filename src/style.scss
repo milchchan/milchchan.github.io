@@ -2606,41 +2606,55 @@ label .scrollable>div {
                                     align-items: center;
                                     justify-content: center;
                                     flex-wrap: wrap;
+                                }
+
+                                div.wrap.is-size-1 {
+                                    margin: 0 !important;
+                                    border-radius: 0px;
+                                    padding: 0;
+                                    width: fit-content;
+                                    height: fit-content;
+                                    background-color: var(--accent-color);
+
+                                    >div.is-size-1 {
+                                        margin: 0 !important;
+                                        padding: 0;
+                                        width: auto;
+                                        height: calc(10vmin + 8px) !important;
+                                        color: #ffffff;
+                                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                        font-size: 10vmin !important;
+                                        font-weight: bold;
+                                        line-height: calc(10vmin + 8px) !important;
+                                        transform: rotate(0.03deg);
+                                    }
 
                                     >div.dummy {
                                         margin: 0 !important;
                                         padding: 0;
                                         height: calc(10vmin + 8px) !important;
+                                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
                                         font-size: 10vmin !important;
                                         font-weight: bold;
                                         line-height: calc(10vmin + 8px) !important;
+                                        transform: rotate(0.03deg);
                                     }
                                 }
 
-                                div.is-size-1 {
-                                    margin: 0 !important;
-                                    padding: 0;
-                                    border-radius: 0px;
-                                    width: auto;
-                                    height: calc(10vmin + 8px) !important;
-                                    color: #ffffff;
-                                    background-color: var(--accent-color);
-                                    font-size: 10vmin !important;
-                                    font-weight: bold;
-                                    line-height: calc(10vmin + 8px) !important;
-                                }
-
                                 div.highlight {
-                                    color: var(--accent-color) !important;
                                     background-color: #ffffff !important;
+
+                                    >div.is-size-1 {
+                                        color: var(--accent-color) !important;
+                                    }
                                 }
 
-                                div.is-size-1:first-child {
+                                div.wrap.is-size-1:first-child {
                                     border-top-left-radius: 2px !important;
                                     border-bottom-left-radius: 2px !important
                                 }
 
-                                div.is-size-1:last-child {
+                                div.wrap.is-size-1:last-child {
                                     border-top-right-radius: 2px !important;
                                     border-bottom-right-radius: 2px !important;
                                 }
