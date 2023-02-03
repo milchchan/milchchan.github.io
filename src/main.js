@@ -2734,7 +2734,9 @@ window.addEventListener("load", event => {
                         for (const key in data) {
                             if ("text" in data[key] && Array.isArray(data[key].text)) {
                                 const tokens = data[key].text.reduce((x, y) => {
-                                    if (typeof (y) === "object") {
+                                    if (Array.isArray(y)) {
+                                        x.push(y[1].name);
+                                    } else if (typeof (y) === "object") {
                                         x.push(y.name);
                                     }
 
