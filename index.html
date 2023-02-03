@@ -4017,14 +4017,13 @@
                     </div>
                 </div>
             </div>
-            <nav id="input" class="navbar is-fixed-bottom" role="navigation"
-                v-bind:style="{ paddingBottom: insetBottom + 'px' }">
+            <nav id="input" class="navbar is-fixed-bottom" role="navigation">
                 <div class="navbar-item is-expanded columns is-desktop" ref="input">
                     <div class="column is-half has-content-centered is-mobile">
                         <div class="control">
                             <transition name="popup" v-on:after-enter="$refs.text.focus();"
                                 v-on:before-leave="/*$refs.text.blur();*/">
-                                <nav class="level" v-if="isLearning">
+                                <nav class="level" v-bind:style="{ paddingBottom: insetBottom + 'px' }" v-if="isLearning">
                                     <form @submit.prevent v-cloak>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
