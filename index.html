@@ -3465,56 +3465,6 @@
                                                         </div>
                                                     </article>
                                                 </div>
-                                                <div class="panel-block" v-if="isDebug">
-                                                    <article class="media">
-                                                        <div class="media-content">
-                                                            <div class="content">
-                                                                <transition name="fade" mode="out-in">
-                                                                    <button
-                                                                        class="button is-rounded is-size-7 is-primary"
-                                                                        type="button" @click="mode = 'sign-in'"
-                                                                        v-if="user === null" key="sign-in">
-                                                                        <span class="icon">
-                                                                            <i class="fa-solid fa-lock"></i>
-                                                                        </span>
-                                                                        <span class="wrap has-text-weight-bold">
-                                                                            <div class="clip">
-                                                                                <div class="scrollable">
-                                                                                    <div>探す</div>
-                                                                                    <div>探す</div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </span>
-                                                                    </button>
-                                                                    <button
-                                                                        class="button is-rounded is-size-7 is-primary"
-                                                                        type="button" v-bind:disabled="user === null"
-                                                                        @click="discover(); isRevealed = false;" v-else
-                                                                        key="signed-in">
-                                                                        <transition name="fade" mode="out-in">
-                                                                            <span class="icon" v-if="isDiscovering"
-                                                                                key="discovering">
-                                                                                <i
-                                                                                    class="fa-solid fa-spinner updating"></i>
-                                                                            </span>
-                                                                            <span class="icon" v-else key="ready">
-                                                                                <i class="fa-solid fa-star"></i>
-                                                                            </span>
-                                                                        </transition>
-                                                                        <span class="wrap has-text-weight-bold">
-                                                                            <div class="clip">
-                                                                                <div class="scrollable">
-                                                                                    <div>探す</div>
-                                                                                    <div>探す</div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </span>
-                                                                    </button>
-                                                                </transition>
-                                                            </div>
-                                                        </div>
-                                                    </article>
-                                                </div>
                                                 <div class="panel-block">
                                                     <article class="media">
                                                         <div class="media-content">
