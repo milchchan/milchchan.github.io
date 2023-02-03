@@ -622,7 +622,7 @@ window.addEventListener("load", event => {
                             this.isLearning = false;
                         }
                     }
-                } else*/ 
+                } else*/
                 const text = this.input.trim();
 
                 if (text.length > 0 && text.length <= this.maxInputLength) {
@@ -895,7 +895,7 @@ window.addEventListener("load", event => {
                 let wordsPath;
                 let countPath;
                 let deleteRequired = false;
-                
+
                 if (word.modifier.selected) {
                     wordsPath = `${databaseRoot}/dictionary/modifiers/words/${word.name}`;
                     countPath = `${databaseRoot}/dictionary/modifiers/count`;
@@ -1193,7 +1193,7 @@ window.addEventListener("load", event => {
             },
             randomize: async function () {
                 const snapshot1 = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
-                
+
                 if (snapshot1.exists()) {
                     function choice(collection, func) {
                         const r = Math.random();
@@ -1266,9 +1266,9 @@ window.addEventListener("load", event => {
                             for (const key in dictionary2) {
                                 dictionary2[key]["name"] = key;
                                 dictionary2[key]["probability"] = 1;
-        
+
                                 words2.push(dictionary2[key]);
-        
+
                                 for (let i = 0; i < key.length; i++) {
                                     if (letters.indexOf(key.charAt(i)) === -1 && key.charAt(i) !== "\n" && key.charAt(i).match(/\s/) === null) {
                                         letters.push(key.charAt(i));
@@ -1279,7 +1279,7 @@ window.addEventListener("load", event => {
                             modifier = choice(softmax(words2, x => x.probability, (x, y) => x.probability = y), x => x.probability);
                         }
                     }
-                    
+
                     return { running: true, time: 0, duration: 0, elapsed: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: modifier === null ? word.name : modifier.name + word.name, word: word, modifier: modifier, characters: [], letters: letters };
                 } else {
                     return null;
@@ -1851,12 +1851,12 @@ window.addEventListener("load", event => {
                         const selectedTokens = [];
 
                         for (const word of this.take(shuffle(words), i)) {
-                            if (!tokens.some(x => (Array.isArray(x) ? x[1].name : x) === word.name) && word.name.indexOf(this.character.name) === -1) {
+                            if (!tokens.some(x => (Array.isArray(x) ? x[1].name : typeof (x) === "object" ? x.name : x) === word.name) && word.name.indexOf(this.character.name) === -1) {
                                 selectedTokens.push(word.name);
                             }
                         }
 
-                        [successful, sequence] = await this.talk(selectedTokens.concat(tokens.filter((x) => (Array.isArray(x) ? x[1].name : x).indexOf(this.character.name) === -1)));
+                        [successful, sequence] = await this.talk(selectedTokens.concat(tokens.filter((x) => (Array.isArray(x) ? x[1].name : typeof (x) === "object" ? x.name : x).indexOf(this.character.name) === -1)));
 
                         if (!successful) {
                             [successful, sequence] = await this.talk();
@@ -1865,7 +1865,7 @@ window.addEventListener("load", event => {
                         if (this.user !== null) {
                             if (logging) {
                                 for (const token of tokens) {
-                                    await this.log(Array.isArray(token) ? token[0] + token[1].name : token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
+                                    await this.log(Array.isArray(token) ? token[0] + token[1].name : typeof (token) === "object" ? token.name : token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
                                 }
 
                                 for (const obj of sequence) {
@@ -1880,7 +1880,7 @@ window.addEventListener("load", event => {
                     }
                 }
 
-                [successful, sequence] = await this.talk(tokens.filter((x) => (Array.isArray(x) ? x[1].name : x).indexOf(this.character.name) === -1))
+                [successful, sequence] = await this.talk(tokens.filter((x) => (Array.isArray(x) ? x[1].name : typeof (x) === "object" ? x.name : x).indexOf(this.character.name) === -1))
 
                 if (!successful) {
                     [successful, sequence] = await this.talk();
@@ -1889,7 +1889,7 @@ window.addEventListener("load", event => {
                 if (this.user !== null) {
                     if (logging) {
                         for (const token of tokens) {
-                            await this.log(Array.isArray(token) ? token[0] + token[1].name : token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
+                            await this.log(Array.isArray(token) ? token[0] + token[1].name : typeof (token) === "object" ? token.name : token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
                         }
 
                         for (const obj of sequence) {
@@ -1948,42 +1948,45 @@ window.addEventListener("load", event => {
                     const tokenSet = [];
 
                     for (const token of tokens) {
-                        if (Array.isArray(token)) {
+                        if (typeof (token) === "string") {
+                            if (!regex.test(token)) {
+                                if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
+                                    const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
+    
+                                    this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
+    
+                                    if (snapshot.exists()) {
+                                        const word = snapshot.val();
+    
+                                        for (const attribute in word.attributes) {
+                                            if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
+                                                this.wordDictionary[token].attributes.push(attribute);
+                                            }
+                                        }
+                                    }
+                                }
+    
+                                for (const attribute of this.wordDictionary[token].attributes) {
+                                    if (!attributes.includes(attribute)) {
+                                        attributes.push(attribute);
+                                    }
+                                }
+                            }
+                        } else {
                             const json = JSON.stringify(token);
+                            const word = Array.isArray(token) ? token[1] : token;
 
                             if (json in this.wordDictionary === false || timestamp - this.wordDictionary[json].timestamp >= timeout) {
                                 this.wordDictionary[json] = { attributes: [], timestamp: timestamp };
 
-                                for (const attribute in token[1].attributes) {
-                                    if (typeof (token[1].attributes[attribute]) === "number" && token[1].attributes[attribute] > 0 && this.attributes.includes(attribute)) {
+                                for (const attribute in word.attributes) {
+                                    if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                         this.wordDictionary[json].attributes.push(attribute);
                                     }
                                 }
                             }
 
                             for (const attribute of this.wordDictionary[json].attributes) {
-                                if (!attributes.includes(attribute)) {
-                                    attributes.push(attribute);
-                                }
-                            }
-                        } else if (!regex.test(token)) {
-                            if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
-
-                                this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-
-                                if (snapshot.exists()) {
-                                    const word = snapshot.val();
-
-                                    for (const attribute in word.attributes) {
-                                        if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
-                                            this.wordDictionary[token].attributes.push(attribute);
-                                        }
-                                    }
-                                }
-                            }
-
-                            for (const attribute of this.wordDictionary[token].attributes) {
                                 if (!attributes.includes(attribute)) {
                                     attributes.push(attribute);
                                 }
@@ -2193,44 +2196,47 @@ window.addEventListener("load", event => {
                 let sequences = [{ sequence: [], score: 1.0 }]
 
                 for (const token of hints) {
-                    if (Array.isArray(token)) {
+                    if (typeof (token) === "string") {
+                        if (!regex.test(token)) {
+                            if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
+                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
+
+                                this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
+
+                                if (snapshot.exists()) {
+                                    const word = snapshot.val();
+
+                                    for (const attribute in word.attributes) {
+                                        if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
+                                            this.wordDictionary[token].attributes.push(attribute);
+                                        }
+                                    }
+                                }
+                            }
+
+                            for (const attribute of this.wordDictionary[token].attributes) {
+                                if (attribute in hintDictionary) {
+                                    hintDictionary[attribute].push(token);
+                                } else {
+                                    hintDictionary[attribute] = [token];
+                                }
+                            }
+                        }
+                    } else if (Array.isArray(token)) {
                         const json = JSON.stringify(token);
+                        const word = Array.isArray(token) ? token[1] : token;
 
                         if (json in this.wordDictionary === false || timestamp - this.wordDictionary[json].timestamp >= timeout) {
                             this.wordDictionary[json] = { attributes: [], timestamp: timestamp };
 
-                            for (const attribute in token[1].attributes) {
-                                if (typeof (token[1].attributes[attribute]) === "number" && token[1].attributes[attribute] > 0 && this.attributes.includes(attribute)) {
+                            for (const attribute in word.attributes) {
+                                if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                     this.wordDictionary[json].attributes.push(attribute);
                                 }
                             }
                         }
 
                         for (const attribute of this.wordDictionary[json].attributes) {
-                            if (attribute in hintDictionary) {
-                                hintDictionary[attribute].push(token);
-                            } else {
-                                hintDictionary[attribute] = [token];
-                            }
-                        }
-                    } else if (!regex.test(token)) {
-                        if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                            const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
-
-                            this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-
-                            if (snapshot.exists()) {
-                                const word = snapshot.val();
-
-                                for (const attribute in word.attributes) {
-                                    if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
-                                        this.wordDictionary[token].attributes.push(attribute);
-                                    }
-                                }
-                            }
-                        }
-
-                        for (const attribute of this.wordDictionary[token].attributes) {
                             if (attribute in hintDictionary) {
                                 hintDictionary[attribute].push(token);
                             } else {
@@ -2249,41 +2255,54 @@ window.addEventListener("load", event => {
                             for (const attribute of token) {
                                 if (attribute in hintDictionary) {
                                     for (const obj of hintDictionary[attribute]) {
-                                        if (Array.isArray(obj)) {
-                                            if (!terms.some(x => x.name === obj[1].name && x.modifier === obj[0])) {
+                                        if (typeof (obj) === "string") {
+                                            if (!terms.some(x => x.name === obj)) {
                                                 let isNew = true;
 
-                                                terms.push({ name: obj[1].name, modifier: obj[0], attributes: this.wordDictionary[JSON.stringify(obj)].attributes });
-    
+                                                terms.push({ name: obj, modifier: null, attributes: this.wordDictionary[obj].attributes });
+
                                                 for (const tag of this.tags) {
-                                                    if (obj[1].name === tag.name) {
+                                                    if (obj === tag.name) {
                                                         scores.push(tag.score);
                                                         isNew = false;
-    
+
                                                         break;
                                                     }
                                                 }
-    
+
                                                 if (isNew) {
                                                     scores.push(epsilon);
                                                 }
                                             }
-                                        } else if (!terms.some(x => x.name === obj)) {
-                                            let isNew = true;
+                                        } else {
+                                            let name;
+                                            let modifier;
 
-                                            terms.push({ name: obj, modifier: null, attributes: this.wordDictionary[obj].attributes });
-
-                                            for (const tag of this.tags) {
-                                                if (obj === tag.name) {
-                                                    scores.push(tag.score);
-                                                    isNew = false;
-
-                                                    break;
-                                                }
+                                            if (Array.isArray(obj)) {
+                                                name = obj[1].name;
+                                                modifier = obj[0];
+                                            } else {
+                                                name = obj.name;
+                                                modifier = null;
                                             }
 
-                                            if (isNew) {
-                                                scores.push(epsilon);
+                                            if (!terms.some(x => x.name === name && x.modifier === modifier)) {
+                                                let isNew = true;
+
+                                                terms.push({ name: name, modifier: modifier, attributes: this.wordDictionary[JSON.stringify(obj)].attributes });
+
+                                                for (const tag of this.tags) {
+                                                    if (name === tag.name) {
+                                                        scores.push(tag.score);
+                                                        isNew = false;
+
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (isNew) {
+                                                    scores.push(epsilon);
+                                                }
                                             }
                                         }
                                     }
@@ -2373,7 +2392,7 @@ window.addEventListener("load", event => {
                         if (Array.isArray(z)) {
                             return z[1].name === y.term.name && z[0] === y.term.modifier;
                         }
-                        
+
                         return z === y.term.name;
                     })));
 
@@ -5432,7 +5451,7 @@ window.addEventListener("load", event => {
 
                 if (count === null) {
                     self.counter.modifiers = 0;
-                    
+
                 } else {
                     self.counter.modifiers = count;
                 }
