@@ -249,6 +249,7 @@ window.addEventListener("load", event => {
                 scrollTimeoutID: undefined,
                 stars: -1,
                 animatedStars: 0,
+                counter: { words: -1, modifiers: -1 },
                 screenshot: null,
                 notifications: [],
                 notificationHeight: 0,
@@ -621,8 +622,11 @@ window.addEventListener("load", event => {
                             this.isLearning = false;
                         }
                     }
-                } else*/ if (this.input.length > 0 && this.input.length <= this.maxInputLength) {
-                    this.learn({ name: this.input });
+                } else*/ 
+                const text = this.input.trim();
+
+                if (text.length > 0 && text.length <= this.maxInputLength) {
+                    this.learn(text);
                     this.input = "";
                     this.isLearning = false;
                 } else {
@@ -888,179 +892,141 @@ window.addEventListener("load", event => {
                 const self = this;
                 const user = 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL };
                 const timestamp = Math.floor(new Date() / 1000);
+                let wordsPath;
+                let countPath;
+                let deleteRequired = false;
+                
+                if (word.modifier.selected) {
+                    wordsPath = `${databaseRoot}/dictionary/modifiers/words/${word.name}`;
+                    countPath = `${databaseRoot}/dictionary/modifiers/count`;
 
-                if (word.name in this.wordDictionary) {
-                    delete this.wordDictionary[word.name];
-                }
-
-                Object.keys(this.reverseWordDictionary).forEach((key) => {
-                    if (this.reverseWordDictionary[key].words.some((x) => x === word.name)) {
-                        delete this.reverseWordDictionary[key];
+                    if (word.modifier.enabled) {
+                        delete word.attributes;
+                    } else {
+                        deleteRequired = true;
                     }
-                });
+                } else {
+                    wordsPath = `${databaseRoot}/dictionary/words/${word.name}`;
+                    countPath = `${databaseRoot}/dictionary/count`;
+
+                    if (word.attributes.every(x => !x.value)) {
+                        deleteRequired = true;
+                    } else {
+                        word.attributes = word.attributes.reduce((x, y) => {
+                            x[y.name] = y.value ? timestamp : 0;
+
+                            return x;
+                        }, {});
+                    }
+
+                    if (word.name in this.wordDictionary) {
+                        delete this.wordDictionary[word.name];
+                    }
+
+                    Object.keys(this.reverseWordDictionary).forEach((key) => {
+                        if (this.reverseWordDictionary[key].words.some((x) => x === word.name)) {
+                            delete this.reverseWordDictionary[key];
+                        }
+                    });
+                }
 
                 this.isSubmitting = true;
 
                 try {
-                    const result = await runTransaction(databaseRef(database, databaseRoot + "/words/" + word.name), current => {
-                        if (current) {
-                            let updateRequired = false;
+                    if (deleteRequired) {
+                        const result = await runTransaction(databaseRef(database, wordsPath), current => {
+                            return null;
+                        });
 
-                            for (const attribute of word.attributes) {
-                                if (attribute.name in current.attributes) {
-                                    if (current.attributes[attribute.name] > 0) {
-                                        if (!attribute.value) {
-                                            updateRequired = true;
+                        if (result.committed && !result.snapshot.exists()) {
+                            await runTransaction(databaseRef(database, countPath), count => {
+                                return (count || 1) - 1;
+                            });
 
-                                            break;
-                                        }
-                                    } else if (attribute.value) {
-                                        updateRequired = true;
-
-                                        break;
-                                    }
-                                } else {
-                                    updateRequired = true;
-
-                                    break;
-                                }
-                            }
-
-                            if ("image" in current) {
-                                if ("image" in word) {
-                                    if (word.image === null || current.image.path !== word.image.path) {
-                                        updateRequired = true;
-                                    }
-                                } else {
-                                    updateRequired = true;
-                                }
-                            } else if ("image" in word && word.image !== null) {
-                                updateRequired = true;
-                            }
-
-                            if (updateRequired) {
-                                let deleteRequired = true;
-                                const c = { attributes: {} };
-
-                                for (const attribute of word.attributes) {
-                                    if (attribute.value) {
-                                        if (attribute.name in current.attributes && current.attributes[attribute.name] > 0) {
-                                            c.attributes[attribute.name] = current.attributes[attribute.name];
-                                        } else {
-                                            c.attributes[attribute.name] = timestamp;
-                                        }
-
-                                        deleteRequired = false;
-                                    } else {
-                                        c.attributes[attribute.name] = 0;
-                                    }
-                                }
-
-                                if (deleteRequired) {
-                                    return null;
-                                } else {
-                                    if ("image" in word && word.image !== null) {
-                                        c["image"] = { path: word.image.path, type: word.image.type };
-                                    }
-
-                                    c["user"] = user;
-                                    c["random"] = current["random"];
-                                    c["timestamp"] = timestamp - 1;
-
-                                    return c;
-                                }
+                            this.word = null;
+                        }
+                    } else {
+                        const result = await runTransaction(databaseRef(database, wordsPath), current => {
+                            if (current) {
+                                current["user"] = user;
+                                current["random"] = Math.random();
+                                current["timestamp"] = timestamp - 1;
                             } else {
-                                return undefined;
+                                current = { user: user, random: Math.random(), timestamp: timestamp };
                             }
-                        } else if (word.attributes.some(x => x.value)) {
-                            current = { attributes: {}, user: user, random: Math.random(), timestamp: timestamp };
 
                             if ("image" in word && word.image !== null) {
                                 current["image"] = { path: word.image.path, type: word.image.type };
                             }
 
-                            for (const attribute of word.attributes) {
-                                if (attribute.value) {
-                                    current.attributes[attribute.name] = timestamp;
-                                } else {
-                                    current.attributes[attribute.name] = 0;
-                                }
+                            if ("attributes" in word) {
+                                current["attributes"] = word.attributes;
                             }
-                        } else {
-                            return undefined;
-                        }
 
-                        return current;
-                    });
+                            return current;
+                        });
 
-                    if (result.committed) {
-                        if (result.snapshot.exists()) {
-                            const dictionary = result.snapshot.val();
+                        if (result.committed) {
+                            if (result.snapshot.exists()) {
+                                const dictionary = result.snapshot.val();
 
-                            if (dictionary.timestamp === timestamp) {
-                                function format(format) {
-                                    var args = arguments;
+                                if (dictionary.timestamp === timestamp) {
+                                    function format(format) {
+                                        var args = arguments;
 
-                                    return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
-                                }
-
-                                const result = await runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
-                                    return (count || 0) + 1;
-                                });
-
-                                if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0 && this.background.nonce === null) {
-                                    try {
-                                        await new Promise((resolve, reject) => {
-                                            const i = new Image();
-
-                                            i.onload = () => {
-                                                resolve();
-                                            };
-                                            i.onerror = (e) => {
-                                                reject(e);
-                                            };
-                                            i.src = window.devicePixelRatio > 1 ? `/images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "/images/Background.png";
-                                        });
-                                    } catch (e) {
-                                        console.error(e);
+                                        return format.replace(/\{(\d)\}/g, function (m, c) { return args[parseInt(c) + 1] });
                                     }
 
-                                    this.background.image = undefined;
-                                    this.preload();
-                                }
+                                    const result = await runTransaction(databaseRef(database, countPath), count => {
+                                        return (count || 0) + 1;
+                                    });
 
-                                for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learned"))) {
-                                    if (obj.type === "Message") {
-                                        this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
+                                    if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0 && this.background.nonce === null) {
+                                        try {
+                                            await new Promise((resolve, reject) => {
+                                                const i = new Image();
+
+                                                i.onload = () => {
+                                                    resolve();
+                                                };
+                                                i.onerror = (e) => {
+                                                    reject(e);
+                                                };
+                                                i.src = window.devicePixelRatio > 1 ? `/images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "/images/Background.png";
+                                            });
+                                        } catch (e) {
+                                            console.error(e);
+                                        }
+
+                                        this.background.image = undefined;
+                                        this.preload();
+                                    }
+
+                                    for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learned"))) {
+                                        if (obj.type === "Message") {
+                                            this.notify({ text: format(obj.text, word.name), accent: this.character.accent, image: this.character.image });
+                                        }
                                     }
                                 }
-                            }
 
-                            if (this.points < this.maxPoints) {
-                                this.retain(Object.assign({ name: word.name }, dictionary));
-                                this.points = Math.min(this.points + 60, this.maxPoints);
-                            }
+                                /*if (this.points < this.maxPoints) {
+                                    this.retain(Object.assign({ name: word.name }, dictionary));
+                                    this.points = Math.min(this.points + 60, this.maxPoints);
+                                }*/
 
-                            this.isStared = true;
+                                this.isStared = true;
 
-                            window.setTimeout(() => {
-                                self.isStared = false;
-                            }, 3000);
+                                window.setTimeout(() => {
+                                    self.isStared = false;
+                                }, 3000);
 
-                            if (!this.isMuted) {
-                                this.$refs.twinkle.play();
-                            }
-                        } else {
-                            runTransaction(databaseRef(database, databaseRoot + "/stars"), count => {
-                                if (count) {
-                                    return count - 1;
+                                if (!this.isMuted) {
+                                    this.$refs.twinkle.play();
                                 }
 
-                                return undefined;
-                            });
+                                this.word = null;
+                            }
                         }
-
-                        this.word = null;
                     }
                 } catch (error) {
                     this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
@@ -1163,7 +1129,7 @@ window.addEventListener("load", event => {
                         }
 
                         if (this.points < this.maxPoints) {
-                            const nextPoints = Math.min(this.points + 30, this.maxPoints);
+                            //const nextPoints = Math.min(this.points + 30, this.maxPoints);
 
                             /*for (let i = parseInt(this.points) + 1; i <= nextPoints; i++) {
                                 if (i % 60 === 0) {
@@ -1171,7 +1137,7 @@ window.addEventListener("load", event => {
                                 }
                             }*/
 
-                            this.points = nextPoints;
+                            //this.points = nextPoints;
                         }
 
                         if (this.background.nonce === null) {
@@ -1207,7 +1173,7 @@ window.addEventListener("load", event => {
             unlike: async function (message) {
                 try {
                     const self = this;
-                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${message.author}&${typeof (message.text) === 'string' ? message.text : Object.keys(message.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (message.text[y]) === 'string' ? message.text[y] : message.text[y].name), '')}`)}`), current => {
+                    const result = await runTransaction(databaseRef(database, `${databaseRoot}/likes/${await this.digestMessage(`${message.author}&${typeof (message.text) === 'string' ? message.text : Object.keys(message.text).sort((x, y) => x - y).reduce((x, y) => x + (typeof (message.text[y]) === 'string' ? message.text[y] : Array.isArray(message.text[y]) ? message.text[y][0] + message.text[y][1].name : message.text[y].name), '')}`)}`), current => {
                         if (current && "user" in current && current.user.id === self.user.uid) {
                             return null;
                         }
@@ -1226,9 +1192,9 @@ window.addEventListener("load", event => {
                 return false;
             },
             randomize: async function () {
-                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
-
-                if (snapshot.exists()) {
+                const snapshot1 = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+                
+                if (snapshot1.exists()) {
                     function choice(collection, func) {
                         const r = Math.random();
                         let sum = 0.0;
@@ -1270,15 +1236,15 @@ window.addEventListener("load", event => {
                         return y;
                     }
 
-                    const dictionary = snapshot.val();
-                    const words = [];
+                    const dictionary1 = snapshot1.val();
+                    const words1 = [];
                     const letters = [];
 
-                    for (const key in dictionary) {
-                        dictionary[key]["name"] = key;
-                        dictionary[key]["probability"] = 1;
+                    for (const key in dictionary1) {
+                        dictionary1[key]["name"] = key;
+                        dictionary1[key]["probability"] = 1;
 
-                        words.push(dictionary[key]);
+                        words1.push(dictionary1[key]);
 
                         for (let i = 0; i < key.length; i++) {
                             if (letters.indexOf(key.charAt(i)) === -1 && key.charAt(i) !== "\n" && key.charAt(i).match(/\s/) === null) {
@@ -1287,9 +1253,34 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    const word = choice(softmax(words, x => x.probability, (x, y) => x.probability = y), x => x.probability);
+                    const word = choice(softmax(words1, x => x.probability, (x, y) => x.probability = y), x => x.probability);
+                    let modifier = null;
 
-                    return { running: true, time: 0, duration: 0, elapsed: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: word.name, attributes: word.attributes, characters: [], words: words, letters: letters };
+                    if (Math.random() < 0.5) {
+                        const snapshot2 = await get(query(databaseRef(database, `${databaseRoot}/dictionary/modifiers/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+
+                        if (snapshot2.exists()) {
+                            const dictionary2 = snapshot2.val();
+                            const words2 = [];
+
+                            for (const key in dictionary2) {
+                                dictionary2[key]["name"] = key;
+                                dictionary2[key]["probability"] = 1;
+        
+                                words2.push(dictionary2[key]);
+        
+                                for (let i = 0; i < key.length; i++) {
+                                    if (letters.indexOf(key.charAt(i)) === -1 && key.charAt(i) !== "\n" && key.charAt(i).match(/\s/) === null) {
+                                        letters.push(key.charAt(i));
+                                    }
+                                }
+                            }
+
+                            modifier = choice(softmax(words2, x => x.probability, (x, y) => x.probability = y), x => x.probability);
+                        }
+                    }
+                    
+                    return { running: true, time: 0, duration: 0, elapsed: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: modifier === null ? word.name : modifier.name + word.name, word: word, modifier: modifier, characters: [], letters: letters };
                 } else {
                     return null;
                 }
@@ -1418,7 +1409,8 @@ window.addEventListener("load", event => {
 
                 this.points -= 60 * words.length;
             },
-            next: async function (key, offset, limit = 5) {
+            next: async function (path, offset, limit = 5) {
+                const key = path.replace(/\//g, "_");
                 const temp = this.mode[key];
                 let snapshot;
                 const data = [];
@@ -1433,20 +1425,20 @@ window.addEventListener("load", event => {
 
                 if (offset === null) {
                     if (limit === null) {
-                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp')));
+                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${path}`), orderByChild('timestamp')));
                     } else {
-                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), limitToLast(limit + 1)));
+                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${path}`), orderByChild('timestamp'), limitToLast(limit + 1)));
                     }
                 } else if (typeof (offset) === "object") {
                     if (limit === null) {
-                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(Math.floor(offset.getTime() / 1000))));
+                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${path}`), orderByChild('timestamp'), startAt(Math.floor(offset.getTime() / 1000))));
                     } else {
-                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(Math.floor(offset.getTime() / 1000)), limitToLast(limit + 1)));
+                        snapshot = await get(query(databaseRef(database, `${databaseRoot}/${path}`), orderByChild('timestamp'), startAt(Math.floor(offset.getTime() / 1000)), limitToLast(limit + 1)));
                     }
                 } else if (limit === null) {
-                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), endAt(offset)));
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${path}`), orderByChild('timestamp'), endAt(offset)));
                 } else {
-                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), endAt(offset), limitToLast(limit + 1)));
+                    snapshot = await get(query(databaseRef(database, `${databaseRoot}/${path}`), orderByChild('timestamp'), endAt(offset), limitToLast(limit + 1)));
                 }
 
                 if (key in this.mode && snapshot.exists()) {
@@ -1497,7 +1489,7 @@ window.addEventListener("load", event => {
                         return 0;
                     });
 
-                    if (data.length === limit + 1) {
+                    if (limit !== null && data.length === limit + 1) {
                         this.mode.next = data.pop();
                     } else {
                         this.mode.next = null;
@@ -1506,12 +1498,13 @@ window.addEventListener("load", event => {
 
                 this.mode[key] = data;
             },
-            previous: async function (key, offset, limit = 5) {
+            previous: async function (path, offset, limit = 5) {
+                const key = path.replace(/\//g, "_");
                 const temp = this.mode[key];
 
                 this.mode[key] = null;
 
-                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/${key}`), orderByChild('timestamp'), startAt(offset), limitToFirst(limit)));
+                const snapshot = await get(query(databaseRef(database, `${databaseRoot}/${path}`), orderByChild('timestamp'), startAt(offset), limitToFirst(limit)));
                 const data = [];
 
                 if (key in this.mode && snapshot.exists()) {
@@ -1692,9 +1685,49 @@ window.addEventListener("load", event => {
 
                 const sequence = [];
                 const attributes = [];
+                let modifier;
                 let image = null;
+                let wordName;
 
-                if ("attributes" in word) {
+                if (typeof (word) === "string") {
+                    const snapshot = await get(databaseRef(database, `${databaseRoot}/dictionary/words/${word}`));
+
+                    if (snapshot.exists()) {
+                        const w = snapshot.val();
+
+                        for (const attribute of this.attributes) {
+                            if (attribute in w.attributes) {
+                                if (w.attributes[attribute] > 0) {
+                                    attributes.push({ name: attribute, value: true });
+                                } else {
+                                    attributes.push({ name: attribute, value: false });
+                                }
+                            }
+                        }
+
+                        if ("image" in w) {
+                            image = { path: w.image.path, url: await getDownloadURL(storageRef(storage, w.image.path)), type: w.image.type };
+                        }
+
+                        const s = await get(databaseRef(database, `${databaseRoot}/dictionary/modifiers/words/${word}`));
+
+                        modifier = { enabled: s.exists(), selected: false };
+                    } else {
+                        for (const attribute of this.attributes) {
+                            attributes.push({ name: attribute, value: false });
+                        }
+
+                        const s = await get(databaseRef(database, `${databaseRoot}/dictionary/modifiers/words/${word}`));
+
+                        if (s.exists()) {
+                            modifier = { enabled: true, selected: true };
+                        } else {
+                            modifier = { enabled: false, selected: false };
+                        }
+                    }
+
+                    wordName = word;
+                } else if ("attributes" in word) {
                     if (Array.isArray(word.attributes)) {
                         for (const attribute of this.attributes) {
                             if (word.attributes.includes(attribute)) {
@@ -1718,8 +1751,13 @@ window.addEventListener("load", event => {
                     if ("image" in word) {
                         image = { path: word.image.path, url: await getDownloadURL(storageRef(storage, word.image.path)), type: word.image.type };
                     }
+
+                    const s = await get(databaseRef(database, `${databaseRoot}/dictionary/modifiers/words/${word.name}`));
+
+                    modifier = { enabled: s.exists(), selected: false };
+                    wordName = word.name;
                 } else {
-                    const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + word.name));
+                    const snapshot = await get(databaseRef(database, `${databaseRoot}/dictionary/words/${word.name}`));
 
                     if (snapshot.exists()) {
                         const w = snapshot.val();
@@ -1742,9 +1780,12 @@ window.addEventListener("load", event => {
                             attributes.push({ name: attribute, value: false });
                         }
                     }
+
+                    modifier = { enabled: true, selected: true };
+                    wordName = word.name;
                 }
 
-                this.word = image === null ? { name: word.name, attributes: attributes } : { name: word.name, image: image, attributes: attributes };
+                this.word = image === null ? { name: wordName, attributes: attributes, modifier: modifier } : { name: wordName, image: image, attributes: attributes, modifier: modifier };
 
                 /*for (const obj of this.prepare(this.character.alternative.sequences.filter((x) => x.name === "Learn"), word.name, this.character.alternative.sequences)) {
                     if (obj.type === "Message") {
@@ -1761,7 +1802,7 @@ window.addEventListener("load", event => {
 
                 for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learn"))) {
                     if (obj.type === "Message") {
-                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: format(obj.text, word.name) });
+                        sequence.push({ type: obj.type, speed: obj.speed, duration: obj.duration, text: format(obj.text, wordName) });
                     } else {
                         sequence.push(obj);
                     }
@@ -1810,12 +1851,12 @@ window.addEventListener("load", event => {
                         const selectedTokens = [];
 
                         for (const word of this.take(shuffle(words), i)) {
-                            if (!tokens.includes(word.name) && word.name.indexOf(this.character.name) === -1) {
+                            if (!tokens.some(x => (Array.isArray(x) ? x[1].name : x) === word.name) && word.name.indexOf(this.character.name) === -1) {
                                 selectedTokens.push(word.name);
                             }
                         }
 
-                        [successful, sequence] = await this.talk(selectedTokens.concat(tokens.filter((x) => x.indexOf(this.character.name) === -1)));
+                        [successful, sequence] = await this.talk(selectedTokens.concat(tokens.filter((x) => (Array.isArray(x) ? x[1].name : x).indexOf(this.character.name) === -1)));
 
                         if (!successful) {
                             [successful, sequence] = await this.talk();
@@ -1824,7 +1865,7 @@ window.addEventListener("load", event => {
                         if (this.user !== null) {
                             if (logging) {
                                 for (const token of tokens) {
-                                    await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
+                                    await this.log(Array.isArray(token) ? token[0] + token[1].name : token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
                                 }
 
                                 for (const obj of sequence) {
@@ -1839,7 +1880,7 @@ window.addEventListener("load", event => {
                     }
                 }
 
-                [successful, sequence] = await this.talk(tokens.filter((x) => x.indexOf(this.character.name) === -1))
+                [successful, sequence] = await this.talk(tokens.filter((x) => (Array.isArray(x) ? x[1].name : x).indexOf(this.character.name) === -1))
 
                 if (!successful) {
                     [successful, sequence] = await this.talk();
@@ -1848,7 +1889,7 @@ window.addEventListener("load", event => {
                 if (this.user !== null) {
                     if (logging) {
                         for (const token of tokens) {
-                            await this.log(token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
+                            await this.log(Array.isArray(token) ? token[0] + token[1].name : token, 'link' in this.user ? { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL, link: this.user.link } : { id: this.user.uid, name: this.user.displayName, image: this.user.photoURL });
                         }
 
                         for (const obj of sequence) {
@@ -1907,7 +1948,25 @@ window.addEventListener("load", event => {
                     const tokenSet = [];
 
                     for (const token of tokens) {
-                        if (!regex.test(token)) {
+                        if (Array.isArray(token)) {
+                            const json = JSON.stringify(token);
+
+                            if (json in this.wordDictionary === false || timestamp - this.wordDictionary[json].timestamp >= timeout) {
+                                this.wordDictionary[json] = { attributes: [], timestamp: timestamp };
+
+                                for (const attribute in token[1].attributes) {
+                                    if (typeof (token[1].attributes[attribute]) === "number" && token[1].attributes[attribute] > 0 && this.attributes.includes(attribute)) {
+                                        this.wordDictionary[json].attributes.push(attribute);
+                                    }
+                                }
+                            }
+
+                            for (const attribute of this.wordDictionary[json].attributes) {
+                                if (!attributes.includes(attribute)) {
+                                    attributes.push(attribute);
+                                }
+                            }
+                        } else if (!regex.test(token)) {
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                 const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
@@ -1916,7 +1975,7 @@ window.addEventListener("load", event => {
                                 if (snapshot.exists()) {
                                     const word = snapshot.val();
 
-                                    for (let attribute in word.attributes) {
+                                    for (const attribute in word.attributes) {
                                         if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                             this.wordDictionary[token].attributes.push(attribute);
                                         }
@@ -2134,7 +2193,27 @@ window.addEventListener("load", event => {
                 let sequences = [{ sequence: [], score: 1.0 }]
 
                 for (const token of hints) {
-                    if (!regex.test(token)) {
+                    if (Array.isArray(token)) {
+                        const json = JSON.stringify(token);
+
+                        if (json in this.wordDictionary === false || timestamp - this.wordDictionary[json].timestamp >= timeout) {
+                            this.wordDictionary[json] = { attributes: [], timestamp: timestamp };
+
+                            for (const attribute in token[1].attributes) {
+                                if (typeof (token[1].attributes[attribute]) === "number" && token[1].attributes[attribute] > 0 && this.attributes.includes(attribute)) {
+                                    this.wordDictionary[json].attributes.push(attribute);
+                                }
+                            }
+                        }
+
+                        for (const attribute of this.wordDictionary[json].attributes) {
+                            if (attribute in hintDictionary) {
+                                hintDictionary[attribute].push(token);
+                            } else {
+                                hintDictionary[attribute] = [token];
+                            }
+                        }
+                    } else if (!regex.test(token)) {
                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                             const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
 
@@ -2169,14 +2248,33 @@ window.addEventListener("load", event => {
 
                             for (const attribute of token) {
                                 if (attribute in hintDictionary) {
-                                    for (const s of hintDictionary[attribute]) {
-                                        if (!terms.some(x => x.name === s)) {
+                                    for (const obj of hintDictionary[attribute]) {
+                                        if (Array.isArray(obj)) {
+                                            if (!terms.some(x => x.name === obj[1].name && x.modifier === obj[0])) {
+                                                let isNew = true;
+
+                                                terms.push({ name: obj[1].name, modifier: obj[0], attributes: this.wordDictionary[JSON.stringify(obj)].attributes });
+    
+                                                for (const tag of this.tags) {
+                                                    if (obj[1].name === tag.name) {
+                                                        scores.push(tag.score);
+                                                        isNew = false;
+    
+                                                        break;
+                                                    }
+                                                }
+    
+                                                if (isNew) {
+                                                    scores.push(epsilon);
+                                                }
+                                            }
+                                        } else if (!terms.some(x => x.name === obj)) {
                                             let isNew = true;
 
-                                            terms.push({ name: s, attributes: this.wordDictionary[s].attributes });
+                                            terms.push({ name: obj, modifier: null, attributes: this.wordDictionary[obj].attributes });
 
                                             for (const tag of this.tags) {
-                                                if (s === tag.name) {
+                                                if (obj === tag.name) {
                                                     scores.push(tag.score);
                                                     isNew = false;
 
@@ -2224,7 +2322,7 @@ window.addEventListener("load", event => {
                                                 }
                                             }
 
-                                            terms.push({ name: word, attributes: this.wordDictionary[word].attributes });
+                                            terms.push({ name: word, modifier: null, attributes: this.wordDictionary[word].attributes });
 
                                             for (const tag of this.tags) {
                                                 if (word == tag.name) {
@@ -2271,12 +2369,17 @@ window.addEventListener("load", event => {
                 }
 
                 if (strict && hints.length > 0) {
-                    sequences = sequences.filter(x => x.sequence.some(y => hints.includes(y.term.name)));
+                    sequences = sequences.filter(x => x.sequence.some(y => hints.some(z => {
+                        if (Array.isArray(z)) {
+                            return z[1].name === y.term.name && z[0] === y.term.modifier;
+                        }
+                        
+                        return z === y.term.name;
+                    })));
 
                     if (sequences.length === 0) {
                         return null;
                     }
-
                 }
 
                 const s = sequences[choice(softmax(sequences.map(x => x.score)))];
@@ -2288,7 +2391,13 @@ window.addEventListener("load", event => {
                         if (typeof cachDictionary[key] === "undefined") {
                             text.push(tokens[i]);
                         } else {
-                            text.push(cachDictionary[key]);
+                            const term = cachDictionary[key];
+
+                            if (term.modifier === null) {
+                                text.push({ name: term.name, attributes: term.attributes });
+                            } else {
+                                text.push([term.modifier, { name: term.name, attributes: term.attributes }]);
+                            }
                         }
                     } else {
                         let isNew = true;
@@ -2299,7 +2408,13 @@ window.addEventListener("load", event => {
                                     cachDictionary[key] = undefined;
                                 } else {
                                     cachDictionary[key] = s.sequence[j].term;
-                                    text.push(s.sequence[j].term);
+
+                                    if (s.sequence[j].term.modifier === null) {
+                                        text.push({ name: s.sequence[j].term.name, attributes: s.sequence[j].term.attributes });
+                                    } else {
+                                        text.push([s.sequence[j].term.modifier, { name: s.sequence[j].term.name, attributes: s.sequence[j].term.attributes }]);
+                                    }
+
                                     isNew = false;
                                 }
 
@@ -3702,7 +3817,18 @@ window.addEventListener("load", event => {
                                 const attributes = [];
 
                                 for (const inline of sequence[0].text) {
-                                    if (typeof (inline) === 'object') {
+                                    if (Array.isArray(inline)) {
+                                        for (const o of inline) {
+                                            if (typeof (o) === "string") {
+                                                attributes.push({ start: text.length, end: text.length + o.length });
+                                                text += o;
+                                            } else {
+                                                attributes.push({ start: text.length, end: text.length + o.name.length });
+                                                text += o.name;
+                                                words.push(o);
+                                            }
+                                        }
+                                    } else if (typeof (inline) === 'object') {
                                         attributes.push({ start: text.length, end: text.length + inline.name.length });
                                         text += inline.name;
                                         words.push(inline);
@@ -3829,6 +3955,14 @@ window.addEventListener("load", event => {
                                             x.source[x.source.length - 1] += s;
                                         } else {
                                             x.source.push(s);
+                                        }
+                                    } else if (Array.isArray(like.text[y])) {
+                                        for (const obj of like.text[y]) {
+                                            const text = (typeof (obj) === "string" ? obj : obj.name).replace("\n", "");
+
+                                            x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
+                                            x.text += text;
+                                            x.source.push({ name: text });
                                         }
                                     } else {
                                         const text = like.text[y].name.replace("\n", "");
@@ -3995,7 +4129,7 @@ window.addEventListener("load", event => {
 
                     this.renderBackground();
 
-                    if (this.mode !== null && "word" in this.mode && "next" && this.mode) {
+                    if (this.mode !== null && typeof (this.mode) === "object" && "word" in this.mode && "next") {
                         if (this.mode.next !== null) {
                             if (this.mode.word === null || this.mode.word.type.elapsed < 0) {
                                 this.mode.word = this.mode.next;
@@ -4939,8 +5073,8 @@ window.addEventListener("load", event => {
                     this.mode.reloading = false;
                 });
             } else if (window.location.pathname === "/words") {
-                this.mode = { words: null, next: null, indexes: [], selected: [], disposable: true };
-                this.next("words", this.mode.next);
+                this.mode = { dictionary_words: null, dictionary_modifiers_words: [], path: 'dictionary/words', next: null, indexes: [], selected: [], disposable: true };
+                this.next("dictionary/words", this.mode.next);
                 this.isRevealed = true;
             } else if (window.location.pathname === "/learn") {
                 this.isLearning = true;
@@ -4949,8 +5083,9 @@ window.addEventListener("load", event => {
                 this.next("likes", this.mode.next, 1);
                 this.isRevealed = true;
             } else if (window.location.pathname === "/stats") {
-                this.mode = { stats: null, words: null, likes: null, disposable: true };
-                this.next('words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.mode = { stats: null, dictionary_words: null, dictionary_modifiers_words: null, likes: null, disposable: true };
+                this.next('dictionary/words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.next('dictionary/modifiers/words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
                 this.next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
                 this.isRevealed = true;
             } else if (window.location.pathname === "/logs") {
@@ -5281,14 +5416,28 @@ window.addEventListener("load", event => {
                     }
                 }
             });*/
-            onValue(databaseRef(database, databaseRoot + "/stars"), snapshot => {
+            onValue(databaseRef(database, databaseRoot + "/dictionary/count"), snapshot => {
                 const count = snapshot.val();
 
                 if (count === null) {
-                    self.stars = 0;
+                    self.counter.words = 0;
                 } else {
-                    self.stars = count;
+                    self.counter.words = count;
                 }
+
+                self.stars = self.counter.words + self.counter.modifiers;
+            });
+            onValue(databaseRef(database, databaseRoot + "/dictionary/modifiers/count"), snapshot => {
+                const count = snapshot.val();
+
+                if (count === null) {
+                    self.counter.modifiers = 0;
+                    
+                } else {
+                    self.counter.modifiers = count;
+                }
+
+                self.stars = self.counter.words + self.counter.modifiers;
             });
             onValue(query(databaseRef(database, databaseRoot + "/words"), orderByChild("timestamp"), limitToLast(100)), async snapshot => {
                 if (snapshot.exists()) {
@@ -5438,7 +5587,9 @@ window.addEventListener("load", event => {
                         for (const like of self.likes) {
                             if ("text" in like && Array.isArray(like.text)) {
                                 for (const word of like.text.reduce((x, y) => {
-                                    if (typeof (y) === "object") {
+                                    if (Array.isArray(y)) {
+                                        x.push(y[1]);
+                                    } else if (typeof (y) === "object") {
                                         x.push(y);
                                     }
 
