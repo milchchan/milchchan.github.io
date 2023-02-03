@@ -895,7 +895,7 @@
                                                                     <div class="media-content">
                                                                         <div class="content">
                                                                             <div class="columns is-gapless"
-                                                                                v-for="(user, index) in take(Object.values(mode.dictionary_words.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).concat(Object.values(mode.dictionary_modifiers_words.filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {}))).sort((x, y) => y.count - x.count), 10)"
+                                                                                v-for="(user, index) in take(Object.values(mode.dictionary_words.concat(mode.dictionary_modifiers_words).filter(x => 'user' in x).reduce((x, y) => { if (y.user.id in x) { x[y.user.id].count += 1; } else { x[y.user.id] = Object.assign({ count: 1 }, y.user); } return x; }, {})).sort((x, y) => y.count - x.count), 10)"
                                                                                 v-bind:key="user">
                                                                                 <div class="column is-full">
                                                                                     <div v-if="user.image">
