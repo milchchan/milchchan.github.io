@@ -2354,7 +2354,7 @@ label .scrollable>div {
                                         border-radius: 290486px;
                                         width: 0.75rem !important;
                                         height: 0.75rem !important;
-                                        background: #ffee00;
+                                        background: var(--main-color);
                                         color: #ffffff !important;
                                         font-family: "Alata", sans-serif;
                                         font-size: 0.75rem;
@@ -2451,12 +2451,11 @@ label .scrollable>div {
                                     border-radius: 290486px;
                                     width: 0.75rem !important;
                                     height: 0.75rem !important;
-                                    background: #ffee00;
+                                    background: var(--main-color);
                                     color: #ffffff !important;
                                     font-family: "Alata", sans-serif;
                                     font-size: 0.75rem;
                                     line-height: 100% !important;
-                                    color: var(--foreground-color);
                                     overflow: hidden;
                                     box-sizing: content-box;
                                     text-align: center;
@@ -3440,12 +3439,11 @@ label .scrollable>div {
                                             border-radius: 290486px;
                                             width: 0.75rem !important;
                                             height: 0.75rem !important;
-                                            background: #ffee00;
+                                            background: var(--main-color);
                                             color: #ffffff !important;
                                             font-family: "Alata", sans-serif;
                                             font-size: 0.75rem;
                                             line-height: 100% !important;
-                                            color: var(--foreground-color);
                                             overflow: hidden;
                                             box-sizing: content-box;
                                             text-align: center;
