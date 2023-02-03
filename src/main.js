@@ -1192,7 +1192,7 @@ window.addEventListener("load", event => {
                 return false;
             },
             randomize: async function () {
-                const snapshot1 = await get(query(databaseRef(database, `${databaseRoot}/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
+                const snapshot1 = await get(query(databaseRef(database, `${databaseRoot}/dictionary/words`), orderByChild('random'), startAt(Math.random()), limitToFirst(10)));
 
                 if (snapshot1.exists()) {
                     function choice(collection, func) {
@@ -2222,7 +2222,7 @@ window.addEventListener("load", event => {
                                 }
                             }
                         }
-                    } else if (Array.isArray(token)) {
+                    } else {
                         const json = JSON.stringify(token);
                         const word = Array.isArray(token) ? token[1] : token;
 
@@ -2391,6 +2391,8 @@ window.addEventListener("load", event => {
                     sequences = sequences.filter(x => x.sequence.some(y => hints.some(z => {
                         if (Array.isArray(z)) {
                             return z[1].name === y.term.name && z[0] === y.term.modifier;
+                        } else if (typeof (z) === "object") {
+                            return z.name === y.term.name;
                         }
 
                         return z === y.term.name;
@@ -3976,13 +3978,11 @@ window.addEventListener("load", event => {
                                             x.source.push(s);
                                         }
                                     } else if (Array.isArray(like.text[y])) {
-                                        for (const obj of like.text[y]) {
-                                            const text = (typeof (obj) === "string" ? obj : obj.name).replace("\n", "");
-
-                                            x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
-                                            x.text += text;
-                                            x.source.push({ name: text });
-                                        }
+                                        const s = like.text[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace("\n", ""), "");
+                                        
+                                        x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
+                                        x.text += s;
+                                        x.source.push({ name: s });
                                     } else {
                                         const text = like.text[y].name.replace("\n", "");
 
@@ -4148,87 +4148,87 @@ window.addEventListener("load", event => {
 
                     this.renderBackground();
 
-                    if (this.mode !== null && typeof (this.mode) === "object" && "word" in this.mode && "next") {
+                    if (this.mode !== null && typeof (this.mode) === "object" && "talk" in this.mode && "next") {
                         if (this.mode.next !== null) {
-                            if (this.mode.word === null || this.mode.word.type.elapsed < 0) {
-                                this.mode.word = this.mode.next;
+                            if (this.mode.talk === null || this.mode.talk.type.elapsed < 0) {
+                                this.mode.talk = this.mode.next;
                                 this.mode.next = null;
                             } else {
-                                this.mode.word.type.reverse = true;
-                                this.mode.word.running = true;
+                                this.mode.talk.type.reverse = true;
+                                this.mode.talk.running = true;
                             }
                         }
 
-                        if (this.mode.word !== null) {
-                            if (this.mode.word.running) {
-                                if (this.mode.word.type.reverse) {
-                                    if (this.mode.word.type.count > 0) {
-                                        this.mode.word.type.elapsed += deltaTime * 2;
+                        if (this.mode.talk !== null) {
+                            if (this.mode.talk.running) {
+                                if (this.mode.talk.type.reverse) {
+                                    if (this.mode.talk.type.count > 0) {
+                                        this.mode.talk.type.elapsed += deltaTime * 2;
 
-                                        if (this.mode.word.type.elapsed >= 1.0 / this.mode.word.type.speed) {
-                                            let index = this.mode.word.type.count - 1;
+                                        if (this.mode.talk.type.elapsed >= 1.0 / this.mode.talk.type.speed) {
+                                            let index = this.mode.talk.type.count - 1;
 
-                                            if (index < this.mode.word.text.length) {
-                                                const width = Math.floor(this.mode.word.text.length / 2);
+                                            if (index < this.mode.talk.text.length) {
+                                                const width = Math.floor(this.mode.talk.text.length / 2);
 
-                                                if (this.mode.word.type.buffer.length <= width && this.mode.word.type.count > 0) {
-                                                    this.mode.word.type.count -= 1;
+                                                if (this.mode.talk.type.buffer.length <= width && this.mode.talk.type.count > 0) {
+                                                    this.mode.talk.type.count -= 1;
                                                 }
 
-                                                if (this.mode.word.type.buffer.length > 0) {
-                                                    this.mode.word.type.buffer = this.mode.word.type.buffer.substring(0, this.mode.word.type.buffer.length - 1);
+                                                if (this.mode.talk.type.buffer.length > 0) {
+                                                    this.mode.talk.type.buffer = this.mode.talk.type.buffer.substring(0, this.mode.talk.type.buffer.length - 1);
                                                 }
                                             }
 
-                                            this.mode.word.type.elapsed = 0;
+                                            this.mode.talk.type.elapsed = 0;
                                         }
                                     } else {
-                                        this.mode.word.time = 0;
-                                        this.mode.word.type.elapsed = -1;
-                                        this.mode.word.type.reverse = false;
-                                        this.mode.word.running = false;
+                                        this.mode.talk.time = 0;
+                                        this.mode.talk.type.elapsed = -1;
+                                        this.mode.talk.type.reverse = false;
+                                        this.mode.talk.running = false;
                                     }
-                                } else if (this.mode.word.type.buffer.length < this.mode.word.text.length) {
-                                    if (this.mode.word.type.elapsed >= 0) {
-                                        this.mode.word.type.elapsed += deltaTime;
+                                } else if (this.mode.talk.type.buffer.length < this.mode.talk.text.length) {
+                                    if (this.mode.talk.type.elapsed >= 0) {
+                                        this.mode.talk.type.elapsed += deltaTime;
                                     } else {
-                                        this.mode.word.type.elapsed = deltaTime;
+                                        this.mode.talk.type.elapsed = deltaTime;
                                     }
 
-                                    if (this.mode.word.type.elapsed >= 1.0 / this.mode.word.type.speed) {
-                                        const index = this.mode.word.type.buffer.length;
-                                        const width = Math.floor(this.mode.word.text.length / 2);
-                                        const length = this.mode.word.text.length;
+                                    if (this.mode.talk.type.elapsed >= 1.0 / this.mode.talk.type.speed) {
+                                        const index = this.mode.talk.type.buffer.length;
+                                        const width = Math.floor(this.mode.talk.text.length / 2);
+                                        const length = this.mode.talk.text.length;
 
-                                        if (this.mode.word.type.count >= width) {
-                                            this.mode.word.type.buffer += this.mode.word.text.charAt(index);
+                                        if (this.mode.talk.type.count >= width) {
+                                            this.mode.talk.type.buffer += this.mode.talk.text.charAt(index);
                                         }
 
-                                        if (this.mode.word.type.count < length) {
-                                            this.mode.word.type.count += 1;
+                                        if (this.mode.talk.type.count < length) {
+                                            this.mode.talk.type.count += 1;
                                         }
 
-                                        this.mode.word.type.elapsed = 0;
+                                        this.mode.talk.type.elapsed = 0;
                                     }
                                 } else {
-                                    this.mode.word.time += deltaTime;
+                                    this.mode.talk.time += deltaTime;
                                 }
 
-                                if (this.mode.word.text.length === this.mode.word.type.buffer.length) {
-                                    const characters = this.mode.word.text.split("");
+                                if (this.mode.talk.text.length === this.mode.talk.type.buffer.length) {
+                                    const characters = this.mode.talk.text.split("");
 
-                                    this.mode.word.characters.splice(0);
+                                    this.mode.talk.characters.splice(0);
 
                                     for (let i = 0; i < characters.length; i++) {
-                                        this.mode.word.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.word.attributes.some(x => i >= x.start && i < x.end)*/ });
+                                        this.mode.talk.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.talk.attributes.some(x => i >= x.start && i < x.end)*/ });
                                     }
                                 } else {
-                                    const charArray = this.mode.word.letters;
+                                    const charArray = this.mode.talk.letters;
                                     let randomBuffer = "";
 
                                     if (charArray.length > 0) {
-                                        for (let i = 0; i < this.mode.word.type.count; i++) {
-                                            if (this.mode.word.text.charAt(i) === "\n") {
+                                        for (let i = 0; i < this.mode.talk.type.count; i++) {
+                                            if (this.mode.talk.text.charAt(i) === "\n") {
                                                 randomBuffer += "\n";
                                             } else {
                                                 randomBuffer += charArray[~~_random(0, charArray.length)];
@@ -4236,27 +4236,27 @@ window.addEventListener("load", event => {
                                         }
                                     }
 
-                                    if (randomBuffer.length > this.mode.word.type.buffer.length) {
-                                        const characters = (this.mode.word.type.buffer + randomBuffer.substring(this.mode.word.type.buffer.length, randomBuffer.length)).split("");
+                                    if (randomBuffer.length > this.mode.talk.type.buffer.length) {
+                                        const characters = (this.mode.talk.type.buffer + randomBuffer.substring(this.mode.talk.type.buffer.length, randomBuffer.length)).split("");
 
-                                        this.mode.word.characters.splice(0);
+                                        this.mode.talk.characters.splice(0);
 
                                         for (let i = 0; i < characters.length; i++) {
-                                            this.mode.word.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.word.attributes.some(x => i >= x.start && i < x.end)*/ });
+                                            this.mode.talk.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.talk.attributes.some(x => i >= x.start && i < x.end)*/ });
                                         }
-                                    } else if (this.mode.word.characters.length !== this.mode.word.type.buffer.length) {
-                                        const characters = this.mode.word.type.buffer.split("");
+                                    } else if (this.mode.talk.characters.length !== this.mode.talk.type.buffer.length) {
+                                        const characters = this.mode.talk.type.buffer.split("");
 
-                                        this.mode.word.characters.splice(0);
+                                        this.mode.talk.characters.splice(0);
 
                                         for (let i = 0; i < characters.length; i++) {
-                                            this.mode.word.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.word.attributes.some(x => i >= x.start && i < x.end)*/ });
+                                            this.mode.talk.characters.push({ key: i, value: characters[i]/*, highlight: this.mode.talk.attributes.some(x => i >= x.start && i < x.end)*/ });
                                         }
                                     }
                                 }
                             }
 
-                            this.mode.word.elapsed += deltaTime;
+                            this.mode.talk.elapsed += deltaTime;
                         }
                     }
 
@@ -5085,7 +5085,7 @@ window.addEventListener("load", event => {
                 this.mode = "_help";
                 this.isRevealed = true;
             } else if (window.location.pathname === "/talk") {
-                this.mode = { collection: null, index: 0, selected: [], word: null, next: null, reloading: true, disposable: true };
+                this.mode = { collection: null, index: 0, selected: [], talk: null, next: null, reloading: true, disposable: true };
                 this.isRevealed = true;
                 this.randomize().then((x) => {
                     this.mode.next = x;
