@@ -702,7 +702,48 @@
                                                 </div>
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <nav class="panel">
+                                                        <nav class="panel is-hidden-mobile">
+                                                            <div class="panel-block"
+                                                                v-for="rows in arrange(word.attributes, 2)"
+                                                                v-bind:key="rows">
+                                                                <div class="level is-fullwidth">
+                                                                    <div class="level-item" :style="{ width: 'calc(100% / 2)' }" v-for="column in rows"
+                                                                        key="column">
+                                                                        <article class="media">
+                                                                            <div class="media-content">
+                                                                                <div class="content">
+                                                                                    <label class="checkbox">
+                                                                                        <input type="checkbox"
+                                                                                            v-bind:data-word="word.name"
+                                                                                            v-bind:data-attribute="column.name"
+                                                                                            v-bind:disabled="word.modifier.selected || isSubmitting"
+                                                                                            @change="check"
+                                                                                            v-model="column.value">
+                                                                                        <span class="custom"></span>
+                                                                                        <span
+                                                                                            class="wrap is-size-7 has-text-weight-bold">
+                                                                                            <div class="clip">
+                                                                                                <div class="scrollable">
+                                                                                                    <div>{{
+                                                                                                        column.name
+                                                                                                        }}
+                                                                                                    </div>
+                                                                                                    <div>{{
+                                                                                                        column.name
+                                                                                                        }}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </nav>
+                                                        <nav class="panel is-hidden-tablet">
                                                             <div class="panel-block"
                                                                 v-for="attribute in word.attributes"
                                                                 v-bind:key="attribute">
@@ -721,8 +762,10 @@
                                                                                     class="wrap is-size-7 has-text-weight-bold">
                                                                                     <div class="clip">
                                                                                         <div class="scrollable">
-                                                                                            <div>{{ attribute.name }}</div>
-                                                                                            <div>{{ attribute.name }}</div>
+                                                                                            <div>{{ attribute.name }}
+                                                                                            </div>
+                                                                                            <div>{{ attribute.name }}
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </span>
@@ -1638,12 +1681,10 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <button class="button"
-                                                                                type="button"
+                                                                            <button class="button" type="button"
                                                                                 v-bind:disabled="user === null"
                                                                                 @click="learn(Object.assign(word, { name: word.id,})); isRevealed = false; mode = null;"
-                                                                                v-else
-                                                                                v-cloak>
+                                                                                v-else v-cloak>
                                                                                 <span class="image is-24x24"
                                                                                     v-if="'user' in word && 'image' in word.user && word.user.image != null">
                                                                                     <img class="is-rounded"
@@ -1663,12 +1704,15 @@
                                                                             </button>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="media-right" v-if="'image' in word === false">
-                                                                        <a class="button is-circle"
-                                                                            v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.id + '&tag=milchchan-22')"
-                                                                            target="_blank"><span
-                                                                                class="icon is-small"><i
-                                                                                    class="fa-brands fa-amazon"></i></span></a>
+                                                                    <div class="media-right"
+                                                                        v-if="'image' in word === false">
+                                                                        <div class="content">
+                                                                            <a class="button is-circle"
+                                                                                v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.id + '&tag=milchchan-22')"
+                                                                                target="_blank"><span
+                                                                                    class="icon is-small"><i
+                                                                                        class="fa-brands fa-amazon"></i></span></a>
+                                                                        </div>
                                                                     </div>
                                                                 </article>
                                                             </div>
