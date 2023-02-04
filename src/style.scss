@@ -2594,68 +2594,64 @@ label .scrollable>div {
                                 flex-direction: row;
                                 align-items: center;
                                 justify-content: flex-start;
+                                gap: 0;
 
                                 div.block:last-child {
-                                    display: flex;
-                                    margin: 0;
-                                    padding: 0px 0px 48px 0px;
+                                    margin: 0px 0px 48px 0px;
+                                    padding: 0;
                                     text-align: center;
                                     font-size: 0;
                                     flex-direction: row;
                                     align-items: center;
                                     justify-content: center;
                                     flex-wrap: wrap;
+                                    background-color: transparent;
                                 }
 
                                 div.wrap.is-size-1 {
+                                    display: inline-flex;
                                     margin: 0 !important;
                                     border-radius: 0px;
                                     padding: 0;
                                     width: fit-content;
                                     height: fit-content;
-                                    background-color: var(--accent-color);
+                                    background-color: transparent;
+                                    overflow: hidden;
 
                                     >div.is-size-1 {
                                         margin: 0 !important;
                                         padding: 0;
                                         width: auto;
                                         height: calc(10vmin + 8px) !important;
-                                        color: #ffffff;
+                                        color: var(--accent-color);
                                         font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
                                         font-size: 10vmin !important;
                                         font-weight: bold;
                                         line-height: calc(10vmin + 8px) !important;
+                                        transform-origin: 0 0;
                                         transform: rotate(0.03deg);
+                                        backface-visibility: hidden;
+                                        overflow: hidden;
+                                        perspective: 1000;
+                                        transition: 0.5s;
                                     }
 
                                     >div.dummy {
                                         margin: 0 !important;
+                                        border: 0px none transparent !important;
                                         padding: 0;
                                         height: calc(10vmin + 8px) !important;
                                         font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
                                         font-size: 10vmin !important;
                                         font-weight: bold;
                                         line-height: calc(10vmin + 8px) !important;
+                                        transform-origin: 0 0;
                                         transform: rotate(0.03deg);
                                     }
                                 }
 
-                                div.highlight {
-                                    background-color: #ffffff !important;
-
-                                    >div.is-size-1 {
-                                        color: var(--accent-color) !important;
-                                    }
-                                }
-
-                                div.wrap.is-size-1:first-child {
-                                    border-top-left-radius: 2px !important;
-                                    border-bottom-left-radius: 2px !important
-                                }
-
-                                div.wrap.is-size-1:last-child {
-                                    border-top-right-radius: 2px !important;
-                                    border-bottom-right-radius: 2px !important;
+                                div.highlight>div.is-size-1 {
+                                    color: var(--main-color) !important;
                                 }
 
                                 span {
