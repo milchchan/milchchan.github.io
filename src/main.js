@@ -1832,12 +1832,12 @@ window.addEventListener("load", event => {
                             if (!regex.test(token)) {
                                 if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
                                     const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
-    
+
                                     this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
-    
+
                                     if (snapshot.exists()) {
                                         const word = snapshot.val();
-    
+
                                         for (const attribute in word.attributes) {
                                             if (typeof (word.attributes[attribute]) === "number" && word.attributes[attribute] > 0 && this.attributes.includes(attribute)) {
                                                 this.wordDictionary[token].attributes.push(attribute);
@@ -1845,7 +1845,7 @@ window.addEventListener("load", event => {
                                         }
                                     }
                                 }
-    
+
                                 for (const attribute of this.wordDictionary[token].attributes) {
                                     if (!attributes.includes(attribute)) {
                                         attributes.push(attribute);
@@ -3718,6 +3718,7 @@ window.addEventListener("load", event => {
                                 let text = "";
                                 const words = [];
                                 const attributes = [];
+                                const letters = [];
 
                                 for (const inline of sequence[0].text) {
                                     if (Array.isArray(inline)) {
@@ -3740,10 +3741,16 @@ window.addEventListener("load", event => {
                                     }
                                 }
 
+                                for (let i = 0; i < text.length; i++) {
+                                    if (letters.indexOf(text.charAt(i)) === -1 && text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
+                                        letters.push(text.charAt(i));
+                                    }
+                                }
+
                                 if ("character" in sequence[0]) {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words, original: sequence[0].text, attributes: attributes };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: sequence[0].character, text: text, words: words, original: sequence[0].text, attributes: attributes, letters: letters };
                                 } else {
-                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words, original: sequence[0].text, attributes: attributes };
+                                    this.message = { time: 0, duration: sequence[0].duration, type: { elapsed: -1, speed: sequence[0].speed, reverse: false, buffer: "", count: 0 }, character: { name: this.character.name, accent: this.character.accent, image: this.character.image }, text: text, words: words, original: sequence[0].text, attributes: attributes, letters: letters };
                                 }
 
                                 lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
@@ -3843,6 +3850,7 @@ window.addEventListener("load", event => {
                             let text;
                             const attributes = [];
                             const source = [];
+                            const letters = [];
 
                             if (typeof (like.text) === "string") {
                                 text = like.text.replace("\n", "");
@@ -3861,7 +3869,7 @@ window.addEventListener("load", event => {
                                         }
                                     } else if (Array.isArray(like.text[y])) {
                                         const s = like.text[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace("\n", ""), "");
-                                        
+
                                         x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
                                         x.text += s;
                                         x.source.push({ name: s });
@@ -3877,11 +3885,17 @@ window.addEventListener("load", event => {
                                 }, { text: "", attributes: attributes, source: source }).text;
                             }
 
+                            for (let i = 0; i < text.length; i++) {
+                                if (letters.indexOf(text.charAt(i)) === -1 && text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
+                                    letters.push(text.charAt(i));
+                                }
+                            }
+
                             this.wall.blocks.push({
                                 height: 100 / samples.length,
                                 colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
                                 inlines: [
-                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source },
+                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters },
                                     //{ running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
                                 ],
                                 iterations: ~~Math.ceil(50 / text.length) * 2,
@@ -3983,7 +3997,7 @@ window.addEventListener("load", event => {
                                         inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
                                     }
                                 } else {
-                                    const charArray = new Array();
+                                    const charArray = inline.letters;
                                     let randomBuffer = "";
 
                                     for (let i = 0; i < inline.text.length; i++) {
@@ -4212,14 +4226,8 @@ window.addEventListener("load", event => {
                                 this.text.push({ key: i, value: characters[i], highlight: this.message.attributes.some(x => i >= x.start && i < x.end) });
                             }
                         } else {
-                            const charArray = new Array();
+                            const charArray = this.message.letters;
                             let randomBuffer = "";
-
-                            for (let i = 0; i < this.message.text.length; i++) {
-                                if (charArray.indexOf(this.message.text.charAt(i)) === -1 && this.message.text.charAt(i) !== "\n" && this.message.text.charAt(i).match(/\s/) === null) {
-                                    charArray.push(this.message.text.charAt(i));
-                                }
-                            }
 
                             if (charArray.length > 0) {
                                 for (let i = 0; i < this.message.type.count; i++) {
