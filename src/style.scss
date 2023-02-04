@@ -2866,6 +2866,7 @@ label .scrollable>div {
             }
 
             .panel {
+                margin: 0;
                 background: var(--background-color);
                 border-radius: 16px;
                 box-shadow: none;
@@ -2886,11 +2887,29 @@ label .scrollable>div {
                     padding: 0;
                     justify-content: center;
 
-                    >.media {
+                    >.level {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: center;
+                        width: 100%;
+
+                        >.level-item {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            flex-shrink: 0;
+                            width: 100%;
+                        }
+
+                        >.level-item:not(:last-child) {
+                            border-right: 1px solid rgba(119, 119, 119, 5%);
+                        }
+                    }
+
+                    .media {
                         display: flex;
                         width: 100%;
                         justify-content: center;
-                        align-items: center;
+                        align-items: stretch;
 
                         >.media-content>.content {
                             display: flex;
@@ -2946,9 +2965,7 @@ label .scrollable>div {
                                 align-items: center;
                                 margin: 0;
                                 padding: 16px 32px 16px 32px;
-                                /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                                 border-radius: 290486px;
-                                /*background: rgba(255, 255, 255, 0.75) !important;*/
                                 border: 0px none transparent !important;
                                 background: var(--background-color);
                                 background-clip: padding-box;
@@ -2956,9 +2973,6 @@ label .scrollable>div {
                                 line-height: calc(0.75rem * 1.5);
                                 backface-visibility: hidden;
                                 color: var(--main-color) !important;
-                                /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                        backdrop-filter: blur(4px) !important;
-                        -webkit-backdrop-filter: blur(4px) !important;*/
                                 transition: 0.5s;
 
                                 .clip {
@@ -3014,7 +3028,7 @@ label .scrollable>div {
                                 margin: 0;
                                 padding: 16px 32px 16px 32px;
                                 border: 0px none transparent !important;
-                                background: #ffffff;
+                                background: transparent;
                                 background-clip: padding-box;
                                 height: fit-content;
                                 line-height: calc(0.75rem * 1.5);
@@ -3064,8 +3078,18 @@ label .scrollable>div {
                         }
 
                         >.media-right {
+                            display: flex;
                             margin: 0;
                             padding: 0px 16px 0px 16px;
+                            height: auto;
+                            justify-content: flex-end;
+                            align-items: center;
+                            border-left: 1px solid rgba(119, 119, 119, 5%);
+
+                            >.content {
+                                width: fit-content;
+                                height: fit-content;
+                            }
                         }
                     }
                 }
