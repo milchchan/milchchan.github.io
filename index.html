@@ -4037,7 +4037,7 @@
                 <transition name="fade" mode="out-in">
                     <button class="button is-circle" type="button" v-bind:disabled="mode.reloading"
                         @click="mode.reloading = true; randomize().then((x) => { mode.next = x; mode.reloading = false; });"
-                        v-if="mode !== null && typeof(mode) === 'object' && 'collection' in mode" key="talk" v-cloak>
+                        v-if="mode !== null && typeof(mode) === 'object' && 'talk' in mode" key="talk" v-cloak>
                         <transition name="fade" mode="out-in">
                             <span class="icon is-small" v-if="mode.reloading" key="loading">
                                 <i class="fa-solid fa-arrows-rotate" v-bind:class="{ loading: mode.reloading }"></i>
@@ -4047,7 +4047,7 @@
                             </span>
                         </transition>
                     </button>
-                    <button class="button is-circle" type="button" v-bind:disabled="isLoading"
+                    <button class="button is-circle" type="button" v-bind:disabled="isLoading || word !== null"
                         @click="mode = { collection: null, index: 0, selected: [], talk: null, next: null, reloading: true, disposable: isRevealed ? false : true }; isRevealed = true; randomize().then((x) => { mode.next = x; mode.reloading = false; });/*captures._resolve().then(() => mode.collection = arrange(Object.values(captures).filter(x => typeof(x) !== 'function').sort((x, y) => y.timestamp - x.timestamp), 1)); user === null ? isRevealed = true : prepare(character.alternative.sequences.filter((x) => x.name === 'Talk'), null, character.alternative.sequences).filter(x => x.type === 'Message').forEach(x => notify({ text: x.text, accent: character.alternative.accent, image: character.alternative.image }));*/"
                         v-else key="default" v-cloak>
                         <transition name="fade" mode="out-in">
