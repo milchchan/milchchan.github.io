@@ -886,7 +886,7 @@
                                                                         <p class="has-text-weight-bold"
                                                                             v-if="Array.isArray(log.text)">
                                                                             <span
-                                                                                v-for="item in log.text.map(x => typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })"
+                                                                                v-for="item in log.text.map(x => Array.isArray(x) ? { highlight: true, text: x[0] + x[1].name } : typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })"
                                                                                 v-bind:class="{ highlight: item.highlight }"
                                                                                 v-bind:style="{ backgroundColor: item.highlight ? log.user.accent : 'transparent' }">
                                                                                 {{ item.text }}
@@ -1818,7 +1818,7 @@
                                                                         <p class="has-text-weight-bold"
                                                                             v-if="Array.isArray(log.text)">
                                                                             <span
-                                                                                v-for="item in log.text.map(x => typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })"
+                                                                                v-for="item in log.text.map(x => Array.isArray(x) ? { highlight: true, text: x[0] + x[1].name } : typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })"
                                                                                 v-bind:class="{ highlight: item.highlight }"
                                                                                 v-bind:style="{ backgroundColor: item.highlight ? log.user.accent : 'transparent' }">
                                                                                 {{ item.text }}
@@ -2343,7 +2343,7 @@
                                                                         <p class="has-text-weight-bold"
                                                                             v-if="Array.isArray(log.text)">
                                                                             <span
-                                                                                v-for="item in log.text.map(x => typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })"
+                                                                                v-for="item in log.text.map(x => Array.isArray(x) ? { highlight: true, text: x[0] + x[1].name } : typeof(x) === 'object' ? { highlight: true, text: x.name } : { highlight: false, text: x })"
                                                                                 v-bind:class="{ highlight: item.highlight }"
                                                                                 v-bind:style="{ backgroundColor: item.highlight ? log.user.accent : 'transparent' }">
                                                                                 {{ item.text }}
