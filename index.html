@@ -702,17 +702,17 @@
                                                 </div>
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <nav class="panel is-hidden-mobile">
+                                                        <nav class="panel is-hidden-mobile" :style="{ width: '125%' }">
                                                             <div class="panel-block"
                                                                 v-for="rows in arrange(word.attributes, 2)"
                                                                 v-bind:key="rows">
                                                                 <div class="level is-fullwidth">
-                                                                    <div class="level-item "
+                                                                    <div class="level-item"
                                                                         :style="{ width: 'calc(100% / 2)' }"
                                                                         v-for="column in rows" key="column">
                                                                         <article class="media">
                                                                             <div class="media-content">
-                                                                                <div class="content">
+                                                                                <div class="content is-align-items-flex-start">
                                                                                     <label class="checkbox">
                                                                                         <input type="checkbox"
                                                                                             v-bind:data-word="word.name"
