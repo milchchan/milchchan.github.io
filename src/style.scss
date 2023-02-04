@@ -2058,7 +2058,7 @@ label .scrollable>div {
                                                     >div:first-child {
                                                         display: flex;
                                                         margin: 0;
-                                                        padding: 16px;
+                                                        padding: 0;
                                                         width: 100%;
                                                         height: 100%;
                                                         overflow-x: hidden;
@@ -2134,7 +2134,7 @@ label .scrollable>div {
 
                                                             >.level-item {
                                                                 margin: 0;
-                                                                padding: 8px 8px 24px 8px;
+                                                                padding: 24px 8px 8px 8px;
                                                             }
                                                         }
 
@@ -2856,7 +2856,7 @@ label .scrollable>div {
                 width: 100%;
             }
 
-            >.panel.is-primary {
+            .panel.is-primary {
                 background: var(--main-color) !important;
 
                 .panel-tabs:not(:last-child),
@@ -2865,10 +2865,11 @@ label .scrollable>div {
                 }
             }
 
-            >.panel {
+            .panel {
                 background: var(--background-color);
-                border-radius: 8px;
+                border-radius: 16px;
                 box-shadow: none;
+                overflow: hidden;
                 /*box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);*/
 
                 .panel-tabs:not(:last-child),
@@ -2885,78 +2886,186 @@ label .scrollable>div {
                     padding: 0;
                     justify-content: center;
 
-                    >.media>.media-content>.content {
+                    >.media {
                         display: flex;
-                        flex-direction: column;
+                        width: 100%;
+                        justify-content: center;
                         align-items: center;
-                        justify-content: flex-start;
 
-                        >button,
-                        >.button {
+                        >.media-content>.content {
                             display: flex;
+                            flex-direction: column;
                             align-items: center;
-                            margin: 0;
-                            padding: 16px 32px 16px 32px;
-                            /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
-                            border-radius: 290486px;
-                            /*background: rgba(255, 255, 255, 0.75) !important;*/
-                            border: 0px none transparent !important;
-                            background: var(--background-color);
-                            background-clip: padding-box;
-                            height: fit-content;
-                            line-height: calc(0.75rem * 1.5);
-                            backface-visibility: hidden;
-                            color: var(--main-color) !important;
-                            /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
-                        backdrop-filter: blur(4px) !important;
-                        -webkit-backdrop-filter: blur(4px) !important;*/
-                            transition: 0.5s;
+                            justify-content: flex-start;
 
-                            .clip {
-                                display: inline-block;
-                                overflow: hidden;
-                                box-sizing: content-box;
-                                height: calc(0.75rem * 1.5);
+                            >.card {
+                                border-radius: 16px;
+                                box-shadow: none;
 
-                                .scrollable div {
+                                >.card-image {
                                     display: flex;
+                                    position: relative;
+                                    justify-content: center;
                                     align-items: center;
-                                    font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                                    transform: rotate(0.03deg);
-                                    line-height: 0.75rem !important;
-                                    height: calc(0.75rem * 1.5);
+
+                                    >figure.image {
+                                        width: 256px;
+
+                                        img {
+                                            object-fit: contain;
+                                            width: 100%;
+                                            height: 100%;
+                                        }
+                                    }
+                                }
+
+                                >.card-content {
+                                    margin: 0;
+                                    padding: 0;
+
+                                    >.content>.field {
+                                        >.control {
+                                            display: flex;
+                                            justify-content: center;
+                                        }
+
+                                        >.control:first-child {
+                                            margin: 16px 0px 0px 0px;
+                                        }
+
+                                        >.control:last-child {
+                                            margin: 0px 0px 16px 0px;
+                                        }
+                                    }
                                 }
                             }
 
-                            .icon {
-                                color: var(--accent-color);
-                                justify-content: flex-start;
-                            }
-
-                            span.wrap+.icon:last-of-type {
-                                color: var(--main-color);
+                            button,
+                            .button {
+                                display: flex;
+                                align-items: center;
+                                margin: 0;
+                                padding: 16px 32px 16px 32px;
+                                /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
+                                border-radius: 290486px;
+                                /*background: rgba(255, 255, 255, 0.75) !important;*/
+                                border: 0px none transparent !important;
+                                background: var(--background-color);
+                                background-clip: padding-box;
+                                height: fit-content;
+                                line-height: calc(0.75rem * 1.5);
+                                backface-visibility: hidden;
+                                color: var(--main-color) !important;
+                                /*box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1) !important;
+                        backdrop-filter: blur(4px) !important;
+                        -webkit-backdrop-filter: blur(4px) !important;*/
                                 transition: 0.5s;
-                                justify-content: flex-end !important;
+
+                                .clip {
+                                    display: inline-block;
+                                    overflow: hidden;
+                                    box-sizing: content-box;
+                                    height: calc(0.75rem * 1.5);
+
+                                    .scrollable div {
+                                        display: flex;
+                                        align-items: center;
+                                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                        transform: rotate(0.03deg);
+                                        line-height: 0.75rem !important;
+                                        height: calc(0.75rem * 1.5);
+                                    }
+                                }
+
+                                .icon {
+                                    color: var(--accent-color);
+                                    justify-content: flex-start;
+                                }
+
+                                span.wrap+.icon:last-of-type {
+                                    color: var(--main-color);
+                                    transition: 0.5s;
+                                    justify-content: flex-end !important;
+                                }
+
+                                .icon:first-child+div {
+                                    margin: 0px 8px 0px 0px;
+                                }
+
+                                span:not(:first-of-type) {
+                                    margin: 0px 0px 0px 8px;
+                                }
                             }
 
-                            .icon:first-child+div {
-                                margin: 0px 8px 0px 0px;
+                            button.is-primary,
+                            .button.is-primary {
+                                background-color: var(--primary-background-color) !important;
+                                transition: 0.5s;
+
+                                span.wrap,
+                                .icon {
+                                    color: #ffffff !important;
+                                }
                             }
 
-                            span:not(:first-of-type) {
-                                margin: 0px 0px 0px 8px;
+                            label.checkbox {
+                                display: flex;
+                                align-items: center;
+                                margin: 0;
+                                padding: 16px 32px 16px 32px;
+                                border: 0px none transparent !important;
+                                background: #ffffff;
+                                background-clip: padding-box;
+                                height: fit-content;
+                                line-height: calc(0.75rem * 1.5);
+                                transition: 0.5s;
+        
+                                span:last-of-type {
+                                    height: calc(0.75rem * 1.5);
+                                }
+        
+                                .wrap {
+                                    border-bottom: 2px solid transparent;
+                                    display: flex;
+                                    justify-content: flex-start;
+                                    align-items: center;
+                                    transition: 0.5s;
+                                }
+        
+                                .clip {
+                                    display: inline-block;
+                                    overflow: hidden;
+                                    box-sizing: content-box;
+                                    height: calc(0.75rem * 1.5);
+        
+                                    .scrollable div {
+                                        display: flex;
+                                        align-items: center;
+                                        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                        transform: rotate(0.03deg);
+                                        line-height: 0.75rem !important;
+                                        height: calc(0.75rem * 1.5);
+                                        white-space: nowrap;
+                                        background-color: transparent;
+                                        color: var(--main-color);
+                                        transition: 0.5s;
+                                    }
+                                }
+        
+                                span:not(:first-of-type) {
+                                    margin: 0px 0px 0px 8px;
+                                }
+                            }
+        
+                            label.checkbox input[type="checkbox"]:checked+.custom:before,
+                            label.checkbox input[type="radio"]:checked+.custom:before {
+                                color: var(--accent-color);
                             }
                         }
 
-                        >button.is-primary,
-                        >.button.is-primary {
-                            background-color: var(--primary-background-color) !important;
-                            transition: 0.5s;
-
-                            span.wrap,
-                            .icon {
-                                color: #ffffff !important;
-                            }
+                        >.media-right {
+                            margin: 0;
+                            padding: 0px 16px 0px 16px;
                         }
                     }
                 }
