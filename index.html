@@ -704,12 +704,12 @@
                                                     <div class="content">
                                                         <nav class="panel is-hidden-mobile" :style="{ width: 'calc(calc(100% + 2rem) + 16px)' }">
                                                             <div class="panel-block"
-                                                                v-for="rows in arrange(word.attributes, 2)"
-                                                                v-bind:key="rows">
+                                                                v-for="(rows, index) in arrange(word.attributes, 2)"
+                                                                v-bind:key="index">
                                                                 <div class="level is-fullwidth">
                                                                     <div class="level-item"
                                                                         :style="{ width: 'calc(100% / 2)' }"
-                                                                        v-for="column in rows" key="column">
+                                                                        v-for="(column, index) in rows" key="index">
                                                                         <article class="media">
                                                                             <div class="media-content">
                                                                                 <div class="content is-align-items-flex-start">
@@ -746,8 +746,8 @@
                                                         </nav>
                                                         <nav class="panel is-hidden-tablet">
                                                             <div class="panel-block"
-                                                                v-for="attribute in word.attributes"
-                                                                v-bind:key="attribute">
+                                                                v-for="(attribute, index) in word.attributes"
+                                                                v-bind:key="index">
                                                                 <article class="media">
                                                                     <div class="media-content">
                                                                         <div class="content">
