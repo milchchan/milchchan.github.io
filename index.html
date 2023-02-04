@@ -647,7 +647,7 @@
                                         </div>
                                         <div class="level-item">
                                             <article class="media">
-                                                <div class="media-left">
+                                                <div class="media-left is-hidden">
                                                     <figure>
                                                         <transition name="fade">
                                                             <picture class="image has-ratio"
@@ -702,31 +702,36 @@
                                                 </div>
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <div class="columns is-gapless"
-                                                            v-for="row in arrange(word.attributes, 2)" v-cloak>
-                                                            <div class="column is-half" v-for="column in row"
-                                                                v-bind:key="column.name" v-cloak>
-                                                                <div class="field">
-                                                                    <label class="checkbox">
-                                                                        <input type="checkbox"
-                                                                            v-bind:data-word="word.name"
-                                                                            v-bind:data-attribute="column.name"
-                                                                            v-bind:disabled="word.modifier.selected || isSubmitting"
-                                                                            @change="check" v-model="column.value">
-                                                                        <span class="custom"></span>
-                                                                        <span
-                                                                            class="wrap is-size-7 has-text-weight-bold">
-                                                                            <div class="clip">
-                                                                                <div class="scrollable">
-                                                                                    <div>{{ column.name }}</div>
-                                                                                    <div>{{ column.name }}</div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
+                                                        <nav class="panel">
+                                                            <div class="panel-block"
+                                                                v-for="attribute in word.attributes"
+                                                                v-bind:key="attribute">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <label class="checkbox">
+                                                                                <input type="checkbox"
+                                                                                    v-bind:data-word="word.name"
+                                                                                    v-bind:data-attribute="attribute.name"
+                                                                                    v-bind:disabled="word.modifier.selected || isSubmitting"
+                                                                                    @change="check"
+                                                                                    v-model="attribute.value">
+                                                                                <span class="custom"></span>
+                                                                                <span
+                                                                                    class="wrap is-size-7 has-text-weight-bold">
+                                                                                    <div class="clip">
+                                                                                        <div class="scrollable">
+                                                                                            <div>{{ attribute.name }}</div>
+                                                                                            <div>{{ attribute.name }}</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </span>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
                                                             </div>
-                                                        </div>
+                                                        </nav>
                                                     </div>
                                                 </div>
                                             </article>
@@ -1560,111 +1565,114 @@
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="level-item"
-                                                        v-for="word in mode.path === 'dictionary/words' ? mode.dictionary_words : mode.dictionary_modifiers_words"
-                                                        v-bind:key="word">
-                                                        <div class="level is-mobile">
-                                                            <div class="level-item">
-                                                                <div class="level is-mobile">
-                                                                    <div class="level-item">
-                                                                        <div class="card"
-                                                                            v-if="'image' in word && word.image !== null">
-                                                                            <div class="card-image">
-                                                                                <figure class="image">
-                                                                                    <transition name="fade">
-                                                                                        <picture class="image has-ratio"
-                                                                                            style="pointer-events: none;"
-                                                                                            v-if="'image' in word && word.image !== null">
-                                                                                            <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
-                                                                                                v-bind:src="word.image.url"
-                                                                                                v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
-                                                                                                v-bind:alt="word.name">
-                                                                                        </picture>
-                                                                                    </transition>
-                                                                                </figure>
-                                                                            </div>
-                                                                            <div class="card-content">
-                                                                                <div class="content">
-                                                                                    <div class="field">
-                                                                                        <div class="control">
-                                                                                            <button
-                                                                                                class="button is-rounded is-size-7"
-                                                                                                type="button"
-                                                                                                v-bind:disabled="user === null"
-                                                                                                @click="learn(Object.assign(word, { name: word.id,})); isRevealed = false; mode = null;"
-                                                                                                v-cloak>
-                                                                                                <span
-                                                                                                    class="image is-24x24"
-                                                                                                    v-if="'user' in word && 'image' in word.user && word.user.image != null">
-                                                                                                    <img class="is-rounded"
-                                                                                                        v-bind:src="word.user.image"
-                                                                                                        v-bind:alt="word.user.name"
-                                                                                                        v-cloak>
-                                                                                                </span>
-                                                                                                <span
-                                                                                                    class="wrap has-text-weight-bold has-text-black">
-                                                                                                    <div class="clip">
+                                                    <div class="level-item">
+                                                        <nav class="panel">
+                                                            <div class="panel-block"
+                                                                v-for="word in mode.path === 'dictionary/words' ? mode.dictionary_words : mode.dictionary_modifiers_words"
+                                                                v-bind:key="word">
+                                                                <article class="media">
+                                                                    <div class="media-content">
+                                                                        <div class="content">
+                                                                            <div class="card"
+                                                                                v-if="'image' in word && word.image !== null">
+                                                                                <div class="card-image">
+                                                                                    <figure class="image">
+                                                                                        <transition name="fade">
+                                                                                            <picture
+                                                                                                class="image has-ratio"
+                                                                                                style="pointer-events: none;"
+                                                                                                v-if="'image' in word && word.image !== null">
+                                                                                                <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
+                                                                                                    v-bind:src="word.image.url"
+                                                                                                    v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
+                                                                                                    v-bind:alt="word.name">
+                                                                                            </picture>
+                                                                                        </transition>
+                                                                                    </figure>
+                                                                                </div>
+                                                                                <div class="card-content">
+                                                                                    <div class="content">
+                                                                                        <div class="field">
+                                                                                            <div class="control">
+                                                                                                <button
+                                                                                                    class="button is-rounded is-size-7"
+                                                                                                    type="button"
+                                                                                                    v-bind:disabled="user === null"
+                                                                                                    @click="learn(Object.assign(word, { name: word.id,})); isRevealed = false; mode = null;"
+                                                                                                    v-cloak>
+                                                                                                    <span
+                                                                                                        class="image is-24x24"
+                                                                                                        v-if="'user' in word && 'image' in word.user && word.user.image != null">
+                                                                                                        <img class="is-rounded"
+                                                                                                            v-bind:src="word.user.image"
+                                                                                                            v-bind:alt="word.user.name"
+                                                                                                            v-cloak>
+                                                                                                    </span>
+                                                                                                    <span
+                                                                                                        class="wrap has-text-weight-bold">
                                                                                                         <div
-                                                                                                            class="scrollable">
-                                                                                                            <div>{{
-                                                                                                                word.id
-                                                                                                                }}</div>
-                                                                                                            <div>{{
-                                                                                                                word.id
-                                                                                                                }}</div>
+                                                                                                            class="clip">
+                                                                                                            <div
+                                                                                                                class="scrollable">
+                                                                                                                <div>{{
+                                                                                                                    word.id
+                                                                                                                    }}
+                                                                                                                </div>
+                                                                                                                <div>{{
+                                                                                                                    word.id
+                                                                                                                    }}
+                                                                                                                </div>
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                </span>
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <div class="control">
-                                                                                            <a class="button is-circle"
-                                                                                                v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.id + '&tag=milchchan-22')"
-                                                                                                target="_blank"><span
-                                                                                                    class="icon is-small"><i
-                                                                                                        class="fa-brands fa-amazon"></i></span></a>
+                                                                                                    </span>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                            <div class="control">
+                                                                                                <a class="button is-circle"
+                                                                                                    v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.id + '&tag=milchchan-22')"
+                                                                                                    target="_blank"><span
+                                                                                                        class="icon is-small"><i
+                                                                                                            class="fa-brands fa-amazon"></i></span></a>
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="level is-mobile" v-else>
-                                                                            <div class="level-item">
-                                                                                <button class="button is-rounded"
-                                                                                    type="button"
-                                                                                    v-bind:disabled="user === null"
-                                                                                    @click="learn(Object.assign(word, { name: word.id,})); isRevealed = false; mode = null;"
-                                                                                    v-cloak>
-                                                                                    <span class="image is-24x24"
-                                                                                        v-if="'user' in word && 'image' in word.user && word.user.image != null">
-                                                                                        <img class="is-rounded"
-                                                                                            v-bind:src="word.user.image"
-                                                                                            v-bind:alt="word.user.name"
-                                                                                            v-cloak>
-                                                                                    </span>
-                                                                                    <span
-                                                                                        class="wrap has-text-weight-bold has-text-black">
-                                                                                        <div class="clip">
-                                                                                            <div class="scrollable">
-                                                                                                <div>{{ word.id }}</div>
-                                                                                                <div>{{ word.id }}</div>
-                                                                                            </div>
+                                                                            <button class="button"
+                                                                                type="button"
+                                                                                v-bind:disabled="user === null"
+                                                                                @click="learn(Object.assign(word, { name: word.id,})); isRevealed = false; mode = null;"
+                                                                                v-else
+                                                                                v-cloak>
+                                                                                <span class="image is-24x24"
+                                                                                    v-if="'user' in word && 'image' in word.user && word.user.image != null">
+                                                                                    <img class="is-rounded"
+                                                                                        v-bind:src="word.user.image"
+                                                                                        v-bind:alt="word.user.name"
+                                                                                        v-cloak>
+                                                                                </span>
+                                                                                <span
+                                                                                    class="wrap has-text-weight-bold is-size-7">
+                                                                                    <div class="clip">
+                                                                                        <div class="scrollable">
+                                                                                            <div>{{ word.id }}</div>
+                                                                                            <div>{{ word.id }}</div>
                                                                                         </div>
-                                                                                    </span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="level-item">
-                                                                                <a class="button is-circle"
-                                                                                    v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.id + '&tag=milchchan-22')"
-                                                                                    target="_blank"><span
-                                                                                        class="icon is-small"><i
-                                                                                            class="fa-brands fa-amazon"></i></span></a>
-                                                                            </div>
+                                                                                    </div>
+                                                                                </span>
+                                                                            </button>
                                                                         </div>
                                                                     </div>
-                                                                </div>
+                                                                    <div class="media-right" v-if="'image' in word === false">
+                                                                        <a class="button is-circle"
+                                                                            v-bind:href="encodeURI('https://www.amazon.co.jp/s?k=' + word.id + '&tag=milchchan-22')"
+                                                                            target="_blank"><span
+                                                                                class="icon is-small"><i
+                                                                                    class="fa-brands fa-amazon"></i></span></a>
+                                                                    </div>
+                                                                </article>
                                                             </div>
-                                                        </div>
+                                                        </nav>
                                                     </div>
                                                     <div class="level-item"
                                                         v-if="(mode.dictionary_words.length > 0 || mode.dictionary_modifiers_words.length > 0) && 'next' in mode && 'indexes' in mode">
@@ -3887,7 +3895,8 @@
                         <div class="control">
                             <transition name="popup" v-on:after-enter="$refs.text.focus();"
                                 v-on:before-leave="/*$refs.text.blur();*/">
-                                <nav class="level" v-bind:style="{ paddingBottom: insetBottom + 'px' }" v-if="isLearning">
+                                <nav class="level" v-bind:style="{ paddingBottom: insetBottom + 'px' }"
+                                    v-if="isLearning">
                                     <form @submit.prevent v-cloak>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
