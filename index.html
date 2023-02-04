@@ -707,8 +707,9 @@
                                                                 v-for="rows in arrange(word.attributes, 2)"
                                                                 v-bind:key="rows">
                                                                 <div class="level is-fullwidth">
-                                                                    <div class="level-item" :style="{ width: 'calc(100% / 2)' }" v-for="column in rows"
-                                                                        key="column">
+                                                                    <div class="level-item "
+                                                                        :style="{ width: 'calc(100% / 2)' }"
+                                                                        v-for="column in rows" key="column">
                                                                         <article class="media">
                                                                             <div class="media-content">
                                                                                 <div class="content">
@@ -1615,7 +1616,8 @@
                                                                 v-bind:key="word">
                                                                 <article class="media">
                                                                     <div class="media-content">
-                                                                        <div class="content">
+                                                                        <div class="content"
+                                                                            :class="{ 'is-align-items-flex-start': 'image' in word === false }">
                                                                             <div class="card"
                                                                                 v-if="'image' in word && word.image !== null">
                                                                                 <div class="card-image">
