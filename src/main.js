@@ -4991,11 +4991,15 @@ window.addEventListener("load", event => {
                 this.mode = { likes: null, next: null, indexes: [], disposable: true };
                 this.next("likes", this.mode.next, 1);
                 this.isRevealed = true;
+            } else if (window.location.pathname === "/backgrounds") {
+                this.mode = { backgrounds: null, next: null, indexes: [], selected: [], disposable: true };
+                this.next("backgrounds", this.mode.next, 1);
+                this.isRevealed = true;
             } else if (window.location.pathname === "/stats") {
                 this.mode = { stats: null, dictionary_words: null, dictionary_modifiers_words: null, likes: null, disposable: true };
-                this.next('dictionary/words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
-                this.next('dictionary/modifiers/words', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
-                this.next('likes', new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.next("dictionary/words", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.next("dictionary/modifiers/words", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                this.next("likes", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
                 this.isRevealed = true;
             } else if (window.location.pathname === "/logs") {
                 this.mode = { logs: this.logs, disposable: true };
