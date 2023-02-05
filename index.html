@@ -1460,7 +1460,7 @@
                                                                                         <picture class="image has-ratio"
                                                                                             style="pointer-events: none;"
                                                                                             v-if="'image' in background && background.image !== null">
-                                                                                            <img style="opacity: 0; transform-origin: 50% 50%; transition: 0.5s"
+                                                                                            <img style="transform-origin: 50% 50%; transition: 0.5s"
                                                                                                 v-bind:src="background.image.url"
                                                                                                 v-on:load="$event.target.style.animation = 'load 0.5s ease-out'; $event.target.style.opacity = 1;"
                                                                                                 v-bind:alt="background.id">
