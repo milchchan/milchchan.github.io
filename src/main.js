@@ -1731,12 +1731,12 @@ window.addEventListener("load", event => {
                         const selectedTokens = [];
 
                         for (const word of this.take(shuffle(words), i)) {
-                            if (!tokens.some(x => (Array.isArray(x) ? x[1].name : typeof (x) === "object" ? x.name : x) === word.name) && word.name.indexOf(this.character.name) === -1) {
+                            if (!tokens.some(x => (Array.isArray(x) ? x[1].name : typeof (x) === "object" ? x.name : x) === word.name)) {
                                 selectedTokens.push(word.name);
                             }
                         }
 
-                        [successful, sequence] = await this.talk(selectedTokens.concat(tokens.filter((x) => (Array.isArray(x) ? x[1].name : typeof (x) === "object" ? x.name : x).indexOf(this.character.name) === -1)));
+                        [successful, sequence] = await this.talk(selectedTokens.concat(tokens));
 
                         if (!successful) {
                             [successful, sequence] = await this.talk();
@@ -1760,7 +1760,7 @@ window.addEventListener("load", event => {
                     }
                 }
 
-                [successful, sequence] = await this.talk(tokens.filter((x) => (Array.isArray(x) ? x[1].name : typeof (x) === "object" ? x.name : x).indexOf(this.character.name) === -1))
+                [successful, sequence] = await this.talk(tokens);
 
                 if (!successful) {
                     [successful, sequence] = await this.talk();
@@ -1831,7 +1831,7 @@ window.addEventListener("load", event => {
                         if (typeof (token) === "string") {
                             if (!regex.test(token)) {
                                 if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                    const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
+                                    const snapshot = await get(databaseRef(database, `${databaseRoot}/dictionary/words/${token}`));
 
                                     this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -1917,7 +1917,7 @@ window.addEventListener("load", event => {
                                         return [true, sequence];
                                     } else if (token.length > 1 && !regex.test(token) && !tokenSet.includes(token)) {
                                         if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                            const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
+                                            const snapshot = await get(databaseRef(database, `${databaseRoot}/dictionary/words/${token}`));
 
                                             this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2079,7 +2079,7 @@ window.addEventListener("load", event => {
                     if (typeof (token) === "string") {
                         if (!regex.test(token)) {
                             if (token in this.wordDictionary === false || timestamp - this.wordDictionary[token].timestamp >= timeout) {
-                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + token));
+                                const snapshot = await get(databaseRef(database, `${databaseRoot}/dictionary/words/${token}`));
 
                                 this.wordDictionary[token] = { attributes: [], timestamp: timestamp };
 
@@ -2188,7 +2188,7 @@ window.addEventListener("load", event => {
                                     }
                                 } else {
                                     if (attribute in this.reverseWordDictionary === false || timestamp - this.reverseWordDictionary[attribute].timestamp >= timeout) {
-                                        const snapshot = await get(query(databaseRef(database, databaseRoot + "/words"), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
+                                        const snapshot = await get(query(databaseRef(database, `${databaseRoot}/dictionary/words`), orderByChild(`attributes/${attribute}`), limitToLast(100), startAt(1)));
 
                                         this.reverseWordDictionary[attribute] = { words: [], timestamp: timestamp };
 
@@ -2206,7 +2206,7 @@ window.addEventListener("load", event => {
                                             let isNew = true;
 
                                             if (word in this.wordDictionary === false) {
-                                                const snapshot = await get(databaseRef(database, databaseRoot + "/words/" + word));
+                                                const snapshot = await get(databaseRef(database, `${databaseRoot}/dictionary/words/${word}`));
 
                                                 this.wordDictionary[word] = { attributes: [], timestamp: timestamp };
 
