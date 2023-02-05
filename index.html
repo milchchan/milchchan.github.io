@@ -704,12 +704,12 @@
                                                     <div class="content">
                                                         <nav class="panel is-hidden-mobile" :style="{ width: 'calc(calc(100% + 2rem) + 16px)' }">
                                                             <div class="panel-block"
-                                                                v-for="(rows, index) in arrange(word.attributes, 2)"
-                                                                v-bind:key="index">
+                                                                v-for="(rows, i) in arrange(word.attributes, 2)"
+                                                                v-bind:key="i">
                                                                 <div class="level is-fullwidth">
                                                                     <div class="level-item"
                                                                         :style="{ width: 'calc(100% / 2)' }"
-                                                                        v-for="(column, index) in rows" key="index">
+                                                                        v-for="(column, j) in rows" key="i * 2 + j">
                                                                         <article class="media">
                                                                             <div class="media-content">
                                                                                 <div class="content is-align-items-flex-start">
