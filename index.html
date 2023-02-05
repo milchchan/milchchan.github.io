@@ -1577,6 +1577,34 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="level-item" v-else>
+                                                        <div class="level is-mobile">
+                                                            <div class="level-item">
+                                                                <label
+                                                                    class="file-label file button is-circle is-primary">
+                                                                    <input class="file-input" type="button"
+                                                                        @click="mode = 'sign-in'" v-if="user === null">
+                                                                    <input class="file-input" type="file" name="upload"
+                                                                        accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
+                                                                        multiple v-bind:disabled="isUploading"
+                                                                        @change="upload($event, { type: 'backgrounds' }).then(() => next('backgrounds', null, 1))"
+                                                                        v-else>
+                                                                    <div class="file-cta_">
+                                                                        <transition name="fade" mode="out-in">
+                                                                            <span class="icon" v-if="isUploading"
+                                                                                key="uploading">
+                                                                                <i
+                                                                                    class="fa-solid fa-spinner updating"></i>
+                                                                            </span>
+                                                                            <span class="icon" v-else key="ready">
+                                                                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                                                            </span>
+                                                                        </transition>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </transition>
                                         </div>
