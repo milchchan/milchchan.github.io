@@ -2778,7 +2778,8 @@ label .scrollable>div {
                 }
 
                 >.level-item:last-child:not(:first-child)>.level>.level-item {
-                    button {
+                    button,
+                    label.button {
                         margin: 0px;
                         /*border: 1px solid rgba(255, 255, 255, 0.1) !important;*/
                         padding: 16px 32px 16px 32px;
@@ -3219,18 +3220,6 @@ label .scrollable>div {
                         color: var(--accent-color);
                     }
                 }
-
-                /*li:first-of-type a,
-                li:first-of-type label.checkbox {
-                    border-bottom-left-radius: 9999px;
-                    border-top-left-radius: 9999px;
-                }
-
-                li:last-of-type a,
-                li:last-of-type label.checkbox {
-                    border-bottom-right-radius: 9999px;
-                    border-top-right-radius: 9999px;
-                }*/
 
                 li:not(:last-child) {
                     border-right: 1px solid rgba(119, 119, 119, 5%);
