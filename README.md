@@ -1,4 +1,7 @@
-# milchchan.github.io
+# https://milchchan.com/
+
+![milchchan](https://user-images.githubusercontent.com/246691/216804336-207cfe46-ea99-4b24-ab04-e56333a3d411.png)
+
 ![](https://github.com/milchchan/milchchan.github.io/workflows/Azure%20Static%20Web%20Apps%20CI%2FCD/badge.svg)
 
 ![](https://github.com/milchchan/milchchan.github.io/workflows/Deploy%20to%20Firebase%20Hosting%20on%20merge/badge.svg)
