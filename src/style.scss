@@ -1835,7 +1835,7 @@ label .scrollable>div {
                                                 align-items: center;
 
                                                 >span.image:first-child:not(:last-child) {
-                                                    margin: 0px 8px 0px 0px !important;
+                                                    margin: 0px 16px 0px 0px !important;
                                                     flex-shrink: 0;
                                                 }
 
@@ -1848,7 +1848,7 @@ label .scrollable>div {
                                                 }
 
                                                 >span.image:last-child:not(:first-child) {
-                                                    margin: 0px 0px 0px 8px !important;
+                                                    margin: 0px 0px 0px 16px !important;
                                                     flex-shrink: 0;
 
                                                     >button,
