@@ -702,7 +702,8 @@
                                                 </div>
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <nav class="panel is-hidden-mobile" :style="{ width: 'calc(calc(100% + 2rem) + 16px)' }">
+                                                        <nav class="panel is-hidden-mobile"
+                                                            :style="{ width: 'calc(calc(100% + 2rem) + 16px)' }">
                                                             <div class="panel-block"
                                                                 v-for="(rows, i) in arrange(word.attributes, 2)"
                                                                 v-bind:key="i">
@@ -712,7 +713,8 @@
                                                                         v-for="(column, j) in rows" key="i * 2 + j">
                                                                         <article class="media">
                                                                             <div class="media-content">
-                                                                                <div class="content is-align-items-flex-start">
+                                                                                <div
+                                                                                    class="content is-align-items-flex-start">
                                                                                     <label class="checkbox">
                                                                                         <input type="checkbox"
                                                                                             v-bind:data-word="word.name"
@@ -1469,12 +1471,13 @@
                                                                                 </figure>
                                                                             </div>
                                                                             <div class="card-content">
-                                                                                <div class="media" v-if="isDebug || 'user' in background && background.user.id === user.uid">
+                                                                                <div class="media"
+                                                                                    v-if="isDebug || 'user' in background && background.user.id === user.uid">
                                                                                     <div class="media-content">
                                                                                         <button class="button is-circle"
                                                                                             type="button"
                                                                                             v-bind:disabled="isUploading"
-                                                                                            @click="upload($event, Object.assign(background, { id: background.id, type: 'backgrounds' })).then(() => next('backgrounds', mode.backgrounds[0].timestamp));">
+                                                                                            @click="upload($event, Object.assign(background, { id: background.id, type: 'backgrounds' })).then(() => next('backgrounds', mode.backgrounds[0].timestamp, 1));">
                                                                                             <transition name="fade"
                                                                                                 mode="out-in">
                                                                                                 <span class="icon"
@@ -1537,6 +1540,30 @@
                                                                         <i class="fa-solid fa-chevron-left"></i>
                                                                     </span>
                                                                 </button>
+                                                            </div>
+                                                            <div class="level-item">
+                                                                <label
+                                                                    class="file-label file button is-circle is-primary">
+                                                                    <input class="file-input" type="button"
+                                                                        @click="mode = 'sign-in'" v-if="user === null">
+                                                                    <input class="file-input" type="file" name="upload"
+                                                                        accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
+                                                                        multiple v-bind:disabled="isUploading"
+                                                                        @change="upload($event, { type: 'backgrounds' }).then(() => next('backgrounds', null, 1))"
+                                                                        v-else>
+                                                                    <div class="file-cta_">
+                                                                        <transition name="fade" mode="out-in">
+                                                                            <span class="icon" v-if="isUploading"
+                                                                                key="uploading">
+                                                                                <i
+                                                                                    class="fa-solid fa-spinner updating"></i>
+                                                                            </span>
+                                                                            <span class="icon" v-else key="ready">
+                                                                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                                                            </span>
+                                                                        </transition>
+                                                                    </div>
+                                                                </label>
                                                             </div>
                                                             <div class="level-item">
                                                                 <button class="button is-circle" type="button"
@@ -2531,7 +2558,10 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <p
-                                                                    class="content is-size-5 has-text-weight-bold has-text-justified">ミルヒちゃんに教えてあげた言葉をランダムに組み合わせて言葉をつくれるよ。<span class="icon marker"><i class="fa-solid fa-arrows-rotate"></i></span>で違う言葉をつくれからミルヒちゃんにお話しして貰いたい言葉をつくってね。つくった言葉でミルヒちゃんにお話しして貰えるよぉ。ミルヒちゃんのお話しをいっぱい楽しんでね。
+                                                                    class="content is-size-5 has-text-weight-bold has-text-justified">
+                                                                    ミルヒちゃんに教えてあげた言葉をランダムに組み合わせて言葉をつくれるよ。<span
+                                                                        class="icon marker"><i
+                                                                            class="fa-solid fa-arrows-rotate"></i></span>で違う言葉をつくれからミルヒちゃんにお話しして貰いたい言葉をつくってね。つくった言葉でミルヒちゃんにお話しして貰えるよぉ。ミルヒちゃんのお話しをいっぱい楽しんでね。
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -3161,7 +3191,7 @@
                                                         </div>
                                                     </article>
                                                 </div>
-                                                <div class="panel-block">
+                                                <div class="panel-block" v-if="isDebug">
                                                     <article class="media">
                                                         <div class="media-content">
                                                             <div class="content">
