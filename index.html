@@ -1469,7 +1469,7 @@
                                                                                 </figure>
                                                                             </div>
                                                                             <div class="card-content">
-                                                                                <div class="media" v-if="isDebug">
+                                                                                <div class="media" v-if="isDebug || 'user' in background && background.user.id === user.uid">
                                                                                     <div class="media-content">
                                                                                         <button class="button is-circle"
                                                                                             type="button"
