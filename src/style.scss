@@ -361,7 +361,7 @@ label .scrollable>div {
             stroke-width: 0.5 !important;
             stroke-dasharray: 250;
             stroke-dashoffset: 250;
-            animation: draw 1s linear forwards;
+            animation: draw 0.5s ease forwards;
             animation-play-state: paused;
         }
     }
