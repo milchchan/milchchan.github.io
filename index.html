@@ -578,7 +578,7 @@
                 </div>
             </transition>
             <transition name="reveal">
-                <div id="menu" v-if="isRevealed && !isOverlayed || word" ref="menu">
+                <div id="menu" v-if="isRevealed && !isOverlayed || word">
                     <transition name="fade" mode="out-in">
                         <div class="background" :style="{ zIndex: 'auto' }" v-if="mode !== null && 'background' in mode && mode.background !== null && mode.background.startsWith('data:')" :key="mode">
                             <div :style="{ opacity: 0.25 }">
@@ -587,10 +587,10 @@
                         </div>
                     </transition>
                     <div class="columns is-centered"
-                        v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }">
+                        v-bind:style="{ paddingTop: insetTop + 'px', paddingBottom: insetBottom + 'px' }" ref="menu">
                         <div class="column is-half-tablet">
                             <div class="control" v-cloak>
-                                <transition name="fade" mode="out-in" v-on:before-leave="$refs.menu.scroll(0, 0)">
+                                <transition name="fade" mode="out-in" v-on:after-leave="$refs.menu.scroll(0, 0)">
                                     <nav class="level" v-if="word" key="learn">
                                         <div class="level-item">
                                             <div class="tabs is-toggle is-toggle-rounded">
