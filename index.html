@@ -141,8 +141,7 @@
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
-                                    v-else-if="mode.disposable"
-                                    key="dispose">
+                                    v-else-if="mode.disposable" key="dispose">
                                     <span class="icon is-small">
                                         <i class="fa-solid fa-xmark"></i>
                                     </span>
@@ -160,7 +159,8 @@
                                     <div class="rotate">
                                         <transition name="fade" mode="out-in">
                                             <button class="button is-selected" type="button"
-                                                @click="isRevealed = false; mode = null;" v-if="mode !== null && mode.name === '/about' && mode.disposable"
+                                                @click="isRevealed = false; mode = null;"
+                                                v-if="mode !== null && mode.name === '/about' && mode.disposable"
                                                 key="_about">
                                                 <div class="wrap is-size-7 has-text-weight-bold">
                                                     <div class="clip">
@@ -175,7 +175,8 @@
                                                 </div>
                                             </button>
                                             <button class="button is-selected" type="button" @click="mode = null"
-                                                v-else-if="mode !== null && mode.name === '/about' && !mode.disposable" key="about">
+                                                v-else-if="mode !== null && mode.name === '/about' && !mode.disposable"
+                                                key="about">
                                                 <div class="wrap is-size-7 has-text-weight-bold">
                                                     <div class="clip">
                                                         <div class="scrollable">
@@ -189,7 +190,8 @@
                                                 </div>
                                             </button>
                                             <button class="button" type="button"
-                                                @click="mode = { name: '/about', background: null, disposable: true }; isRevealed = true;" v-else key="unselected">
+                                                @click="mode = { name: '/about', background: null, disposable: true }; isRevealed = true;"
+                                                v-else key="unselected">
                                                 <div class="wrap is-size-7 has-text-weight-bold">
                                                     <div class="clip">
                                                         <div class="scrollable">
@@ -580,9 +582,13 @@
             <transition name="reveal">
                 <div id="menu" v-if="isRevealed && !isOverlayed || word">
                     <transition name="fade" mode="out-in">
-                        <div class="background" :style="{ zIndex: 'auto' }" v-if="mode !== null && 'background' in mode && mode.background !== null && mode.background.startsWith('data:')" :key="mode">
+                        <div class="background" :style="{ zIndex: 'auto' }"
+                            v-if="mode !== null && 'background' in mode && mode.background !== null && mode.background.startsWith('data:')"
+                            :key="mode">
                             <div :style="{ opacity: 0.25 }">
-                                <div :style="{ backgroundImage: 'url(' + mode.background + ')', animation: 'load 0.5s ease-out', animationPlayState: mode !== null && 'background' in mode && mode.background !== null ? 'running' : 'paused' }"></div>
+                                <div
+                                    :style="{ backgroundImage: 'url(' + mode.background + ')', animation: 'load 0.5s ease-out', animationPlayState: mode !== null && 'background' in mode && mode.background !== null ? 'running' : 'paused' }">
+                                </div>
                             </div>
                         </div>
                     </transition>
@@ -830,7 +836,8 @@
                                                     <p class="image is-64x64">
                                                         <transition name="fade" mode="out-in">
                                                             <button class="button image is-64x64 is-superellips"
-                                                                type="button" @click="mode = { name: '/sign-in', background: null, disposable: false }"
+                                                                type="button"
+                                                                @click="mode = { name: '/sign-in', background: null, disposable: false }"
                                                                 v-if="user === null" key="default" v-cloak>
                                                                 <figure>
                                                                     <picture class="image is-64x64">
@@ -845,8 +852,9 @@
                                                                 </figure>
                                                             </button>
                                                             <button class="button image is-64x64 is-superellips"
-                                                                type="button" @click="mode = { name: '/settings', background: null, disposable: false }" v-else
-                                                                key="user" v-cloak>
+                                                                type="button"
+                                                                @click="mode = { name: '/settings', background: null, disposable: false }"
+                                                                v-else key="user" v-cloak>
                                                                 <figure>
                                                                     <picture class="image is-64x64"
                                                                         v-if="'photoURL' in user && user.photoURL !== null">
@@ -1016,7 +1024,8 @@
                                                                 <transition name="fade" mode="out-in">
                                                                     <button
                                                                         class="button is-rounded is-size-7 is-primary"
-                                                                        type="button" @click="mode = { name: '/sign-in', background: null, disposable: false }"
+                                                                        type="button"
+                                                                        @click="mode = { name: '/sign-in', background: null, disposable: false }"
                                                                         v-if="user === null" key="sign-in">
                                                                         <span class="icon">
                                                                             <i class="fa-solid fa-lock"></i>
@@ -1059,7 +1068,8 @@
                                                                 <transition name="fade" mode="out-in">
                                                                     <button
                                                                         class="button is-rounded is-size-7 is-primary"
-                                                                        type="button" @click="mode = { name: '/sign-in', background: null, disposable: false }"
+                                                                        type="button"
+                                                                        @click="mode = { name: '/sign-in', background: null, disposable: false }"
                                                                         v-if="user === null" key="sign-in">
                                                                         <span class="icon">
                                                                             <i class="fa-solid fa-lock"></i>
@@ -1126,7 +1136,8 @@
                                                                 <transition name="fade" mode="out-in">
                                                                     <button
                                                                         class="button is-rounded is-size-7 is-primary"
-                                                                        type="button" @click="mode = { name: '/sign-in', background: null, disposable: false }"
+                                                                        type="button"
+                                                                        @click="mode = { name: '/sign-in', background: null, disposable: false }"
                                                                         v-if="user === null" key="sign-in">
                                                                         <span class="icon">
                                                                             <i class="fa-solid fa-lock"></i>
@@ -1169,7 +1180,8 @@
                                                                 <label
                                                                     class="file-label file button is-rounded is-size-7 is-primary has-text-weight-bold">
                                                                     <input class="file-input" type="button"
-                                                                        @click="mode = { name: '/sign-in', background: null, disposable: false }" v-if="user === null">
+                                                                        @click="mode = { name: '/sign-in', background: null, disposable: false }"
+                                                                        v-if="user === null">
                                                                     <input class="file-input" type="file" name="upload"
                                                                         accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
                                                                         multiple v-bind:disabled="isUploading"
@@ -1233,7 +1245,8 @@
                                                                 <transition name="fade" mode="out-in">
                                                                     <button
                                                                         class="button is-rounded is-size-7 is-primary"
-                                                                        type="button" @click="mode = { name: '/sign-in', background: null, disposable: false }"
+                                                                        type="button"
+                                                                        @click="mode = { name: '/sign-in', background: null, disposable: false }"
                                                                         v-if="user === null" key="sign-in">
                                                                         <span class="icon">
                                                                             <i class="fa-solid fa-lock"></i>
@@ -1249,8 +1262,9 @@
                                                                     </button>
                                                                     <button
                                                                         class="button is-rounded is-size-7 is-primary"
-                                                                        type="button" @click="mode = { name: '/mail', background: null, disposable: false }" v-else
-                                                                        key="signed-in">
+                                                                        type="button"
+                                                                        @click="mode = { name: '/mail', background: null, disposable: false }"
+                                                                        v-else key="signed-in">
                                                                         <span class="icon">
                                                                             <i class="fa-solid fa-star"></i>
                                                                         </span>
@@ -1273,7 +1287,8 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <button class="button is-rounded is-size-7 is-primary"
-                                                                    type="button" @click="mode = { name: '/support', background: null, disposable: false }">
+                                                                    type="button"
+                                                                    @click="mode = { name: '/support', background: null, disposable: false }">
                                                                     <span class="icon">
                                                                         <i class="fa-solid fa-star"></i>
                                                                     </span>
@@ -1308,7 +1323,8 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <button class="button is-rounded is-size-7"
-                                                                    type="button" @click="mode = { name: '/about', background: null, disposable: false }">
+                                                                    type="button"
+                                                                    @click="mode = { name: '/about', background: null, disposable: false }">
                                                                     <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
@@ -1343,7 +1359,8 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <button class="button is-rounded is-size-7"
-                                                                    type="button" @click="mode = { name: '/milch', background: null, disposable: false }">
+                                                                    type="button"
+                                                                    @click="mode = { name: '/milch', background: null, disposable: false }">
                                                                     <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
@@ -1365,7 +1382,8 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <button class="button is-rounded is-size-7"
-                                                                    type="button" @click="mode = { name: '/merku', background: null, disposable: false }">
+                                                                    type="button"
+                                                                    @click="mode = { name: '/merku', background: null, disposable: false }">
                                                                     <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
@@ -1711,6 +1729,20 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-circle" type="button"
+                                                            @click="scrollToTop($refs.menu)" v-cloak>
+                                                            <span class="icon is-small">
+                                                                <i class="fa-solid fa-chevron-up"></i>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
                                     </nav>
                                     <nav class="level" v-else-if="'name' in mode && mode.name === '/milch'" key="milch">
                                         <div class="level-item">
@@ -1790,6 +1822,20 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-circle" type="button"
+                                                            @click="scrollToTop($refs.menu)" v-cloak>
+                                                            <span class="icon is-small">
+                                                                <i class="fa-solid fa-chevron-up"></i>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
                                     </nav>
                                     <nav class="level" v-else-if="'name' in mode && mode.name === '/merku'" key="merku">
                                         <div class="level-item">
@@ -1861,6 +1907,20 @@
                                                     </article>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="level-item">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="content">
+                                                        <button class="button is-circle" type="button"
+                                                            @click="scrollToTop($refs.menu)" v-cloak>
+                                                            <span class="icon is-small">
+                                                                <i class="fa-solid fa-chevron-up"></i>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </article>
                                         </div>
                                     </nav>
                                     <nav class="level" v-else-if="'name' in mode && mode.name === '/settings'"
@@ -2191,7 +2251,8 @@
                                             </div>
                                         </div>
                                     </nav>
-                                    <nav class="level" v-else-if="'name' in mode && mode.name === '/support'" key="support">
+                                    <nav class="level" v-else-if="'name' in mode && mode.name === '/support'"
+                                        key="support">
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
@@ -2632,6 +2693,18 @@
                                                             </div>
                                                         </article>
                                                     </div>
+                                                    <div class="level-item">
+                                                        <div class="level">
+                                                            <div class="level-item">
+                                                                <button class="button is-circle" type="button"
+                                                                    @click="scrollToTop($refs.menu)" v-cloak>
+                                                                    <span class="icon is-small">
+                                                                        <i class="fa-solid fa-chevron-up"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </transition>
                                         </div>
@@ -3020,7 +3093,8 @@
                                                                                     class="fa-solid fa-spinner updating"></i>
                                                                             </span>
                                                                             <span class="icon" v-else key="ready">
-                                                                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                                                                <i
+                                                                                    class="fa-solid fa-cloud-arrow-up"></i>
                                                                             </span>
                                                                         </transition>
                                                                     </div>
@@ -3058,7 +3132,8 @@
                                                                                     class="fa-solid fa-spinner updating"></i>
                                                                             </span>
                                                                             <span class="icon" v-else key="ready">
-                                                                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                                                                <i
+                                                                                    class="fa-solid fa-cloud-arrow-up"></i>
                                                                             </span>
                                                                         </transition>
                                                                     </div>
@@ -3727,8 +3802,7 @@
                     </span>
                 </button>
                 <button class="button is-circle" type="button" @click="isRevealed = !isRevealed; mode = null;"
-                    v-else-if="mode.disposable"
-                    key="dispose">
+                    v-else-if="mode.disposable" key="dispose">
                     <span class="icon is-small">
                         <i class="fa-solid fa-xmark"></i>
                     </span>
