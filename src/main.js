@@ -3092,9 +3092,22 @@ window.addEventListener("load", event => {
                     { transform: "translate3d(0, 0, 0)" }],
                     { duration: 1000, iterations: 1 });
             },
-            scrollToTop() {
-                this.$nextTick(() => {
-                    window.scroll(0, 0);
+            scrollToTop(element) {
+                const obj = { y: element.scrollTop };
+
+                anime({
+                    targets: obj,
+                    y: 0,
+                    round: 1,
+                    duration: 500,
+                    easing: "easeOutCubic",
+                    update: () => {
+                        element.scroll(0, 0);
+                        element.scrollTop = obj.y
+                    },
+                    complete: () => {
+                        element.scrollTop = 0;
+                    }
                 });
             },
             scrollToEnd: function () {
