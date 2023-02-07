@@ -670,7 +670,7 @@ label .scrollable>div {
     background-size: cover;
     background-repeat: no-repeat;
 
-    >div {
+    div {
         display: block;
         position: absolute;
         background-color: transparent;
@@ -683,7 +683,7 @@ label .scrollable>div {
         overflow: hidden;
     }
 
-    >div::before {
+    div::before {
         display: block;
         position: absolute;
         left: 0;
