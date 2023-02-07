@@ -580,7 +580,7 @@
             <transition name="reveal">
                 <div id="menu" v-if="isRevealed && !isOverlayed || word" ref="menu">
                     <transition name="fade" mode="out-in">
-                        <div class="background" :style="{ zIndex: 'auto' }" v-if="mode !== null && 'background' in mode && mode.background !== null" :key="mode">
+                        <div class="background" :style="{ zIndex: 'auto' }" v-if="mode !== null && 'background' in mode && mode.background !== null && mode.background.startsWith('data:')" :key="mode">
                             <div :style="{ opacity: 0.25 }">
                                 <div :style="{ backgroundImage: 'url(' + mode.background + ')', animation: 'load 0.5s ease-out', animationPlayState: mode !== null && 'background' in mode && mode.background !== null ? 'running' : 'paused' }"></div>
                             </div>
@@ -1308,7 +1308,7 @@
                                                         <div class="media-content">
                                                             <div class="content">
                                                                 <button class="button is-rounded is-size-7"
-                                                                    type="button" @click="mode = { name: '/about', background: null, disposable: false }/*; download('/images/Milchchan.png', false).then(x => toDataURL(x).then(y => mode.background = y));*/">
+                                                                    type="button" @click="mode = { name: '/about', background: null, disposable: false }">
                                                                     <span class="wrap has-text-weight-bold">
                                                                         <div class="clip">
                                                                             <div class="scrollable">
