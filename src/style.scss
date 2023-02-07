@@ -1461,7 +1461,7 @@ label .scrollable>div {
             flex: none;
             margin: auto !important;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: hidden;
             width: 100%;
 
             .tags>.control>.tags>.tag {
