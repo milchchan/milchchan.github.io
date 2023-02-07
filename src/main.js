@@ -364,6 +364,31 @@ window.addEventListener("load", event => {
                 },
                 deep: true
             },
+            async mode(newValue) {
+                if (newValue !== null && "background" in newValue && newValue.background !== null && !newValue.background.startsWith("data:")) {
+                    try {
+                        const response = await fetch(newValue.background);
+
+                        if (response.ok) {
+                            const blob = await response.blob();
+
+                            newValue.background = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(null);
+                                };
+                                reader.readAsDataURL(blob);
+                            });
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            },
             text: {
                 handler: () => {
                     app.$nextTick(() => {
@@ -705,7 +730,7 @@ window.addEventListener("load", event => {
 
                 return null;
             },
-            download: async function (url, progress=true) {
+            download: async function (url) {
                 try {
                     const response = await fetch(url);
 
@@ -726,15 +751,11 @@ window.addEventListener("load", event => {
                             chunks.push(value);
                             receivedLength += value.length;
 
-                            if (progress) {
-                                this.progress = receivedLength / contentLength;
-                            }
+                            this.progress = receivedLength / contentLength;
                         }
 
                         if (receivedLength === contentLength) {
-                            if (progress) {
-                                this.progress = null;
-                            }
+                            this.progress = null;
                             
                             if (contentType === "application/json") {
                                 return new TextDecoder("utf-8").decode(chunks.reduce((x, y) => {
@@ -750,16 +771,6 @@ window.addEventListener("load", event => {
                     }
                 } catch (error) {
                     console.error(error);
-
-                    if (progress) {
-                        this.progress = null;
-                    }
-                    
-                    throw error;
-                }
-
-                if (progress) {
-                    this.progress = null;
                 }
                 
                 return null;
@@ -5265,7 +5276,6 @@ window.addEventListener("load", event => {
                     if (window.location.pathname === "/about") {
                         self.mode = { name: window.location.pathname, background: null, disposable: true };
                         self.isRevealed = true;
-                        /*self.download("/images/Milchchan.png", false).then(x => self.toDataURL(x).then(y => self.mode.background = y));*/
                     } else if (window.location.pathname === "/milch") {
                         self.mode = { name: window.location.pathname, background: null, disposable: true };
                         self.isRevealed = true;
