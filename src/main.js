@@ -705,7 +705,7 @@ window.addEventListener("load", event => {
 
                 return null;
             },
-            download: async function (url) {
+            download: async function (url, progress=true) {
                 try {
                     const response = await fetch(url);
 
@@ -725,12 +725,17 @@ window.addEventListener("load", event => {
 
                             chunks.push(value);
                             receivedLength += value.length;
-                            this.progress = receivedLength / contentLength;
+
+                            if (progress) {
+                                this.progress = receivedLength / contentLength;
+                            }
                         }
 
                         if (receivedLength === contentLength) {
-                            this.progress = null;
-
+                            if (progress) {
+                                this.progress = null;
+                            }
+                            
                             if (contentType === "application/json") {
                                 return new TextDecoder("utf-8").decode(chunks.reduce((x, y) => {
                                     x.buffer.set(y, x.position);
@@ -744,13 +749,33 @@ window.addEventListener("load", event => {
                         }
                     }
                 } catch (error) {
-                    this.notify({ text: error.message, accent: this.character.accent, image: this.character.image });
                     console.error(error);
+
+                    if (progress) {
+                        this.progress = null;
+                    }
+                    
+                    throw error;
                 }
 
-                this.progress = null;
-
+                if (progress) {
+                    this.progress = null;
+                }
+                
                 return null;
+            },
+            toDataURL: async function(blob) {
+                return await new Promise(async (resolve, reject) => {
+                    const reader = new FileReader();
+
+                    reader.onload = () => {
+                        resolve(reader.result);
+                    };
+                    reader.onerror = () => {
+                        reject(reader.error);
+                    };
+                    reader.readAsDataURL(blob);
+                });
             },
             upload: async function (event, data = null) {
                 const timestamp = Math.floor(new Date() / 1000);
@@ -4959,53 +4984,6 @@ window.addEventListener("load", event => {
                 }
             }
 
-            if (window.location.pathname === "/about") {
-                this.mode = "_about";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/milch") {
-                this.mode = "_milch";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/merku") {
-                this.mode = "_merku";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/settings") {
-                this.mode = "_settings";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/help") {
-                this.mode = "_help";
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/talk") {
-                this.mode = { collection: null, index: 0, selected: [], talk: null, next: null, reloading: true, disposable: true };
-                this.isRevealed = true;
-                this.randomize().then((x) => {
-                    this.mode.next = x;
-                    this.mode.reloading = false;
-                });
-            } else if (window.location.pathname === "/words") {
-                this.mode = { dictionary_words: null, dictionary_modifiers_words: [], path: 'dictionary/words', next: null, indexes: [], selected: [], disposable: true };
-                this.next("dictionary/words", this.mode.next);
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/learn") {
-                this.isLearning = true;
-            } else if (window.location.pathname === "/likes") {
-                this.mode = { likes: null, next: null, indexes: [], disposable: true };
-                this.next("likes", this.mode.next, 1);
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/backgrounds") {
-                this.mode = { backgrounds: null, next: null, indexes: [], selected: [], disposable: true };
-                this.next("backgrounds", this.mode.next, 1);
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/stats") {
-                this.mode = { stats: null, dictionary_words: null, dictionary_modifiers_words: null, likes: null, disposable: true };
-                this.next("dictionary/words", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
-                this.next("dictionary/modifiers/words", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
-                this.next("likes", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
-                this.isRevealed = true;
-            } else if (window.location.pathname === "/logs") {
-                this.mode = { logs: this.logs, disposable: true };
-                this.isRevealed = true;
-            }
-
             const rect = this.$refs.wall.getBoundingClientRect();
 
             this.wall.canvasSize.width = rect.width;
@@ -5282,6 +5260,54 @@ window.addEventListener("load", event => {
                     // User is signed in.
                     if (self.user === null) {
                         self.user = user;
+                    }
+
+                    if (window.location.pathname === "/about") {
+                        self.mode = { name: window.location.pathname, background: null, disposable: true };
+                        self.isRevealed = true;
+                        /*self.download("/images/Milchchan.png", false).then(x => self.toDataURL(x).then(y => self.mode.background = y));*/
+                    } else if (window.location.pathname === "/milch") {
+                        self.mode = { name: window.location.pathname, background: null, disposable: true };
+                        self.isRevealed = true;
+                    } else if (window.location.pathname === "/merku") {
+                        self.mode = { name: window.location.pathname, background: null, disposable: true };
+                        self.isRevealed = true;
+                    } else if (window.location.pathname === "/settings") {
+                        self.mode = { name: window.location.pathname, background: null, disposable: true };
+                        self.isRevealed = true;
+                    } else if (window.location.pathname === "/help") {
+                        self.mode = { name: window.location.pathname, background: null, disposable: true };
+                        self.isRevealed = true;
+                    } else if (window.location.pathname === "/talk") {
+                        self.mode = { collection: null, index: 0, selected: [], talk: null, next: null, reloading: true, disposable: true };
+                        self.isRevealed = true;
+                        self.randomize().then((x) => {
+                            self.mode.next = x;
+                            self.mode.reloading = false;
+                        });
+                    } else if (window.location.pathname === "/words") {
+                        self.mode = { dictionary_words: null, dictionary_modifiers_words: [], path: 'dictionary/words', next: null, indexes: [], selected: [], disposable: true };
+                        self.next("dictionary/words", self.mode.next);
+                        self.isRevealed = true;
+                    } else if (window.location.pathname === "/learn") {
+                        self.isLearning = true;
+                    } else if (window.location.pathname === "/likes") {
+                        self.mode = { likes: null, next: null, indexes: [], disposable: true };
+                        self.next("likes", self.mode.next, 1);
+                        self.isRevealed = true;
+                    } else if (window.location.pathname === "/backgrounds") {
+                        self.mode = { backgrounds: null, next: null, indexes: [], selected: [], disposable: true };
+                        self.next("backgrounds", self.mode.next, 1);
+                        self.isRevealed = true;
+                    } else if (window.location.pathname === "/stats") {
+                        self.mode = { stats: null, dictionary_words: null, dictionary_modifiers_words: null, likes: null, disposable: true };
+                        self.next("dictionary/words", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                        self.next("dictionary/modifiers/words", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                        self.next("likes", new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), null);
+                        self.isRevealed = true;
+                    } else if (window.location.pathname === "/logs") {
+                        self.mode = { logs: self.logs, disposable: true };
+                        self.isRevealed = true;
                     }
                 } else {
                     // User is signed out.
