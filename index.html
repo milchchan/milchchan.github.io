@@ -458,16 +458,8 @@
                                                     <div class="level-item" v-if="character !== null">
                                                         <transition name="fade" mode="out-in">
                                                             <button class="button is-circle" type="button"
-                                                                @click="isRevealed = true; mode = '_sign-in';"
-                                                                v-if="user === null" key="disable" v-cloak>
-                                                                <span class="icon is-small"
-                                                                    style="pointer-events: none;">
-                                                                    <i class="fa-solid fa-heart"></i>
-                                                                </span>
-                                                            </button>
-                                                            <button class="button is-circle" type="button"
                                                                 @click="like(message, character.visible ? $refs.canvas : null)"
-                                                                v-else key="enable" v-cloak>
+                                                                v-if="user !== null && Array.isArray(message.original) && message.original.some(x => typeof (x)  === 'object')" key="enable" v-cloak>
                                                                 <span class="icon is-small"
                                                                     style="pointer-events: none;">
                                                                     <i class="fa-solid fa-heart"></i>
