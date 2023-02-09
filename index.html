@@ -135,7 +135,7 @@
                                     </span>
                                 </button>
                                 <button class="button" type="button" @click="isRevealed = !isRevealed; mode = null;"
-                                    v-else-if="user !== null && mode === 'sign-in'" key="force">
+                                    v-else-if="user !== null && 'name' in mode && mode.name === '/sign-in'" key="force">
                                     <span class="icon is-small">
                                         <i class="fa-solid fa-bars"></i>
                                     </span>
@@ -271,7 +271,7 @@
                             <p class="image is-48x48" v-cloak>
                                 <transition name="fade" mode="out-in">
                                     <button class="button image is-48x48 is-superellips" type="button"
-                                        @click="mode = 'sign-in'; isRevealed = true;" v-if="user === null" key="default"
+                                        @click="mode = { name: '/sign-in', background: null, disposable: false }; isRevealed = true;" v-if="user === null" key="default"
                                         v-cloak>
                                         <figure>
                                             <picture class="image is-48x48">
@@ -1525,7 +1525,7 @@
                                         </div>
                                     </nav>
                                     <nav class="level"
-                                        v-else-if="user === null && 'name' in mode && mode.name === 'sign-in'"
+                                        v-else-if="user === null && 'name' in mode && mode.name === '/sign-in'"
                                         key="sign-in">
                                         <div class="level-item">
                                             <nav class="panel">
@@ -1984,7 +1984,7 @@
                                                         <div class="level-item">
                                                             <transition name="fade" mode="out-in">
                                                                 <button class="button is-circle" type="button"
-                                                                    @click="mode = 'sign-in'" v-if="user === null"
+                                                                    @click="mode = { name: '/sign-in', background: null, disposable: false }" v-if="user === null"
                                                                     key="signedout" v-cloak>
                                                                     <span class="icon">
                                                                         <i
@@ -3071,7 +3071,7 @@
                                                                 <label
                                                                     class="file-label file button is-circle is-primary">
                                                                     <input class="file-input" type="button"
-                                                                        @click="mode = 'sign-in'" v-if="user === null">
+                                                                        @click="mode = { name: '/sign-in', background: null, disposable: false }" v-if="user === null">
                                                                     <input class="file-input" type="file" name="upload"
                                                                         accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
                                                                         multiple v-bind:disabled="isUploading"
@@ -3110,7 +3110,7 @@
                                                                 <label
                                                                     class="file-label file button is-circle is-primary">
                                                                     <input class="file-input" type="button"
-                                                                        @click="mode = 'sign-in'" v-if="user === null">
+                                                                        @click="mode = { name: '/sign-in', background: null, disposable: false }" v-if="user === null">
                                                                     <input class="file-input" type="file" name="upload"
                                                                         accept="image/apng, image/gif, image/png, image/jpeg, image/webp"
                                                                         multiple v-bind:disabled="isUploading"
@@ -3788,7 +3788,7 @@
                     </span>
                 </button>
                 <button class="button is-circle" type="button" @click="isRevealed = !isRevealed; mode = null;"
-                    v-else-if="user !== null && mode === 'sign-in'" key="force">
+                    v-else-if="user !== null && 'name' in mode && mode.name === '/sign-in'" key="force">
                     <span class="icon is-small">
                         <i class="fa-solid fa-bars"></i>
                     </span>
