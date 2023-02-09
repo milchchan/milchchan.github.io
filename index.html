@@ -797,7 +797,7 @@
                                             </nav>
                                         </div>
                                     </nav>
-                                    <nav class="level" v-else-if="mode === null" key="main">
+                                    <nav class="level" v-else-if="mode === null || user !== null && 'name' in mode && mode.name === '/sign-in'" key="main">
                                         <div class="level-item">
                                             <article class="media">
                                                 <div class="media-content">
