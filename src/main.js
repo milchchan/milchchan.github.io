@@ -222,6 +222,7 @@ window.addEventListener("load", event => {
                 isTweeting: false,
                 isPaused: false,
                 isPreparing: false,
+                isPreloading: false,
                 isRetaining: false,
                 mode: null,
                 sequenceQueue: [],
@@ -255,7 +256,8 @@ window.addEventListener("load", event => {
                 animatedNotificationHeight: 0,
                 recentImages: [],
                 backgroundQueue: [],
-                background: { image: null, width: 0, height: 0, timestamp: 0, timeout: { id: null, duration: 10000 }, nonce: null },
+                background: { image: null, width: 0, height: 0, timestamp: 0, timeout: { id: null, duration: 10000 }, nonce: null, presets: null },
+                backgroundImage: null,
                 wall: { canvasSize: { width: 0, height: 0, deviceWidth: 0, deviceHeight: 0 }, blocks: [] },
                 refreshRequired: false,
                 isUploading: false,
@@ -756,7 +758,7 @@ window.addEventListener("load", event => {
 
                         if (receivedLength === contentLength) {
                             this.progress = null;
-                            
+
                             if (contentType === "application/json") {
                                 return new TextDecoder("utf-8").decode(chunks.reduce((x, y) => {
                                     x.buffer.set(y, x.position);
@@ -772,10 +774,10 @@ window.addEventListener("load", event => {
                 } catch (error) {
                     console.error(error);
                 }
-                
+
                 return null;
             },
-            toDataURL: async function(blob) {
+            toDataURL: async function (blob) {
                 return await new Promise(async (resolve, reject) => {
                     const reader = new FileReader();
 
@@ -1016,7 +1018,7 @@ window.addEventListener("load", event => {
                                         return (count || 0) + 1;
                                     });
 
-                                    if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0 && this.background.nonce === null) {
+                                    /*if (result.committed && result.snapshot.exists() && ~~result.snapshot.val() % 10 === 0 && this.background.nonce === null) {
                                         try {
                                             await new Promise((resolve, reject) => {
                                                 const i = new Image();
@@ -1035,7 +1037,7 @@ window.addEventListener("load", event => {
 
                                         this.background.image = undefined;
                                         this.preload();
-                                    }
+                                    }*/
 
                                     for (const obj of this.prepare(this.character.sequences.filter((x) => x.name === "Learned"))) {
                                         if (obj.type === "Message") {
@@ -1504,7 +1506,7 @@ window.addEventListener("load", event => {
                                             reject(reader.error);
                                         };
                                         reader.readAsDataURL(blob);
-                                    }), 512);
+                                    }), 1024);
                                 }
                             } catch (e) {
                                 console.error(e);
@@ -1569,7 +1571,7 @@ window.addEventListener("load", event => {
                                             reject(reader.error);
                                         };
                                         reader.readAsDataURL(blob);
-                                    }), 512);
+                                    }), 1024);
                                 }
                             } catch (e) {
                                 console.error(e);
@@ -2481,6 +2483,8 @@ window.addEventListener("load", event => {
                                         this.background.height = height;
                                         this.background.timestamp = Math.floor(new Date() / 1000);
                                         this.background.nonce = null;
+                                        this.background.presets.splice(0);
+                                        this.background.presets.push(`gs://milchchan.appspot.com/${path}`);
 
                                         const timeout = window.setTimeout(() => {
                                             this.background.timeout.id = timeout;
@@ -2505,6 +2509,8 @@ window.addEventListener("load", event => {
                                 });
                                 this.background.timestamp = Math.floor(new Date() / 1000);
                                 this.background.nonce = null;
+                                this.background.presets.splice(0);
+                                this.background.presets.push(`gs://milchchan.appspot.com/${path}`);
 
                                 const timeout = window.setTimeout(() => {
                                     this.background.timeout.id = timeout;
@@ -3853,7 +3859,7 @@ window.addEventListener("load", event => {
                         }
                     }
 
-                    if (this.refreshRequired) {
+                    if (!this.isHangingOn && this.refreshRequired) {
                         for (const block of this.wall.blocks) {
                             let index = -1;
 
@@ -3874,7 +3880,7 @@ window.addEventListener("load", event => {
                         this.refreshRequired = false;
                     }
 
-                    if (!this.wall.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && this.likes.length > 0) {
+                    if (!this.isPreloading && !this.wall.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && this.likes.length > 0) {
                         function _random(min, max) {
                             min = Math.ceil(min);
                             max = Math.floor(max);
@@ -3883,6 +3889,53 @@ window.addEventListener("load", event => {
                         }
 
                         this.wall.blocks.splice(0);
+                        
+                        if (this.background.presets !== null && this.background.presets.length > 0) {
+                            this.isPreloading = true;
+
+                            try {
+                                let url = this.background.presets[_random(0, this.background.presets.length)];
+
+                                if (url.startsWith("gs:")) {
+                                    url = await getDownloadURL(storageRef(storage, url));
+                                }
+                                
+                                const response = await fetch(url);
+
+                                if (response.ok) {
+                                    const blob = await response.blob();
+                                    const dataURL = await new Promise(async (resolve, reject) => {
+                                        const reader = new FileReader();
+
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    });
+
+                                    this.backgroundImage = await new Promise(async (resolve, reject) => {
+                                        const i = new Image();
+
+                                        i.onload = () => {
+                                            resolve(i);
+                                        };
+                                        i.onerror = (e) => {
+                                            reject(e);
+                                        };
+
+                                        i.crossOrigin = "Anonymous";
+                                        i.src = dataURL;
+                                    });
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            }
+
+                            this.isPreloading = false;
+                        }
 
                         const length = _random(8, 16);
                         let start = this.likes.length - length;
@@ -3944,26 +3997,12 @@ window.addEventListener("load", event => {
                                 height: 100 / samples.length,
                                 colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
                                 inlines: [
-                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters },
-                                    //{ running: false, time: 0, duration: 3, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [] }
+                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
                                 ],
                                 iterations: ~~Math.ceil(50 / text.length) * 2,
                                 elapsed: 0,
                             });
                         }
-
-                        /*this.$nextTick(() => {
-                            const elements = document.body.querySelectorAll("#app>.container>.wrap>.frame>.wall>.wrap>.line");
-
-                            for (const element of elements) {
-                                element.animate([{ transform: "translate3d(0%, 0, 0)" }, { transform: "translate3d(-50%, 0, 0)" }], {
-                                    fill: 'forwards',
-                                    easing: 'linear',
-                                    duration: 60000,
-                                    iterations: Infinity
-                                });
-                            }
-                        });*/
                     }
 
                     for (const block of this.wall.blocks) {
@@ -4780,6 +4819,7 @@ window.addEventListener("load", event => {
                 backContext.textAlign = "left";
                 backContext.textBaseline = "middle";
                 backContext.save();
+                backContext.beginPath();
 
                 for (const block of this.wall.blocks) {
                     for (const inline of block.inlines) {
@@ -4846,6 +4886,37 @@ window.addEventListener("load", event => {
                     }
 
                     index++;
+                }
+
+                backContext.closePath();
+                backContext.globalCompositeOperation = "source-atop";
+                backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
+                backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
+
+                if ((this.background.image === null || this.background.image === undefined) && this.backgroundImage !== null) {
+                    const top = 0.25;
+                    const left = 0.5;
+                    const canvasAspect = backCanvas.width / backCanvas.height;
+                    const imageAspect = this.backgroundImage.width / this.backgroundImage.height;
+                    let sx, sy, sw, sh;
+
+                    if (canvasAspect > imageAspect) {
+                        const ratio = backCanvas.width / this.backgroundImage.width;
+
+                        sx = 0;
+                        sy = (this.backgroundImage.height * ratio - backCanvas.height) / ratio * top;
+                        sw = this.backgroundImage.width;
+                        sh = backCanvas.height / ratio;
+                    } else {
+                        const ratio = backCanvas.height / this.backgroundImage.height;
+
+                        sx = (this.backgroundImage.width * ratio - backCanvas.width) / ratio * left;
+                        sy = 0;
+                        sw = backCanvas.width / ratio;
+                        sh = this.backgroundImage.height;
+                    }
+
+                    backContext.drawImage(this.backgroundImage, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
                 }
 
                 backContext.restore();
@@ -5064,6 +5135,21 @@ window.addEventListener("load", event => {
                     alternative = await response2.json();
                 } else {
                     throw new Error(response2.statusText);
+                }
+
+                const response3 = await fetch("/assets/background.json", {
+                    mode: "cors",
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                });
+
+                if (response3.ok) {
+                    this.background.presets = await response3.json();
+                }
+                else {
+                    throw new Error(response3.statusText);
                 }
 
                 this.canvasSize.width = character.width;
@@ -5557,6 +5643,10 @@ window.addEventListener("load", event => {
 
                                     return x;
                                 }, [])) {
+                                    if (word.name in this.wordDictionary === false || timestamp - this.wordDictionary[word.name].timestamp >= timeout) {
+                                        this.wordDictionary[word.name] = { attributes: word.attributes, timestamp: timestamp };
+                                    }
+
                                     for (const attribute of word.attributes) {
                                         if (attribute in self.reverseWordDictionary === false || timestamp - self.reverseWordDictionary[attribute].timestamp >= timeout) {
                                             this.reverseWordDictionary[attribute] = { words: [word.name], timestamp: timestamp };
