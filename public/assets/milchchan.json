@@ -5,12 +5,12 @@
     },
     {
         "type": "Milch",
-        "images": ["/images/Milchchan.png"],
+        "images": ["/images/Omr.png"],
         "texts": ["Milch"]
     },
     {
         "type": "Merku",
-        "images": ["/images/Milchchan.png"],
+        "images": ["/images/404.png"],
         "texts": ["Merku"]
     }
 ]
