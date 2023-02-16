@@ -19,16 +19,7 @@
   <style media="screen">
     :root {
       --background-color: #ffffff;
-      --foreground-color: #68e6ff;
-      --accent-color: #fecde2;
-      --background-image: url('/images/404.png');
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --foreground-color: #c1aee6;
-        --background-image: url('/images/Omr.png');
-      }
+      --foreground-color: #000000;
     }
 
     html {
@@ -67,7 +58,7 @@
     .wrap {
       position: absolute;
       margin: 0;
-      padding: 16px;
+      padding: 0;
       width: 100%;
       height: 100%;
       min-height: 100%;
@@ -81,12 +72,12 @@
       position: relative;
       margin: 0;
       padding: 0;
-      border-radius: 16px;
+      border-radius: 0px;
       width: 100%;
       max-width: 100% !important;
       height: 100%;
       overflow: hidden;
-      background-color: var(--accent-color);
+      background-color: rgb(247, 248, 248);
     }
 
     .background {
@@ -98,16 +89,17 @@
       max-width: 100%;
       height: 100%;
       max-height: 100%;
-      background: transparent;
-      will-change: opacity, transform;
-      animation: load 0.5s ease-out forwards;
-      -webkit-backface-visibility:hidden;
+      background-color: transparent;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+      background-size: cover;
+      transform-origin: 50% 50%;
       backface-visibility: hidden;
       perspective: 1000;
     }
 
     .background::before {
-      z-index: 0;
       position: absolute;
       margin: 0;
       padding: 0;
@@ -115,11 +107,8 @@
       max-width: 100%;
       height: 100%;
       max-height: 100%;
-      background: var(--background-image) 50% 50% no-repeat;
-      background-attachment: scroll;
-      background-size: cover;
-      transform-origin: 50% 50%;
       overflow: hidden;
+      background: transparent;
       content: "";
     }
 
@@ -135,12 +124,9 @@
       justify-content: center;
       align-items: center;
       animation: fade 0.5s ease-out forwards;
-      -webkit-backface-visibility:hidden;
-      backface-visibility: hidden;
       overflow: hidden;
       perspective: 1000;
       transform: translate3d(0, 0, 0);
-      -webkit-backface-visibility:hidden;
       backface-visibility: hidden;
     }
 
@@ -175,19 +161,73 @@
         transform: scale3d(1.0, 1.0, 1.0);
       }
     }
+
+    @media screen and (min-width: 769px) {
+      .wrap {
+        padding: 16px;
+      }
+    }
   </style>
-  <script>[].forEach(x => console.log(x));</script>
 </head>
 
 <body>
   <div class="wrap">
     <div class="frame">
-      <div class="background"></div>
       <div id="message">
         <h1>404</h1>
       </div>
     </div>
   </div>
+  <script type="text/javascript">
+    window.addEventListener("load", async event => {
+      const background = document.createElement("div");
+
+      background.className = "background";
+      background.style.opacity = 0;
+      background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+
+      try {
+        const response = await fetch(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "/images/Omr.png" : "/images/404.png");
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const dataURL = await new Promise(async (resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+              resolve(reader.result);
+            };
+            reader.onerror = () => {
+              reject(reader.error);
+            };
+            reader.readAsDataURL(blob);
+          });
+          background.style.backgroundImage = `url('${dataURL}')`;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      document.body.querySelector(".wrap>.frame").prepend(background);
+
+      background.animate([
+        {
+          opacity: 0,
+          transform: "scale3d(1.1, 1.1, 1.1)"
+        },
+        {
+          opacity: 1,
+          transform: "scale3d(1.0, 1.0, 1.0)"
+        }
+      ], {
+        delay: 0,
+        fill: "forwards",
+        duration: 500,
+        iterations: 1,
+        easing: "ease-out"
+      });
+    });
+  </script>
 </body>
 
 </html>
