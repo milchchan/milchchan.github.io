@@ -140,6 +140,10 @@
             transform: rotate(19deg);
         }
 
+        .has-text-weight-bold {
+            font-weight: bold;
+        }
+
         .sidebar a .scrollable:hover,
         .sidebar button .scrollable:hover,
         .sidebar label .scrollable:hover {
@@ -359,7 +363,7 @@
             margin: 32px 0px 32px 0px;
             padding: 0;
             width: 16px;
-            height: 2px;
+            height: 1px;
             background-color: #000000;
             text-align: center !important;
         }
@@ -406,7 +410,6 @@
             margin: 0px 4px 0px 4px !important;
             font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
             font-size: 0.75rem !important;
-            font-weight: bold;
             transform: rotate(0.03deg) !important;
             line-height: 0.75rem !important;
             height: calc(0.75rem * 1.5);
@@ -472,6 +475,7 @@
         .sidebar>.level>.level-item>.level>.level-item .button .wrap {
             position: relative;
             margin: 0;
+            border-bottom: 2px solid transparent;
             color: #000000;
             transition: 0.5s;
             width: fit-content;
@@ -479,11 +483,17 @@
             min-height: fit-content;
             box-sizing: border-box;
             overflow: hidden;
+            transition: 0.5s
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .wrap.is-selected {
+            border-bottom: 2px solid #000000;
+            transition: 0.5s ease-in;
         }
 
         .sidebar>.level>.level-item>.level>.level-item .button.is-selected .icon {
             color: var(--accent-color) !important;
-            transition: 0.5s;
+            transition: 0.5s ease-out;
         }
 
         .sidebar>.level>.level-item>.level>.level-item .button.is-selected .wrap {
@@ -737,8 +747,7 @@
                                         <div class="rotation-wrapper-outer">
                                             <div class="rotation-wrapper-inner">
                                                 <div class="rotate">
-                                                    <button class="button" type="button" onclick="onClick(event);"
-                                                        data-type="milchchan.com">
+                                                    <button class="button" type="button" onclick="onClick(event);">
                                                         <div class="wrap">
                                                             <svg width="136px" height="16px" viewBox="0 0 136 16"
                                                                 version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -819,7 +828,7 @@
                                                 <div class="rotate">
                                                     <button class="button" type="button" onclick="onClick(event);"
                                                         data-type="Milch">
-                                                        <div class="wrap is-size-7 has-text-weight-bold">
+                                                        <div class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>Milch</div>
@@ -843,7 +852,7 @@
                                                 <div class="rotate">
                                                     <button class="button" type="button" onclick="onClick(event);"
                                                         data-type="Merku">
-                                                        <div class="wrap is-size-7 has-text-weight-bold">
+                                                        <div class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>Merku</div>
@@ -881,7 +890,7 @@
                                                                 </figure>
                                                             </div>
                                                         </div>
-                                                        <div class="wrap is-size-7 has-text-weight-bold">
+                                                        <div class="wrap has-text-weight-bold">
                                                             <div class="clip">
                                                                 <div class="scrollable">
                                                                     <div>Apricot</div>
@@ -936,7 +945,25 @@
     </div>
     <script type="text/javascript">
         function onClick(event) {
-            console.log((event.currentTarget || event.target).dataset.type);
+            const dataset = (event.currentTarget || event.target).dataset;
+
+            if ("type" in dataset) {
+                for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
+                    if ("type" in element.parentElement.dataset) {
+                        if (element.parentElement.dataset.type === dataset.type) {
+                            element.className = `${element.className} is-selected`;
+                        } else {
+                            element.className = element.className.replace(/is-selected/g, "").trim();
+                        }
+                    }
+                }
+            } else {
+                for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
+                    if ("type" in element.parentElement.dataset) {
+                        element.className = element.className.replace(/is-selected/g, "").trim();
+                    }
+                }
+            }
         }
 
         window.addEventListener("load", async event => {
