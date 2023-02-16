@@ -35,10 +35,7 @@
     <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/75ab01b762.js" crossorigin="anonymous"></script>
@@ -47,6 +44,7 @@
             --background-color: #ffffff;
             --foreground-color: #68e6ff;
             --accent-color: #fecde2;
+            --background-font-family: "Dela Gothic One", cursive;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -120,6 +118,11 @@
             vertical-align: middle;
         }
 
+        figure {
+            margin: 0;
+            padding: 0;
+        }
+
         .is-superellips {
             transform: rotate(-19deg);
         }
@@ -127,8 +130,6 @@
         .is-superellips>figure {
             z-index: 1;
             position: relative;
-            margin: 0;
-            padding: 0;
             border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
             overflow: hidden !important;
             width: fit-content;
@@ -207,7 +208,7 @@
             transform: translate3d(0, 0%, 0);
             overflow: hidden;
             background: url('/images/Background.png') 0 0 repeat;
-            background-color: #ffffff;
+            background-color: rgb(247, 248, 248);
             background-size: 100px 100px;
             animation: loop 10s linear forwards infinite;
             transition: .5s;
@@ -301,7 +302,7 @@
             width: 100%;
             max-width: 100% !important;
             height: 100%;
-            background: lightgray;
+            background: rgb(247, 248, 248);
             overflow: hidden;
         }
 
@@ -435,11 +436,6 @@
             justify-content: center;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon figure {
-            margin: 0;
-            padding: 0;
-        }
-
         .sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure {
             transform-origin: 50% 50%;
         }
@@ -461,13 +457,13 @@
             transition: 0.5s;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon figure>picture>img {
+        .sidebar>.level>.level-item>.level>.level-item .button :not(.icon.animatable) figure>picture>img {
             transform-origin: 50% 50%;
             transform: scale3d(1, 1, 1);
             transition: 0.5s ease-out;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button:hover .icon figure>picture>img {
+        .sidebar>.level>.level-item>.level>.level-item .button:hover :not(.icon.animatable) figure>picture>img {
             transform: scale3d(1.1, 1.1, 1);
             transition: 0.5s ease-in;
         }
@@ -475,6 +471,7 @@
         .sidebar>.level>.level-item>.level>.level-item .button .wrap {
             position: relative;
             margin: 0;
+            border-top: 2px solid transparent;
             border-bottom: 2px solid transparent;
             color: #000000;
             transition: 0.5s;
@@ -486,19 +483,9 @@
             transition: 0.5s
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .wrap.is-selected {
+        .sidebar>.level>.level-item>.level>.level-item .button.is-selected .wrap {
             border-bottom: 2px solid #000000;
             transition: 0.5s ease-in;
-        }
-
-        .sidebar>.level>.level-item>.level>.level-item .button.is-selected .icon {
-            color: var(--accent-color) !important;
-            transition: 0.5s ease-out;
-        }
-
-        .sidebar>.level>.level-item>.level>.level-item .button.is-selected .wrap {
-            color: var(--accent-color) !important;
-            transition: 0.5s;
         }
 
         .sidebar>.level>.level-item>.level>.level-item div.wrap {
@@ -549,6 +536,33 @@
             transition: 0.5s;
         }
 
+        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            overflow: hidden;
+            width: 16px;
+            height: 16px;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture {
+            margin-left: 0%;
+            width: auto;
+            height: 100%;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button:hover .icon.animatable>figure>picture,
+        .sidebar>.level>.level-item>.level>.level-item .button.is-selected .icon.animatable>figure>picture {
+            animation: frame 1.33s steps(4) infinite forwards;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture>img {
+            object-fit: none;
+            object-position: 0% 0%;
+            width: 100%;
+            height: 100%;
+        }
+
         .rotation-wrapper-outer {
             display: table;
         }
@@ -576,18 +590,17 @@
             height: fit-content;
         }
 
-        div.bottom {
+        div.top {
             position: absolute;
-            bottom: 0%;
-            left: 50%;
-            padding: 0px 0px 12px 0px;
-            transform: translate(-50%, 0%);
+            top: 0%;
+            right: 0%;
+            padding: 16px 16px 16px 0px;
             width: fit-content;
             height: fit-content;
         }
 
         div.center>.level,
-        div.bottom>.level {
+        div.top>.level {
             display: flex;
             margin: -8px;
             padding: 0;
@@ -597,14 +610,14 @@
         }
 
         div.center>.level>.level-item,
-        div.bottom>.level>.level-item {
+        div.top>.level>.level-item {
             margin: 0;
             padding: 8px;
             flex-shrink: 0;
         }
 
         div.center>.level>.level-item>.level,
-        div.bottom>.level>.level-item>.level {
+        div.top>.level>.level-item>.level {
             display: flex;
             margin: -8px;
             padding: 0;
@@ -614,25 +627,25 @@
         }
 
         div.center>.level>.level-item>.level>.level-item,
-        div.bottom>.level>.level-item>.level>.level-item {
+        div.top>.level>.level-item>.level>.level-item {
             margin: 0;
             padding: 8px;
             flex-shrink: 0;
         }
 
         div.center .button,
-        div.bottom .button {
+        div.top .button {
             margin: 0px;
             border: 0px none transparent !important;
             padding: 16px 32px 16px 32px;
-            background: #000000;
+            background: #ffffff;
             background-clip: padding-box !important;
             height: initial;
             transition: 0.5s;
         }
 
         div.center .button.is-circle,
-        div.bottom .button.is-circle {
+        div.top .button.is-circle {
             display: flex;
             margin: 0px;
             border-radius: 290486px !important;
@@ -644,19 +657,19 @@
         }
 
         div.center .icon,
-        div.bottom .icon {
+        div.top .icon {
             display: flex;
             margin: 0;
             width: 16px;
             height: 16px;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
+            color: #000000;
             transition: .5s;
         }
 
         div.center .button:hover .icon,
-        div.bottom .button:hover .icon {
+        div.top .button:hover .icon {
             opacity: 0.5;
             transition: .5s;
         }
@@ -695,6 +708,16 @@
             }
         }
 
+        @keyframes frame {
+            0% {
+                margin-left: 0%;
+            }
+
+            100% {
+                margin-left: -400%;
+            }
+        }
+
         @media screen and (-webkit-min-device-pixel-ratio: 2),
         (min-resolution: 2dppx) {
             .progress>.bar {
@@ -705,7 +728,7 @@
 
             .blind {
                 background: url('/images/Background@2x.png') 0 0 repeat;
-                background-color: #ffffff;
+                background-color: rgb(247, 248, 248);
                 background-size: 100px 100px;
             }
         }
@@ -720,7 +743,7 @@
 
             .blind {
                 background: url('/images/Background@3x.png') 0 0 repeat;
-                background-color: #ffffff;
+                background-color: rgb(247, 248, 248);
                 background-size: 100px 100px;
             }
         }
@@ -747,7 +770,7 @@
                                         <div class="rotation-wrapper-outer">
                                             <div class="rotation-wrapper-inner">
                                                 <div class="rotate">
-                                                    <button class="button" type="button" onclick="onClick(event);">
+                                                    <button class="button" type="button" onclick="select(event);">
                                                         <div class="wrap">
                                                             <svg width="136px" height="16px" viewBox="0 0 136 16"
                                                                 version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -826,7 +849,7 @@
                                         <div class="rotation-wrapper-outer">
                                             <div class="rotation-wrapper-inner">
                                                 <div class="rotate">
-                                                    <button class="button" type="button" onclick="onClick(event);"
+                                                    <button class="button" type="button" onclick="select(event);"
                                                         data-type="Milch">
                                                         <div class="wrap has-text-weight-bold">
                                                             <div class="clip">
@@ -835,6 +858,18 @@
                                                                     <div>Milch</div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        <div class="icon animatable">
+                                                            <figure>
+                                                                <picture>
+                                                                    <source
+                                                                        srcset="/images/PixelatedLuna-Transformed-16.png 1x, /images/PixelatedLuna-Transformed-16@2x.png 2x, /images/PixelatedLuna-Transformed-16@3x.png 3x"
+                                                                        media="(prefers-color-scheme: dark)">
+                                                                    <img src="/images/PixelatedMilch-Transformed-16.png"
+                                                                        srcset="/images/PixelatedMilch-Transformed-16.png 1x, /images/PixelatedMilch-Transformed-16@2x.png 2x, /images/PixelatedMilch-Transformed-16@3x.png 3x"
+                                                                        alt="Milch">
+                                                                </picture>
+                                                            </figure>
                                                         </div>
                                                     </button>
                                                 </div>
@@ -850,7 +885,7 @@
                                         <div class="rotation-wrapper-outer">
                                             <div class="rotation-wrapper-inner">
                                                 <div class="rotate">
-                                                    <button class="button" type="button" onclick="onClick(event);"
+                                                    <button class="button" type="button" onclick="select(event);"
                                                         data-type="Merku">
                                                         <div class="wrap has-text-weight-bold">
                                                             <div class="clip">
@@ -859,6 +894,15 @@
                                                                     <div>Merku</div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        <div class="icon animatable">
+                                                            <figure>
+                                                                <picture>
+                                                                    <img src="/images/PixelatedMilch-Transformed-16.png"
+                                                                        srcset="/images/PixelatedMerku-Transformed-16.png 1x, /images/PixelatedMerku-Transformed-16@2x.png 2x, /images/PixelatedMerku-Transformed-16@3x.png 3x"
+                                                                        alt="Merku">
+                                                                </picture>
+                                                            </figure>
                                                         </div>
                                                     </button>
                                                 </div>
@@ -881,10 +925,10 @@
                                                                 <figure>
                                                                     <picture class="image">
                                                                         <source
-                                                                            srcset="/images/Merku-48.png 1x,/images/Merku-96.png 2x,/images/Merku-144.png 3x"
+                                                                            srcset="/images/Merku-16.png 1x,/images/Merku-32.png 2x,/images/Merku-48.png 3x"
                                                                             media="(prefers-color-scheme: dark)">
-                                                                        <img src="/images/Milch-48.png"
-                                                                            srcset="/images/Milch-48.png 1x,/images/Milch-96.png 2x,/images/Milch-144.png 3x"
+                                                                        <img src="/images/Milch-16.png"
+                                                                            srcset="/images/Milch-16.png 1x,/images/Milch-32.png 2x,/images/Milch-48.png 3x"
                                                                             width="16" height="16" alt="Logo">
                                                                     </picture>
                                                                 </figure>
@@ -910,32 +954,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bottom">
+                    <div class="top">
                         <div class="level">
                             <div class="level-item">
-                                <div class="level">
-                                    <div class="level-item">
-                                        <a class="button is-circle" href="https://twitter.com/milchchan"
-                                            target="_blank"><span class="icon"><i
-                                                    class="fa-brands fa-twitter fa-xs"></i></span></a>
-                                    </div>
-                                    <div class="level-item">
-                                        <a class="button is-circle" href="https://instagram.com/milchchan"
-                                            target="_blank"><span class="icon"><i
-                                                    class="fab fa-instagram fa-xs"></i></span></a>
-                                    </div>
-                                    <div class="level-item">
-                                        <a class="button is-circle"
-                                            href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
-                                            target="_blank"><span class="icon"><i
-                                                    class="fab fa-youtube fa-xs"></i></span></a>
-                                    </div>
-                                    <div class="level-item">
-                                        <a class="button is-circle" href="https://github.com/milchchan"
-                                            target="_blank"><span class="icon"><i
-                                                    class="fab fa-github fa-xs"></i></span></a>
-                                    </div>
-                                </div>
+                                <a class="button is-circle" href="https://twitter.com/milchchan" target="_blank"><span
+                                        class="icon"><i class="fa-brands fa-twitter fa-xs"></i></span></a>
+                            </div>
+                            <div class="level-item">
+                                <a class="button is-circle" href="https://instagram.com/milchchan" target="_blank"><span
+                                        class="icon"><i class="fab fa-instagram fa-xs"></i></span></a>
+                            </div>
+                            <div class="level-item">
+                                <a class="button is-circle"
+                                    href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
+                                    target="_blank"><span class="icon"><i class="fab fa-youtube fa-xs"></i></span></a>
+                            </div>
+                            <div class="level-item">
+                                <a class="button is-circle" href="https://github.com/milchchan" target="_blank"><span
+                                        class="icon"><i class="fab fa-github fa-xs"></i></span></a>
                             </div>
                         </div>
                     </div>
@@ -944,25 +980,73 @@
         </div>
     </div>
     <script type="text/javascript">
-        function onClick(event) {
-            const dataset = (event.currentTarget || event.target).dataset;
+        const background = { invalid: false, preloading: false, image: null, blocks: [], index: 0 };
 
-            if ("type" in dataset) {
-                for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
-                    if ("type" in element.parentElement.dataset) {
-                        if (element.parentElement.dataset.type === dataset.type) {
-                            element.className = `${element.className} is-selected`;
-                        } else {
-                            element.className = element.className.replace(/is-selected/g, "").trim();
+        function shake(element) {
+            element.animate([
+                { transform: "translate3d(0, 0, 0)" },
+                { transform: "translate3d(8px, 0, 0)" },
+                { transform: "translate3d(-8px, 0, 0)" },
+                { transform: "translate3d(7px, 0, 0)" },
+                { transform: "translate3d(-7px, 0, 0)" },
+                { transform: "translate3d(6px, 0, 0)" },
+                { transform: "translate3d(-6px, 0, 0)" },
+                { transform: "translate3d(5px, 0, 0)" },
+                { transform: "translate3d(-5px, 0, 0)" },
+                { transform: "translate3d(4px, 0, 0)" },
+                { transform: "translate3d(-4px, 0, 0)" },
+                { transform: "translate3d(3px, 0, 0)" },
+                { transform: "translate3d(-3px, 0, 0)" },
+                { transform: "translate3d(2px, 0, 0)" },
+                { transform: "translate3d(-2px, 0, 0)" },
+                { transform: "translate3d(1px, 0, 0)" },
+                { transform: "translate3d(-1px, 0, 0)" },
+                { transform: "translate3d(0, 0, 0)" }],
+                { duration: 1000, iterations: 1 });
+        }
+
+        function select(event) {
+            const target = (event.currentTarget || event.target);
+
+            if ("dataset" in background) {
+                if ("type" in target.dataset) {
+                    for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
+                        if ("type" in element.parentElement.dataset) {
+                            if (element.parentElement.dataset.type === target.dataset.type) {
+                                const index = background.dataset.findIndex(x => x.type === target.dataset.type);
+
+                                if (index >= 0) {
+                                    background.index = index;
+                                    background.invalid = true;
+                                    element.parentElement.className = `${element.parentElement.className} is-selected`;
+                                } else {
+                                    element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
+                                    
+                                    shake(target);
+                                }
+                            } else {
+                                element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
+                            }
+                        }
+                    }
+                } else {
+                    const index = background.dataset.findIndex(x => "type" in x === false);
+
+                    if (index >= 0) {
+                        background.index = index;
+                        background.invalid = true;
+                    } else {
+                        shake(target);
+                    }
+
+                    for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
+                        if ("type" in element.parentElement.dataset) {
+                            element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
                         }
                     }
                 }
             } else {
-                for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
-                    if ("type" in element.parentElement.dataset) {
-                        element.className = element.className.replace(/is-selected/g, "").trim();
-                    }
-                }
+                shake(target);
             }
         }
 
@@ -971,14 +1055,13 @@
             const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
             const canvas = document.createElement("canvas");
             const rect = wall.getBoundingClientRect();
-            let background = null;
 
             canvas["backBuffer"] = document.createElement("canvas");
-            canvas.width = canvas["backBuffer"].width = rect.width * window.devicePixelRatio;
-            canvas.height = canvas["backBuffer"].height = rect.height * window.devicePixelRatio;
-            canvas.style.width = canvas["backBuffer"].style.width = `${rect.width}px`;
-            canvas.style.height = canvas["backBuffer"].style.height = `${rect.height}px`;
-            canvas.style.backgroundColor = canvas["backBuffer"].style.backgroundColor = "transparent";
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            canvas.style.width = `${rect.width}px`;
+            canvas.style.height = `${rect.height}px`;
+            canvas.style.backgroundColor = "transparent";
 
             wall.appendChild(canvas);
 
@@ -1007,7 +1090,7 @@
                 });
 
                 if (response.ok) {
-                    background = await response.json();
+                    background["dataset"] = await response.json();
                 } else {
                     throw new Error(response.statusText);
                 }
@@ -1015,7 +1098,14 @@
                 console.error(e.code, e.message);
             }
 
-            if (background !== null) {
+            if (background["dataset"] !== null) {
+                function _random(min, max) {
+                    min = Math.ceil(min);
+                    max = Math.floor(max);
+
+                    return Math.floor(Math.random() * (max - min)) + min;
+                }
+
                 async function download(url) {
                     const progress = document.createElement("div");
                     const bar = document.createElement("div");
@@ -1217,7 +1307,7 @@
                     element.style.animationPlayState = "running";
                 }
 
-                await download(background[0].images[0]);
+                await download(background.dataset[0].images[0]);
 
                 logo.animate([
                     {
@@ -1232,14 +1322,392 @@
                 });
                 animation.cancel();
 
-                function render(timestamp) {
-                    const deltaTime = timestamp - previousTime;
+                async function render(timestamp) {
+                    const deltaTime = (timestamp - previousTime) / 1000;
 
                     requestAnimationFrame(render);
 
+                    if (background.invalid) {
+                        for (const block of background.blocks) {
+                            let index = -1;
 
+                            for (let i = block.inlines.length - 1; i >= 0; i--) {
+                                if (block.inlines[i].running) {
+                                    block.inlines[i].type.reverse = true;
+                                    index = i;
 
-                    //console.log(1000 / deltaTime);
+                                    break;
+                                }
+                            }
+
+                            if (index === -1) {
+                                block.inlines[block.inlines.length - 1].running = true;
+                            }
+                        }
+
+                        background.invalid = false;
+                    }
+
+                    if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
+                        background.blocks.splice(0);
+
+                        if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
+                            background.preloading = true;
+
+                            try {
+                                const response = await fetch(background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)]);
+
+                                if (response.ok) {
+                                    const blob = await response.blob();
+                                    const dataURL = await new Promise(async (resolve, reject) => {
+                                        const reader = new FileReader();
+
+                                        reader.onload = () => {
+                                            resolve(reader.result);
+                                        };
+                                        reader.onerror = () => {
+                                            reject(reader.error);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    });
+
+                                    background.image = await new Promise(async (resolve, reject) => {
+                                        const i = new Image();
+
+                                        i.onload = () => {
+                                            resolve(i);
+                                        };
+                                        i.onerror = (e) => {
+                                            reject(e);
+                                        };
+
+                                        i.crossOrigin = "Anonymous";
+                                        i.src = dataURL;
+                                    });
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            }
+
+                            background.preloading = false;
+                        }
+
+                        const length = _random(8, 16);
+                        let start = background.dataset[background.index].texts.length - length;
+                        let samples;
+
+                        if (start >= 0) {
+                            start = _random(0, start);
+                            samples = background.dataset[background.index].texts.slice(start, start + length);
+                        } else {
+                            samples = background.dataset[background.index].texts;
+                        }
+
+                        for (const sample of samples) {
+                            let text;
+                            const attributes = [];
+                            const source = [];
+                            const letters = [];
+
+                            if (typeof (sample) === "string") {
+                                text = sample.replace("\n", "");
+                                source.push(text);
+                            } else {
+                                text = Object.keys(sample).sort((x, y) => x - y).reduce((x, y) => {
+                                    if (typeof (sample[y]) === "string") {
+                                        const s = sample[y].replace("\n", "");
+
+                                        x.text += s;
+
+                                        if (x.source.length > 0 && typeof (x.source[x.source.length - 1]) === "string") {
+                                            x.source[x.source.length - 1] += s;
+                                        } else {
+                                            x.source.push(s);
+                                        }
+                                    } else if (Array.isArray(sample[y])) {
+                                        const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace("\n", ""), "");
+
+                                        x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
+                                        x.text += s;
+                                        x.source.push({ name: s });
+                                    } else {
+                                        const text = sample[y].name.replace("\n", "");
+
+                                        x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
+                                        x.text += text;
+                                        x.source.push({ name: text });
+                                    }
+
+                                    return x;
+                                }, { text: "", attributes: attributes, source: source }).text;
+                            }
+
+                            for (let i = 0; i < text.length; i++) {
+                                if (letters.indexOf(text.charAt(i)) === -1 && text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
+                                    letters.push(text.charAt(i));
+                                }
+                            }
+
+                            background.blocks.push({
+                                height: 100 / samples.length,
+                                colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
+                                inlines: [
+                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
+                                ],
+                                iterations: ~~Math.ceil(50 / text.length) * 2,
+                                elapsed: 0,
+                            });
+                        }
+                    }
+
+                    for (const block of background.blocks) {
+                        let index = 0;
+
+                        for (const inline of block.inlines) {
+                            if (inline.running) {
+                                if (inline.type.reverse) {
+                                    if (inline.type.count > 0) {
+                                        inline.type.elapsed += deltaTime * 2;
+
+                                        if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                                            let index = inline.type.count - 1;
+
+                                            if (index < inline.text.length) {
+                                                const width = Math.floor(inline.text.length / 2);
+
+                                                if (inline.type.buffer.length <= width && inline.type.count > 0) {
+                                                    inline.type.count -= 1;
+                                                }
+
+                                                if (inline.type.buffer.length > 0) {
+                                                    inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
+                                                }
+                                            }
+
+                                            inline.type.elapsed = 0;
+                                        }
+                                    } else {
+                                        inline.time = 0;
+                                        inline.type.elapsed = -1;
+                                        inline.type.reverse = false;
+                                        inline.running = false;
+
+                                        if (index - 1 >= 0) {
+                                            block.inlines[index - 1].running = true;
+                                        }
+                                    }
+                                } else if (inline.type.buffer.length < inline.text.length) {
+                                    if (inline.type.elapsed >= 0) {
+                                        inline.type.elapsed += deltaTime;
+                                    } else {
+                                        inline.type.elapsed = deltaTime;
+                                    }
+
+                                    if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                                        const index = inline.type.buffer.length;
+                                        const width = Math.floor(inline.text.length / 2);
+                                        const length = inline.text.length;
+
+                                        if (inline.type.count >= width) {
+                                            inline.type.buffer += inline.text.charAt(index);
+                                        }
+
+                                        if (inline.type.count < length) {
+                                            inline.type.count += 1;
+                                        }
+
+                                        inline.type.elapsed = 0;
+                                    }
+                                } else {
+                                    inline.time += deltaTime;
+
+                                    if (inline.time >= inline.duration) {
+                                        inline.type.reverse = true;
+                                        inline.running = false;
+
+                                        if (index + 1 < block.inlines.length) {
+                                            block.inlines[index + 1].running = true;
+                                        }
+                                    }
+                                }
+
+                                if (inline.text.length === inline.type.buffer.length) {
+                                    const characters = inline.text.split("");
+
+                                    inline.characters.splice(0);
+
+                                    for (let i = 0; i < characters.length; i++) {
+                                        inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                    }
+                                } else {
+                                    const charArray = inline.letters;
+                                    let randomBuffer = "";
+
+                                    for (let i = 0; i < inline.text.length; i++) {
+                                        if (charArray.indexOf(inline.text.charAt(i)) === -1 && inline.text.charAt(i) !== "\n" && inline.text.charAt(i).match(/\s/) === null) {
+                                            charArray.push(inline.text.charAt(i));
+                                        }
+                                    }
+
+                                    if (charArray.length > 0) {
+                                        for (let i = 0; i < inline.type.count; i++) {
+                                            if (inline.text.charAt(i) === "\n") {
+                                                randomBuffer += "\n";
+                                            } else {
+                                                randomBuffer += charArray[~~_random(0, charArray.length)];
+                                            }
+                                        }
+                                    }
+
+                                    if (randomBuffer.length > inline.type.buffer.length) {
+                                        const characters = (inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length)).split("");
+
+                                        inline.characters.splice(0);
+
+                                        for (let i = 0; i < characters.length; i++) {
+                                            inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                        }
+                                    } else if (inline.characters.length !== inline.type.buffer.length) {
+                                        const characters = inline.type.buffer.split("");
+
+                                        inline.characters.splice(0);
+
+                                        for (let i = 0; i < characters.length; i++) {
+                                            inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                        }
+                                    }
+                                }
+                            }
+
+                            index++;
+                        }
+
+                        block.elapsed += deltaTime;
+                    }
+
+                    const backCanvas = canvas.backBuffer;
+
+                    backCanvas.width = canvas.width;
+                    backCanvas.height = canvas.height;
+
+                    const backContext = backCanvas.getContext("2d");
+                    const frontContext = canvas.getContext("2d");
+                    const margin = 16;
+                    const lineHeight = backCanvas.height / background.blocks.length;
+                    const fontSize = Math.floor(lineHeight / 2);
+                    const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
+                    let index = 0;
+
+                    backContext.imageSmoothingEnabled = true;
+                    backContext.imageSmoothingQuality = "high";
+                    backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+                    backContext.textAlign = "left";
+                    backContext.textBaseline = "middle";
+                    backContext.save();
+                    backContext.beginPath();
+
+                    for (const block of background.blocks) {
+                        for (const inline of block.inlines) {
+                            if (inline.characters.length > 0) {
+                                const line = [{ text: inline.characters[0].value, highlight: inline.characters[0].highlight }];
+                                let width = 0;
+                                let offset = 0;
+
+                                for (let i = 1; i < inline.characters.length; i++) {
+                                    if (inline.characters[i].highlight) {
+                                        if (line[line.length - 1].highlight) {
+                                            line[line.length - 1].text += inline.characters[i].value;
+                                        } else {
+                                            line.push({ text: inline.characters[i].value, highlight: true });
+                                        }
+                                    } else if (line[line.length - 1].highlight) {
+                                        line.push({ text: inline.characters[i].value, highlight: false });
+                                    } else {
+                                        line[line.length - 1].text += inline.characters[i].value;
+                                    }
+                                }
+
+                                backContext.save();
+                                backContext.font = `${fontSize}px ${fontFamily}`;
+
+                                for (const s of inline.source) {
+                                    const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+
+                                    width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                }
+
+                                backContext.translate(block.elapsed % 60 / 60 * -width, 0);
+
+                                do {
+                                    for (let i = 0; i < 2; i++) {
+                                        let x = 0;
+
+                                        for (const segment of line) {
+                                            if (segment.highlight) {
+                                                backContext.globalAlpha = 1.0;
+                                                backContext.fillStyle = `${block.colors.accent}`;
+                                            } else {
+                                                backContext.globalAlpha = 1.0;
+                                                backContext.fillStyle = `${block.colors.main}`;
+                                            }
+
+                                            const textMetrics = backContext.measureText(segment.text);
+
+                                            backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
+
+                                            x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                        }
+
+                                        for (const s of inline.source) {
+                                            const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+
+                                            offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                        }
+                                    }
+                                } while (offset - margin < backCanvas.width * 2);
+
+                                backContext.restore();
+                            }
+                        }
+
+                        index++;
+                    }
+
+                    backContext.closePath();
+                    backContext.globalCompositeOperation = "source-atop";
+                    backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
+                    backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
+
+                    if (background.image !== null) {
+                        const top = 0.25;
+                        const left = 0.5;
+                        const canvasAspect = backCanvas.width / backCanvas.height;
+                        const imageAspect = background.image.width / background.image.height;
+                        let sx, sy, sw, sh;
+
+                        if (canvasAspect > imageAspect) {
+                            const ratio = backCanvas.width / background.image.width;
+
+                            sx = 0;
+                            sy = (background.image.height * ratio - backCanvas.height) / ratio * top;
+                            sw = background.image.width;
+                            sh = backCanvas.height / ratio;
+                        } else {
+                            const ratio = backCanvas.height / background.image.height;
+
+                            sx = (background.image.width * ratio - backCanvas.width) / ratio * left;
+                            sy = 0;
+                            sw = backCanvas.width / ratio;
+                            sh = background.image.height;
+                        }
+
+                        backContext.drawImage(background.image, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
+                    }
+
+                    backContext.restore();
+
+                    frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+                    frontContext.drawImage(backCanvas, 0, 0);
 
                     previousTime = timestamp;
                 }
@@ -1252,10 +1720,10 @@
             const canvas = wall.querySelector(":scope>canvas");
             const rect = wall.getBoundingClientRect();
 
-            canvas.width = canvas["backBuffer"].width = rect.width * window.devicePixelRatio;
-            canvas.height = canvas["backBuffer"].height = rect.height * window.devicePixelRatio;
-            canvas.style.width = canvas["backBuffer"].style.width = `${rect.width}px`;
-            canvas.style.height = canvas["backBuffer"].style.height = `${rect.height}px`;
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            canvas.style.width = `${rect.width}px`;
+            canvas.style.height = `${rect.height}px`;
         });
     </script>
 </body>
