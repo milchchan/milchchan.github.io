@@ -1021,7 +1021,7 @@
                                     element.parentElement.className = `${element.parentElement.className} is-selected`;
                                 } else {
                                     element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
-                                    
+
                                     shake(target);
                                 }
                             } else {
@@ -1167,16 +1167,20 @@
 
                     document.body.querySelector("#app>.container>.wrap>.frame>.wall").after(blind);
 
-                    blind.animate([
-                        {
-                            transform: "translate3d(0, 0%, 0)"
-                        }
-                    ], {
-                        delay: 0,
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-out"
+                    await new Promise(async (resolve) => {
+                        blind.animate([
+                            {
+                                transform: "translate3d(0, 0%, 0)"
+                            }
+                        ], {
+                            delay: 0,
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        }).onfinish = () => {
+                            resolve();
+                        };
                     });
 
                     try {
@@ -1300,14 +1304,10 @@
 
                     return null;
                 }
-
-                let previousTime = performance.now();
-
+                
                 for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path")) {
                     element.style.animationPlayState = "running";
                 }
-
-                await download(background.dataset[0].images[0]);
 
                 logo.animate([
                     {
@@ -1322,10 +1322,10 @@
                 });
                 animation.cancel();
 
+                let previousTime = performance.now();
+                
                 async function render(timestamp) {
-                    const deltaTime = (timestamp - previousTime) / 1000;
-
-                    requestAnimationFrame(render);
+                    const deltaTime = Math.max((timestamp - previousTime) / 1000, 0);
 
                     if (background.invalid) {
                         for (const block of background.blocks) {
@@ -1349,17 +1349,27 @@
                     }
 
                     if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
+                        background.image = null;
                         background.blocks.splice(0);
 
                         if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
                             background.preloading = true;
 
-                            try {
-                                const response = await fetch(background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)]);
+                            const blob = await download(background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)]);
 
-                                if (response.ok) {
-                                    const blob = await response.blob();
-                                    const dataURL = await new Promise(async (resolve, reject) => {
+                            if (blob !== null) {
+                                background.image = await new Promise(async (resolve, reject) => {
+                                    const i = new Image();
+
+                                    i.onload = () => {
+                                        resolve(i);
+                                    };
+                                    i.onerror = (e) => {
+                                        reject(e);
+                                    };
+
+                                    i.crossOrigin = "Anonymous";
+                                    i.src = await new Promise(async (resolve, reject) => {
                                         const reader = new FileReader();
 
                                         reader.onload = () => {
@@ -1370,23 +1380,7 @@
                                         };
                                         reader.readAsDataURL(blob);
                                     });
-
-                                    background.image = await new Promise(async (resolve, reject) => {
-                                        const i = new Image();
-
-                                        i.onload = () => {
-                                            resolve(i);
-                                        };
-                                        i.onerror = (e) => {
-                                            reject(e);
-                                        };
-
-                                        i.crossOrigin = "Anonymous";
-                                        i.src = dataURL;
-                                    });
-                                }
-                            } catch (e) {
-                                console.error(e);
+                                });
                             }
 
                             background.preloading = false;
@@ -1452,9 +1446,8 @@
                                 height: 100 / samples.length,
                                 colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
                                 inlines: [
-                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 60, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
+                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
                                 ],
-                                iterations: ~~Math.ceil(50 / text.length) * 2,
                                 elapsed: 0,
                             });
                         }
@@ -1710,6 +1703,8 @@
                     frontContext.drawImage(backCanvas, 0, 0);
 
                     previousTime = timestamp;
+
+                    requestAnimationFrame(render);
                 }
 
                 requestAnimationFrame(render);
