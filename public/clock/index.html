@@ -6,7 +6,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
         gtag('config', 'G-617KR1WTYP');
@@ -42,14 +42,7 @@
     <style type="text/css">
         :root {
             --background-color: #ffffff;
-            --foreground-color: #68e6ff;
-            --accent-color: #fecde2;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --foreground-color: #c1aee6;
-            }
+            --foreground-color: #000000;
         }
 
         html {
@@ -91,7 +84,7 @@
             position: relative;
             margin: 0;
             border-radius: 0px;
-            padding: 16px;
+            padding: 0;
             width: 100%;
             height: 100%;
             background: transparent;
@@ -102,11 +95,11 @@
             box-sizing: border-box;
             position: relative;
             margin: 0;
-            border-radius: 16px;
+            border-radius: 0px;
             padding: 0;
             width: 100%;
             height: 100%;
-            background: var(--accent-color);
+            background: rgb(247, 248, 248);
             overflow: hidden;
         }
 
@@ -143,9 +136,10 @@
             left: 0px;
             top: 0px;
             margin: 0px 4px 0px 4px;
-            border: 1px solid var(--background-color);
+            border: 1px solid var(--foreground-color);
             background: #ffffff;
             overflow: hidden;
+            transition: .5s;
         }
 
         div.digit {
@@ -169,7 +163,7 @@
             width: 120px;
             height: 320px;
             background: url('/images/Background.png') 0 0 repeat;
-            background-color: var(--accent-color);
+            background-color: rgb(247, 248, 248);
             background-size: 100px 100px;
             animation: loop 10s linear forwards infinite;
         }
@@ -285,13 +279,14 @@
         span.caption {
             user-select: none;
             float: right;
-            color: var(--background-color);
+            color: var(--foreground-color);
             margin: 4px 8px 4px 4px;
             font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
             font-size: 0.5rem;
             font-weight: bold;
             line-height: 8px;
             text-transform: uppercase;
+            transition: .5s;
         }
 
         img.digit {
@@ -382,7 +377,7 @@
         (min-resolution: 2dppx) {
             div.loading {
                 background: url('/images/Background@2x.png') repeat;
-                background-color: var(--accent-color);
+                background-color: rgb(247, 248, 248);
                 background-size: 100px 100px;
             }
         }
@@ -391,8 +386,14 @@
         (min-resolution: 3dppx) {
             div.loading {
                 background: url('/images/Background@3x.png') repeat;
-                background-color: var(--accent-color);
+                background-color: rgb(247, 248, 248);
                 background-size: 100px 100px;
+            }
+        }
+
+        @media screen and (min-width: 769px) {
+            #container>.wrap {
+                padding: 16px;
             }
         }
     </style>
