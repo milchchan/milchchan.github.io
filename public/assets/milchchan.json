@@ -1,7 +1,16 @@
 [
     {
-        "type": "milchchan.com",
         "images": ["/images/Milchchan.png"],
         "texts": ["Hello, world!"]
+    },
+    {
+        "type": "Milch",
+        "images": ["/images/Milchchan.png"],
+        "texts": ["Milch"]
+    },
+    {
+        "type": "Merku",
+        "images": ["/images/Milchchan.png"],
+        "texts": ["Merku"]
     }
 ]
