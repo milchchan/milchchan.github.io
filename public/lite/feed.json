@@ -1,7 +1,12 @@
 [
     {
         "images": [
-            "images/Milchchan.png"
+            [
+                {
+                    "delay": 1,
+                    "source": "images/Milchchan.png"
+                }
+            ]
         ],
         "texts": [
             "ミルヒちゃん！ミルヒちゃん！\\nミルヒちゃんもいっしょに魔法少女しようね！",
@@ -20,7 +25,12 @@
     {
         "type": "Milch",
         "images": [
-            "images/Omr.png"
+            [
+                {
+                    "delay": 1.0,
+                    "source": "images/Omr.png"
+                }
+            ]
         ],
         "texts": [
             "ミルヒちゃんは、メルクの大切なお友達だよぉ。",
@@ -32,7 +42,12 @@
     {
         "type": "Merku",
         "images": [
-            "images/404.png"
+            [
+                {
+                    "delay": 1,
+                    "source": "images/404.png"
+                }
+            ]
         ],
         "texts": [
             "メルクは、お友達のミルヒちゃんと同じ小学5年生だよぉ。",
