@@ -145,9 +145,9 @@
             font-weight: bold;
         }
 
-        .sidebar a .scrollable:hover,
-        .sidebar button .scrollable:hover,
-        .sidebar label .scrollable:hover {
+        div.sidebar a .scrollable:hover,
+        div.sidebar button .scrollable:hover,
+        div.sidebar label .scrollable:hover {
             transform: translate3d(-100%, 0%, 0);
         }
 
@@ -306,7 +306,7 @@
             overflow: hidden;
         }
 
-        .sidebar {
+        div.sidebar {
             position: relative;
             padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 0px);
             width: fit-content;
@@ -315,7 +315,7 @@
             transition: 0.5s;
         }
 
-        .sidebar>.level {
+        div.sidebar>.level {
             display: flex;
             margin: 0;
             padding: 0;
@@ -325,7 +325,7 @@
             justify-content: flex-start;
         }
 
-        .sidebar>.level>.level-item:first-child {
+        div.sidebar>.level>.level-item:first-child {
             display: flex;
             top: 0;
             margin: 0;
@@ -335,7 +335,7 @@
             justify-content: flex-start;
         }
 
-        .sidebar>.level>.level-item:first-child>.level {
+        div.sidebar>.level>.level-item:first-child>.level {
             display: flex;
             margin: 0;
             padding: 0;
@@ -345,12 +345,12 @@
             justify-content: center;
         }
 
-        .sidebar>.level>.level-item:first-child>.level>.level-item {
+        div.sidebar>.level>.level-item:first-child>.level>.level-item {
             margin: 0;
             padding: 0;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item>.wrapper {
+        div.sidebar>.level>.level-item>.level>.level-item>.separator {
             display: flex;
             flex-direction: row;
             align-items: flex-start;
@@ -359,7 +359,7 @@
             height: fit-content;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item>.wrapper>hr {
+        div.sidebar>.level>.level-item>.level>.level-item>.separator>hr {
             border-width: 0;
             margin: 32px 0px 32px 0px;
             padding: 0;
@@ -369,7 +369,7 @@
             text-align: center !important;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button {
+        div.sidebar>.level>.level-item>.level>.level-item .button {
             display: flex;
             align-items: center;
             margin: 0;
@@ -387,7 +387,7 @@
             cursor: pointer;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .clip {
+        div.sidebar>.level>.level-item>.level>.level-item .button .clip {
             position: relative;
             display: flex;
             overflow: hidden;
@@ -397,7 +397,7 @@
             box-sizing: border-box;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable {
+        div.sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable {
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -405,7 +405,7 @@
             margin: 0px -4px 0px -4px !important;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable div {
+        div.sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable div {
             display: flex;
             align-items: center;
             margin: 0px 4px 0px 4px !important;
@@ -417,12 +417,12 @@
             vertical-align: middle;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable div:last-child:not(:first-child) {
+        div.sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable div:last-child:not(:first-child) {
             position: absolute;
             left: 100%;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon {
             display: flex;
             margin: 0;
             padding: 0;
@@ -436,39 +436,39 @@
             justify-content: center;
         }
 
-        .sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure {
+        div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure {
             transform-origin: 50% 50%;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon figure>picture {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon figure>picture {
             display: block;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon:first-child+div {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon:first-child+div {
             margin: 0px 0px 0px 16px;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon:not(:first-of-type) {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon:not(:first-of-type) {
             margin: 0px 0px 0px 16px;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button:hover .icon {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon {
             opacity: 0.5;
             transition: 0.5s;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button :not(.icon.animatable) figure>picture>img {
+        div.sidebar>.level>.level-item>.level>.level-item .button :not(.icon.animatable) figure>picture>img {
             transform-origin: 50% 50%;
             transform: scale3d(1, 1, 1);
             transition: 0.5s ease-out;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button:hover :not(.icon.animatable) figure>picture>img {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover :not(.icon.animatable) figure>picture>img {
             transform: scale3d(1.1, 1.1, 1);
             transition: 0.5s ease-in;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .wrap {
+        div.sidebar>.level>.level-item>.level>.level-item .button .wrap {
             position: relative;
             margin: 0;
             border-top: 2px solid transparent;
@@ -483,12 +483,12 @@
             transition: 0.5s
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button.is-selected .wrap {
+        div.sidebar>.level>.level-item>.level>.level-item .button.is-selected .wrap {
             border-bottom: 2px solid #000000;
             transition: 0.5s ease-in;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item div.wrap {
+        div.sidebar>.level>.level-item>.level>.level-item div.wrap {
             display: flex;
             justify-content: flex-start;
             align-items: center;
@@ -496,21 +496,21 @@
             height: calc(0.75rem * 1.5);
         }
 
-        .sidebar>.level>.level-item:last-child:not(:first-child) {
+        div.sidebar>.level>.level-item:last-child:not(:first-child) {
             position: absolute;
             bottom: 0;
             margin: 0;
             padding: 0px 0px 16px 0px;
         }
 
-        .sidebar>.level>.level-item:last-child:not(:first-child) .image>button {
+        div.sidebar>.level>.level-item:last-child:not(:first-child) .image>button {
             margin: 0;
             border: 0px solid transparent;
             padding: 0;
             background: transparent;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path {
+        div.sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path {
             fill: #000000;
             fill-opacity: 0;
             stroke: #000000;
@@ -524,19 +524,19 @@
             transition: 0.5s;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button:hover .wrap svg g:nth-child(odd)>path {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover .wrap svg g:nth-child(odd)>path {
             fill: var(--accent-color);
             stroke: var(--accent-color);
             transition: 0.5s;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button:hover .wrap svg g:nth-child(even)>path {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover .wrap svg g:nth-child(even)>path {
             fill: var(--foreground-color);
             stroke: var(--foreground-color);
             transition: 0.5s;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure {
             display: flex;
             justify-content: flex-start;
             align-items: flex-start;
@@ -545,34 +545,34 @@
             height: 16px;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture {
             margin-left: 0%;
             width: auto;
             height: 100%;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button:hover .icon.animatable>figure>picture,
-        .sidebar>.level>.level-item>.level>.level-item .button.is-selected .icon.animatable>figure>picture {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon.animatable>figure>picture,
+        div.sidebar>.level>.level-item>.level>.level-item .button.is-selected .icon.animatable>figure>picture {
             animation: frame 1.33s steps(4) infinite forwards;
         }
 
-        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture>img {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture>img {
             object-fit: none;
             object-position: 0% 0%;
             width: 100%;
             height: 100%;
         }
 
-        .rotation-wrapper-outer {
+        div.sidebar>.level>.level-item>.level>.level-item>.rotation-outer {
             display: table;
         }
 
-        .rotation-wrapper-outer .rotation-wrapper-inner {
+        div.sidebar>.level>.level-item>.level>.level-item>.rotation-outer>div.rotation-inner {
             padding: 50% 0;
             height: 0;
         }
 
-        .rotation-wrapper-outer .rotation-wrapper-inner .rotate {
+        div.sidebar>.level>.level-item>.level>.level-item>.rotation-outer>div.rotation-inner>div.rotate {
             display: block;
             transform-origin: top left;
             transform: rotate(-90deg) translate(-100%);
@@ -590,17 +590,17 @@
             height: fit-content;
         }
 
-        div.top {
+        div.remarks {
             position: absolute;
-            top: 0%;
-            right: 0%;
+            top: 0;
+            right: 0;
             padding: 16px 16px 16px 0px;
             width: fit-content;
             height: fit-content;
         }
 
         div.center>.level,
-        div.top>.level {
+        div.remarks>.level {
             display: flex;
             margin: -8px;
             padding: 0;
@@ -610,14 +610,14 @@
         }
 
         div.center>.level>.level-item,
-        div.top>.level>.level-item {
+        div.remarks>.level>.level-item {
             margin: 0;
             padding: 8px;
             flex-shrink: 0;
         }
 
         div.center>.level>.level-item>.level,
-        div.top>.level>.level-item>.level {
+        div.remarks>.level>.level-item>.level {
             display: flex;
             margin: -8px;
             padding: 0;
@@ -627,14 +627,14 @@
         }
 
         div.center>.level>.level-item>.level>.level-item,
-        div.top>.level>.level-item>.level>.level-item {
+        div.remarks>.level>.level-item>.level>.level-item {
             margin: 0;
             padding: 8px;
             flex-shrink: 0;
         }
 
         div.center .button,
-        div.top .button {
+        div.remarks .button {
             margin: 0px;
             border: 0px none transparent !important;
             padding: 16px 32px 16px 32px;
@@ -645,7 +645,7 @@
         }
 
         div.center .button.is-circle,
-        div.top .button.is-circle {
+        div.remarks .button.is-circle {
             display: flex;
             margin: 0px;
             border-radius: 290486px !important;
@@ -657,7 +657,7 @@
         }
 
         div.center .icon,
-        div.top .icon {
+        div.remarks .icon {
             display: flex;
             margin: 0;
             width: 16px;
@@ -669,9 +669,48 @@
         }
 
         div.center .button:hover .icon,
-        div.top .button:hover .icon {
+        div.remarks .button:hover .icon {
             opacity: 0.5;
             transition: .5s;
+        }
+
+        #stats {
+            display: flex;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding: 16px 16px 16px 0px;
+            width: fit-content;
+            height: fit-content;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+            opacity: 0;
+            transition: .5s;
+            cursor: default;
+        }
+
+        #stats.is-active {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #stats:hover {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #stats>span {
+            margin: 0;
+            padding: 0px 1px 0px 1px;
+            background-color: #000000;
+            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+            font-size: 0.75rem;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem;
+            height: 0.75rem;
+            vertical-align: middle;
+            color: #ffffff;
         }
 
         @keyframes progress {
@@ -767,8 +806,8 @@
                             <div class="level-item">
                                 <div class="level">
                                     <div class="level-item">
-                                        <div class="rotation-wrapper-outer">
-                                            <div class="rotation-wrapper-inner">
+                                        <div class="rotation-outer">
+                                            <div class="rotation-inner">
                                                 <div class="rotate">
                                                     <button class="button" type="button" onclick="select(event);">
                                                         <div class="wrap">
@@ -840,14 +879,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="level-item" v-cloak>
-                                        <div class="wrapper">
+                                    <div class="level-item">
+                                        <div class="separator">
                                             <hr>
                                         </div>
                                     </div>
-                                    <div class="level-item" v-cloak>
-                                        <div class="rotation-wrapper-outer">
-                                            <div class="rotation-wrapper-inner">
+                                    <div class="level-item">
+                                        <div class="rotation-outer">
+                                            <div class="rotation-inner">
                                                 <div class="rotate">
                                                     <button class="button" type="button" onclick="select(event);"
                                                         data-type="Milch">
@@ -876,14 +915,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="level-item" v-cloak>
-                                        <div class="wrapper">
+                                    <div class="level-item">
+                                        <div class="separator">
                                             <hr>
                                         </div>
                                     </div>
-                                    <div class="level-item" v-cloak>
-                                        <div class="rotation-wrapper-outer">
-                                            <div class="rotation-wrapper-inner">
+                                    <div class="level-item">
+                                        <div class="rotation-outer">
+                                            <div class="rotation-inner">
                                                 <div class="rotate">
                                                     <button class="button" type="button" onclick="select(event);"
                                                         data-type="Merku">
@@ -914,8 +953,8 @@
                             <div class="level-item">
                                 <div class="level">
                                     <div class="level-item">
-                                        <div class="rotation-wrapper-outer">
-                                            <div class="rotation-wrapper-inner">
+                                        <div class="rotation-outer">
+                                            <div class="rotation-inner">
                                                 <div class="rotate">
                                                     <a class="button"
                                                         href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q"
@@ -954,7 +993,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="top">
+                    <div class="remarks">
                         <div class="level">
                             <div class="level-item">
                                 <a class="button is-circle" href="https://twitter.com/milchchan" target="_blank"><span
@@ -974,6 +1013,9 @@
                                         class="icon"><i class="fab fa-github fa-xs"></i></span></a>
                             </div>
                         </div>
+                    </div>
+                    <div id="stats">
+                        <span class="has-text-weight-bold">0</span>
                     </div>
                 </div>
             </div>
@@ -1010,7 +1052,7 @@
 
             if ("dataset" in background) {
                 if ("type" in target.dataset) {
-                    for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
+                    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
                         if ("type" in element.parentElement.dataset) {
                             if (element.parentElement.dataset.type === target.dataset.type) {
                                 const index = background.dataset.findIndex(x => x.type === target.dataset.type);
@@ -1039,7 +1081,7 @@
                         shake(target);
                     }
 
-                    for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
+                    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
                         if ("type" in element.parentElement.dataset) {
                             element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
                         }
@@ -1051,10 +1093,14 @@
         }
 
         window.addEventListener("load", async event => {
-            const logo = document.body.querySelector(".sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
+            const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
             const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
             const canvas = document.createElement("canvas");
             const rect = wall.getBoundingClientRect();
+
+            if (decodeURIComponent(window.location.hash.substring(1)) === "debug") {
+                document.body.querySelector("#stats").className = "is-active";
+            }
 
             canvas["backBuffer"] = document.createElement("canvas");
             canvas.width = rect.width * window.devicePixelRatio;
@@ -1305,7 +1351,7 @@
                     return null;
                 }
 
-                for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path")) {
+                for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path")) {
                     element.style.animationPlayState = "running";
                 }
 
@@ -1323,8 +1369,11 @@
                 animation.cancel();
 
                 let previousTime = performance.now();
+                const stats = { time: previousTime, frames: 0, target: document.body.querySelector("#stats>span") };
 
                 async function render(timestamp) {
+                    const startTime = performance.now();
+                    
                     if (timestamp > previousTime) {
                         const deltaTime = (timestamp - previousTime) / 1000;
 
@@ -1700,6 +1749,14 @@
                         frontContext.drawImage(backCanvas, 0, 0);
                     }
                 
+                    stats.frames++;
+
+                    if (performance.now() - stats.time >= 1000) {
+                        stats.target.innerText = String(stats.frames);
+                        stats.time = performance.now();
+                        stats.frames = 0;
+                    }
+                    
                     requestAnimationFrame(render);
                 }
 
