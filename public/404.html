@@ -228,6 +228,75 @@
         easing: "ease-out"
       });
     });
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", async e => {
+      const background = document.createElement("div");
+
+      background.className = "background";
+      background.style.opacity = 0;
+      background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+
+      try {
+        const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(e.matches ? "--dark-background-image" : "--light-background-image"));
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const dataURL = await new Promise(async (resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+              resolve(reader.result);
+            };
+            reader.onerror = () => {
+              reject(reader.error);
+            };
+            reader.readAsDataURL(blob);
+          });
+          background.style.backgroundImage = `url('${dataURL}')`;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      for (const element of document.body.querySelectorAll(".wrap>.frame>.background")) {
+        element.animate([
+          {
+            opacity: 1,
+            transform: "scale3d(1.0, 1.0, 1.0)"
+          },
+          {
+            opacity: 0,
+            transform: "scale3d(1.1, 1.1, 1.1)"
+          }
+        ], {
+          delay: 0,
+          fill: "forwards",
+          duration: 500,
+          iterations: 1,
+          easing: "ease-in"
+        }).onfinish = () => {
+          element.remove();
+        };
+      }
+
+      document.body.querySelector(".wrap>.frame").prepend(background);
+      
+      background.animate([
+        {
+          opacity: 0,
+          transform: "scale3d(1.1, 1.1, 1.1)"
+        },
+        {
+          opacity: 1,
+          transform: "scale3d(1.0, 1.0, 1.0)"
+        }
+      ], {
+        delay: 0,
+        fill: "forwards",
+        duration: 500,
+        iterations: 1,
+        easing: "ease-out"
+      });
+    });
   </script>
 </body>
 
