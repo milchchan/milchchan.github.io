@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#ffffff">
+  <title>404</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+  <style media="screen">
+    :root {
+      --background-color: #ffffff;
+      --foreground-color: #000000;
+    }
+
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100vh;
+      height: -webkit-fill-available;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      background: var(--background-color);
+    }
+
+    body {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 0;
+      color: var(--foreground-color) !important;
+      font-family: 'Barlow', 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
+      font-size: 50vmin;
+      font-weight: bold;
+      line-height: 50vmin;
+      transition: 0.5s;
+    }
+
+    .wrap {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      backface-visibility: hidden;
+    }
+
+    .frame {
+      z-index: 0;
+      position: relative;
+      margin: 0;
+      padding: 0;
+      border-radius: 0px;
+      width: 100%;
+      max-width: 100% !important;
+      height: 100%;
+      overflow: hidden;
+      background-color: rgb(247, 248, 248);
+    }
+
+    .background {
+      z-index: 0;
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      max-height: 100%;
+      background-color: transparent;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+      background-size: cover;
+      transform-origin: 50% 50%;
+      backface-visibility: hidden;
+      perspective: 1000;
+    }
+
+    .background::before {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
+      background: transparent;
+      content: "";
+    }
+
+    #message {
+      z-index: 1;
+      position: absolute;
+      display: flex;
+      top: 0;
+      left: 0;
+      width: 100%;
+      min-height: 100%;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fade 0.5s ease-out forwards;
+      overflow: hidden;
+      perspective: 1000;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes loop {
+      0% {
+        background-position: 0 0;
+      }
+
+      100% {
+        background-position: -100px 0px;
+      }
+    }
+
+    @keyframes load {
+      from {
+        opacity: 0;
+        transform: scale3d(1.1, 1.1, 1.1);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale3d(1.0, 1.0, 1.0);
+      }
+    }
+
+    @media screen and (min-width: 769px) {
+      .wrap {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="frame">
+      <div id="message">
+        <h1>404</h1>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    window.addEventListener("load", async event => {
+      const background = document.createElement("div");
+
+      background.className = "background";
+      background.style.opacity = 0;
+      background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+
+      try {
+        const response = await fetch(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "/images/Omr.png" : "/images/404.png");
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const dataURL = await new Promise(async (resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+              resolve(reader.result);
+            };
+            reader.onerror = () => {
+              reject(reader.error);
+            };
+            reader.readAsDataURL(blob);
+          });
+          background.style.backgroundImage = `url('${dataURL}')`;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      document.body.querySelector(".wrap>.frame").prepend(background);
+
+      background.animate([
+        {
+          opacity: 0,
+          transform: "scale3d(1.1, 1.1, 1.1)"
+        },
+        {
+          opacity: 1,
+          transform: "scale3d(1.0, 1.0, 1.0)"
+        }
+      ], {
+        delay: 0,
+        fill: "forwards",
+        duration: 500,
+        iterations: 1,
+        easing: "ease-out"
+      });
+    });
+  </script>
+</body>
+
+</html>
