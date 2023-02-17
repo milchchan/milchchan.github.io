@@ -53,6 +53,15 @@
                         "source": "images/Background-Milch-Chuno-2.png"
                     }
                 ]
+            },
+            {
+                "color": "#d1f4f4",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Tukigi-1.png"
+                    }
+                ]
             }
         ],
         "texts": [
