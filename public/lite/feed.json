@@ -62,6 +62,15 @@
                         "source": "images/Background-Milch-Tukigi-1.png"
                     }
                 ]
+            },
+            {
+                "color": "#f86684",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Mamimu-1.png"
+                    }
+                ]
             }
         ],
         "texts": [
