@@ -1028,7 +1028,7 @@
         </div>
     </div>
     <script type="text/javascript">
-        const background = { invalid: false, preloading: false, blocks: [], index: 0 };
+        const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0 };
 
         function shake(element) {
             element.animate([
@@ -1334,7 +1334,7 @@
                             animationQueue.splice(0);
 
                             if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
-                                const motion = background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)];
+                                const data = background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)];
                                 const blind = document.createElement("div");
                                 const timeout = 60 * 60;
                                 let index = 0;
@@ -1384,11 +1384,17 @@
                                     };
                                 });
 
-                                for (const frame of frames) {
+                                if ("color" in data) {
+                                    background.color = data.color;
+                                } else {
+                                    background.color = null;
+                                }
+
+                                for (const frame of data.frames) {
                                     const timestamp = Math.floor(new Date() / 1000);
 
                                     if (frame.source in cache === false || timestamp - cache[frame.source].timestamp >= timeout) {
-                                        const blob = await download(frame.source, index, frames.length);
+                                        const blob = await download(frame.source, index, data.frames.length);
                                         let image = null;
 
                                         if (blob !== null) {
@@ -1446,6 +1452,8 @@
                                 }).onfinish = () => {
                                     blind.remove();
                                 };
+                            } else {
+                                background.color = null;
                             }
 
                             const length = _random(8, 16);
@@ -1640,9 +1648,9 @@
 
                         backContext.imageSmoothingEnabled = true;
                         backContext.imageSmoothingQuality = "high";
-                        backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
                         backContext.textAlign = "left";
                         backContext.textBaseline = "middle";
+                        backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
                         backContext.save();
                         backContext.beginPath();
 
@@ -1715,7 +1723,13 @@
 
                         backContext.closePath();
                         backContext.globalCompositeOperation = "source-atop";
-                        backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
+
+                        if (background.color === null) {
+                            backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
+                        } else {
+                            backContext.fillStyle = background.color;
+                        }
+
                         backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
                         if (animationQueue.length > 0) {
