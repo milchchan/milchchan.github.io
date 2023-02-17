@@ -4088,12 +4088,6 @@ window.addEventListener("load", event => {
                                     const charArray = inline.letters;
                                     let randomBuffer = "";
 
-                                    for (let i = 0; i < inline.text.length; i++) {
-                                        if (charArray.indexOf(inline.text.charAt(i)) === -1 && inline.text.charAt(i) !== "\n" && inline.text.charAt(i).match(/\s/) === null) {
-                                            charArray.push(inline.text.charAt(i));
-                                        }
-                                    }
-
                                     if (charArray.length > 0) {
                                         for (let i = 0; i < inline.type.count; i++) {
                                             if (inline.text.charAt(i) === "\n") {
