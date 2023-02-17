@@ -1325,8 +1325,6 @@
                 let previousTime = performance.now();
 
                 async function render(timestamp) {
-                    requestAnimationFrame(render);
-
                     if (timestamp > previousTime) {
                         const deltaTime = (timestamp - previousTime) / 1000;
 
@@ -1701,6 +1699,8 @@
                         frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
                         frontContext.drawImage(backCanvas, 0, 0);
                     }
+                
+                    requestAnimationFrame(render);
                 }
 
                 requestAnimationFrame(render);
