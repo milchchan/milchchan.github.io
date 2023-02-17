@@ -457,19 +457,27 @@
             transition: 0.5s;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button :not(.icon.animatable) figure>picture>img {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon:not(.animatable) figure>picture>img {
             transform-origin: 50% 50%;
             transform: scale3d(1, 1, 1);
             transition: 0.5s ease-out;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button:hover :not(.icon.animatable) figure>picture>img {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon:not(.animatable) figure>picture>img {
             transform: scale3d(1.1, 1.1, 1);
             transition: 0.5s ease-in;
         }
 
+        div.sidebar>.level>.level-item>.level>.level-item .button .stack .icon {
+            position: absolute;
+            margin: 0% 0px 0px 50% !important;
+            transform-origin: 50% 50%;
+            transform: translate3d(-50%, 8px, 0) rotate(90deg);
+        }
+
         div.sidebar>.level>.level-item>.level>.level-item .button .wrap {
             position: relative;
+            display: flex;
             margin: 0;
             border-top: 2px solid transparent;
             border-bottom: 2px solid transparent;
@@ -480,20 +488,14 @@
             min-height: fit-content;
             box-sizing: border-box;
             overflow: hidden;
-            transition: 0.5s
+            justify-content: flex-start;
+            align-items: center;
+            transition: 0.5s;
         }
 
         div.sidebar>.level>.level-item>.level>.level-item .button.is-selected .wrap {
             border-bottom: 2px solid #000000;
             transition: 0.5s ease-in;
-        }
-
-        div.sidebar>.level>.level-item>.level>.level-item div.wrap {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            margin: 0;
-            height: calc(0.75rem * 1.5);
         }
 
         div.sidebar>.level>.level-item:last-child:not(:first-child) {
@@ -890,25 +892,27 @@
                                                 <div class="rotate">
                                                     <button class="button" type="button" onclick="select(event);"
                                                         data-type="Milch">
-                                                        <div class="wrap has-text-weight-bold">
-                                                            <div class="clip">
-                                                                <div class="scrollable">
-                                                                    <div>Milch</div>
-                                                                    <div>Milch</div>
+                                                        <div class="stack">
+                                                            <div class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>Milch</div>
+                                                                        <div>Milch</div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="icon animatable">
-                                                            <figure>
-                                                                <picture>
-                                                                    <source
-                                                                        srcset="/images/PixelatedLuna-Transformed-16.png 1x, /images/PixelatedLuna-Transformed-16@2x.png 2x, /images/PixelatedLuna-Transformed-16@3x.png 3x"
-                                                                        media="(prefers-color-scheme: dark)">
-                                                                    <img src="/images/PixelatedMilch-Transformed-16.png"
-                                                                        srcset="/images/PixelatedMilch-Transformed-16.png 1x, /images/PixelatedMilch-Transformed-16@2x.png 2x, /images/PixelatedMilch-Transformed-16@3x.png 3x"
-                                                                        alt="Milch">
-                                                                </picture>
-                                                            </figure>
+                                                            <div class="icon animatable">
+                                                                <figure>
+                                                                    <picture>
+                                                                        <source
+                                                                            srcset="/images/PixelatedLuna-Transformed-16.png 1x, /images/PixelatedLuna-Transformed-16@2x.png 2x, /images/PixelatedLuna-Transformed-16@3x.png 3x"
+                                                                            media="(prefers-color-scheme: dark)">
+                                                                        <img src="/images/PixelatedMilch-Transformed-16.png"
+                                                                            srcset="/images/PixelatedMilch-Transformed-16.png 1x, /images/PixelatedMilch-Transformed-16@2x.png 2x, /images/PixelatedMilch-Transformed-16@3x.png 3x"
+                                                                            alt="Milch">
+                                                                    </picture>
+                                                                </figure>
+                                                            </div>
                                                         </div>
                                                     </button>
                                                 </div>
@@ -926,22 +930,24 @@
                                                 <div class="rotate">
                                                     <button class="button" type="button" onclick="select(event);"
                                                         data-type="Merku">
-                                                        <div class="wrap has-text-weight-bold">
-                                                            <div class="clip">
-                                                                <div class="scrollable">
-                                                                    <div>Merku</div>
-                                                                    <div>Merku</div>
+                                                        <div class="stack">
+                                                            <div class="wrap has-text-weight-bold">
+                                                                <div class="clip">
+                                                                    <div class="scrollable">
+                                                                        <div>Merku</div>
+                                                                        <div>Merku</div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="icon animatable">
-                                                            <figure>
-                                                                <picture>
-                                                                    <img src="/images/PixelatedMilch-Transformed-16.png"
-                                                                        srcset="/images/PixelatedMerku-Transformed-16.png 1x, /images/PixelatedMerku-Transformed-16@2x.png 2x, /images/PixelatedMerku-Transformed-16@3x.png 3x"
-                                                                        alt="Merku">
-                                                                </picture>
-                                                            </figure>
+                                                            <div class="icon animatable">
+                                                                <figure>
+                                                                    <picture>
+                                                                        <img src="/images/PixelatedMilch-Transformed-16.png"
+                                                                            srcset="/images/PixelatedMerku-Transformed-16.png 1x, /images/PixelatedMerku-Transformed-16@2x.png 2x, /images/PixelatedMerku-Transformed-16@3x.png 3x"
+                                                                            alt="Merku">
+                                                                    </picture>
+                                                                </figure>
+                                                            </div>
                                                         </div>
                                                     </button>
                                                 </div>
@@ -1052,22 +1058,22 @@
 
             if ("dataset" in background) {
                 if ("type" in target.dataset) {
-                    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
-                        if ("type" in element.parentElement.dataset) {
-                            if (element.parentElement.dataset.type === target.dataset.type) {
+                    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
+                        if ("type" in element.dataset) {
+                            if (element.dataset.type === target.dataset.type) {
                                 const index = background.dataset.findIndex(x => x.type === target.dataset.type);
 
                                 if (index >= 0) {
                                     background.index = index;
                                     background.invalid = true;
-                                    element.parentElement.className = `${element.parentElement.className} is-selected`;
+                                    element.className = `${element.className} is-selected`;
                                 } else {
-                                    element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
+                                    element.className = element.className.replace(/is-selected/g, "").trim();
 
-                                    shake(target);
+                                    shake(target.querySelector(":scope .wrap"));
                                 }
                             } else {
-                                element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
+                                element.className = element.className.replace(/is-selected/g, "").trim();
                             }
                         }
                     }
@@ -1078,17 +1084,17 @@
                         background.index = index;
                         background.invalid = true;
                     } else {
-                        shake(target);
+                        shake(target.querySelector(":scope .wrap"));
                     }
 
-                    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
-                        if ("type" in element.parentElement.dataset) {
-                            element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
+                    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
+                        if ("type" in element.dataset) {
+                            element.className = element.className.replace(/is-selected/g, "").trim();
                         }
                     }
                 }
             } else {
-                shake(target);
+                shake(target.querySelector(":scope .wrap"));
             }
         }
 
@@ -1373,7 +1379,7 @@
 
                 async function render(timestamp) {
                     const startTime = performance.now();
-                    
+
                     if (timestamp > previousTime) {
                         const deltaTime = (timestamp - previousTime) / 1000;
 
@@ -1381,26 +1387,17 @@
 
                         if (background.invalid) {
                             for (const block of background.blocks) {
-                                let index = -1;
-
                                 for (let i = block.inlines.length - 1; i >= 0; i--) {
                                     if (block.inlines[i].running) {
                                         block.inlines[i].type.reverse = true;
-                                        index = i;
-
-                                        break;
                                     }
-                                }
-
-                                if (index === -1) {
-                                    block.inlines[block.inlines.length - 1].running = true;
                                 }
                             }
 
                             background.invalid = false;
                         }
 
-                        if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
+                        if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
                             background.image = null;
                             background.blocks.splice(0);
 
@@ -1498,7 +1495,7 @@
                                     height: 100 / samples.length,
                                     colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
                                     inlines: [
-                                        { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
+                                        { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
                                     ],
                                     elapsed: 0,
                                 });
@@ -1536,10 +1533,6 @@
                                             inline.type.elapsed = -1;
                                             inline.type.reverse = false;
                                             inline.running = false;
-
-                                            if (index - 1 >= 0) {
-                                                block.inlines[index - 1].running = true;
-                                            }
                                         }
                                     } else if (inline.type.buffer.length < inline.text.length) {
                                         if (inline.type.elapsed >= 0) {
@@ -1566,13 +1559,8 @@
                                     } else {
                                         inline.time += deltaTime;
 
-                                        if (inline.time >= inline.duration) {
+                                        if (inline.duration !== null && inline.time >= inline.duration) {
                                             inline.type.reverse = true;
-                                            inline.running = false;
-
-                                            if (index + 1 < block.inlines.length) {
-                                                block.inlines[index + 1].running = true;
-                                            }
                                         }
                                     }
 
@@ -1635,6 +1623,7 @@
                         const lineHeight = backCanvas.height / background.blocks.length;
                         const fontSize = Math.floor(lineHeight / 2);
                         const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
+                        let isRunning = false;
                         let index = 0;
 
                         backContext.imageSmoothingEnabled = true;
@@ -1647,7 +1636,7 @@
 
                         for (const block of background.blocks) {
                             for (const inline of block.inlines) {
-                                if (inline.characters.length > 0) {
+                                if (inline.running && inline.characters.length > 0) {
                                     const line = [{ text: inline.characters[0].value, highlight: inline.characters[0].highlight }];
                                     let width = 0;
                                     let offset = 0;
@@ -1706,49 +1695,53 @@
                                     } while (offset - margin < backCanvas.width * 2);
 
                                     backContext.restore();
+
+                                    isRunning = true;
                                 }
                             }
 
                             index++;
                         }
 
-                        backContext.closePath();
-                        backContext.globalCompositeOperation = "source-atop";
-                        backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
-                        backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
+                        if (isRunning) {
+                            backContext.closePath();
+                            backContext.globalCompositeOperation = "source-atop";
+                            backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
+                            backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
-                        if (background.image !== null) {
-                            const top = 0.25;
-                            const left = 0.5;
-                            const canvasAspect = backCanvas.width / backCanvas.height;
-                            const imageAspect = background.image.width / background.image.height;
-                            let sx, sy, sw, sh;
+                            if (background.image !== null) {
+                                const top = 0.25;
+                                const left = 0.5;
+                                const canvasAspect = backCanvas.width / backCanvas.height;
+                                const imageAspect = background.image.width / background.image.height;
+                                let sx, sy, sw, sh;
 
-                            if (canvasAspect > imageAspect) {
-                                const ratio = backCanvas.width / background.image.width;
+                                if (canvasAspect > imageAspect) {
+                                    const ratio = backCanvas.width / background.image.width;
 
-                                sx = 0;
-                                sy = (background.image.height * ratio - backCanvas.height) / ratio * top;
-                                sw = background.image.width;
-                                sh = backCanvas.height / ratio;
-                            } else {
-                                const ratio = backCanvas.height / background.image.height;
+                                    sx = 0;
+                                    sy = (background.image.height * ratio - backCanvas.height) / ratio * top;
+                                    sw = background.image.width;
+                                    sh = backCanvas.height / ratio;
+                                } else {
+                                    const ratio = backCanvas.height / background.image.height;
 
-                                sx = (background.image.width * ratio - backCanvas.width) / ratio * left;
-                                sy = 0;
-                                sw = backCanvas.width / ratio;
-                                sh = background.image.height;
+                                    sx = (background.image.width * ratio - backCanvas.width) / ratio * left;
+                                    sy = 0;
+                                    sw = backCanvas.width / ratio;
+                                    sh = background.image.height;
+                                }
+
+                                backContext.drawImage(background.image, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
                             }
 
-                            backContext.drawImage(background.image, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
+                            backContext.restore();
                         }
-
-                        backContext.restore();
 
                         frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
                         frontContext.drawImage(backCanvas, 0, 0);
                     }
-                
+
                     stats.frames++;
 
                     if (performance.now() - stats.time >= 1000) {
@@ -1756,7 +1749,7 @@
                         stats.time = performance.now();
                         stats.frames = 0;
                     }
-                    
+
                     requestAnimationFrame(render);
                 }
 
