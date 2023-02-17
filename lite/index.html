@@ -1304,7 +1304,7 @@
 
                     return null;
                 }
-                
+
                 for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path")) {
                     element.style.animationPlayState = "running";
                 }
@@ -1323,388 +1323,390 @@
                 animation.cancel();
 
                 let previousTime = performance.now();
-                
+
                 async function render(timestamp) {
-                    const deltaTime = Math.max((timestamp - previousTime) / 1000, 0);
+                    requestAnimationFrame(render);
 
-                    if (background.invalid) {
-                        for (const block of background.blocks) {
-                            let index = -1;
+                    if (timestamp > previousTime) {
+                        const deltaTime = (timestamp - previousTime) / 1000;
 
-                            for (let i = block.inlines.length - 1; i >= 0; i--) {
-                                if (block.inlines[i].running) {
-                                    block.inlines[i].type.reverse = true;
-                                    index = i;
+                        previousTime = timestamp;
 
-                                    break;
+                        if (background.invalid) {
+                            for (const block of background.blocks) {
+                                let index = -1;
+
+                                for (let i = block.inlines.length - 1; i >= 0; i--) {
+                                    if (block.inlines[i].running) {
+                                        block.inlines[i].type.reverse = true;
+                                        index = i;
+
+                                        break;
+                                    }
+                                }
+
+                                if (index === -1) {
+                                    block.inlines[block.inlines.length - 1].running = true;
                                 }
                             }
 
-                            if (index === -1) {
-                                block.inlines[block.inlines.length - 1].running = true;
-                            }
+                            background.invalid = false;
                         }
 
-                        background.invalid = false;
-                    }
+                        if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
+                            background.image = null;
+                            background.blocks.splice(0);
 
-                    if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
-                        background.image = null;
-                        background.blocks.splice(0);
+                            if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
+                                background.preloading = true;
 
-                        if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
-                            background.preloading = true;
+                                const blob = await download(background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)]);
 
-                            const blob = await download(background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)]);
+                                if (blob !== null) {
+                                    background.image = await new Promise(async (resolve, reject) => {
+                                        const i = new Image();
 
-                            if (blob !== null) {
-                                background.image = await new Promise(async (resolve, reject) => {
-                                    const i = new Image();
-
-                                    i.onload = () => {
-                                        resolve(i);
-                                    };
-                                    i.onerror = (e) => {
-                                        reject(e);
-                                    };
-
-                                    i.crossOrigin = "Anonymous";
-                                    i.src = await new Promise(async (resolve, reject) => {
-                                        const reader = new FileReader();
-
-                                        reader.onload = () => {
-                                            resolve(reader.result);
+                                        i.onload = () => {
+                                            resolve(i);
                                         };
-                                        reader.onerror = () => {
-                                            reject(reader.error);
+                                        i.onerror = (e) => {
+                                            reject(e);
                                         };
-                                        reader.readAsDataURL(blob);
+
+                                        i.crossOrigin = "Anonymous";
+                                        i.src = await new Promise(async (resolve, reject) => {
+                                            const reader = new FileReader();
+
+                                            reader.onload = () => {
+                                                resolve(reader.result);
+                                            };
+                                            reader.onerror = () => {
+                                                reject(reader.error);
+                                            };
+                                            reader.readAsDataURL(blob);
+                                        });
                                     });
+                                }
+
+                                background.preloading = false;
+                            }
+
+                            const length = _random(8, 16);
+                            let start = background.dataset[background.index].texts.length - length;
+                            let samples;
+
+                            if (start >= 0) {
+                                start = _random(0, start);
+                                samples = background.dataset[background.index].texts.slice(start, start + length);
+                            } else {
+                                samples = background.dataset[background.index].texts;
+                            }
+
+                            for (const sample of samples) {
+                                let text;
+                                const attributes = [];
+                                const source = [];
+                                const letters = [];
+
+                                if (typeof (sample) === "string") {
+                                    text = sample.replace("\n", "");
+                                    source.push(text);
+                                } else {
+                                    text = Object.keys(sample).sort((x, y) => x - y).reduce((x, y) => {
+                                        if (typeof (sample[y]) === "string") {
+                                            const s = sample[y].replace("\n", "");
+
+                                            x.text += s;
+
+                                            if (x.source.length > 0 && typeof (x.source[x.source.length - 1]) === "string") {
+                                                x.source[x.source.length - 1] += s;
+                                            } else {
+                                                x.source.push(s);
+                                            }
+                                        } else if (Array.isArray(sample[y])) {
+                                            const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace("\n", ""), "");
+
+                                            x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
+                                            x.text += s;
+                                            x.source.push({ name: s });
+                                        } else {
+                                            const text = sample[y].name.replace("\n", "");
+
+                                            x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
+                                            x.text += text;
+                                            x.source.push({ name: text });
+                                        }
+
+                                        return x;
+                                    }, { text: "", attributes: attributes, source: source }).text;
+                                }
+
+                                for (let i = 0; i < text.length; i++) {
+                                    if (letters.indexOf(text.charAt(i)) === -1 && text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
+                                        letters.push(text.charAt(i));
+                                    }
+                                }
+
+                                background.blocks.push({
+                                    height: 100 / samples.length,
+                                    colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
+                                    inlines: [
+                                        { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
+                                    ],
+                                    elapsed: 0,
                                 });
                             }
-
-                            background.preloading = false;
                         }
 
-                        const length = _random(8, 16);
-                        let start = background.dataset[background.index].texts.length - length;
-                        let samples;
+                        for (const block of background.blocks) {
+                            let index = 0;
 
-                        if (start >= 0) {
-                            start = _random(0, start);
-                            samples = background.dataset[background.index].texts.slice(start, start + length);
-                        } else {
-                            samples = background.dataset[background.index].texts;
-                        }
+                            for (const inline of block.inlines) {
+                                if (inline.running) {
+                                    if (inline.type.reverse) {
+                                        if (inline.type.count > 0) {
+                                            inline.type.elapsed += deltaTime * 2;
 
-                        for (const sample of samples) {
-                            let text;
-                            const attributes = [];
-                            const source = [];
-                            const letters = [];
+                                            if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                                                let index = inline.type.count - 1;
 
-                            if (typeof (sample) === "string") {
-                                text = sample.replace("\n", "");
-                                source.push(text);
-                            } else {
-                                text = Object.keys(sample).sort((x, y) => x - y).reduce((x, y) => {
-                                    if (typeof (sample[y]) === "string") {
-                                        const s = sample[y].replace("\n", "");
+                                                if (index < inline.text.length) {
+                                                    const width = Math.floor(inline.text.length / 2);
 
-                                        x.text += s;
+                                                    if (inline.type.buffer.length <= width && inline.type.count > 0) {
+                                                        inline.type.count -= 1;
+                                                    }
 
-                                        if (x.source.length > 0 && typeof (x.source[x.source.length - 1]) === "string") {
-                                            x.source[x.source.length - 1] += s;
+                                                    if (inline.type.buffer.length > 0) {
+                                                        inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
+                                                    }
+                                                }
+
+                                                inline.type.elapsed = 0;
+                                            }
                                         } else {
-                                            x.source.push(s);
+                                            inline.time = 0;
+                                            inline.type.elapsed = -1;
+                                            inline.type.reverse = false;
+                                            inline.running = false;
+
+                                            if (index - 1 >= 0) {
+                                                block.inlines[index - 1].running = true;
+                                            }
                                         }
-                                    } else if (Array.isArray(sample[y])) {
-                                        const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace("\n", ""), "");
-
-                                        x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
-                                        x.text += s;
-                                        x.source.push({ name: s });
-                                    } else {
-                                        const text = sample[y].name.replace("\n", "");
-
-                                        x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
-                                        x.text += text;
-                                        x.source.push({ name: text });
-                                    }
-
-                                    return x;
-                                }, { text: "", attributes: attributes, source: source }).text;
-                            }
-
-                            for (let i = 0; i < text.length; i++) {
-                                if (letters.indexOf(text.charAt(i)) === -1 && text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
-                                    letters.push(text.charAt(i));
-                                }
-                            }
-
-                            background.blocks.push({
-                                height: 100 / samples.length,
-                                colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
-                                inlines: [
-                                    { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
-                                ],
-                                elapsed: 0,
-                            });
-                        }
-                    }
-
-                    for (const block of background.blocks) {
-                        let index = 0;
-
-                        for (const inline of block.inlines) {
-                            if (inline.running) {
-                                if (inline.type.reverse) {
-                                    if (inline.type.count > 0) {
-                                        inline.type.elapsed += deltaTime * 2;
+                                    } else if (inline.type.buffer.length < inline.text.length) {
+                                        if (inline.type.elapsed >= 0) {
+                                            inline.type.elapsed += deltaTime;
+                                        } else {
+                                            inline.type.elapsed = deltaTime;
+                                        }
 
                                         if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                                            let index = inline.type.count - 1;
+                                            const index = inline.type.buffer.length;
+                                            const width = Math.floor(inline.text.length / 2);
+                                            const length = inline.text.length;
 
-                                            if (index < inline.text.length) {
-                                                const width = Math.floor(inline.text.length / 2);
+                                            if (inline.type.count >= width) {
+                                                inline.type.buffer += inline.text.charAt(index);
+                                            }
 
-                                                if (inline.type.buffer.length <= width && inline.type.count > 0) {
-                                                    inline.type.count -= 1;
-                                                }
-
-                                                if (inline.type.buffer.length > 0) {
-                                                    inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
-                                                }
+                                            if (inline.type.count < length) {
+                                                inline.type.count += 1;
                                             }
 
                                             inline.type.elapsed = 0;
                                         }
                                     } else {
-                                        inline.time = 0;
-                                        inline.type.elapsed = -1;
-                                        inline.type.reverse = false;
-                                        inline.running = false;
+                                        inline.time += deltaTime;
 
-                                        if (index - 1 >= 0) {
-                                            block.inlines[index - 1].running = true;
-                                        }
-                                    }
-                                } else if (inline.type.buffer.length < inline.text.length) {
-                                    if (inline.type.elapsed >= 0) {
-                                        inline.type.elapsed += deltaTime;
-                                    } else {
-                                        inline.type.elapsed = deltaTime;
-                                    }
+                                        if (inline.time >= inline.duration) {
+                                            inline.type.reverse = true;
+                                            inline.running = false;
 
-                                    if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                                        const index = inline.type.buffer.length;
-                                        const width = Math.floor(inline.text.length / 2);
-                                        const length = inline.text.length;
-
-                                        if (inline.type.count >= width) {
-                                            inline.type.buffer += inline.text.charAt(index);
-                                        }
-
-                                        if (inline.type.count < length) {
-                                            inline.type.count += 1;
-                                        }
-
-                                        inline.type.elapsed = 0;
-                                    }
-                                } else {
-                                    inline.time += deltaTime;
-
-                                    if (inline.time >= inline.duration) {
-                                        inline.type.reverse = true;
-                                        inline.running = false;
-
-                                        if (index + 1 < block.inlines.length) {
-                                            block.inlines[index + 1].running = true;
-                                        }
-                                    }
-                                }
-
-                                if (inline.text.length === inline.type.buffer.length) {
-                                    const characters = inline.text.split("");
-
-                                    inline.characters.splice(0);
-
-                                    for (let i = 0; i < characters.length; i++) {
-                                        inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
-                                    }
-                                } else {
-                                    const charArray = inline.letters;
-                                    let randomBuffer = "";
-
-                                    for (let i = 0; i < inline.text.length; i++) {
-                                        if (charArray.indexOf(inline.text.charAt(i)) === -1 && inline.text.charAt(i) !== "\n" && inline.text.charAt(i).match(/\s/) === null) {
-                                            charArray.push(inline.text.charAt(i));
-                                        }
-                                    }
-
-                                    if (charArray.length > 0) {
-                                        for (let i = 0; i < inline.type.count; i++) {
-                                            if (inline.text.charAt(i) === "\n") {
-                                                randomBuffer += "\n";
-                                            } else {
-                                                randomBuffer += charArray[~~_random(0, charArray.length)];
+                                            if (index + 1 < block.inlines.length) {
+                                                block.inlines[index + 1].running = true;
                                             }
                                         }
                                     }
 
-                                    if (randomBuffer.length > inline.type.buffer.length) {
-                                        const characters = (inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length)).split("");
+                                    if (inline.text.length === inline.type.buffer.length) {
+                                        const characters = inline.text.split("");
 
                                         inline.characters.splice(0);
 
                                         for (let i = 0; i < characters.length; i++) {
                                             inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
                                         }
-                                    } else if (inline.characters.length !== inline.type.buffer.length) {
-                                        const characters = inline.type.buffer.split("");
+                                    } else {
+                                        const charArray = inline.letters;
+                                        let randomBuffer = "";
 
-                                        inline.characters.splice(0);
+                                        for (let i = 0; i < inline.text.length; i++) {
+                                            if (charArray.indexOf(inline.text.charAt(i)) === -1 && inline.text.charAt(i) !== "\n" && inline.text.charAt(i).match(/\s/) === null) {
+                                                charArray.push(inline.text.charAt(i));
+                                            }
+                                        }
 
-                                        for (let i = 0; i < characters.length; i++) {
-                                            inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                        if (charArray.length > 0) {
+                                            for (let i = 0; i < inline.type.count; i++) {
+                                                if (inline.text.charAt(i) === "\n") {
+                                                    randomBuffer += "\n";
+                                                } else {
+                                                    randomBuffer += charArray[~~_random(0, charArray.length)];
+                                                }
+                                            }
+                                        }
+
+                                        if (randomBuffer.length > inline.type.buffer.length) {
+                                            const characters = (inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length)).split("");
+
+                                            inline.characters.splice(0);
+
+                                            for (let i = 0; i < characters.length; i++) {
+                                                inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                            }
+                                        } else if (inline.characters.length !== inline.type.buffer.length) {
+                                            const characters = inline.type.buffer.split("");
+
+                                            inline.characters.splice(0);
+
+                                            for (let i = 0; i < characters.length; i++) {
+                                                inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                            }
                                         }
                                     }
+                                }
+
+                                index++;
+                            }
+
+                            block.elapsed += deltaTime;
+                        }
+
+                        const backCanvas = canvas.backBuffer;
+
+                        backCanvas.width = canvas.width;
+                        backCanvas.height = canvas.height;
+
+                        const backContext = backCanvas.getContext("2d");
+                        const frontContext = canvas.getContext("2d");
+                        const margin = 16;
+                        const lineHeight = backCanvas.height / background.blocks.length;
+                        const fontSize = Math.floor(lineHeight / 2);
+                        const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
+                        let index = 0;
+
+                        backContext.imageSmoothingEnabled = true;
+                        backContext.imageSmoothingQuality = "high";
+                        backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+                        backContext.textAlign = "left";
+                        backContext.textBaseline = "middle";
+                        backContext.save();
+                        backContext.beginPath();
+
+                        for (const block of background.blocks) {
+                            for (const inline of block.inlines) {
+                                if (inline.characters.length > 0) {
+                                    const line = [{ text: inline.characters[0].value, highlight: inline.characters[0].highlight }];
+                                    let width = 0;
+                                    let offset = 0;
+
+                                    for (let i = 1; i < inline.characters.length; i++) {
+                                        if (inline.characters[i].highlight) {
+                                            if (line[line.length - 1].highlight) {
+                                                line[line.length - 1].text += inline.characters[i].value;
+                                            } else {
+                                                line.push({ text: inline.characters[i].value, highlight: true });
+                                            }
+                                        } else if (line[line.length - 1].highlight) {
+                                            line.push({ text: inline.characters[i].value, highlight: false });
+                                        } else {
+                                            line[line.length - 1].text += inline.characters[i].value;
+                                        }
+                                    }
+
+                                    backContext.save();
+                                    backContext.font = `${fontSize}px ${fontFamily}`;
+
+                                    for (const s of inline.source) {
+                                        const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+
+                                        width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                    }
+
+                                    backContext.translate(block.elapsed % 60 / 60 * -width, 0);
+
+                                    do {
+                                        for (let i = 0; i < 2; i++) {
+                                            let x = 0;
+
+                                            for (const segment of line) {
+                                                if (segment.highlight) {
+                                                    backContext.globalAlpha = 1.0;
+                                                    backContext.fillStyle = `${block.colors.accent}`;
+                                                } else {
+                                                    backContext.globalAlpha = 1.0;
+                                                    backContext.fillStyle = `${block.colors.main}`;
+                                                }
+
+                                                const textMetrics = backContext.measureText(segment.text);
+
+                                                backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
+
+                                                x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                            }
+
+                                            for (const s of inline.source) {
+                                                const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+
+                                                offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                            }
+                                        }
+                                    } while (offset - margin < backCanvas.width * 2);
+
+                                    backContext.restore();
                                 }
                             }
 
                             index++;
                         }
 
-                        block.elapsed += deltaTime;
-                    }
+                        backContext.closePath();
+                        backContext.globalCompositeOperation = "source-atop";
+                        backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
+                        backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
-                    const backCanvas = canvas.backBuffer;
+                        if (background.image !== null) {
+                            const top = 0.25;
+                            const left = 0.5;
+                            const canvasAspect = backCanvas.width / backCanvas.height;
+                            const imageAspect = background.image.width / background.image.height;
+                            let sx, sy, sw, sh;
 
-                    backCanvas.width = canvas.width;
-                    backCanvas.height = canvas.height;
+                            if (canvasAspect > imageAspect) {
+                                const ratio = backCanvas.width / background.image.width;
 
-                    const backContext = backCanvas.getContext("2d");
-                    const frontContext = canvas.getContext("2d");
-                    const margin = 16;
-                    const lineHeight = backCanvas.height / background.blocks.length;
-                    const fontSize = Math.floor(lineHeight / 2);
-                    const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
-                    let index = 0;
+                                sx = 0;
+                                sy = (background.image.height * ratio - backCanvas.height) / ratio * top;
+                                sw = background.image.width;
+                                sh = backCanvas.height / ratio;
+                            } else {
+                                const ratio = backCanvas.height / background.image.height;
 
-                    backContext.imageSmoothingEnabled = true;
-                    backContext.imageSmoothingQuality = "high";
-                    backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
-                    backContext.textAlign = "left";
-                    backContext.textBaseline = "middle";
-                    backContext.save();
-                    backContext.beginPath();
-
-                    for (const block of background.blocks) {
-                        for (const inline of block.inlines) {
-                            if (inline.characters.length > 0) {
-                                const line = [{ text: inline.characters[0].value, highlight: inline.characters[0].highlight }];
-                                let width = 0;
-                                let offset = 0;
-
-                                for (let i = 1; i < inline.characters.length; i++) {
-                                    if (inline.characters[i].highlight) {
-                                        if (line[line.length - 1].highlight) {
-                                            line[line.length - 1].text += inline.characters[i].value;
-                                        } else {
-                                            line.push({ text: inline.characters[i].value, highlight: true });
-                                        }
-                                    } else if (line[line.length - 1].highlight) {
-                                        line.push({ text: inline.characters[i].value, highlight: false });
-                                    } else {
-                                        line[line.length - 1].text += inline.characters[i].value;
-                                    }
-                                }
-
-                                backContext.save();
-                                backContext.font = `${fontSize}px ${fontFamily}`;
-
-                                for (const s of inline.source) {
-                                    const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
-
-                                    width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
-                                }
-
-                                backContext.translate(block.elapsed % 60 / 60 * -width, 0);
-
-                                do {
-                                    for (let i = 0; i < 2; i++) {
-                                        let x = 0;
-
-                                        for (const segment of line) {
-                                            if (segment.highlight) {
-                                                backContext.globalAlpha = 1.0;
-                                                backContext.fillStyle = `${block.colors.accent}`;
-                                            } else {
-                                                backContext.globalAlpha = 1.0;
-                                                backContext.fillStyle = `${block.colors.main}`;
-                                            }
-
-                                            const textMetrics = backContext.measureText(segment.text);
-
-                                            backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
-
-                                            x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
-                                        }
-
-                                        for (const s of inline.source) {
-                                            const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
-
-                                            offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
-                                        }
-                                    }
-                                } while (offset - margin < backCanvas.width * 2);
-
-                                backContext.restore();
+                                sx = (background.image.width * ratio - backCanvas.width) / ratio * left;
+                                sy = 0;
+                                sw = backCanvas.width / ratio;
+                                sh = background.image.height;
                             }
+
+                            backContext.drawImage(background.image, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
                         }
 
-                        index++;
+                        backContext.restore();
+
+                        frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+                        frontContext.drawImage(backCanvas, 0, 0);
                     }
-
-                    backContext.closePath();
-                    backContext.globalCompositeOperation = "source-atop";
-                    backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
-                    backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
-
-                    if (background.image !== null) {
-                        const top = 0.25;
-                        const left = 0.5;
-                        const canvasAspect = backCanvas.width / backCanvas.height;
-                        const imageAspect = background.image.width / background.image.height;
-                        let sx, sy, sw, sh;
-
-                        if (canvasAspect > imageAspect) {
-                            const ratio = backCanvas.width / background.image.width;
-
-                            sx = 0;
-                            sy = (background.image.height * ratio - backCanvas.height) / ratio * top;
-                            sw = background.image.width;
-                            sh = backCanvas.height / ratio;
-                        } else {
-                            const ratio = backCanvas.height / background.image.height;
-
-                            sx = (background.image.width * ratio - backCanvas.width) / ratio * left;
-                            sy = 0;
-                            sw = backCanvas.width / ratio;
-                            sh = background.image.height;
-                        }
-
-                        backContext.drawImage(background.image, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
-                    }
-
-                    backContext.restore();
-
-                    frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
-                    frontContext.drawImage(backCanvas, 0, 0);
-
-                    previousTime = timestamp;
-
-                    requestAnimationFrame(render);
                 }
 
                 requestAnimationFrame(render);
