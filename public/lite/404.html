@@ -19,6 +19,8 @@
     :root {
       --background-color: #ffffff;
       --foreground-color: #000000;
+      --light-background-image: images/404.png;
+      --dark-background-image: images/Omr.png;
     }
 
     html {
@@ -186,7 +188,7 @@
       background.style.transform = "scale3d(1.0, 1.0, 1.0)";
 
       try {
-        const response = await fetch(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "/images/Omr.png" : "/images/404.png");
+        const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "--dark-background-image" : "--light-background-image"));
 
         if (response.ok) {
           const blob = await response.blob();
