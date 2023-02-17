@@ -1409,12 +1409,12 @@
                                 const letters = [];
 
                                 if (typeof (sample) === "string") {
-                                    text = sample.replace("\n", "");
+                                    text = sample.replace(/\r?\n/g, "");
                                     source.push(text);
                                 } else {
                                     text = Object.keys(sample).sort((x, y) => x - y).reduce((x, y) => {
                                         if (typeof (sample[y]) === "string") {
-                                            const s = sample[y].replace("\n", "");
+                                            const s = sample[y].replace(/\r?\n/g, "");
 
                                             x.text += s;
 
@@ -1424,13 +1424,13 @@
                                                 x.source.push(s);
                                             }
                                         } else if (Array.isArray(sample[y])) {
-                                            const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace("\n", ""), "");
+                                            const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace(/\r?\n/g, ""), "");
 
                                             x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
                                             x.text += s;
                                             x.source.push({ name: s });
                                         } else {
-                                            const text = sample[y].name.replace("\n", "");
+                                            const text = sample[y].name.replace(/\r?\n/g, "");
 
                                             x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
                                             x.text += text;
