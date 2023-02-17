@@ -1,0 +1,1722 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-617KR1WTYP');
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#ffffff">
+    <meta property="og:title" content="ミルヒちゃん">
+    <meta property="og:description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://milchchan.com/">
+    <meta property="og:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:site" content="@milchchan">
+    <meta property="twitter:title" content="ミルヒちゃん">
+    <meta property="twitter:description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta property="twitter:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:url" content="https://milchchan.com/">
+    <title>ミルヒちゃん</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/75ab01b762.js" crossorigin="anonymous"></script>
+    <style type="text/css">
+        :root {
+            --background-color: #ffffff;
+            --foreground-color: #68e6ff;
+            --accent-color: #fecde2;
+            --background-font-family: "Dela Gothic One", cursive;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --foreground-color: #c1aee6;
+            }
+        }
+
+        html {
+            touch-action: manipulation;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            height: -webkit-fill-available;
+            overflow-x: hidden;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background: var(--background-color);
+            transition: 0.5s;
+            overscroll-behavior-x: none;
+            overscroll-behavior-y: none;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        a,
+        a:focus,
+        a:link,
+        a:visited,
+        a:hover,
+        a:active {
+            outline: none;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        a .scrollable,
+        button .scrollable,
+        label .scrollable {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, 0%, 0);
+            transition: 0.5s ease-in;
+        }
+
+        a .scrollable:hover,
+        button .scrollable:hover,
+        label .scrollable:hover {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, -50%, 0);
+            transition: 0.5s ease-out;
+        }
+
+        a .scrollable>div,
+        button .scrollable>div,
+        label .scrollable>div {
+            box-sizing: content-box;
+            vertical-align: middle;
+        }
+
+        figure {
+            margin: 0;
+            padding: 0;
+        }
+
+        .is-superellips {
+            transform: rotate(-19deg);
+        }
+
+        .is-superellips>figure {
+            z-index: 1;
+            position: relative;
+            border-radius: 43% 57% 43% 57% / 57% 43% 57% 43% !important;
+            overflow: hidden !important;
+            width: fit-content;
+            height: fit-content;
+        }
+
+        .is-superellips>figure>picture {
+            display: block;
+            transform: rotate(19deg);
+        }
+
+        .has-text-weight-bold {
+            font-weight: bold;
+        }
+
+        .sidebar a .scrollable:hover,
+        .sidebar button .scrollable:hover,
+        .sidebar label .scrollable:hover {
+            transform: translate3d(-100%, 0%, 0);
+        }
+
+        .progress {
+            pointer-events: none;
+            z-index: 1;
+            position: absolute;
+            margin: 0 !important;
+            border: 0px solid transparent;
+            border-radius: 0px;
+            padding: 0;
+            width: 100%;
+            height: fit-content;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            backface-visibility: hidden;
+            background: transparent;
+            touch-action: none;
+        }
+
+        .progress>.bar {
+            pointer-events: none;
+            z-index: 1;
+            position: relative;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            border: 0px solid transparent;
+            border-radius: 0px;
+            width: 100%;
+            height: 2px;
+            transform: translate3d(0, 0%, 0);
+            overflow: hidden;
+            background: url('/images/Stripes.png') 0 0 repeat;
+            background-color: #ffee00;
+            background-size: 24px 24px;
+            animation: progress 1s linear forwards infinite;
+            animation-play-state: paused;
+            transition: .5s;
+            backface-visibility: hidden;
+            perspective: 1000;
+        }
+
+        .progress>.bar.animating {
+            animation-play-state: running;
+        }
+
+        .blind {
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            transform: translate3d(0, 0%, 0);
+            overflow: hidden;
+            background: url('/images/Background.png') 0 0 repeat;
+            background-color: rgb(247, 248, 248);
+            background-size: 100px 100px;
+            animation: loop 10s linear forwards infinite;
+            transition: .5s;
+            backface-visibility: hidden;
+            perspective: 1000;
+        }
+
+        .wall {
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .wall>canvas {
+            background: transparent;
+        }
+
+        .wall::before {
+            z-index: -1;
+            pointer-events: none;
+            position: absolute;
+            opacity: 1;
+            background: transparent;
+            width: 100%;
+            min-height: 100%;
+            content: "";
+        }
+
+        .container {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 100% !important;
+            height: 100%;
+        }
+
+        #app {
+            position: absolute;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #app>.container {
+            position: absolute;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            left: 0px;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            margin: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+            padding: 0;
+            background: transparent;
+            transition: .5s;
+        }
+
+        #app>.container>.wrap {
+            box-sizing: border-box;
+            position: relative;
+            margin: 0;
+            border-radius: 0px;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        #app>.container>.wrap>.frame {
+            box-sizing: border-box;
+            position: relative;
+            margin: 0;
+            border-radius: 0px;
+            padding: 0;
+            width: 100%;
+            max-width: 100% !important;
+            height: 100%;
+            background: rgb(247, 248, 248);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            position: relative;
+            padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 0px);
+            width: fit-content;
+            height: 100%;
+            background: transparent;
+            transition: 0.5s;
+        }
+
+        .sidebar>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .sidebar>.level>.level-item:first-child {
+            display: flex;
+            top: 0;
+            margin: 0;
+            padding: 16px 0px 16px 0px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 48px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item {
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item>.wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            width: 48px;
+            height: fit-content;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item>.wrapper>hr {
+            border-width: 0;
+            margin: 32px 0px 32px 0px;
+            padding: 0;
+            width: 16px;
+            height: 1px;
+            background-color: #000000;
+            text-align: center !important;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            border: 0px solid transparent;
+            background: transparent;
+            background-clip: padding-box;
+            line-height: calc(0.75rem * 1.5);
+            backface-visibility: hidden;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+            height: 48px;
+            cursor: pointer;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .clip {
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.75rem * 1.5);
+            transform: translate(0px, -1px);
+            box-sizing: border-box;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 0px -4px 0px -4px !important;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable div {
+            display: flex;
+            align-items: center;
+            margin: 0px 4px 0px 4px !important;
+            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+            font-size: 0.75rem !important;
+            transform: rotate(0.03deg) !important;
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+            vertical-align: middle;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .clip .scrollable div:last-child:not(:first-child) {
+            position: absolute;
+            left: 100%;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            color: #000000;
+            width: fit-content;
+            height: fit-content;
+            transform: rotate(90deg);
+            transition: 0.5s;
+            line-height: 0;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure {
+            transform-origin: 50% 50%;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon figure>picture {
+            display: block;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon:first-child+div {
+            margin: 0px 0px 0px 16px;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon:not(:first-of-type) {
+            margin: 0px 0px 0px 16px;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button:hover .icon {
+            opacity: 0.5;
+            transition: 0.5s;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button :not(.icon.animatable) figure>picture>img {
+            transform-origin: 50% 50%;
+            transform: scale3d(1, 1, 1);
+            transition: 0.5s ease-out;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button:hover :not(.icon.animatable) figure>picture>img {
+            transform: scale3d(1.1, 1.1, 1);
+            transition: 0.5s ease-in;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .wrap {
+            position: relative;
+            margin: 0;
+            border-top: 2px solid transparent;
+            border-bottom: 2px solid transparent;
+            color: #000000;
+            transition: 0.5s;
+            width: fit-content;
+            height: fit-content;
+            min-height: fit-content;
+            box-sizing: border-box;
+            overflow: hidden;
+            transition: 0.5s
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button.is-selected .wrap {
+            border-bottom: 2px solid #000000;
+            transition: 0.5s ease-in;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item div.wrap {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin: 0;
+            height: calc(0.75rem * 1.5);
+        }
+
+        .sidebar>.level>.level-item:last-child:not(:first-child) {
+            position: absolute;
+            bottom: 0;
+            margin: 0;
+            padding: 0px 0px 16px 0px;
+        }
+
+        .sidebar>.level>.level-item:last-child:not(:first-child) .image>button {
+            margin: 0;
+            border: 0px solid transparent;
+            padding: 0;
+            background: transparent;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path {
+            fill: #000000;
+            fill-opacity: 0;
+            stroke: #000000;
+            stroke-opacity: 1;
+            stroke-width: 1;
+            stroke-dasharray: 250;
+            stroke-dashoffset: 250;
+            animation: draw 1s linear forwards;
+            animation-play-state: paused;
+            opacity: 1;
+            transition: 0.5s;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button:hover .wrap svg g:nth-child(odd)>path {
+            fill: var(--accent-color);
+            stroke: var(--accent-color);
+            transition: 0.5s;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button:hover .wrap svg g:nth-child(even)>path {
+            fill: var(--foreground-color);
+            stroke: var(--foreground-color);
+            transition: 0.5s;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            overflow: hidden;
+            width: 16px;
+            height: 16px;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture {
+            margin-left: 0%;
+            width: auto;
+            height: 100%;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button:hover .icon.animatable>figure>picture,
+        .sidebar>.level>.level-item>.level>.level-item .button.is-selected .icon.animatable>figure>picture {
+            animation: frame 1.33s steps(4) infinite forwards;
+        }
+
+        .sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture>img {
+            object-fit: none;
+            object-position: 0% 0%;
+            width: 100%;
+            height: 100%;
+        }
+
+        .rotation-wrapper-outer {
+            display: table;
+        }
+
+        .rotation-wrapper-outer .rotation-wrapper-inner {
+            padding: 50% 0;
+            height: 0;
+        }
+
+        .rotation-wrapper-outer .rotation-wrapper-inner .rotate {
+            display: block;
+            transform-origin: top left;
+            transform: rotate(-90deg) translate(-100%);
+            margin-top: -50%;
+            white-space: nowrap;
+        }
+
+        div.center {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            padding: 0;
+            transform: translate(-50%, 50%);
+            width: fit-content;
+            height: fit-content;
+        }
+
+        div.top {
+            position: absolute;
+            top: 0%;
+            right: 0%;
+            padding: 16px 16px 16px 0px;
+            width: fit-content;
+            height: fit-content;
+        }
+
+        div.center>.level,
+        div.top>.level {
+            display: flex;
+            margin: -8px;
+            padding: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        div.center>.level>.level-item,
+        div.top>.level>.level-item {
+            margin: 0;
+            padding: 8px;
+            flex-shrink: 0;
+        }
+
+        div.center>.level>.level-item>.level,
+        div.top>.level>.level-item>.level {
+            display: flex;
+            margin: -8px;
+            padding: 0;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        div.center>.level>.level-item>.level>.level-item,
+        div.top>.level>.level-item>.level>.level-item {
+            margin: 0;
+            padding: 8px;
+            flex-shrink: 0;
+        }
+
+        div.center .button,
+        div.top .button {
+            margin: 0px;
+            border: 0px none transparent !important;
+            padding: 16px 32px 16px 32px;
+            background: #ffffff;
+            background-clip: padding-box !important;
+            height: initial;
+            transition: 0.5s;
+        }
+
+        div.center .button.is-circle,
+        div.top .button.is-circle {
+            display: flex;
+            margin: 0px;
+            border-radius: 290486px !important;
+            padding: 4px !important;
+            width: 24px;
+            height: 24px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        div.center .icon,
+        div.top .icon {
+            display: flex;
+            margin: 0;
+            width: 16px;
+            height: 16px;
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+            transition: .5s;
+        }
+
+        div.center .button:hover .icon,
+        div.top .button:hover .icon {
+            opacity: 0.5;
+            transition: .5s;
+        }
+
+        @keyframes progress {
+            0% {
+                background-position: 0px 0px;
+            }
+
+            100% {
+                background-position: -24px 0px;
+            }
+        }
+
+        @keyframes draw {
+            50% {
+                stroke-opacity: 1;
+                stroke-dashoffset: 0;
+                fill-opacity: 0;
+            }
+
+            to {
+                stroke-opacity: 0;
+                stroke-dashoffset: 0;
+                fill-opacity: 1;
+            }
+        }
+
+        @keyframes loop {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: -100px 0px;
+            }
+        }
+
+        @keyframes frame {
+            0% {
+                margin-left: 0%;
+            }
+
+            100% {
+                margin-left: -400%;
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 2dppx) {
+            .progress>.bar {
+                background: url('/images/Stripes@2x.png') 0 0 repeat;
+                background-color: #ffee00;
+                background-size: 24px 24px;
+            }
+
+            .blind {
+                background: url('/images/Background@2x.png') 0 0 repeat;
+                background-color: rgb(247, 248, 248);
+                background-size: 100px 100px;
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio: 3),
+        (min-resolution: 3dppx) {
+            .progress>.bar {
+                background: url('/images/Stripes@3x.png') 0 0 repeat;
+                background-color: #ffee00;
+                background-size: 24px 24px;
+            }
+
+            .blind {
+                background: url('/images/Background@3x.png') 0 0 repeat;
+                background-color: rgb(247, 248, 248);
+                background-size: 100px 100px;
+            }
+        }
+
+        @media screen and (min-width: 769px) {
+            #app>.container>.wrap {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="wrap">
+                <div class="frame">
+                    <div class="wall"></div>
+                    <div class="sidebar">
+                        <div class="level">
+                            <div class="level-item">
+                                <div class="level">
+                                    <div class="level-item">
+                                        <div class="rotation-wrapper-outer">
+                                            <div class="rotation-wrapper-inner">
+                                                <div class="rotate">
+                                                    <button class="button" type="button" onclick="select(event);">
+                                                        <div class="wrap">
+                                                            <svg width="136px" height="16px" viewBox="0 0 136 16"
+                                                                version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                xml:space="preserve" xmlns:serif="http://www.serif.com/"
+                                                                style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                                                                <g
+                                                                    transform="matrix(0.333222,0,0,0.333222,-20.2079,-152.502)">
+                                                                    <g transform="matrix(1,0,0,1,450.229,463.965)">
+                                                                        <path
+                                                                            d="M0,38.429C-3.95,34.613 -7.767,30.997 -11.517,27.047C-11.717,26.646 -12.319,27.248 -12.119,27.716L-8.303,33.609C-9.307,38.229 -13.658,41.71 -18.681,41.71C-24.572,41.71 -29.393,37.023 -29.393,30.997L-29.393,4.616C-29.393,-1.208 -24.572,-6.094 -18.681,-6.094C-15.466,-6.094 -12.521,-4.354 -10.512,-2.345L0.401,8.366C0.603,8.769 1.205,8.366 1.004,7.966L-2.946,2.207C-1.941,-2.345 2.41,-6.094 7.365,-6.094C13.324,-6.094 18.145,-1.208 18.145,4.616L18.145,30.997C18.145,41.308 6.025,44.523 0,38.429"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                    <g transform="matrix(1,0,0,1,402.059,484.755)">
+                                                                        <path
+                                                                            d="M0,-6.242L-2.539,-3.767L-1.939,-0.273C-1.854,0.219 -2.058,0.715 -2.461,1.008C-2.689,1.174 -2.96,1.259 -3.231,1.259C-3.44,1.259 -3.649,1.208 -3.841,1.108L-6.979,-0.541L-10.117,1.108C-10.559,1.34 -11.093,1.302 -11.497,1.008C-11.9,0.715 -12.103,0.219 -12.019,-0.273L-11.419,-3.767L-13.958,-6.242C-14.315,-6.591 -14.443,-7.11 -14.289,-7.585C-14.135,-8.059 -13.725,-8.405 -13.231,-8.476L-9.724,-8.987L-8.154,-12.166C-7.934,-12.613 -7.478,-12.895 -6.979,-12.895C-6.479,-12.895 -6.024,-12.613 -5.804,-12.166L-4.235,-8.987L-0.727,-8.476C-0.233,-8.405 0.177,-8.059 0.331,-7.585C0.485,-7.11 0.356,-6.591 0,-6.242M-6.979,-27.096C-19.59,-27.096 -29.812,-16.875 -29.812,-4.264L-29.811,10.207C-29.811,16.233 -24.99,20.854 -19.165,20.854C-13.206,20.854 -8.52,16.233 -8.52,10.207L-8.52,7.931C-8.52,7.127 -7.85,6.458 -7.047,6.458C-6.242,6.458 -5.573,7.127 -5.573,7.931L-5.573,10.207C-5.573,16.1 -0.752,20.854 5.206,20.854C11.031,20.854 15.852,16.1 15.852,10.207L15.854,-4.264C15.854,-16.875 5.631,-27.096 -6.979,-27.096"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                    <g transform="matrix(1,0,0,1,347.447,468.649)">
+                                                                        <path
+                                                                            d="M0,26.313L0,24.037C0,23.233 -0.669,22.564 -1.473,22.564C-2.276,22.564 -2.946,23.233 -2.946,24.037L-2.946,26.313C-2.946,32.338 -7.633,36.959 -13.591,36.959C-19.417,36.959 -24.237,32.338 -24.237,26.313L-24.237,-0.067C-24.237,-6.025 -19.417,-10.646 -13.591,-10.646C-7.633,-10.646 -2.946,-6.025 -2.946,-0.067L-2.946,2.344C-2.946,3.081 -2.276,3.75 -1.473,3.75C-0.669,3.75 0,3.081 0,2.344L0,-0.067C0,-5.892 4.821,-10.646 10.78,-10.646C16.604,-10.646 21.425,-5.892 21.425,-0.067L21.425,26.313C21.425,32.206 16.604,36.959 10.78,36.959C4.821,36.959 0,32.206 0,26.313"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                    <g transform="matrix(1,0,0,1,308.547,505.541)">
+                                                                        <path
+                                                                            d="M0,-47.604C6.227,-47.604 11.314,-42.248 11.314,-36.221C11.314,-29.928 6.227,-24.907 0,-24.907C-3.348,-24.907 -5.959,-26.446 -7.968,-26.446C-9.373,-26.446 -10.579,-25.241 -10.579,-23.835C-10.579,-22.497 -9.373,-21.424 -7.968,-21.424C-5.959,-21.424 -3.348,-22.965 0,-22.965C6.227,-22.965 11.314,-17.608 11.314,-11.315C11.314,-5.29 6.227,0 0,0L-9.709,0C-22.563,0 -33.075,-11.18 -33.075,-23.835C-33.075,-37.092 -22.43,-47.403 -9.373,-47.604L0,-47.604Z"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                    <g transform="matrix(1,0,0,1,251.206,468.649)">
+                                                                        <path
+                                                                            d="M0,26.313L0,24.037C0,23.233 -0.669,22.564 -1.473,22.564C-2.276,22.564 -2.945,23.233 -2.945,24.037L-2.945,26.313C-2.945,32.338 -7.633,36.959 -13.592,36.959C-19.416,36.959 -24.237,32.338 -24.237,26.313L-24.237,-0.067C-24.237,-6.025 -19.416,-10.646 -13.592,-10.646C-7.633,-10.646 -2.945,-6.025 -2.945,-0.067L-2.945,2.344C-2.945,3.081 -2.276,3.75 -1.473,3.75C-0.669,3.75 0,3.081 0,2.344L0,-0.067C0,-5.892 4.82,-10.646 10.779,-10.646C16.603,-10.646 21.424,-5.892 21.424,-0.067L21.424,26.313C21.424,32.206 16.603,36.959 10.779,36.959C4.82,36.959 0,32.206 0,26.313"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                    <g transform="matrix(1,0,0,1,212.473,505.541)">
+                                                                        <path
+                                                                            d="M0,-47.604C6.227,-47.604 11.315,-42.248 11.315,-36.221C11.315,-29.928 6.227,-24.907 0,-24.907C-3.348,-24.907 -5.958,-26.446 -7.967,-26.446C-9.374,-26.446 -10.579,-25.241 -10.579,-23.835C-10.579,-22.497 -9.374,-21.424 -7.967,-21.424C-5.958,-21.424 -3.348,-22.965 0,-22.965C6.227,-22.965 11.315,-17.608 11.315,-11.315C11.315,-5.29 6.227,0 0,0L-9.708,0C-22.563,0 -33.075,-11.18 -33.075,-23.835C-33.075,-37.092 -22.43,-47.403 -9.374,-47.604L0,-47.604Z"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                    <g transform="matrix(1,0,0,1,144.701,468.718)">
+                                                                        <path
+                                                                            d="M0,25.977L0,-0.203C0,-6.027 4.753,-10.847 10.646,-10.847C16.604,-10.847 21.358,-6.027 21.358,-0.203L21.224,15.399L23.568,15.399C37.494,15.399 37.494,36.824 23.568,36.824L10.846,36.824C4.62,36.824 -0.201,32.137 0,25.977"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                    <g transform="matrix(1,0,0,1,119.753,468.851)">
+                                                                        <path
+                                                                            d="M0,25.91L0,-0.201C0,-6.027 4.687,-10.713 10.579,-10.713C16.671,-10.713 21.359,-6.027 21.359,-0.201L21.359,25.91C21.359,31.736 16.671,36.623 10.579,36.623C4.687,36.623 0,31.736 0,25.91"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                    <g transform="matrix(1,0,0,1,105.357,505.475)">
+                                                                        <path
+                                                                            d="M0,-47.337C-3.737,-47.337 -5.522,-46.208 -8.863,-42.581C-12.204,-38.956 -15.61,-34.627 -15.61,-34.627C-15.449,-34.316 -12.945,-29.959 -12.908,-29.445C-12.872,-28.931 -13.349,-29.243 -13.704,-29.556C-14.141,-29.94 -22.787,-39.785 -25.106,-42.625C-27.426,-45.465 -30.289,-47.337 -34.134,-47.337C-40.026,-47.337 -44.713,-42.649 -44.713,-36.825L-44.713,-10.713C-44.713,-4.888 -40.026,0 -34.134,0C-29.87,0 -26.31,-2.4 -24.551,-5.836C-25.025,-6.555 -28.111,-11.071 -28.365,-11.704C-28.576,-12.232 -28.304,-12.14 -28.164,-12.089C-28.096,-12.064 -27.791,-11.978 -25.543,-9.718C-24.95,-9.12 -23.718,-7.989 -23.716,-7.999C-21.889,-6.554 -19.505,-5.62 -16.966,-5.62C-14.326,-5.62 -12.005,-6.548 -10.215,-7.985C-10.213,-7.98 -5.942,-11.944 -5.77,-12.089C-5.597,-12.233 -5.291,-12.232 -5.568,-11.704C-5.885,-11.101 -8.91,-6.552 -9.386,-5.831C-7.637,-2.399 -4.121,0 0,0C6.093,0 10.78,-4.888 10.78,-10.713L10.78,-36.825C10.78,-42.649 6.093,-47.337 0,-47.337"
+                                                                            style="fill-rule:nonzero;" />
+                                                                    </g>
+                                                                </g>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="icon">
+                                                            <figure>
+                                                                <picture class="image">
+                                                                    <img src="/images/Logo-Star.svg" width="16"
+                                                                        alt="Star">
+                                                                </picture>
+                                                            </figure>
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="level-item" v-cloak>
+                                        <div class="wrapper">
+                                            <hr>
+                                        </div>
+                                    </div>
+                                    <div class="level-item" v-cloak>
+                                        <div class="rotation-wrapper-outer">
+                                            <div class="rotation-wrapper-inner">
+                                                <div class="rotate">
+                                                    <button class="button" type="button" onclick="select(event);"
+                                                        data-type="Milch">
+                                                        <div class="wrap has-text-weight-bold">
+                                                            <div class="clip">
+                                                                <div class="scrollable">
+                                                                    <div>Milch</div>
+                                                                    <div>Milch</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="icon animatable">
+                                                            <figure>
+                                                                <picture>
+                                                                    <source
+                                                                        srcset="/images/PixelatedLuna-Transformed-16.png 1x, /images/PixelatedLuna-Transformed-16@2x.png 2x, /images/PixelatedLuna-Transformed-16@3x.png 3x"
+                                                                        media="(prefers-color-scheme: dark)">
+                                                                    <img src="/images/PixelatedMilch-Transformed-16.png"
+                                                                        srcset="/images/PixelatedMilch-Transformed-16.png 1x, /images/PixelatedMilch-Transformed-16@2x.png 2x, /images/PixelatedMilch-Transformed-16@3x.png 3x"
+                                                                        alt="Milch">
+                                                                </picture>
+                                                            </figure>
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="level-item" v-cloak>
+                                        <div class="wrapper">
+                                            <hr>
+                                        </div>
+                                    </div>
+                                    <div class="level-item" v-cloak>
+                                        <div class="rotation-wrapper-outer">
+                                            <div class="rotation-wrapper-inner">
+                                                <div class="rotate">
+                                                    <button class="button" type="button" onclick="select(event);"
+                                                        data-type="Merku">
+                                                        <div class="wrap has-text-weight-bold">
+                                                            <div class="clip">
+                                                                <div class="scrollable">
+                                                                    <div>Merku</div>
+                                                                    <div>Merku</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="icon animatable">
+                                                            <figure>
+                                                                <picture>
+                                                                    <img src="/images/PixelatedMilch-Transformed-16.png"
+                                                                        srcset="/images/PixelatedMerku-Transformed-16.png 1x, /images/PixelatedMerku-Transformed-16@2x.png 2x, /images/PixelatedMerku-Transformed-16@3x.png 3x"
+                                                                        alt="Merku">
+                                                                </picture>
+                                                            </figure>
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="level-item">
+                                <div class="level">
+                                    <div class="level-item">
+                                        <div class="rotation-wrapper-outer">
+                                            <div class="rotation-wrapper-inner">
+                                                <div class="rotate">
+                                                    <a class="button"
+                                                        href="https://www.microsoft.com/store/apps/9WZDNCRDT09Q"
+                                                        target="_blank">
+                                                        <div class="icon">
+                                                            <div class="is-superellips">
+                                                                <figure>
+                                                                    <picture class="image">
+                                                                        <source
+                                                                            srcset="/images/Merku-16.png 1x,/images/Merku-32.png 2x,/images/Merku-48.png 3x"
+                                                                            media="(prefers-color-scheme: dark)">
+                                                                        <img src="/images/Milch-16.png"
+                                                                            srcset="/images/Milch-16.png 1x,/images/Milch-32.png 2x,/images/Milch-48.png 3x"
+                                                                            width="16" height="16" alt="Logo">
+                                                                    </picture>
+                                                                </figure>
+                                                            </div>
+                                                        </div>
+                                                        <div class="wrap has-text-weight-bold">
+                                                            <div class="clip">
+                                                                <div class="scrollable">
+                                                                    <div>Apricot</div>
+                                                                    <div>Apricot</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="icon">
+                                                            <i class="fa-solid fa-up-right-from-square fa-xs"></i>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="top">
+                        <div class="level">
+                            <div class="level-item">
+                                <a class="button is-circle" href="https://twitter.com/milchchan" target="_blank"><span
+                                        class="icon"><i class="fa-brands fa-twitter fa-xs"></i></span></a>
+                            </div>
+                            <div class="level-item">
+                                <a class="button is-circle" href="https://instagram.com/milchchan" target="_blank"><span
+                                        class="icon"><i class="fab fa-instagram fa-xs"></i></span></a>
+                            </div>
+                            <div class="level-item">
+                                <a class="button is-circle"
+                                    href="https://www.youtube.com/channel/UCfL-rgK8MnI31mFrW2-js9A"
+                                    target="_blank"><span class="icon"><i class="fab fa-youtube fa-xs"></i></span></a>
+                            </div>
+                            <div class="level-item">
+                                <a class="button is-circle" href="https://github.com/milchchan" target="_blank"><span
+                                        class="icon"><i class="fab fa-github fa-xs"></i></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const background = { invalid: false, preloading: false, image: null, blocks: [], index: 0 };
+
+        function shake(element) {
+            element.animate([
+                { transform: "translate3d(0, 0, 0)" },
+                { transform: "translate3d(8px, 0, 0)" },
+                { transform: "translate3d(-8px, 0, 0)" },
+                { transform: "translate3d(7px, 0, 0)" },
+                { transform: "translate3d(-7px, 0, 0)" },
+                { transform: "translate3d(6px, 0, 0)" },
+                { transform: "translate3d(-6px, 0, 0)" },
+                { transform: "translate3d(5px, 0, 0)" },
+                { transform: "translate3d(-5px, 0, 0)" },
+                { transform: "translate3d(4px, 0, 0)" },
+                { transform: "translate3d(-4px, 0, 0)" },
+                { transform: "translate3d(3px, 0, 0)" },
+                { transform: "translate3d(-3px, 0, 0)" },
+                { transform: "translate3d(2px, 0, 0)" },
+                { transform: "translate3d(-2px, 0, 0)" },
+                { transform: "translate3d(1px, 0, 0)" },
+                { transform: "translate3d(-1px, 0, 0)" },
+                { transform: "translate3d(0, 0, 0)" }],
+                { duration: 1000, iterations: 1 });
+        }
+
+        function select(event) {
+            const target = (event.currentTarget || event.target);
+
+            if ("dataset" in background) {
+                if ("type" in target.dataset) {
+                    for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
+                        if ("type" in element.parentElement.dataset) {
+                            if (element.parentElement.dataset.type === target.dataset.type) {
+                                const index = background.dataset.findIndex(x => x.type === target.dataset.type);
+
+                                if (index >= 0) {
+                                    background.index = index;
+                                    background.invalid = true;
+                                    element.parentElement.className = `${element.parentElement.className} is-selected`;
+                                } else {
+                                    element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
+
+                                    shake(target);
+                                }
+                            } else {
+                                element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
+                            }
+                        }
+                    }
+                } else {
+                    const index = background.dataset.findIndex(x => "type" in x === false);
+
+                    if (index >= 0) {
+                        background.index = index;
+                        background.invalid = true;
+                    } else {
+                        shake(target);
+                    }
+
+                    for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item:first-child>.level>.level-item .button .wrap")) {
+                        if ("type" in element.parentElement.dataset) {
+                            element.parentElement.className = element.parentElement.className.replace(/is-selected/g, "").trim();
+                        }
+                    }
+                }
+            } else {
+                shake(target);
+            }
+        }
+
+        window.addEventListener("load", async event => {
+            const logo = document.body.querySelector(".sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
+            const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
+            const canvas = document.createElement("canvas");
+            const rect = wall.getBoundingClientRect();
+
+            canvas["backBuffer"] = document.createElement("canvas");
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            canvas.style.width = `${rect.width}px`;
+            canvas.style.height = `${rect.height}px`;
+            canvas.style.backgroundColor = "transparent";
+
+            wall.appendChild(canvas);
+
+            const animation = logo.animate([
+                {
+                    transform: "rotate(0deg)"
+                },
+                {
+                    transform: "rotate(360deg)"
+                }
+            ], {
+                delay: 0,
+                fill: "forwards",
+                duration: 1000,
+                iterations: Infinity,
+                easing: "linear"
+            });
+
+            try {
+                const response = await fetch(encodeURI("feed.json"), {
+                    mode: "cors",
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                });
+
+                if (response.ok) {
+                    background["dataset"] = await response.json();
+                } else {
+                    throw new Error(response.statusText);
+                }
+            } catch (e) {
+                console.error(e.code, e.message);
+            }
+
+            if (background["dataset"] !== null) {
+                function _random(min, max) {
+                    min = Math.ceil(min);
+                    max = Math.floor(max);
+
+                    return Math.floor(Math.random() * (max - min)) + min;
+                }
+
+                async function download(url) {
+                    const progress = document.createElement("div");
+                    const bar = document.createElement("div");
+                    const blind = document.createElement("div");
+
+                    progress.className = "progress";
+                    bar.className = "bar animating";
+                    bar.style.width = "0%";
+
+                    try {
+                        const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${window.devicePixelRatio}x.png` : "/images/Stripes.png");
+
+                        if (response.ok) {
+                            const blob = await response.blob();
+                            const dataURL = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(reader.error);
+                                };
+                                reader.readAsDataURL(blob);
+                            });
+                            bar.style.backgroundImage = `url('${dataURL}')`;
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    progress.appendChild(bar);
+                    document.body.querySelector("#app").appendChild(progress);
+
+                    blind.className = "blind";
+                    blind.style.transform = "translate3d(0, 100%, 0)";
+
+                    try {
+                        const response = await fetch(window.devicePixelRatio > 1 ? `/images/Background@${window.devicePixelRatio}x.png` : "/images/Background.png");
+
+                        if (response.ok) {
+                            const blob = await response.blob();
+                            const dataURL = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(reader.error);
+                                };
+                                reader.readAsDataURL(blob);
+                            });
+                            blind.style.backgroundImage = `url('${dataURL}')`;
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    document.body.querySelector("#app>.container>.wrap>.frame>.wall").after(blind);
+
+                    await new Promise(async (resolve) => {
+                        blind.animate([
+                            {
+                                transform: "translate3d(0, 0%, 0)"
+                            }
+                        ], {
+                            delay: 0,
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        }).onfinish = () => {
+                            resolve();
+                        };
+                    });
+
+                    try {
+                        const response = await fetch(url);
+
+                        if (response.ok) {
+                            const reader = response.body.getReader();
+                            const contentType = response.headers.get("Content-Type");
+                            const contentLength = +response.headers.get("Content-Length");
+                            const chunks = [];
+                            let receivedLength = 0;
+
+                            while (true) {
+                                const { done, value } = await reader.read();
+
+                                if (done) {
+                                    bar.animate([
+                                        {
+                                            width: "100%"
+                                        }
+                                    ], {
+                                        delay: 0,
+                                        fill: "forwards",
+                                        duration: 500,
+                                        iterations: 1,
+                                        easing: "ease-in",
+                                        composite: "replace"
+                                    }).onfinish = () => {
+                                        bar.animate([
+                                            {
+                                                opacity: 0
+                                            }
+                                        ], {
+                                            delay: 0,
+                                            fill: "forwards",
+                                            duration: 500,
+                                            iterations: 1,
+                                            easing: "ease-in"
+                                        }).onfinish = () => {
+                                            bar.remove();
+                                        };
+                                        blind.animate([
+                                            {
+                                                transform: "translate3d(0, -100%, 0)"
+                                            }
+                                        ], {
+                                            delay: 0,
+                                            fill: "forwards",
+                                            duration: 500,
+                                            iterations: 1,
+                                            easing: "ease-out",
+                                            composite: "replace"
+                                        }).onfinish = () => {
+                                            blind.remove();
+                                        };
+                                    };
+
+                                    break;
+                                }
+
+                                chunks.push(value);
+                                receivedLength += value.length;
+
+                                if (receivedLength < contentLength) {
+                                    bar.animate([
+                                        {
+                                            width: `${Math.floor(receivedLength / contentLength * 100)}%`
+                                        }
+                                    ], {
+                                        delay: 0,
+                                        fill: "forwards",
+                                        duration: 500,
+                                        iterations: 1,
+                                        easing: "linear",
+                                        composite: "replace"
+                                    });
+                                }
+                            }
+
+                            if (contentType === "application/json") {
+                                return new TextDecoder("utf-8").decode(chunks.reduce((x, y) => {
+                                    x.buffer.set(y, x.position);
+                                    x.position += chunk.length;
+
+                                    return x;
+                                }, { buffer: new Uint8Array(receivedLength), position: 0 }).buffer);
+                            } else {
+                                return new Blob(chunks, { type: contentType });
+                            }
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    bar.animate([
+                        {
+                            opacity: 0
+                        }
+                    ], {
+                        delay: 0,
+                        fill: "forwards",
+                        duration: 500,
+                        iterations: 1,
+                        easing: "ease-in"
+                    }).onfinish = () => {
+                        bar.remove();
+                    };
+                    blind.animate([
+                        {
+                            transform: "translate3d(0, -100%, 0)"
+                        }
+                    ], {
+                        delay: 0,
+                        fill: "forwards",
+                        duration: 500,
+                        iterations: 1,
+                        easing: "ease-out"
+                    }).onfinish = () => {
+                        blind.remove();
+                    };
+
+                    return null;
+                }
+
+                for (const element of document.body.querySelectorAll(".sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path")) {
+                    element.style.animationPlayState = "running";
+                }
+
+                logo.animate([
+                    {
+                        transform: "rotate(360deg)"
+                    }
+                ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 1000 - animation.currentTime % 1000,
+                    iterations: 1,
+                    easing: "linear"
+                });
+                animation.cancel();
+
+                let previousTime = performance.now();
+
+                async function render(timestamp) {
+                    requestAnimationFrame(render);
+
+                    if (timestamp > previousTime) {
+                        const deltaTime = (timestamp - previousTime) / 1000;
+
+                        previousTime = timestamp;
+
+                        if (background.invalid) {
+                            for (const block of background.blocks) {
+                                let index = -1;
+
+                                for (let i = block.inlines.length - 1; i >= 0; i--) {
+                                    if (block.inlines[i].running) {
+                                        block.inlines[i].type.reverse = true;
+                                        index = i;
+
+                                        break;
+                                    }
+                                }
+
+                                if (index === -1) {
+                                    block.inlines[block.inlines.length - 1].running = true;
+                                }
+                            }
+
+                            background.invalid = false;
+                        }
+
+                        if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.type.elapsed >= 0)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
+                            background.image = null;
+                            background.blocks.splice(0);
+
+                            if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
+                                background.preloading = true;
+
+                                const blob = await download(background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)]);
+
+                                if (blob !== null) {
+                                    background.image = await new Promise(async (resolve, reject) => {
+                                        const i = new Image();
+
+                                        i.onload = () => {
+                                            resolve(i);
+                                        };
+                                        i.onerror = (e) => {
+                                            reject(e);
+                                        };
+
+                                        i.crossOrigin = "Anonymous";
+                                        i.src = await new Promise(async (resolve, reject) => {
+                                            const reader = new FileReader();
+
+                                            reader.onload = () => {
+                                                resolve(reader.result);
+                                            };
+                                            reader.onerror = () => {
+                                                reject(reader.error);
+                                            };
+                                            reader.readAsDataURL(blob);
+                                        });
+                                    });
+                                }
+
+                                background.preloading = false;
+                            }
+
+                            const length = _random(8, 16);
+                            let start = background.dataset[background.index].texts.length - length;
+                            let samples;
+
+                            if (start >= 0) {
+                                start = _random(0, start);
+                                samples = background.dataset[background.index].texts.slice(start, start + length);
+                            } else {
+                                samples = background.dataset[background.index].texts;
+                            }
+
+                            for (const sample of samples) {
+                                let text;
+                                const attributes = [];
+                                const source = [];
+                                const letters = [];
+
+                                if (typeof (sample) === "string") {
+                                    text = sample.replace(/\r?\n/g, "");
+                                    source.push(text);
+                                } else {
+                                    text = Object.keys(sample).sort((x, y) => x - y).reduce((x, y) => {
+                                        if (typeof (sample[y]) === "string") {
+                                            const s = sample[y].replace(/\r?\n/g, "");
+
+                                            x.text += s;
+
+                                            if (x.source.length > 0 && typeof (x.source[x.source.length - 1]) === "string") {
+                                                x.source[x.source.length - 1] += s;
+                                            } else {
+                                                x.source.push(s);
+                                            }
+                                        } else if (Array.isArray(sample[y])) {
+                                            const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace(/\r?\n/g, ""), "");
+
+                                            x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
+                                            x.text += s;
+                                            x.source.push({ name: s });
+                                        } else {
+                                            const text = sample[y].name.replace(/\r?\n/g, "");
+
+                                            x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
+                                            x.text += text;
+                                            x.source.push({ name: text });
+                                        }
+
+                                        return x;
+                                    }, { text: "", attributes: attributes, source: source }).text;
+                                }
+
+                                for (let i = 0; i < text.length; i++) {
+                                    if (letters.indexOf(text.charAt(i)) === -1 && text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
+                                        letters.push(text.charAt(i));
+                                    }
+                                }
+
+                                background.blocks.push({
+                                    height: 100 / samples.length,
+                                    colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
+                                    inlines: [
+                                        { running: true, time: 0, duration: 0, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
+                                    ],
+                                    elapsed: 0,
+                                });
+                            }
+                        }
+
+                        for (const block of background.blocks) {
+                            let index = 0;
+
+                            for (const inline of block.inlines) {
+                                if (inline.running) {
+                                    if (inline.type.reverse) {
+                                        if (inline.type.count > 0) {
+                                            inline.type.elapsed += deltaTime * 2;
+
+                                            if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                                                let index = inline.type.count - 1;
+
+                                                if (index < inline.text.length) {
+                                                    const width = Math.floor(inline.text.length / 2);
+
+                                                    if (inline.type.buffer.length <= width && inline.type.count > 0) {
+                                                        inline.type.count -= 1;
+                                                    }
+
+                                                    if (inline.type.buffer.length > 0) {
+                                                        inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
+                                                    }
+                                                }
+
+                                                inline.type.elapsed = 0;
+                                            }
+                                        } else {
+                                            inline.time = 0;
+                                            inline.type.elapsed = -1;
+                                            inline.type.reverse = false;
+                                            inline.running = false;
+
+                                            if (index - 1 >= 0) {
+                                                block.inlines[index - 1].running = true;
+                                            }
+                                        }
+                                    } else if (inline.type.buffer.length < inline.text.length) {
+                                        if (inline.type.elapsed >= 0) {
+                                            inline.type.elapsed += deltaTime;
+                                        } else {
+                                            inline.type.elapsed = deltaTime;
+                                        }
+
+                                        if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                                            const index = inline.type.buffer.length;
+                                            const width = Math.floor(inline.text.length / 2);
+                                            const length = inline.text.length;
+
+                                            if (inline.type.count >= width) {
+                                                inline.type.buffer += inline.text.charAt(index);
+                                            }
+
+                                            if (inline.type.count < length) {
+                                                inline.type.count += 1;
+                                            }
+
+                                            inline.type.elapsed = 0;
+                                        }
+                                    } else {
+                                        inline.time += deltaTime;
+
+                                        if (inline.time >= inline.duration) {
+                                            inline.type.reverse = true;
+                                            inline.running = false;
+
+                                            if (index + 1 < block.inlines.length) {
+                                                block.inlines[index + 1].running = true;
+                                            }
+                                        }
+                                    }
+
+                                    if (inline.text.length === inline.type.buffer.length) {
+                                        const characters = inline.text.split("");
+
+                                        inline.characters.splice(0);
+
+                                        for (let i = 0; i < characters.length; i++) {
+                                            inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                        }
+                                    } else {
+                                        const charArray = inline.letters;
+                                        let randomBuffer = "";
+
+                                        if (charArray.length > 0) {
+                                            for (let i = 0; i < inline.type.count; i++) {
+                                                if (inline.text.charAt(i) === "\n") {
+                                                    randomBuffer += "\n";
+                                                } else {
+                                                    randomBuffer += charArray[~~_random(0, charArray.length)];
+                                                }
+                                            }
+                                        }
+
+                                        if (randomBuffer.length > inline.type.buffer.length) {
+                                            const characters = (inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length)).split("");
+
+                                            inline.characters.splice(0);
+
+                                            for (let i = 0; i < characters.length; i++) {
+                                                inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                            }
+                                        } else if (inline.characters.length !== inline.type.buffer.length) {
+                                            const characters = inline.type.buffer.split("");
+
+                                            inline.characters.splice(0);
+
+                                            for (let i = 0; i < characters.length; i++) {
+                                                inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
+                                            }
+                                        }
+                                    }
+                                }
+
+                                index++;
+                            }
+
+                            block.elapsed += deltaTime;
+                        }
+
+                        const backCanvas = canvas.backBuffer;
+
+                        backCanvas.width = canvas.width;
+                        backCanvas.height = canvas.height;
+
+                        const backContext = backCanvas.getContext("2d");
+                        const frontContext = canvas.getContext("2d");
+                        const margin = 16;
+                        const lineHeight = backCanvas.height / background.blocks.length;
+                        const fontSize = Math.floor(lineHeight / 2);
+                        const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
+                        let index = 0;
+
+                        backContext.imageSmoothingEnabled = true;
+                        backContext.imageSmoothingQuality = "high";
+                        backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+                        backContext.textAlign = "left";
+                        backContext.textBaseline = "middle";
+                        backContext.save();
+                        backContext.beginPath();
+
+                        for (const block of background.blocks) {
+                            for (const inline of block.inlines) {
+                                if (inline.characters.length > 0) {
+                                    const line = [{ text: inline.characters[0].value, highlight: inline.characters[0].highlight }];
+                                    let width = 0;
+                                    let offset = 0;
+
+                                    for (let i = 1; i < inline.characters.length; i++) {
+                                        if (inline.characters[i].highlight) {
+                                            if (line[line.length - 1].highlight) {
+                                                line[line.length - 1].text += inline.characters[i].value;
+                                            } else {
+                                                line.push({ text: inline.characters[i].value, highlight: true });
+                                            }
+                                        } else if (line[line.length - 1].highlight) {
+                                            line.push({ text: inline.characters[i].value, highlight: false });
+                                        } else {
+                                            line[line.length - 1].text += inline.characters[i].value;
+                                        }
+                                    }
+
+                                    backContext.save();
+                                    backContext.font = `${fontSize}px ${fontFamily}`;
+
+                                    for (const s of inline.source) {
+                                        const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+
+                                        width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                    }
+
+                                    backContext.translate(block.elapsed % 60 / 60 * -width, 0);
+
+                                    do {
+                                        for (let i = 0; i < 2; i++) {
+                                            let x = 0;
+
+                                            for (const segment of line) {
+                                                if (segment.highlight) {
+                                                    backContext.globalAlpha = 1.0;
+                                                    backContext.fillStyle = `${block.colors.accent}`;
+                                                } else {
+                                                    backContext.globalAlpha = 1.0;
+                                                    backContext.fillStyle = `${block.colors.main}`;
+                                                }
+
+                                                const textMetrics = backContext.measureText(segment.text);
+
+                                                backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
+
+                                                x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                            }
+
+                                            for (const s of inline.source) {
+                                                const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+
+                                                offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                                            }
+                                        }
+                                    } while (offset - margin < backCanvas.width * 2);
+
+                                    backContext.restore();
+                                }
+                            }
+
+                            index++;
+                        }
+
+                        backContext.closePath();
+                        backContext.globalCompositeOperation = "source-atop";
+                        backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
+                        backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
+
+                        if (background.image !== null) {
+                            const top = 0.25;
+                            const left = 0.5;
+                            const canvasAspect = backCanvas.width / backCanvas.height;
+                            const imageAspect = background.image.width / background.image.height;
+                            let sx, sy, sw, sh;
+
+                            if (canvasAspect > imageAspect) {
+                                const ratio = backCanvas.width / background.image.width;
+
+                                sx = 0;
+                                sy = (background.image.height * ratio - backCanvas.height) / ratio * top;
+                                sw = background.image.width;
+                                sh = backCanvas.height / ratio;
+                            } else {
+                                const ratio = backCanvas.height / background.image.height;
+
+                                sx = (background.image.width * ratio - backCanvas.width) / ratio * left;
+                                sy = 0;
+                                sw = backCanvas.width / ratio;
+                                sh = background.image.height;
+                            }
+
+                            backContext.drawImage(background.image, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
+                        }
+
+                        backContext.restore();
+
+                        frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+                        frontContext.drawImage(backCanvas, 0, 0);
+                    }
+                }
+
+                requestAnimationFrame(render);
+            }
+        });
+        window.addEventListener("resize", event => {
+            const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
+            const canvas = wall.querySelector(":scope>canvas");
+            const rect = wall.getBoundingClientRect();
+
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            canvas.style.width = `${rect.width}px`;
+            canvas.style.height = `${rect.height}px`;
+        });
+    </script>
+</body>
+
+</html>
