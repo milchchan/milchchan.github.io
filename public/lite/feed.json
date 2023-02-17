@@ -5,8 +5,52 @@
                 "color": "#bdbcaf",
                 "frames": [
                     {
-                        "delay": 1,
+                        "delay": 0.5,
                         "source": "images/Background-Milch-Chuno-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Chuno-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
                     }
                 ]
             }
