@@ -452,18 +452,18 @@
             margin: 0px 0px 0px 16px;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon:not(.is-animatable) {
             opacity: 0.5;
             transition: 0.5s;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button .icon:not(.animatable) figure>picture>img {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon:not(.is-animatable) figure>picture>img {
             transform-origin: 50% 50%;
             transform: scale3d(1, 1, 1);
             transition: 0.5s ease-out;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon:not(.animatable) figure>picture>img {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon:not(.is-animatable) figure>picture>img {
             transform: scale3d(1.1, 1.1, 1);
             transition: 0.5s ease-in;
         }
@@ -538,7 +538,7 @@
             transition: 0.5s;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon.is-animatable>figure {
             display: flex;
             justify-content: flex-start;
             align-items: flex-start;
@@ -547,18 +547,18 @@
             height: 16px;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon.is-animatable>figure>picture {
             margin-left: 0%;
             width: auto;
             height: 100%;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon.animatable>figure>picture,
-        div.sidebar>.level>.level-item>.level>.level-item .button.is-selected .icon.animatable>figure>picture {
+        div.sidebar>.level>.level-item>.level>.level-item .button:hover .icon.is-animatable>figure>picture,
+        div.sidebar>.level>.level-item>.level>.level-item .button.is-selected .icon.is-animatable>figure>picture {
             animation: frame 1.33s steps(4) infinite forwards;
         }
 
-        div.sidebar>.level>.level-item>.level>.level-item .button .icon.animatable>figure>picture>img {
+        div.sidebar>.level>.level-item>.level>.level-item .button .icon.is-animatable>figure>picture>img {
             object-fit: none;
             object-position: 0% 0%;
             width: 100%;
@@ -901,7 +901,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="icon animatable">
+                                                            <div class="icon is-animatable">
                                                                 <figure>
                                                                     <picture>
                                                                         <source
@@ -939,7 +939,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="icon animatable">
+                                                            <div class="icon is-animatable">
                                                                 <figure>
                                                                     <picture>
                                                                         <img src="/images/PixelatedMilch-Transformed-16.png"
