@@ -159,7 +159,7 @@
             padding: 0px 0px 0px 0px;
             width: 120px;
             height: 320px;
-            background: url('/images/Background.png') 0 0 repeat;
+            background: url('images/Background.png') 0 0 repeat;
             background-color: rgb(247, 248, 248);
             background-size: 100px 100px;
             animation: loop 10s linear forwards infinite;
@@ -373,7 +373,7 @@
         @media screen and (-webkit-min-device-pixel-ratio:2),
         (min-resolution: 2dppx) {
             div.loading {
-                background: url('/images/Background@2x.png') repeat;
+                background: url('images/Background@2x.png') repeat;
                 background-color: rgb(247, 248, 248);
                 background-size: 100px 100px;
             }
@@ -382,7 +382,7 @@
         @media screen and (-webkit-min-device-pixel-ratio:3),
         (min-resolution: 3dppx) {
             div.loading {
-                background: url('/images/Background@3x.png') repeat;
+                background: url('images/Background@3x.png') repeat;
                 background-color: rgb(247, 248, 248);
                 background-size: 100px 100px;
             }
@@ -1053,7 +1053,7 @@
                             i.onerror = (e) => {
                                 reject(e);
                             };
-                            i.src = window.devicePixelRatio > 1 ? `/images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "/images/Background.png";
+                            i.src = window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png";
                         });
                     } catch (e) {
                         console.error(e);

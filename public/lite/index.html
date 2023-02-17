@@ -183,7 +183,7 @@
             height: 2px;
             transform: translate3d(0, 0%, 0);
             overflow: hidden;
-            background: url('/images/Stripes.png') 0 0 repeat;
+            background: url('images/Stripes.png') 0 0 repeat;
             background-color: #ffee00;
             background-size: 24px 24px;
             animation: progress 1s linear forwards infinite;
@@ -207,7 +207,7 @@
             min-height: 100%;
             transform: translate3d(0, 0%, 0);
             overflow: hidden;
-            background: url('/images/Background.png') 0 0 repeat;
+            background: url('images/Background.png') 0 0 repeat;
             background-color: rgb(247, 248, 248);
             background-size: 100px 100px;
             animation: loop 10s linear forwards infinite;
@@ -762,13 +762,13 @@
         @media screen and (-webkit-min-device-pixel-ratio: 2),
         (min-resolution: 2dppx) {
             .progress>.bar {
-                background: url('/images/Stripes@2x.png') 0 0 repeat;
+                background: url('images/Stripes@2x.png') 0 0 repeat;
                 background-color: #ffee00;
                 background-size: 24px 24px;
             }
 
             .blind {
-                background: url('/images/Background@2x.png') 0 0 repeat;
+                background: url('images/Background@2x.png') 0 0 repeat;
                 background-color: rgb(247, 248, 248);
                 background-size: 100px 100px;
             }
@@ -777,13 +777,13 @@
         @media screen and (-webkit-min-device-pixel-ratio: 3),
         (min-resolution: 3dppx) {
             .progress>.bar {
-                background: url('/images/Stripes@3x.png') 0 0 repeat;
+                background: url('images/Stripes@3x.png') 0 0 repeat;
                 background-color: #ffee00;
                 background-size: 24px 24px;
             }
 
             .blind {
-                background: url('/images/Background@3x.png') 0 0 repeat;
+                background: url('images/Background@3x.png') 0 0 repeat;
                 background-color: rgb(247, 248, 248);
                 background-size: 100px 100px;
             }
@@ -871,7 +871,7 @@
                                                         <div class="icon">
                                                             <figure>
                                                                 <picture class="image">
-                                                                    <img src="/images/Logo-Star.svg" width="16"
+                                                                    <img src="images/Logo-Star.svg" width="16"
                                                                         alt="Star">
                                                                 </picture>
                                                             </figure>
@@ -970,10 +970,10 @@
                                                                 <figure>
                                                                     <picture class="image">
                                                                         <source
-                                                                            srcset="/images/Merku-16.png 1x,/images/Merku-32.png 2x,/images/Merku-48.png 3x"
+                                                                            srcset="images/Merku-16.png 1x,images/Merku-32.png 2x,images/Merku-48.png 3x"
                                                                             media="(prefers-color-scheme: dark)">
-                                                                        <img src="/images/Milch-16.png"
-                                                                            srcset="/images/Milch-16.png 1x,/images/Milch-32.png 2x,/images/Milch-48.png 3x"
+                                                                        <img src="images/Milch-16.png"
+                                                                            srcset="images/Milch-16.png 1x,images/Milch-32.png 2x,images/Milch-48.png 3x"
                                                                             width="16" height="16" alt="Logo">
                                                                     </picture>
                                                                 </figure>
@@ -1167,7 +1167,7 @@
                     bar.style.width = "0%";
 
                     try {
-                        const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${window.devicePixelRatio}x.png` : "/images/Stripes.png");
+                        const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
 
                         if (response.ok) {
                             const blob = await response.blob();
@@ -1334,7 +1334,7 @@
                             animationQueue.splice(0);
 
                             if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
-                                const frames = background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)];
+                                const motion = background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)];
                                 const blind = document.createElement("div");
                                 const timeout = 60 * 60;
                                 let index = 0;
@@ -1345,7 +1345,7 @@
                                 blind.style.transform = "translate3d(0, 100%, 0)";
 
                                 try {
-                                    const response = await fetch(window.devicePixelRatio > 1 ? `/images/Background@${window.devicePixelRatio}x.png` : "/images/Background.png");
+                                    const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${window.devicePixelRatio}x.png` : "images/Background.png");
 
                                     if (response.ok) {
                                         const blob = await response.blob();
