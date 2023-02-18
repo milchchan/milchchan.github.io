@@ -669,7 +669,7 @@
         div.remarks .button:hover .icon {
             opacity: 0.5;
             transition: 0.5s;
-        }        
+        }
 
         #stats {
             display: flex;
@@ -1023,7 +1023,8 @@
         </div>
     </div>
     <script type="text/javascript">
-        const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0 };
+        const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, particles: [], cache: [] };
+        const mouse = { active: false, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, timestamp: 0 };
 
         function shake(element) {
             element.animate([
@@ -1141,6 +1142,20 @@
                 } else {
                     throw new Error(response.statusText);
                 }
+
+                for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
+                    background.cache.push(await new Promise((resolve, reject) => {
+                        const i = new Image();
+
+                        i.onload = () => {
+                            resolve(i);
+                        };
+                        i.onerror = (e) => {
+                            reject(e);
+                        };
+                        i.src = source
+                    }));
+                }
             } catch (e) {
                 console.error(e.code, e.message);
             }
@@ -1212,6 +1227,7 @@
                                         easing: "ease-in",
                                         composite: "replace"
                                     }).onfinish = () => {
+                                        bar.style.width = `${Math.floor((index + 1) / length * 100)}%`;
                                         bar.animate([
                                             {
                                                 opacity: 0
@@ -1245,7 +1261,9 @@
                                         iterations: 1,
                                         easing: "linear",
                                         composite: "replace"
-                                    });
+                                    }).onfinish = () => {
+                                        bar.style.width = `${Math.floor(receivedLength / contentLength * (index + 1) / length * 100)}%`;
+                                    };
                                 }
                             }
 
@@ -1326,8 +1344,9 @@
                         if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
                             background.image = null;
                             background.blocks.splice(0);
+                            mouse.movement.x = mouse.movement.y = 0;
                             animationQueue.splice(0);
-
+                            
                             if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
                                 const data = background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)];
                                 const blind = document.createElement("div");
@@ -1375,6 +1394,8 @@
                                         iterations: 1,
                                         easing: "ease-out"
                                     }).onfinish = () => {
+                                        blind.style.transform = "translate3d(0, 0%, 0)";
+
                                         resolve();
                                     };
                                 });
@@ -1716,6 +1737,37 @@
                             index++;
                         }
 
+                        if (background.particles.length > 0) {
+                            backContext.save();
+
+                            for (let i = background.particles.length - 1; i >= 0; i--) {
+                                const particle = background.particles[i];
+
+                                if (particle.elapsed >= 0) {
+                                    particle.elapsed += deltaTime;
+                                } else {
+                                    particle.elapsed = deltaTime;
+                                    particle["radius"] = Math.random() * 64;
+                                    particle["degrees"] = Math.random() * 360;
+                                    particle["duration"] = Math.random() * 2.5 + 0.5;
+                                }
+
+                                if (particle.elapsed >= particle.duration) {
+                                    background.particles.pop();
+                                } else {
+                                    const step = Math.sin(particle.elapsed / particle.duration * Math.PI);
+                                    const scale = window.devicePixelRatio * step;
+
+                                    backContext.save();
+                                    backContext.scale(scale, scale);
+                                    backContext.translate(-particle.image.width / 2 + Math.round(particle.x + Math.cos(Math.PI / 180 * particle.degrees) * particle.radius) * window.devicePixelRatio / scale, -particle.image.height / 2 + Math.round(particle.y + Math.sin(Math.PI / 180 * particle.degrees) * particle.radius) * window.devicePixelRatio / scale);
+                                    backContext.globalAlpha = step;
+                                    backContext.drawImage(particle.image, 0, 0, particle.image.width, particle.image.height, 0, 0, particle.image.width, particle.image.height);
+                                    backContext.restore();
+                                }
+                            }
+                        }
+
                         backContext.closePath();
                         backContext.globalCompositeOperation = "source-atop";
 
@@ -1749,16 +1801,28 @@
                                     const ratio = backCanvas.width / frame.image.width;
 
                                     sx = 0;
-                                    sy = (frame.image.height * ratio - backCanvas.height) / ratio * top;
-                                    sw = frame.image.width;
                                     sh = backCanvas.height / ratio;
+                                    sy = Math.max(0, Math.min(frame.image.height - sh, (frame.image.height * ratio - backCanvas.height) / ratio * top - mouse.movement.y * window.devicePixelRatio / ratio));
+                                    sw = frame.image.width;
+
+                                    if ((frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio < mouse.movement.y) {
+                                        mouse.movement.y = (frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio;
+                                    } else if ((backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio > mouse.movement.y) {
+                                        mouse.movement.y = (backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio;
+                                    }
                                 } else {
                                     const ratio = backCanvas.height / frame.image.height;
 
-                                    sx = (frame.image.width * ratio - backCanvas.width) / ratio * left;
-                                    sy = 0;
                                     sw = backCanvas.width / ratio;
+                                    sx = Math.max(0, Math.min(frame.image.width - sw, (frame.image.width * ratio - backCanvas.width) / ratio * left - mouse.movement.x * window.devicePixelRatio / ratio));
+                                    sy = 0;
                                     sh = frame.image.height;
+                                    
+                                    if ((frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio < mouse.movement.x) {
+                                        mouse.movement.x = (frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio;
+                                    } else if ((backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio > mouse.movement.x) {
+                                        mouse.movement.x = (backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio;
+                                    }
                                 }
 
                                 backContext.drawImage(frame.image, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
@@ -1796,6 +1860,172 @@
             canvas.style.width = `${rect.width}px`;
             canvas.style.height = `${rect.height}px`;
         });
+        window.addEventListener("mousedown", event => {
+            if (event.button === 0) {
+                const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
+
+                mouse.active = true;
+                mouse.position.x = event.clientX - rect.x;
+                mouse.position.y = event.clientY - rect.y;
+                mouse.timestamp = event.timeStamp / 1000;
+
+                if (background.cache.length > 0) {
+                    function _random(min, max) {
+                        min = Math.ceil(min);
+                        max = Math.floor(max);
+
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+
+                    for (let i = _random(0, 4); i > 0; i--) {
+                        background.particles.unshift({ elapsed: -1, x: mouse.position.x, y: mouse.position.y, image: background.cache[_random(0, background.cache.length)] });
+                    }
+                }
+            }
+        });
+        window.addEventListener("mousemove", event => {
+            if (mouse.active) {
+                const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
+                const x = event.clientX - rect.x;
+                const y = event.clientY - rect.y;
+                const time = event.timeStamp / 1000;
+
+                mouse.movement.x += x - mouse.position.x;
+                mouse.movement.y += y - mouse.position.y;
+                mouse.position.x = x;
+                mouse.position.y = y;
+
+                if (time - mouse.timestamp >= 0.1) {
+                    if (background.cache.length > 0) {
+                        function _random(min, max) {
+                            min = Math.ceil(min);
+                            max = Math.floor(max);
+
+                            return Math.floor(Math.random() * (max - min)) + min;
+                        }
+
+                        for (let i = _random(0, 4); i > 0; i--) {
+                            background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[_random(0, background.cache.length)] });
+                        }
+                    }
+
+                    mouse.timestamp = time;
+                }
+            }
+        });
+        window.addEventListener("mouseup", event => {
+            if (event.button === 0) {
+                mouse.active = false;
+            }
+        });
+        /*window.addEventListener("touchstart", event => {
+            event.stopPropagation();
+
+            if (app.isVisible) {
+                const element = app.$refs.three;
+                const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+                const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+                const w = element.offsetWidth;
+                const h = element.offsetHeight;
+
+                mouse.x = (x / w) * 2 - 1;
+                mouse.y = -(y / h) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+
+                if (tapCount == 0) {
+                    tapCount++;
+
+                    setTimeout(() => {
+                        tapCount = 0;
+                    }, 500);
+
+                    let minDistance = Number.MAX_SAFE_INTEGER;
+                    let bestIntersect = null;
+
+                    for (let intersect of raycaster.intersectObjects(scene.children, true)) {
+                        if (intersect.distance < minDistance) {
+                            bestIntersect = intersect;
+                            minDistance = intersect.distance;
+                        }
+                    }
+
+                    if (bestIntersect !== null) {
+                        let springBoneIndex = 0;
+
+                        draggableBone = { point: { x: x, y: y }, direction: { x: 0, y: 0, }, distance: 0, index: -1 };
+                        minDistance = Number.MAX_SAFE_INTEGER;
+
+                        for (const springBoneJoint of vrmModel.springBoneManager.joints) {
+                            const distance = springBoneJoint.bone.getWorldPosition(new Vector3()).distanceTo(bestIntersect.point);
+
+                            if (distance < minDistance) {
+                                draggableBone.index = springBoneIndex;
+                                minDistance = distance;
+                            }
+
+                            springBoneIndex++;
+                        }
+
+                        if (app.character !== null) {
+                            app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchStart"), bestIntersect.object.name));
+                        }
+                    }
+
+                    lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+                } else {
+                    if (raycaster.intersectObjects(scene.children, true).length > 0) {
+                        app.activate();
+                    }
+
+                    tapCount = 0;
+                }
+            }
+
+            isTouching = true;
+        });
+        window.addEventListener("touchmove", event => {
+            event.stopPropagation();
+
+            if (app.isVisible) {
+                const element = app.$refs.three;
+                const x = event.changedTouches[0].clientX - element.offsetLeft - (window.innerWidth - element.offsetWidth);
+                const y = event.changedTouches[0].clientY - element.offsetTop - (window.innerHeight - element.offsetHeight);
+                const w = element.offsetWidth;
+                const h = element.offsetHeight;
+
+                mouse.x = (x / w) * 2 - 1;
+                mouse.y = -(y / h) * 2 + 1;
+
+                if (draggableBone !== null) {
+                    const vector = new Vector2(draggableBone.point.x - x, y - draggableBone.point.y);
+
+                    draggableBone.direction = vector.normalize();
+                    draggableBone.distance = Math.sqrt((draggableBone.point.x - x) * (draggableBone.point.x - x) + (draggableBone.point.y - y) * (draggableBone.point.y - y));
+                }
+
+                lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: (x - 0.5 * w) / w * 10.0, y: (y - 0.5 * h) / h * -10.0 } };
+            }
+        });
+        window.addEventListener("touchend", event => {
+            event.stopPropagation();
+
+            draggableBone = null;
+            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
+
+            if (app.isVisible && app.character !== null) {
+                app.sequenceQueue.push(app.prepare(app.character.sequences.filter((x) => x.name === "TouchEnd")));
+            }
+
+            isTouching = false;
+        });
+        window.addEventListener("touchcancel", event => {
+            event.stopPropagation();
+
+            draggableBone = null;
+            lookAnimation = { time: 0.0, duration: 0.5, source: { x: lookAtTarget.position.x, y: lookAtTarget.position.y }, target: { x: 0.0, y: 0.0 } };
+            isTouching = false;
+        });*/
     </script>
 </body>
 
