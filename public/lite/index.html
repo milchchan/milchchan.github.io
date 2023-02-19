@@ -1358,7 +1358,7 @@
                                             if (index < data.frames.length - 1 || rate < 1) {
                                                 bar.animate([
                                                     {
-                                                        width: `${Math.floor(rate * (index + 1) / data.frames.length * 100)}%`
+                                                        width: `${Math.floor((rate / data.frames.length + index / data.frames.length) * 100)}%`
                                                     }
                                                 ], {
                                                     delay: 0,
@@ -1366,8 +1366,10 @@
                                                     duration: 500,
                                                     iterations: 1,
                                                     easing: "linear",
-                                                    composite: "accumulate"
-                                                });
+                                                    composite: "replace"
+                                                }).onfinish = () => {
+                                                    bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                                                };
                                             } else {
                                                 bar.animate([
                                                     {
@@ -1379,8 +1381,9 @@
                                                     duration: 500,
                                                     iterations: 1,
                                                     easing: "ease-in",
-                                                    composite: "accumulate"
+                                                    composite: "replace"
                                                 }).onfinish = () => {
+                                                    bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
                                                     bar.animate([
                                                         {
                                                             opacity: 0
@@ -1411,7 +1414,7 @@
                                                     duration: 500,
                                                     iterations: 1,
                                                     easing: "ease-in",
-                                                    composite: "accumulate"
+                                                    composite: "replace"
                                                 }).onfinish = () => {
                                                     progress.remove();
                                                 };
@@ -1460,8 +1463,10 @@
                                                 duration: 500,
                                                 iterations: 1,
                                                 easing: "ease-in",
-                                                composite: "accumulate"
-                                            });
+                                                composite: "replace"
+                                            }).onfinish = () => {
+                                                bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                                            };
                                         } else {
                                             bar.animate([
                                                 {
@@ -1473,8 +1478,9 @@
                                                 duration: 500,
                                                 iterations: 1,
                                                 easing: "ease-in",
-                                                composite: "accumulate"
+                                                composite: "replace"
                                             }).onfinish = () => {
+                                                bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
                                                 bar.animate([
                                                     {
                                                         opacity: 0
