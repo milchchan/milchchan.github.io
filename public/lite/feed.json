@@ -159,6 +159,112 @@
                         "source": "images/Background-Milch-Mamimu-2.png"
                     }
                 ]
+            },
+            {
+                "color": "#fcdcde",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Merku-Randou-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Merku-Randou-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    }
+                ]
+            },
+            {
+                "color": "#e5ebed",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Najimi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Najimi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    }
+                ]
             }
         ],
         "texts": [
@@ -186,6 +292,59 @@
                         "source": "images/Milchchan.png"
                     }
                 ]
+            },
+            {
+                "color": "#e2e0ec",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    }
+                ]
             }
         ],
         "texts": [
@@ -205,6 +364,59 @@
                     {
                         "delay": 1,
                         "source": "images/Merkuchan.png"
+                    }
+                ]
+            },
+            {
+                "color": "#e2e0ec",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Merku-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Merku-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
                     }
                 ]
             }
