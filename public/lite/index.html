@@ -1709,7 +1709,7 @@
                         const fontSize = Math.floor(lineHeight / 2);
                         const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
                         let index = 0;
-
+                        
                         backContext.imageSmoothingEnabled = true;
                         backContext.imageSmoothingQuality = "high";
                         backContext.textAlign = "left";
@@ -1843,11 +1843,8 @@
                             }
 
                             tracker.velocity.x -= tracker.velocity.x * decelerationRate * deltaTime;
-                            tracker.movement.x += tracker.velocity.x * deltaTime;
-
                             tracker.velocity.y -= tracker.velocity.y * decelerationRate * deltaTime;
-                            tracker.movement.y += tracker.velocity.y * deltaTime;
-
+                            
                             if (Math.abs(tracker.velocity.x) < 0.001) {
                                 tracker.velocity.x = 0;
                             }
@@ -1855,6 +1852,9 @@
                             if (Math.abs(tracker.velocity.y) < 0.001) {
                                 tracker.velocity.y = 0;
                             }
+
+                            tracker.movement.x += tracker.velocity.x * deltaTime;
+                            tracker.movement.y += tracker.velocity.y * deltaTime;
                         }
 
                         if (animationQueue.length > 0) {
