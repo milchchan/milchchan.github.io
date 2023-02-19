@@ -1,4 +1,4 @@
-![milchchan](https://user-images.githubusercontent.com/246691/216804336-207cfe46-ea99-4b24-ab04-e56333a3d411.png)
+![milchchan](https://user-images.githubusercontent.com/246691/219968034-712ca259-4e00-41eb-a7c5-d82606bb8586.png)
 
 # milchchan.com
 
