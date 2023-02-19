@@ -1828,7 +1828,7 @@
                         backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
                         if (!tracker.active && (tracker.velocity.x !== 0 || tracker.velocity.y !== 0)) {
-                            const decelerationRate = 0.01;
+                            const decelerationRate = 10 * 96 / 1000;
 
                             if (tracker.velocity.x > 1000) {
                                 tracker.velocity.x = 1000;
@@ -1842,10 +1842,10 @@
                                 tracker.velocity.y = -1000;
                             }
 
-                            tracker.velocity.x -= tracker.velocity.x * decelerationRate;
+                            tracker.velocity.x -= tracker.velocity.x * decelerationRate * deltaTime;
                             tracker.movement.x += tracker.velocity.x * deltaTime;
 
-                            tracker.velocity.y -= tracker.velocity.y * decelerationRate;
+                            tracker.velocity.y -= tracker.velocity.y * decelerationRate * deltaTime;
                             tracker.movement.y += tracker.velocity.y * deltaTime;
 
                             if (Math.abs(tracker.velocity.x) < 0.001) {
