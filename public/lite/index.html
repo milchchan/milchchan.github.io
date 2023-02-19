@@ -1782,6 +1782,18 @@
                         if (!mouse.active && (mouse.velocity.x !== 0 || mouse.velocity.y !== 0)) {
                             const decelerationRate = 0.01;
 
+                            if (mouse.velocity.x > 1000) {
+                                mouse.velocity.x = 1000;
+                            } else if (mouse.velocity.x < -1000) {
+                                mouse.velocity.x = -1000;
+                            }
+
+                            if (mouse.velocity.y > 1000) {
+                                mouse.velocity.y = 1000;
+                            } else if (mouse.velocity.y < -1000) {
+                                mouse.velocity.y = -1000;
+                            }
+
                             mouse.velocity.x -= mouse.velocity.x * decelerationRate;
                             mouse.movement.x += mouse.velocity.x * deltaTime;
 
