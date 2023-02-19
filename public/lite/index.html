@@ -1024,7 +1024,7 @@
     </div>
     <script type="text/javascript">
         const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, particles: [], cache: [] };
-        const tracker = { active: false, touching: false, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
+        const tracker = { active: false, touching: false, edge: true, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 
         function random(min, max) {
             min = Math.ceil(min);
@@ -1709,7 +1709,7 @@
                         const fontSize = Math.floor(lineHeight / 2);
                         const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
                         let index = 0;
-                        
+
                         backContext.imageSmoothingEnabled = true;
                         backContext.imageSmoothingQuality = "high";
                         backContext.textAlign = "left";
@@ -1844,7 +1844,7 @@
 
                             tracker.velocity.x -= tracker.velocity.x * decelerationRate * deltaTime;
                             tracker.velocity.y -= tracker.velocity.y * decelerationRate * deltaTime;
-                            
+
                             if (Math.abs(tracker.velocity.x) < 0.001) {
                                 tracker.velocity.x = 0;
                             }
@@ -1883,12 +1883,31 @@
                                     sy = Math.max(0, Math.min(frame.image.height - sh, (frame.image.height * ratio - backCanvas.height) / ratio * top - tracker.movement.y * window.devicePixelRatio / ratio));
                                     sw = frame.image.width;
 
-                                    if ((frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio < tracker.movement.y) {
-                                        tracker.velocity.y *= -1;
-                                        tracker.movement.y = (frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio;
-                                    } else if ((backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio > tracker.movement.y) {
-                                        tracker.velocity.y *= -1;
-                                        tracker.movement.y = (backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio;
+                                    const insetTop = (frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio;
+                                    const insetBottom = (backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio;
+
+                                    if (insetTop < tracker.movement.y) {
+                                        if (tracker.active) {
+                                            tracker.edge = true;
+                                        } else if (!tracker.edge) {
+                                            tracker.velocity.y *= -1;
+                                        }
+
+                                        tracker.movement.y = insetTop;
+                                    } else if (insetBottom > tracker.movement.y) {
+                                        if (tracker.active) {
+                                            tracker.edge = true;
+                                        } else if (!tracker.edge) {
+                                            tracker.velocity.y *= -1;
+                                        }
+
+                                        tracker.movement.y = insetBottom;
+                                    } else if (insetTop === tracker.movement.y || insetBottom === tracker.movement.y) {
+                                        if (tracker.active) {
+                                            tracker.edge = true;
+                                        }
+                                    } else {
+                                        tracker.edge = false;
                                     }
                                 } else {
                                     const ratio = backCanvas.height / frame.image.height;
@@ -1898,12 +1917,31 @@
                                     sy = 0;
                                     sh = frame.image.height;
 
-                                    if ((frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio < tracker.movement.x) {
-                                        tracker.velocity.x *= -1;
-                                        tracker.movement.x = (frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio;
-                                    } else if ((backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio > tracker.movement.x) {
-                                        tracker.velocity.x *= -1;
-                                        tracker.movement.x = (backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio;
+                                    const insetLeft = (frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio;
+                                    const insetRight = (backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio;
+
+                                    if (insetLeft < tracker.movement.x) {
+                                        if (tracker.active) {
+                                            tracker.edge = true;
+                                        } else if (!tracker.edge) {
+                                            tracker.velocity.y *= -1;
+                                        }
+
+                                        tracker.movement.x = insetLeft;
+                                    } else if (insetRight > tracker.movement.x) {
+                                        if (tracker.active) {
+                                            tracker.edge = true;
+                                        } else if (!tracker.edge) {
+                                            tracker.velocity.y *= -1;
+                                        }
+
+                                        tracker.movement.x = insetRight;
+                                    } else if (insetLeft === tracker.movement.x || insetRight === tracker.movement.x) {
+                                        if (tracker.active) {
+                                            tracker.edge = true;
+                                        }
+                                    } else {
+                                        tracker.edge = false;
                                     }
                                 }
 
