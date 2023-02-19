@@ -1168,39 +1168,7 @@
             }
 
             if (background["dataset"] !== null) {
-                async function download(url, index, length) {
-                    const progress = document.createElement("div");
-                    const bar = document.createElement("div");
-
-                    progress.className = "progress";
-                    bar.className = "bar animating";
-                    bar.style.width = "0%";
-
-                    try {
-                        const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
-
-                        if (response.ok) {
-                            const blob = await response.blob();
-                            const dataURL = await new Promise(async (resolve, reject) => {
-                                const reader = new FileReader();
-
-                                reader.onload = () => {
-                                    resolve(reader.result);
-                                };
-                                reader.onerror = () => {
-                                    reject(reader.error);
-                                };
-                                reader.readAsDataURL(blob);
-                            });
-                            bar.style.backgroundImage = `url('${dataURL}')`;
-                        }
-                    } catch (error) {
-                        console.error(error);
-                    }
-
-                    progress.appendChild(bar);
-                    document.body.querySelector("#app").appendChild(progress);
-
+                async function download(url, handler = null) {
                     try {
                         const response = await fetch(url);
 
@@ -1215,55 +1183,14 @@
                                 const { done, value } = await reader.read();
 
                                 if (done) {
-                                    bar.animate([
-                                        {
-                                            width: `${Math.floor((index + 1) / length * 100)}%`
-                                        }
-                                    ], {
-                                        delay: 0,
-                                        fill: "forwards",
-                                        duration: 500,
-                                        iterations: 1,
-                                        easing: "ease-in",
-                                        composite: "replace"
-                                    }).onfinish = () => {
-                                        bar.style.width = `${Math.floor((index + 1) / length * 100)}%`;
-                                        bar.animate([
-                                            {
-                                                opacity: 0
-                                            }
-                                        ], {
-                                            delay: 0,
-                                            fill: "forwards",
-                                            duration: 500,
-                                            iterations: 1,
-                                            easing: "ease-in"
-                                        }).onfinish = () => {
-                                            progress.remove();
-                                        };
-                                    };
-
                                     break;
                                 }
 
                                 chunks.push(value);
                                 receivedLength += value.length;
 
-                                if (receivedLength < contentLength) {
-                                    bar.animate([
-                                        {
-                                            width: `${Math.floor(receivedLength / contentLength * (index + 1) / length * 100)}%`
-                                        }
-                                    ], {
-                                        delay: 0,
-                                        fill: "forwards",
-                                        duration: 500,
-                                        iterations: 1,
-                                        easing: "linear",
-                                        composite: "replace"
-                                    }).onfinish = () => {
-                                        bar.style.width = `${Math.floor(receivedLength / contentLength * (index + 1) / length * 100)}%`;
-                                    };
+                                if (handler !== null) {
+                                    handler(receivedLength / contentLength);
                                 }
                             }
 
@@ -1281,20 +1208,6 @@
                     } catch (error) {
                         console.error(error);
                     }
-
-                    bar.animate([
-                        {
-                            opacity: 0
-                        }
-                    ], {
-                        delay: 0,
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-in"
-                    }).onfinish = () => {
-                        progress.remove();
-                    };
 
                     return null;
                 }
@@ -1350,6 +1263,8 @@
                             if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
                                 const data = background.dataset[background.index].images[random(0, background.dataset[background.index].images.length)];
                                 const blind = document.createElement("div");
+                                const progress = document.createElement("div");
+                                const bar = document.createElement("div");
                                 const timeout = 60 * 60;
                                 let index = 0;
 
@@ -1400,6 +1315,35 @@
                                     };
                                 });
 
+                                progress.className = "progress";
+                                bar.className = "bar animating";
+                                bar.style.width = "0%";
+
+                                try {
+                                    const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
+
+                                    if (response.ok) {
+                                        const blob = await response.blob();
+                                        const dataURL = await new Promise(async (resolve, reject) => {
+                                            const reader = new FileReader();
+
+                                            reader.onload = () => {
+                                                resolve(reader.result);
+                                            };
+                                            reader.onerror = () => {
+                                                reject(reader.error);
+                                            };
+                                            reader.readAsDataURL(blob);
+                                        });
+                                        bar.style.backgroundImage = `url('${dataURL}')`;
+                                    }
+                                } catch (error) {
+                                    console.error(error);
+                                }
+
+                                progress.appendChild(bar);
+                                document.body.querySelector("#app").appendChild(progress);
+
                                 if ("color" in data) {
                                     background.color = data.color;
                                 } else {
@@ -1410,10 +1354,71 @@
                                     const timestamp = Math.floor(new Date() / 1000);
 
                                     if (frame.source in cache === false || timestamp - cache[frame.source].timestamp >= timeout) {
-                                        const blob = await download(frame.source, index, data.frames.length);
+                                        const blob = await download(frame.source, (rate) => {
+                                            if (index < data.frames.length - 1 || rate < 1) {
+                                                bar.animate([
+                                                    {
+                                                        width: `${Math.floor(rate * (index + 1) / data.frames.length * 100)}%`
+                                                    }
+                                                ], {
+                                                    delay: 0,
+                                                    fill: "forwards",
+                                                    duration: 500,
+                                                    iterations: 1,
+                                                    easing: "linear",
+                                                    composite: "replace"
+                                                }).onfinish = () => {
+                                                    bar.style.width = `${Math.floor(rate * (index + 1) / data.frames.length * 100)}%`;
+                                                };
+                                            } else {
+                                                bar.animate([
+                                                    {
+                                                        width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                                                    }
+                                                ], {
+                                                    delay: 0,
+                                                    fill: "forwards",
+                                                    duration: 500,
+                                                    iterations: 1,
+                                                    easing: "ease-in",
+                                                    composite: "replace"
+                                                }).onfinish = () => {
+                                                    bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                                                    bar.animate([
+                                                        {
+                                                            opacity: 0
+                                                        }
+                                                    ], {
+                                                        delay: 0,
+                                                        fill: "forwards",
+                                                        duration: 500,
+                                                        iterations: 1,
+                                                        easing: "ease-in"
+                                                    }).onfinish = () => {
+                                                        progress.remove();
+                                                    };
+                                                };
+                                            }
+                                        });
                                         let image = null;
 
-                                        if (blob !== null) {
+                                        if (blob === null) {
+                                            if (index === data.frames.length - 1) {
+                                                bar.animate([
+                                                    {
+                                                        opacity: 0
+                                                    }
+                                                ], {
+                                                    delay: 0,
+                                                    fill: "forwards",
+                                                    duration: 500,
+                                                    iterations: 1,
+                                                    easing: "ease-in"
+                                                }).onfinish = () => {
+                                                    progress.remove();
+                                                };
+                                            }
+                                        } else {
                                             try {
                                                 image = await new Promise(async (resolve, reject) => {
                                                     const i = new Image();
@@ -1446,6 +1451,49 @@
 
                                         animationQueue.push(Object.assign({ time: 0, image: image }, frame));
                                     } else {
+                                        if (index < data.frames.length - 1) {
+                                            bar.animate([
+                                                {
+                                                    width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                                                }
+                                            ], {
+                                                delay: 0,
+                                                fill: "forwards",
+                                                duration: 500,
+                                                iterations: 1,
+                                                easing: "ease-in",
+                                                composite: "replace"
+                                            });
+                                        } else {
+                                            bar.animate([
+                                                {
+                                                    width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                                                }
+                                            ], {
+                                                delay: 0,
+                                                fill: "forwards",
+                                                duration: 500,
+                                                iterations: 1,
+                                                easing: "ease-in",
+                                                composite: "replace"
+                                            }).onfinish = () => {
+                                                bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                                                bar.animate([
+                                                    {
+                                                        opacity: 0
+                                                    }
+                                                ], {
+                                                    delay: 0,
+                                                    fill: "forwards",
+                                                    duration: 500,
+                                                    iterations: 1,
+                                                    easing: "ease-in"
+                                                }).onfinish = () => {
+                                                    progress.remove();
+                                                };
+                                            };
+                                        }
+
                                         animationQueue.push(Object.assign({ time: 0, image: cache[frame.source].image }, frame));
                                     }
 
