@@ -1024,7 +1024,7 @@
     </div>
     <script type="text/javascript">
         const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, particles: [], cache: [] };
-        const mouse = { active: false, touching: false, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
+        const tracker = { active: false, touching: false, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 
         function random(min, max) {
             min = Math.ceil(min);
@@ -1257,7 +1257,7 @@
                         if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
                             background.image = null;
                             background.blocks.splice(0);
-                            mouse.movement.x = mouse.movement.y = 0;
+                            tracker.movement.x = tracker.movement.y = 0;
                             animationQueue.splice(0);
 
                             if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
@@ -1827,33 +1827,33 @@
 
                         backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
-                        if (!mouse.active && (mouse.velocity.x !== 0 || mouse.velocity.y !== 0)) {
+                        if (!tracker.active && (tracker.velocity.x !== 0 || tracker.velocity.y !== 0)) {
                             const decelerationRate = 0.01;
 
-                            if (mouse.velocity.x > 1000) {
-                                mouse.velocity.x = 1000;
-                            } else if (mouse.velocity.x < -1000) {
-                                mouse.velocity.x = -1000;
+                            if (tracker.velocity.x > 1000) {
+                                tracker.velocity.x = 1000;
+                            } else if (tracker.velocity.x < -1000) {
+                                tracker.velocity.x = -1000;
                             }
 
-                            if (mouse.velocity.y > 1000) {
-                                mouse.velocity.y = 1000;
-                            } else if (mouse.velocity.y < -1000) {
-                                mouse.velocity.y = -1000;
+                            if (tracker.velocity.y > 1000) {
+                                tracker.velocity.y = 1000;
+                            } else if (tracker.velocity.y < -1000) {
+                                tracker.velocity.y = -1000;
                             }
 
-                            mouse.velocity.x -= mouse.velocity.x * decelerationRate;
-                            mouse.movement.x += mouse.velocity.x * deltaTime;
+                            tracker.velocity.x -= tracker.velocity.x * decelerationRate;
+                            tracker.movement.x += tracker.velocity.x * deltaTime;
 
-                            mouse.velocity.y -= mouse.velocity.y * decelerationRate;
-                            mouse.movement.y += mouse.velocity.y * deltaTime;
+                            tracker.velocity.y -= tracker.velocity.y * decelerationRate;
+                            tracker.movement.y += tracker.velocity.y * deltaTime;
 
-                            if (Math.abs(mouse.velocity.x) < 0.001) {
-                                mouse.velocity.x = 0;
+                            if (Math.abs(tracker.velocity.x) < 0.001) {
+                                tracker.velocity.x = 0;
                             }
 
-                            if (Math.abs(mouse.velocity.y) < 0.001) {
-                                mouse.velocity.y = 0;
+                            if (Math.abs(tracker.velocity.y) < 0.001) {
+                                tracker.velocity.y = 0;
                             }
                         }
 
@@ -1880,30 +1880,30 @@
 
                                     sx = 0;
                                     sh = backCanvas.height / ratio;
-                                    sy = Math.max(0, Math.min(frame.image.height - sh, (frame.image.height * ratio - backCanvas.height) / ratio * top - mouse.movement.y * window.devicePixelRatio / ratio));
+                                    sy = Math.max(0, Math.min(frame.image.height - sh, (frame.image.height * ratio - backCanvas.height) / ratio * top - tracker.movement.y * window.devicePixelRatio / ratio));
                                     sw = frame.image.width;
 
-                                    if ((frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio < mouse.movement.y) {
-                                        mouse.velocity.y *= -1;
-                                        mouse.movement.y = (frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio;
-                                    } else if ((backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio > mouse.movement.y) {
-                                        mouse.velocity.y *= -1;
-                                        mouse.movement.y = (backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio;
+                                    if ((frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio < tracker.movement.y) {
+                                        tracker.velocity.y *= -1;
+                                        tracker.movement.y = (frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio;
+                                    } else if ((backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio > tracker.movement.y) {
+                                        tracker.velocity.y *= -1;
+                                        tracker.movement.y = (backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio;
                                     }
                                 } else {
                                     const ratio = backCanvas.height / frame.image.height;
 
                                     sw = backCanvas.width / ratio;
-                                    sx = Math.max(0, Math.min(frame.image.width - sw, (frame.image.width * ratio - backCanvas.width) / ratio * left - mouse.movement.x * window.devicePixelRatio / ratio));
+                                    sx = Math.max(0, Math.min(frame.image.width - sw, (frame.image.width * ratio - backCanvas.width) / ratio * left - tracker.movement.x * window.devicePixelRatio / ratio));
                                     sy = 0;
                                     sh = frame.image.height;
 
-                                    if ((frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio < mouse.movement.x) {
-                                        mouse.velocity.x *= -1;
-                                        mouse.movement.x = (frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio;
-                                    } else if ((backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio > mouse.movement.x) {
-                                        mouse.velocity.x *= -1;
-                                        mouse.movement.x = (backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio;
+                                    if ((frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio < tracker.movement.x) {
+                                        tracker.velocity.x *= -1;
+                                        tracker.movement.x = (frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio;
+                                    } else if ((backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio > tracker.movement.x) {
+                                        tracker.velocity.x *= -1;
+                                        tracker.movement.x = (backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio;
                                     }
                                 }
 
@@ -1943,17 +1943,17 @@
             canvas.style.height = `${rect.height}px`;
         });
         window.addEventListener("mousedown", event => {
-            if (event.button === 0 && !mouse.touching) {
+            if (event.button === 0 && !tracker.touching) {
                 const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
                 const x = event.clientX - rect.x;
                 const y = event.clientY - rect.y;
                 const timestamp = event.timeStamp / 1000;
 
-                mouse.active = true;
-                mouse.position.x = x;
-                mouse.position.y = y;
-                mouse.timestamp = timestamp;
-                mouse.velocity.x = mouse.velocity.y = 0;
+                tracker.active = true;
+                tracker.position.x = x;
+                tracker.position.y = y;
+                tracker.timestamp = timestamp;
+                tracker.velocity.x = tracker.velocity.y = 0;
 
                 if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
                     for (let i = random(0, 4); i > 0; i--) {
@@ -1963,24 +1963,24 @@
             }
         });
         window.addEventListener("mousemove", event => {
-            if (mouse.active && !mouse.touching) {
+            if (tracker.active && !tracker.touching) {
                 const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
                 const x = event.clientX - rect.x;
                 const y = event.clientY - rect.y;
                 const timestamp = event.timeStamp / 1000;
-                const deltaX = x - mouse.position.x;
-                const deltaY = y - mouse.position.y;
-                const deltaTime = timestamp - mouse.timestamp;
+                const deltaX = x - tracker.position.x;
+                const deltaY = y - tracker.position.y;
+                const deltaTime = timestamp - tracker.timestamp;
 
-                mouse.position.x = x;
-                mouse.position.y = y;
-                mouse.timestamp = timestamp;
-                mouse.movement.x += deltaX;
-                mouse.movement.y += deltaY;
+                tracker.position.x = x;
+                tracker.position.y = y;
+                tracker.timestamp = timestamp;
+                tracker.movement.x += deltaX;
+                tracker.movement.y += deltaY;
 
                 if (deltaTime > 0) {
-                    mouse.velocity.x = deltaX / deltaTime;
-                    mouse.velocity.y = deltaY / deltaTime;
+                    tracker.velocity.x = deltaX / deltaTime;
+                    tracker.velocity.y = deltaY / deltaTime;
                 }
 
                 if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
@@ -1991,8 +1991,8 @@
             }
         });
         window.addEventListener("mouseup", event => {
-            if (event.button === 0 && !mouse.touching) {
-                mouse.active = false;
+            if (event.button === 0 && !tracker.touching) {
+                tracker.active = false;
             }
         });
         window.addEventListener("touchstart", event => {
@@ -2003,12 +2003,12 @@
             const y = event.changedTouches[0].clientY - rect.y;
             const timestamp = event.timeStamp / 1000;
 
-            mouse.active = true;
-            mouse.touching = true;
-            mouse.position.x = x;
-            mouse.position.y = y;
-            mouse.timestamp = timestamp;
-            mouse.velocity.x = mouse.velocity.y = 0;
+            tracker.active = true;
+            tracker.touching = true;
+            tracker.position.x = x;
+            tracker.position.y = y;
+            tracker.timestamp = timestamp;
+            tracker.velocity.x = tracker.velocity.y = 0;
 
             if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
                 for (let i = random(0, 4); i > 0; i--) {
@@ -2023,19 +2023,19 @@
             const x = event.changedTouches[0].clientX - rect.x;
             const y = event.changedTouches[0].clientY - rect.y;
             const timestamp = event.timeStamp / 1000;
-            const deltaX = x - mouse.position.x;
-            const deltaY = y - mouse.position.y;
-            const deltaTime = timestamp - mouse.timestamp;
+            const deltaX = x - tracker.position.x;
+            const deltaY = y - tracker.position.y;
+            const deltaTime = timestamp - tracker.timestamp;
 
-            mouse.position.x = x;
-            mouse.position.y = y;
-            mouse.timestamp = timestamp;
-            mouse.movement.x += deltaX;
-            mouse.movement.y += deltaY;
+            tracker.position.x = x;
+            tracker.position.y = y;
+            tracker.timestamp = timestamp;
+            tracker.movement.x += deltaX;
+            tracker.movement.y += deltaY;
 
             if (deltaTime > 0) {
-                mouse.velocity.x = deltaX / deltaTime;
-                mouse.velocity.y = deltaY / deltaTime;
+                tracker.velocity.x = deltaX / deltaTime;
+                tracker.velocity.y = deltaY / deltaTime;
             }
 
             if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
@@ -2047,14 +2047,14 @@
         window.addEventListener("touchend", event => {
             event.stopPropagation();
 
-            mouse.active = false;
-            mouse.touching = false;
+            tracker.active = false;
+            tracker.touching = false;
         });
         window.addEventListener("touchcancel", event => {
             event.stopPropagation();
 
-            mouse.active = false;
-            mouse.touching = false;
+            tracker.active = false;
+            tracker.touching = false;
         });
     </script>
 </body>
