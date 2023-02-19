@@ -1024,7 +1024,14 @@
     </div>
     <script type="text/javascript">
         const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, particles: [], cache: [] };
-        const mouse = { active: false, touching: false, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, timestamp: 0 };
+        const mouse = { active: false, touching: false, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
+
+        function random(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
 
         function shake(element) {
             element.animate([
@@ -1161,13 +1168,6 @@
             }
 
             if (background["dataset"] !== null) {
-                function _random(min, max) {
-                    min = Math.ceil(min);
-                    max = Math.floor(max);
-
-                    return Math.floor(Math.random() * (max - min)) + min;
-                }
-
                 async function download(url, index, length) {
                     const progress = document.createElement("div");
                     const bar = document.createElement("div");
@@ -1348,7 +1348,7 @@
                             animationQueue.splice(0);
 
                             if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
-                                const data = background.dataset[background.index].images[_random(0, background.dataset[background.index].images.length)];
+                                const data = background.dataset[background.index].images[random(0, background.dataset[background.index].images.length)];
                                 const blind = document.createElement("div");
                                 const timeout = 60 * 60;
                                 let index = 0;
@@ -1472,12 +1472,12 @@
                                 background.color = null;
                             }
 
-                            const length = _random(8, 16);
+                            const length = random(8, 16);
                             let start = background.dataset[background.index].texts.length - length;
                             let samples;
 
                             if (start >= 0) {
-                                start = _random(0, start);
+                                start = random(0, start);
                                 samples = background.dataset[background.index].texts.slice(start, start + length);
                             } else {
                                 samples = background.dataset[background.index].texts;
@@ -1618,7 +1618,7 @@
                                                 if (inline.text.charAt(i) === "\n") {
                                                     randomBuffer += "\n";
                                                 } else {
-                                                    randomBuffer += charArray[~~_random(0, charArray.length)];
+                                                    randomBuffer += charArray[~~random(0, charArray.length)];
                                                 }
                                             }
                                         }
@@ -1779,6 +1779,24 @@
 
                         backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
+                        if (!mouse.active && (mouse.velocity.x !== 0 || mouse.velocity.y !== 0)) {
+                            const decelerationRate = 0.01;
+
+                            mouse.velocity.x -= mouse.velocity.x * decelerationRate;
+                            mouse.movement.x += mouse.velocity.x * deltaTime;
+
+                            mouse.velocity.y -= mouse.velocity.y * decelerationRate;
+                            mouse.movement.y += mouse.velocity.y * deltaTime;
+
+                            if (Math.abs(mouse.velocity.x) < 0.001) {
+                                mouse.velocity.x = 0;
+                            }
+
+                            if (Math.abs(mouse.velocity.y) < 0.001) {
+                                mouse.velocity.y = 0;
+                            }
+                        }
+
                         if (animationQueue.length > 0) {
                             const frame = animationQueue[0];
 
@@ -1863,22 +1881,19 @@
         window.addEventListener("mousedown", event => {
             if (event.button === 0 && !mouse.touching) {
                 const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
+                const x = event.clientX - rect.x;
+                const y = event.clientY - rect.y;
+                const timestamp = event.timeStamp / 1000;
 
                 mouse.active = true;
-                mouse.position.x = event.clientX - rect.x;
-                mouse.position.y = event.clientY - rect.y;
-                mouse.timestamp = event.timeStamp / 1000;
+                mouse.position.x = x;
+                mouse.position.y = y;
+                mouse.timestamp = timestamp;
+                mouse.velocity.x = mouse.velocity.y = 0;
 
-                if (background.cache.length > 0) {
-                    function _random(min, max) {
-                        min = Math.ceil(min);
-                        max = Math.floor(max);
-
-                        return Math.floor(Math.random() * (max - min)) + min;
-                    }
-
-                    for (let i = _random(0, 4); i > 0; i--) {
-                        background.particles.unshift({ elapsed: -1, x: mouse.position.x, y: mouse.position.y, image: background.cache[_random(0, background.cache.length)] });
+                if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+                    for (let i = random(0, 4); i > 0; i--) {
+                        background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
                     }
                 }
             }
@@ -1888,28 +1903,26 @@
                 const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
                 const x = event.clientX - rect.x;
                 const y = event.clientY - rect.y;
-                const time = event.timeStamp / 1000;
+                const timestamp = event.timeStamp / 1000;
+                const deltaX = x - mouse.position.x;
+                const deltaY = y - mouse.position.y;
+                const deltaTime = timestamp - mouse.timestamp;
 
-                mouse.movement.x += x - mouse.position.x;
-                mouse.movement.y += y - mouse.position.y;
                 mouse.position.x = x;
                 mouse.position.y = y;
+                mouse.timestamp = timestamp;
+                mouse.movement.x += deltaX;
+                mouse.movement.y += deltaY;
 
-                if (time - mouse.timestamp >= 0.1) {
-                    if (background.cache.length > 0) {
-                        function _random(min, max) {
-                            min = Math.ceil(min);
-                            max = Math.floor(max);
+                if (deltaTime > 0) {
+                    mouse.velocity.x = deltaX / deltaTime;
+                    mouse.velocity.y = deltaY / deltaTime;
+                }
 
-                            return Math.floor(Math.random() * (max - min)) + min;
-                        }
-
-                        for (let i = _random(0, 4); i > 0; i--) {
-                            background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[_random(0, background.cache.length)] });
-                        }
+                if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+                    for (let i = random(0, 4); i > 0; i--) {
+                        background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
                     }
-
-                    mouse.timestamp = time;
                 }
             }
         });
@@ -1922,26 +1935,22 @@
             event.stopPropagation();
 
             const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
+            const x = event.changedTouches[0].clientX - rect.x;
+            const y = event.changedTouches[0].clientY - rect.y;
+            const timestamp = event.timeStamp / 1000;
 
             mouse.active = true;
-            mouse.position.x = event.changedTouches[0].clientX - rect.x;
-            mouse.position.y = event.changedTouches[0].clientY - rect.y;
-            mouse.timestamp = event.timeStamp / 1000;
+            mouse.touching = true;
+            mouse.position.x = x;
+            mouse.position.y = y;
+            mouse.timestamp = timestamp;
+            mouse.velocity.x = mouse.velocity.y = 0;
 
-            if (background.cache.length > 0) {
-                function _random(min, max) {
-                    min = Math.ceil(min);
-                    max = Math.floor(max);
-
-                    return Math.floor(Math.random() * (max - min)) + min;
-                }
-
-                for (let i = _random(0, 4); i > 0; i--) {
-                    background.particles.unshift({ elapsed: -1, x: mouse.position.x, y: mouse.position.y, image: background.cache[_random(0, background.cache.length)] });
+            if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+                for (let i = random(0, 4); i > 0; i--) {
+                    background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
                 }
             }
-
-            mouse.touching = true;
         });
         window.addEventListener("touchmove", event => {
             event.stopPropagation();
@@ -1949,28 +1958,26 @@
             const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
             const x = event.changedTouches[0].clientX - rect.x;
             const y = event.changedTouches[0].clientY - rect.y;
-            const time = event.timeStamp / 1000;
+            const timestamp = event.timeStamp / 1000;
+            const deltaX = x - mouse.position.x;
+            const deltaY = y - mouse.position.y;
+            const deltaTime = timestamp - mouse.timestamp;
 
-            mouse.movement.x += x - mouse.position.x;
-            mouse.movement.y += y - mouse.position.y;
             mouse.position.x = x;
             mouse.position.y = y;
+            mouse.timestamp = timestamp;
+            mouse.movement.x += deltaX;
+            mouse.movement.y += deltaY;
 
-            if (time - mouse.timestamp >= 0.1) {
-                if (background.cache.length > 0) {
-                    function _random(min, max) {
-                        min = Math.ceil(min);
-                        max = Math.floor(max);
+            if (deltaTime > 0) {
+                mouse.velocity.x = deltaX / deltaTime;
+                mouse.velocity.y = deltaY / deltaTime;
+            }
 
-                        return Math.floor(Math.random() * (max - min)) + min;
-                    }
-
-                    for (let i = _random(0, 4); i > 0; i--) {
-                        background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[_random(0, background.cache.length)] });
-                    }
+            if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+                for (let i = random(0, 4); i > 0; i--) {
+                    background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
                 }
-
-                mouse.timestamp = time;
             }
         });
         window.addEventListener("touchend", event => {
