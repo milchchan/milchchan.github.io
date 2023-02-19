@@ -1836,8 +1836,10 @@
                                     sw = frame.image.width;
 
                                     if ((frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio < mouse.movement.y) {
+                                        mouse.velocity.y *= -1;
                                         mouse.movement.y = (frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio;
                                     } else if ((backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio > mouse.movement.y) {
+                                        mouse.velocity.y *= -1;
                                         mouse.movement.y = (backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio;
                                     }
                                 } else {
@@ -1849,8 +1851,10 @@
                                     sh = frame.image.height;
 
                                     if ((frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio < mouse.movement.x) {
+                                        mouse.velocity.x *= -1;
                                         mouse.movement.x = (frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio;
                                     } else if ((backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio > mouse.movement.x) {
+                                        mouse.velocity.x *= -1;
                                         mouse.movement.x = (backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio;
                                     }
                                 }
