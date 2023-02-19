@@ -1367,9 +1367,7 @@
                                                     iterations: 1,
                                                     easing: "linear",
                                                     composite: "replace"
-                                                }).onfinish = () => {
-                                                    bar.style.width = `${Math.floor(rate * (index + 1) / data.frames.length * 100)}%`;
-                                                };
+                                                });
                                             } else {
                                                 bar.animate([
                                                     {
@@ -1383,7 +1381,6 @@
                                                     easing: "ease-in",
                                                     composite: "replace"
                                                 }).onfinish = () => {
-                                                    bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
                                                     bar.animate([
                                                         {
                                                             opacity: 0
@@ -1477,7 +1474,6 @@
                                                 easing: "ease-in",
                                                 composite: "replace"
                                             }).onfinish = () => {
-                                                bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
                                                 bar.animate([
                                                     {
                                                         opacity: 0
