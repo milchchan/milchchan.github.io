@@ -1366,7 +1366,7 @@
                                                     duration: 500,
                                                     iterations: 1,
                                                     easing: "linear",
-                                                    composite: "replace"
+                                                    composite: "accumulate"
                                                 });
                                             } else {
                                                 bar.animate([
@@ -1379,7 +1379,7 @@
                                                     duration: 500,
                                                     iterations: 1,
                                                     easing: "ease-in",
-                                                    composite: "replace"
+                                                    composite: "accumulate"
                                                 }).onfinish = () => {
                                                     bar.animate([
                                                         {
@@ -1410,7 +1410,8 @@
                                                     fill: "forwards",
                                                     duration: 500,
                                                     iterations: 1,
-                                                    easing: "ease-in"
+                                                    easing: "ease-in",
+                                                    composite: "accumulate"
                                                 }).onfinish = () => {
                                                     progress.remove();
                                                 };
@@ -1459,7 +1460,7 @@
                                                 duration: 500,
                                                 iterations: 1,
                                                 easing: "ease-in",
-                                                composite: "replace"
+                                                composite: "accumulate"
                                             });
                                         } else {
                                             bar.animate([
@@ -1472,7 +1473,7 @@
                                                 duration: 500,
                                                 iterations: 1,
                                                 easing: "ease-in",
-                                                composite: "replace"
+                                                composite: "accumulate"
                                             }).onfinish = () => {
                                                 bar.animate([
                                                     {
