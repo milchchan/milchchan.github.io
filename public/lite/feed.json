@@ -60,6 +60,50 @@
                     {
                         "delay": 0.5,
                         "source": "images/Background-Milch-Tukigi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Tukigi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
                     }
                 ]
             },
@@ -69,6 +113,50 @@
                     {
                         "delay": 0.5,
                         "source": "images/Background-Milch-Mamimu-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Mamimu-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
                     }
                 ]
             }
