@@ -428,7 +428,9 @@
         let oldYear3 = -1, year3X = 0.0, year3Y = 0.0, year3Width = maxWidth, year3Height = maxHeight, year3Step = 0.0;
         let oldYear4 = -1, year4X = 0.0, year4Y = 0.0, year4Width = maxWidth, year4Height = maxHeight, year4Step = 0.0;
         let lastDate = new Date();
-        let isPaused = false;
+        let isLocked = false;
+        let isTouching = false;
+        let tapCount = 0;
         let clocks = [{ source: "images/Digits1.png", digits: digits }, { source: "images/Digits2.png", digits: digits }];
 
         function shuffle(array) {
@@ -966,6 +968,7 @@
                 creditsElement.className = "credits";
                 creditsElement.style.opacity = "0";
                 linkElement.href = data.url;
+                linkElement.dataset["name"] = data.name;
                 clipElement.className = "clip";
                 scrollableElement.className = "scrollable";
                 contentElement1.innerText = contentElement2.innerText = data.name;
@@ -1041,8 +1044,6 @@
 
             setTimeout(function tick() {
                 async function update(data) {
-                    const elements = document.body.querySelectorAll("div.digit > img.digit");
-
                     try {
                         await new Promise((resolve, reject) => {
                             const i = new Image();
@@ -1064,14 +1065,13 @@
 
                         for (const credits of frame.querySelectorAll(":scope > div.credits")) {
                             const link = credits.querySelector(":scope > a");
-                            const div = link.querySelector(":scope > .clip > .scrollable > div:first-child");
-
-                            if (div.innerText === data.name) {
+                            
+                            if (link.dataset["name"] === data.name) {
                                 if (link.href !== data.url) {
                                     link.href = data.url;
                                 }
                             } else {
-                                const animation = credits.animate([
+                                credits.animate([
                                     {
                                         opacity: "0"
                                     }
@@ -1080,9 +1080,7 @@
                                     duration: 500,
                                     iterations: 1,
                                     easing: "ease-in"
-                                });
-
-                                animation.onfinish = () => {
+                                }).onfinish = () => {
                                     credits.remove();
                                 };
 
@@ -1101,6 +1099,7 @@
                             creditsElement.className = "credits";
                             creditsElement.style.opacity = "0";
                             linkElement.href = data.url;
+                            linkElement.dataset["name"] = data.name;
                             clipElement.className = "clip";
                             scrollableElement.className = "scrollable";
                             contentElement1.innerText = contentElement2.innerText = data.name;
@@ -1121,11 +1120,13 @@
                                 duration: 500,
                                 iterations: 1,
                                 easing: "ease-out"
-                            });
+                            }).onfinish = () => {
+                                creditsElement.style.opacity = 1;
+                            };
                         }
                     }
 
-                    for (const element of elements) {
+                    for (const element of document.body.querySelectorAll("div.digit > img.digit")) {
                         const animation = element.animate([
                             {
                                 opacity: "0"
@@ -1176,10 +1177,11 @@
                                         };
                                         i.src = data.source;
                                     });
+                                    const elements = document.body.querySelectorAll("div.digit > img.digit");
 
                                     image.className = "digit";
                                     image.alt = "Digit";
-
+                                    
                                     for (let index = 0; index < elements.length; index++) {
                                         if (elements.item(index) === element) {
                                             for (let i = 0; i < data.digits.length; i++) {
@@ -1345,16 +1347,14 @@
                 }
 
                 if (clocks.length > 1) {
-                    if (!isPaused) {
+                    if (!isLocked) {
                         if (clockQueue.length === 0) {
                             for (const c of shuffle(clocks)) {
                                 clockQueue.push(c);
                             }
                         }
 
-                        const nextClock = clockQueue.shift();
-
-                        update(nextClock);
+                        update(clockQueue.shift());
                     }
 
                     setTimeout(tick, 15000);
@@ -1473,11 +1473,36 @@
                 }
             }
         });
-        window.addEventListener("focus", event => {
-            isPaused = false;
+        window.addEventListener("dblclick", event => {
+            if (event.button === 0 && !isTouching) {
+                isLocked = !isLocked;
+            }
         });
-        window.addEventListener("blur", event => {
-            isPaused = true;
+        window.addEventListener("touchstart", event => {
+            event.stopPropagation();
+
+            if (tapCount === 0) {
+                tapCount++;
+
+                setTimeout(() => {
+                    tapCount = 0;
+                }, 500);
+            } else {
+                isLocked = !isLocked;
+                tapCount = 0;
+            }
+
+            isTouching = true;
+        });
+        window.addEventListener("touchend", event => {
+            event.stopPropagation();
+
+            isTouching = false;
+        });
+        window.addEventListener("touchcancel", event => {
+            event.stopPropagation();
+
+            isTouching = false;
         });
     </script>
 </body>
