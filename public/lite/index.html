@@ -1020,7 +1020,7 @@
         </div>
     </div>
     <script type="text/javascript">
-        const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, particles: [], cache: [] };
+        const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
         const tracker = { active: false, touching: false, edge: true, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 
         function random(min, max) {
@@ -1028,6 +1028,24 @@
             max = Math.floor(max);
 
             return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function shuffle(array) {
+            let a = [].concat(array);
+            let n = array.length;
+
+            while (n > 1) {
+                const k = random(0, n);
+
+                n--;
+
+                const temp = a[n];
+
+                a[n] = a[k];
+                a[k] = temp;
+            }
+
+            return a;
         }
 
         function shake(element) {
