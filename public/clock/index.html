@@ -36,6 +36,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/75ab01b762.js" crossorigin="anonymous"></script>
     <style type="text/css">
         :root {
             --background-color: #ffffff;
@@ -195,7 +196,7 @@
             position: absolute;
             bottom: 0;
             left: 50%;
-            padding: 0px 16px 8px 16px;
+            padding: 0px 16px 16px 16px;
             transform: translateX(-50%);
             width: fit-content;
             height: fit-content;
@@ -360,6 +361,46 @@
             vertical-align: middle;
         }
 
+        #stats {
+            display: flex;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding: 16px 16px 16px 0px;
+            width: fit-content;
+            height: fit-content;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+            opacity: 0;
+            transition: .5s;
+            cursor: default;
+        }
+
+        #stats.is-active {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #stats:hover {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #stats>span {
+            margin: 0;
+            padding: 0px 1px 0px 1px;
+            background-color: #000000;
+            font-family: "Barlow", sans-serif;
+            font-size: 0.75rem;
+            font-weight: bold;
+            transform: rotate(0.03deg);
+            line-height: 0.75rem;
+            height: 0.75rem;
+            vertical-align: middle;
+            color: #ffffff;
+        }
+
         @keyframes loop {
             0% {
                 background-position: 0 0;
@@ -427,7 +468,6 @@
         let oldYear2 = -1, year2X = 0.0, year2Y = 0.0, year2Width = maxWidth, year2Height = maxHeight, year2Step = 0.0;
         let oldYear3 = -1, year3X = 0.0, year3Y = 0.0, year3Width = maxWidth, year3Height = maxHeight, year3Step = 0.0;
         let oldYear4 = -1, year4X = 0.0, year4Y = 0.0, year4Width = maxWidth, year4Height = maxHeight, year4Step = 0.0;
-        let lastDate = new Date();
         let isLocked = false;
         let isTouching = false;
         let tapCount = 0;
@@ -483,361 +523,8 @@
             element.parentElement.style.transform = "scale(" + (scale1 + (scale2 - scale1) * Math.sin(step / 2.0 * Math.PI)).toString() + ")";
         }
 
-        function animate() {
-            requestAnimationFrame(animate);
-
-            let date = new Date();
-            const frameRate = 1000 / (date - lastDate);
-            let newSecond1 = date.getSeconds() % 10;
-            let newSecond2 = Math.floor(date.getSeconds() / 10) % 10;
-            let newMinute1 = date.getMinutes() % 10;
-            let newMinute2 = Math.floor(date.getMinutes() / 10) % 10;
-            let newHour1 = date.getHours() % 10;
-            let newHour2 = Math.floor(date.getHours() / 10) % 10;
-            let newDay1 = date.getDate() % 10;
-            let newDay2 = Math.floor(date.getDate() / 10) % 10;
-            let newMonth1 = (date.getMonth() + 1) % 10;
-            let newMonth2 = Math.floor((date.getMonth() + 1) / 10) % 10;
-            let newYear1 = date.getFullYear() % 10;
-            let newYear2 = Math.floor(date.getFullYear() / 10) % 10;
-            let newYear3 = Math.floor(date.getFullYear() / 100) % 10;
-            let newYear4 = Math.floor(date.getFullYear() / 1000) % 10;
-            let i = 0;
-
-            for (const element of document.body.querySelectorAll("div.digit > img.digit")) {
-                if (element.parentElement.style.visibility === "visible") {
-                    if (i % 14 === 0 && newYear4 !== oldYear4) {
-                        year4Step += 1 / (frameRate / 2);
-
-                        if (year4Step >= 1) {
-                            if (widthArray[newYear4] > maxWidth) {
-                                year4X = xArray[newYear4] + (widthArray[newYear4] - maxWidth) / 2.0;
-                            } else {
-                                year4X = xArray[newYear4];
-                            }
-
-                            if (heightArray[newYear4] > maxHeight) {
-                                year4Y = yArray[newYear4] + (heightArray[newYear4] - maxHeight) / 2.0;
-                            } else {
-                                year4Y = yArray[newYear4];
-                            }
-
-                            year4Width = widthArray[newYear4];
-                            year4Height = heightArray[newYear4];
-                            year4Step = 0.0;
-                            oldYear4 = newYear4;
-                        }
-
-                        renderDigit(element, newYear4, year4X, year4Y, year4Width, year4Height, year4Step);
-                    } else if (i % 14 === 1 && newYear3 !== oldYear3) {
-                        year3Step += 1 / (frameRate / 2);
-
-                        if (year3Step >= 1) {
-                            if (widthArray[newYear3] > maxWidth) {
-                                year3X = xArray[newYear3] + (widthArray[newYear3] - maxWidth) / 2.0;
-                            } else {
-                                year3X = xArray[newYear3];
-                            }
-
-                            if (heightArray[newYear3] > maxHeight) {
-                                year3Y = yArray[newYear3] + (heightArray[newYear3] - maxHeight) / 2.0;
-                            } else {
-                                year3Y = yArray[newYear3];
-                            }
-
-                            year3Width = widthArray[newYear3];
-                            year3Height = heightArray[newYear3];
-                            year3Step = 0.0;
-                            oldYear3 = newYear3;
-                        }
-
-                        renderDigit(element, newYear3, year3X, year3Y, year3Width, year3Height, year3Step);
-                    } else if (i % 14 === 2 && newYear2 !== oldYear2) {
-                        year2Step += 1 / (frameRate / 2);
-
-                        if (year2Step >= 1) {
-                            if (widthArray[newYear2] > maxWidth) {
-                                year2X = xArray[newYear2] + (widthArray[newYear2] - maxWidth) / 2.0;
-                            } else {
-                                year2X = xArray[newYear2];
-                            }
-
-                            if (heightArray[newYear2] > maxHeight) {
-                                year2Y = yArray[newYear2] + (heightArray[newYear2] - maxHeight) / 2.0;
-                            } else {
-                                year2Y = yArray[newYear2];
-                            }
-
-                            year2Width = widthArray[newYear2];
-                            year2Height = heightArray[newYear2];
-                            year2Step = 0.0;
-                            oldYear2 = newYear2;
-                        }
-
-                        renderDigit(element, newYear2, year2X, year2Y, year2Width, year2Height, year2Step);
-                    } else if (i % 14 === 3 && newYear1 !== oldYear1) {
-                        year1Step += 1 / (frameRate / 2);
-
-                        if (year1Step >= 1) {
-                            if (widthArray[newYear1] > maxWidth) {
-                                year1X = xArray[newYear1] + (widthArray[newYear1] - maxWidth) / 2.0;
-                            } else {
-                                year1X = xArray[newYear1];
-                            }
-
-                            if (heightArray[newYear1] > maxHeight) {
-                                year1Y = yArray[newYear1] + (heightArray[newYear1] - maxHeight) / 2.0;
-                            } else {
-                                year1Y = yArray[newYear1];
-                            }
-
-                            year1Width = widthArray[newYear1];
-                            year1Height = heightArray[newYear1];
-                            year1Step = 0.0;
-                            oldYear1 = newYear1;
-                        }
-
-                        renderDigit(element, newYear1, year1X, year1Y, year1Width, year1Height, year1Step);
-                    } else if (i % 14 === 4 && newMonth2 !== oldMonth2) {
-                        month2Step += 1 / (frameRate / 2);
-
-                        if (month2Step >= 1) {
-                            if (widthArray[newMonth2] > maxWidth) {
-                                month2X = xArray[newMonth2] + (widthArray[newMonth2] - maxWidth) / 2.0;
-                            } else {
-                                month2X = xArray[newMonth2];
-                            }
-
-                            if (heightArray[newMonth2] > maxHeight) {
-                                month2Y = yArray[newMonth2] + (heightArray[newMonth2] - maxHeight) / 2.0;
-                            } else {
-                                month2Y = yArray[newMonth2];
-                            }
-
-                            month2Width = widthArray[newMonth2];
-                            month2Height = heightArray[newMonth2];
-                            month2Step = 0.0;
-                            oldMonth2 = newMonth2;
-                        }
-
-                        renderDigit(element, newMonth2, month2X, month2Y, month2Width, month2Height, month2Step);
-                    } else if (i % 14 === 5 && newMonth1 !== oldMonth1) {
-                        month1Step += 1 / (frameRate / 2);
-
-                        if (month1Step >= 1) {
-                            if (widthArray[newMonth1] > maxWidth) {
-                                month1X = xArray[newMonth1] + (widthArray[newMonth1] - maxWidth) / 2.0;
-                            } else {
-                                month1X = xArray[newMonth1];
-                            }
-
-                            if (heightArray[newMonth1] > maxHeight) {
-                                month1Y = yArray[newMonth1] + (heightArray[newMonth1] - maxHeight) / 2.0;
-                            } else {
-                                month1Y = yArray[newMonth1];
-                            }
-
-                            month1Width = widthArray[newMonth1];
-                            month1Height = heightArray[newMonth1];
-                            month1Step = 0.0;
-                            oldMonth1 = newMonth1;
-                        }
-
-                        renderDigit(element, newMonth1, month1X, month1Y, month1Width, month1Height, month1Step);
-                    } else if (i % 14 === 6 && newDay2 !== oldDay2) {
-                        day2Step += 1 / (frameRate / 2);
-
-                        if (day2Step >= 1) {
-                            if (widthArray[newDay2] > maxWidth) {
-                                day2X = xArray[newDay2] + (widthArray[newDay2] - maxWidth) / 2.0;
-                            } else {
-                                day2X = xArray[newDay2];
-                            }
-
-                            if (heightArray[newDay2] > maxHeight) {
-                                day2Y = yArray[newDay2] + (heightArray[newDay2] - maxHeight) / 2.0;
-                            } else {
-                                day2Y = yArray[newDay2];
-                            }
-
-                            day2Width = widthArray[newDay2];
-                            day2Height = heightArray[newDay2];
-                            day2Step = 0.0;
-                            oldDay2 = newDay2;
-                        }
-
-                        renderDigit(element, newDay2, day2X, day2Y, day2Width, day2Height, day2Step);
-                    } else if (i % 14 === 7 && newDay1 !== oldDay1) {
-                        day1Step += 1 / (frameRate / 2);
-
-                        if (day1Step >= 1) {
-                            if (widthArray[newDay1] > maxWidth) {
-                                day1X = xArray[newDay1] + (widthArray[newDay1] - maxWidth) / 2.0;
-                            } else {
-                                day1X = xArray[newDay1];
-                            }
-
-                            if (heightArray[newDay1] > maxHeight) {
-                                day1Y = yArray[newDay1] + (heightArray[newDay1] - maxHeight) / 2.0;
-                            } else {
-                                day1Y = yArray[newDay1];
-                            }
-
-                            day1Width = widthArray[newDay1];
-                            day1Height = heightArray[newDay1];
-                            day1Step = 0.0;
-                            oldDay1 = newDay1;
-                        }
-
-                        renderDigit(element, newDay1, day1X, day1Y, day1Width, day1Height, day1Step);
-                    } else if (i % 14 === 8 && newHour2 !== oldHour2) {
-                        hour2Step += 1 / (frameRate / 2);
-
-                        if (hour2Step >= 1) {
-                            if (widthArray[newHour2] > maxWidth) {
-                                hour2X = xArray[newHour2] + (widthArray[newHour2] - maxWidth) / 2.0;
-                            } else {
-                                hour2X = xArray[newHour2];
-                            }
-
-                            if (heightArray[newHour2] > maxHeight) {
-                                hour2Y = yArray[newHour2] + (heightArray[newHour2] - maxHeight) / 2.0;
-                            } else {
-                                hour2Y = yArray[newHour2];
-                            }
-
-                            hour2Width = widthArray[newHour2];
-                            hour2Height = heightArray[newHour2];
-                            hour2Step = 0.0;
-                            oldHour2 = newHour2;
-                        }
-
-                        renderDigit(element, newHour2, hour2X, hour2Y, hour2Width, hour2Height, hour2Step);
-                    } else if (i % 14 === 9 && newHour1 !== oldHour1) {
-                        hour1Step += 1 / (frameRate / 2);
-
-                        if (hour1Step >= 1) {
-                            if (widthArray[newHour1] > maxWidth) {
-                                hour1X = xArray[newHour1] + (widthArray[newHour1] - maxWidth) / 2.0;
-                            } else {
-                                hour1X = xArray[newHour1];
-                            }
-
-                            if (heightArray[newHour1] > maxHeight) {
-                                hour1Y = yArray[newHour1] + (heightArray[newHour1] - maxHeight) / 2.0;
-                            } else {
-                                hour1Y = yArray[newHour1];
-                            }
-
-                            hour1Width = widthArray[newHour1];
-                            hour1Height = heightArray[newHour1];
-                            hour1Step = 0.0;
-                            oldHour1 = newHour1;
-                        }
-
-                        renderDigit(element, newHour1, hour1X, hour1Y, hour1Width, hour1Height, hour1Step);
-                    } else if (i % 14 === 10 && newMinute2 !== oldMinute2) {
-                        minute2Step += 1 / (frameRate / 2);
-
-                        if (minute2Step >= 1) {
-                            if (widthArray[newMinute2] > maxWidth) {
-                                minute2X = xArray[newMinute2] + (widthArray[newMinute2] - maxWidth) / 2.0;
-                            } else {
-                                minute2X = xArray[newMinute2];
-                            }
-
-                            if (heightArray[newMinute2] > maxHeight) {
-                                minute2Y = yArray[newMinute2] + (heightArray[newMinute2] - maxHeight) / 2.0;
-                            } else {
-                                minute2Y = yArray[newMinute2];
-                            }
-
-                            minute2Width = widthArray[newMinute2];
-                            minute2Height = heightArray[newMinute2];
-                            minute2Step = 0.0;
-                            oldMinute2 = newMinute2;
-                        }
-
-                        renderDigit(element, newMinute2, minute2X, minute2Y, minute2Width, minute2Height, minute2Step);
-                    } else if (i % 14 === 11 && newMinute1 !== oldMinute1) {
-                        minute1Step += 1 / (frameRate / 2);
-
-                        if (minute1Step >= 1) {
-                            if (widthArray[newMinute1] > maxWidth) {
-                                minute1X = xArray[newMinute1] + (widthArray[newMinute1] - maxWidth) / 2.0;
-                            } else {
-                                minute1X = xArray[newMinute1];
-                            }
-
-                            if (heightArray[newMinute1] > maxHeight) {
-                                minute1Y = yArray[newMinute1] + (heightArray[newMinute1] - maxHeight) / 2.0;
-                            } else {
-                                minute1Y = yArray[newMinute1];
-                            }
-
-                            minute1Width = widthArray[newMinute1];
-                            minute1Height = heightArray[newMinute1];
-                            minute1Step = 0.0;
-                            oldMinute1 = newMinute1;
-                        }
-
-                        renderDigit(element, newMinute1, minute1X, minute1Y, minute1Width, minute1Height, minute1Step);
-                    } else if (i % 14 === 12 && newSecond2 !== oldSecond2) {
-                        second2Step += 1 / (frameRate / 2);
-
-                        if (second2Step >= 1) {
-                            if (widthArray[newSecond2] > maxWidth) {
-                                second2X = xArray[newSecond2] + (widthArray[newSecond2] - maxWidth) / 2.0;
-                            } else {
-                                second2X = xArray[newSecond2];
-                            }
-
-                            if (heightArray[newSecond2] > maxHeight) {
-                                second2Y = yArray[newSecond2] + (heightArray[newSecond2] - maxHeight) / 2.0;
-                            } else {
-                                second2Y = yArray[newSecond2];
-                            }
-
-                            second2Width = widthArray[newSecond2];
-                            second2Height = heightArray[newSecond2];
-                            second2Step = 0.0;
-                            oldSecond2 = newSecond2;
-                        }
-
-                        renderDigit(element, newSecond2, second2X, second2Y, second2Width, second2Height, second2Step);
-                    } else if (i % 14 === 13 && newSecond1 !== oldSecond1) {
-                        second1Step += 1 / (frameRate / 2);
-
-                        if (second1Step >= 1) {
-                            if (widthArray[newSecond1] > maxWidth) {
-                                second1X = xArray[newSecond1] + (widthArray[newSecond1] - maxWidth) / 2.0;
-                            } else {
-                                second1X = xArray[newSecond1];
-                            }
-
-                            if (heightArray[newSecond1] > maxHeight) {
-                                second1Y = yArray[newSecond1] + (heightArray[newSecond1] - maxHeight) / 2.0;
-                            } else {
-                                second1Y = yArray[newSecond1];
-                            }
-
-                            second1Width = widthArray[newSecond1];
-                            second1Height = heightArray[newSecond1];
-                            second1Step = 0.0;
-                            oldSecond1 = newSecond1;
-                        }
-
-                        renderDigit(element, newSecond1, second1X, second1Y, second1Width, second1Height, second1Step);
-                    }
-                }
-
-                i++;
-            }
-
-            lastDate = date;
-        }
-
         window.addEventListener("load", async event => {
+            const isDebug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
             const width = (maxWidth + space) * 14;
             const sum = split.reduce((x, y) => x + Number(y), 0);
             const container = document.body.querySelector("#container");
@@ -956,6 +643,8 @@
             }
 
             const data = clockQueue.shift();
+            let previousTime = performance.now();
+            const stats = { time: previousTime, frames: 0, targets: [] };
 
             for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
                 const creditsElement = document.createElement("div");
@@ -964,6 +653,8 @@
                 const scrollableElement = document.createElement("div");
                 const contentElement1 = document.createElement("div");
                 const contentElement2 = document.createElement("div");
+                const statsElement = document.createElement("div");
+                const counterElement = document.createElement("span");
 
                 creditsElement.className = "credits";
                 creditsElement.style.opacity = "0";
@@ -973,7 +664,19 @@
                 scrollableElement.className = "scrollable";
                 contentElement1.innerText = contentElement2.innerText = data.name;
 
+                statsElement.id = "stats";
+                counterElement.innerText = "0";
+                counterElement.style.opacity = "0";
+
+                stats.targets.push(counterElement);
+
+                if (isDebug) {
+                    statsElement.className = "is-active";
+                }
+
+                statsElement.appendChild(counterElement);
                 frame.appendChild(creditsElement);
+                frame.appendChild(statsElement)
                 creditsElement.appendChild(linkElement);
                 linkElement.appendChild(clipElement);
                 clipElement.appendChild(scrollableElement);
@@ -981,6 +684,16 @@
                 scrollableElement.appendChild(contentElement2);
 
                 creditsElement.animate([
+                    {
+                        opacity: "1"
+                    }
+                ], {
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out"
+                });
+                counterElement.animate([
                     {
                         opacity: "1"
                     }
@@ -999,7 +712,376 @@
                 heightArray[i] = digits[i][3];
             }
 
-            animate();
+            function render(timestamp) {
+                const startTime = performance.now();
+
+                if (timestamp > previousTime) {
+                    const frameRate = 1000 / (timestamp - previousTime);
+                    const date = new Date();
+                    let newSecond1 = date.getSeconds() % 10;
+                    let newSecond2 = Math.floor(date.getSeconds() / 10) % 10;
+                    let newMinute1 = date.getMinutes() % 10;
+                    let newMinute2 = Math.floor(date.getMinutes() / 10) % 10;
+                    let newHour1 = date.getHours() % 10;
+                    let newHour2 = Math.floor(date.getHours() / 10) % 10;
+                    let newDay1 = date.getDate() % 10;
+                    let newDay2 = Math.floor(date.getDate() / 10) % 10;
+                    let newMonth1 = (date.getMonth() + 1) % 10;
+                    let newMonth2 = Math.floor((date.getMonth() + 1) / 10) % 10;
+                    let newYear1 = date.getFullYear() % 10;
+                    let newYear2 = Math.floor(date.getFullYear() / 10) % 10;
+                    let newYear3 = Math.floor(date.getFullYear() / 100) % 10;
+                    let newYear4 = Math.floor(date.getFullYear() / 1000) % 10;
+                    let i = 0;
+
+                    previousTime = timestamp;
+
+                    for (const element of document.body.querySelectorAll("div.digit > img.digit")) {
+                        if (element.parentElement.style.visibility === "visible") {
+                            if (i % 14 === 0 && newYear4 !== oldYear4) {
+                                year4Step += 1 / (frameRate / 2);
+
+                                if (year4Step >= 1) {
+                                    if (widthArray[newYear4] > maxWidth) {
+                                        year4X = xArray[newYear4] + (widthArray[newYear4] - maxWidth) / 2.0;
+                                    } else {
+                                        year4X = xArray[newYear4];
+                                    }
+
+                                    if (heightArray[newYear4] > maxHeight) {
+                                        year4Y = yArray[newYear4] + (heightArray[newYear4] - maxHeight) / 2.0;
+                                    } else {
+                                        year4Y = yArray[newYear4];
+                                    }
+
+                                    year4Width = widthArray[newYear4];
+                                    year4Height = heightArray[newYear4];
+                                    year4Step = 0.0;
+                                    oldYear4 = newYear4;
+                                }
+
+                                renderDigit(element, newYear4, year4X, year4Y, year4Width, year4Height, year4Step);
+                            } else if (i % 14 === 1 && newYear3 !== oldYear3) {
+                                year3Step += 1 / (frameRate / 2);
+
+                                if (year3Step >= 1) {
+                                    if (widthArray[newYear3] > maxWidth) {
+                                        year3X = xArray[newYear3] + (widthArray[newYear3] - maxWidth) / 2.0;
+                                    } else {
+                                        year3X = xArray[newYear3];
+                                    }
+
+                                    if (heightArray[newYear3] > maxHeight) {
+                                        year3Y = yArray[newYear3] + (heightArray[newYear3] - maxHeight) / 2.0;
+                                    } else {
+                                        year3Y = yArray[newYear3];
+                                    }
+
+                                    year3Width = widthArray[newYear3];
+                                    year3Height = heightArray[newYear3];
+                                    year3Step = 0.0;
+                                    oldYear3 = newYear3;
+                                }
+
+                                renderDigit(element, newYear3, year3X, year3Y, year3Width, year3Height, year3Step);
+                            } else if (i % 14 === 2 && newYear2 !== oldYear2) {
+                                year2Step += 1 / (frameRate / 2);
+
+                                if (year2Step >= 1) {
+                                    if (widthArray[newYear2] > maxWidth) {
+                                        year2X = xArray[newYear2] + (widthArray[newYear2] - maxWidth) / 2.0;
+                                    } else {
+                                        year2X = xArray[newYear2];
+                                    }
+
+                                    if (heightArray[newYear2] > maxHeight) {
+                                        year2Y = yArray[newYear2] + (heightArray[newYear2] - maxHeight) / 2.0;
+                                    } else {
+                                        year2Y = yArray[newYear2];
+                                    }
+
+                                    year2Width = widthArray[newYear2];
+                                    year2Height = heightArray[newYear2];
+                                    year2Step = 0.0;
+                                    oldYear2 = newYear2;
+                                }
+
+                                renderDigit(element, newYear2, year2X, year2Y, year2Width, year2Height, year2Step);
+                            } else if (i % 14 === 3 && newYear1 !== oldYear1) {
+                                year1Step += 1 / (frameRate / 2);
+
+                                if (year1Step >= 1) {
+                                    if (widthArray[newYear1] > maxWidth) {
+                                        year1X = xArray[newYear1] + (widthArray[newYear1] - maxWidth) / 2.0;
+                                    } else {
+                                        year1X = xArray[newYear1];
+                                    }
+
+                                    if (heightArray[newYear1] > maxHeight) {
+                                        year1Y = yArray[newYear1] + (heightArray[newYear1] - maxHeight) / 2.0;
+                                    } else {
+                                        year1Y = yArray[newYear1];
+                                    }
+
+                                    year1Width = widthArray[newYear1];
+                                    year1Height = heightArray[newYear1];
+                                    year1Step = 0.0;
+                                    oldYear1 = newYear1;
+                                }
+
+                                renderDigit(element, newYear1, year1X, year1Y, year1Width, year1Height, year1Step);
+                            } else if (i % 14 === 4 && newMonth2 !== oldMonth2) {
+                                month2Step += 1 / (frameRate / 2);
+
+                                if (month2Step >= 1) {
+                                    if (widthArray[newMonth2] > maxWidth) {
+                                        month2X = xArray[newMonth2] + (widthArray[newMonth2] - maxWidth) / 2.0;
+                                    } else {
+                                        month2X = xArray[newMonth2];
+                                    }
+
+                                    if (heightArray[newMonth2] > maxHeight) {
+                                        month2Y = yArray[newMonth2] + (heightArray[newMonth2] - maxHeight) / 2.0;
+                                    } else {
+                                        month2Y = yArray[newMonth2];
+                                    }
+
+                                    month2Width = widthArray[newMonth2];
+                                    month2Height = heightArray[newMonth2];
+                                    month2Step = 0.0;
+                                    oldMonth2 = newMonth2;
+                                }
+
+                                renderDigit(element, newMonth2, month2X, month2Y, month2Width, month2Height, month2Step);
+                            } else if (i % 14 === 5 && newMonth1 !== oldMonth1) {
+                                month1Step += 1 / (frameRate / 2);
+
+                                if (month1Step >= 1) {
+                                    if (widthArray[newMonth1] > maxWidth) {
+                                        month1X = xArray[newMonth1] + (widthArray[newMonth1] - maxWidth) / 2.0;
+                                    } else {
+                                        month1X = xArray[newMonth1];
+                                    }
+
+                                    if (heightArray[newMonth1] > maxHeight) {
+                                        month1Y = yArray[newMonth1] + (heightArray[newMonth1] - maxHeight) / 2.0;
+                                    } else {
+                                        month1Y = yArray[newMonth1];
+                                    }
+
+                                    month1Width = widthArray[newMonth1];
+                                    month1Height = heightArray[newMonth1];
+                                    month1Step = 0.0;
+                                    oldMonth1 = newMonth1;
+                                }
+
+                                renderDigit(element, newMonth1, month1X, month1Y, month1Width, month1Height, month1Step);
+                            } else if (i % 14 === 6 && newDay2 !== oldDay2) {
+                                day2Step += 1 / (frameRate / 2);
+
+                                if (day2Step >= 1) {
+                                    if (widthArray[newDay2] > maxWidth) {
+                                        day2X = xArray[newDay2] + (widthArray[newDay2] - maxWidth) / 2.0;
+                                    } else {
+                                        day2X = xArray[newDay2];
+                                    }
+
+                                    if (heightArray[newDay2] > maxHeight) {
+                                        day2Y = yArray[newDay2] + (heightArray[newDay2] - maxHeight) / 2.0;
+                                    } else {
+                                        day2Y = yArray[newDay2];
+                                    }
+
+                                    day2Width = widthArray[newDay2];
+                                    day2Height = heightArray[newDay2];
+                                    day2Step = 0.0;
+                                    oldDay2 = newDay2;
+                                }
+
+                                renderDigit(element, newDay2, day2X, day2Y, day2Width, day2Height, day2Step);
+                            } else if (i % 14 === 7 && newDay1 !== oldDay1) {
+                                day1Step += 1 / (frameRate / 2);
+
+                                if (day1Step >= 1) {
+                                    if (widthArray[newDay1] > maxWidth) {
+                                        day1X = xArray[newDay1] + (widthArray[newDay1] - maxWidth) / 2.0;
+                                    } else {
+                                        day1X = xArray[newDay1];
+                                    }
+
+                                    if (heightArray[newDay1] > maxHeight) {
+                                        day1Y = yArray[newDay1] + (heightArray[newDay1] - maxHeight) / 2.0;
+                                    } else {
+                                        day1Y = yArray[newDay1];
+                                    }
+
+                                    day1Width = widthArray[newDay1];
+                                    day1Height = heightArray[newDay1];
+                                    day1Step = 0.0;
+                                    oldDay1 = newDay1;
+                                }
+
+                                renderDigit(element, newDay1, day1X, day1Y, day1Width, day1Height, day1Step);
+                            } else if (i % 14 === 8 && newHour2 !== oldHour2) {
+                                hour2Step += 1 / (frameRate / 2);
+
+                                if (hour2Step >= 1) {
+                                    if (widthArray[newHour2] > maxWidth) {
+                                        hour2X = xArray[newHour2] + (widthArray[newHour2] - maxWidth) / 2.0;
+                                    } else {
+                                        hour2X = xArray[newHour2];
+                                    }
+
+                                    if (heightArray[newHour2] > maxHeight) {
+                                        hour2Y = yArray[newHour2] + (heightArray[newHour2] - maxHeight) / 2.0;
+                                    } else {
+                                        hour2Y = yArray[newHour2];
+                                    }
+
+                                    hour2Width = widthArray[newHour2];
+                                    hour2Height = heightArray[newHour2];
+                                    hour2Step = 0.0;
+                                    oldHour2 = newHour2;
+                                }
+
+                                renderDigit(element, newHour2, hour2X, hour2Y, hour2Width, hour2Height, hour2Step);
+                            } else if (i % 14 === 9 && newHour1 !== oldHour1) {
+                                hour1Step += 1 / (frameRate / 2);
+
+                                if (hour1Step >= 1) {
+                                    if (widthArray[newHour1] > maxWidth) {
+                                        hour1X = xArray[newHour1] + (widthArray[newHour1] - maxWidth) / 2.0;
+                                    } else {
+                                        hour1X = xArray[newHour1];
+                                    }
+
+                                    if (heightArray[newHour1] > maxHeight) {
+                                        hour1Y = yArray[newHour1] + (heightArray[newHour1] - maxHeight) / 2.0;
+                                    } else {
+                                        hour1Y = yArray[newHour1];
+                                    }
+
+                                    hour1Width = widthArray[newHour1];
+                                    hour1Height = heightArray[newHour1];
+                                    hour1Step = 0.0;
+                                    oldHour1 = newHour1;
+                                }
+
+                                renderDigit(element, newHour1, hour1X, hour1Y, hour1Width, hour1Height, hour1Step);
+                            } else if (i % 14 === 10 && newMinute2 !== oldMinute2) {
+                                minute2Step += 1 / (frameRate / 2);
+
+                                if (minute2Step >= 1) {
+                                    if (widthArray[newMinute2] > maxWidth) {
+                                        minute2X = xArray[newMinute2] + (widthArray[newMinute2] - maxWidth) / 2.0;
+                                    } else {
+                                        minute2X = xArray[newMinute2];
+                                    }
+
+                                    if (heightArray[newMinute2] > maxHeight) {
+                                        minute2Y = yArray[newMinute2] + (heightArray[newMinute2] - maxHeight) / 2.0;
+                                    } else {
+                                        minute2Y = yArray[newMinute2];
+                                    }
+
+                                    minute2Width = widthArray[newMinute2];
+                                    minute2Height = heightArray[newMinute2];
+                                    minute2Step = 0.0;
+                                    oldMinute2 = newMinute2;
+                                }
+
+                                renderDigit(element, newMinute2, minute2X, minute2Y, minute2Width, minute2Height, minute2Step);
+                            } else if (i % 14 === 11 && newMinute1 !== oldMinute1) {
+                                minute1Step += 1 / (frameRate / 2);
+
+                                if (minute1Step >= 1) {
+                                    if (widthArray[newMinute1] > maxWidth) {
+                                        minute1X = xArray[newMinute1] + (widthArray[newMinute1] - maxWidth) / 2.0;
+                                    } else {
+                                        minute1X = xArray[newMinute1];
+                                    }
+
+                                    if (heightArray[newMinute1] > maxHeight) {
+                                        minute1Y = yArray[newMinute1] + (heightArray[newMinute1] - maxHeight) / 2.0;
+                                    } else {
+                                        minute1Y = yArray[newMinute1];
+                                    }
+
+                                    minute1Width = widthArray[newMinute1];
+                                    minute1Height = heightArray[newMinute1];
+                                    minute1Step = 0.0;
+                                    oldMinute1 = newMinute1;
+                                }
+
+                                renderDigit(element, newMinute1, minute1X, minute1Y, minute1Width, minute1Height, minute1Step);
+                            } else if (i % 14 === 12 && newSecond2 !== oldSecond2) {
+                                second2Step += 1 / (frameRate / 2);
+
+                                if (second2Step >= 1) {
+                                    if (widthArray[newSecond2] > maxWidth) {
+                                        second2X = xArray[newSecond2] + (widthArray[newSecond2] - maxWidth) / 2.0;
+                                    } else {
+                                        second2X = xArray[newSecond2];
+                                    }
+
+                                    if (heightArray[newSecond2] > maxHeight) {
+                                        second2Y = yArray[newSecond2] + (heightArray[newSecond2] - maxHeight) / 2.0;
+                                    } else {
+                                        second2Y = yArray[newSecond2];
+                                    }
+
+                                    second2Width = widthArray[newSecond2];
+                                    second2Height = heightArray[newSecond2];
+                                    second2Step = 0.0;
+                                    oldSecond2 = newSecond2;
+                                }
+
+                                renderDigit(element, newSecond2, second2X, second2Y, second2Width, second2Height, second2Step);
+                            } else if (i % 14 === 13 && newSecond1 !== oldSecond1) {
+                                second1Step += 1 / (frameRate / 2);
+
+                                if (second1Step >= 1) {
+                                    if (widthArray[newSecond1] > maxWidth) {
+                                        second1X = xArray[newSecond1] + (widthArray[newSecond1] - maxWidth) / 2.0;
+                                    } else {
+                                        second1X = xArray[newSecond1];
+                                    }
+
+                                    if (heightArray[newSecond1] > maxHeight) {
+                                        second1Y = yArray[newSecond1] + (heightArray[newSecond1] - maxHeight) / 2.0;
+                                    } else {
+                                        second1Y = yArray[newSecond1];
+                                    }
+
+                                    second1Width = widthArray[newSecond1];
+                                    second1Height = heightArray[newSecond1];
+                                    second1Step = 0.0;
+                                    oldSecond1 = newSecond1;
+                                }
+
+                                renderDigit(element, newSecond1, second1X, second1Y, second1Width, second1Height, second1Step);
+                            }
+                        }
+
+                        i++;
+                    }
+                }
+
+                stats.frames++;
+
+                if (performance.now() - stats.time >= 1000) {
+                    for (const target of stats.targets) {
+                        target.innerText = String(stats.frames);
+                    }
+
+                    stats.time = performance.now();
+                    stats.frames = 0;
+                }
+
+                requestAnimationFrame(render);
+            }
+
+            render();
 
             for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
                 const clock = frame.querySelector(":scope > .clock");
@@ -1065,7 +1147,7 @@
 
                         for (const credits of frame.querySelectorAll(":scope > div.credits")) {
                             const link = credits.querySelector(":scope > a");
-                            
+
                             if (link.dataset["name"] === data.name) {
                                 if (link.href !== data.url) {
                                     link.href = data.url;
@@ -1178,10 +1260,11 @@
                                         i.src = data.source;
                                     });
                                     const elements = document.body.querySelectorAll("div.digit > img.digit");
+                                    let isinitialized = false;
 
                                     image.className = "digit";
                                     image.alt = "Digit";
-                                    
+
                                     for (let index = 0; index < elements.length; index++) {
                                         if (elements.item(index) === element) {
                                             for (let i = 0; i < data.digits.length; i++) {
@@ -1288,28 +1371,30 @@
                                                 second1Step = 0.0;
                                             }
 
+                                            isinitialized = true;
+
                                             break;
                                         }
                                     }
 
-                                    parent.removeChild(element);
-                                    parent.appendChild(image);
-                                    parent.style.visibility = "visible";
-                                    image.style.opacity = "0";
+                                    if (isinitialized) {
+                                        parent.removeChild(element);
+                                        parent.appendChild(image);
+                                        parent.style.visibility = "visible";
+                                        image.style.opacity = "0";
 
-                                    const a1 = image.animate([
-                                        {
-                                            opacity: "1"
+                                        image.animate([
+                                            {
+                                                opacity: "1"
+                                            }
+                                        ], {
+                                            fill: "forwards",
+                                            duration: 500,
+                                            iterations: 1,
+                                            easing: "ease-out"
+                                        }).onfinish = () => {
+                                            image.style.opacity = "1";
                                         }
-                                    ], {
-                                        fill: "forwards",
-                                        duration: 500,
-                                        iterations: 1,
-                                        easing: "ease-out"
-                                    });
-
-                                    a1.onfinish = () => {
-                                        image.style.opacity = "1";
                                     }
                                 } catch (e) {
                                     parent.style.visibility = "visible";
@@ -1327,7 +1412,7 @@
                                     console.error(e);
                                 }
 
-                                const a2 = loadingElement.animate([
+                                loadingElement.animate([
                                     {
                                         transform: "translate3d(0px, -100%, 0)"
                                     }
@@ -1336,9 +1421,7 @@
                                     duration: 500,
                                     iterations: 1,
                                     easing: "ease-in"
-                                });
-
-                                a2.onfinish = () => {
+                                }).onfinish = () => {
                                     loadingElement.remove();
                                 }
                             }
