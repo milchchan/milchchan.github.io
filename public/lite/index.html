@@ -291,6 +291,7 @@
             min-height: 100%;
             background: transparent;
             overflow: hidden;
+            transition: .5s;
         }
 
         #app>.container>.wrap>.frame {
@@ -304,6 +305,7 @@
             height: 100%;
             background: rgb(247, 248, 248);
             overflow: hidden;
+            transition: .5s;
         }
 
         div.sidebar {
@@ -787,6 +789,12 @@
         @media screen and (min-width: 769px) {
             #app>.container>.wrap {
                 padding: 16px;
+                transition: .5s;
+            }
+
+            #app>.container>.wrap>.frame {
+                border-radius: 4px;
+                transition: .5s;
             }
         }
     </style>
@@ -1300,7 +1308,7 @@
                                 if (background.queue.some(x => x.index !== background.index)) {
                                     background.queue.splice(0);
                                 }
-                                
+
                                 if (background.queue.length === 0) {
                                     for (const image of shuffle(background.dataset[background.index].images)) {
                                         background.queue.push({ index: background.index, data: image });
