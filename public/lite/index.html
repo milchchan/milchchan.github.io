@@ -1119,14 +1119,14 @@
         window.addEventListener("load", async event => {
             const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
             const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
-            const notice = document.createElement("div");
+            const stats = document.createElement("div");
             const canvas = document.createElement("canvas");
             const rect = wall.getBoundingClientRect();
 
-            notice.id = "stats";
+            stats.id = "stats";
 
             if (decodeURIComponent(window.location.hash.substring(1)) === "debug") {
-                notice.className = "is-active";
+                stats.className = "is-active";
             }
 
             canvas["backBuffer"] = document.createElement("canvas");
@@ -1250,16 +1250,16 @@
                 let previousTime = performance.now();
                 const cache = {};
                 const animationQueue = [];
-                const stats = { time: previousTime, frames: 0, target: document.createElement("span") };
+                const fps = { time: previousTime, frames: 0, target: document.createElement("span") };
 
-                stats.target.className = "has-text-weight-bold";
-                stats.target.innerText = "0";
-                stats.target.style.opacity = "0";
+                fps.target.className = "has-text-weight-bold";
+                fps.target.innerText = "0";
+                fps.target.style.opacity = "0";
 
-                notice.appendChild(stats.target);
-                document.body.querySelector("#app>.container>.wrap>.frame").appendChild(notice);
+                stats.appendChild(fps.target);
+                document.body.querySelector("#app>.container>.wrap>.frame").appendChild(stats);
 
-                stats.target.animate([
+                fps.target.animate([
                     {
                         opacity: "1"
                     }
@@ -1297,7 +1297,17 @@
                             animationQueue.splice(0);
 
                             if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
-                                const data = background.dataset[background.index].images[random(0, background.dataset[background.index].images.length)];
+                                if (background.queue.some(x => x.index !== background.index)) {
+                                    background.queue.splice(0);
+                                }
+                                
+                                if (background.queue.length === 0) {
+                                    for (const image of shuffle(background.dataset[background.index].images)) {
+                                        background.queue.push({ index: background.index, data: image });
+                                    }
+                                }
+
+                                const data = background.queue.shift().data;
                                 const blind = document.createElement("div");
                                 const progress = document.createElement("div");
                                 const bar = document.createElement("div");
@@ -1995,18 +2005,24 @@
                         backCanvas.width = backCanvas.height = 0;
                     }
 
-                    stats.frames++;
+                    fps.frames++;
 
-                    if (performance.now() - stats.time >= 1000) {
-                        stats.target.innerText = String(stats.frames);
-                        stats.time = performance.now();
-                        stats.frames = 0;
+                    if (performance.now() - fps.time >= 1000) {
+                        fps.target.innerText = String(fps.frames);
+                        fps.time = performance.now();
+                        fps.frames = 0;
                     }
 
                     requestAnimationFrame(render);
                 }
 
                 requestAnimationFrame(render);
+
+                setTimeout(function tick() {
+                    background.invalid = true;
+
+                    setTimeout(tick, 60000);
+                }, 60000);
             }
         });
         window.addEventListener("resize", event => {
