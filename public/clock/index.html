@@ -87,6 +87,7 @@
             height: 100%;
             background: transparent;
             overflow: hidden;
+            transition: .5s;
         }
 
         #container>.wrap>.frame {
@@ -99,6 +100,7 @@
             height: 100%;
             background: rgb(247, 248, 248);
             overflow: hidden;
+            transition: .5s;
         }
 
         .clock {
@@ -494,6 +496,12 @@
         @media screen and (min-width: 769px) {
             #container>.wrap {
                 padding: 16px;
+                transition: .5s;
+            }
+
+            #container>.wrap>.frame {
+                border-radius: 4px;
+                transition: .5s;
             }
         }
     </style>
