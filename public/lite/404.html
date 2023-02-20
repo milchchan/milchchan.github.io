@@ -66,6 +66,7 @@
       overflow: hidden;
       box-sizing: border-box;
       backface-visibility: hidden;
+      transition: .5s;
     }
 
     .frame {
@@ -79,6 +80,7 @@
       height: 100%;
       overflow: hidden;
       background-color: rgb(247, 248, 248);
+      transition: .5s;
     }
 
     .background {
@@ -166,6 +168,12 @@
     @media screen and (min-width: 769px) {
       .wrap {
         padding: 16px;
+        transition: .5s;
+      }
+
+      .frame {
+        border-radius: 4px;
+        transition: .5s;
       }
     }
   </style>
@@ -279,7 +287,7 @@
       }
 
       document.body.querySelector(".wrap>.frame").prepend(background);
-      
+
       background.animate([
         {
           opacity: 0,
