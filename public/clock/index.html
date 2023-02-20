@@ -716,7 +716,7 @@
             const data = clockQueue.shift();
             let previousTime = performance.now();
             const fps = { time: previousTime, frames: 0, targets: [] };
-            
+
             for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
                 const creditsElement = document.createElement("div");
                 const linkElement = document.createElement("a");
@@ -1338,7 +1338,9 @@
                             duration: 500,
                             iterations: 1,
                             easing: "ease-out"
-                        });
+                        }).onfinish = () => {
+                            loadingElement.style.transform = "translate3d(0px, 0%, 0)";
+                        };
 
                         element.animate([
                             {
@@ -1353,8 +1355,6 @@
                             const parent = element.parentElement;
 
                             if (parent !== null) {
-                                const image = new Image();
-
                                 parent.style.visibility = "hidden";
                                 element.style.opacity = "0";
 
@@ -1505,7 +1505,7 @@
                                             easing: "ease-out"
                                         }).onfinish = () => {
                                             image.style.opacity = "1";
-                                        }
+                                        };
                                     }
                                 } catch (e) {
                                     parent.style.visibility = "visible";
@@ -1518,7 +1518,9 @@
                                         duration: 500,
                                         iterations: 1,
                                         easing: "ease-out"
-                                    });
+                                    }).onfinish = () => {
+                                        element.style.opacity = "1";
+                                    };
 
                                     console.error(e);
                                 }
