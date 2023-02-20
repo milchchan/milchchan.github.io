@@ -231,6 +231,7 @@
             color: var(--foreground-color);
             transform: rotate(0.03deg);
             transition: .5s;
+            user-select: none;
         }
 
         div.legal {
@@ -361,6 +362,67 @@
             vertical-align: middle;
         }
 
+        #status {
+            display: flex;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            padding: 16px 0px 16px 16px;
+            width: fit-content;
+            height: fit-content;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+            opacity: 0;
+            transition: .5s;
+            cursor: default;
+        }
+
+        #status.is-active {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #status:hover {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #status>div.stack {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #status>div.stack>div.icon {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            color: #000000;
+            align-items: flex-end;
+            justify-content: flex-start;
+            font-size: 0.75rem;
+            line-height: 0.75rem;
+            opacity: 0;
+            transition: .5s;
+        }
+
+        #status>div.stack>div.icon.is-active {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #status>div.stack>div.icon:not(:first-child) {
+            position: absolute;
+        }
+
         #stats {
             display: flex;
             position: absolute;
@@ -472,6 +534,7 @@
         let isTouching = false;
         let tapCount = 0;
         let clocks = [{ source: "images/Digits1.png", digits: digits }, { source: "images/Digits2.png", digits: digits }];
+        const status = { locks: [], unlocks: [] };
 
         function shuffle(array) {
             function _random(min, max) {
@@ -644,8 +707,8 @@
 
             const data = clockQueue.shift();
             let previousTime = performance.now();
-            const stats = { time: previousTime, frames: 0, targets: [] };
-
+            const fps = { time: previousTime, frames: 0, targets: [] };
+            
             for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
                 const creditsElement = document.createElement("div");
                 const linkElement = document.createElement("a");
@@ -653,6 +716,12 @@
                 const scrollableElement = document.createElement("div");
                 const contentElement1 = document.createElement("div");
                 const contentElement2 = document.createElement("div");
+                const statusElement = document.createElement("div");
+                const stackElement = document.createElement("div");
+                const lockElement = document.createElement("div");
+                const unlockElement = document.createElement("div");
+                const lockIconElement = document.createElement("i");
+                const unlockIconElement = document.createElement("i");
                 const statsElement = document.createElement("div");
                 const counterElement = document.createElement("span");
 
@@ -664,18 +733,42 @@
                 scrollableElement.className = "scrollable";
                 contentElement1.innerText = contentElement2.innerText = data.name;
 
+                statusElement.id = "status";
+                stackElement.className = "stack";
+                stackElement.style.opacity = "0";
+                lockElement.className = "icon";
+                unlockElement.className = "icon";
+                lockIconElement.className = "fa-solid fa-lock";
+                unlockIconElement.className = "fa-solid fa-unlock";
+
+                if (isLocked) {
+                    lockElement.className = `${lockElement.className} is-active`;
+                } else {
+                    unlockElement.className = `${unlockElement.className} is-active`;
+                }
+
+                lockElement.appendChild(lockIconElement);
+                unlockElement.appendChild(unlockIconElement);
+                stackElement.appendChild(lockElement);
+                stackElement.appendChild(unlockElement);
+                statusElement.appendChild(stackElement);
+
+                status.locks.push(lockElement);
+                status.unlocks.push(unlockElement);
+
                 statsElement.id = "stats";
                 counterElement.innerText = "0";
                 counterElement.style.opacity = "0";
 
-                stats.targets.push(counterElement);
+                fps.targets.push(counterElement);
 
                 if (isDebug) {
-                    statsElement.className = "is-active";
+                    statusElement.className = statsElement.className = "is-active";
                 }
 
                 statsElement.appendChild(counterElement);
                 frame.appendChild(creditsElement);
+                frame.appendChild(statusElement);
                 frame.appendChild(statsElement)
                 creditsElement.appendChild(linkElement);
                 linkElement.appendChild(clipElement);
@@ -694,6 +787,16 @@
                     easing: "ease-out"
                 });
                 counterElement.animate([
+                    {
+                        opacity: "1"
+                    }
+                ], {
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out"
+                });
+                stackElement.animate([
                     {
                         opacity: "1"
                     }
@@ -1067,15 +1170,15 @@
                     }
                 }
 
-                stats.frames++;
+                fps.frames++;
 
-                if (performance.now() - stats.time >= 1000) {
-                    for (const target of stats.targets) {
-                        target.innerText = String(stats.frames);
+                if (performance.now() - fps.time >= 1000) {
+                    for (const target of fps.targets) {
+                        target.innerText = String(fps.frames);
                     }
 
-                    stats.time = performance.now();
-                    stats.frames = 0;
+                    fps.time = performance.now();
+                    fps.frames = 0;
                 }
 
                 requestAnimationFrame(render);
@@ -1209,16 +1312,6 @@
                     }
 
                     for (const element of document.body.querySelectorAll("div.digit > img.digit")) {
-                        const animation = element.animate([
-                            {
-                                opacity: "0"
-                            }
-                        ], {
-                            fill: "forwards",
-                            duration: 500,
-                            iterations: 1,
-                            easing: "ease-in"
-                        });
                         const loadingElement = document.createElement("div");
 
                         loadingElement.className = "loading";
@@ -1239,9 +1332,19 @@
                             easing: "ease-out"
                         });
 
-                        animation.onfinish = async () => {
-                            if (element) {
-                                const parent = element.parentElement;
+                        element.animate([
+                            {
+                                opacity: "0"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-in"
+                        }).onfinish = async () => {
+                            const parent = element.parentElement;
+
+                            if (parent !== null) {
                                 const image = new Image();
 
                                 parent.style.visibility = "hidden";
@@ -1261,9 +1364,6 @@
                                     });
                                     const elements = document.body.querySelectorAll("div.digit > img.digit");
                                     let isinitialized = false;
-
-                                    image.className = "digit";
-                                    image.alt = "Digit";
 
                                     for (let index = 0; index < elements.length; index++) {
                                         if (elements.item(index) === element) {
@@ -1378,10 +1478,13 @@
                                     }
 
                                     if (isinitialized) {
+                                        image.className = "digit";
+                                        image.alt = "Digit";
+                                        image.style.opacity = "0";
+
                                         parent.removeChild(element);
                                         parent.appendChild(image);
                                         parent.style.visibility = "visible";
-                                        image.style.opacity = "0";
 
                                         image.animate([
                                             {
@@ -1559,6 +1662,24 @@
         window.addEventListener("dblclick", event => {
             if (event.button === 0 && !isTouching) {
                 isLocked = !isLocked;
+
+                if (isLocked) {
+                    for (const element of status.locks) {
+                        element.className = `${element.className} is-active`;
+                    }
+
+                    for (const element of status.unlocks) {
+                        element.className = element.className.replace(/is-active/g, "").trim();
+                    }
+                } else {
+                    for (const element of status.locks) {
+                        element.className = element.className.replace(/is-active/g, "").trim();
+                    }
+
+                    for (const element of status.unlocks) {
+                        element.className = `${element.className} is-active`;
+                    }
+                }
             }
         });
         window.addEventListener("touchstart", event => {
@@ -1572,6 +1693,25 @@
                 }, 500);
             } else {
                 isLocked = !isLocked;
+
+                if (isLocked) {
+                    for (const element of status.locks) {
+                        element.className = `${element.className} is-active`;
+                    }
+
+                    for (const element of status.unlocks) {
+                        element.className = element.className.replace(/is-active/g, "").trim();
+                    }
+                } else {
+                    for (const element of status.locks) {
+                        element.className = element.className.replace(/is-active/g, "").trim();
+                    }
+
+                    for (const element of status.unlocks) {
+                        element.className = `${element.className} is-active`;
+                    }
+                }
+
                 tapCount = 0;
             }
 
