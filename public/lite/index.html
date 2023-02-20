@@ -1015,9 +1015,6 @@
                             </div>
                         </div>
                     </div>
-                    <div id="stats">
-                        <span class="has-text-weight-bold">0</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1104,11 +1101,14 @@
         window.addEventListener("load", async event => {
             const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
             const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
+            const notice = document.createElement("div");
             const canvas = document.createElement("canvas");
             const rect = wall.getBoundingClientRect();
 
+            notice.id = "stats";
+
             if (decodeURIComponent(window.location.hash.substring(1)) === "debug") {
-                document.body.querySelector("#stats").className = "is-active";
+                notice.className = "is-active";
             }
 
             canvas["backBuffer"] = document.createElement("canvas");
@@ -1232,7 +1232,25 @@
                 let previousTime = performance.now();
                 const cache = {};
                 const animationQueue = [];
-                const stats = { time: previousTime, frames: 0, target: document.body.querySelector("#stats>span") };
+                const stats = { time: previousTime, frames: 0, target: document.createElement("span") };
+
+                stats.target.className = "has-text-weight-bold";
+                stats.target.innerText = "0";
+                stats.target.style.opacity = "0";
+
+                notice.appendChild(stats.target);
+                document.body.querySelector("#app>.container>.wrap>.frame").appendChild(notice);
+
+                stats.target.animate([
+                    {
+                        opacity: "1"
+                    }
+                ], {
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out"
+                });
 
                 async function render(timestamp) {
                     const startTime = performance.now();
