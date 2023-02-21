@@ -2023,6 +2023,10 @@
                                     index++;
                                 }
 
+                                for (let i = animationQueue.length - 2; i >= 0; i--) {
+                                    animationQueue.push(animationQueue[i]);
+                                }
+
                                 blind.animate([
                                     {
                                         transform: "translate3d(0, -100%, 0)"
