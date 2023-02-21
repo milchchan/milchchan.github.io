@@ -115,16 +115,6 @@
             transform: scale(1.0);
         }
 
-        #footer {
-            z-index: 2;
-            position: absolute;
-            bottom: 0;
-            margin: 16px 0px 16px 0px;
-            padding: 0px 0px 0px 0px;
-            width: 100%;
-            text-align: left;
-        }
-
         div.content {
             float: left;
             position: relative;
@@ -143,9 +133,9 @@
         }
 
         div.digit {
-            border: 0px;
-            margin: 0px 0px 0px 0px;
-            padding: 0px 0px 0px 0px;
+            border: 0px solid transparent;
+            margin: 0;
+            padding: 0;
             transform-origin: 50% 50%;
             transform: scale(1.0);
             width: 120px;
@@ -157,41 +147,15 @@
             position: absolute;
             left: 0px;
             top: 0px;
-            border: 0px;
-            margin: 0px 0px 0px 0px;
-            padding: 0px 0px 0px 0px;
+            border: 0px solid transparent;
+            margin: 0;
+            padding: 0;
             width: 120px;
             height: 320px;
             background: url('images/Background.png') 0 0 repeat;
             background-color: rgb(247, 248, 248);
             background-size: 100px 100px;
             animation: loop 10s linear forwards infinite;
-        }
-
-        div.left {
-            float: left;
-            margin: 0px 0px 0px 0px;
-            padding: 0px 0px 0px 0px;
-            border-width: 0px;
-            text-align: left;
-            vertical-align: baseline;
-        }
-
-        div.right {
-            float: right;
-            margin: 0px 0px 0px 0px;
-            padding: 0px 0px 0px 0px;
-            border-width: 0px;
-            text-align: left;
-            vertical-align: baseline;
-        }
-
-        div.navigation {
-            float: left;
-            border: 0px;
-            margin: 0px 8px 4px 8px;
-            padding: 0px 0px 0px 0px;
-            line-height: 0px;
         }
 
         div.credits {
@@ -224,7 +188,7 @@
             align-items: center;
             text-align: center;
             vertical-align: baseline;
-            font-family: "Fredoka One", "M PLUS Rounded 1c", sans-serif;
+            font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
             font-size: 0.5rem;
             font-weight: bold;
             text-transform: uppercase;
@@ -234,47 +198,6 @@
             transform: rotate(0.03deg);
             transition: .5s;
             user-select: none;
-        }
-
-        div.legal {
-            clear: left;
-            float: left;
-            border: 0px;
-            margin: 0px 16px 0px 16px;
-            padding: 0px 0px 0px 0px;
-            line-height: 0px;
-        }
-
-        div.plugin {
-            float: left;
-            margin: 4px 16px 4px 0px;
-            padding: 0px 0px 0px 0px;
-            border-width: 0px;
-            line-height: 0px;
-        }
-
-        span.button:first-child {
-            display: inline-block;
-            margin: 0px 8px 4px 8px;
-            padding: 0px 0px 0px 0px;
-            line-height: 0px;
-            vertical-align: middle;
-        }
-
-        span.button:nth-child(n+2) {
-            display: inline-block;
-            margin: 4px 8px 4px 8px;
-            padding: 0px 0px 0px 0px;
-            line-height: 0px;
-            vertical-align: middle;
-        }
-
-        span.control {
-            display: inline-block;
-            margin: 4px 8px 4px 8px;
-            padding: 0px 0px 0px 0px;
-            line-height: 0px;
-            vertical-align: middle;
         }
 
         span.caption {
@@ -290,29 +213,15 @@
             transition: .5s;
         }
 
+        img {
+            border: 0px solid transparent;
+            margin: 0;
+            padding: 0;
+        }
+
         img.digit {
             transform-origin: 0% 0%;
             transform: translate(0px, 0px);
-        }
-
-        img.caption {
-            float: right;
-            margin: 4px 8px 4px 4px;
-        }
-
-        img.control {
-            border: 1px solid var(--background-color);
-            margin: 0px 0px 0px 0px;
-            padding: 1px 1px 1px 1px;
-            vertical-align: top;
-            opacity: 0.5;
-        }
-
-        img {
-            border: 0px;
-            margin: 0px 0px 0px 0px;
-            padding: 0px 0px 0px 0px;
-            vertical-align: baseline;
         }
 
         a:link {
