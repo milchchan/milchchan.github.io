@@ -54,7 +54,7 @@
                     },
                     {
                         "delay": 2.5,
-                        "source": "images/Background-Milch-Chuno-2.png"
+                        "source": "images/Background-Milch-Chuno-1.png"
                     }
                 ]
             },
@@ -111,7 +111,7 @@
                     },
                     {
                         "delay": 2.5,
-                        "source": "images/Background-Milch-Tukigi-2.png"
+                        "source": "images/Background-Milch-Tukigi-1.png"
                     }
                 ]
             },
@@ -168,7 +168,7 @@
                     },
                     {
                         "delay": 2.5,
-                        "source": "images/Background-Milch-Mamimu-2.png"
+                        "source": "images/Background-Milch-Mamimu-1.png"
                     }
                 ]
             },
@@ -225,7 +225,7 @@
                     },
                     {
                         "delay": 2.5,
-                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                        "source": "images/Background-Milch-Merku-Randou-1.png"
                     }
                 ]
             },
@@ -282,7 +282,7 @@
                     },
                     {
                         "delay": 2.5,
-                        "source": "images/Background-Milch-Najimi-2.png"
+                        "source": "images/Background-Milch-Najimi-1.png"
                     }
                 ]
             }
@@ -366,7 +366,7 @@
                     },
                     {
                         "delay": 2.5,
-                        "source": "images/Background-Milch-Zankuro-2.png"
+                        "source": "images/Background-Milch-Zankuro-1.png"
                     }
                 ]
             }
@@ -444,7 +444,7 @@
                     },
                     {
                         "delay": 2.5,
-                        "source": "images/Background-Merku-Zankuro-2.png"
+                        "source": "images/Background-Merku-Zankuro-1.png"
                     }
                 ]
             }
