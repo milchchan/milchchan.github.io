@@ -2,15 +2,6 @@
 <html lang="ja">
 
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-617KR1WTYP');
-    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="ミルヒちゃんもいっしょに魔法少女しようね">
@@ -466,7 +457,7 @@
         div.sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button:hover>.wrap+.icon:not(.is-animatable),
         div.sidebar>.level>.level-item:not(:first-child)>.level>.level-item .button:hover>.icon:not(.is-animatable):first-of-type:last-of-type,
         div.sidebar>.level>.level-item:not(:first-child)>.level>.level-item .button:hover>.wrap+.icon:not(.is-animatable) {
-            opacity: 0.5;;
+            opacity: 0.5;
             transition: .5s;
         }
 
@@ -980,8 +971,7 @@
                                         <div class="rotation-outer">
                                             <div class="rotation-inner">
                                                 <div class="rotate">
-                                                    <a class="button"
-                                                        href="https://clock.milchchan.com/">
+                                                    <a class="button" href="https://clock.milchchan.com/">
                                                         <div class="icon">
                                                             <i class="fa-solid fa-clock fa-xs"></i>
                                                         </div>
@@ -1061,7 +1051,13 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, get, query, ref as databaseRef, orderByChild, startAt, limitToFirst, limitToLast } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+        import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
+        import { initializeAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app-check.js";
+
         const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
         const tracker = { active: false, touching: false, edge: true, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 
@@ -1145,8 +1141,8 @@
                     image.crossOrigin = "anonymous";
                     image.src = dataURL;
                 });
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error(error);
             }
 
             return null;
@@ -1226,6 +1222,28 @@
             const stats = document.createElement("div");
             const canvas = document.createElement("canvas");
             const rect = wall.getBoundingClientRect();
+            const firebaseConfig = {
+                apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
+                authDomain: "auth.milchchan.com",
+                databaseURL: "https://milchchan.firebaseio.com",
+                projectId: "milchchan",
+                storageBucket: "milchchan.appspot.com",
+                messagingSenderId: "355698971889",
+                appId: "1:355698971889:web:e3653c5c31bd7289cd4550",
+                measurementId: "G-3998FJYNWX"
+            };
+            const app = initializeApp(firebaseConfig);
+            const database = getDatabase(app);
+            const storage = getStorage(app);
+
+            initializeAnalytics(app);
+            initializeAppCheck(app, {
+                provider: new ReCaptchaV3Provider("6LdFDHYeAAAAAPlZYl6TB1vpjPNQPltkuKHLyRJi"),
+
+                // Optional argument. If true, the SDK automatically refreshes App Check
+                // tokens as needed.
+                isTokenAutoRefreshEnabled: true
+            });
 
             stats.id = "stats";
 
@@ -1285,8 +1303,8 @@
                         i.src = source
                     }));
                 }
-            } catch (e) {
-                console.error(e.code, e.message);
+            } catch (error) {
+                console.error(error);
             }
 
             if (background["dataset"] !== null) {
@@ -1395,10 +1413,116 @@
                         }
 
                         if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
+                            background.preloading = true;
                             background.image = null;
                             background.blocks.splice(0);
                             tracker.movement.x = tracker.movement.y = 0;
                             animationQueue.splice(0);
+
+                            for (const item of background.dataset) {
+                                for (let i = item.texts.length - 1; i >= 0; i--) {
+                                    if (Array.isArray(item.texts[i])) {
+                                        item.texts.splice(i, 1);
+                                    }
+                                }
+
+                                if ("images" in item) {
+                                    for (let i = item.images.length - 1; i >= 0; i--) {
+                                        if (item.images[i].frames.some(x => x.source.startsWith("gs:"))) {
+                                            item.images.splice(i, 1);
+                                        }
+                                    }
+                                }
+                            }
+
+                            try {
+                                const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
+
+                                if (snapshot.exists()) {
+                                    const likes = snapshot.val();
+
+                                    for (const key in likes) {
+                                        if (Array.isArray(likes[key].text)) {
+                                            for (const item of background.dataset) {
+                                                if ("type" in item === false) {
+                                                    item.texts.push(likes[key].text);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (error) {
+                                console.error(error);
+                            }
+
+                            try {
+                                const snapshot = await get(query(databaseRef(database, "backgrounds"), orderByChild("random"), startAt(Math.random()), limitToFirst(10)));
+
+                                if (snapshot.exists()) {
+                                    function choice(collection, func) {
+                                        const r = Math.random();
+                                        let sum = 0.0;
+                                        let index = 0;
+
+                                        for (let item of collection) {
+                                            const probability = func(item);
+
+                                            if (sum <= r && r < sum + probability) {
+                                                break;
+                                            }
+
+                                            sum += probability;
+                                            index++;
+                                        }
+
+                                        return collection[index];
+                                    }
+
+                                    function softmax(x, func1, func2) {
+                                        const y = [].concat(x);
+                                        let max = Number.MIN_VALUE;
+                                        let sum = 0.0;
+
+                                        for (let i = 0; i < x.length; i++) {
+                                            if (func1(x[i]) > max) {
+                                                max = func1(x[i]);
+                                            }
+                                        }
+
+                                        for (let i = 0; i < x.length; i++) {
+                                            sum += Math.exp(func1(x[i]) - max);
+                                        }
+
+                                        for (let i = 0; i < x.length; i++) {
+                                            func2(y[i], Math.exp(func1(x[i]) - max) / sum);
+                                        }
+
+                                        return y;
+                                    }
+
+                                    const dictionary = snapshot.val();
+                                    const images = [];
+
+                                    for (const key in dictionary) {
+                                        dictionary[key]["probability"] = 1;
+
+                                        images.push(dictionary[key]);
+                                    }
+
+                                    const path = choice(softmax(images, x => x.probability, (x, y) => x.probability = y), x => x.probability).image.path;
+                                    const metadata = await getMetadata(storageRef(storage, path));
+
+                                    if (metadata.contentType.startsWith("image/")) {
+                                        for (const item of background.dataset) {
+                                            if ("type" in item === false && "images" in item) {
+                                                item.images.push({ color: "#ffffff", frames: [{ delay: 1.0, source: `gs://milchchan.appspot.com/${path}` }] });
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (error) {
+                                console.error(error);
+                            }
 
                             if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
                                 if (background.queue.some(x => x.index !== background.index)) {
@@ -1417,8 +1541,6 @@
                                 const bar = document.createElement("div");
                                 const timeout = 60 * 60;
                                 let index = 0;
-
-                                background.preloading = true;
 
                                 blind.className = "blind";
                                 blind.style.transform = "translate3d(0, 100%, 0)";
@@ -1507,7 +1629,7 @@
                                     const timestamp = Math.floor(new Date() / 1000);
 
                                     if (frame.source in cache === false || timestamp - cache[frame.source].timestamp >= timeout) {
-                                        const blob = await download(frame.source, (rate) => {
+                                        const blob = await download(frame.source.startsWith("gs:") ? await getDownloadURL(storageRef(storage, frame.source)) : frame.source, (rate) => {
                                             if (index < data.frames.length - 1 || rate < 1) {
                                                 bar.animate([
                                                     {
@@ -1656,8 +1778,6 @@
                                     index++;
                                 }
 
-                                background.preloading = false;
-
                                 blind.animate([
                                     {
                                         transform: "translate3d(0, -100%, 0)"
@@ -1675,6 +1795,8 @@
                             } else {
                                 background.color = null;
                             }
+
+                            background.preloading = false;
 
                             const length = random(8, 16);
                             let start = background.dataset[background.index].texts.length - length;
