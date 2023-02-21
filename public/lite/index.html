@@ -673,7 +673,7 @@
             background: #ffffff;
             background-clip: padding-box !important;
             height: initial;
-            transition: .5s;
+            backface-visibility: hidden;
         }
 
         div.center .button.is-circle,
@@ -688,8 +688,8 @@
             justify-content: center;
         }
 
-        div.center .icon,
-        div.remarks .icon {
+        div.center .button>.icon,
+        div.remarks .button>.icon {
             display: flex;
             margin: 0;
             width: 16px;
@@ -697,11 +697,12 @@
             align-items: center;
             justify-content: center;
             color: #000000;
+            opacity: 1;
             transition: .5s;
         }
 
-        div.center .button:hover .icon,
-        div.remarks .button:hover .icon {
+        div.center .button:hover>.icon,
+        div.remarks .button:hover>.icon {
             opacity: 0.5;
             transition: .5s;
         }
