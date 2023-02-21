@@ -134,6 +134,10 @@
             transform: rotate(19deg);
         }
 
+        .is-hidden {
+            display: none;
+        }
+
         .has-text-weight-bold {
             font-weight: bold;
         }
@@ -578,7 +582,6 @@
             position: absolute;
             width: 100%;
             height: 100%;
-
         }
 
         div.sidebar>.level>.level-item>.level>.level-item label.button>input:disabled+.icon {
@@ -984,7 +987,7 @@
                             </div>
                             <div class="level-item">
                                 <div class="level">
-                                    <div class="level-item">
+                                    <div class="level-item is-hidden">
                                         <div class="rotation-outer">
                                             <div class="rotation-inner">
                                                 <div class="rotate">
@@ -1000,7 +1003,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="level-item">
+                                    <div class="level-item is-hidden">
                                         <div class="separator">
                                             <hr>
                                         </div>
@@ -1223,6 +1226,154 @@
                 { duration: 1000, iterations: 1 });
         }
 
+        async function upload(files) {
+            function generateUuid() {
+                // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
+                // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+                let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
+
+                for (let i = 0, len = chars.length; i < len; i++) {
+                    switch (chars[i]) {
+                        case "x":
+                            chars[i] = Math.floor(Math.random() * 16).toString(16);
+                            break;
+                        case "y":
+                            chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
+                            break;
+                    }
+                }
+
+                return chars.join("");
+            }
+
+            const progress = document.createElement("div");
+            const bar = document.createElement("div");
+            let completed = 0;
+            let animation = null;
+
+            progress.className = "progress";
+            bar.className = "bar animating";
+            bar.style.width = "0%";
+
+            try {
+                const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const dataURL = await resize(await new Promise(async (resolve, reject) => {
+                        const reader = new FileReader();
+
+                        reader.onload = () => {
+                            resolve(reader.result);
+                        };
+                        reader.onerror = () => {
+                            reject(reader.error);
+                        };
+                        reader.readAsDataURL(blob);
+                    }), Math.max(window.screen.width, window.screen.height));
+
+                    if (dataURL !== null) {
+                        bar.style.backgroundImage = `url('${dataURL}')`;
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+            progress.appendChild(bar);
+            document.body.querySelector("#app").appendChild(progress);
+
+            for (const file of files) {
+                if (file.type.startsWith("image/")) {
+                    const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file, {
+                        contentType: file.type
+                    });
+
+                    try {
+                        const path = await new Promise(function (resolve, reject) {
+                            uploadTask.on("state_changed", (snapshot) => {
+                                animation = bar.animate([
+                                    {
+                                        width: `${Math.floor((snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed / files.length) * 100)}%`
+                                    }
+                                ], {
+                                    delay: 0,
+                                    fill: "forwards",
+                                    duration: 500,
+                                    iterations: 1,
+                                    easing: "linear",
+                                    composite: "replace"
+                                }).onfinish = () => {
+                                    bar.style.width = `${Math.floor((completed + 1) / files.length * 100)}%`;
+                                };
+                            }, (error) => {
+                                reject(error);
+                            }, () => {
+                                resolve(uploadTask.snapshot.ref.fullPath);
+                            });
+                        });
+
+                        await runTransaction(databaseRef(database, `images/${push(child(databaseRef(database), "images")).key}`), current => {
+                            return { path: path, type: file.type, random: Math.random(), timestamp: Math.floor(new Date() / 1000) };
+                        });
+
+                    } catch (error) {
+                        console.error(error);
+
+                        animation = null;
+
+                        break;
+                    }
+
+                    completed++;
+                }
+            }
+
+            if (animation === null || animation.playState === "finished") {
+                bar.animate([
+                    {
+                        opacity: 0
+                    }
+                ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-in"
+                }).onfinish = () => {
+                    progress.remove();
+                };
+            } else {
+                bar.animate([
+                    {
+                        width: "100%"
+                    }
+                ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-in",
+                    composite: "replace"
+                }).onfinish = () => {
+                    bar.style.width = "100%";
+                    bar.animate([
+                        {
+                            opacity: 0
+                        }
+                    ], {
+                        delay: 0,
+                        fill: "forwards",
+                        duration: 500,
+                        iterations: 1,
+                        easing: "ease-in"
+                    }).onfinish = () => {
+                        progress.remove();
+                    };
+                };
+            }
+        }
+
         window.select = (event) => {
             const target = (event.currentTarget || event.target);
 
@@ -1271,152 +1422,9 @@
             const target = (event.currentTarget || event.target);
 
             if ("files" in target) {
-                function generateUuid() {
-                    // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
-                    // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-                    let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
-
-                    for (let i = 0, len = chars.length; i < len; i++) {
-                        switch (chars[i]) {
-                            case "x":
-                                chars[i] = Math.floor(Math.random() * 16).toString(16);
-                                break;
-                            case "y":
-                                chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
-                                break;
-                        }
-                    }
-
-                    return chars.join("");
-                }
-
-                const progress = document.createElement("div");
-                const bar = document.createElement("div");
-                const files = target.files;
-                let completed = 0;
-                let animation = null;
-
                 target.disabled = true;
 
-                progress.className = "progress";
-                bar.className = "bar animating";
-                bar.style.width = "0%";
-
-                try {
-                    const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
-
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        const dataURL = await resize(await new Promise(async (resolve, reject) => {
-                            const reader = new FileReader();
-
-                            reader.onload = () => {
-                                resolve(reader.result);
-                            };
-                            reader.onerror = () => {
-                                reject(reader.error);
-                            };
-                            reader.readAsDataURL(blob);
-                        }), Math.max(window.screen.width, window.screen.height));
-
-                        if (dataURL !== null) {
-                            bar.style.backgroundImage = `url('${dataURL}')`;
-                        }
-                    }
-                } catch (error) {
-                    console.error(error);
-                }
-
-                progress.appendChild(bar);
-                document.body.querySelector("#app").appendChild(progress);
-
-                for (const file of files) {
-                    const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file, {
-                        contentType: file.type
-                    });
-
-                    try {
-                        const path = await new Promise(function (resolve, reject) {
-                            uploadTask.on("state_changed", (snapshot) => {
-                                animation = bar.animate([
-                                    {
-                                        width: `${Math.floor((snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed / files.length) * 100)}%`
-                                    }
-                                ], {
-                                    delay: 0,
-                                    fill: "forwards",
-                                    duration: 500,
-                                    iterations: 1,
-                                    easing: "linear",
-                                    composite: "replace"
-                                }).onfinish = () => {
-                                    bar.style.width = `${Math.floor((completed + 1) / files.length * 100)}%`;
-                                };
-                            }, (error) => {
-                                reject(error);
-                            }, () => {
-                                resolve(uploadTask.snapshot.ref.fullPath);
-                            });
-                        });
-
-                        await runTransaction(databaseRef(database, `images/${push(child(databaseRef(database), "images")).key}`), current => {
-                            return { path: path, type: file.type, random: Math.random(), timestamp: Math.floor(new Date() / 1000) };
-                        });
-
-                    } catch (error) {
-                        console.error(error);
-
-                        animation = null;
-
-                        break;
-                    }
-
-                    completed++;
-                }
-
-                if (animation === null || animation.playState === "finished") {
-                    bar.animate([
-                        {
-                            opacity: 0
-                        }
-                    ], {
-                        delay: 0,
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-in"
-                    }).onfinish = () => {
-                        progress.remove();
-                    };
-                } else {
-                    bar.animate([
-                        {
-                            width: "100%"
-                        }
-                    ], {
-                        delay: 0,
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-in",
-                        composite: "replace"
-                    }).onfinish = () => {
-                        bar.style.width = "100%";
-                        bar.animate([
-                            {
-                                opacity: 0
-                            }
-                        ], {
-                            delay: 0,
-                            fill: "forwards",
-                            duration: 500,
-                            iterations: 1,
-                            easing: "ease-in"
-                        }).onfinish = () => {
-                            progress.remove();
-                        };
-                    };
-                }
+                await upload(target.files);
 
                 target.disabled = false;
             }
@@ -2562,6 +2570,22 @@
             tracker.active = false;
             tracker.touching = false;
         });
+        window.addEventListener("dragover", event => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+        }, false);
+        window.addEventListener("drop", async event => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            const input = document.body.querySelector("div.sidebar>.level>.level-item>.level>.level-item label.button>input");
+
+            input.disabled = true;
+
+            await upload(event.dataTransfer.files);
+
+            input.disabled = false;
+        }, false);
     </script>
 </body>
 
