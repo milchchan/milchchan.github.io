@@ -1056,8 +1056,7 @@
         import { getDatabase, get, query, ref as databaseRef, orderByChild, startAt, limitToFirst, limitToLast } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
         import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
         import { initializeAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js";
-        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app-check.js";
-
+        
         const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
         const tracker = { active: false, touching: false, edge: true, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 
@@ -1241,14 +1240,7 @@
             const storage = getStorage(app);
 
             initializeAnalytics(app);
-            initializeAppCheck(app, {
-                provider: new ReCaptchaV3Provider("6LdFDHYeAAAAAPlZYl6TB1vpjPNQPltkuKHLyRJi"),
-
-                // Optional argument. If true, the SDK automatically refreshes App Check
-                // tokens as needed.
-                isTokenAutoRefreshEnabled: true
-            });
-
+            
             stats.id = "stats";
 
             if (decodeURIComponent(window.location.hash.substring(1)) === "debug") {
