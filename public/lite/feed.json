@@ -51,6 +51,10 @@
                     {
                         "delay": 0.1,
                         "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Chuno-2.png"
                     }
                 ]
             },
@@ -103,6 +107,10 @@
                     },
                     {
                         "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 2.5,
                         "source": "images/Background-Milch-Tukigi-2.png"
                     }
                 ]
@@ -157,6 +165,10 @@
                     {
                         "delay": 0.1,
                         "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Mamimu-2.png"
                     }
                 ]
             },
@@ -210,6 +222,10 @@
                     {
                         "delay": 0.1,
                         "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
                     }
                 ]
             },
@@ -262,6 +278,10 @@
                     },
                     {
                         "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 2.5,
                         "source": "images/Background-Milch-Najimi-2.png"
                     }
                 ]
@@ -343,6 +363,10 @@
                     {
                         "delay": 0.1,
                         "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Zankuro-2.png"
                     }
                 ]
             }
@@ -416,6 +440,10 @@
                     },
                     {
                         "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 2.5,
                         "source": "images/Background-Merku-Zankuro-2.png"
                     }
                 ]
