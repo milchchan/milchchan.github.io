@@ -221,6 +221,13 @@
             height: 100%;
             background: transparent;
             overflow: hidden;
+            opacity: 1;
+            transition: .5s;
+        }
+
+        .wall.dragging {
+            opacity: 0.5;
+            transition: .5s;
         }
 
         .wall>canvas {
@@ -1248,7 +1255,7 @@
 
             const progress = document.createElement("div");
             const bar = document.createElement("div");
-            let completed = 0;
+            const completed = [];
             let animation = null;
 
             progress.className = "progress";
@@ -1294,7 +1301,7 @@
                             uploadTask.on("state_changed", (snapshot) => {
                                 animation = bar.animate([
                                     {
-                                        width: `${Math.floor((snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed / files.length) * 100)}%`
+                                        width: `${Math.floor((snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed.length / files.length) * 100)}%`
                                     }
                                 ], {
                                     delay: 0,
@@ -1304,7 +1311,7 @@
                                     easing: "linear",
                                     composite: "replace"
                                 }).onfinish = () => {
-                                    bar.style.width = `${Math.floor((completed + 1) / files.length * 100)}%`;
+                                    bar.style.width = `${Math.floor((completed.length + 1) / files.length * 100)}%`;
                                 };
                             }, (error) => {
                                 reject(error);
@@ -1317,6 +1324,7 @@
                             return { path: path, type: file.type, random: Math.random(), timestamp: Math.floor(new Date() / 1000) };
                         });
 
+                        completed.push(path);
                     } catch (error) {
                         console.error(error);
 
@@ -1324,8 +1332,6 @@
 
                         break;
                     }
-
-                    completed++;
                 }
             }
 
@@ -1372,6 +1378,8 @@
                     };
                 };
             }
+
+            return completed;
         }
 
         window.select = (event) => {
@@ -1424,7 +1432,17 @@
             if ("files" in target) {
                 target.disabled = true;
 
-                await upload(target.files);
+                const stack = await upload(target.files);
+
+                if (stack.length > 0) {
+                    background.queue.splice(0);
+
+                    do {
+                        background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 1.0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
+                    } while (stack.length > 0);
+
+                    background.invalid = true;
+                }
 
                 target.disabled = false;
             }
@@ -1436,6 +1454,41 @@
             const stats = document.createElement("div");
             const canvas = document.createElement("canvas");
             const rect = wall.getBoundingClientRect();
+
+            wall.addEventListener("dragenter", e => {
+                (e.currentTarget || e.target).classList.add("dragging");
+            });
+            wall.addEventListener("dragover", e => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "copy";
+            }, false);
+            wall.addEventListener("drop", async e => {
+                e.stopPropagation();
+                e.preventDefault();
+
+                (e.currentTarget || e.target).classList.remove("dragging");
+                
+                const input = document.body.querySelector("div.sidebar>.level>.level-item>.level>.level-item label.button>input");
+                
+                input.disabled = true;
+
+                const stack = await upload(e.dataTransfer.files);
+
+                if (stack.length > 0) {
+                    background.queue.splice(0);
+
+                    do {
+                        background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 1.0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
+                    } while (stack.length > 0);
+
+                    background.invalid = true;
+                }
+
+                input.disabled = false;
+            }, false);
+            wall.addEventListener("dragleave", e => {
+                (e.currentTarget || e.target).classList.remove("dragging");
+            });
 
             stats.id = "stats";
 
@@ -2570,22 +2623,6 @@
             tracker.active = false;
             tracker.touching = false;
         });
-        window.addEventListener("dragover", event => {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = "copy";
-        }, false);
-        window.addEventListener("drop", async event => {
-            event.stopPropagation();
-            event.preventDefault();
-
-            const input = document.body.querySelector("div.sidebar>.level>.level-item>.level>.level-item label.button>input");
-
-            input.disabled = true;
-
-            await upload(event.dataTransfer.files);
-
-            input.disabled = false;
-        }, false);
     </script>
 </body>
 
