@@ -1216,6 +1216,10 @@
             }
         }
 
+        function upload(event) {
+
+        }
+
         window.addEventListener("load", async event => {
             const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
             const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
@@ -1456,7 +1460,7 @@
                             }
 
                             try {
-                                const snapshot = await get(query(databaseRef(database, "backgrounds"), orderByChild("random"), startAt(Math.random()), limitToFirst(10)));
+                                const snapshot = await get(query(databaseRef(database, "images"), orderByChild("random"), startAt(Math.random()), limitToFirst(10)));
 
                                 if (snapshot.exists()) {
                                     function choice(collection, func) {
