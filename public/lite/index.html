@@ -456,6 +456,20 @@
             margin: 0px 0px 0px 16px;
         }
 
+        div.sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button>.wrap+.icon:not(.is-animatable),
+        div.sidebar>.level>.level-item:not(:first-child)>.level>.level-item .button>.icon:not(.is-animatable):first-of-type:last-of-type,
+        div.sidebar>.level>.level-item:not(:first-child)>.level>.level-item .button>.wrap+.icon:not(.is-animatable) {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        div.sidebar>.level>.level-item:first-child>.level>.level-item:not(:first-child) .button:hover>.wrap+.icon:not(.is-animatable),
+        div.sidebar>.level>.level-item:not(:first-child)>.level>.level-item .button:hover>.icon:not(.is-animatable):first-of-type:last-of-type,
+        div.sidebar>.level>.level-item:not(:first-child)>.level>.level-item .button:hover>.wrap+.icon:not(.is-animatable) {
+            opacity: 0.5;;
+            transition: .5s;
+        }
+
         div.sidebar>.level>.level-item>.level>.level-item .button .icon:not(.is-animatable) figure>picture>img {
             transform-origin: 50% 50%;
             transform: scale3d(1, 1, 1);
@@ -962,6 +976,25 @@
                             </div>
                             <div class="level-item">
                                 <div class="level">
+                                    <div class="level-item">
+                                        <div class="rotation-outer">
+                                            <div class="rotation-inner">
+                                                <div class="rotate">
+                                                    <a class="button"
+                                                        href="https://clock.milchchan.com/">
+                                                        <div class="icon">
+                                                            <i class="fa-solid fa-clock fa-xs"></i>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="level-item">
+                                        <div class="separator">
+                                            <hr>
+                                        </div>
+                                    </div>
                                     <div class="level-item">
                                         <div class="rotation-outer">
                                             <div class="rotation-inner">
