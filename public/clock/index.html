@@ -610,8 +610,8 @@
                     throw new Error(response.statusText);
                 }
             }
-            catch (e) {
-                console.error(e.message);
+            catch (error) {
+                console.error(error);
 
                 return;
             }
@@ -1156,8 +1156,8 @@
                             };
                             i.src = window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png";
                         });
-                    } catch (e) {
-                        console.error(e);
+                    } catch (error) {
+                        console.error(error);
                     }
 
                     for (const frame of document.body.querySelectorAll("#container > .wrap > .frame")) {
@@ -1414,7 +1414,7 @@
                                             image.style.opacity = "1";
                                         };
                                     }
-                                } catch (e) {
+                                } catch (error) {
                                     parent.style.visibility = "visible";
                                     element.animate([
                                         {
@@ -1429,7 +1429,7 @@
                                         element.style.opacity = "1";
                                     };
 
-                                    console.error(e);
+                                    console.error(error);
                                 }
 
                                 loadingElement.animate([
