@@ -1379,7 +1379,7 @@
                 };
             }
 
-            return completed;
+            return [completed, completed === files.length];
         }
 
         window.select = (event) => {
@@ -1432,7 +1432,7 @@
             if ("files" in target) {
                 target.disabled = true;
 
-                const stack = await upload(target.files);
+                const [stack, completed] = await upload(target.files);
 
                 if (stack.length > 0) {
                     background.queue.splice(0);
@@ -1442,6 +1442,10 @@
                     } while (stack.length > 0);
 
                     background.invalid = true;
+                }
+
+                if (!completed) {
+                    shake(target);
                 }
 
                 target.disabled = false;
@@ -1466,10 +1470,10 @@
                 e.stopPropagation();
                 e.preventDefault();
 
-                (e.currentTarget || e.target).classList.remove("dragging");
-                
+                const target = (e.currentTarget || e.target);
                 const input = document.body.querySelector("div.sidebar>.level>.level-item>.level>.level-item label.button>input");
                 
+                target.classList.remove("dragging");
                 input.disabled = true;
 
                 const stack = await upload(e.dataTransfer.files);
@@ -1482,6 +1486,10 @@
                     } while (stack.length > 0);
 
                     background.invalid = true;
+                }
+
+                if (!completed) {
+                    shake(target);
                 }
 
                 input.disabled = false;
