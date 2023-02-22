@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "milchchan",
     "public": "dist/lite",
     "ignore": [
       "firebase.json",
