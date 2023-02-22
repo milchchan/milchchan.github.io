@@ -1445,7 +1445,7 @@
                 }
 
                 if (!completed) {
-                    shake(target);
+                    shake(target.parentElement);
                 }
 
                 target.disabled = false;
@@ -1476,7 +1476,7 @@
                 target.classList.remove("dragging");
                 input.disabled = true;
 
-                const stack = await upload(e.dataTransfer.files);
+                const [stack, completed] = await upload(e.dataTransfer.files);
 
                 if (stack.length > 0) {
                     background.queue.splice(0);
@@ -1489,7 +1489,7 @@
                 }
 
                 if (!completed) {
-                    shake(target);
+                    shake(target.parentElement);
                 }
 
                 input.disabled = false;
