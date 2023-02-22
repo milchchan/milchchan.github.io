@@ -1775,7 +1775,9 @@
                                 }
 
                                 if (background.queue.length === 0) {
-                                    for (const image of shuffle(background.dataset[background.index].images)) {
+                                    const boundary = background.dataset[background.index].images.reduce((x, y) => y.frames.some(z => z.source.startsWith("gs:")) ? x : x + 1, 0);
+
+                                    for (const image of background.dataset[background.index].images.length > boundary ? [background.dataset[background.index].images[random(0, boundary)], background.dataset[background.index].images[random(boundary, background.dataset[background.index].images.length)]] : shuffle(background.dataset[background.index].images)) {
                                         background.queue.push({ index: background.index, data: image });
                                     }
                                 }
