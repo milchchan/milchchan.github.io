@@ -1111,7 +1111,7 @@
         import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
         import { initializeAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js";
 
-        const background = { invalid: false, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
+        const background = { updated: -60 * 1000, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
         const tracker = { active: false, touching: false, edge: true, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
         const firebaseConfig = {
             apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
@@ -1400,7 +1400,7 @@
 
                                 if (index >= 0) {
                                     background.index = index;
-                                    background.invalid = true;
+                                    background.updated = -background.timeout;
                                     element.className = `${element.className} is-selected`;
                                 } else {
                                     element.className = element.className.replace(/is-selected/g, "").trim();
@@ -1417,7 +1417,7 @@
 
                     if (index >= 0) {
                         background.index = index;
-                        background.invalid = true;
+                        background.updated = -background.timeout;;
                     } else {
                         shake(target.querySelector(":scope .wrap"));
                     }
@@ -1447,7 +1447,7 @@
                         background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 1.0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
                     } while (stack.length > 0);
 
-                    background.invalid = true;
+                    background.updated = -background.timeout;;
                 }
 
                 if (!completed) {
@@ -1491,7 +1491,7 @@
                         background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 1.0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
                     } while (stack.length > 0);
 
-                    background.invalid = true;
+                    background.updated = -background.timeout;;
                 }
 
                 if (!completed) {
@@ -1652,14 +1652,12 @@
                 });
 
                 async function render(timestamp) {
-                    const startTime = performance.now();
-
                     if (timestamp > previousTime) {
                         const deltaTime = (timestamp - previousTime) / 1000;
 
                         previousTime = timestamp;
 
-                        if (background.invalid) {
+                        if (timestamp - background.updated >= background.timeout) {
                             for (const block of background.blocks) {
                                 for (let i = block.inlines.length - 1; i >= 0; i--) {
                                     if (block.inlines[i].running) {
@@ -1668,7 +1666,7 @@
                                 }
                             }
 
-                            background.invalid = false;
+                            background.updated = timestamp;
                         }
 
                         if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
@@ -2511,12 +2509,6 @@
                 }
 
                 requestAnimationFrame(render);
-
-                setTimeout(function tick() {
-                    background.invalid = true;
-
-                    setTimeout(tick, 60000);
-                }, 60000);
             }
         });
         window.addEventListener("resize", event => {
