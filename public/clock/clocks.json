@@ -3,6 +3,7 @@
         "name": "milchchan.com",
         "url": "https://milchchan.com/",
         "source": "images/Digits1.png",
+        "color": "#ffffff",
         "digits": [
             [
                 3240,
@@ -70,6 +71,7 @@
         "name": "milchchan.com",
         "url": "https://milchchan.com/",
         "source": "images/Digits2.png",
+        "color": "#ffffff",
         "digits": [
             [
                 3240,
