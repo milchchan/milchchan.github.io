@@ -1798,10 +1798,12 @@
                                 const blind = document.createElement("div");
                                 const progress = document.createElement("div");
                                 const bar = document.createElement("div");
+                                const colors = data.color === "#ffffff" ? [window.getComputedStyle(document.documentElement).getPropertyValue("--foreground-color"), window.getComputedStyle(document.documentElement).getPropertyValue("--accent-color")] : [data.color];
                                 const timeout = 60 * 60;
                                 let index = 0;
 
                                 blind.className = "blind";
+                                blind.style.backgroundColor = `${colors[random(0, colors.length)]}`;
                                 blind.style.transform = "translate3d(0, 100%, 0)";
 
                                 try {
