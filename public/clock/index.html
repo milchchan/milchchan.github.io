@@ -48,7 +48,7 @@
             padding: 0;
             height: 100%;
             overflow: hidden;
-            background: #ffffff;
+            background: var(--background-color);
         }
 
         body {
@@ -126,7 +126,7 @@
             top: 0px;
             margin: 0px 4px 0px 4px;
             border: 1px solid var(--foreground-color);
-            background: #ffffff;
+            background: var(--background-color);
             overflow: hidden;
             transition: .5s;
         }
@@ -533,6 +533,7 @@
                     }
 
                     frameElement.className = "frame";
+                    frameElement.style.backgroundColor =  "color" in data && data.color !== "#ffffff" ? data.color : "";
                     frameElement.style.opacity = "0";
 
                     digitElement.className = "digit";
@@ -1238,6 +1239,7 @@
                         loadingElement.className = "loading";
                         loadingElement.style.width = `${maxWidth}px`;
                         loadingElement.style.height = `${maxHeight}px`;
+                        loadingElement.style.backgroundColor =  "color" in data && data.color !== "#ffffff" ? data.color : "";
                         loadingElement.style.transform = "translate3d(0px, 100%, 0)";
 
                         element.parentElement.parentElement.appendChild(loadingElement);
