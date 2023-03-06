@@ -1193,26 +1193,26 @@
                     const postDataParts = [];
                     let headerDataBytes = null;
                     let frame = null;
-                    const anim = { frames: [] };
+                    const animation = { frames: [] };
                     const frames = [];
-                    
+
                     this.parseChunks(this.bytes, function (type, bytes, offset, length) {
                         switch (type) {
                             case "IHDR":
                                 headerDataBytes = bytes.subarray(offset + 8, offset + 8 + length);
-                                anim.width = self.readDWord(bytes, offset + 8);
-                                anim.height = self.readDWord(bytes, offset + 12);
+                                animation.width = self.readDWord(bytes, offset + 8);
+                                animation.height = self.readDWord(bytes, offset + 12);
 
                                 break;
 
                             case "acTL":
-                                anim.numPlays = self.readDWord(bytes, offset + 8 + 4);
-
+                                animation.iterations = self.readDWord(bytes, offset + 8 + 4);
+                                
                                 break;
 
                             case "fcTL":
                                 if (frame) {
-                                    anim.frames.push(frame);
+                                    animation.frames.push(frame);
                                 }
 
                                 frame = {};
@@ -1224,18 +1224,17 @@
                                 const delayN = self.readWord(bytes, offset + 8 + 20);
                                 let delayD = self.readWord(bytes, offset + 8 + 22);
 
-                                if (delayD == 0) {
+                                if (delayD === 0) {
                                     delayD = 100;
                                 }
 
-                                frame.delay = 1000 * delayN / delayD;
+                                frame.delay = delayN / delayD;
 
-                                // see http://mxr.mozilla.org/mozilla/source/gfx/src/shared/gfxImageFrame.cpp#343
-                                if (frame.delay <= 10) {
-                                    frame.delay = 100;
+                                if (frame.delay <= 0.01) {
+                                    frame.delay = 0.1;
                                 }
 
-                                anim.playTime += frame.delay;
+                                animation.playTime += frame.delay;
                                 frame.disposeOp = bytes[offset + 8 + 24];
                                 frame.blendOp = bytes[offset + 8 + 25];
                                 frame.dataParts = [];
@@ -1267,16 +1266,16 @@
                     });
 
                     if (frame) {
-                        anim.frames.push(frame);
+                        animation.frames.push(frame);
                     }
 
-                    if (anim.frames.length > 0) {
+                    if (animation.frames.length > 0) {
                         const preBlob = new Blob(preDataParts);
                         const postBlob = new Blob(postDataParts);
                         const canvas = document.createElement("canvas");
 
-                        canvas.width = anim.width;
-                        canvas.height = anim.height;
+                        canvas.width = animation.width;
+                        canvas.height = animation.height;
 
                         const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
@@ -1284,21 +1283,21 @@
                         ctx.imageSmoothingQuality = "high";
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                        for (const frame of anim.frames) {
-                            let bb = [];
+                        for (const frame of animation.frames) {
+                            const chunks = [];
                             let imageData;
 
-                            bb.push(this.PNG_SIGNATURE_BYTES);
+                            chunks.push(this.PNG_SIGNATURE_BYTES);
                             headerDataBytes.set(this.buildDWordArray(frame.width), 0);
                             headerDataBytes.set(this.buildDWordArray(frame.height), 4);
-                            bb.push(this.buildChunkBytes("IHDR", headerDataBytes));
-                            bb.push(preBlob);
+                            chunks.push(this.buildChunkBytes("IHDR", headerDataBytes));
+                            chunks.push(preBlob);
 
                             for (let j = 0; j < frame.dataParts.length; j++) {
-                                bb.push(this.buildChunkBytes("IDAT", frame.dataParts[j]));
+                                chunks.push(this.buildChunkBytes("IDAT", frame.dataParts[j]));
                             }
 
-                            bb.push(postBlob);
+                            chunks.push(postBlob);
 
                             if (frame.disposeOp === 2) {
                                 imageData = ctx.getImageData(frame.left, frame.top, frame.width, frame.height);
@@ -1348,7 +1347,7 @@
                                             reader.onerror = () => {
                                                 reject3(reader.error);
                                             };
-                                            reader.readAsDataURL(new Blob(bb, { "type": "image/png" }));
+                                            reader.readAsDataURL(new Blob(chunks, { "type": "image/png" }));
                                         });
                                     })
                                 });
@@ -1360,8 +1359,6 @@
                                 return;
                             } finally {
                                 delete frame.dataParts;
-
-                                bb = null;
                             }
 
                             if (frame.disposeOp === 1) {
@@ -1374,7 +1371,7 @@
                         ctx.canvas.width = ctx.canvas.height = 0;
                     }
 
-                    resolve1(frames);
+                    resolve1({ frames: frames, iterations: animation.iterations });
                 });
             }
 
@@ -1787,7 +1784,7 @@
                     background.queue.splice(0);
 
                     do {
-                        background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 1.0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
+                        background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
                     } while (stack.length > 0);
 
                     background.updated = -background.timeout;;
@@ -1831,7 +1828,7 @@
                     background.queue.splice(0);
 
                     do {
-                        background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 1.0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
+                        background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
                     } while (stack.length > 0);
 
                     background.updated = -background.timeout;;
@@ -2115,7 +2112,7 @@
                                     if (metadata.contentType.startsWith("image/")) {
                                         for (const item of background.dataset) {
                                             if ("type" in item === false && "images" in item) {
-                                                item.images.push({ color: "#ffffff", frames: [{ delay: 1.0, source: `gs://milchchan.appspot.com/${path}` }] });
+                                                item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${path}` }] });
                                             }
                                         }
                                     }
@@ -2302,9 +2299,10 @@
                                                 const apng = new APNG(await blob.arrayBuffer());
 
                                                 if (await apng.isAnimatable()) {
+                                                    const animation = await apng.load();
                                                     const frames = [];
 
-                                                    for (const frame of await apng.load()) {
+                                                    for (const frame of animation.frames) {
                                                         const image = await new Promise(async (resolve, reject) => {
                                                             const i = new Image();
 
@@ -2319,11 +2317,26 @@
                                                             i.src = frame.dataURL;
                                                         });
 
-                                                        frames.push({ delay: frame.delay / 1000, image: image });
-                                                        animationQueue.push(Object.assign({ time: 0 }, frames[frames.length - 1]));
+                                                        frames.push({ delay: frame.delay, image: image });
                                                     }
 
-                                                    cache[frame.source] = { frames: frames, timestamp: timestamp };
+                                                    if (frames.length > 0) {
+                                                        for (let i = 1; i < animation.iterations; i++) {
+                                                            const length = frames.length;
+
+                                                            for (let j = 0; j < length; j++) {
+                                                                frames.push(frames[j]);
+                                                            }
+                                                        }
+                                                        
+                                                        frames[frames.length - 1].delay += frame.delay;
+
+                                                        for (const frame of frames) {
+                                                            animationQueue.push(Object.assign({ time: 0 }, frame));
+                                                        }
+
+                                                        cache[frame.source] = { frames: frames, timestamp: timestamp };
+                                                    }
                                                 } else {
                                                     const image = await new Promise(async (resolve, reject) => {
                                                         const i = new Image();
@@ -2734,7 +2747,6 @@
                             }
                         }
 
-                        backContext.fillRect(0, 0, backCanvas.width, backCanvas.height); ///
                         backContext.closePath();
                         backContext.globalCompositeOperation = "source-atop";
 
@@ -2777,14 +2789,27 @@
                         }
 
                         if (animationQueue.length > 0) {
-                            const frame = animationQueue[0];
+                            let count = animationQueue.length;
+                            let frame = animationQueue[0];
+                            let delay = Math.max(frame.delay, 0.01);
 
                             frame.time += deltaTime;
 
-                            if (frame.time >= frame.delay) {
-                                frame.time = 0;
+                            while (frame.time >= delay) {
+                                const time = frame.time - delay;
 
+                                frame.time = 0;
                                 animationQueue.push(animationQueue.shift());
+                                frame = animationQueue[0];
+                                count--;
+
+                                if (count > 0) {
+                                    frame.time += time;
+                                } else {
+                                    break;
+                                }
+
+                                delay = Math.max(frame.delay, 0.01);
                             }
 
                             if (frame.image !== null) {
