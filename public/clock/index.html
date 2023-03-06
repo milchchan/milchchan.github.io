@@ -1158,8 +1158,8 @@
                             i.onload = () => {
                                 resolve();
                             };
-                            i.onerror = (e) => {
-                                reject(e);
+                            i.onerror = (error) => {
+                                reject(error);
                             };
                             i.src = window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png";
                         });
@@ -1280,8 +1280,8 @@
                                         i.onload = () => {
                                             resolve(i);
                                         };
-                                        i.onerror = (e) => {
-                                            reject(e);
+                                        i.onerror = (error) => {
+                                            reject(error);
                                         };
                                         i.src = data.source;
                                     });
