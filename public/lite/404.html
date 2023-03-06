@@ -273,8 +273,8 @@
                   };
                   reader.readAsDataURL(blob);
                 }));
-              } catch (e) {
-                reject1(e);
+              } catch (error) {
+                reject1(error);
               }
 
               ctx.canvas.width = ctx.canvas.height = 0;
@@ -286,8 +286,8 @@
           image.crossOrigin = "anonymous";
           image.src = dataURL;
         });
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(error);
       }
 
       return null;
