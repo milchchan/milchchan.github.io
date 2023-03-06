@@ -1144,8 +1144,9 @@
         initializeAnalytics(app);
 
         class APNG {
-            constructor() {
+            constructor(buffer) {
                 this.PNG_SIGNATURE_BYTES = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+                this.bytes = new Uint8Array(buffer);
                 this.crc32Table = new Uint32Array(256);
 
                 for (let i = 0; i < 256; i++) {
@@ -1159,24 +1160,20 @@
                 }
             }
 
-            load(buffer) {
-                //await arrayBuffer()
-                const bytes = new Uint8Array(buffer);
-
-                return new Promise((resolve, reject) => {
+            isAnimatable() {
+                return new Promise(async (resolve) => {
                     for (let i = 0; i < this.PNG_SIGNATURE_BYTES.length; i++) {
-                        if (this.PNG_SIGNATURE_BYTES[i] != bytes[i]) {
-                            reject(null);
+                        if (this.PNG_SIGNATURE_BYTES[i] !== this.bytes[i]) {
+                            resolve(false);
 
                             return;
                         }
                     }
 
-                    // Animation test
                     let isAnimatable = false;
 
-                    parseChunks(bytes, (type) => {
-                        if (type == "acTL") {
+                    this.parseChunks(this.bytes, (type) => {
+                        if (type === "acTL") {
                             isAnimatable = true;
 
                             return false;
@@ -1185,29 +1182,31 @@
                         return true;
                     });
 
-                    if (!isAnimatable) {
-                        reject(null);
+                    resolve(isAnimatable);
+                });
+            }
 
-                        return;
-                    }
-
+            load() {
+                return new Promise(async (resolve1, reject1) => {
+                    const self = this;
                     const preDataParts = [];
                     const postDataParts = [];
                     let headerDataBytes = null;
                     let frame = null;
                     const anim = { frames: [] };
-
-                    parseChunks(bytes, function (type, bytes, off, length) {
+                    const frames = [];
+                    
+                    this.parseChunks(this.bytes, function (type, bytes, offset, length) {
                         switch (type) {
                             case "IHDR":
-                                headerDataBytes = bytes.subarray(off + 8, off + 8 + length);
-                                anim.width = readDWord(bytes, off + 8);
-                                anim.height = readDWord(bytes, off + 12);
+                                headerDataBytes = bytes.subarray(offset + 8, offset + 8 + length);
+                                anim.width = self.readDWord(bytes, offset + 8);
+                                anim.height = self.readDWord(bytes, offset + 12);
 
                                 break;
 
                             case "acTL":
-                                anim.numPlays = readDWord(bytes, off + 8 + 4);
+                                anim.numPlays = self.readDWord(bytes, offset + 8 + 4);
 
                                 break;
 
@@ -1217,53 +1216,53 @@
                                 }
 
                                 frame = {};
-                                frame.width = readDWord(bytes, off + 8 + 4);
-                                frame.height = readDWord(bytes, off + 8 + 8);
-                                frame.left = readDWord(bytes, off + 8 + 12);
-                                frame.top = readDWord(bytes, off + 8 + 16);
-                                
-                                const delayN = readWord(bytes, off + 8 + 20);
-                                let delayD = readWord(bytes, off + 8 + 22);
+                                frame.width = self.readDWord(bytes, offset + 8 + 4);
+                                frame.height = self.readDWord(bytes, offset + 8 + 8);
+                                frame.left = self.readDWord(bytes, offset + 8 + 12);
+                                frame.top = self.readDWord(bytes, offset + 8 + 16);
+
+                                const delayN = self.readWord(bytes, offset + 8 + 20);
+                                let delayD = self.readWord(bytes, offset + 8 + 22);
 
                                 if (delayD == 0) {
                                     delayD = 100;
                                 }
-                                
+
                                 frame.delay = 1000 * delayN / delayD;
-                                
+
                                 // see http://mxr.mozilla.org/mozilla/source/gfx/src/shared/gfxImageFrame.cpp#343
                                 if (frame.delay <= 10) {
                                     frame.delay = 100;
                                 }
 
                                 anim.playTime += frame.delay;
-                                frame.disposeOp = readByte(bytes, off + 8 + 24);
-                                frame.blendOp = readByte(bytes, off + 8 + 25);
+                                frame.disposeOp = bytes[offset + 8 + 24];
+                                frame.blendOp = bytes[offset + 8 + 25];
                                 frame.dataParts = [];
 
                                 break;
 
                             case "fdAT":
                                 if (frame) {
-                                    frame.dataParts.push(bytes.subarray(off + 8 + 4, off + 8 + length));
+                                    frame.dataParts.push(bytes.subarray(offset + 8 + 4, offset + 8 + length));
                                 }
 
                                 break;
 
                             case "IDAT":
                                 if (frame) {
-                                    frame.dataParts.push(bytes.subarray(off + 8, off + 8 + length));
+                                    frame.dataParts.push(bytes.subarray(offset + 8, offset + 8 + length));
                                 }
 
                                 break;
 
                             case "IEND":
-                                postDataParts.push(subBuffer(bytes, off, 12 + length));
+                                postDataParts.push(self.subBuffer(bytes, offset, 12 + length));
 
                                 break;
 
                             default:
-                                preDataParts.push(subBuffer(bytes, off, 12 + length));
+                                preDataParts.push(self.subBuffer(bytes, offset, 12 + length));
                         }
                     });
 
@@ -1271,97 +1270,149 @@
                         anim.frames.push(frame);
                     }
 
-                    if (anim.frames.length == 0) {
-                        reject(null);
+                    if (anim.frames.length > 0) {
+                        const preBlob = new Blob(preDataParts);
+                        const postBlob = new Blob(postDataParts);
+                        const canvas = document.createElement("canvas");
 
-                        return;
-                    }
+                        canvas.width = anim.width;
+                        canvas.height = anim.height;
 
-                    // Creating images
-                    let createdImages = 0;
-                    const preBlob = new Blob(preDataParts);
-                    const postBlob = new Blob(postDataParts);
+                        const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-                    for (let f = 0; f < anim.frames.length; f++) {
-                        const bb = [];
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = "high";
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                        frame = anim.frames[f];
+                        for (const frame of anim.frames) {
+                            let bb = [];
+                            let imageData;
 
-                        bb.push(this.PNG_SIGNATURE_BYTES);
-                        headerDataBytes.set(makeDWordArray(frame.width), 0);
-                        headerDataBytes.set(makeDWordArray(frame.height), 4);
-                        bb.push(makeChunkBytes("IHDR", headerDataBytes));
-                        bb.push(preBlob);
+                            bb.push(this.PNG_SIGNATURE_BYTES);
+                            headerDataBytes.set(this.buildDWordArray(frame.width), 0);
+                            headerDataBytes.set(this.buildDWordArray(frame.height), 4);
+                            bb.push(this.buildChunkBytes("IHDR", headerDataBytes));
+                            bb.push(preBlob);
 
-                        for (let j = 0; j < frame.dataParts.length; j++) {
-                            bb.push(makeChunkBytes("IDAT", frame.dataParts[j]));
+                            for (let j = 0; j < frame.dataParts.length; j++) {
+                                bb.push(this.buildChunkBytes("IDAT", frame.dataParts[j]));
+                            }
+
+                            bb.push(postBlob);
+
+                            if (frame.disposeOp === 2) {
+                                imageData = ctx.getImageData(frame.left, frame.top, frame.width, frame.height);
+                            } else {
+                                imageData = null;
+                            }
+
+                            if (frame.blendOp === 0) {
+                                ctx.clearRect(frame.left, frame.top, frame.width, frame.height);
+                            }
+
+                            try {
+                                frames.push({
+                                    delay: frame.delay, dataURL: await new Promise(async (resolve2, reject2) => {
+                                        const image = new Image();
+
+                                        image.onload = () => {
+                                            ctx.drawImage(image, frame.left, frame.top, frame.width, frame.height);
+                                            ctx.canvas.toBlob(async (blob) => {
+                                                try {
+                                                    resolve2(await new Promise(async (resolve3, reject3) => {
+                                                        const reader = new FileReader();
+
+                                                        reader.onload = () => {
+                                                            resolve3(reader.result);
+                                                        };
+                                                        reader.onerror = () => {
+                                                            reject3(reader.error);
+                                                        };
+                                                        reader.readAsDataURL(blob);
+                                                    }));
+                                                } catch (error) {
+                                                    reject2(error);
+                                                }
+                                            }, "image/png");
+                                        };
+                                        image.onerror = (error) => {
+                                            reject2(error);
+                                        };
+                                        image.crossOrigin = "anonymous";
+                                        image.src = await new Promise(async (resolve3, reject3) => {
+                                            const reader = new FileReader();
+
+                                            reader.onload = () => {
+                                                resolve3(reader.result);
+                                            };
+                                            reader.onerror = () => {
+                                                reject3(reader.error);
+                                            };
+                                            reader.readAsDataURL(new Blob(bb, { "type": "image/png" }));
+                                        });
+                                    })
+                                });
+                            } catch (error) {
+                                ctx.canvas.width = ctx.canvas.height = 0;
+
+                                reject1(error);
+
+                                return;
+                            } finally {
+                                delete frame.dataParts;
+
+                                bb = null;
+                            }
+
+                            if (frame.disposeOp === 1) {
+                                ctx.clearRect(frame.left, frame.top, frame.width, frame.height);
+                            } else if (imageData !== null) {
+                                ctx.putImageData(imageData, frame.left, frame.top);
+                            }
                         }
 
-                        bb.push(postBlob);
-
-                        const url = URL.createObjectURL(new Blob(bb, { "type": "image/png" }));
-
-                        delete frame.dataParts;
-
-                        bb = null;
-
-                        /**
-                         * Using "createElement" instead of "new Image" because of bug in Chrome 27
-                         * https://code.google.com/p/chromium/issues/detail?id=238071
-                         * http://stackoverflow.com/questions/16377375/using-canvas-drawimage-in-chrome-extension-content-script/16378270
-                         */
-                        frame.img = document.createElement('img');
-                        frame.img.onload = function () {
-                            URL.revokeObjectURL(this.src);
-                            createdImages++;
-                            if (createdImages == anim.frames.length) {
-                                resolve(anim);
-                            }
-                        };
-                        frame.img.onerror = function () {
-                            reject(null);
-                        };
-                        frame.img.src = url;
+                        ctx.canvas.width = ctx.canvas.height = 0;
                     }
+
+                    resolve1(frames);
                 });
             }
 
             parseChunks(bytes, callback) {
                 let off = 8;
+                let type;
+                let done;
 
                 do {
-                    const length = readDWord(bytes, off);
-                    const type = readString(bytes, off + 4, 4);
-                    const res = callback(type, bytes, off, length);
+                    const length = this.readDWord(bytes, off);
 
+                    type = this.readString(bytes, off + 4, 4);
+                    done = callback(type, bytes, off, length);
                     off += 12 + length;
-                } while (res !== false && type != "IEND" && off < bytes.length);
+                } while (done !== false && type != "IEND" && off < bytes.length);
             }
 
-            readDWord(bytes, off) {
+            readDWord(bytes, offset) {
                 let x = 0;
+
                 // Force the most-significant byte to unsigned.
-                x += ((bytes[0 + off] << 24) >>> 0);
+                x += ((bytes[0 + offset] << 24) >>> 0);
 
                 for (let i = 1; i < 4; i++) {
-                    x += ((bytes[i + off] << ((3 - i) * 8)));
+                    x += ((bytes[i + offset] << ((3 - i) * 8)));
                 }
 
                 return x;
             }
 
-            readWord(bytes, off) {
+            readWord(bytes, offset) {
                 let x = 0;
 
                 for (let i = 0; i < 2; i++) {
-                    x += (bytes[i + off] << ((1 - i) * 8));
+                    x += (bytes[i + offset] << ((1 - i) * 8));
                 }
 
                 return x;
-            }
-
-            readByte(bytes, off) {
-                return bytes[off];
             }
 
             subBuffer(bytes, start, length) {
@@ -1372,37 +1423,37 @@
                 return a;
             }
 
-            readString(bytes, off, length) {
-                const chars = Array.prototype.slice.call(bytes.subarray(off, off + length));
+            readString(bytes, offset, length) {
+                const chars = Array.prototype.slice.call(bytes.subarray(offset, offset + length));
 
                 return String.fromCharCode.apply(String, chars);
             }
 
-            makeDWordArray(x) {
+            buildDWordArray(x) {
                 return [(x >>> 24) & 0xff, (x >>> 16) & 0xff, (x >>> 8) & 0xff, x & 0xff];
             }
 
-            makeStringArray(x) {
-                const res = [];
+            buildStringArray(x) {
+                const buffer = [];
 
                 for (let i = 0; i < x.length; i++) {
-                    res.push(x.charCodeAt(i));
+                    buffer.push(x.charCodeAt(i));
                 }
 
-                return res;
+                return buffer;
             }
 
-            makeChunkBytes(type, dataBytes) {
+            buildChunkBytes(type, dataBytes) {
                 const crcLen = type.length + dataBytes.length;
                 const bytes = new Uint8Array(new ArrayBuffer(crcLen + 8));
 
-                bytes.set(makeDWordArray(dataBytes.length), 0);
-                bytes.set(makeStringArray(type), 4);
+                bytes.set(this.buildDWordArray(dataBytes.length), 0);
+                bytes.set(this.buildStringArray(type), 4);
                 bytes.set(dataBytes, 8);
 
-                const crc = crc32(bytes, 4, crcLen);
+                const crc = this.crc32(bytes, 4, crcLen);
 
-                bytes.set(makeDWordArray(crc), crcLen + 4);
+                bytes.set(this.buildDWordArray(crc), crcLen + 4);
 
                 return bytes;
             }
@@ -1488,8 +1539,8 @@
                                     };
                                     reader.readAsDataURL(blob);
                                 }));
-                            } catch (e) {
-                                reject1(e);
+                            } catch (error) {
+                                reject1(error);
                             }
 
                             ctx.canvas.width = ctx.canvas.height = 0;
@@ -1848,8 +1899,8 @@
                         i.onload = () => {
                             resolve(i);
                         };
-                        i.onerror = (e) => {
-                            reject(e);
+                        i.onerror = (error) => {
+                            reject(error);
                         };
                         i.src = source
                     }));
@@ -2228,7 +2279,6 @@
                                                 };
                                             }
                                         });
-                                        let image = null;
 
                                         if (blob === null) {
                                             if (index === data.frames.length - 1) {
@@ -2249,36 +2299,63 @@
                                             }
                                         } else {
                                             try {
-                                                image = await new Promise(async (resolve, reject) => {
-                                                    const i = new Image();
+                                                const apng = new APNG(await blob.arrayBuffer());
 
-                                                    i.onload = () => {
-                                                        resolve(i);
-                                                    };
-                                                    i.onerror = (e) => {
-                                                        reject(e);
-                                                    };
+                                                if (await apng.isAnimatable()) {
+                                                    const frames = [];
 
-                                                    i.crossOrigin = "Anonymous";
-                                                    i.src = await new Promise(async (resolve, reject) => {
-                                                        const reader = new FileReader();
+                                                    for (const frame of await apng.load()) {
+                                                        const image = await new Promise(async (resolve, reject) => {
+                                                            const i = new Image();
 
-                                                        reader.onload = () => {
-                                                            resolve(reader.result);
+                                                            i.onload = () => {
+                                                                resolve(i);
+                                                            };
+                                                            i.onerror = (error) => {
+                                                                reject(error);
+                                                            };
+
+                                                            i.crossOrigin = "Anonymous";
+                                                            i.src = frame.dataURL;
+                                                        });
+
+                                                        frames.push({ delay: frame.delay / 1000, image: image });
+                                                        animationQueue.push(Object.assign({ time: 0 }, frames[frames.length - 1]));
+                                                    }
+
+                                                    cache[frame.source] = { frames: frames, timestamp: timestamp };
+                                                } else {
+                                                    const image = await new Promise(async (resolve, reject) => {
+                                                        const i = new Image();
+
+                                                        i.onload = () => {
+                                                            resolve(i);
                                                         };
-                                                        reader.onerror = () => {
-                                                            reject(reader.error);
+                                                        i.onerror = (error) => {
+                                                            reject(error);
                                                         };
-                                                        reader.readAsDataURL(blob);
+
+                                                        i.crossOrigin = "Anonymous";
+                                                        i.src = await new Promise(async (resolve, reject) => {
+                                                            const reader = new FileReader();
+
+                                                            reader.onload = () => {
+                                                                resolve(reader.result);
+                                                            };
+                                                            reader.onerror = () => {
+                                                                reject(reader.error);
+                                                            };
+                                                            reader.readAsDataURL(blob);
+                                                        });
                                                     });
-                                                });
-                                                cache[frame.source] = { image: image, timestamp: timestamp };
+
+                                                    animationQueue.push(Object.assign({ time: 0, image: image }, frame));
+                                                    cache[frame.source] = { image: image, timestamp: timestamp };
+                                                }
                                             } catch (error) {
                                                 console.error(error);
                                             }
                                         }
-
-                                        animationQueue.push(Object.assign({ time: 0, image: image }, frame));
                                     } else {
                                         if (index < data.frames.length - 1) {
                                             bar.animate([
@@ -2325,7 +2402,13 @@
                                             };
                                         }
 
-                                        animationQueue.push(Object.assign({ time: 0, image: cache[frame.source].image }, frame));
+                                        if ("frames" in cache[frame.source]) {
+                                            for (const data of cache[frame.source].frames) {
+                                                animationQueue.push(Object.assign({ time: 0 }, data));
+                                            }
+                                        } else {
+                                            animationQueue.push(Object.assign({ time: 0, image: cache[frame.source].image }, frame));
+                                        }
                                     }
 
                                     index++;
@@ -2651,6 +2734,7 @@
                             }
                         }
 
+                        backContext.fillRect(0, 0, backCanvas.width, backCanvas.height); ///
                         backContext.closePath();
                         backContext.globalCompositeOperation = "source-atop";
 
