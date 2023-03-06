@@ -1522,6 +1522,7 @@
 
                         ctx.imageSmoothingEnabled = true;
                         ctx.imageSmoothingQuality = "high";
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
                         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
                         ctx.canvas.toBlob(async (blob) => {
                             try {
