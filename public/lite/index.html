@@ -2241,7 +2241,7 @@
                                                 if (await apng.isAnimatable()) {
                                                     const frames = [];
 
-                                                    for (const frame of await apng.load()[0]) {
+                                                    for (const frame of (await apng.load())[0]) {
                                                         frames.push({
                                                             delay: frame.delay, image: await new Promise(async (resolve, reject) => {
                                                                 const i = new Image();
