@@ -1265,7 +1265,7 @@
                         }
                     });
 
-                    if (frame) {
+                    if (frame !== null) {
                         animation.frames.push(frame);
                     }
 
@@ -1371,7 +1371,13 @@
                         ctx.canvas.width = ctx.canvas.height = 0;
                     }
 
-                    resolve1({ frames: frames, iterations: animation.iterations });
+                    for (let i = 1; i < animation.iterations; i++) {
+                        for (let j = 0; j < animation.frames.length; j++) {
+                            frames.push(frames[j]);
+                        }
+                    }
+
+                    resolve1([frames, animation.iterations === 0]);
                 });
             }
 
@@ -2233,36 +2239,27 @@
                                                 const apng = new APNG(await blob.arrayBuffer());
 
                                                 if (await apng.isAnimatable()) {
-                                                    const animation = await apng.load();
                                                     const frames = [];
 
-                                                    for (const frame of animation.frames) {
-                                                        const image = await new Promise(async (resolve, reject) => {
-                                                            const i = new Image();
+                                                    for (const frame of await apng.load()[0]) {
+                                                        frames.push({
+                                                            delay: frame.delay, image: await new Promise(async (resolve, reject) => {
+                                                                const i = new Image();
 
-                                                            i.onload = () => {
-                                                                resolve(i);
-                                                            };
-                                                            i.onerror = (error) => {
-                                                                reject(error);
-                                                            };
+                                                                i.onload = () => {
+                                                                    resolve(i);
+                                                                };
+                                                                i.onerror = (error) => {
+                                                                    reject(error);
+                                                                };
 
-                                                            i.crossOrigin = "Anonymous";
-                                                            i.src = frame.dataURL;
+                                                                i.crossOrigin = "Anonymous";
+                                                                i.src = frame.dataURL;
+                                                            })
                                                         });
-
-                                                        frames.push({ delay: frame.delay, image: image });
                                                     }
 
                                                     if (frames.length > 0) {
-                                                        for (let i = 1; i < animation.iterations; i++) {
-                                                            const length = frames.length;
-
-                                                            for (let j = 0; j < length; j++) {
-                                                                frames.push(frames[j]);
-                                                            }
-                                                        }
-
                                                         frames[frames.length - 1].delay += frame.delay;
 
                                                         for (const frame of frames) {
