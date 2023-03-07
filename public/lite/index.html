@@ -1382,17 +1382,17 @@
             }
 
             parseChunks(bytes, callback) {
-                let off = 8;
+                let offset = 8;
                 let type;
                 let done;
 
                 do {
-                    const length = this.readDWord(bytes, off);
+                    const length = this.readDWord(bytes, offset);
 
-                    type = this.readString(bytes, off + 4, 4);
-                    done = callback(type, bytes, off, length);
-                    off += 12 + length;
-                } while (done !== false && type != "IEND" && off < bytes.length);
+                    type = this.readString(bytes, offset + 4, 4);
+                    done = callback(type, bytes, offset, length);
+                    offset += 12 + length;
+                } while (done !== false && type != "IEND" && offset < bytes.length);
             }
 
             readDWord(bytes, offset) {
