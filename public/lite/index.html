@@ -1160,10 +1160,14 @@
                 }
             }
 
+            get signature() {
+                return this.PNG_SIGNATURE_BYTES;
+            }
+
             isAnimatable() {
                 return new Promise(async (resolve) => {
-                    for (let i = 0; i < this.PNG_SIGNATURE_BYTES.length; i++) {
-                        if (this.PNG_SIGNATURE_BYTES[i] !== this.bytes[i]) {
+                    for (let i = 0; i < this.signature.length; i++) {
+                        if (this.signature[i] !== this.bytes[i]) {
                             resolve(false);
 
                             return;
@@ -1287,7 +1291,7 @@
                             const chunks = [];
                             let imageData;
 
-                            chunks.push(this.PNG_SIGNATURE_BYTES);
+                            chunks.push(this.signature);
                             headerDataBytes.set(this.buildDWordArray(frame.width), 0);
                             headerDataBytes.set(this.buildDWordArray(frame.height), 4);
                             chunks.push(this.buildChunkBytes("IHDR", headerDataBytes));
