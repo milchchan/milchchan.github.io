@@ -1144,9 +1144,8 @@
         initializeAnalytics(app);
 
         class APNG {
-            constructor(buffer) {
+            constructor() {
                 this.PNG_SIGNATURE_BYTES = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
-                this.bytes = new Uint8Array(buffer);
                 this.crc32Table = new Uint32Array(256);
 
                 for (let i = 0; i < 256; i++) {
@@ -1164,224 +1163,198 @@
                 return this.PNG_SIGNATURE_BYTES;
             }
 
-            isAnimatable() {
-                return new Promise(async (resolve) => {
-                    for (let i = 0; i < this.signature.length; i++) {
-                        if (this.signature[i] !== this.bytes[i]) {
-                            resolve(false);
-
-                            return;
-                        }
-                    }
-
-                    let isAnimatable = false;
-
-                    this.parseChunks(this.bytes, (type) => {
-                        if (type === "acTL") {
-                            isAnimatable = true;
-
-                            return false;
-                        }
-
-                        return true;
-                    });
-
-                    resolve(isAnimatable);
-                });
-            }
-
-            load() {
+            load(blob) {
                 return new Promise(async (resolve1, reject1) => {
                     const self = this;
-                    const preDataParts = [];
-                    const postDataParts = [];
-                    let headerDataBytes = null;
-                    let frame = null;
-                    const animation = { frames: [] };
-                    const frames = [];
+                    const bytes = new Uint8Array(await blob.arrayBuffer());
 
-                    this.parseChunks(this.bytes, function (type, bytes, offset, length) {
-                        switch (type) {
-                            case "IHDR":
-                                headerDataBytes = bytes.subarray(offset + 8, offset + 8 + length);
-                                animation.width = self.readDWord(bytes, offset + 8);
-                                animation.height = self.readDWord(bytes, offset + 12);
+                    if (this.signature.every((element, index) => element === bytes[index])) {
+                        let isAnimatable = false;
 
-                                break;
+                        this.parseChunks(bytes, (type) => {
+                            if (type === "acTL") {
+                                isAnimatable = true;
 
-                            case "acTL":
-                                animation.iterations = self.readDWord(bytes, offset + 8 + 4);
-
-                                break;
-
-                            case "fcTL":
-                                if (frame) {
-                                    animation.frames.push(frame);
-                                }
-
-                                frame = {};
-                                frame.width = self.readDWord(bytes, offset + 8 + 4);
-                                frame.height = self.readDWord(bytes, offset + 8 + 8);
-                                frame.left = self.readDWord(bytes, offset + 8 + 12);
-                                frame.top = self.readDWord(bytes, offset + 8 + 16);
-
-                                const delayN = self.readWord(bytes, offset + 8 + 20);
-                                let delayD = self.readWord(bytes, offset + 8 + 22);
-
-                                if (delayD === 0) {
-                                    delayD = 100;
-                                }
-
-                                frame.delay = delayN / delayD;
-
-                                if (frame.delay <= 0.01) {
-                                    frame.delay = 0.1;
-                                }
-
-                                animation.playTime += frame.delay;
-                                frame.disposeOp = bytes[offset + 8 + 24];
-                                frame.blendOp = bytes[offset + 8 + 25];
-                                frame.dataParts = [];
-
-                                break;
-
-                            case "fdAT":
-                                if (frame) {
-                                    frame.dataParts.push(bytes.subarray(offset + 8 + 4, offset + 8 + length));
-                                }
-
-                                break;
-
-                            case "IDAT":
-                                if (frame) {
-                                    frame.dataParts.push(bytes.subarray(offset + 8, offset + 8 + length));
-                                }
-
-                                break;
-
-                            case "IEND":
-                                postDataParts.push(self.subBuffer(bytes, offset, 12 + length));
-
-                                break;
-
-                            default:
-                                preDataParts.push(self.subBuffer(bytes, offset, 12 + length));
-                        }
-                    });
-
-                    if (frame !== null) {
-                        animation.frames.push(frame);
-                    }
-
-                    if (animation.frames.length > 0) {
-                        const preBlob = new Blob(preDataParts);
-                        const postBlob = new Blob(postDataParts);
-                        const canvas = document.createElement("canvas");
-
-                        canvas.width = animation.width;
-                        canvas.height = animation.height;
-
-                        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-
-                        ctx.imageSmoothingEnabled = true;
-                        ctx.imageSmoothingQuality = "high";
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                        for (const frame of animation.frames) {
-                            const chunks = [];
-                            let imageData;
-
-                            chunks.push(this.signature);
-                            headerDataBytes.set(this.buildDWordArray(frame.width), 0);
-                            headerDataBytes.set(this.buildDWordArray(frame.height), 4);
-                            chunks.push(this.buildChunkBytes("IHDR", headerDataBytes));
-                            chunks.push(preBlob);
-
-                            for (let j = 0; j < frame.dataParts.length; j++) {
-                                chunks.push(this.buildChunkBytes("IDAT", frame.dataParts[j]));
+                                return false;
                             }
 
-                            chunks.push(postBlob);
+                            return true;
+                        });
 
-                            if (frame.disposeOp === 2) {
-                                imageData = ctx.getImageData(frame.left, frame.top, frame.width, frame.height);
-                            } else {
-                                imageData = null;
+                        if (isAnimatable) {
+                            const preDataParts = [];
+                            const postDataParts = [];
+                            let headerDataBytes = null;
+                            let frame = null;
+                            const animation = { frames: [] };
+                            const frames = [];
+
+                            this.parseChunks(bytes, (type, bytes, offset, length) => {
+                                switch (type) {
+                                    case "IHDR":
+                                        headerDataBytes = bytes.subarray(offset + 8, offset + 8 + length);
+                                        animation.width = self.readDWord(bytes, offset + 8);
+                                        animation.height = self.readDWord(bytes, offset + 12);
+
+                                        break;
+
+                                    case "acTL":
+                                        animation.iterations = self.readDWord(bytes, offset + 8 + 4);
+
+                                        break;
+
+                                    case "fcTL":
+                                        if (frame) {
+                                            animation.frames.push(frame);
+                                        }
+
+                                        frame = {};
+                                        frame.width = self.readDWord(bytes, offset + 8 + 4);
+                                        frame.height = self.readDWord(bytes, offset + 8 + 8);
+                                        frame.left = self.readDWord(bytes, offset + 8 + 12);
+                                        frame.top = self.readDWord(bytes, offset + 8 + 16);
+
+                                        const delayN = self.readWord(bytes, offset + 8 + 20);
+                                        let delayD = self.readWord(bytes, offset + 8 + 22);
+
+                                        if (delayD === 0) {
+                                            delayD = 100;
+                                        }
+
+                                        frame.delay = delayN / delayD;
+
+                                        if (frame.delay <= 0.01) {
+                                            frame.delay = 0.1;
+                                        }
+
+                                        animation.playTime += frame.delay;
+                                        frame.disposeOp = bytes[offset + 8 + 24];
+                                        frame.blendOp = bytes[offset + 8 + 25];
+                                        frame.dataParts = [];
+
+                                        break;
+
+                                    case "fdAT":
+                                        if (frame) {
+                                            frame.dataParts.push(bytes.subarray(offset + 8 + 4, offset + 8 + length));
+                                        }
+
+                                        break;
+
+                                    case "IDAT":
+                                        if (frame) {
+                                            frame.dataParts.push(bytes.subarray(offset + 8, offset + 8 + length));
+                                        }
+
+                                        break;
+
+                                    case "IEND":
+                                        postDataParts.push(self.subBuffer(bytes, offset, 12 + length));
+
+                                        break;
+
+                                    default:
+                                        preDataParts.push(self.subBuffer(bytes, offset, 12 + length));
+                                }
+                            });
+
+                            if (frame !== null) {
+                                animation.frames.push(frame);
                             }
 
-                            if (frame.blendOp === 0) {
-                                ctx.clearRect(frame.left, frame.top, frame.width, frame.height);
-                            }
+                            if (animation.frames.length > 0) {
+                                const preBlob = new Blob(preDataParts);
+                                const postBlob = new Blob(postDataParts);
+                                const canvas = document.createElement("canvas");
 
-                            try {
-                                frames.push({
-                                    delay: frame.delay, dataURL: await new Promise(async (resolve2, reject2) => {
-                                        const image = new Image();
+                                canvas.width = animation.width;
+                                canvas.height = animation.height;
 
-                                        image.onload = () => {
-                                            ctx.drawImage(image, frame.left, frame.top, frame.width, frame.height);
-                                            ctx.canvas.toBlob(async (blob) => {
-                                                try {
-                                                    resolve2(await new Promise(async (resolve3, reject3) => {
-                                                        const reader = new FileReader();
+                                const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-                                                        reader.onload = () => {
-                                                            resolve3(reader.result);
-                                                        };
-                                                        reader.onerror = () => {
-                                                            reject3(reader.error);
-                                                        };
-                                                        reader.readAsDataURL(blob);
-                                                    }));
-                                                } catch (error) {
-                                                    reject2(error);
-                                                }
-                                            }, "image/png");
-                                        };
-                                        image.onerror = (error) => {
-                                            reject2(error);
-                                        };
-                                        image.crossOrigin = "anonymous";
-                                        image.src = await new Promise(async (resolve3, reject3) => {
-                                            const reader = new FileReader();
+                                ctx.imageSmoothingEnabled = true;
+                                ctx.imageSmoothingQuality = "high";
+                                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                                            reader.onload = () => {
-                                                resolve3(reader.result);
-                                            };
-                                            reader.onerror = () => {
-                                                reject3(reader.error);
-                                            };
-                                            reader.readAsDataURL(new Blob(chunks, { "type": "image/png" }));
+                                for (const frame of animation.frames) {
+                                    const chunks = [];
+                                    let imageData;
+
+                                    chunks.push(this.signature);
+                                    headerDataBytes.set(this.buildDWordArray(frame.width), 0);
+                                    headerDataBytes.set(this.buildDWordArray(frame.height), 4);
+                                    chunks.push(this.buildChunkBytes("IHDR", headerDataBytes));
+                                    chunks.push(preBlob);
+
+                                    for (let j = 0; j < frame.dataParts.length; j++) {
+                                        chunks.push(this.buildChunkBytes("IDAT", frame.dataParts[j]));
+                                    }
+
+                                    chunks.push(postBlob);
+
+                                    if (frame.disposeOp === 2) {
+                                        imageData = ctx.getImageData(frame.left, frame.top, frame.width, frame.height);
+                                    } else {
+                                        imageData = null;
+                                    }
+
+                                    if (frame.blendOp === 0) {
+                                        ctx.clearRect(frame.left, frame.top, frame.width, frame.height);
+                                    }
+
+                                    try {
+                                        frames.push({
+                                            delay: frame.delay, blob: await new Promise(async (resolve2, reject2) => {
+                                                const reader = new FileReader();
+
+                                                reader.onload = () => {
+                                                    const image = new Image();
+
+                                                    image.onload = () => {
+                                                        ctx.drawImage(image, frame.left, frame.top, frame.width, frame.height);
+                                                        ctx.canvas.toBlob(async (blob) => {
+                                                            resolve2(blob);
+                                                        }, "image/png");
+                                                    };
+                                                    image.onerror = (error) => {
+                                                        reject2(error);
+                                                    };
+                                                    image.crossOrigin = "anonymous";
+                                                    image.src = reader.result;
+                                                };
+                                                reader.onerror = () => {
+                                                    reject2(reader.error);
+                                                };
+                                                reader.readAsDataURL(new Blob(chunks, { "type": "image/png" }));
+                                            })
                                         });
-                                    })
-                                });
-                            } catch (error) {
+                                    } catch (error) {
+                                        ctx.canvas.width = ctx.canvas.height = 0;
+
+                                        reject1(error);
+
+                                        return;
+                                    } finally {
+                                        delete frame.dataParts;
+                                    }
+
+                                    if (frame.disposeOp === 1) {
+                                        ctx.clearRect(frame.left, frame.top, frame.width, frame.height);
+                                    } else if (imageData !== null) {
+                                        ctx.putImageData(imageData, frame.left, frame.top);
+                                    }
+                                }
+
                                 ctx.canvas.width = ctx.canvas.height = 0;
 
-                                reject1(error);
+                                resolve1([frames, animation.iterations]);
 
                                 return;
-                            } finally {
-                                delete frame.dataParts;
                             }
-
-                            if (frame.disposeOp === 1) {
-                                ctx.clearRect(frame.left, frame.top, frame.width, frame.height);
-                            } else if (imageData !== null) {
-                                ctx.putImageData(imageData, frame.left, frame.top);
-                            }
-                        }
-
-                        ctx.canvas.width = ctx.canvas.height = 0;
-                    }
-
-                    for (let i = 1; i < animation.iterations; i++) {
-                        for (let j = 0; j < animation.frames.length; j++) {
-                            frames.push(frames[j]);
                         }
                     }
 
-                    resolve1([frames, animation.iterations === 0]);
+                    resolve1(null);
                 });
             }
 
@@ -1838,15 +1811,15 @@
 
                 for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
                     background.cache.push(await new Promise((resolve, reject) => {
-                        const i = new Image();
+                        const image = new Image();
 
-                        i.onload = () => {
-                            resolve(i);
+                        image.onload = () => {
+                            resolve(image);
                         };
-                        i.onerror = (error) => {
+                        image.onerror = (error) => {
                             reject(error);
                         };
-                        i.src = source
+                        image.src = source
                     }));
                 }
             } catch (error) {
@@ -2240,30 +2213,67 @@
                                             }
                                         } else {
                                             try {
-                                                const apng = new APNG(await blob.arrayBuffer());
+                                                const animation = ["image/apng", "image/png"].includes(blob.type) ? await new APNG().load(blob) : null;
 
-                                                if (await apng.isAnimatable()) {
+                                                if (animation === null) {
+                                                    const image = await new Promise(async (resolve, reject) => {
+                                                        const reader = new FileReader();
+
+                                                        reader.onload = () => {
+                                                            const image = new Image();
+
+                                                            image.onload = () => {
+                                                                resolve(image);
+                                                            };
+                                                            image.onerror = (error) => {
+                                                                reject(error);
+                                                            };
+                                                            image.crossOrigin = "anonymous";
+                                                            image.src = reader.result;
+                                                        };
+                                                        reader.onerror = () => {
+                                                            reject(reader.error);
+                                                        };
+                                                        reader.readAsDataURL(blob);
+                                                    });
+
+                                                    animationQueue.push(Object.assign({ time: 0, image: image }, frame));
+                                                    cache[frame.source] = { image: image, timestamp: timestamp };
+                                                } else {
                                                     const frames = [];
 
-                                                    for (const frame of (await apng.load())[0]) {
+                                                    for (const frame of animation[0]) {
                                                         frames.push({
                                                             delay: frame.delay, image: await new Promise(async (resolve, reject) => {
-                                                                const i = new Image();
+                                                                const reader = new FileReader();
 
-                                                                i.onload = () => {
-                                                                    resolve(i);
-                                                                };
-                                                                i.onerror = (error) => {
-                                                                    reject(error);
-                                                                };
+                                                                reader.onload = () => {
+                                                                    const image = new Image();
 
-                                                                i.crossOrigin = "Anonymous";
-                                                                i.src = frame.dataURL;
+                                                                    image.onload = () => {
+                                                                        resolve(image);
+                                                                    };
+                                                                    image.onerror = (error) => {
+                                                                        reject(error);
+                                                                    };
+                                                                    image.crossOrigin = "anonymous";
+                                                                    image.src = reader.result;
+                                                                };
+                                                                reader.onerror = () => {
+                                                                    reject(reader.error);
+                                                                };
+                                                                reader.readAsDataURL(frame.blob);
                                                             })
                                                         });
                                                     }
 
                                                     if (frames.length > 0) {
+                                                        for (let i = 1; i < animation[1]; i++) {
+                                                            for (let j = 0; j < frames.length; j++) {
+                                                                frames.push(frames[j]);
+                                                            }
+                                                        }
+
                                                         frames[frames.length - 1].delay += frame.delay;
 
                                                         for (const frame of frames) {
@@ -2272,33 +2282,6 @@
 
                                                         cache[frame.source] = { frames: frames, timestamp: timestamp };
                                                     }
-                                                } else {
-                                                    const image = await new Promise(async (resolve, reject) => {
-                                                        const i = new Image();
-
-                                                        i.onload = () => {
-                                                            resolve(i);
-                                                        };
-                                                        i.onerror = (error) => {
-                                                            reject(error);
-                                                        };
-
-                                                        i.crossOrigin = "Anonymous";
-                                                        i.src = await new Promise(async (resolve, reject) => {
-                                                            const reader = new FileReader();
-
-                                                            reader.onload = () => {
-                                                                resolve(reader.result);
-                                                            };
-                                                            reader.onerror = () => {
-                                                                reject(reader.error);
-                                                            };
-                                                            reader.readAsDataURL(blob);
-                                                        });
-                                                    });
-
-                                                    animationQueue.push(Object.assign({ time: 0, image: image }, frame));
-                                                    cache[frame.source] = { image: image, timestamp: timestamp };
                                                 }
                                             } catch (error) {
                                                 console.error(error);
