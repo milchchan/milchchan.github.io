@@ -1154,15 +1154,15 @@
                 async function update(data) {
                     try {
                         await new Promise((resolve, reject) => {
-                            const i = new Image();
+                            const image = new Image();
 
-                            i.onload = () => {
+                            image.onload = () => {
                                 resolve();
                             };
-                            i.onerror = (error) => {
+                            image.onerror = (error) => {
                                 reject(error);
                             };
-                            i.src = window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png";
+                            image.src = window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png";
                         });
                     } catch (error) {
                         console.error(error);
@@ -1275,15 +1275,15 @@
 
                                 try {
                                     const image = await new Promise((resolve, reject) => {
-                                        const i = new Image();
+                                        const image = new Image();
 
-                                        i.onload = () => {
-                                            resolve(i);
+                                        image.onload = () => {
+                                            resolve(image);
                                         };
-                                        i.onerror = (error) => {
+                                        image.onerror = (error) => {
                                             reject(error);
                                         };
-                                        i.src = data.source;
+                                        image.src = data.source;
                                     });
                                     const elements = document.body.querySelectorAll("div.digit > img.digit");
                                     let isinitialized = false;
