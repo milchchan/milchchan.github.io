@@ -534,7 +534,7 @@
                     }
 
                     frameElement.className = "frame";
-                    frameElement.style.backgroundColor =  "color" in data && data.color !== "#ffffff" ? data.color : "";
+                    frameElement.style.backgroundColor = "color" in data && data.color !== "#ffffff" ? data.color : "";
                     frameElement.style.opacity = "0";
 
                     digitElement.className = "digit";
@@ -1152,18 +1152,24 @@
 
             setTimeout(function tick() {
                 async function update(data) {
-                    try {
-                        await new Promise((resolve, reject) => {
-                            const image = new Image();
+                    let dataURL = null;
 
-                            image.onload = () => {
-                                resolve();
-                            };
-                            image.onerror = (error) => {
-                                reject(error);
-                            };
-                            image.src = window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png";
-                        });
+                    try {
+                        const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png");
+
+                        if (response.ok) {
+                            dataURL = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(reader.error);
+                                };
+                                reader.readAsDataURL(await response.blob());
+                            });
+                        }
                     } catch (error) {
                         console.error(error);
                     }
@@ -1240,6 +1246,7 @@
                         loadingElement.className = "loading";
                         loadingElement.style.width = `${maxWidth}px`;
                         loadingElement.style.height = `${maxHeight}px`;
+                        loadingElement.style.backgroundImage = dataURL === null ? "" : `url(${dataURL})`;
                         loadingElement.style.transform = "translate3d(0px, 100%, 0)";
 
                         element.parentElement.parentElement.appendChild(loadingElement);
