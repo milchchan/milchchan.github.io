@@ -52,7 +52,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         client = CosmosClient.from_connection_string(
             os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
-        database = client.get_database_client('Wonderland')
+        database = client.get_database_client('Milch')
         container = database.get_container_client('Likes')
 
         if geohash is None:
