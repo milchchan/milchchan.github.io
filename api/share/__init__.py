@@ -43,7 +43,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if 'text' in data and data['text'] is not None and len(data['text']) > 0:
                 client = CosmosClient.from_connection_string(
                     os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
-                database = client.get_database_client('Wonderland')
+                database = client.get_database_client('Milch')
                 container = database.get_container_client('Likes')
 
                 if 'id' in data and data['id'] is not None and len(data['id']) > 0:
