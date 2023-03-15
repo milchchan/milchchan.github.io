@@ -19,6 +19,7 @@
     <meta property="twitter:image" content="https://milchchan.com/images/Milch.png">
     <meta property="twitter:url" content="https://milchchan.com/">
     <title>ミルヒちゃん</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="touch-icon-iphone.png">
     <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
@@ -1717,6 +1718,21 @@
         };
 
         window.addEventListener("load", async event => {
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("sw.js").then(registration => {
+                    registration.onupdatefound = function () {
+                        registration.update();
+                    }
+                }).catch(error => {
+                    console.error(error.code, error.message);
+                });
+                navigator.serviceWorker.addEventListener("message", event => {
+                    if (navigator.serviceWorker.controller !== null && "command" in event.data && event.data.command === "caches") {
+                        navigator.serviceWorker.controller.postMessage({ command: "clear", caches: event.data.caches });
+                    }
+                });
+            }
+            
             const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
             const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
             const stats = document.createElement("div");
