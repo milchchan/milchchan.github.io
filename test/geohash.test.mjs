@@ -1,5 +1,5 @@
 import assert from "assert";
-import { encodeGeohash, decodeGeohash, getNeighbors, getDistance } from "../geohash.mjs"
+import { encodeGeohash, decodeGeohash, getNeighbors, deg2rad, getDistance } from "../geohash.mjs"
 
 describe("geohash", function () {
     it("encodeGeohash", function () {
@@ -24,6 +24,10 @@ describe("geohash", function () {
         assert.equal("u4pruydqqvq", neighbors.topright);
         assert.equal("u4pruydqquy", neighbors.bottomright);
         assert.equal("u4pruydqquu", neighbors.bottomleft);
+    });
+
+    it("deg2rad", function () {
+        assert.equal(1.57, Math.round(deg2rad(90) * 100) / 100);
     });
 
     it("getDistance", function () {

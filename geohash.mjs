@@ -187,7 +187,7 @@ export function getNeighbors(geohash) {
  * @param {!number} deg - Degrees
  * @return {!number} - Radians
  */
-function deg2rad(deg) {
+export function deg2rad(deg) {
     return deg * (Math.PI / 180)
 }
 
