@@ -355,6 +355,129 @@ function shuffle(array) {
   return a;
 }
 
+async function resize(dataURL, length) {
+  try {
+    return await new Promise(async (resolve1, reject1) => {
+      const image = new Image();
+
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+
+        if (image.width > image.height) {
+          if (image.width > length) {
+            canvas.width = length * window.devicePixelRatio;
+            canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
+          } else {
+            canvas.width = image.width * window.devicePixelRatio;
+            canvas.height = image.height * window.devicePixelRatio;
+          }
+        } else if (image.height > length) {
+          canvas.width = Math.floor((length / image.height) * image.width) * window.devicePixelRatio;
+          canvas.height = length * window.devicePixelRatio;
+        } else {
+          canvas.width = image.width * window.devicePixelRatio;
+          canvas.height = image.height * window.devicePixelRatio;
+        }
+
+        const ctx = canvas.getContext("2d");
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        ctx.canvas.toBlob(async (blob) => {
+          try {
+            resolve1(await new Promise(async (resolve2, reject2) => {
+              const reader = new FileReader();
+
+              reader.onload = () => {
+                resolve2(reader.result);
+              };
+              reader.onerror = () => {
+                reject2(reader.error);
+              };
+              reader.readAsDataURL(blob);
+            }));
+          } catch (error) {
+            reject1(error);
+          }
+
+          ctx.canvas.width = ctx.canvas.height = 0;
+        }, "image/png");
+      };
+      image.onerror = (error) => {
+        reject1(error);
+      };
+      image.crossOrigin = "anonymous";
+      image.src = dataURL;
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  return null;
+}
+
+function rgbToHsv(r, g, b) {
+  r /= 255.0;
+  g /= 255.0;
+  b /= 255.0;
+
+  const v = Math.max(r, g, b);
+  const n = v - Math.min(r, g, b);
+  const h = n === 0 ? 0 : n && v === r ? (g - b) / n : v === g ? 2 + (b - r) / n : 4 + (r - g) / n;
+
+  return [60 * (h < 0 ? h + 6 : h), v && (n / v) * 100, v * 100];
+}
+
+function computeHistogram(context, r = 0.1, r1 = 0.85) {
+  const MULT_FCTR = 40;
+  const DIV_FCTR = 8;
+  const histogram = Array(Math.round(2 * Math.PI * MULT_FCTR) + 1 + Math.round(255.0 / DIV_FCTR) + 1);
+
+  for (let i = 0; i < histogram.length; i++) {
+    histogram[i] = 0;
+  }
+  
+  for (let y = 0; y < context.canvas.height; y++) {
+    for (let x = 0; x < context.canvas.width; x++) {
+      const imageData = context.getImageData(x, y, 1, 1);
+      const red = imageData.data[0];
+      const green = imageData.data[1];
+      const blue = imageData.data[2];
+      let [hue, saturation, value] = rgbToHsv(red, green, blue);
+
+      hue /= 360.0;
+      hue *= 2 * Math.PI;
+      value *= 255.0;
+
+      const wh = value === 0.0 ? 0.0 : Math.pow(saturation, r * Math.pow(255.0 / value, r1));
+      const wi = 1.0 - wh;
+
+      histogram[Math.round(hue * MULT_FCTR)] += wh;
+      histogram[Math.round(2 * Math.PI * MULT_FCTR) + 1 + Math.round(value / DIV_FCTR)] += wi;
+    }
+  }
+
+  return histogram;
+}
+
+function topK(data, k) {
+  const items = [];
+
+  for (let i = 0; i < data.length; i++) {
+    items.push([i, data[i]]);
+  }
+
+  items.sort((x, y) => y[1] - x[1]);
+
+  if (items.length > k) {
+    return items.slice(0, k);
+  }
+
+  return items;
+}
+
 function shake(element) {
   element.animate([
     { transform: "translate3d(0, 0, 0)" },
@@ -1115,8 +1238,36 @@ window.addEventListener("load", async event => {
                         reader.onload = () => {
                           const image = new Image();
 
-                          image.onload = () => {
-                            resolve(image);
+                          image.onload = async () => {
+                            const i = new Image();
+
+                            i.onload = async () => {
+                              const histogram = await new Promise(async (r) => {
+                                const canvas = document.createElement("canvas");
+
+                                canvas.width = i.width;
+                                canvas.height = i.height;
+
+                                const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+                                ctx.imageSmoothingEnabled = true;
+                                ctx.imageSmoothingQuality = "high";
+                                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                ctx.drawImage(i, 0, 0, i.width, i.height);
+
+                                r(computeHistogram(ctx));
+                              });
+
+                              console.log(histogram);
+                              console.log(topK(histogram, 10));
+
+                              resolve(image);
+                            };
+                            i.onerror = (error) => {
+                              reject(error);
+                            };
+                            i.crossOrigin = "anonymous";
+                            i.src = await resize(reader.result, 256);
                           };
                           image.onerror = (error) => {
                             reject(error);
