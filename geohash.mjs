@@ -1,3 +1,11 @@
+/**
+ * Encode geohash
+ * @module encodeGeohash
+ * @param {!number} latitude - Latitude
+ * @param {!number} longitude - Longitude
+ * @param {!number} precision - Precision
+ * @return {!string} - Geohash
+ */
 export function encodeGeohash(latitude, longitude, precision = 12) {
     const BITS = [16, 8, 4, 2, 1];
     const BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
@@ -44,6 +52,12 @@ export function encodeGeohash(latitude, longitude, precision = 12) {
     return geohash;
 }
 
+/**
+ * Decode geohash
+ * @module encodeGeohash
+ * @param {!string} geohash - Geohash
+ * @return {!object} - A Latitude/longitude pair of center, topleft, topright, bottomright and bottomleft
+ */
 export function decodeGeohash(geohash) {
     const BITS = [16, 8, 4, 2, 1];
     const BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
@@ -100,6 +114,13 @@ export function decodeGeohash(geohash) {
     };
 }
 
+/**
+ * Calculate adjacent
+ * @module calculateAdjacent
+ * @param {!string} srcHash - Source geohash
+ * @param {!string} dir - Direction
+ * @return {!string} - Geohash
+ */
 function calculateAdjacent(srcHash, dir) {
     const BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
     const NEIGHBORS = {
@@ -138,6 +159,12 @@ function calculateAdjacent(srcHash, dir) {
     return base + BASE32[NEIGHBORS[dir][type].indexOf(lastChr)];
 }
 
+/**
+ * Get neighbors
+ * @module getNeighbors
+ * @param {!string} geohash - Geohash
+ * @return {!object} - Geohashes of top, bottom, right, left, topleft, topright, bottomright and bottomleft
+ */
 export function getNeighbors(geohash) {
     const rightGeohash = calculateAdjacent(geohash, 'right');
     const leftGeohash = calculateAdjacent(geohash, 'left');
@@ -154,10 +181,25 @@ export function getNeighbors(geohash) {
     };
 }
 
+/**
+ * Degrees to radians
+ * @module deg2rad
+ * @param {!number} deg - Degrees
+ * @return {!number} - Radians
+ */
 function deg2rad(deg) {
     return deg * (Math.PI / 180)
 }
 
+/**
+ * Get distance
+ * @module getDistance
+ * @param {!number} lat1 - Latitude of start
+ * @param {!number} lon1 - Longitude of start
+ * @param {!number} lat2 - Latitude of end
+ * @param {!number} lon2 - Longitude of end
+ * @return {!number} - Distance in km
+ */
 export function getDistance(lat1, lon1, lat2, lon2) {
     var R = 6371; // Radius of the earth in km
     var dLat = deg2rad(lat2 - lat1);
