@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f8f8">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f7f8f8">
+  <title>404</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+  <style media="screen">
+    :root {
+      --background-color: #ffffff;
+      --foreground-color: #000000;
+      --light-background-image: images/404.png;
+      --dark-background-image: images/Omr.png;
+    }
+
+    html {
+      touch-action: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100dvh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      background: var(--background-color);
+    }
+
+    body {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 0;
+      color: var(--foreground-color) !important;
+      font-family: 'Barlow', 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
+      font-size: 50vmin;
+      font-weight: bold;
+      line-height: 50vmin;
+      transition: .5s;
+    }
+
+    .wrap {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      backface-visibility: hidden;
+      transition: .5s;
+    }
+
+    .frame {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      border-radius: 0px;
+      width: 100%;
+      max-width: 100% !important;
+      height: 100%;
+      overflow: hidden;
+      background-color: rgb(247, 248, 248);
+      transition: .5s;
+    }
+
+    .background {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      max-height: 100%;
+      background-color: transparent;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+      background-size: cover;
+      transform-origin: 50% 50%;
+      backface-visibility: hidden;
+      perspective: 1000;
+    }
+
+    .background::before {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
+      background: transparent;
+      content: "";
+    }
+
+    #message {
+      user-select: none;
+      position: absolute;
+      display: flex;
+      top: 0;
+      left: 0;
+      width: 100%;
+      min-height: 100%;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fade .5s ease-out forwards;
+      overflow: hidden;
+      perspective: 1000;
+      backface-visibility: hidden;
+    }
+
+    #message>div {
+      margin: 8px 0px 0px 0px;
+      padding: 0;
+    }
+
+    #message>div>a {
+      margin: 0;
+      padding: 0;
+      height: calc(0.5rem * 1.5);
+      background-clip: padding-box;
+      line-height: calc(0.5rem * 1.5);
+      backface-visibility: hidden;
+    }
+
+    #message>div>a>.clip {
+      overflow: hidden;
+      box-sizing: content-box;
+      height: calc(0.5rem * 1.5);
+    }
+
+    #message>div>a>.clip>.scrollable>div {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      vertical-align: baseline;
+      font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+      font-size: 0.5rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      line-height: 0.5rem !important;
+      height: calc(0.5rem * 1.5);
+      color: var(--foreground-color);
+      transform: rotate(0.03deg);
+      transition: .5s;
+      user-select: none;
+    }
+
+    a .scrollable {
+      display: inline-block;
+      box-sizing: content-box;
+      backface-visibility: hidden;
+      transform: translate3d(0%, 0%, 0);
+      transition: .5s ease-in;
+    }
+
+    a .scrollable:hover {
+      display: inline-block;
+      box-sizing: content-box;
+      backface-visibility: hidden;
+      transform: translate3d(0%, -50%, 0);
+      transition: .5s ease-out;
+    }
+
+    a .scrollable>div {
+      box-sizing: content-box;
+      vertical-align: middle;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media screen and (min-width: 769px) {
+      .wrap {
+        padding: 16px;
+        transition: .5s;
+      }
+
+      .frame {
+        border-radius: 4px;
+        transition: .5s;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="frame">
+      <div id="message">
+        <h1>404</h1>
+        <div>
+          <a href="https://milchchan.com/">
+            <div class="clip">
+              <div class="scrollable">
+                <div>milchchan.com</div>
+                <div>milchchan.com</div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    async function resize(dataURL, length) {
+      try {
+        return await new Promise(async (resolve1, reject1) => {
+          const image = new Image();
+
+          image.onload = () => {
+            const canvas = document.createElement("canvas");
+
+            if (image.width > image.height) {
+              if (image.width > length) {
+                canvas.width = length * window.devicePixelRatio;
+                canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
+              } else {
+                canvas.width = image.width * window.devicePixelRatio;
+                canvas.height = image.height * window.devicePixelRatio;
+              }
+            } else if (image.height > length) {
+              canvas.width = Math.floor((length / image.height) * image.width) * window.devicePixelRatio;
+              canvas.height = length * window.devicePixelRatio;
+            } else {
+              canvas.width = image.width * window.devicePixelRatio;
+              canvas.height = image.height * window.devicePixelRatio;
+            }
+
+            const ctx = canvas.getContext("2d");
+
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            ctx.canvas.toBlob(async (blob) => {
+              try {
+                resolve1(await new Promise(async (resolve2, reject2) => {
+                  const reader = new FileReader();
+
+                  reader.onload = () => {
+                    resolve2(reader.result);
+                  };
+                  reader.onerror = () => {
+                    reject2(reader.error);
+                  };
+                  reader.readAsDataURL(blob);
+                }));
+              } catch (error) {
+                reject1(error);
+              }
+
+              ctx.canvas.width = ctx.canvas.height = 0;
+            }, "image/png");
+          };
+          image.onerror = (error) => {
+            reject1(error);
+          };
+          image.crossOrigin = "anonymous";
+          image.src = dataURL;
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      return null;
+    }
+
+    window.addEventListener("load", async event => {
+      const background = document.createElement("div");
+
+      background.className = "background";
+      background.style.opacity = 0;
+      background.style.transform = "scale3d(1.1, 1.1, 1.1)";
+
+      try {
+        const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "--dark-background-image" : "--light-background-image"));
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const dataURL = await resize(await new Promise(async (resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+              resolve(reader.result);
+            };
+            reader.onerror = () => {
+              reject(reader.error);
+            };
+            reader.readAsDataURL(blob);
+          }), Math.max(window.screen.width, window.screen.height));
+
+          if (dataURL !== null) {
+            background.style.backgroundImage = `url('${dataURL}')`;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      document.body.querySelector(".wrap>.frame").prepend(background);
+
+      background.animate([
+        {
+          opacity: 1,
+          transform: "scale3d(1.0, 1.0, 1.0)"
+        }
+      ], {
+        delay: 0,
+        fill: "forwards",
+        duration: 500,
+        iterations: 1,
+        easing: "ease-out"
+      });
+    });
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", async e => {
+      const background = document.createElement("div");
+
+      background.className = "background";
+      background.style.opacity = 0;
+      background.style.transform = "scale3d(1.1, 1.1, 1.1)";
+
+      try {
+        const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(e.matches ? "--dark-background-image" : "--light-background-image"));
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const dataURL = await resize(await new Promise(async (resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+              resolve(reader.result);
+            };
+            reader.onerror = () => {
+              reject(reader.error);
+            };
+            reader.readAsDataURL(blob);
+          }), Math.max(window.screen.width, window.screen.height));
+
+          if (dataURL !== null) {
+            background.style.backgroundImage = `url('${dataURL}')`;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      for (const element of document.body.querySelectorAll(".wrap>.frame>.background")) {
+        element.animate([
+          {
+            opacity: 0,
+            transform: "scale3d(1.1, 1.1, 1.1)"
+          }
+        ], {
+          delay: 0,
+          fill: "forwards",
+          duration: 500,
+          iterations: 1,
+          easing: "ease-in"
+        }).onfinish = () => {
+          element.remove();
+        };
+      }
+
+      document.body.querySelector(".wrap>.frame").prepend(background);
+
+      background.animate([
+        {
+          opacity: 1,
+          transform: "scale3d(1.0, 1.0, 1.0)"
+        }
+      ], {
+        delay: 0,
+        fill: "forwards",
+        duration: 500,
+        iterations: 1,
+        easing: "ease-out"
+      });
+    });
+  </script>
+</body>
+
+</html>

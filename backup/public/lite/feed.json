@@ -1,0 +1,460 @@
+[
+    {
+        "images": [
+            {
+                "color": "#bdbcaf",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Chuno-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Chuno-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Chuno-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Chuno-1.png"
+                    }
+                ]
+            },
+            {
+                "color": "#d1f4f4",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Tukigi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Tukigi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Tukigi-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Tukigi-1.png"
+                    }
+                ]
+            },
+            {
+                "color": "#f86684",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Mamimu-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Mamimu-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mamimu-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Mamimu-1.png"
+                    }
+                ]
+            },
+            {
+                "color": "#fcdcde",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Merku-Randou-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Merku-Randou-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Merku-Randou-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Merku-Randou-1.png"
+                    }
+                ]
+            },
+            {
+                "color": "#e5ebed",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Najimi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Najimi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Najimi-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Najimi-1.png"
+                    }
+                ]
+            }
+        ],
+        "texts": [
+            "ミルヒちゃん！ミルヒちゃん！\nミルヒちゃんもいっしょに魔法少女しようね！",
+            "ミルヒちゃんのために魔法少女の衣装をつくったよぉ。逃げなくていいよぉ。ミルヒちゃんはメルクといっしょにいるのが一番幸せなのぉ！ミルヒちゃん、お着替えしようね。メルクが着せてあげるね。フヒヒ。",
+            "メタモルフォーゼ！",
+            "ミルヒちゃんのぱんつ、クンカクンカしよぉ。クンカクンカ！スーハースーハー！いい匂いだよぉ。ミルヒちゃん、つるつるだね。ミルヒちゃん、メルクのぱんつを穿かせてあげるね。ぬぎぬぎ。",
+            "マジカルミルヒちゃん爆誕！",
+            "ミルヒちゃん、かわいいね。ハァハァ……。かわいいミルヒちゃんをいっぱい撮ってあげるね！パシャパシャ。",
+            "ミルヒちゃん、いっしょにおでかけしようね。キャッキャウフフな魔法少女の活動やろぉ。",
+            "ミルヒちゃんはメルクのためになんでもしてくれるよね！",
+            "わーい！ミルヒちゃん、大好き！\nミルヒちゃん、ペロペロしたいよぉ！",
+            "あんなことやこんなことを教えてあげて、メルク好みの魔法少女にしてあげるね！",
+            "ミルヒちゃん、これからもずっといっしょに魔法少女しようね！"
+        ]
+    },
+    {
+        "type": "Milch",
+        "images": [
+            {
+                "color": "#ffffff",
+                "frames": [
+                    {
+                        "delay": 1.0,
+                        "source": "images/Milchchan.png"
+                    }
+                ]
+            },
+            {
+                "color": "#e2e0ec",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Zankuro-1.png"
+                    }
+                ]
+            }
+        ],
+        "texts": [
+            "ミルヒちゃんは、メルクの大切なお友達だよぉ。",
+            "いつもメルクといっしょに遊んでくれる明るくてまじめでかわいい小学5年生の女の子だよぉ。",
+            "かわいくて舐めたくなるよぉ。ペロペロ。",
+            "メルクが大好きなミルヒちゃんのためにつくった魔法少女の衣装を着せてあげて、マジカルミルヒちゃんが爆誕したんだよぉ。",
+            "ミルヒちゃん、これからもずっといっしょに魔法少女しようね！フヒヒ。"
+        ]
+    },
+    {
+        "type": "Merku",
+        "images": [
+            {
+                "color": "#ffffff",
+                "frames": [
+                    {
+                        "delay": 1,
+                        "source": "images/Merkuchan.png"
+                    }
+                ]
+            },
+            {
+                "color": "#e2e0ec",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Merku-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Merku-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Merku-Zankuro-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Merku-Zankuro-1.png"
+                    }
+                ]
+            }
+        ],
+        "texts": [
+            "メルクは、お友達のミルヒちゃんと同じ小学5年生だよぉ。",
+            "ミルヒちゃん、大好き！",
+            "大好きなミルヒちゃんのために魔法少女の衣装をつくって、恥ずかしがるミルヒちゃんに衣装を着せてあげてるよぉ。",
+            "ミルヒちゃんもいっしょに魔法少女しようね！",
+            "お着替えの時に脱いだミルヒちゃんのぱんつは貰ってあげるね。クンカクンカ！スーハースーハー！"
+        ]
+    }
+]

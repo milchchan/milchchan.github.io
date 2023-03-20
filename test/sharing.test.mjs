@@ -1,6 +1,6 @@
 import assert from "assert";
 import sinon from "sinon";
-import { share } from "../src/sharing.mjs"
+import { share } from "../sharing.mjs"
 
 global.fetch = () => { };
 global.window = {

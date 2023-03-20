@@ -1,0 +1,1668 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-617KR1WTYP');
+    </script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>ミルヒちゃんクロック</title>
+    <meta name="description" content="milchchan.com">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f8f8">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f7f8f8">
+    <meta property="og:title" content="ミルヒちゃんクロック">
+    <meta property="og:description" content="milchchan.com">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://clock.milchchan.com/">
+    <meta property="og:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:site" content="@milchchan">
+    <meta property="twitter:title" content="ミルヒちゃんクロック">
+    <meta property="twitter:description" content="milchchan.com">
+    <meta property="twitter:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:url" content="https://clock.milchchan.com/">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/touch-icon-ipad-retina.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/75ab01b762.js" crossorigin="anonymous"></script>
+    <style type="text/css">
+        :root {
+            --background-color: #ffffff;
+            --foreground-color: #000000;
+        }
+
+        html {
+            touch-action: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100dvh;
+            height: -webkit-fill-available;
+            overflow: hidden;
+            background: var(--background-color);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100dvh;
+            overflow: hidden;
+            font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+        }
+
+        #container {
+            position: absolute;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            left: 0px;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            margin: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+            padding: 0;
+            background: transparent;
+            transition: .5s;
+        }
+
+        #container>.wrap {
+            box-sizing: border-box;
+            position: relative;
+            margin: 0;
+            border-radius: 0px;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow: hidden;
+            transition: .5s;
+        }
+
+        #container>.wrap>.frame {
+            box-sizing: border-box;
+            position: relative;
+            margin: 0;
+            border-radius: 0px;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: rgb(247, 248, 248);
+            overflow: hidden;
+            transition: .5s;
+        }
+
+        .clock {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-top: -179px;
+            padding: 0;
+            overflow: hidden;
+            height: 338px;
+            transform-origin: 50% 50%;
+            transform: scale(1.0);
+        }
+
+        div.content {
+            float: left;
+            position: relative;
+        }
+
+        div.content>div.frame {
+            user-select: none;
+            position: relative;
+            left: 0px;
+            top: 0px;
+            margin: 0px 4px 0px 4px;
+            border: 1px solid var(--foreground-color);
+            background: var(--background-color);
+            overflow: hidden;
+            transition: .5s;
+        }
+
+        div.digit {
+            border: 0px solid transparent;
+            margin: 0;
+            padding: 0;
+            transform-origin: 50% 50%;
+            transform: scale(1.0);
+            width: 120px;
+            height: 320px;
+        }
+
+        div.loading {
+            z-index: 1;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            border: 0px solid transparent;
+            margin: 0;
+            padding: 0;
+            width: 120px;
+            height: 320px;
+            background: url('images/Background.png') 0 0 repeat;
+            background-color: rgb(247, 248, 248);
+            background-size: 100px 100px;
+            animation: loop 10s linear forwards infinite;
+        }
+
+        div.credits {
+            user-select: none;
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            margin: 0;
+            padding: 0;
+            transform: translateX(-50%);
+            width: fit-content;
+            height: fit-content;
+        }
+
+        div.credits>a {
+            margin: 0;
+            padding: 0;
+            height: calc(0.5rem * 1.5);
+            background-clip: padding-box;
+            line-height: calc(0.5rem * 1.5);
+            backface-visibility: hidden;
+        }
+
+        div.credits>a>.clip {
+            overflow: hidden;
+            box-sizing: content-box;
+            height: calc(0.5rem * 1.5);
+        }
+
+        div.credits>a>.clip>.scrollable>div {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            vertical-align: baseline;
+            font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+            font-size: 0.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            line-height: 0.5rem !important;
+            height: calc(0.5rem * 1.5);
+            color: var(--foreground-color);
+            transform: rotate(0.03deg);
+            transition: .5s;
+            user-select: none;
+        }
+
+        span.caption {
+            user-select: none;
+            float: right;
+            color: var(--foreground-color);
+            margin: 4px 8px 4px 4px;
+            font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+            font-size: 0.5rem;
+            font-weight: bold;
+            line-height: 8px;
+            text-transform: uppercase;
+            transition: .5s;
+        }
+
+        img {
+            border: 0px solid transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        img.digit {
+            transform-origin: 0% 0%;
+            transform: translate(0px, 0px);
+        }
+
+        a:link {
+            color: var(--foreground-color);
+            font-weight: bold;
+            text-decoration: none;
+            transition: .5s;
+        }
+
+        a:visited {
+            color: var(--foreground-color);
+            font-weight: bold;
+            text-decoration: none;
+            transition: .5s;
+        }
+
+        a:hover {
+            color: var(--foreground-color);
+            font-weight: bold;
+            text-decoration: underline;
+            transition: .5s;
+        }
+
+        a:active {
+            color: var(--foreground-color);
+            font-weight: bold;
+            text-decoration: underline;
+            transition: .5s;
+        }
+
+        a .scrollable {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, 0%, 0);
+            transition: .5s ease-in;
+        }
+
+        a .scrollable:hover {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, -50%, 0);
+            transition: .5s ease-out;
+        }
+
+        a .scrollable>div {
+            box-sizing: content-box;
+            vertical-align: middle;
+        }
+
+        #status {
+            user-select: none;
+            display: flex;
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+            opacity: 0;
+            transition: .5s;
+            cursor: default;
+        }
+
+        #status.is-active {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #status:hover {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #status>div.stack {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #status>div.stack>div.icon {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            color: #000000;
+            align-items: flex-end;
+            justify-content: flex-start;
+            font-size: 0.75rem;
+            line-height: 0.75rem;
+            opacity: 0;
+            transition: .5s;
+        }
+
+        #status>div.stack>div.icon.is-active {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #status>div.stack>div.icon:not(:first-child) {
+            position: absolute;
+        }
+
+        #stats {
+            user-select: none;
+            display: flex;
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+            opacity: 0;
+            transition: .5s;
+            cursor: default;
+        }
+
+        #stats.is-active {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #stats:hover {
+            opacity: 1;
+            transition: .5s;
+        }
+
+        #stats>span {
+            margin: 0;
+            padding: 1px;
+            background-color: #000000;
+            font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+            font-size: 0.75rem;
+            font-weight: bold;
+            line-height: 0.75rem;
+            height: 0.75rem;
+            vertical-align: middle;
+            color: #ffffff;
+        }
+
+        @keyframes loop {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: -100px 0px;
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio:2),
+        (min-resolution: 2dppx) {
+            div.loading {
+                background: url('images/Background@2x.png') repeat;
+                background-color: rgb(247, 248, 248);
+                background-size: 100px 100px;
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio:3),
+        (min-resolution: 3dppx) {
+            div.loading {
+                background: url('images/Background@3x.png') repeat;
+                background-color: rgb(247, 248, 248);
+                background-size: 100px 100px;
+            }
+        }
+
+        @media screen and (min-width: 769px) {
+            #container>.wrap {
+                padding: 16px;
+                transition: .5s;
+            }
+
+            #container>.wrap>.frame {
+                border-radius: 4px;
+                transition: .5s;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+    </div>
+    <script type="text/javascript">
+        const query = [...new URLSearchParams(window.location.search).entries()];
+        const scale = query.reduce((x, y) => y[0] === "scale" ? y[1] : x, 1);
+        const split = query.reduce((x, y) => y[0] === "split" ? y[1] : x, "1").split(":");
+        const digits = [[3240, 0, 360, 640], [2880, 0, 360, 640], [2520, 0, 360, 640], [2160, 0, 360, 640], [1800, 0, 360, 640], [1440, 0, 360, 640], [1080, 0, 360, 640], [720, 0, 360, 640], [360, 0, 360, 640], [0, 0, 360, 640]];
+        const maxWidth = 120.0 * scale;
+        const maxHeight = 320.0 * scale;
+        const margin = 16 - 4 * 2;
+        const space = 8 + 2;
+        const clockQueue = new Array();
+        const xArray = new Array(10);
+        const yArray = new Array(10);
+        const widthArray = new Array(10);
+        const heightArray = new Array(10);
+        let oldSecond1 = -1, second1X = 0.0, second1Y = 0.0, second1Width = maxWidth, second1Height = maxHeight, second1Step = 0.0;
+        let oldSecond2 = -1, second2X = 0.0, second2Y = 0.0, second2Width = maxWidth, second2Height = maxHeight, second2Step = 0.0;
+        let oldMinute1 = -1, minute1X = 0.0, minute1Y = 0.0, minute1Width = maxWidth, minute1Height = maxHeight, minute1Step = 0.0;
+        let oldMinute2 = -1, minute2X = 0.0, minute2Y = 0.0, minute2Width = maxWidth, minute2Height = maxHeight, minute2Step = 0.0;
+        let oldHour1 = -1, hour1X = 0.0, hour1Y = 0.0, hour1Width = maxWidth, hour1Height = maxHeight, hour1Step = 0.0;
+        let oldHour2 = -1, hour2X = 0.0, hour2Y = 0.0, hour2Width = maxWidth, hour2Height = maxHeight, hour2Step = 0.0;
+        let oldDay1 = -1, day1X = 0.0, day1Y = 0.0, day1Width = maxWidth, day1Height = maxHeight, day1Step = 0.0;
+        let oldDay2 = -1, day2X = 0.0, day2Y = 0.0, day2Width = maxWidth, day2Height = maxHeight, day2Step = 0.0;
+        let oldMonth1 = -1, month1X = 0.0, month1Y = 0.0, month1Width = maxWidth, month1Height = maxHeight, month1Step = 0.0;
+        let oldMonth2 = -1, month2X = 0.0, month2Y = 0.0, month2Width = maxWidth, month2Height = maxHeight, month2Step = 0.0;
+        let oldYear1 = -1, year1X = 0.0, year1Y = 0.0, year1Width = maxWidth, year1Height = maxHeight, year1Step = 0.0;
+        let oldYear2 = -1, year2X = 0.0, year2Y = 0.0, year2Width = maxWidth, year2Height = maxHeight, year2Step = 0.0;
+        let oldYear3 = -1, year3X = 0.0, year3Y = 0.0, year3Width = maxWidth, year3Height = maxHeight, year3Step = 0.0;
+        let oldYear4 = -1, year4X = 0.0, year4Y = 0.0, year4Width = maxWidth, year4Height = maxHeight, year4Step = 0.0;
+        let isLocked = false;
+        let isTouching = false;
+        let tapCount = 0;
+        let clocks = [{ source: "images/Digits1.png", digits: digits }, { source: "images/Digits2.png", digits: digits }];
+        const status = { locks: [], unlocks: [] };
+
+        function shuffle(array) {
+            function _random(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+
+                return Math.floor(Math.random() * (max - min)) + min;
+            }
+
+            let a = [].concat(array);
+            let n = array.length;
+
+            while (n > 1) {
+                const k = _random(0, n);
+
+                n--;
+
+                const temp = a[n];
+
+                a[n] = a[k];
+                a[k] = temp;
+            }
+
+            return a;
+        }
+
+        function renderDigit(element, i, x, y, width, height, step) {
+            let scale1 = Math.max(maxWidth / width, maxHeight / height);
+            let scale2 = Math.max(maxWidth / widthArray[i], maxHeight / heightArray[i]);
+
+            if (scale1 > 1) {
+                scale1 = 1.0;
+            }
+
+            if (scale2 > 1) {
+                scale2 = 1.0;
+            }
+
+            if (widthArray[i] > maxWidth && heightArray[i] > maxHeight) {
+                element.style.transform = "translate3d(" + Math.round(-(x + (xArray[i] + (widthArray[i] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI))).toString() + "px, " + Math.round(-(y + (yArray[i] + (heightArray[i] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI))).toString() + "px, 0)";
+            } else if (widthArray[i] > maxWidth) {
+                element.style.transform = "translate3d(" + Math.round(-(x + (xArray[i] + (widthArray[i] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI))).toString() + "px, " + Math.round(-(y + (yArray[i] - y) * Math.sin(step / 2.0 * Math.PI))).toString() + "px, 0)";
+            } else if (heightArray[i] > maxHeight) {
+                element.style.transform = "translate3d(" + Math.round(-(x + (xArray[i] - x) * Math.sin(step / 2.0 * Math.PI))).toString() + "px, " + Math.round(-(y + (yArray[i] + (heightArray[i] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI))).toString() + "px, 0)";
+            } else {
+                element.style.transform = "translate3d(" + Math.round(-(x + (xArray[i] - x) * Math.sin(step / 2.0 * Math.PI))).toString() + "px, " + Math.round(-(y + (yArray[i] - y) * Math.sin(step / 2.0 * Math.PI))).toString() + "px, 0)";
+            }
+
+            element.parentElement.style.transform = "scale(" + (scale1 + (scale2 - scale1) * Math.sin(step / 2.0 * Math.PI)).toString() + ")";
+        }
+
+        window.addEventListener("load", async event => {
+            const isDebug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
+            const width = (maxWidth + space) * 14;
+            const sum = split.reduce((x, y) => x + Number(y), 0);
+            const container = document.body.querySelector("#container");
+
+            function random(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function attach(clock, data, visible, width, height, alt, length) {
+                for (let i = 0; i < length; i++) {
+                    const contentElement = document.createElement("div");
+                    const frameElement = document.createElement("div");
+                    const digitElement = document.createElement("div");
+                    const image = new Image();
+
+                    contentElement.className = "content";
+
+                    if (visible) {
+                        contentElement.style.opacity = "1";
+                    } else {
+                        contentElement.style.opacity = "0";
+                    }
+
+                    frameElement.className = "frame";
+                    frameElement.style.backgroundColor = "color" in data && data.color !== "#ffffff" ? data.color : "";
+                    frameElement.style.opacity = "0";
+
+                    digitElement.className = "digit";
+                    digitElement.style.visibility = "hidden";
+                    digitElement.style.width = `${maxWidth}px`;
+                    digitElement.style.height = `${maxHeight}px`;
+
+                    image.onload = () => {
+                        digitElement.style.visibility = "visible";
+                        image.parentElement.parentElement.animate([
+                            {
+                                opacity: "1"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    };
+                    image.className = "digit";
+                    image.src = data.source;
+                    image.alt = "Digit";
+
+                    digitElement.appendChild(image);
+                    frameElement.appendChild(digitElement);
+                    contentElement.appendChild(frameElement);
+
+                    if (i === length - 1) {
+                        const captionElement = document.createElement("span");
+
+                        captionElement.className = "caption";
+                        captionElement.innerHTML = alt;
+                        captionElement.style.opacity = 0
+
+                        contentElement.appendChild(captionElement);
+                        captionElement.animate([
+                            {
+                                opacity: "1"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    }
+
+                    clock.appendChild(contentElement);
+                }
+            }
+
+            for (const factor of split) {
+                const wrapElement = document.createElement("div");
+                const frameElement = document.createElement("div");
+                const clockElement = document.createElement("div");
+
+                wrapElement.className = "wrap";
+                wrapElement.style.width = `${factor / sum * 100}%`;
+                frameElement.className = "frame";
+                clockElement.className = "clock";
+
+                frameElement.appendChild(clockElement);
+                wrapElement.appendChild(frameElement);
+                container.appendChild(wrapElement);
+            }
+
+            try {
+                const response = await fetch(encodeURI("clocks.json"), {
+                    mode: "cors",
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                });
+
+                if (response.ok) {
+                    clocks = await response.json();
+                }
+                else {
+                    throw new Error(response.statusText);
+                }
+            }
+            catch (error) {
+                console.error(error);
+
+                return;
+            }
+
+            for (const clock of shuffle(clocks)) {
+                clockQueue.push(clock);
+            }
+
+            const data = clockQueue.shift();
+            let previousTime = performance.now();
+            const fps = { time: previousTime, frames: 0, targets: [] };
+
+            for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
+                const creditsElement = document.createElement("div");
+                const linkElement = document.createElement("a");
+                const clipElement = document.createElement("div");
+                const scrollableElement = document.createElement("div");
+                const contentElement1 = document.createElement("div");
+                const contentElement2 = document.createElement("div");
+                const statusElement = document.createElement("div");
+                const stackElement = document.createElement("div");
+                const lockElement = document.createElement("div");
+                const unlockElement = document.createElement("div");
+                const lockIconElement = document.createElement("i");
+                const unlockIconElement = document.createElement("i");
+                const statsElement = document.createElement("div");
+                const counterElement = document.createElement("span");
+
+                creditsElement.className = "credits";
+                creditsElement.style.opacity = "0";
+                linkElement.href = data.url;
+                linkElement.dataset["name"] = data.name;
+                clipElement.className = "clip";
+                scrollableElement.className = "scrollable";
+                contentElement1.innerText = contentElement2.innerText = data.name;
+
+                statusElement.id = "status";
+                stackElement.className = "stack";
+                stackElement.style.opacity = "0";
+                lockElement.className = "icon";
+                unlockElement.className = "icon";
+                lockIconElement.className = "fa-solid fa-lock";
+                unlockIconElement.className = "fa-solid fa-unlock";
+
+                if (isLocked) {
+                    lockElement.className = `${lockElement.className} is-active`;
+                } else {
+                    unlockElement.className = `${unlockElement.className} is-active`;
+                }
+
+                lockElement.appendChild(lockIconElement);
+                unlockElement.appendChild(unlockIconElement);
+                stackElement.appendChild(lockElement);
+                stackElement.appendChild(unlockElement);
+                statusElement.appendChild(stackElement);
+
+                status.locks.push(lockElement);
+                status.unlocks.push(unlockElement);
+
+                statsElement.id = "stats";
+                counterElement.innerText = "0";
+                counterElement.style.opacity = "0";
+
+                fps.targets.push(counterElement);
+
+                if (isDebug) {
+                    statusElement.className = statsElement.className = "is-active";
+                }
+
+                statsElement.appendChild(counterElement);
+                frame.appendChild(creditsElement);
+                frame.appendChild(statusElement);
+                frame.appendChild(statsElement)
+                creditsElement.appendChild(linkElement);
+                linkElement.appendChild(clipElement);
+                clipElement.appendChild(scrollableElement);
+                scrollableElement.appendChild(contentElement1);
+                scrollableElement.appendChild(contentElement2);
+
+                creditsElement.animate([
+                    {
+                        opacity: "1"
+                    }
+                ], {
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out"
+                });
+                counterElement.animate([
+                    {
+                        opacity: "1"
+                    }
+                ], {
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out"
+                });
+                stackElement.animate([
+                    {
+                        opacity: "1"
+                    }
+                ], {
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out"
+                });
+            }
+
+            for (let i = 0; i < data.digits.length; i++) {
+                xArray[i] = digits[i][0];
+                yArray[i] = digits[i][1];
+                widthArray[i] = digits[i][2];
+                heightArray[i] = digits[i][3];
+            }
+
+            function render(timestamp) {
+                const startTime = performance.now();
+
+                if (timestamp > previousTime) {
+                    const frameRate = 1000 / (timestamp - previousTime);
+                    const date = new Date();
+                    let newSecond1 = date.getSeconds() % 10;
+                    let newSecond2 = Math.floor(date.getSeconds() / 10) % 10;
+                    let newMinute1 = date.getMinutes() % 10;
+                    let newMinute2 = Math.floor(date.getMinutes() / 10) % 10;
+                    let newHour1 = date.getHours() % 10;
+                    let newHour2 = Math.floor(date.getHours() / 10) % 10;
+                    let newDay1 = date.getDate() % 10;
+                    let newDay2 = Math.floor(date.getDate() / 10) % 10;
+                    let newMonth1 = (date.getMonth() + 1) % 10;
+                    let newMonth2 = Math.floor((date.getMonth() + 1) / 10) % 10;
+                    let newYear1 = date.getFullYear() % 10;
+                    let newYear2 = Math.floor(date.getFullYear() / 10) % 10;
+                    let newYear3 = Math.floor(date.getFullYear() / 100) % 10;
+                    let newYear4 = Math.floor(date.getFullYear() / 1000) % 10;
+                    let i = 0;
+
+                    previousTime = timestamp;
+
+                    for (const element of document.body.querySelectorAll("div.digit > img.digit")) {
+                        if (element.parentElement.style.visibility === "visible") {
+                            if (i % 14 === 0 && newYear4 !== oldYear4) {
+                                year4Step += 1 / (frameRate / 2);
+
+                                if (year4Step >= 1) {
+                                    if (widthArray[newYear4] > maxWidth) {
+                                        year4X = xArray[newYear4] + (widthArray[newYear4] - maxWidth) / 2.0;
+                                    } else {
+                                        year4X = xArray[newYear4];
+                                    }
+
+                                    if (heightArray[newYear4] > maxHeight) {
+                                        year4Y = yArray[newYear4] + (heightArray[newYear4] - maxHeight) / 2.0;
+                                    } else {
+                                        year4Y = yArray[newYear4];
+                                    }
+
+                                    year4Width = widthArray[newYear4];
+                                    year4Height = heightArray[newYear4];
+                                    year4Step = 0.0;
+                                    oldYear4 = newYear4;
+                                }
+
+                                renderDigit(element, newYear4, year4X, year4Y, year4Width, year4Height, year4Step);
+                            } else if (i % 14 === 1 && newYear3 !== oldYear3) {
+                                year3Step += 1 / (frameRate / 2);
+
+                                if (year3Step >= 1) {
+                                    if (widthArray[newYear3] > maxWidth) {
+                                        year3X = xArray[newYear3] + (widthArray[newYear3] - maxWidth) / 2.0;
+                                    } else {
+                                        year3X = xArray[newYear3];
+                                    }
+
+                                    if (heightArray[newYear3] > maxHeight) {
+                                        year3Y = yArray[newYear3] + (heightArray[newYear3] - maxHeight) / 2.0;
+                                    } else {
+                                        year3Y = yArray[newYear3];
+                                    }
+
+                                    year3Width = widthArray[newYear3];
+                                    year3Height = heightArray[newYear3];
+                                    year3Step = 0.0;
+                                    oldYear3 = newYear3;
+                                }
+
+                                renderDigit(element, newYear3, year3X, year3Y, year3Width, year3Height, year3Step);
+                            } else if (i % 14 === 2 && newYear2 !== oldYear2) {
+                                year2Step += 1 / (frameRate / 2);
+
+                                if (year2Step >= 1) {
+                                    if (widthArray[newYear2] > maxWidth) {
+                                        year2X = xArray[newYear2] + (widthArray[newYear2] - maxWidth) / 2.0;
+                                    } else {
+                                        year2X = xArray[newYear2];
+                                    }
+
+                                    if (heightArray[newYear2] > maxHeight) {
+                                        year2Y = yArray[newYear2] + (heightArray[newYear2] - maxHeight) / 2.0;
+                                    } else {
+                                        year2Y = yArray[newYear2];
+                                    }
+
+                                    year2Width = widthArray[newYear2];
+                                    year2Height = heightArray[newYear2];
+                                    year2Step = 0.0;
+                                    oldYear2 = newYear2;
+                                }
+
+                                renderDigit(element, newYear2, year2X, year2Y, year2Width, year2Height, year2Step);
+                            } else if (i % 14 === 3 && newYear1 !== oldYear1) {
+                                year1Step += 1 / (frameRate / 2);
+
+                                if (year1Step >= 1) {
+                                    if (widthArray[newYear1] > maxWidth) {
+                                        year1X = xArray[newYear1] + (widthArray[newYear1] - maxWidth) / 2.0;
+                                    } else {
+                                        year1X = xArray[newYear1];
+                                    }
+
+                                    if (heightArray[newYear1] > maxHeight) {
+                                        year1Y = yArray[newYear1] + (heightArray[newYear1] - maxHeight) / 2.0;
+                                    } else {
+                                        year1Y = yArray[newYear1];
+                                    }
+
+                                    year1Width = widthArray[newYear1];
+                                    year1Height = heightArray[newYear1];
+                                    year1Step = 0.0;
+                                    oldYear1 = newYear1;
+                                }
+
+                                renderDigit(element, newYear1, year1X, year1Y, year1Width, year1Height, year1Step);
+                            } else if (i % 14 === 4 && newMonth2 !== oldMonth2) {
+                                month2Step += 1 / (frameRate / 2);
+
+                                if (month2Step >= 1) {
+                                    if (widthArray[newMonth2] > maxWidth) {
+                                        month2X = xArray[newMonth2] + (widthArray[newMonth2] - maxWidth) / 2.0;
+                                    } else {
+                                        month2X = xArray[newMonth2];
+                                    }
+
+                                    if (heightArray[newMonth2] > maxHeight) {
+                                        month2Y = yArray[newMonth2] + (heightArray[newMonth2] - maxHeight) / 2.0;
+                                    } else {
+                                        month2Y = yArray[newMonth2];
+                                    }
+
+                                    month2Width = widthArray[newMonth2];
+                                    month2Height = heightArray[newMonth2];
+                                    month2Step = 0.0;
+                                    oldMonth2 = newMonth2;
+                                }
+
+                                renderDigit(element, newMonth2, month2X, month2Y, month2Width, month2Height, month2Step);
+                            } else if (i % 14 === 5 && newMonth1 !== oldMonth1) {
+                                month1Step += 1 / (frameRate / 2);
+
+                                if (month1Step >= 1) {
+                                    if (widthArray[newMonth1] > maxWidth) {
+                                        month1X = xArray[newMonth1] + (widthArray[newMonth1] - maxWidth) / 2.0;
+                                    } else {
+                                        month1X = xArray[newMonth1];
+                                    }
+
+                                    if (heightArray[newMonth1] > maxHeight) {
+                                        month1Y = yArray[newMonth1] + (heightArray[newMonth1] - maxHeight) / 2.0;
+                                    } else {
+                                        month1Y = yArray[newMonth1];
+                                    }
+
+                                    month1Width = widthArray[newMonth1];
+                                    month1Height = heightArray[newMonth1];
+                                    month1Step = 0.0;
+                                    oldMonth1 = newMonth1;
+                                }
+
+                                renderDigit(element, newMonth1, month1X, month1Y, month1Width, month1Height, month1Step);
+                            } else if (i % 14 === 6 && newDay2 !== oldDay2) {
+                                day2Step += 1 / (frameRate / 2);
+
+                                if (day2Step >= 1) {
+                                    if (widthArray[newDay2] > maxWidth) {
+                                        day2X = xArray[newDay2] + (widthArray[newDay2] - maxWidth) / 2.0;
+                                    } else {
+                                        day2X = xArray[newDay2];
+                                    }
+
+                                    if (heightArray[newDay2] > maxHeight) {
+                                        day2Y = yArray[newDay2] + (heightArray[newDay2] - maxHeight) / 2.0;
+                                    } else {
+                                        day2Y = yArray[newDay2];
+                                    }
+
+                                    day2Width = widthArray[newDay2];
+                                    day2Height = heightArray[newDay2];
+                                    day2Step = 0.0;
+                                    oldDay2 = newDay2;
+                                }
+
+                                renderDigit(element, newDay2, day2X, day2Y, day2Width, day2Height, day2Step);
+                            } else if (i % 14 === 7 && newDay1 !== oldDay1) {
+                                day1Step += 1 / (frameRate / 2);
+
+                                if (day1Step >= 1) {
+                                    if (widthArray[newDay1] > maxWidth) {
+                                        day1X = xArray[newDay1] + (widthArray[newDay1] - maxWidth) / 2.0;
+                                    } else {
+                                        day1X = xArray[newDay1];
+                                    }
+
+                                    if (heightArray[newDay1] > maxHeight) {
+                                        day1Y = yArray[newDay1] + (heightArray[newDay1] - maxHeight) / 2.0;
+                                    } else {
+                                        day1Y = yArray[newDay1];
+                                    }
+
+                                    day1Width = widthArray[newDay1];
+                                    day1Height = heightArray[newDay1];
+                                    day1Step = 0.0;
+                                    oldDay1 = newDay1;
+                                }
+
+                                renderDigit(element, newDay1, day1X, day1Y, day1Width, day1Height, day1Step);
+                            } else if (i % 14 === 8 && newHour2 !== oldHour2) {
+                                hour2Step += 1 / (frameRate / 2);
+
+                                if (hour2Step >= 1) {
+                                    if (widthArray[newHour2] > maxWidth) {
+                                        hour2X = xArray[newHour2] + (widthArray[newHour2] - maxWidth) / 2.0;
+                                    } else {
+                                        hour2X = xArray[newHour2];
+                                    }
+
+                                    if (heightArray[newHour2] > maxHeight) {
+                                        hour2Y = yArray[newHour2] + (heightArray[newHour2] - maxHeight) / 2.0;
+                                    } else {
+                                        hour2Y = yArray[newHour2];
+                                    }
+
+                                    hour2Width = widthArray[newHour2];
+                                    hour2Height = heightArray[newHour2];
+                                    hour2Step = 0.0;
+                                    oldHour2 = newHour2;
+                                }
+
+                                renderDigit(element, newHour2, hour2X, hour2Y, hour2Width, hour2Height, hour2Step);
+                            } else if (i % 14 === 9 && newHour1 !== oldHour1) {
+                                hour1Step += 1 / (frameRate / 2);
+
+                                if (hour1Step >= 1) {
+                                    if (widthArray[newHour1] > maxWidth) {
+                                        hour1X = xArray[newHour1] + (widthArray[newHour1] - maxWidth) / 2.0;
+                                    } else {
+                                        hour1X = xArray[newHour1];
+                                    }
+
+                                    if (heightArray[newHour1] > maxHeight) {
+                                        hour1Y = yArray[newHour1] + (heightArray[newHour1] - maxHeight) / 2.0;
+                                    } else {
+                                        hour1Y = yArray[newHour1];
+                                    }
+
+                                    hour1Width = widthArray[newHour1];
+                                    hour1Height = heightArray[newHour1];
+                                    hour1Step = 0.0;
+                                    oldHour1 = newHour1;
+                                }
+
+                                renderDigit(element, newHour1, hour1X, hour1Y, hour1Width, hour1Height, hour1Step);
+                            } else if (i % 14 === 10 && newMinute2 !== oldMinute2) {
+                                minute2Step += 1 / (frameRate / 2);
+
+                                if (minute2Step >= 1) {
+                                    if (widthArray[newMinute2] > maxWidth) {
+                                        minute2X = xArray[newMinute2] + (widthArray[newMinute2] - maxWidth) / 2.0;
+                                    } else {
+                                        minute2X = xArray[newMinute2];
+                                    }
+
+                                    if (heightArray[newMinute2] > maxHeight) {
+                                        minute2Y = yArray[newMinute2] + (heightArray[newMinute2] - maxHeight) / 2.0;
+                                    } else {
+                                        minute2Y = yArray[newMinute2];
+                                    }
+
+                                    minute2Width = widthArray[newMinute2];
+                                    minute2Height = heightArray[newMinute2];
+                                    minute2Step = 0.0;
+                                    oldMinute2 = newMinute2;
+                                }
+
+                                renderDigit(element, newMinute2, minute2X, minute2Y, minute2Width, minute2Height, minute2Step);
+                            } else if (i % 14 === 11 && newMinute1 !== oldMinute1) {
+                                minute1Step += 1 / (frameRate / 2);
+
+                                if (minute1Step >= 1) {
+                                    if (widthArray[newMinute1] > maxWidth) {
+                                        minute1X = xArray[newMinute1] + (widthArray[newMinute1] - maxWidth) / 2.0;
+                                    } else {
+                                        minute1X = xArray[newMinute1];
+                                    }
+
+                                    if (heightArray[newMinute1] > maxHeight) {
+                                        minute1Y = yArray[newMinute1] + (heightArray[newMinute1] - maxHeight) / 2.0;
+                                    } else {
+                                        minute1Y = yArray[newMinute1];
+                                    }
+
+                                    minute1Width = widthArray[newMinute1];
+                                    minute1Height = heightArray[newMinute1];
+                                    minute1Step = 0.0;
+                                    oldMinute1 = newMinute1;
+                                }
+
+                                renderDigit(element, newMinute1, minute1X, minute1Y, minute1Width, minute1Height, minute1Step);
+                            } else if (i % 14 === 12 && newSecond2 !== oldSecond2) {
+                                second2Step += 1 / (frameRate / 2);
+
+                                if (second2Step >= 1) {
+                                    if (widthArray[newSecond2] > maxWidth) {
+                                        second2X = xArray[newSecond2] + (widthArray[newSecond2] - maxWidth) / 2.0;
+                                    } else {
+                                        second2X = xArray[newSecond2];
+                                    }
+
+                                    if (heightArray[newSecond2] > maxHeight) {
+                                        second2Y = yArray[newSecond2] + (heightArray[newSecond2] - maxHeight) / 2.0;
+                                    } else {
+                                        second2Y = yArray[newSecond2];
+                                    }
+
+                                    second2Width = widthArray[newSecond2];
+                                    second2Height = heightArray[newSecond2];
+                                    second2Step = 0.0;
+                                    oldSecond2 = newSecond2;
+                                }
+
+                                renderDigit(element, newSecond2, second2X, second2Y, second2Width, second2Height, second2Step);
+                            } else if (i % 14 === 13 && newSecond1 !== oldSecond1) {
+                                second1Step += 1 / (frameRate / 2);
+
+                                if (second1Step >= 1) {
+                                    if (widthArray[newSecond1] > maxWidth) {
+                                        second1X = xArray[newSecond1] + (widthArray[newSecond1] - maxWidth) / 2.0;
+                                    } else {
+                                        second1X = xArray[newSecond1];
+                                    }
+
+                                    if (heightArray[newSecond1] > maxHeight) {
+                                        second1Y = yArray[newSecond1] + (heightArray[newSecond1] - maxHeight) / 2.0;
+                                    } else {
+                                        second1Y = yArray[newSecond1];
+                                    }
+
+                                    second1Width = widthArray[newSecond1];
+                                    second1Height = heightArray[newSecond1];
+                                    second1Step = 0.0;
+                                    oldSecond1 = newSecond1;
+                                }
+
+                                renderDigit(element, newSecond1, second1X, second1Y, second1Width, second1Height, second1Step);
+                            }
+                        }
+
+                        i++;
+                    }
+                }
+
+                fps.frames++;
+
+                if (performance.now() - fps.time >= 1000) {
+                    for (const target of fps.targets) {
+                        target.innerText = String(fps.frames);
+                    }
+
+                    fps.time = performance.now();
+                    fps.frames = 0;
+                }
+
+                requestAnimationFrame(render);
+            }
+
+            render();
+
+            for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
+                const clock = frame.querySelector(":scope > .clock");
+
+                if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 14) {
+                    clock.style.marginLeft = (-width / 2).toString() + "px";
+                    clock.style.width = width + "px";
+                    clock.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
+
+                    attach(clock, data, true, 23, 8, 'Year', 4);
+                    attach(clock, data, true, 32, 8, 'Month', 2);
+                    attach(clock, data, true, 17, 8, 'Day', 2);
+                } else if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 10) {
+                    clock.style.marginLeft = ((-width - (maxWidth + space) * 4) / 2).toString() + "px";
+                    clock.style.width = width + "px";
+                    clock.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
+
+                    attach(clock, data, false, 23, 8, 'Year', 4);
+                    attach(clock, data, true, 32, 8, 'Month', 2);
+                    attach(clock, data, true, 17, 8, 'Day', 2);
+                } else {
+                    clock.style.marginLeft = ((-width - (maxWidth + space) * 8) / 2).toString() + "px";
+                    clock.style.width = width + "px";
+                    clock.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
+
+                    if (frame.clientWidth < (maxWidth + space) * 6) {
+                        clock.style.transform = `scale(${((frame.clientWidth - margin * 2) / (margin * 2 + (maxWidth + space) * 6)).toString()})`;
+                    }
+
+                    attach(clock, data, false, 23, 8, 'Year', 4);
+                    attach(clock, data, false, 32, 8, 'Month', 2);
+                    attach(clock, data, false, 17, 8, 'Day', 2);
+                }
+
+                clock.style.marginTop = `${-(maxHeight + 18) / 2}px`;
+                clock.style.height = `${maxHeight + 18}px`;
+
+                attach(clock, data, true, 26, 8, 'Hour', 2);
+                attach(clock, data, true, 34, 8, 'Minute', 2);
+                attach(clock, data, true, 36, 8, 'Second', 2);
+            }
+
+            setTimeout(function tick() {
+                async function update(data) {
+                    let dataURL = null;
+
+                    try {
+                        const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png");
+
+                        if (response.ok) {
+                            dataURL = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                    reject(reader.error);
+                                };
+                                reader.readAsDataURL(await response.blob());
+                            });
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    for (const frame of document.body.querySelectorAll("#container > .wrap > .frame")) {
+                        let updateRequired = false;
+
+                        for (const credits of frame.querySelectorAll(":scope > div.credits")) {
+                            const link = credits.querySelector(":scope > a");
+
+                            if (link.dataset["name"] === data.name) {
+                                if (link.href !== data.url) {
+                                    link.href = data.url;
+                                }
+                            } else {
+                                credits.animate([
+                                    {
+                                        opacity: "0"
+                                    }
+                                ], {
+                                    fill: "forwards",
+                                    duration: 500,
+                                    iterations: 1,
+                                    easing: "ease-in"
+                                }).onfinish = () => {
+                                    credits.remove();
+                                };
+
+                                updateRequired = true;
+                            }
+                        }
+
+                        if (updateRequired) {
+                            const creditsElement = document.createElement("div");
+                            const linkElement = document.createElement("a");
+                            const clipElement = document.createElement("div");
+                            const scrollableElement = document.createElement("div");
+                            const contentElement1 = document.createElement("div");
+                            const contentElement2 = document.createElement("div");
+
+                            creditsElement.className = "credits";
+                            creditsElement.style.opacity = "0";
+                            linkElement.href = data.url;
+                            linkElement.dataset["name"] = data.name;
+                            clipElement.className = "clip";
+                            scrollableElement.className = "scrollable";
+                            contentElement1.innerText = contentElement2.innerText = data.name;
+
+                            frame.appendChild(creditsElement);
+                            creditsElement.appendChild(linkElement);
+                            linkElement.appendChild(clipElement);
+                            clipElement.appendChild(scrollableElement);
+                            scrollableElement.appendChild(contentElement1);
+                            scrollableElement.appendChild(contentElement2);
+
+                            creditsElement.animate([
+                                {
+                                    opacity: "1"
+                                }
+                            ], {
+                                fill: "forwards",
+                                duration: 500,
+                                iterations: 1,
+                                easing: "ease-out"
+                            }).onfinish = () => {
+                                creditsElement.style.opacity = 1;
+                            };
+                        }
+                    }
+
+                    for (const element of document.body.querySelectorAll("div.digit > img.digit")) {
+                        const loadingElement = document.createElement("div");
+
+                        loadingElement.className = "loading";
+                        loadingElement.style.width = `${maxWidth}px`;
+                        loadingElement.style.height = `${maxHeight}px`;
+                        loadingElement.style.backgroundImage = dataURL === null ? "" : `url(${dataURL})`;
+                        loadingElement.style.transform = "translate3d(0px, 100%, 0)";
+
+                        element.parentElement.parentElement.appendChild(loadingElement);
+
+                        loadingElement.animate([
+                            {
+                                transform: "translate3d(0px, 0%, 0)"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        }).onfinish = () => {
+                            loadingElement.style.transform = "translate3d(0px, 0%, 0)";
+                        };
+
+                        element.animate([
+                            {
+                                opacity: "0"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-in"
+                        }).onfinish = async () => {
+                            const parent = element.parentElement;
+
+                            if (parent !== null) {
+                                parent.style.visibility = "hidden";
+                                element.style.opacity = "0";
+
+                                try {
+                                    const image = await new Promise((resolve, reject) => {
+                                        const image = new Image();
+
+                                        image.onload = () => {
+                                            resolve(image);
+                                        };
+                                        image.onerror = (error) => {
+                                            reject(error);
+                                        };
+                                        image.src = data.source;
+                                    });
+                                    const elements = document.body.querySelectorAll("div.digit > img.digit");
+                                    let isinitialized = false;
+
+                                    for (let index = 0; index < elements.length; index++) {
+                                        if (elements.item(index) === element) {
+                                            for (let i = 0; i < data.digits.length; i++) {
+                                                if (xArray[i] !== digits[i][0]) {
+                                                    xArray[i] = digits[i][0];
+                                                }
+
+                                                if (yArray[i] !== digits[i][1]) {
+                                                    yArray[i] = digits[i][1];
+                                                }
+
+                                                if (widthArray[i] !== digits[i][2]) {
+                                                    widthArray[i] = digits[i][2];
+                                                }
+
+                                                if (heightArray[i] !== digits[i][3]) {
+                                                    heightArray[i] = digits[i][3];
+                                                }
+                                            }
+
+                                            if (index === 0) {
+                                                oldYear4 = -1;
+                                                year4X = day2Y = 0.0;
+                                                year4Width = maxWidth;
+                                                year4Height = maxHeight;
+                                                year4Step = 0.0;
+                                            } else if (index === 1) {
+                                                oldYear3 = -1;
+                                                year3X = month3Y = 0.0;
+                                                year3Width = maxWidth;
+                                                year3Height = maxHeight;
+                                                year3Step = 0.0;
+                                            } else if (index === 2) {
+                                                oldYear2 = -1;
+                                                year2X = day2Y = 0.0;
+                                                year2Width = maxWidth;
+                                                year2Height = maxHeight;
+                                                year2Step = 0.0;
+                                            } else if (index === 3) {
+                                                oldYear1 = -1;
+                                                year1X = month1Y = 0.0;
+                                                year1Width = maxWidth;
+                                                year1Height = maxHeight;
+                                                year1Step = 0.0;
+                                            } else if (index === 4) {
+                                                oldMonth2 = -1;
+                                                month2X = day2Y = 0.0;
+                                                month2Width = maxWidth;
+                                                month2Height = maxHeight;
+                                                month2Step = 0.0;
+                                            } else if (index === 5) {
+                                                oldMonth1 = -1;
+                                                month1X = month1Y = 0.0;
+                                                month1Width = maxWidth;
+                                                month1Height = maxHeight;
+                                                month1Step = 0.0;
+                                            } else if (index === 6) {
+                                                oldDay2 = -1;
+                                                day2X = day2Y = 0.0;
+                                                day2Width = maxWidth;
+                                                day2Height = maxHeight;
+                                                day2Step = 0.0;
+                                            } else if (index === 7) {
+                                                oldDay1 = -1;
+                                                day1X = day1Y = 0.0;
+                                                day1Width = maxWidth;
+                                                day1Height = maxHeight;
+                                                day1Step = 0.0;
+                                            } else if (index === 8) {
+                                                hour2X = hour2Y = 0.0;
+                                                hour2Width = maxWidth;
+                                                hour2Height = maxHeight;
+                                                hour2Step = 0.0;
+                                            } else if (index === 9) {
+                                                oldHour1 = -1;
+                                                hour1X = hour1Y = 0.0;
+                                                hour1Width = maxWidth;
+                                                hour1Height = maxHeight;
+                                                hour1Step = 0.0;
+                                                oldHour2 = -1;
+                                            } else if (index === 10) {
+                                                oldMinute2 = -1;
+                                                minute2X = minute2Y = 0.0;
+                                                minute2Width = maxWidth;
+                                                minute2Height = maxHeight;
+                                                minute2Step = 0.0;
+                                            } else if (index === 11) {
+                                                oldMinute1 = -1;
+                                                minute1X = minute1Y = 0.0;
+                                                minute1Width = maxWidth;
+                                                minute1Height = maxHeight;
+                                                minute1Step = 0.0;
+                                            } else if (index === 12) {
+                                                oldSecond2 = -1;
+                                                second2X = second2Y = 0.0;
+                                                second2Width = maxWidth;
+                                                second2Height = maxHeight;
+                                                second2Step = 0.0;
+                                            } else if (index === 13) {
+                                                oldSecond1 = -1;
+                                                second1X = second1Y = 0.0;
+                                                second1Width = maxWidth;
+                                                second1Height = maxHeight;
+                                                second1Step = 0.0;
+                                            }
+
+                                            isinitialized = true;
+
+                                            break;
+                                        }
+                                    }
+
+                                    if (isinitialized) {
+                                        image.className = "digit";
+                                        image.alt = "Digit";
+                                        image.style.opacity = "0";
+
+                                        parent.removeChild(element);
+                                        parent.appendChild(image);
+                                        parent.style.visibility = "visible";
+
+                                        image.animate([
+                                            {
+                                                opacity: "1"
+                                            }
+                                        ], {
+                                            fill: "forwards",
+                                            duration: 500,
+                                            iterations: 1,
+                                            easing: "ease-out"
+                                        }).onfinish = () => {
+                                            image.style.opacity = "1";
+                                        };
+                                    }
+                                } catch (error) {
+                                    parent.style.visibility = "visible";
+                                    element.animate([
+                                        {
+                                            opacity: "1"
+                                        }
+                                    ], {
+                                        fill: "forwards",
+                                        duration: 500,
+                                        iterations: 1,
+                                        easing: "ease-out"
+                                    }).onfinish = () => {
+                                        element.style.opacity = "1";
+                                    };
+
+                                    console.error(error);
+                                }
+
+                                loadingElement.animate([
+                                    {
+                                        transform: "translate3d(0px, -100%, 0)"
+                                    }
+                                ], {
+                                    fill: "forwards",
+                                    duration: 500,
+                                    iterations: 1,
+                                    easing: "ease-in"
+                                }).onfinish = () => {
+                                    loadingElement.remove();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (clocks.length > 1) {
+                    if (!isLocked) {
+                        if (clockQueue.length === 0) {
+                            for (const c of shuffle(clocks)) {
+                                clockQueue.push(c);
+                            }
+                        }
+
+                        update(clockQueue.shift());
+                    }
+
+                    setTimeout(tick, 15000);
+                }
+            }, 15000);
+        });
+
+        window.addEventListener("resize", event => {
+            const container = document.body.querySelector("#container");
+
+            for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
+                const clock = frame.querySelector(":scope > .clock");
+
+                if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 14) {
+                    clock.style.transform = "scale(1.0)";
+                    clock.animate([
+                        {
+                            marginLeft: -clock.clientWidth / 2 + "px"
+                        }
+                    ], {
+                        fill: "forwards",
+                        duration: 500,
+                        iterations: 1,
+                        easing: "ease-out"
+                    });
+
+                    for (let i = 0; i < 8; i++) {
+                        clock.children[i].animate([
+                            {
+                                opacity: "1"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    }
+                } else if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 10) {
+                    clock.style.transform = "scale(1.0)";
+                    clock.animate([
+                        {
+                            marginLeft: ((-clock.clientWidth - (maxWidth + space) * 4) / 2).toString() + "px"
+                        }
+                    ], {
+                        fill: "forwards",
+                        duration: 500,
+                        iterations: 1,
+                        easing: "ease-out"
+                    });
+
+                    for (let i = 0; i < 4; i++) {
+                        clock.children[i].animate([
+                            {
+                                opacity: "0"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-in"
+                        });
+                    }
+
+                    for (let i = 4; i < 8; i++) {
+                        clock.children[i].animate([
+                            {
+                                opacity: "1"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    }
+                } else {
+                    if (frame.clientWidth - margin * 2 < (maxWidth + space) * 6) {
+                        clock.style.transform = "scale(" + ((frame.clientWidth - margin * 2) / (margin * 2 + (maxWidth + space) * 6)).toString() + ")";
+                        clock.animate([
+                            {
+                                marginLeft: (((-clock.clientWidth - (maxWidth + space) * 8) / 2)).toString() + "px"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    } else {
+                        clock.style.transform = "scale(1.0)";
+                        clock.animate([
+                            {
+                                marginLeft: ((-clock.clientWidth - (maxWidth + space) * 8) / 2).toString() + "px"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-out"
+                        });
+                    }
+
+                    for (let i = 0; i < 8; i++) {
+                        clock.children[i].animate([
+                            {
+                                opacity: "0"
+                            }
+                        ], {
+                            fill: "forwards",
+                            duration: 500,
+                            iterations: 1,
+                            easing: "ease-in"
+                        });
+                    }
+                }
+            }
+        });
+        window.addEventListener("dblclick", event => {
+            if (event.button === 0 && !isTouching) {
+                isLocked = !isLocked;
+
+                if (isLocked) {
+                    for (const element of status.locks) {
+                        element.className = `${element.className} is-active`;
+                    }
+
+                    for (const element of status.unlocks) {
+                        element.className = element.className.replace(/is-active/g, "").trim();
+                    }
+                } else {
+                    for (const element of status.locks) {
+                        element.className = element.className.replace(/is-active/g, "").trim();
+                    }
+
+                    for (const element of status.unlocks) {
+                        element.className = `${element.className} is-active`;
+                    }
+                }
+            }
+        });
+        window.addEventListener("touchstart", event => {
+            event.stopPropagation();
+
+            if (tapCount === 0) {
+                tapCount++;
+
+                setTimeout(() => {
+                    tapCount = 0;
+                }, 500);
+            } else {
+                isLocked = !isLocked;
+
+                if (isLocked) {
+                    for (const element of status.locks) {
+                        element.className = `${element.className} is-active`;
+                    }
+
+                    for (const element of status.unlocks) {
+                        element.className = element.className.replace(/is-active/g, "").trim();
+                    }
+                } else {
+                    for (const element of status.locks) {
+                        element.className = element.className.replace(/is-active/g, "").trim();
+                    }
+
+                    for (const element of status.unlocks) {
+                        element.className = `${element.className} is-active`;
+                    }
+                }
+
+                tapCount = 0;
+            }
+
+            isTouching = true;
+        });
+        window.addEventListener("touchend", event => {
+            event.stopPropagation();
+
+            isTouching = false;
+        });
+        window.addEventListener("touchcancel", event => {
+            event.stopPropagation();
+
+            isTouching = false;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 {
-    "name": "ミルヒちゃんねる",
-    "short_name": "ミルヒちゃんねる",
+    "name": "ミルヒちゃん",
+    "short_name": "ミルヒちゃん",
     "start_url": "index.html?utm_source=homescreen",
     "scope" : "/",
     "icons": [
@@ -21,7 +21,7 @@
             "purpose": "maskable"
         }
     ],
-    "theme_color": "#d8d8d8",
-    "background_color": "#00eeff",
+    "theme_color": "#f7f8f8",
+    "background_color": "#ffffff",
     "display": "standalone"
 }

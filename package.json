@@ -1,8 +1,8 @@
 {
   "name": "milchchan.com",
+  "private": true,
   "version": "1.0.0",
-  "description": "milchchan.com",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -19,21 +19,9 @@
     "url": "https://github.com/milchchan/milchchan.github.io/issues"
   },
   "homepage": "https://milchchan.com/",
-  "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.1.2",
-    "@pixiv/three-vrm": "^1.0.9",
-    "animejs": "^3.2.1",
-    "bulma": "^0.9.4",
-    "firebase": "^9.9.3",
-    "mocha": "^10.0.0",
-    "sinon": "^15.0.0",
-    "stats.js": "^0.17.0",
-    "three": "^0.149.0",
-    "vue": "^3.2.37"
-  },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.0.0",
-    "sass": "^1.54.5",
-    "vite": "^4.0.2"
+    "mocha": "^10.2.0",
+    "sinon": "^15.0.2",
+    "vite": "^4.2.0"
   }
 }

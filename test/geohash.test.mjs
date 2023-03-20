@@ -1,5 +1,5 @@
 import assert from "assert";
-import { encodeGeohash, decodeGeohash, getNeighbors, getDistance } from "../src/geohash.mjs"
+import { encodeGeohash, decodeGeohash, getNeighbors, getDistance } from "../geohash.mjs"
 
 describe("geohash", function () {
     it("encodeGeohash", function () {

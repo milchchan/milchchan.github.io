@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,11 +8,10 @@ export default defineConfig({
       output: {
         entryFileNames: "[name].js",
         manualChunks: undefined,
-        assetFileNames: "assets/[name].[ext]",
+        assetFileNames: "[name].[ext]",
       },
     },
     cssCodeSplit: false,
     chunkSizeWarningLimit: 1500,
-  },
-  plugins: [vue()]
+  }
 })
