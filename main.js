@@ -781,9 +781,9 @@ window.addEventListener("load", async event => {
     });
     animation.cancel();
 
-    let previousTime = performance.now();
     const cache = {};
     const animationQueue = [];
+    let previousTime = performance.now();
     const fps = { time: previousTime, frames: 0, target: document.createElement("span") };
 
     fps.target.className = "has-text-weight-bold";
