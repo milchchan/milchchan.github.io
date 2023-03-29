@@ -606,10 +606,6 @@
             }
 
             function resetDigit(index, x, y, width, height, step) {
-                //const scale1 = Math.min(Math.max(maxWidth / width, maxHeight / height), 1.0);
-                //const scale2 = Math.min(Math.max(maxWidth / widthArray[index], maxHeight / heightArray[index]), 1.0);
-                //const scale3 = scale1 + (scale2 - scale1) * Math.sin(step / 2.0 * Math.PI);
-
                 if (widthArray[index] > maxWidth) {
                     x = x + (xArray[index] + (widthArray[index] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI);
                 } else {
