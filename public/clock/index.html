@@ -224,7 +224,13 @@
             padding: 0;
         }
 
-        img.digit {
+        div.digit>div.wrap {
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            line-height: 0;
+            width: fit-content;
+            height: fit-content;
             transform-origin: 0% 0%;
             transform: translate(0px, 0px);
         }
@@ -506,6 +512,7 @@
                     const contentElement = document.createElement("div");
                     const frameElement = document.createElement("div");
                     const digitElement = document.createElement("div");
+                    const wrapElement = document.createElement("div");
                     const canvas = document.createElement("canvas");
 
                     contentElement.className = "content";
@@ -525,13 +532,16 @@
                     digitElement.style.width = `${maxWidth}px`;
                     digitElement.style.height = `${maxHeight}px`;
 
+                    wrapElement.className = "wrap";
+
                     canvas["backBuffer"] = document.createElement("canvas");
                     canvas.className = "digit";
                     canvas.style.backgroundColor = "transparent";
 
                     const context = canvas.getContext("2d");
 
-                    digitElement.appendChild(canvas);
+                    wrapElement.appendChild(canvas);
+                    digitElement.appendChild(wrapElement);
                     frameElement.appendChild(digitElement);
                     contentElement.appendChild(frameElement);
 
@@ -560,28 +570,20 @@
             }
 
             function renderDigit(canvas, image, i, x, y, width, height, step) {
-                let scale1 = Math.max(maxWidth / width, maxHeight / height);
-                let scale2 = Math.max(maxWidth / widthArray[i], maxHeight / heightArray[i]);
-
-                if (scale1 > 1) {
-                    scale1 = 1.0;
-                }
-
-                if (scale2 > 1) {
-                    scale2 = 1.0;
-                }
+                const scale1 = Math.min(Math.max(maxWidth / width, maxHeight / height), 1.0);
+                const scale2 = Math.min(Math.max(maxWidth / widthArray[i], maxHeight / heightArray[i]), 1.0);
 
                 if (widthArray[i] > maxWidth && heightArray[i] > maxHeight) {
-                    canvas.style.transform = `translate3d(${Math.round(-(x + (xArray[i] + (widthArray[i] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI))).toString()}px, ${Math.round(-(y + (yArray[i] + (heightArray[i] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI))).toString()}px, 0)`;
+                    canvas.parentElement.style.transform = `translate3d(${Math.round(-(x + (xArray[i] + (widthArray[i] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI))).toString()}px, ${Math.round(-(y + (yArray[i] + (heightArray[i] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI))).toString()}px, 0)`;
                 } else if (widthArray[i] > maxWidth) {
-                    canvas.style.transform = `translate3d(${Math.round(-(x + (xArray[i] + (widthArray[i] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI))).toString()}px, ${Math.round(-(y + (yArray[i] - y) * Math.sin(step / 2.0 * Math.PI))).toString()}px, 0)`;
+                    canvas.parentElement.style.transform = `translate3d(${Math.round(-(x + (xArray[i] + (widthArray[i] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI))).toString()}px, ${Math.round(-(y + (yArray[i] - y) * Math.sin(step / 2.0 * Math.PI))).toString()}px, 0)`;
                 } else if (heightArray[i] > maxHeight) {
-                    canvas.style.transform = `translate3d(${Math.round(-(x + (xArray[i] - x) * Math.sin(step / 2.0 * Math.PI))).toString()}px, ${Math.round(-(y + (yArray[i] + (heightArray[i] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI))).toString()}px, 0)`;
+                    canvas.parentElement.style.transform = `translate3d(${Math.round(-(x + (xArray[i] - x) * Math.sin(step / 2.0 * Math.PI))).toString()}px, ${Math.round(-(y + (yArray[i] + (heightArray[i] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI))).toString()}px, 0)`;
                 } else {
-                    canvas.style.transform = `translate3d(${Math.round(-(x + (xArray[i] - x) * Math.sin(step / 2.0 * Math.PI))).toString()}px, ${Math.round(-(y + (yArray[i] - y) * Math.sin(step / 2.0 * Math.PI))).toString()}px, 0)`;
+                    canvas.parentElement.style.transform = `translate3d(${Math.round(-(x + (xArray[i] - x) * Math.sin(step / 2.0 * Math.PI))).toString()}px, ${Math.round(-(y + (yArray[i] - y) * Math.sin(step / 2.0 * Math.PI))).toString()}px, 0)`;
                 }
 
-                canvas.parentElement.style.transform = `scale(${(scale1 + (scale2 - scale1) * Math.sin(step / 2.0 * Math.PI)).toString()})`;
+                canvas.parentElement.parentElement.style.transform = `scale(${(scale1 + (scale2 - scale1) * Math.sin(step / 2.0 * Math.PI)).toString()})`;
 
                 if (image !== null) {
                     const backCanvas = canvas.backBuffer;
@@ -601,6 +603,29 @@
 
                     backCanvas.width = backCanvas.height = 0;
                 }
+            }
+
+            function resetDigit(index, x, y, width, height, step) {
+                //const scale1 = Math.min(Math.max(maxWidth / width, maxHeight / height), 1.0);
+                //const scale2 = Math.min(Math.max(maxWidth / widthArray[index], maxHeight / heightArray[index]), 1.0);
+                //const scale3 = scale1 + (scale2 - scale1) * Math.sin(step / 2.0 * Math.PI);
+
+                if (widthArray[index] > maxWidth) {
+                    x = x + (xArray[index] + (widthArray[index] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI);
+                } else {
+                    x = x + (xArray[index] - x) * Math.sin(step / 2.0 * Math.PI);
+                }
+
+                if (heightArray[index] > maxHeight) {
+                    y = y + (yArray[index] + (heightArray[index] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI);
+                } else {
+                    y = y + (yArray[index] - y) * Math.sin(step / 2.0 * Math.PI);
+                }
+
+                width = width + (widthArray[index] - width) * Math.sin(step / 2.0 * Math.PI);
+                height = height + (heightArray[index] - height) * Math.sin(step / 2.0 * Math.PI);
+
+                return [x, y, width, height];
             }
 
             for (const factor of split) {
@@ -647,10 +672,10 @@
             const data = clockQueue.shift();
             const cache = {};
             const animationQueue = [];
-            let animation = data.frames;
-            let previousTime = performance.now();
-            let seconds = -1;
+            let animation = null;
             let currentImage = null;
+            let frameStep = null;
+            let previousTime = performance.now();
             const fps = { time: previousTime, frames: 0, targets: [] };
 
             for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
@@ -804,169 +829,71 @@
                 }
             }
 
-            let dataURL = null;
-            const elements = document.body.querySelectorAll("div.digit > canvas.digit");
-            let count = 0;
-
-            try {
-                const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png");
-
-                if (response.ok) {
-                    dataURL = await new Promise(async (resolve, reject) => {
-                        const reader = new FileReader();
-
-                        reader.onload = () => {
-                            resolve(reader.result);
-                        };
-                        reader.onerror = () => {
-                            reject(reader.error);
-                        };
-                        reader.readAsDataURL(await response.blob());
-                    });
-                }
-            } catch (error) {
-                console.error(error);
-            }
-
-            for (const element of elements) {
-                const loadingElement = document.createElement("div");
-
-                loadingElement.className = "loading";
-                loadingElement.style.width = `${maxWidth}px`;
-                loadingElement.style.height = `${maxHeight}px`;
-                loadingElement.style.backgroundImage = dataURL === null ? "" : `url(${dataURL})`;
-                loadingElement.style.transform = "translate3d(0px, 100%, 0)";
-
-                element.parentElement.parentElement.appendChild(loadingElement);
-
-                loadingElement.animate([
-                    {
-                        transform: "translate3d(0px, 0%, 0)"
-                    }
-                ], {
-                    fill: "forwards",
-                    duration: 500,
-                    iterations: 1,
-                    easing: "ease-out"
-                }).onfinish = async () => {
-                    element.parentElement.style.visibility = "hidden";
-                    loadingElement.style.transform = "translate3d(0px, 0%, 0)";
-                    count++;
-
-                    if (count === elements.length) {
-                        for (const frame of data.frames) {
-                            if (frame.source in cache === false) {
-                                try {
-                                    cache[frame.source] = {
-                                        image: await new Promise((resolve, reject) => {
-                                            const image = new Image();
-
-                                            image.onload = () => {
-                                                resolve(image);
-                                            };
-                                            image.onerror = (error) => {
-                                                reject(error);
-                                            };
-                                            image.src = frame.source
-                                        }), timestamp: Math.floor(new Date() / 1000)
-                                    };
-                                } catch (error) {
-                                    console.error(error);
-                                }
-                            }
-                        }
-
-                        for (let i = 0; i < data.frames[0].digits.length; i++) {
-                            xArray[i] = data.frames[0].digits[i][0];
-                            yArray[i] = data.frames[0].digits[i][1];
-                            widthArray[i] = data.frames[0].digits[i][2];
-                            heightArray[i] = data.frames[0].digits[i][3];
-                        }
-
-                        if (data.frames[0].source in cache) {
-                            for (const canvas of elements) {
-                                const e = canvas.parentElement.parentElement.querySelector(":scope > div.loading");
-                                const context = canvas.getContext("2d");
-                                const image = cache[data.frames[0].source].image;
-
-                                canvas.width = image.width;
-                                canvas.height = image.height;
-
-                                context.clearRect(0, 0, canvas.width, canvas.height);
-                                context.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
-
-                                canvas.parentElement.style.visibility = "visible";
-                                e.animate([
-                                    {
-                                        transform: "translate3d(0px, -100%, 0)"
-                                    }
-                                ], {
-                                    fill: "forwards",
-                                    duration: 500,
-                                    iterations: 1,
-                                    easing: "ease-in"
-                                }).onfinish = () => {
-                                    e.remove();
-                                };
-                            }
-                        } else {
-                            for (const canvas of elements) {
-                                const e = canvas.parentElement.parentElement.querySelector(":scope > div.loading");
-
-                                canvas.parentElement.style.visibility = "visible";
-                                e.animate([
-                                    {
-                                        transform: "translate3d(0px, -100%, 0)"
-                                    }
-                                ], {
-                                    fill: "forwards",
-                                    duration: 500,
-                                    iterations: 1,
-                                    easing: "ease-in"
-                                }).onfinish = () => {
-                                    e.remove();
-                                };
-                            }
-                        }
-                    }
-                };
-            }
-
             function render(timestamp) {
                 const startTime = performance.now();
 
                 if (timestamp > previousTime) {
                     const deltaTime = (timestamp - previousTime) / 1000;
-                    const frameRate = 1000 / (timestamp - previousTime);
+                    const frameRate = 1 / deltaTime;
                     let image = null;
                     const date = new Date();
-                    let newSecond1 = date.getSeconds() % 10;
-                    let newSecond2 = Math.floor(date.getSeconds() / 10) % 10;
-                    let newMinute1 = date.getMinutes() % 10;
-                    let newMinute2 = Math.floor(date.getMinutes() / 10) % 10;
-                    let newHour1 = date.getHours() % 10;
-                    let newHour2 = Math.floor(date.getHours() / 10) % 10;
-                    let newDay1 = date.getDate() % 10;
-                    let newDay2 = Math.floor(date.getDate() / 10) % 10;
-                    let newMonth1 = (date.getMonth() + 1) % 10;
-                    let newMonth2 = Math.floor((date.getMonth() + 1) / 10) % 10;
-                    let newYear1 = date.getFullYear() % 10;
-                    let newYear2 = Math.floor(date.getFullYear() / 10) % 10;
-                    let newYear3 = Math.floor(date.getFullYear() / 100) % 10;
-                    let newYear4 = Math.floor(date.getFullYear() / 1000) % 10;
+                    const newSecond1 = date.getSeconds() % 10;
+                    const newSecond2 = Math.floor(date.getSeconds() / 10) % 10;
+                    const newMinute1 = date.getMinutes() % 10;
+                    const newMinute2 = Math.floor(date.getMinutes() / 10) % 10;
+                    const newHour1 = date.getHours() % 10;
+                    const newHour2 = Math.floor(date.getHours() / 10) % 10;
+                    const newDay1 = date.getDate() % 10;
+                    const newDay2 = Math.floor(date.getDate() / 10) % 10;
+                    const newMonth1 = (date.getMonth() + 1) % 10;
+                    const newMonth2 = Math.floor((date.getMonth() + 1) / 10) % 10;
+                    const newYear1 = date.getFullYear() % 10;
+                    const newYear2 = Math.floor(date.getFullYear() / 10) % 10;
+                    const newYear3 = Math.floor(date.getFullYear() / 100) % 10;
+                    const newYear4 = Math.floor(date.getFullYear() / 1000) % 10;
                     let i = 0;
-                    let updateRequired = false;
 
                     previousTime = timestamp;
 
-                    if (seconds !== newSecond1) {
+                    if (animation !== null && oldSecond1 !== newSecond1) {
                         animationQueue.splice(0);
 
                         for (const frame of animation) {
                             animationQueue.push(Object.assign({ time: 0, image: frame.source in cache ? cache[frame.source].image : null }, frame));
                         }
 
-                        seconds = newSecond1;
+                        if (frameStep !== null) {
+                            [year4X, year4Y, year4Width, year4Height] = resetDigit(oldYear4, year4X, year4Y, year4Width, year4Height, frameStep);
+                            [year3X, year3Y, year3Width, year3Height] = resetDigit(oldYear3, year3X, year3Y, year3Width, year3Height, frameStep);
+                            [year2X, year2Y, year2Width, year2Height] = resetDigit(oldYear2, year2X, year2Y, year2Width, year2Height, frameStep);
+                            [year1X, year1Y, year1Width, year1Height] = resetDigit(oldYear1, year1X, year1Y, year1Width, year1Height, frameStep);
+                            [month2X, month2Y, month2Width, month2Height] = resetDigit(oldMonth2, month2X, month2Y, month2Width, month2Height, frameStep);
+                            [month1X, month1Y, month1Width, month1Height] = resetDigit(oldMonth1, month1X, month1Y, month1Width, month1Height, frameStep);
+                            [day2X, day2Y, day2Width, day2Height] = resetDigit(oldDay2, day2X, day2Y, day2Width, day2Height, frameStep);
+                            [day1X, day1Y, day1Width, day1Height] = resetDigit(oldDay1, day1X, day1Y, day1Width, day1Height, frameStep);
+                            [hour2X, hour2Y, hour2Width, hour2Height] = resetDigit(oldHour2, hour2X, hour2Y, hour2Width, hour2Height, frameStep);
+                            [hour1X, hour1Y, hour1Width, hour1Height] = resetDigit(oldHour1, hour1X, hour1Y, hour1Width, hour1Height, frameStep);
+                            [minute2X, minute2Y, minute2Width, minute2Height] = resetDigit(oldMinute2, minute2X, minute2Y, minute2Width, minute2Height, frameStep);
+                            [minute1X, minute1Y, minute1Width, minute1Height] = resetDigit(oldMinute1, minute1X, minute1Y, minute1Width, minute1Height, frameStep);
+                            [second2X, second2Y, second2Width, second2Height] = resetDigit(oldSecond2, second2X, second2Y, second2Width, second2Height, frameStep);
+                            [second1X, second1Y, second1Width, second1Height] = resetDigit(oldSecond1, second1X, second1Y, second1Width, second1Height, frameStep);
+                        }
+
+                        frameStep = 0.0;
+                        oldSecond1 = newSecond1;
+                        oldSecond2 = newSecond2;
+                        oldMinute1 = newMinute1;
+                        oldMinute2 = newMinute2;
+                        oldHour1 = newHour1;
+                        oldHour2 = newHour2;
+                        oldDay1 = newDay1;
+                        oldDay2 = newDay2;
+                        oldMonth1 = newMonth1;
+                        oldMonth2 = newMonth2;
+                        oldYear1 = newYear1;
+                        oldYear2 = newYear2;
+                        oldYear3 = newYear3;
+                        oldYear4 = newYear4;
                     }
 
                     if (animationQueue.length > 0) {
@@ -976,12 +903,18 @@
 
                         frame.time += deltaTime;
 
-                        while (frame.time >= delay) {
+                        while (frame.time >= delay && frameStep === null) {
+                            animationQueue.shift();
+
+                            if (animationQueue.length === 0) {
+                                break;
+                            }
+
                             const time = frame.time - delay;
 
                             frame.time = 0;
-                            animationQueue.push(animationQueue.shift());
                             frame = animationQueue[0];
+                            frameStep = 0.0;
                             count--;
 
                             if (count > 0) {
@@ -1016,337 +949,81 @@
                             }
                         }
 
-                        updateRequired = true;
-                    }
+                        if (frameStep !== null) {
+                            let step = frameStep + deltaTime / frame.delay;
 
-                    for (const element of document.body.querySelectorAll("div.digit > canvas.digit")) {
-                        if (element.parentElement.style.visibility === "visible") {
-                            if (i % 14 === 0 && (newYear4 !== oldYear4 || updateRequired)) {
-                                year4Step += 1 / (frameRate / 2);
+                            if (step >= 1) {
+                                [year4X, year4Y, year4Width, year4Height] = resetDigit(oldYear4, year4X, year4Y, year4Width, year4Height, 1.0);
+                                [year3X, year3Y, year3Width, year3Height] = resetDigit(oldYear3, year3X, year3Y, year3Width, year3Height, 1.0);
+                                [year2X, year2Y, year2Width, year2Height] = resetDigit(oldYear2, year2X, year2Y, year2Width, year2Height, 1.0);
+                                [year1X, year1Y, year1Width, year1Height] = resetDigit(oldYear1, year1X, year1Y, year1Width, year1Height, 1.0);
+                                [month2X, month2Y, month2Width, month2Height] = resetDigit(oldMonth2, month2X, month2Y, month2Width, month2Height, 1.0);
+                                [month1X, month1Y, month1Width, month1Height] = resetDigit(oldMonth1, month1X, month1Y, month1Width, month1Height, 1.0);
+                                [day2X, day2Y, day2Width, day2Height] = resetDigit(oldDay2, day2X, day2Y, day2Width, day2Height, 1.0);
+                                [day1X, day1Y, day1Width, day1Height] = resetDigit(oldDay1, day1X, day1Y, day1Width, day1Height, 1.0);
+                                [hour2X, hour2Y, hour2Width, hour2Height] = resetDigit(oldHour2, hour2X, hour2Y, hour2Width, hour2Height, 1.0);
+                                [hour1X, hour1Y, hour1Width, hour1Height] = resetDigit(oldHour1, hour1X, hour1Y, hour1Width, hour1Height, 1.0);
+                                [minute2X, minute2Y, minute2Width, minute2Height] = resetDigit(oldMinute2, minute2X, minute2Y, minute2Width, minute2Height, 1.0);
+                                [minute1X, minute1Y, minute1Width, minute1Height] = resetDigit(oldMinute1, minute1X, minute1Y, minute1Width, minute1Height, 1.0);
+                                [second2X, second2Y, second2Width, second2Height] = resetDigit(oldSecond2, second2X, second2Y, second2Width, second2Height, 1.0);
+                                [second1X, second1Y, second1Width, second1Height] = resetDigit(oldSecond1, second1X, second1Y, second1Width, second1Height, 1.0);
+                                oldSecond1 = newSecond1;
+                                oldSecond2 = newSecond2;
+                                oldMinute1 = newMinute1;
+                                oldMinute2 = newMinute2;
+                                oldHour1 = newHour1;
+                                oldHour2 = newHour2;
+                                oldDay1 = newDay1;
+                                oldDay2 = newDay2;
+                                oldMonth1 = newMonth1;
+                                oldMonth2 = newMonth2;
+                                oldYear1 = newYear1;
+                                oldYear2 = newYear2;
+                                oldYear3 = newYear3;
+                                oldYear4 = newYear4;
 
-                                if (year4Step >= 1) {
-                                    if (widthArray[newYear4] > maxWidth) {
-                                        year4X = xArray[newYear4] + (widthArray[newYear4] - maxWidth) / 2.0;
-                                    } else {
-                                        year4X = xArray[newYear4];
+                                frameStep = null;
+                                step = 0;
+                            } else {
+                                frameStep = step;
+                            }
+
+                            for (const element of document.body.querySelectorAll("div.digit > div.wrap > canvas.digit")) {
+                                if (element.parentElement.parentElement.style.visibility === "visible") {
+                                    if (i % 14 === 0) {
+                                        renderDigit(element, image, newYear4, year4X, year4Y, year4Width, year4Height, step);
+                                    } else if (i % 14 === 1) {
+                                        renderDigit(element, image, newYear3, year3X, year3Y, year3Width, year3Height, step);
+                                    } else if (i % 14 === 2) {
+                                        renderDigit(element, image, newYear2, year2X, year2Y, year2Width, year2Height, step);
+                                    } else if (i % 14 === 3) {
+                                        renderDigit(element, image, newYear1, year1X, year1Y, year1Width, year1Height, step);
+                                    } else if (i % 14 === 4) {
+                                        renderDigit(element, image, newMonth2, month2X, month2Y, month2Width, month2Height, step);
+                                    } else if (i % 14 === 5) {
+                                        renderDigit(element, image, newMonth1, month1X, month1Y, month1Width, month1Height, step);
+                                    } else if (i % 14 === 6) {
+                                        renderDigit(element, image, newDay2, day2X, day2Y, day2Width, day2Height, step);
+                                    } else if (i % 14 === 7) {
+                                        renderDigit(element, image, newDay1, day1X, day1Y, day1Width, day1Height, step);
+                                    } else if (i % 14 === 8) {
+                                        renderDigit(element, image, newHour2, hour2X, hour2Y, hour2Width, hour2Height, step);
+                                    } else if (i % 14 === 9) {
+                                        renderDigit(element, image, newHour1, hour1X, hour1Y, hour1Width, hour1Height, step);
+                                    } else if (i % 14 === 10) {
+                                        renderDigit(element, image, newMinute2, minute2X, minute2Y, minute2Width, minute2Height, step);
+                                    } else if (i % 14 === 11) {
+                                        renderDigit(element, image, newMinute1, minute1X, minute1Y, minute1Width, minute1Height, step);
+                                    } else if (i % 14 === 12) {
+                                        renderDigit(element, image, newSecond2, second2X, second2Y, second2Width, second2Height, step);
+                                    } else if (i % 14 === 13) {
+                                        renderDigit(element, image, newSecond1, second1X, second1Y, second1Width, second1Height, step);
                                     }
-
-                                    if (heightArray[newYear4] > maxHeight) {
-                                        year4Y = yArray[newYear4] + (heightArray[newYear4] - maxHeight) / 2.0;
-                                    } else {
-                                        year4Y = yArray[newYear4];
-                                    }
-
-                                    year4Width = widthArray[newYear4];
-                                    year4Height = heightArray[newYear4];
-                                    year4Step = 0.0;
-                                    oldYear4 = newYear4;
                                 }
 
-                                renderDigit(element, image, newYear4, year4X, year4Y, year4Width, year4Height, year4Step);
-                            } else if (i % 14 === 1 && (newYear3 !== oldYear3 || updateRequired)) {
-                                year3Step += 1 / (frameRate / 2);
-
-                                if (year3Step >= 1) {
-                                    if (widthArray[newYear3] > maxWidth) {
-                                        year3X = xArray[newYear3] + (widthArray[newYear3] - maxWidth) / 2.0;
-                                    } else {
-                                        year3X = xArray[newYear3];
-                                    }
-
-                                    if (heightArray[newYear3] > maxHeight) {
-                                        year3Y = yArray[newYear3] + (heightArray[newYear3] - maxHeight) / 2.0;
-                                    } else {
-                                        year3Y = yArray[newYear3];
-                                    }
-
-                                    year3Width = widthArray[newYear3];
-                                    year3Height = heightArray[newYear3];
-                                    year3Step = 0.0;
-                                    oldYear3 = newYear3;
-                                }
-
-                                renderDigit(element, image, newYear3, year3X, year3Y, year3Width, year3Height, year3Step);
-                            } else if (i % 14 === 2 && (newYear2 !== oldYear2 || updateRequired)) {
-                                year2Step += 1 / (frameRate / 2);
-
-                                if (year2Step >= 1) {
-                                    if (widthArray[newYear2] > maxWidth) {
-                                        year2X = xArray[newYear2] + (widthArray[newYear2] - maxWidth) / 2.0;
-                                    } else {
-                                        year2X = xArray[newYear2];
-                                    }
-
-                                    if (heightArray[newYear2] > maxHeight) {
-                                        year2Y = yArray[newYear2] + (heightArray[newYear2] - maxHeight) / 2.0;
-                                    } else {
-                                        year2Y = yArray[newYear2];
-                                    }
-
-                                    year2Width = widthArray[newYear2];
-                                    year2Height = heightArray[newYear2];
-                                    year2Step = 0.0;
-                                    oldYear2 = newYear2;
-                                }
-
-                                renderDigit(element, image, newYear2, year2X, year2Y, year2Width, year2Height, year2Step);
-                            } else if (i % 14 === 3 && (newYear1 !== oldYear1 || updateRequired)) {
-                                year1Step += 1 / (frameRate / 2);
-
-                                if (year1Step >= 1) {
-                                    if (widthArray[newYear1] > maxWidth) {
-                                        year1X = xArray[newYear1] + (widthArray[newYear1] - maxWidth) / 2.0;
-                                    } else {
-                                        year1X = xArray[newYear1];
-                                    }
-
-                                    if (heightArray[newYear1] > maxHeight) {
-                                        year1Y = yArray[newYear1] + (heightArray[newYear1] - maxHeight) / 2.0;
-                                    } else {
-                                        year1Y = yArray[newYear1];
-                                    }
-
-                                    year1Width = widthArray[newYear1];
-                                    year1Height = heightArray[newYear1];
-                                    year1Step = 0.0;
-                                    oldYear1 = newYear1;
-                                }
-
-                                renderDigit(element, image, newYear1, year1X, year1Y, year1Width, year1Height, year1Step);
-                            } else if (i % 14 === 4 && (newMonth2 !== oldMonth2 || updateRequired)) {
-                                month2Step += 1 / (frameRate / 2);
-
-                                if (month2Step >= 1) {
-                                    if (widthArray[newMonth2] > maxWidth) {
-                                        month2X = xArray[newMonth2] + (widthArray[newMonth2] - maxWidth) / 2.0;
-                                    } else {
-                                        month2X = xArray[newMonth2];
-                                    }
-
-                                    if (heightArray[newMonth2] > maxHeight) {
-                                        month2Y = yArray[newMonth2] + (heightArray[newMonth2] - maxHeight) / 2.0;
-                                    } else {
-                                        month2Y = yArray[newMonth2];
-                                    }
-
-                                    month2Width = widthArray[newMonth2];
-                                    month2Height = heightArray[newMonth2];
-                                    month2Step = 0.0;
-                                    oldMonth2 = newMonth2;
-                                }
-
-                                renderDigit(element, image, newMonth2, month2X, month2Y, month2Width, month2Height, month2Step);
-                            } else if (i % 14 === 5 && (newMonth1 !== oldMonth1 || updateRequired)) {
-                                month1Step += 1 / (frameRate / 2);
-
-                                if (month1Step >= 1) {
-                                    if (widthArray[newMonth1] > maxWidth) {
-                                        month1X = xArray[newMonth1] + (widthArray[newMonth1] - maxWidth) / 2.0;
-                                    } else {
-                                        month1X = xArray[newMonth1];
-                                    }
-
-                                    if (heightArray[newMonth1] > maxHeight) {
-                                        month1Y = yArray[newMonth1] + (heightArray[newMonth1] - maxHeight) / 2.0;
-                                    } else {
-                                        month1Y = yArray[newMonth1];
-                                    }
-
-                                    month1Width = widthArray[newMonth1];
-                                    month1Height = heightArray[newMonth1];
-                                    month1Step = 0.0;
-                                    oldMonth1 = newMonth1;
-                                }
-
-                                renderDigit(element, image, newMonth1, month1X, month1Y, month1Width, month1Height, month1Step);
-                            } else if (i % 14 === 6 && (newDay2 !== oldDay2 || updateRequired)) {
-                                day2Step += 1 / (frameRate / 2);
-
-                                if (day2Step >= 1) {
-                                    if (widthArray[newDay2] > maxWidth) {
-                                        day2X = xArray[newDay2] + (widthArray[newDay2] - maxWidth) / 2.0;
-                                    } else {
-                                        day2X = xArray[newDay2];
-                                    }
-
-                                    if (heightArray[newDay2] > maxHeight) {
-                                        day2Y = yArray[newDay2] + (heightArray[newDay2] - maxHeight) / 2.0;
-                                    } else {
-                                        day2Y = yArray[newDay2];
-                                    }
-
-                                    day2Width = widthArray[newDay2];
-                                    day2Height = heightArray[newDay2];
-                                    day2Step = 0.0;
-                                    oldDay2 = newDay2;
-                                }
-
-                                renderDigit(element, image, newDay2, day2X, day2Y, day2Width, day2Height, day2Step);
-                            } else if (i % 14 === 7 && (newDay1 !== oldDay1 || updateRequired)) {
-                                day1Step += 1 / (frameRate / 2);
-
-                                if (day1Step >= 1) {
-                                    if (widthArray[newDay1] > maxWidth) {
-                                        day1X = xArray[newDay1] + (widthArray[newDay1] - maxWidth) / 2.0;
-                                    } else {
-                                        day1X = xArray[newDay1];
-                                    }
-
-                                    if (heightArray[newDay1] > maxHeight) {
-                                        day1Y = yArray[newDay1] + (heightArray[newDay1] - maxHeight) / 2.0;
-                                    } else {
-                                        day1Y = yArray[newDay1];
-                                    }
-
-                                    day1Width = widthArray[newDay1];
-                                    day1Height = heightArray[newDay1];
-                                    day1Step = 0.0;
-                                    oldDay1 = newDay1;
-                                }
-
-                                renderDigit(element, image, newDay1, day1X, day1Y, day1Width, day1Height, day1Step);
-                            } else if (i % 14 === 8 && (newHour2 !== oldHour2 || updateRequired)) {
-                                hour2Step += 1 / (frameRate / 2);
-
-                                if (hour2Step >= 1) {
-                                    if (widthArray[newHour2] > maxWidth) {
-                                        hour2X = xArray[newHour2] + (widthArray[newHour2] - maxWidth) / 2.0;
-                                    } else {
-                                        hour2X = xArray[newHour2];
-                                    }
-
-                                    if (heightArray[newHour2] > maxHeight) {
-                                        hour2Y = yArray[newHour2] + (heightArray[newHour2] - maxHeight) / 2.0;
-                                    } else {
-                                        hour2Y = yArray[newHour2];
-                                    }
-
-                                    hour2Width = widthArray[newHour2];
-                                    hour2Height = heightArray[newHour2];
-                                    hour2Step = 0.0;
-                                    oldHour2 = newHour2;
-                                }
-
-                                renderDigit(element, image, newHour2, hour2X, hour2Y, hour2Width, hour2Height, hour2Step);
-                            } else if (i % 14 === 9 && (newHour1 !== oldHour1 || updateRequired)) {
-                                hour1Step += 1 / (frameRate / 2);
-
-                                if (hour1Step >= 1) {
-                                    if (widthArray[newHour1] > maxWidth) {
-                                        hour1X = xArray[newHour1] + (widthArray[newHour1] - maxWidth) / 2.0;
-                                    } else {
-                                        hour1X = xArray[newHour1];
-                                    }
-
-                                    if (heightArray[newHour1] > maxHeight) {
-                                        hour1Y = yArray[newHour1] + (heightArray[newHour1] - maxHeight) / 2.0;
-                                    } else {
-                                        hour1Y = yArray[newHour1];
-                                    }
-
-                                    hour1Width = widthArray[newHour1];
-                                    hour1Height = heightArray[newHour1];
-                                    hour1Step = 0.0;
-                                    oldHour1 = newHour1;
-                                }
-
-                                renderDigit(element, image, newHour1, hour1X, hour1Y, hour1Width, hour1Height, hour1Step);
-                            } else if (i % 14 === 10 && (newMinute2 !== oldMinute2 || updateRequired)) {
-                                minute2Step += 1 / (frameRate / 2);
-
-                                if (minute2Step >= 1) {
-                                    if (widthArray[newMinute2] > maxWidth) {
-                                        minute2X = xArray[newMinute2] + (widthArray[newMinute2] - maxWidth) / 2.0;
-                                    } else {
-                                        minute2X = xArray[newMinute2];
-                                    }
-
-                                    if (heightArray[newMinute2] > maxHeight) {
-                                        minute2Y = yArray[newMinute2] + (heightArray[newMinute2] - maxHeight) / 2.0;
-                                    } else {
-                                        minute2Y = yArray[newMinute2];
-                                    }
-
-                                    minute2Width = widthArray[newMinute2];
-                                    minute2Height = heightArray[newMinute2];
-                                    minute2Step = 0.0;
-                                    oldMinute2 = newMinute2;
-                                }
-
-                                renderDigit(element, image, newMinute2, minute2X, minute2Y, minute2Width, minute2Height, minute2Step);
-                            } else if (i % 14 === 11 && (newMinute1 !== oldMinute1 || updateRequired)) {
-                                minute1Step += 1 / (frameRate / 2);
-
-                                if (minute1Step >= 1) {
-                                    if (widthArray[newMinute1] > maxWidth) {
-                                        minute1X = xArray[newMinute1] + (widthArray[newMinute1] - maxWidth) / 2.0;
-                                    } else {
-                                        minute1X = xArray[newMinute1];
-                                    }
-
-                                    if (heightArray[newMinute1] > maxHeight) {
-                                        minute1Y = yArray[newMinute1] + (heightArray[newMinute1] - maxHeight) / 2.0;
-                                    } else {
-                                        minute1Y = yArray[newMinute1];
-                                    }
-
-                                    minute1Width = widthArray[newMinute1];
-                                    minute1Height = heightArray[newMinute1];
-                                    minute1Step = 0.0;
-                                    oldMinute1 = newMinute1;
-                                }
-
-                                renderDigit(element, image, newMinute1, minute1X, minute1Y, minute1Width, minute1Height, minute1Step);
-                            } else if (i % 14 === 12 && (newSecond2 !== oldSecond2 || updateRequired)) {
-                                second2Step += 1 / (frameRate / 2);
-
-                                if (second2Step >= 1) {
-                                    if (widthArray[newSecond2] > maxWidth) {
-                                        second2X = xArray[newSecond2] + (widthArray[newSecond2] - maxWidth) / 2.0;
-                                    } else {
-                                        second2X = xArray[newSecond2];
-                                    }
-
-                                    if (heightArray[newSecond2] > maxHeight) {
-                                        second2Y = yArray[newSecond2] + (heightArray[newSecond2] - maxHeight) / 2.0;
-                                    } else {
-                                        second2Y = yArray[newSecond2];
-                                    }
-
-                                    second2Width = widthArray[newSecond2];
-                                    second2Height = heightArray[newSecond2];
-                                    second2Step = 0.0;
-                                    oldSecond2 = newSecond2;
-                                }
-
-                                renderDigit(element, image, newSecond2, second2X, second2Y, second2Width, second2Height, second2Step);
-                            } else if (i % 14 === 13 && (newSecond1 !== oldSecond1 || updateRequired)) {
-                                second1Step += 1 / (frameRate / 2);
-
-                                if (second1Step >= 1) {
-                                    if (widthArray[newSecond1] > maxWidth) {
-                                        second1X = xArray[newSecond1] + (widthArray[newSecond1] - maxWidth) / 2.0;
-                                    } else {
-                                        second1X = xArray[newSecond1];
-                                    }
-
-                                    if (heightArray[newSecond1] > maxHeight) {
-                                        second1Y = yArray[newSecond1] + (heightArray[newSecond1] - maxHeight) / 2.0;
-                                    } else {
-                                        second1Y = yArray[newSecond1];
-                                    }
-
-                                    second1Width = widthArray[newSecond1];
-                                    second1Height = heightArray[newSecond1];
-                                    second1Step = 0.0;
-                                    oldSecond1 = newSecond1;
-                                }
-
-                                renderDigit(element, image, newSecond1, second1X, second1Y, second1Width, second1Height, second1Step);
+                                i++;
                             }
                         }
-
-                        i++;
                     }
                 }
 
@@ -1366,312 +1043,302 @@
 
             render();
 
-            setTimeout(function tick() {
-                async function update(data) {
-                    let dataURL = null;
+            async function update(data) {
+                let dataURL = null;
 
-                    animation = data.frames;
+                try {
+                    const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png");
 
-                    try {
-                        const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${String(Math.trunc(window.devicePixelRatio))}x.png` : "images/Background.png");
+                    if (response.ok) {
+                        dataURL = await new Promise(async (resolve, reject) => {
+                            const reader = new FileReader();
 
-                        if (response.ok) {
-                            dataURL = await new Promise(async (resolve, reject) => {
-                                const reader = new FileReader();
-
-                                reader.onload = () => {
-                                    resolve(reader.result);
-                                };
-                                reader.onerror = () => {
-                                    reject(reader.error);
-                                };
-                                reader.readAsDataURL(await response.blob());
-                            });
-                        }
-                    } catch (error) {
-                        console.error(error);
+                            reader.onload = () => {
+                                resolve(reader.result);
+                            };
+                            reader.onerror = () => {
+                                reject(reader.error);
+                            };
+                            reader.readAsDataURL(await response.blob());
+                        });
                     }
+                } catch (error) {
+                    console.error(error);
+                }
 
-                    for (const frame of document.body.querySelectorAll("#container > .wrap > .frame")) {
-                        let updateRequired = false;
+                for (const frame of document.body.querySelectorAll("#container > .wrap > .frame")) {
+                    let updateRequired = false;
 
-                        for (const credits of frame.querySelectorAll(":scope > div.credits")) {
-                            const link = credits.querySelector(":scope > a");
+                    for (const credits of frame.querySelectorAll(":scope > div.credits")) {
+                        const link = credits.querySelector(":scope > a");
 
-                            if (link.dataset["name"] === data.name) {
-                                if (link.href !== data.url) {
-                                    link.href = data.url;
-                                }
-                            } else {
-                                credits.animate([
-                                    {
-                                        opacity: "0"
-                                    }
-                                ], {
-                                    fill: "forwards",
-                                    duration: 500,
-                                    iterations: 1,
-                                    easing: "ease-in"
-                                }).onfinish = () => {
-                                    credits.remove();
-                                };
-
-                                updateRequired = true;
+                        if (link.dataset["name"] === data.name) {
+                            if (link.href !== data.url) {
+                                link.href = data.url;
                             }
-                        }
-
-                        if (updateRequired) {
-                            const creditsElement = document.createElement("div");
-                            const linkElement = document.createElement("a");
-                            const clipElement = document.createElement("div");
-                            const scrollableElement = document.createElement("div");
-                            const contentElement1 = document.createElement("div");
-                            const contentElement2 = document.createElement("div");
-
-                            creditsElement.className = "credits";
-                            creditsElement.style.opacity = "0";
-                            linkElement.href = data.url;
-                            linkElement.dataset["name"] = data.name;
-                            clipElement.className = "clip";
-                            scrollableElement.className = "scrollable";
-                            contentElement1.innerText = contentElement2.innerText = data.name;
-
-                            frame.appendChild(creditsElement);
-                            creditsElement.appendChild(linkElement);
-                            linkElement.appendChild(clipElement);
-                            clipElement.appendChild(scrollableElement);
-                            scrollableElement.appendChild(contentElement1);
-                            scrollableElement.appendChild(contentElement2);
-
-                            creditsElement.animate([
+                        } else {
+                            credits.animate([
                                 {
-                                    opacity: "1"
+                                    opacity: "0"
                                 }
                             ], {
                                 fill: "forwards",
                                 duration: 500,
                                 iterations: 1,
-                                easing: "ease-out"
+                                easing: "ease-in"
                             }).onfinish = () => {
-                                creditsElement.style.opacity = 1;
+                                credits.remove();
                             };
+
+                            updateRequired = true;
                         }
                     }
 
-                    const elements = document.body.querySelectorAll("div.digit > canvas.digit");
-                    let count = 0;
+                    if (updateRequired) {
+                        const creditsElement = document.createElement("div");
+                        const linkElement = document.createElement("a");
+                        const clipElement = document.createElement("div");
+                        const scrollableElement = document.createElement("div");
+                        const contentElement1 = document.createElement("div");
+                        const contentElement2 = document.createElement("div");
 
-                    for (const element of elements) {
-                        const loadingElement = document.createElement("div");
+                        creditsElement.className = "credits";
+                        creditsElement.style.opacity = "0";
+                        linkElement.href = data.url;
+                        linkElement.dataset["name"] = data.name;
+                        clipElement.className = "clip";
+                        scrollableElement.className = "scrollable";
+                        contentElement1.innerText = contentElement2.innerText = data.name;
 
-                        loadingElement.className = "loading";
-                        loadingElement.style.width = `${maxWidth}px`;
-                        loadingElement.style.height = `${maxHeight}px`;
-                        loadingElement.style.backgroundImage = dataURL === null ? "" : `url(${dataURL})`;
-                        loadingElement.style.transform = "translate3d(0px, 100%, 0)";
+                        frame.appendChild(creditsElement);
+                        creditsElement.appendChild(linkElement);
+                        linkElement.appendChild(clipElement);
+                        clipElement.appendChild(scrollableElement);
+                        scrollableElement.appendChild(contentElement1);
+                        scrollableElement.appendChild(contentElement2);
 
-                        element.parentElement.parentElement.appendChild(loadingElement);
-
-                        loadingElement.animate([
+                        creditsElement.animate([
                             {
-                                transform: "translate3d(0px, 0%, 0)"
+                                opacity: "1"
                             }
                         ], {
                             fill: "forwards",
                             duration: 500,
                             iterations: 1,
                             easing: "ease-out"
-                        }).onfinish = async () => {
-                            element.parentElement.style.visibility = "hidden";
-                            loadingElement.style.transform = "translate3d(0px, 0%, 0)";
-                            count++;
-
-                            if (count === elements.length) {
-                                for (const frame of data.frames) {
-                                    const timestamp = Math.floor(new Date() / 1000);
-                                    const timeout = 60 * 60;
-
-                                    if (frame.source in cache === false || timestamp - cache[frame.source].timestamp >= timeout) {
-                                        try {
-                                            cache[frame.source] = {
-                                                image: await new Promise((resolve, reject) => {
-                                                    const image = new Image();
-
-                                                    image.onload = () => {
-                                                        resolve(image);
-                                                    };
-                                                    image.onerror = (error) => {
-                                                        reject(error);
-                                                    };
-                                                    image.src = frame.source
-                                                }), timestamp: timestamp
-                                            };
-                                        } catch (error) {
-                                            delete cache[frame.source];
-
-                                            console.error(error);
-                                        }
-                                    }
-                                }
-
-                                if (data.frames[0].source in cache) {
-                                    let index = 0;
-
-                                    for (let i = 0; i < data.frames[0].digits.length; i++) {
-                                        if (xArray[i] !== data.frames[0].digits[i][0]) {
-                                            xArray[i] = data.frames[0].digits[i][0];
-                                        }
-
-                                        if (yArray[i] !== data.frames[0].digits[i][1]) {
-                                            yArray[i] = data.frames[0].digits[i][1];
-                                        }
-
-                                        if (widthArray[i] !== data.frames[0].digits[i][2]) {
-                                            widthArray[i] = data.frames[0].digits[i][2];
-                                        }
-
-                                        if (heightArray[i] !== data.frames[0].digits[i][3]) {
-                                            heightArray[i] = data.frames[0].digits[i][3];
-                                        }
-                                    }
-
-                                    for (const canvas of elements) {
-                                        const context = canvas.getContext("2d");
-                                        const e = canvas.parentElement.parentElement.querySelector(":scope > div.loading");
-                                        const image = cache[data.frames[0].source].image;
-
-                                        canvas.width = image.width;
-                                        canvas.height = image.height;
-
-                                        context.clearRect(0, 0, canvas.width, canvas.height);
-                                        context.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
-
-                                        if (index === 0) {
-                                            oldYear4 = -1;
-                                            year4X = day2Y = 0.0;
-                                            year4Width = maxWidth;
-                                            year4Height = maxHeight;
-                                            year4Step = 0.0;
-                                        } else if (index === 1) {
-                                            oldYear3 = -1;
-                                            year3X = month3Y = 0.0;
-                                            year3Width = maxWidth;
-                                            year3Height = maxHeight;
-                                            year3Step = 0.0;
-                                        } else if (index === 2) {
-                                            oldYear2 = -1;
-                                            year2X = day2Y = 0.0;
-                                            year2Width = maxWidth;
-                                            year2Height = maxHeight;
-                                            year2Step = 0.0;
-                                        } else if (index === 3) {
-                                            oldYear1 = -1;
-                                            year1X = month1Y = 0.0;
-                                            year1Width = maxWidth;
-                                            year1Height = maxHeight;
-                                            year1Step = 0.0;
-                                        } else if (index === 4) {
-                                            oldMonth2 = -1;
-                                            month2X = day2Y = 0.0;
-                                            month2Width = maxWidth;
-                                            month2Height = maxHeight;
-                                            month2Step = 0.0;
-                                        } else if (index === 5) {
-                                            oldMonth1 = -1;
-                                            month1X = month1Y = 0.0;
-                                            month1Width = maxWidth;
-                                            month1Height = maxHeight;
-                                            month1Step = 0.0;
-                                        } else if (index === 6) {
-                                            oldDay2 = -1;
-                                            day2X = day2Y = 0.0;
-                                            day2Width = maxWidth;
-                                            day2Height = maxHeight;
-                                            day2Step = 0.0;
-                                        } else if (index === 7) {
-                                            oldDay1 = -1;
-                                            day1X = day1Y = 0.0;
-                                            day1Width = maxWidth;
-                                            day1Height = maxHeight;
-                                            day1Step = 0.0;
-                                        } else if (index === 8) {
-                                            hour2X = hour2Y = 0.0;
-                                            hour2Width = maxWidth;
-                                            hour2Height = maxHeight;
-                                            hour2Step = 0.0;
-                                        } else if (index === 9) {
-                                            oldHour1 = -1;
-                                            hour1X = hour1Y = 0.0;
-                                            hour1Width = maxWidth;
-                                            hour1Height = maxHeight;
-                                            hour1Step = 0.0;
-                                            oldHour2 = -1;
-                                        } else if (index === 10) {
-                                            oldMinute2 = -1;
-                                            minute2X = minute2Y = 0.0;
-                                            minute2Width = maxWidth;
-                                            minute2Height = maxHeight;
-                                            minute2Step = 0.0;
-                                        } else if (index === 11) {
-                                            oldMinute1 = -1;
-                                            minute1X = minute1Y = 0.0;
-                                            minute1Width = maxWidth;
-                                            minute1Height = maxHeight;
-                                            minute1Step = 0.0;
-                                        } else if (index === 12) {
-                                            oldSecond2 = -1;
-                                            second2X = second2Y = 0.0;
-                                            second2Width = maxWidth;
-                                            second2Height = maxHeight;
-                                            second2Step = 0.0;
-                                        } else if (index === 13) {
-                                            oldSecond1 = -1;
-                                            second1X = second1Y = 0.0;
-                                            second1Width = maxWidth;
-                                            second1Height = maxHeight;
-                                            second1Step = 0.0;
-                                        }
-
-                                        canvas.parentElement.style.visibility = "visible";
-                                        e.animate([
-                                            {
-                                                transform: "translate3d(0px, -100%, 0)"
-                                            }
-                                        ], {
-                                            fill: "forwards",
-                                            duration: 500,
-                                            iterations: 1,
-                                            easing: "ease-in"
-                                        }).onfinish = () => {
-                                            e.remove();
-                                        };
-
-                                        index++;
-                                    }
-                                } else {
-                                    for (const canvas of elements) {
-                                        const e = canvas.parentElement.parentElement.querySelector(":scope > div.loading");
-
-                                        canvas.parentElement.style.visibility = "visible";
-                                        e.animate([
-                                            {
-                                                transform: "translate3d(0px, -100%, 0)"
-                                            }
-                                        ], {
-                                            fill: "forwards",
-                                            duration: 500,
-                                            iterations: 1,
-                                            easing: "ease-in"
-                                        }).onfinish = () => {
-                                            e.remove();
-                                        };
-                                    }
-                                }
-                            }
+                        }).onfinish = () => {
+                            creditsElement.style.opacity = 1;
                         };
                     }
                 }
 
+                const elements = document.body.querySelectorAll("div.digit > div.wrap > canvas.digit");
+                let count = 0;
+
+                for (const element of elements) {
+                    const loadingElement = document.createElement("div");
+
+                    loadingElement.className = "loading";
+                    loadingElement.style.width = `${maxWidth}px`;
+                    loadingElement.style.height = `${maxHeight}px`;
+                    loadingElement.style.backgroundImage = dataURL === null ? "" : `url(${dataURL})`;
+                    loadingElement.style.transform = "translate3d(0px, 100%, 0)";
+
+                    element.parentElement.parentElement.parentElement.appendChild(loadingElement);
+
+                    loadingElement.animate([
+                        {
+                            transform: "translate3d(0px, 0%, 0)"
+                        }
+                    ], {
+                        fill: "forwards",
+                        duration: 500,
+                        iterations: 1,
+                        easing: "ease-out"
+                    }).onfinish = async () => {
+                        element.parentElement.parentElement.style.visibility = "hidden";
+                        loadingElement.style.transform = "translate3d(0px, 0%, 0)";
+                        count++;
+
+                        if (count === elements.length) {
+                            for (const frame of data.frames) {
+                                const timestamp = Math.floor(new Date() / 1000);
+                                const timeout = 60 * 60;
+
+                                if (frame.source in cache === false || timestamp - cache[frame.source].timestamp >= timeout) {
+                                    try {
+                                        cache[frame.source] = {
+                                            image: await new Promise((resolve, reject) => {
+                                                const image = new Image();
+
+                                                image.onload = () => {
+                                                    resolve(image);
+                                                };
+                                                image.onerror = (error) => {
+                                                    reject(error);
+                                                };
+                                                image.src = frame.source
+                                            }), timestamp: timestamp
+                                        };
+                                    } catch (error) {
+                                        delete cache[frame.source];
+
+                                        console.error(error);
+                                    }
+                                }
+                            }
+
+                            if (data.frames[0].source in cache) {
+                                let index = 0;
+
+                                for (let i = 0; i < data.frames[0].digits.length; i++) {
+                                    if (xArray[i] !== data.frames[0].digits[i][0]) {
+                                        xArray[i] = data.frames[0].digits[i][0];
+                                    }
+
+                                    if (yArray[i] !== data.frames[0].digits[i][1]) {
+                                        yArray[i] = data.frames[0].digits[i][1];
+                                    }
+
+                                    if (widthArray[i] !== data.frames[0].digits[i][2]) {
+                                        widthArray[i] = data.frames[0].digits[i][2];
+                                    }
+
+                                    if (heightArray[i] !== data.frames[0].digits[i][3]) {
+                                        heightArray[i] = data.frames[0].digits[i][3];
+                                    }
+                                }
+
+                                for (const canvas of elements) {
+                                    const context = canvas.getContext("2d");
+                                    const e = canvas.parentElement.parentElement.parentElement.querySelectorAll("div.loading");
+                                    const image = cache[data.frames[0].source].image;
+
+                                    canvas.width = image.width;
+                                    canvas.height = image.height;
+
+                                    context.clearRect(0, 0, canvas.width, canvas.height);
+                                    context.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
+
+                                    if (index === 0) {
+                                        oldYear4 = -1;
+                                        year4X = day2Y = 0.0;
+                                        year4Width = maxWidth;
+                                        year4Height = maxHeight;
+                                        year4Step = 0.0;
+                                    } else if (index === 1) {
+                                        oldYear3 = -1;
+                                        year3X = month3Y = 0.0;
+                                        year3Width = maxWidth;
+                                        year3Height = maxHeight;
+                                        year3Step = 0.0;
+                                    } else if (index === 2) {
+                                        oldYear2 = -1;
+                                        year2X = day2Y = 0.0;
+                                        year2Width = maxWidth;
+                                        year2Height = maxHeight;
+                                        year2Step = 0.0;
+                                    } else if (index === 3) {
+                                        oldYear1 = -1;
+                                        year1X = month1Y = 0.0;
+                                        year1Width = maxWidth;
+                                        year1Height = maxHeight;
+                                        year1Step = 0.0;
+                                    } else if (index === 4) {
+                                        oldMonth2 = -1;
+                                        month2X = day2Y = 0.0;
+                                        month2Width = maxWidth;
+                                        month2Height = maxHeight;
+                                        month2Step = 0.0;
+                                    } else if (index === 5) {
+                                        oldMonth1 = -1;
+                                        month1X = month1Y = 0.0;
+                                        month1Width = maxWidth;
+                                        month1Height = maxHeight;
+                                        month1Step = 0.0;
+                                    } else if (index === 6) {
+                                        oldDay2 = -1;
+                                        day2X = day2Y = 0.0;
+                                        day2Width = maxWidth;
+                                        day2Height = maxHeight;
+                                        day2Step = 0.0;
+                                    } else if (index === 7) {
+                                        oldDay1 = -1;
+                                        day1X = day1Y = 0.0;
+                                        day1Width = maxWidth;
+                                        day1Height = maxHeight;
+                                        day1Step = 0.0;
+                                    } else if (index === 8) {
+                                        hour2X = hour2Y = 0.0;
+                                        hour2Width = maxWidth;
+                                        hour2Height = maxHeight;
+                                        hour2Step = 0.0;
+                                    } else if (index === 9) {
+                                        oldHour1 = -1;
+                                        hour1X = hour1Y = 0.0;
+                                        hour1Width = maxWidth;
+                                        hour1Height = maxHeight;
+                                        hour1Step = 0.0;
+                                        oldHour2 = -1;
+                                    } else if (index === 10) {
+                                        oldMinute2 = -1;
+                                        minute2X = minute2Y = 0.0;
+                                        minute2Width = maxWidth;
+                                        minute2Height = maxHeight;
+                                        minute2Step = 0.0;
+                                    } else if (index === 11) {
+                                        oldMinute1 = -1;
+                                        minute1X = minute1Y = 0.0;
+                                        minute1Width = maxWidth;
+                                        minute1Height = maxHeight;
+                                        minute1Step = 0.0;
+                                    } else if (index === 12) {
+                                        oldSecond2 = -1;
+                                        second2X = second2Y = 0.0;
+                                        second2Width = maxWidth;
+                                        second2Height = maxHeight;
+                                        second2Step = 0.0;
+                                    } else if (index === 13) {
+                                        oldSecond1 = -1;
+                                        second1X = second1Y = 0.0;
+                                        second1Width = maxWidth;
+                                        second1Height = maxHeight;
+                                        second1Step = 0.0;
+                                    }
+
+                                    index++;
+                                }
+
+                                animation = data.frames;
+                                frameStep = null;
+                            }
+
+                            for (const element1 of document.body.querySelectorAll("div.digit")) {
+                                element1.style.visibility = "visible";
+
+                                for (const element2 of element1.parentElement.querySelectorAll(":scope > div.loading")) {
+                                    element2.animate([
+                                        {
+                                            transform: "translate3d(0px, -100%, 0)"
+                                        }
+                                    ], {
+                                        fill: "forwards",
+                                        duration: 500,
+                                        iterations: 1,
+                                        easing: "ease-in"
+                                    }).onfinish = () => {
+                                        element2.remove();
+                                    };
+                                }
+                            }
+                        }
+                    };
+                }
+            }
+
+            update(data);
+
+            setTimeout(function tick() {
                 if (clocks.length > 1) {
                     if (!isLocked) {
                         if (clockQueue.length === 0) {
