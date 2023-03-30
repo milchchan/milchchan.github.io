@@ -21,6 +21,7 @@
   "homepage": "https://milchchan.com/",
   "devDependencies": {
     "mocha": "^10.2.0",
+    "sass": "^1.60.0",
     "sinon": "^15.0.2",
     "vite": "^4.2.0"
   }
