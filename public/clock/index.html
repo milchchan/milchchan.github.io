@@ -612,22 +612,7 @@
             }
 
             function resetDigit(index, x, y, width, height, step) {
-                if (widthArray[index] > maxWidth) {
-                    x = x + (xArray[index] + (widthArray[index] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI);
-                } else {
-                    x = x + (xArray[index] - x) * Math.sin(step / 2.0 * Math.PI);
-                }
-
-                if (heightArray[index] > maxHeight) {
-                    y = y + (yArray[index] + (heightArray[index] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI);
-                } else {
-                    y = y + (yArray[index] - y) * Math.sin(step / 2.0 * Math.PI);
-                }
-
-                width = width + (widthArray[index] - width) * Math.sin(step / 2.0 * Math.PI);
-                height = height + (heightArray[index] - height) * Math.sin(step / 2.0 * Math.PI);
-
-                return [x, y, width, height];
+                return [widthArray[index] > maxWidth ? x + (xArray[index] + (widthArray[index] - maxWidth) / 2.0 - x) * Math.sin(step / 2.0 * Math.PI) : x + (xArray[index] - x) * Math.sin(step / 2.0 * Math.PI), heightArray[index] > maxHeight ? y + (yArray[index] + (heightArray[index] - maxHeight) / 2.0 - y) * Math.sin(step / 2.0 * Math.PI) : y + (yArray[index] - y) * Math.sin(step / 2.0 * Math.PI), width + (widthArray[index] - width) * Math.sin(step / 2.0 * Math.PI), height + (heightArray[index] - height) * Math.sin(step / 2.0 * Math.PI)];
             }
 
             for (const factor of split) {
