@@ -2,7 +2,6 @@
   {
     "name": "milchchan.com",
     "url": "https://milchchan.com/",
-    "source": "images/Digits1.png",
     "color": "#ffffff",
     "frames": [
       {
@@ -22,7 +21,7 @@
         ]
       },
       {
-        "delay": 0.25,
+        "delay": 0.2,
         "source": "images/Digits1.png",
         "digits": [
           [3258, 32, 324, 576],
@@ -38,7 +37,23 @@
         ]
       },
       {
-        "delay": 0.25,
+        "delay": 0.2,
+        "source": "images/Digits1.png",
+        "digits": [
+          [3222, -32, 396, 704],
+          [2862, -32, 396, 704],
+          [2502, -32, 396, 704],
+          [2142, -32, 396, 704],
+          [1782, -32, 396, 704],
+          [1422, -32, 396, 704],
+          [1062, -32, 396, 704],
+          [702, -32, 396, 704],
+          [342, -32, 396, 704],
+          [-18, -32, 396, 704]
+        ]
+      },
+      {
+        "delay": 0.1,
         "source": "images/Digits1.png",
         "digits": [
           [3240, 0, 360, 640],
@@ -58,7 +73,6 @@
   {
     "name": "milchchan.com",
     "url": "https://milchchan.com/",
-    "source": "images/Digits2.png",
     "color": "#ffffff",
     "frames": [
       {
@@ -78,7 +92,7 @@
         ]
       },
       {
-        "delay": 0.25,
+        "delay": 0.2,
         "source": "images/Digits2.png",
         "digits": [
           [3258, 32, 324, 576],
@@ -94,7 +108,23 @@
         ]
       },
       {
-        "delay": 0.25,
+        "delay": 0.2,
+        "source": "images/Digits2.png",
+        "digits": [
+          [3222, -32, 396, 704],
+          [2862, -32, 396, 704],
+          [2502, -32, 396, 704],
+          [2142, -32, 396, 704],
+          [1782, -32, 396, 704],
+          [1422, -32, 396, 704],
+          [1062, -32, 396, 704],
+          [702, -32, 396, 704],
+          [342, -32, 396, 704],
+          [-18, -32, 396, 704]
+        ]
+      },
+      {
+        "delay": 0.1,
         "source": "images/Digits2.png",
         "digits": [
           [3240, 0, 360, 640],
