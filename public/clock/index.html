@@ -63,6 +63,10 @@
             font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
         }
 
+        .is-hidden {
+            display: none;
+        }
+
         #container {
             position: absolute;
             overflow: hidden;
@@ -469,7 +473,7 @@
         let isLocked = false;
         let isTouching = false;
         let tapCount = 0;
-        let clocks = [{ source: "images/Digits1.png", digits: digits }, { source: "images/Digits2.png", digits: digits }];
+        let clocks = [{ frames: { delay: 0.5, source: "images/Digits1.png", digits: digits } }, { frames: { delay: 0.5, source: "images/Digits2.png", digits: digits } }];
         const status = { locks: [], unlocks: [] };
 
         function shuffle(array) {
@@ -498,7 +502,9 @@
         }
 
         window.addEventListener("load", async event => {
-            const isDebug = decodeURIComponent(window.location.hash.substring(1)) === "debug";
+            const hash = decodeURIComponent(window.location.hash.substring(1));
+            const isDebug = hash === "debug";
+            const isNologo = hash === "nologo";
             const width = (maxWidth + space) * 14;
             const sum = split.reduce((x, y) => x + Number(y), 0);
             const container = document.body.querySelector("#container");
@@ -707,10 +713,14 @@
                 lockIconElement.className = "fa-solid fa-lock";
                 unlockIconElement.className = "fa-solid fa-unlock";
 
+                if (isNologo) {
+                    creditsElement.classList.add("is-hidden");
+                }
+
                 if (isLocked) {
-                    lockElement.className = `${lockElement.className} is-active`;
+                    lockElement.classList.add("is-active");
                 } else {
-                    unlockElement.className = `${unlockElement.className} is-active`;
+                    unlockElement.classList.add("is-active");
                 }
 
                 lockElement.appendChild(lockIconElement);
@@ -729,7 +739,8 @@
                 fps.targets.push(counterElement);
 
                 if (isDebug) {
-                    statusElement.className = statsElement.className = "is-active";
+                    statusElement.classList.add("is-active");
+                    statsElement.className.add("is-active");
                 }
 
                 statsElement.appendChild(counterElement);
@@ -1467,19 +1478,19 @@
 
                 if (isLocked) {
                     for (const element of status.locks) {
-                        element.className = `${element.className} is-active`;
+                        element.classList.add("is-active");
                     }
 
                     for (const element of status.unlocks) {
-                        element.className = element.className.replace(/is-active/g, "").trim();
+                        element.classList.remove("is-active");
                     }
                 } else {
                     for (const element of status.locks) {
-                        element.className = element.className.replace(/is-active/g, "").trim();
+                        element.classList.remove("is-active");
                     }
 
                     for (const element of status.unlocks) {
-                        element.className = `${element.className} is-active`;
+                        element.classList.add("is-active");
                     }
                 }
             }
@@ -1498,19 +1509,19 @@
 
                 if (isLocked) {
                     for (const element of status.locks) {
-                        element.className = `${element.className} is-active`;
+                        element.classList.add("is-active");
                     }
 
                     for (const element of status.unlocks) {
-                        element.className = element.className.replace(/is-active/g, "").trim();
+                        element.classList.remove("is-active");
                     }
                 } else {
                     for (const element of status.locks) {
-                        element.className = element.className.replace(/is-active/g, "").trim();
+                        element.classList.remove("is-active");
                     }
 
                     for (const element of status.unlocks) {
-                        element.className = `${element.className} is-active`;
+                        element.classList.add("is-active");
                     }
                 }
 
