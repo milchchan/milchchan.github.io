@@ -13,7 +13,6 @@
 
 html {
     touch-action: none;
-    -webkit-touch-callout: none;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -171,6 +170,7 @@ figure {
 }
 
 .wall {
+    user-select: none;
     position: absolute;
     margin: 0;
     padding: 0;
