@@ -189,12 +189,14 @@ figure {
 
 .wall.dragging {
     opacity: 0.5;
+    user-select: none;
     transition: .5s ease-in;
 }
 
 
 .wall::before {
     z-index: -1;
+    user-select: none;
     pointer-events: none;
     position: absolute;
     opacity: 1;
