@@ -826,7 +826,6 @@
 
                 if (timestamp > previousTime) {
                     const deltaTime = (timestamp - previousTime) / 1000;
-                    const frameRate = 1 / deltaTime;
                     let image = null;
                     const date = new Date();
                     const newSecond1 = date.getSeconds() % 10;
