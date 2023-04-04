@@ -1679,7 +1679,7 @@ window.addEventListener("load", async event => {
                 if (tracker.active) {
                   tracker.edge = true;
                 } else if (!tracker.edge) {
-                  tracker.velocity.y *= -1;
+                  tracker.velocity.x *= -1;
                 }
 
                 tracker.movement.x = insetLeft;
@@ -1687,7 +1687,7 @@ window.addEventListener("load", async event => {
                 if (tracker.active) {
                   tracker.edge = true;
                 } else if (!tracker.edge) {
-                  tracker.velocity.y *= -1;
+                  tracker.velocity.x *= -1;
                 }
 
                 tracker.movement.x = insetRight;
