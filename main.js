@@ -4,7 +4,7 @@ import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytes
 import { initializeAnalytics } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-analytics.js";
 
 const background = { updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
-const tracker = { active: false, touching: false, edge: true, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
+const tracker = { active: false, identifier: null, edge: true, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const firebaseConfig = {
   apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
   authDomain: "auth.milchchan.com",
@@ -1736,7 +1736,7 @@ window.addEventListener("resize", event => {
   canvas.style.height = `${rect.height}px`;
 });
 window.addEventListener("mousedown", event => {
-  if (event.button === 0 && !tracker.touching) {
+  if (event.button === 0 && tracker.identifier === null) {
     const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
     const x = event.clientX - rect.x;
     const y = event.clientY - rect.y;
@@ -1756,7 +1756,7 @@ window.addEventListener("mousedown", event => {
   }
 });
 window.addEventListener("mousemove", event => {
-  if (tracker.active && !tracker.touching) {
+  if (tracker.active && tracker.identifier === null) {
     const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
     const x = event.clientX - rect.x;
     const y = event.clientY - rect.y;
@@ -1772,8 +1772,8 @@ window.addEventListener("mousemove", event => {
     tracker.movement.y += deltaY;
 
     if (deltaTime > 0) {
-      tracker.velocity.x = deltaX / deltaTime;
-      tracker.velocity.y = deltaY / deltaTime;
+      tracker.velocity.x = Math.max(Math.min(deltaX / deltaTime, 1000), -1000);
+      tracker.velocity.y = Math.max(Math.min(deltaY / deltaTime, 1000), -1000);
     }
 
     if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
@@ -1784,7 +1784,7 @@ window.addEventListener("mousemove", event => {
   }
 });
 window.addEventListener("mouseup", event => {
-  if (event.button === 0 && !tracker.touching) {
+  if (event.button === 0 && tracker.identifier === null) {
     tracker.active = false;
   }
 });
@@ -1797,7 +1797,7 @@ window.addEventListener("touchstart", event => {
   const timestamp = event.timeStamp / 1000;
 
   tracker.active = true;
-  tracker.touching = true;
+  tracker.identifier = event.changedTouches[0].identifier;
   tracker.position.x = x;
   tracker.position.y = y;
   tracker.timestamp = timestamp;
@@ -1812,28 +1812,34 @@ window.addEventListener("touchstart", event => {
 window.addEventListener("touchmove", event => {
   event.stopPropagation();
 
-  const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
-  const x = event.changedTouches[0].clientX - rect.x;
-  const y = event.changedTouches[0].clientY - rect.y;
-  const timestamp = event.timeStamp / 1000;
-  const deltaX = x - tracker.position.x;
-  const deltaY = y - tracker.position.y;
-  const deltaTime = timestamp - tracker.timestamp;
+  for (const touch of event.changedTouches) {
+    if (touch.identifier === tracker.identifier) {
+      const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
+      const x = touch.clientX - rect.x;
+      const y = touch.clientY - rect.y;
+      const timestamp = event.timeStamp / 1000;
+      const deltaX = x - tracker.position.x;
+      const deltaY = y - tracker.position.y;
+      const deltaTime = timestamp - tracker.timestamp;
 
-  tracker.position.x = x;
-  tracker.position.y = y;
-  tracker.timestamp = timestamp;
-  tracker.movement.x += deltaX;
-  tracker.movement.y += deltaY;
+      tracker.position.x = x;
+      tracker.position.y = y;
+      tracker.timestamp = timestamp;
+      tracker.movement.x += deltaX;
+      tracker.movement.y += deltaY;
 
-  if (deltaTime > 0) {
-    tracker.velocity.x = deltaX / deltaTime;
-    tracker.velocity.y = deltaY / deltaTime;
-  }
+      if (deltaTime > 0) {
+        tracker.velocity.x = Math.max(Math.min(deltaX / deltaTime, 1000), -1000);
+        tracker.velocity.y = Math.max(Math.min(deltaY / deltaTime, 1000), -1000);
+      }
 
-  if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
-    for (let i = random(0, 4); i > 0; i--) {
-      background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
+      if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+        for (let i = random(0, 4); i > 0; i--) {
+          background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
+        }
+      }
+
+      break;
     }
   }
 });
@@ -1841,11 +1847,11 @@ window.addEventListener("touchend", event => {
   event.stopPropagation();
 
   tracker.active = false;
-  tracker.touching = false;
+  tracker.identifier = null;
 });
 window.addEventListener("touchcancel", event => {
   event.stopPropagation();
 
   tracker.active = false;
-  tracker.touching = false;
+  tracker.identifier = null;
 });
