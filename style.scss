@@ -59,6 +59,8 @@ label {
         transition: .5s ease-in;
 
         >div {
+            -webkit-user-select: none;
+            user-select: none;
             box-sizing: content-box;
             vertical-align: middle;
         }
@@ -170,6 +172,7 @@ figure {
 }
 
 .wall {
+    -webkit-user-select: none;
     user-select: none;
     position: absolute;
     margin: 0;
@@ -188,7 +191,6 @@ figure {
 }
 
 .wall.dragging {
-    user-select: none;
     opacity: 0.5;
     transition: .5s ease-in;
 }
@@ -196,7 +198,6 @@ figure {
 
 .wall::before {
     z-index: -1;
-    user-select: none;
     pointer-events: none;
     position: absolute;
     opacity: 1;
@@ -275,6 +276,7 @@ figure {
 }
 
 div.sidebar {
+    -webkit-user-select: none;
     user-select: none;
     position: relative;
     padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) calc(env(safe-area-inset-left, 0px) + 0px);
@@ -613,6 +615,7 @@ div.sidebar {
 }
 
 div.center {
+    -webkit-user-select: none;
     user-select: none;
     position: absolute;
     bottom: 50%;
@@ -624,6 +627,7 @@ div.center {
 }
 
 div.remarks {
+    -webkit-user-select: none;
     user-select: none;
     position: absolute;
     top: 16px;
@@ -707,6 +711,7 @@ div.remarks {
 }
 
 #stats {
+    -webkit-user-select: none;
     user-select: none;
     display: flex;
     position: absolute;
