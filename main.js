@@ -617,6 +617,8 @@ window.addEventListener("load", async event => {
   const stats = document.createElement("div");
   const canvas = document.createElement("canvas");
   const rect = wall.getBoundingClientRect();
+  const width = Math.floor(rect.width);
+  const height = Math.floor(rect.height);
 
   wall.addEventListener("dragenter", e => {
     (e.currentTarget || e.target).classList.add("dragging");
@@ -664,10 +666,10 @@ window.addEventListener("load", async event => {
   }
 
   canvas["backBuffer"] = document.createElement("canvas");
-  canvas.width = rect.width * window.devicePixelRatio;
-  canvas.height = rect.height * window.devicePixelRatio;
-  canvas.style.width = `${rect.width}px`;
-  canvas.style.height = `${rect.height}px`;
+  canvas.width = width * window.devicePixelRatio;
+  canvas.height = height * window.devicePixelRatio;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
   canvas.style.backgroundColor = "transparent";
 
   wall.appendChild(canvas);
@@ -1729,11 +1731,13 @@ window.addEventListener("resize", event => {
   const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
   const canvas = wall.querySelector(":scope>canvas");
   const rect = wall.getBoundingClientRect();
+  const width = Math.floor(rect.width);
+  const height = Math.floor(rect.height);
 
-  canvas.width = rect.width * window.devicePixelRatio;
-  canvas.height = rect.height * window.devicePixelRatio;
-  canvas.style.width = `${rect.width}px`;
-  canvas.style.height = `${rect.height}px`;
+  canvas.width = width * window.devicePixelRatio;
+  canvas.height = height * window.devicePixelRatio;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
 });
 window.addEventListener("mousedown", event => {
   if (event.button === 0 && tracker.identifier === null) {
