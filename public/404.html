@@ -5,11 +5,11 @@
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
   <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-      gtag('config', 'G-617KR1WTYP');
+    gtag('config', 'G-617KR1WTYP');
   </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -91,6 +91,7 @@
     }
 
     .background {
+      -webkit-user-select: none;
       user-select: none;
       position: absolute;
       margin: 0;
@@ -110,6 +111,7 @@
     }
 
     .background::before {
+      -webkit-user-select: none;
       user-select: none;
       position: absolute;
       margin: 0;
@@ -124,6 +126,7 @@
     }
 
     #message {
+      -webkit-user-select: none;
       user-select: none;
       position: absolute;
       display: flex;
@@ -161,6 +164,8 @@
     }
 
     #message>div>a>.clip>.scrollable>div {
+      -webkit-user-select: none;
+      user-select: none;
       display: flex;
       align-items: center;
       text-align: center;
@@ -174,7 +179,6 @@
       color: var(--foreground-color);
       transform: rotate(0.03deg);
       transition: .5s;
-      user-select: none;
     }
 
     a .scrollable {
