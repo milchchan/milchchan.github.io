@@ -111,7 +111,6 @@
         }
 
         .clock {
-            user-select: none;
             position: absolute;
             left: 50%;
             top: 50%;
@@ -129,6 +128,7 @@
         }
 
         div.content>div.frame {
+            -webkit-user-select: none;
             user-select: none;
             position: relative;
             left: 0px;
@@ -167,6 +167,7 @@
         }
 
         div.credits {
+            -webkit-user-select: none;
             user-select: none;
             position: absolute;
             bottom: 16px;
@@ -194,6 +195,8 @@
         }
 
         div.credits>a>.clip>.scrollable>div {
+            -webkit-user-select: none;
+            user-select: none;
             display: flex;
             align-items: center;
             text-align: center;
@@ -207,10 +210,10 @@
             color: var(--foreground-color);
             transform: rotate(0.03deg);
             transition: .5s;
-            user-select: none;
         }
 
         span.caption {
+            -webkit-user-select: none;
             user-select: none;
             float: right;
             color: var(--foreground-color);
@@ -295,6 +298,7 @@
         }
 
         #status {
+            -webkit-user-select: none;
             user-select: none;
             display: flex;
             position: absolute;
@@ -358,6 +362,7 @@
         }
 
         #stats {
+            -webkit-user-select: none;
             user-select: none;
             display: flex;
             position: absolute;
