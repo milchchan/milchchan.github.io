@@ -1702,7 +1702,7 @@ window.addEventListener("load", async event => {
               }
             }
 
-            backContext.drawImage(frame.image, sx, sy, sw, sh, 0, 0, backCanvas.width, backCanvas.height);
+            backContext.drawImage(frame.image, Math.round(sx), Math.round(sy), Math.floor(sw), Math.floor(sh), 0, 0, backCanvas.width, backCanvas.height);
           }
         }
 
