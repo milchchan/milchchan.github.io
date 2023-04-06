@@ -388,20 +388,20 @@ async function resize(blob, length) {
       image.onload = () => {
         const canvas = document.createElement("canvas");
 
-        if (image.width > image.height) {
+        if (image.width < image.height) {
           if (image.width > length) {
-            canvas.width = length * window.devicePixelRatio;
-            canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
+            canvas.width = length;
+            canvas.height = Math.floor((length / image.width) * image.height);
           } else {
-            canvas.width = image.width * window.devicePixelRatio;
-            canvas.height = image.height * window.devicePixelRatio;
+            canvas.width = image.width;
+            canvas.height = image.height;
           }
         } else if (image.height > length) {
-          canvas.width = Math.floor((length / image.height) * image.width) * window.devicePixelRatio;
-          canvas.height = length * window.devicePixelRatio;
+          canvas.width = Math.floor((length / image.height) * image.width);
+          canvas.height = length;
         } else {
-          canvas.width = image.width * window.devicePixelRatio;
-          canvas.height = image.height * window.devicePixelRatio;
+          canvas.width = image.width;
+          canvas.height = image.height;
         }
 
         const ctx = canvas.getContext("2d");
@@ -1180,7 +1180,7 @@ window.addEventListener("load", async event => {
                         reader.onerror = () => {
                           reject(reader.error);
                         };
-                        reader.readAsDataURL(await resize(blob, Math.max(window.screen.width, window.screen.height)));
+                        reader.readAsDataURL(await resize(blob, Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
                       });
 
                       animationQueue.push(Object.assign({ time: 0, image: image }, frame));
@@ -1208,7 +1208,7 @@ window.addEventListener("load", async event => {
                             reader.onerror = () => {
                               reject(reader.error);
                             };
-                            reader.readAsDataURL(await resize(frame.blob, Math.max(window.screen.width, window.screen.height)));
+                            reader.readAsDataURL(await resize(frame.blob, Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
                           })
                         });
                       }
