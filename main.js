@@ -1691,7 +1691,7 @@ window.addEventListener("load", async event => {
                 if (tracker.active) {
                   tracker.edge = true;
                 } else if (!tracker.edge) {
-                  tracker.velocity.y *= -1;
+                  tracker.velocity.y = -Math.abs(tracker.velocity.y);
                 }
 
                 tracker.movement.y = insetTop;
@@ -1699,7 +1699,7 @@ window.addEventListener("load", async event => {
                 if (tracker.active) {
                   tracker.edge = true;
                 } else if (!tracker.edge) {
-                  tracker.velocity.y *= -1;
+                  tracker.velocity.y = Math.abs(tracker.velocity.y);
                 }
 
                 tracker.movement.y = insetBottom;
@@ -1725,7 +1725,7 @@ window.addEventListener("load", async event => {
                 if (tracker.active) {
                   tracker.edge = true;
                 } else if (!tracker.edge) {
-                  tracker.velocity.x *= -1;
+                  tracker.velocity.x = -Math.abs(tracker.velocity.x);
                 }
 
                 tracker.movement.x = insetLeft;
@@ -1733,7 +1733,7 @@ window.addEventListener("load", async event => {
                 if (tracker.active) {
                   tracker.edge = true;
                 } else if (!tracker.edge) {
-                  tracker.velocity.x *= -1;
+                  tracker.velocity.x = Math.abs(tracker.velocity.x);
                 }
 
                 tracker.movement.x = insetRight;
@@ -1839,34 +1839,8 @@ window.addEventListener("mouseup", event => {
 window.addEventListener("wheel", event => {
   event.preventDefault();
 
-  const deltaTime = Math.max(event.timeStamp / 1000 - tracker.timestamp, Math.pow(10, -6));
-  let x;
-  let y;
-
-  if (Math.abs(event.deltaX) >= 100) {
-    if (Math.sign(event.deltaX) === Math.sign(tracker.velocity.x)) {
-      x = tracker.velocity.x + event.deltaX;
-    } else {
-      x = event.deltaX;
-    }
-  } else {
-    tracker.movement.x += event.deltaX;
-    x = event.deltaX / deltaTime;
-  }
-
-  if (Math.abs(event.deltaY) >= 100) {
-    if (Math.sign(-event.deltaY) === Math.sign(tracker.velocity.y)) {
-      y = tracker.velocity.y - event.deltaY;
-    } else {
-      y = -event.deltaY;
-    }
-  } else {
-    tracker.movement.y -= event.deltaY;
-    y = -event.deltaY / deltaTime
-  }
-
-  tracker.velocity.x = Math.max(Math.min(x, 1000), -1000);
-  tracker.velocity.y = Math.max(Math.min(y, 1000), -1000);
+  tracker.movement.x -= event.deltaX;
+  tracker.movement.y -= event.deltaY;
 }, { passive: false });
 window.addEventListener("touchstart", event => {
   event.stopPropagation();
