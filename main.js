@@ -1380,8 +1380,6 @@ window.addEventListener("load", async event => {
               elapsed: 0,
             });
           }
-
-          background.updated = timestamp;
         }
 
         for (const block of background.blocks) {
@@ -1392,9 +1390,7 @@ window.addEventListener("load", async event => {
                   inline.type.elapsed += deltaTime * 2;
 
                   if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                    const index = inline.type.count - 1;
-
-                    if (index < inline.text.length) {
+                    if (inline.type.count - 1 < inline.text.length) {
                       const width = Math.floor(inline.text.length / 2);
 
                       if (inline.type.buffer.length <= width && inline.type.count > 0) {
@@ -1422,12 +1418,11 @@ window.addEventListener("load", async event => {
                 }
 
                 if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                  const index = inline.type.buffer.length;
                   const width = Math.floor(inline.text.length / 2);
                   const length = inline.text.length;
 
                   if (inline.type.count >= width) {
-                    inline.type.buffer += inline.text.charAt(index);
+                    inline.type.buffer += inline.text.charAt(inline.type.buffer.length);
                   }
 
                   if (inline.type.count < length) {
