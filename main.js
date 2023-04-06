@@ -1852,8 +1852,7 @@ window.addEventListener("mouseup", event => {
 window.addEventListener("wheel", event => {
   event.preventDefault();
 
-  const timestamp = event.timeStamp / 1000;
-  const deltaTime = Math.max(timestamp - tracker.timestamp, Math.pow(10, -6));
+  const deltaTime = Math.max(event.timeStamp / 1000 - tracker.timestamp, Math.pow(10, -6));
   let x;
   let y;
   
