@@ -378,6 +378,63 @@ function shake(element) {
     { duration: 1000, iterations: 1 });
 }
 
+async function resize(dataURL, length) {
+  return await new Promise(async (resolve1, reject1) => {
+    const image = new Image();
+
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      if (image.width > image.height) {
+        if (image.width > length) {
+          canvas.width = length * window.devicePixelRatio;
+          canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
+        } else {
+          canvas.width = image.width * window.devicePixelRatio;
+          canvas.height = image.height * window.devicePixelRatio;
+        }
+      } else if (image.height > length) {
+        canvas.width = Math.floor((length / image.height) * image.width) * window.devicePixelRatio;
+        canvas.height = length * window.devicePixelRatio;
+      } else {
+        canvas.width = image.width * window.devicePixelRatio;
+        canvas.height = image.height * window.devicePixelRatio;
+      }
+
+      const ctx = canvas.getContext("2d");
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      ctx.canvas.toBlob(async (blob) => {
+        try {
+          resolve1(await new Promise(async (resolve2, reject2) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+              resolve2(reader.result);
+            };
+            reader.onerror = () => {
+              reject2(reader.error);
+            };
+            reader.readAsDataURL(blob);
+          }));
+        } catch (error) {
+          reject1(error);
+        }
+
+        ctx.canvas.width = ctx.canvas.height = 0;
+      }, "image/png");
+    };
+    image.onerror = (error) => {
+      reject1(error);
+    };
+    image.crossOrigin = "anonymous";
+    image.src = dataURL;
+  });
+}
+
 async function upload(files) {
   function generateUuid() {
     // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
@@ -1795,36 +1852,35 @@ window.addEventListener("mouseup", event => {
 window.addEventListener("wheel", event => {
   event.preventDefault();
 
-  if (event.deltaMode === 0x00) {
-    const timestamp = event.timeStamp / 1000;
-    const deltaTime = timestamp - tracker.timestamp;
-
-    tracker.movement.x += event.deltaX;
-    tracker.movement.y -= event.deltaY;
-
-    if (deltaTime > 0) {
-      tracker.velocity.x = Math.max(Math.min(event.deltaX / deltaTime, 1000), -1000);
-      tracker.velocity.y = Math.max(Math.min(-event.deltaY / deltaTime, 1000), -1000);
-    }
-  } else if (event.deltaMode === 0x01) {
-    let x;
-    let y;
-
+  const timestamp = event.timeStamp / 1000;
+  const deltaTime = Math.max(timestamp - tracker.timestamp, Math.pow(10, -6));
+  let x;
+  let y;
+  
+  if (Math.abs(event.deltaX) >= 100) {
     if (Math.sign(event.deltaX) === Math.sign(tracker.velocity.x)) {
       x = tracker.velocity.x + event.deltaX;
     } else {
       x = event.deltaX;
     }
+  } else {
+    tracker.movement.x += event.deltaX;
+    x = event.deltaX / deltaTime;
+  }
 
+  if (Math.abs(event.deltaY) >= 100) {
     if (Math.sign(-event.deltaY) === Math.sign(tracker.velocity.y)) {
       y = tracker.velocity.y - event.deltaY;
     } else {
       y = -event.deltaY;
     }
-
-    tracker.velocity.x = Math.max(Math.min(x, 1000), -1000);
-    tracker.velocity.y = Math.max(Math.min(y, 1000), -1000);
+  } else {
+    tracker.movement.y -= event.deltaY;
+    y = -event.deltaY / deltaTime
   }
+
+  tracker.velocity.x = Math.max(Math.min(x, 1000), -1000);
+  tracker.velocity.y = Math.max(Math.min(y, 1000), -1000);
 }, { passive: false });
 window.addEventListener("touchstart", event => {
   event.stopPropagation();
