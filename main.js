@@ -1380,11 +1380,11 @@ window.addEventListener("load", async event => {
               elapsed: 0,
             });
           }
+
+          background.updated = timestamp;
         }
 
         for (const block of background.blocks) {
-          let index = 0;
-
           for (const inline of block.inlines) {
             if (inline.running) {
               if (inline.type.reverse) {
@@ -1392,7 +1392,7 @@ window.addEventListener("load", async event => {
                   inline.type.elapsed += deltaTime * 2;
 
                   if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                    let index = inline.type.count - 1;
+                    const index = inline.type.count - 1;
 
                     if (index < inline.text.length) {
                       const width = Math.floor(inline.text.length / 2);
@@ -1485,8 +1485,6 @@ window.addEventListener("load", async event => {
                 }
               }
             }
-
-            index++;
           }
 
           block.elapsed += deltaTime;
