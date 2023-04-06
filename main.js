@@ -1807,17 +1807,23 @@ window.addEventListener("wheel", event => {
       tracker.velocity.y = Math.max(Math.min(-event.deltaY / deltaTime, 1000), -1000);
     }
   } else if (event.deltaMode === 0x01) {
+    let x;
+    let y;
+
     if (Math.sign(event.deltaX) === Math.sign(tracker.velocity.x)) {
-      tracker.velocity.x += event.deltaX;
+      x = tracker.velocity.x + event.deltaX;
     } else {
-      tracker.velocity.x = event.deltaX;
+      x = event.deltaX;
     }
 
     if (Math.sign(-event.deltaY) === Math.sign(tracker.velocity.y)) {
-      tracker.velocity.y -= event.deltaY;
+      y = tracker.velocity.y - event.deltaY;
     } else {
-      tracker.velocity.y = -event.deltaY;
+      y = -event.deltaY;
     }
+
+    tracker.velocity.x = Math.max(Math.min(x, 1000), -1000);
+    tracker.velocity.y = Math.max(Math.min(y, 1000), -1000);
   }
 }, { passive: false });
 window.addEventListener("touchstart", event => {
