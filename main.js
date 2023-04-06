@@ -1792,6 +1792,20 @@ window.addEventListener("mouseup", event => {
     tracker.active = false;
   }
 });
+window.addEventListener("wheel", event => {
+  event.preventDefault();
+
+  const timestamp = event.timeStamp / 1000;
+  const deltaTime = timestamp - tracker.timestamp;
+
+  tracker.movement.x += event.deltaX;
+  tracker.movement.y -= event.deltaY;
+
+  if (deltaTime > 0) {
+    tracker.velocity.x = Math.max(Math.min(event.deltaX / deltaTime, 1000), -1000);
+    tracker.velocity.y = Math.max(Math.min(-event.deltaY / deltaTime, 1000), -1000);
+  }
+}, { passive: false });
 window.addEventListener("touchstart", event => {
   event.stopPropagation();
 
