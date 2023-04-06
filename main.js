@@ -378,60 +378,54 @@ function shake(element) {
     { duration: 1000, iterations: 1 });
 }
 
-async function resize(dataURL, length) {
-  return await new Promise(async (resolve1, reject1) => {
-    const image = new Image();
+async function resize(blob, length) {
+  return await new Promise(async (resolve, reject) => {
+    const reader = new FileReader();
 
-    image.onload = () => {
-      const canvas = document.createElement("canvas");
+    reader.onload = () => {
+      const image = new Image();
 
-      if (image.width > image.height) {
-        if (image.width > length) {
-          canvas.width = length * window.devicePixelRatio;
-          canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+
+        if (image.width < image.height) {
+          if (image.width > length) {
+            canvas.width = length * window.devicePixelRatio;
+            canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
+          } else {
+            canvas.width = image.width * window.devicePixelRatio;
+            canvas.height = image.height * window.devicePixelRatio;
+          }
+        } else if (image.height > length) {
+          canvas.width = Math.floor((length / image.height) * image.width) * window.devicePixelRatio;
+          canvas.height = length * window.devicePixelRatio;
         } else {
           canvas.width = image.width * window.devicePixelRatio;
           canvas.height = image.height * window.devicePixelRatio;
         }
-      } else if (image.height > length) {
-        canvas.width = Math.floor((length / image.height) * image.width) * window.devicePixelRatio;
-        canvas.height = length * window.devicePixelRatio;
-      } else {
-        canvas.width = image.width * window.devicePixelRatio;
-        canvas.height = image.height * window.devicePixelRatio;
-      }
 
-      const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d");
 
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-      ctx.canvas.toBlob(async (blob) => {
-        try {
-          resolve1(await new Promise(async (resolve2, reject2) => {
-            const reader = new FileReader();
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        ctx.canvas.toBlob(async (blob) => {
+          resolve(blob);
 
-            reader.onload = () => {
-              resolve2(reader.result);
-            };
-            reader.onerror = () => {
-              reject2(reader.error);
-            };
-            reader.readAsDataURL(blob);
-          }));
-        } catch (error) {
-          reject1(error);
-        }
-
-        ctx.canvas.width = ctx.canvas.height = 0;
-      }, "image/png");
+          ctx.canvas.width = ctx.canvas.height = 0;
+        }, "image/png");
+      };
+      image.onerror = (error) => {
+        reject(error);
+      };
+      image.crossOrigin = "anonymous";
+      image.src = reader.result;
     };
-    image.onerror = (error) => {
-      reject1(error);
+    reader.onerror = () => {
+      reject(reader.error);
     };
-    image.crossOrigin = "anonymous";
-    image.src = dataURL;
+    reader.readAsDataURL(blob);
   });
 }
 
@@ -1186,7 +1180,7 @@ window.addEventListener("load", async event => {
                         reader.onerror = () => {
                           reject(reader.error);
                         };
-                        reader.readAsDataURL(blob);
+                        reader.readAsDataURL(await resize(blob, Math.max(window.screen.width, window.screen.height)));
                       });
 
                       animationQueue.push(Object.assign({ time: 0, image: image }, frame));
@@ -1214,7 +1208,7 @@ window.addEventListener("load", async event => {
                             reader.onerror = () => {
                               reject(reader.error);
                             };
-                            reader.readAsDataURL(frame.blob);
+                            reader.readAsDataURL(await resize(frame.blob, Math.max(window.screen.width, window.screen.height)));
                           })
                         });
                       }
@@ -1855,7 +1849,7 @@ window.addEventListener("wheel", event => {
   const deltaTime = Math.max(event.timeStamp / 1000 - tracker.timestamp, Math.pow(10, -6));
   let x;
   let y;
-  
+
   if (Math.abs(event.deltaX) >= 100) {
     if (Math.sign(event.deltaX) === Math.sign(tracker.velocity.x)) {
       x = tracker.velocity.x + event.deltaX;
