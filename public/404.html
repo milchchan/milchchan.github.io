@@ -338,7 +338,10 @@
         duration: 500,
         iterations: 1,
         easing: "ease-out"
-      });
+      }).onfinish = () => {
+        background.style.opacity = 1;
+        background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+      };
     });
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", async e => {
       const background = document.createElement("div");
@@ -397,7 +400,10 @@
         duration: 500,
         iterations: 1,
         easing: "ease-out"
-      });
+      }).onfinish = () => {
+        background.style.opacity = 1;
+        background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+      };
     });
   </script>
 </body>
