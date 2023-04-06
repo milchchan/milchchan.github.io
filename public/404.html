@@ -247,60 +247,54 @@
     </div>
   </div>
   <script type="text/javascript">
-    async function resize(dataURL, length) {
-      return await new Promise(async (resolve1, reject1) => {
-        const image = new Image();
+    async function resize(blob, length) {
+      return await new Promise(async (resolve, reject) => {
+        const reader = new FileReader();
 
-        image.onload = () => {
-          const canvas = document.createElement("canvas");
+        reader.onload = () => {
+          const image = new Image();
 
-          if (image.width > image.height) {
-            if (image.width > length) {
-              canvas.width = length * window.devicePixelRatio;
-              canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
+          image.onload = () => {
+            const canvas = document.createElement("canvas");
+
+            if (image.width < image.height) {
+              if (image.width > length) {
+                canvas.width = length * window.devicePixelRatio;
+                canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
+              } else {
+                canvas.width = image.width * window.devicePixelRatio;
+                canvas.height = image.height * window.devicePixelRatio;
+              }
+            } else if (image.height > length) {
+              canvas.width = Math.floor((length / image.height) * image.width) * window.devicePixelRatio;
+              canvas.height = length * window.devicePixelRatio;
             } else {
               canvas.width = image.width * window.devicePixelRatio;
               canvas.height = image.height * window.devicePixelRatio;
             }
-          } else if (image.height > length) {
-            canvas.width = Math.floor((length / image.height) * image.width) * window.devicePixelRatio;
-            canvas.height = length * window.devicePixelRatio;
-          } else {
-            canvas.width = image.width * window.devicePixelRatio;
-            canvas.height = image.height * window.devicePixelRatio;
-          }
 
-          const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext("2d");
 
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = "high";
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-          ctx.canvas.toBlob(async (blob) => {
-            try {
-              resolve1(await new Promise(async (resolve2, reject2) => {
-                const reader = new FileReader();
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            ctx.canvas.toBlob(async (blob) => {
+              resolve(blob);
 
-                reader.onload = () => {
-                  resolve2(reader.result);
-                };
-                reader.onerror = () => {
-                  reject2(reader.error);
-                };
-                reader.readAsDataURL(blob);
-              }));
-            } catch (error) {
-              reject1(error);
-            }
-
-            ctx.canvas.width = ctx.canvas.height = 0;
-          }, "image/png");
+              ctx.canvas.width = ctx.canvas.height = 0;
+            }, "image/png");
+          };
+          image.onerror = (error) => {
+            reject(error);
+          };
+          image.crossOrigin = "anonymous";
+          image.src = reader.result;
         };
-        image.onerror = (error) => {
-          reject1(error);
+        reader.onerror = () => {
+          reject(reader.error);
         };
-        image.crossOrigin = "anonymous";
-        image.src = dataURL;
+        reader.readAsDataURL(blob);
       });
     }
 
@@ -315,7 +309,7 @@
         const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "--dark-background-image" : "--light-background-image"));
 
         if (response.ok) {
-          background.style.backgroundImage = `url('${await resize(await new Promise(async (resolve, reject) => {
+          background.style.backgroundImage = `url('${await new Promise(async (resolve, reject) => {
             const reader = new FileReader();
 
             reader.onload = () => {
@@ -324,8 +318,8 @@
             reader.onerror = () => {
               reject(reader.error);
             };
-            reader.readAsDataURL(await response.blob());
-          }), Math.max(window.screen.width, window.screen.height))}')`;
+            reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height)));
+          })}')`;
         }
       } catch (error) {
         console.error(error);
@@ -357,7 +351,7 @@
         const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(e.matches ? "--dark-background-image" : "--light-background-image"));
 
         if (response.ok) {
-          background.style.backgroundImage = `url('${await resize(await new Promise(async (resolve, reject) => {
+          background.style.backgroundImage = `url('${await new Promise(async (resolve, reject) => {
             const reader = new FileReader();
 
             reader.onload = () => {
@@ -366,8 +360,8 @@
             reader.onerror = () => {
               reject(reader.error);
             };
-            reader.readAsDataURL(await response.blob());
-          }), Math.max(window.screen.width, window.screen.height))}')`;
+            reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height)));
+          })}')`;
         }
       } catch (error) {
         console.error(error);
