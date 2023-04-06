@@ -388,7 +388,7 @@ async function resize(blob, length) {
       image.onload = () => {
         const canvas = document.createElement("canvas");
 
-        if (image.width < image.height) {
+        if (image.width > image.height) {
           if (image.width > length) {
             canvas.width = length * window.devicePixelRatio;
             canvas.height = Math.floor((length / image.width) * image.height) * window.devicePixelRatio;
