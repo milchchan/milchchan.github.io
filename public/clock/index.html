@@ -1,5 +1,5 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+﻿<!doctype html>
+<html lang="ja">
 
 <head>
     <!-- Google tag (gtag.js) -->
@@ -694,6 +694,7 @@
                 creditsElement.style.opacity = "0";
                 linkElement.href = data.url;
                 linkElement.dataset["name"] = data.name;
+                linkElement.title = data.name;
                 clipElement.className = "clip";
                 scrollableElement.className = "scrollable";
                 contentElement1.innerText = contentElement2.innerText = data.name;
@@ -1105,6 +1106,7 @@
                         creditsElement.style.opacity = "0";
                         linkElement.href = data.url;
                         linkElement.dataset["name"] = data.name;
+                        linkElement.title = data.name;
                         clipElement.className = "clip";
                         scrollableElement.className = "scrollable";
                         contentElement1.innerText = contentElement2.innerText = data.name;

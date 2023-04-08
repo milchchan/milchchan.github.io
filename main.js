@@ -4,7 +4,7 @@ import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytes
 import { initializeAnalytics } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-analytics.js";
 
 const background = { updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
-const tracker = { active: false, identifier: null, edge: true, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
+const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const firebaseConfig = {
   apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
   authDomain: "auth.milchchan.com",
@@ -1804,10 +1804,14 @@ window.addEventListener("mousedown", event => {
   }
 });
 window.addEventListener("mousemove", event => {
+  const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
+  const x = event.clientX - rect.x;
+  const y = event.clientY - rect.y;
+
+  tracker.mouse.x = x;
+  tracker.mouse.y = y;
+
   if (tracker.active && tracker.identifier === null) {
-    const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
-    const x = event.clientX - rect.x;
-    const y = event.clientY - rect.y;
     const timestamp = event.timeStamp / 1000;
     const deltaX = x - tracker.position.x;
     const deltaY = y - tracker.position.y;
@@ -1839,8 +1843,16 @@ window.addEventListener("mouseup", event => {
 window.addEventListener("wheel", event => {
   event.preventDefault();
 
+  const timestamp = event.timeStamp / 1000;
+
   tracker.movement.x -= event.deltaX;
   tracker.movement.y -= event.deltaY;
+
+  if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+    for (let i = random(0, 4); i > 0; i--) {
+      background.particles.unshift({ elapsed: -1, x: tracker.mouse.x, y: tracker.mouse.y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
+    }
+  }
 }, { passive: false });
 window.addEventListener("touchstart", event => {
   event.stopPropagation();
