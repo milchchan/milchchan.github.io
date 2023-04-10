@@ -673,7 +673,7 @@
             let previousTime = performance.now();
             const fps = { time: previousTime, frames: 0, targets: [] };
 
-            for (const frame of container.querySelectorAll(":scope>.wrap>.frame")) {
+            for (const wrap of container.querySelectorAll(":scope>.wrap")) {
                 const creditsElement = document.createElement("div");
                 const linkElement = document.createElement("a");
                 const clipElement = document.createElement("div");
@@ -688,8 +688,12 @@
                 const unlockIconElement = document.createElement("i");
                 const statsElement = document.createElement("div");
                 const counterElement = document.createElement("span");
+                const frame = wrap.querySelector(":scope>.frame");
                 const clock = frame.querySelector(":scope>.clock");
-
+                const style = window.getComputedStyle(wrap);
+                const rect = wrap.getBoundingClientRect();
+                const frameWidth = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
+                
                 creditsElement.className = "credits";
                 creditsElement.style.opacity = "0";
                 linkElement.href = data.url;
@@ -778,7 +782,7 @@
                     easing: "ease-out"
                 });
 
-                if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 14) {
+                if (frameWidth - margin * 2 >= (maxWidth + space) * 14) {
                     clock.style.marginLeft = `${(-width / 2).toString()}px`;
                     clock.style.width = `${width}px`;
                     clock.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
@@ -786,7 +790,7 @@
                     attach(clock, data, true, "Year", 4);
                     attach(clock, data, true, "Month", 2);
                     attach(clock, data, true, "Day", 2);
-                } else if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 10) {
+                } else if (frameWidth - margin * 2 >= (maxWidth + space) * 10) {
                     clock.style.marginLeft = `${((-width - (maxWidth + space) * 4) / 2).toString()}px`;
                     clock.style.width = `${width}px`;
                     clock.style.transformOrigin = `${(11 / 14 * 100).toString()}% 50%`;
@@ -799,8 +803,8 @@
                     clock.style.width = `${width}px`;
                     clock.style.transformOrigin = `${(11 / 14 * 100).toString()}% 50%`;
 
-                    if (frame.clientWidth < (maxWidth + space) * 6) {
-                        clock.style.transform = `scale(${((frame.clientWidth - margin * 2) / (margin * 2 + (maxWidth + space) * 6)).toString()})`;
+                    if (frameWidth < (maxWidth + space) * 6) {
+                        clock.style.transform = `scale(${((frameWidth - margin * 2) / (margin * 2 + (maxWidth + space) * 6)).toString()})`;
                     }
 
                     attach(clock, data, false, "Year", 4);
@@ -1358,10 +1362,13 @@
         window.addEventListener("resize", event => {
             const container = document.body.querySelector("#container");
 
-            for (const frame of container.querySelectorAll(":scope>.wrap>.frame")) {
-                const clock = frame.querySelector(":scope>.clock");
-
-                if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 14) {
+            for (const wrap of container.querySelectorAll(":scope>.wrap")) {
+                const clock = wrap.querySelector(":scope>.frame>.clock");
+                const style = window.getComputedStyle(wrap);
+                const rect = wrap.getBoundingClientRect();
+                const frameWidth = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
+                
+                if (frameWidth - margin * 2 >= (maxWidth + space) * 14) {
                     clock.style.transform = "scale(1.0)";
                     clock.animate([
                         {
@@ -1386,7 +1393,7 @@
                             easing: "ease-out"
                         });
                     }
-                } else if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 10) {
+                } else if (frameWidth - margin * 2 >= (maxWidth + space) * 10) {
                     clock.style.transform = "scale(1.0)";
                     clock.animate([
                         {
@@ -1425,8 +1432,8 @@
                         });
                     }
                 } else {
-                    if (frame.clientWidth - margin * 2 < (maxWidth + space) * 6) {
-                        clock.style.transform = "scale(" + ((frame.clientWidth - margin * 2) / (margin * 2 + (maxWidth + space) * 6)).toString() + ")";
+                    if (frameWidth - margin * 2 < (maxWidth + space) * 6) {
+                        clock.style.transform = "scale(" + ((frameWidth - margin * 2) / (margin * 2 + (maxWidth + space) * 6)).toString() + ")";
                         clock.animate([
                             {
                                 marginLeft: (((-clock.clientWidth - (maxWidth + space) * 8) / 2)).toString() + "px"
