@@ -281,7 +281,7 @@ div.sidebar {
     -webkit-user-select: none;
     user-select: none;
     position: relative;
-    padding: 0;
+    padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
     width: fit-content;
     height: 100%;
     background: transparent;
@@ -622,7 +622,7 @@ div.center {
     position: absolute;
     bottom: 50%;
     left: 50%;
-    padding: 0;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
     transform: translate(-50%, 50%);
     width: fit-content;
     height: fit-content;
@@ -635,7 +635,7 @@ div.remarks {
     top: 16px;
     right: 16px;
     margin: 0;
-    padding: 0;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0px 0px;
     width: fit-content;
     height: fit-content;
 }
@@ -720,7 +720,7 @@ div.remarks {
     bottom: 16px;
     right: 16px;
     margin: 0;
-    padding: 0;
+    padding: 0px env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) 0px;
     width: fit-content;
     height: fit-content;
     flex-direction: column;
@@ -827,9 +827,21 @@ div.remarks {
     }
 }
 
-@media screen and (min-width: 769px) {
+@media screen and (min-width: 769px) and (max-width: 1023px) {
     #app>.container>.wrap {
-        padding: 0;
+        padding: 16px;
+        transition: .5s;
+    }
+
+    #app>.container>.wrap>.frame {
+        border-radius: 4px;
+        transition: .5s;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    #app>.container>.wrap {
+        padding: 16px;
         transition: .5s;
     }
 

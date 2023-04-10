@@ -81,7 +81,7 @@
             right: 0px;
             bottom: 0px;
             margin: 0;
-            padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+            padding: 0;
             background: transparent;
             transition: .5s;
         }
@@ -175,7 +175,7 @@
             bottom: 16px;
             left: 50%;
             margin: 0;
-            padding: 0;
+            padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px;
             transform: translateX(-50%);
             width: fit-content;
             height: fit-content;
@@ -307,7 +307,7 @@
             bottom: 16px;
             left: 16px;
             margin: 0;
-            padding: 0;
+            padding: 0px 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
             width: fit-content;
             height: fit-content;
             flex-direction: column;
@@ -371,7 +371,7 @@
             bottom: 16px;
             right: 16px;
             margin: 0;
-            padding: 0;
+            padding: 0px env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) 0px;
             width: fit-content;
             height: fit-content;
             flex-direction: column;
@@ -673,7 +673,7 @@
             let previousTime = performance.now();
             const fps = { time: previousTime, frames: 0, targets: [] };
 
-            for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
+            for (const frame of container.querySelectorAll(":scope>.wrap>.frame")) {
                 const creditsElement = document.createElement("div");
                 const linkElement = document.createElement("a");
                 const clipElement = document.createElement("div");
@@ -688,7 +688,7 @@
                 const unlockIconElement = document.createElement("i");
                 const statsElement = document.createElement("div");
                 const counterElement = document.createElement("span");
-                const clock = frame.querySelector(":scope > .clock");
+                const clock = frame.querySelector(":scope>.clock");
 
                 creditsElement.className = "credits";
                 creditsElement.style.opacity = "0";
@@ -988,7 +988,7 @@
                                 frameStep = step;
                             }
 
-                            for (const element of document.body.querySelectorAll("div.digit > div.wrap > canvas.digit")) {
+                            for (const element of document.body.querySelectorAll("div.digit>div.wrap>canvas.digit")) {
                                 if (element.parentElement.parentElement.style.visibility === "visible") {
                                     if (i % 14 === 0) {
                                         renderDigit(element, image, newYear4, year4X, year4Y, year4Width, year4Height, step);
@@ -1066,11 +1066,11 @@
                     console.error(error);
                 }
 
-                for (const frame of document.body.querySelectorAll("#container > .wrap > .frame")) {
+                for (const frame of document.body.querySelectorAll("#container>.wrap>.frame")) {
                     let updateRequired = false;
 
-                    for (const credits of frame.querySelectorAll(":scope > div.credits")) {
-                        const link = credits.querySelector(":scope > a");
+                    for (const credits of frame.querySelectorAll(":scope>div.credits")) {
+                        const link = credits.querySelector(":scope>a");
 
                         if (link.dataset["name"] === data.name) {
                             if (link.href !== data.url) {
@@ -1133,7 +1133,7 @@
                     }
                 }
 
-                const elements = document.body.querySelectorAll("div.digit > div.wrap > canvas.digit");
+                const elements = document.body.querySelectorAll("div.digit>div.wrap>canvas.digit");
                 let count = 0;
 
                 for (const element of elements) {
@@ -1317,7 +1317,7 @@
                             for (const element1 of document.body.querySelectorAll("div.digit")) {
                                 element1.style.visibility = "visible";
 
-                                for (const element2 of element1.parentElement.querySelectorAll(":scope > div.loading")) {
+                                for (const element2 of element1.parentElement.querySelectorAll(":scope>div.loading")) {
                                     element2.animate([
                                         {
                                             transform: "translate3d(0px, -100%, 0)"
@@ -1358,8 +1358,8 @@
         window.addEventListener("resize", event => {
             const container = document.body.querySelector("#container");
 
-            for (const frame of container.querySelectorAll(":scope > .wrap > .frame")) {
-                const clock = frame.querySelector(":scope > .clock");
+            for (const frame of container.querySelectorAll(":scope>.wrap>.frame")) {
+                const clock = frame.querySelector(":scope>.clock");
 
                 if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 14) {
                     clock.style.transform = "scale(1.0)";

@@ -664,12 +664,16 @@ window.addEventListener("load", async event => {
   }
 
   const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
-  const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
+  const container = document.body.querySelector("#app>.container");
+  const wrap = container.querySelector(":scope>.wrap");
+  const wall = wrap.querySelector(":scope>.frame>.wall");
   const stats = document.createElement("div");
   const canvas = document.createElement("canvas");
-  const rect = wall.getBoundingClientRect();
-  const width = Math.floor(rect.width);
-  const height = Math.floor(rect.height);
+  const style = window.getComputedStyle(wrap);
+  const rect = container.getBoundingClientRect();
+
+  const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
+  const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
 
   wall.addEventListener("dragenter", e => {
     (e.currentTarget || e.target).classList.add("dragging");
@@ -1772,11 +1776,13 @@ window.addEventListener("load", async event => {
   }
 });
 window.addEventListener("resize", event => {
-  const frame = document.body.querySelector("#app>.container>.wrap>.frame");
-  const canvas = frame.querySelector(":scope>.wall>canvas");
-  const rect = frame.getBoundingClientRect();
-  const width = Math.floor(rect.width);
-  const height = Math.floor(rect.height);
+  const container = document.body.querySelector("#app>.container");
+  const wrap = container.querySelector(":scope>.wrap");
+  const canvas = wrap.querySelector(":scope>.frame>.wall>canvas");
+  const style = window.getComputedStyle(wrap);
+  const rect = container.getBoundingClientRect();
+  const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
+  const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
 
   canvas.width = width * window.devicePixelRatio;
   canvas.height = height * window.devicePixelRatio;
