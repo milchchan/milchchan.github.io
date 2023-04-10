@@ -664,14 +664,12 @@ window.addEventListener("load", async event => {
   }
 
   const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
-  const container = document.body.querySelector("#app>.container");
-  const wrap = container.querySelector(":scope>.wrap");
+  const wrap = document.body.querySelector("#app>.container>.wrap");
   const wall = wrap.querySelector(":scope>.frame>.wall");
   const stats = document.createElement("div");
   const canvas = document.createElement("canvas");
   const style = window.getComputedStyle(wrap);
-  const rect = container.getBoundingClientRect();
-
+  const rect = wrap.getBoundingClientRect();
   const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
   const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
 
@@ -1776,11 +1774,10 @@ window.addEventListener("load", async event => {
   }
 });
 window.addEventListener("resize", event => {
-  const container = document.body.querySelector("#app>.container");
-  const wrap = container.querySelector(":scope>.wrap");
+  const wrap = document.body.querySelector("#app>.container>.wrap");
   const canvas = wrap.querySelector(":scope>.frame>.wall>canvas");
   const style = window.getComputedStyle(wrap);
-  const rect = container.getBoundingClientRect();
+  const rect = wrap.getBoundingClientRect();
   const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
   const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
 
