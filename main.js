@@ -1772,9 +1772,9 @@ window.addEventListener("load", async event => {
   }
 });
 window.addEventListener("resize", event => {
-  const wall = document.body.querySelector("#app>.container>.wrap>.frame>.wall");
-  const canvas = wall.querySelector(":scope>canvas");
-  const rect = wall.getBoundingClientRect();
+  const frame = document.body.querySelector("#app>.container>.wrap>.frame");
+  const canvas = frame.querySelector(":scope>.wall>canvas");
+  const rect = frame.getBoundingClientRect();
   const width = Math.floor(rect.width);
   const height = Math.floor(rect.height);
 
