@@ -783,17 +783,17 @@
                     clock.style.width = `${width}px`;
                     clock.style.transformOrigin = (11 / 14 * 100).toString() + "% 50%";
 
-                    attach(clock, data, true, 'Year', 4);
-                    attach(clock, data, true, 'Month', 2);
-                    attach(clock, data, true, 'Day', 2);
+                    attach(clock, data, true, "Year", 4);
+                    attach(clock, data, true, "Month", 2);
+                    attach(clock, data, true, "Day", 2);
                 } else if (frame.clientWidth - margin * 2 >= (maxWidth + space) * 10) {
                     clock.style.marginLeft = `${((-width - (maxWidth + space) * 4) / 2).toString()}px`;
                     clock.style.width = `${width}px`;
                     clock.style.transformOrigin = `${(11 / 14 * 100).toString()}% 50%`;
 
-                    attach(clock, data, false, 'Year', 4);
-                    attach(clock, data, true, 'Month', 2);
-                    attach(clock, data, true, 'Day', 2);
+                    attach(clock, data, false, "Year", 4);
+                    attach(clock, data, true, "Month", 2);
+                    attach(clock, data, true, "Day", 2);
                 } else {
                     clock.style.marginLeft = `${((-width - (maxWidth + space) * 8) / 2).toString()}px`;
                     clock.style.width = `${width}px`;
@@ -803,17 +803,17 @@
                         clock.style.transform = `scale(${((frame.clientWidth - margin * 2) / (margin * 2 + (maxWidth + space) * 6)).toString()})`;
                     }
 
-                    attach(clock, data, false, 'Year', 4);
-                    attach(clock, data, false, 'Month', 2);
-                    attach(clock, data, false, 'Day', 2);
+                    attach(clock, data, false, "Year", 4);
+                    attach(clock, data, false, "Month", 2);
+                    attach(clock, data, false, "Day", 2);
                 }
 
                 clock.style.marginTop = `${-(maxHeight + 18) / 2}px`;
                 clock.style.height = `${maxHeight + 18}px`;
 
-                attach(clock, data, true, 'Hour', 2);
-                attach(clock, data, true, 'Minute', 2);
-                attach(clock, data, true, 'Second', 2);
+                attach(clock, data, true, "Hour", 2);
+                attach(clock, data, true, "Minute", 2);
+                attach(clock, data, true, "Second", 2);
 
                 for (const element of clock.querySelectorAll(":scope div.digit")) {
                     element.style.visibility = "visible";
