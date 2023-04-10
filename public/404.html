@@ -64,7 +64,6 @@
       font-size: 50vmin;
       font-weight: bold;
       line-height: 50vmin;
-      transition: .5s;
     }
 
     .wrap {
@@ -133,13 +132,15 @@
       user-select: none;
       position: absolute;
       display: flex;
-      top: 0;
-      left: 0;
-      padding: 0;
-      width: 100%;
-      min-height: 100%;
+      bottom: 50%;
+      left: 50%;
+      padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+      transform: translate(-50%, 50%);
+      width: fit-content;
+      height: fit-content;
+      box-sizing: border-box;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       animation: fade .5s ease-out forwards;
       overflow: hidden;
@@ -147,20 +148,10 @@
       backface-visibility: hidden;
     }
 
-    #message>h1 {
-      padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px)) 0px max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-
-      padding: 128px 64px 0px 64px;
-    }
-
     #message>div {
       margin: 8px 0px 0px 0px;
       padding: 0;
-    }
-
-    #message>div:last-of-type {
-      padding: 0px max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px)) max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-      padding: 0px 64px 128px 64px;
+      height: fit-content;
     }
 
     #message>div>a {
