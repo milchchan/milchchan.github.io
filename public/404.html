@@ -51,6 +51,7 @@
       padding: 0;
       width: 100%;
       min-height: 100vh;
+      min-height: -webkit-fill-available;
       min-height: 100dvh;
       overflow: hidden;
     }
@@ -215,7 +216,7 @@
       }
     }
 
-    @media screen and (min-width: 769px) {
+    @media screen and (min-width: 769px) and (min-height: 769px) {
       .wrap {
         padding: 16px;
         transition: .5s;

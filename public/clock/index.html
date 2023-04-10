@@ -60,6 +60,7 @@
             padding: 0;
             width: 100%;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             min-height: 100dvh;
             overflow: hidden;
             font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
@@ -433,7 +434,7 @@
             }
         }
 
-        @media screen and (min-width: 769px) {
+        @media screen and (min-width: 769px) and (min-height: 769px) {
             #container>.wrap {
                 padding: 16px;
                 transition: .5s;

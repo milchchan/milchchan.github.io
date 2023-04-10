@@ -33,6 +33,7 @@ body {
     padding: 0;
     width: 100%;
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     min-height: 100dvh;
     overflow: hidden;
     background: transparent;
@@ -827,19 +828,7 @@ div.remarks {
     }
 }
 
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-    #app>.container>.wrap {
-        padding: 16px;
-        transition: .5s;
-    }
-
-    #app>.container>.wrap>.frame {
-        border-radius: 4px;
-        transition: .5s;
-    }
-}
-
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 769px) and (min-height: 769px) {
     #app>.container>.wrap {
         padding: 16px;
         transition: .5s;
