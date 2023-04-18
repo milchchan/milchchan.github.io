@@ -143,7 +143,7 @@ figure {
         height: 2px;
         transform: translate3d(0, 0%, 0);
         overflow: hidden;
-        background: url('images/Stripes.png') 0 0 repeat;
+        background: url('public/images/Stripes.png') 0 0 repeat;
         background-color: #ffee00;
         background-size: 24px 24px;
         animation: progress 1s linear forwards infinite;
@@ -168,7 +168,7 @@ figure {
     min-height: 100%;
     transform: translate3d(0, 0%, 0);
     overflow: hidden;
-    background: url('images/Background.png') 0 0 repeat;
+    background: url('public/images/Background.png') 0 0 repeat;
     background-color: rgb(247, 248, 248);
     background-size: 100px 100px;
     animation: loop 10s linear forwards infinite;
@@ -800,13 +800,13 @@ div.remarks {
 @media screen and (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 2dppx) {
     .progress>.bar {
-        background: url('images/Stripes@2x.png') 0 0 repeat;
+        background: url('public/images/Stripes@2x.png') 0 0 repeat;
         background-color: #ffee00;
         background-size: 24px 24px;
     }
 
     .blind {
-        background: url('images/Background@2x.png') 0 0 repeat;
+        background: url('public/images/Background@2x.png') 0 0 repeat;
         background-color: rgb(247, 248, 248);
         background-size: 100px 100px;
     }
@@ -815,13 +815,13 @@ div.remarks {
 @media screen and (-webkit-min-device-pixel-ratio: 3),
 (min-resolution: 3dppx) {
     .progress>.bar {
-        background: url('images/Stripes@3x.png') 0 0 repeat;
+        background: url('public/images/Stripes@3x.png') 0 0 repeat;
         background-color: #ffee00;
         background-size: 24px 24px;
     }
 
     .blind {
-        background: url('images/Background@3x.png') 0 0 repeat;
+        background: url('public/images/Background@3x.png') 0 0 repeat;
         background-color: rgb(247, 248, 248);
         background-size: 100px 100px;
     }
