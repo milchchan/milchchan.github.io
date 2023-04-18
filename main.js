@@ -1,7 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
-import { getDatabase, get, push, runTransaction, query, ref as databaseRef, child, orderByChild, startAt, limitToFirst, limitToLast } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-database.js";
-import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
-import { initializeAnalytics } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-analytics.js";
+import { initializeApp } from "firebase/app";
+import { getDatabase, get, push, runTransaction, query, ref as databaseRef, child, orderByChild, startAt, limitToFirst, limitToLast } from "firebase/database";
+import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
+import { initializeAnalytics } from "firebase/analytics";
 
 const background = { updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
