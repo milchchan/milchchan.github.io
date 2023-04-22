@@ -25,7 +25,6 @@ html {
     overflow-y: auto;
     scroll-behavior: smooth;
     background: var(--background-color);
-    transition: .5s;
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
 }
@@ -106,6 +105,10 @@ figure {
 
 .is-hidden {
     display: none;
+}
+
+.is-preloading * {
+    transition: none !important;
 }
 
 .has-text-weight-bold {
