@@ -673,6 +673,8 @@ window.addEventListener("load", async event => {
   const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
   const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
 
+  document.body.classList.remove("is-preloading");
+
   wall.addEventListener("dragenter", e => {
     (e.currentTarget || e.target).classList.add("dragging");
   });
