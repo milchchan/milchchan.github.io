@@ -63,7 +63,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     item['author'] = author
 
                 if image is not None:
-                    match = re.match("data:([\\w/\\-\\.]+);(\\w+),(.+)", image)
+                    match = re.match('data:([\\w/\\-\\.]+);(\\w+),(.+)', image)
 
                     if match:
                         mime_type, encoding, data = match.groups()
