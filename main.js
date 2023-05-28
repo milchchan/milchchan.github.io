@@ -1370,7 +1370,7 @@ window.addEventListener("load", async event => {
             }
 
             for (let i = 0; i < text.length; i++) {
-              if (letters.indexOf(text.charAt(i)) === -1 && text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
+              if (text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
                 letters.push(text.charAt(i));
               }
             }
