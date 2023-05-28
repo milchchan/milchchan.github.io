@@ -606,7 +606,7 @@ window.select = (event) => {
 
       if (index >= 0) {
         background.index = index;
-        background.updated = -background.timeout;;
+        background.updated = -background.timeout;
       } else {
         shake(target.querySelector(":scope .wrap"));
       }
@@ -636,7 +636,7 @@ window.upload = async (event) => {
         background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
       } while (stack.length > 0);
 
-      background.updated = -background.timeout;;
+      background.updated = -background.timeout;
     }
 
     if (!completed) {
@@ -701,7 +701,7 @@ window.addEventListener("load", async event => {
         background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
       } while (stack.length > 0);
 
-      background.updated = -background.timeout;;
+      background.updated = -background.timeout;
     }
 
     if (!completed) {
@@ -1540,9 +1540,7 @@ window.addEventListener("load", async event => {
                 width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
               }
 
-              width += margin
-
-              backContext.translate(block.elapsed % 60 / 60 * -width, 0);
+              backContext.translate(block.elapsed % 60 / 60 * -(width + margin), 0);
 
               do {
                 for (let i = 0; i < 2; i++) {
