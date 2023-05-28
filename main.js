@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, get, push, runTransaction, query, ref as databaseRef, child, orderByChild, startAt, limitToFirst, limitToLast } from "firebase/database";
+import { getDatabase, get, push, runTransaction, query, ref as databaseRef, child, orderByChild, startAt, limitToFirst, limitToLast, off } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from "firebase/analytics";
 
@@ -1496,10 +1496,10 @@ window.addEventListener("load", async event => {
 
         const backContext = backCanvas.getContext("2d");
         const frontContext = canvas.getContext("2d");
-        const margin = 16;
         const lineHeight = backCanvas.height / background.blocks.length;
-        const fontSize = Math.floor(lineHeight / 2);
+        const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
         const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
+        const margin = Math.ceil(fontSize / 2);
         let index = 0;
 
         backContext.imageSmoothingEnabled = true;
@@ -1537,8 +1537,10 @@ window.addEventListener("load", async event => {
               for (const s of inline.source) {
                 const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
 
-                width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
               }
+
+              width += margin
 
               backContext.translate(block.elapsed % 60 / 60 * -width, 0);
 
@@ -1551,22 +1553,24 @@ window.addEventListener("load", async event => {
                       backContext.globalAlpha = 1.0;
                       backContext.fillStyle = `${block.colors.accent}`;
                     } else {
-                      backContext.globalAlpha = 1.0;
+                      backContext.globalAlpha = 0.75;
                       backContext.fillStyle = `${block.colors.main}`;
                     }
 
                     const textMetrics = backContext.measureText(segment.text);
 
-                    backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
+                    backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
 
-                    x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                    x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
                   }
 
                   for (const s of inline.source) {
                     const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
 
-                    offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight) + margin;
+                    offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
                   }
+
+                  offset += margin
                 }
               } while (offset - margin < backCanvas.width * 2);
 
