@@ -1379,7 +1379,7 @@ window.addEventListener("load", async event => {
               height: 100 / samples.length,
               colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
               inlines: [
-                { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, characters: [], source: source, letters: letters }
+                { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
               ],
               elapsed: 0,
             });
@@ -1444,13 +1444,7 @@ window.addEventListener("load", async event => {
               }
 
               if (inline.text.length === inline.type.buffer.length) {
-                const characters = inline.text.split("");
-
-                inline.characters.splice(0);
-
-                for (let i = 0; i < characters.length; i++) {
-                  inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
-                }
+                inline.current = inline.text;
               } else {
                 const charArray = inline.letters;
                 let randomBuffer = "";
@@ -1466,21 +1460,9 @@ window.addEventListener("load", async event => {
                 }
 
                 if (randomBuffer.length > inline.type.buffer.length) {
-                  const characters = (inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length)).split("");
-
-                  inline.characters.splice(0);
-
-                  for (let i = 0; i < characters.length; i++) {
-                    inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
-                  }
-                } else if (inline.characters.length !== inline.type.buffer.length) {
-                  const characters = inline.type.buffer.split("");
-
-                  inline.characters.splice(0);
-
-                  for (let i = 0; i < characters.length; i++) {
-                    inline.characters.push({ key: i, value: characters[i], highlight: inline.attributes.some(x => i >= x.start && i < x.end) });
-                  }
+                  inline.current = inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length);
+                } else if (inline.current.length !== inline.type.buffer.length) {
+                  inline.current = inline.type.buffer;
                 }
               }
             }
@@ -1512,22 +1494,48 @@ window.addEventListener("load", async event => {
 
         for (const block of background.blocks) {
           for (const inline of block.inlines) {
-            if (inline.running && inline.characters.length > 0) {
-              const line = [{ text: inline.characters[0].value, highlight: inline.characters[0].highlight }];
+            if (inline.running && inline.current.length > 0) {
+              const line = [];
+              let i = 0;
               let width = 0;
               let offset = 0;
 
-              for (let i = 1; i < inline.characters.length; i++) {
-                if (inline.characters[i].highlight) {
-                  if (line[line.length - 1].highlight) {
-                    line[line.length - 1].text += inline.characters[i].value;
+              while (i < inline.current.length) {
+                const j = inline.attributes.findIndex(x => i >= x.start && i < x.end);
+
+                if (j >= 0) {
+                  if (inline.attributes[j].end <= inline.current.length) {
+                    line.push({ text: inline.current.substring(i, inline.attributes[j].end), highlight: true });
+                    i = inline.attributes[j].end;
                   } else {
-                    line.push({ text: inline.characters[i].value, highlight: true });
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: true });
+
+                    break;
                   }
-                } else if (line[line.length - 1].highlight) {
-                  line.push({ text: inline.characters[i].value, highlight: false });
                 } else {
-                  line[line.length - 1].text += inline.characters[i].value;
+                  const minimum = { start: null, distance: Number.MAX_SAFE_INTEGER };
+
+                  for (const attribute of inline.attributes) {
+                    const distance = attribute.start - i;
+
+                    if (distance >= 0 && distance < minimum.distance) {
+                      minimum.distance = distance;
+                      minimum.start = attribute.start;
+                    }
+                  }
+
+                  if (minimum.start === null) {
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
+
+                    break;
+                  } else if (minimum.start <= inline.current.length) {
+                    line.push({ text: inline.current.substring(i, minimum.start), highlight: false });
+                    i = minimum.start
+                  } else {
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
+
+                    break;
+                  }
                 }
               }
 
