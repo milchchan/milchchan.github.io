@@ -1490,8 +1490,7 @@ window.addEventListener("load", async event => {
         backContext.textBaseline = "middle";
         backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
         backContext.save();
-        backContext.beginPath();
-
+        
         for (const block of background.blocks) {
           for (const inline of block.inlines) {
             if (inline.running && inline.current.length > 0) {
@@ -1618,7 +1617,6 @@ window.addEventListener("load", async event => {
           }
         }
 
-        backContext.closePath();
         backContext.globalCompositeOperation = "source-atop";
 
         if (background.color === null) {
