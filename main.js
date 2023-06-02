@@ -1490,7 +1490,7 @@ window.addEventListener("load", async event => {
         backContext.textBaseline = "middle";
         backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
         backContext.save();
-        
+
         for (const block of background.blocks) {
           for (const inline of block.inlines) {
             if (inline.running && inline.current.length > 0) {
@@ -1547,26 +1547,31 @@ window.addEventListener("load", async event => {
                 width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
               }
 
-              backContext.translate(block.elapsed % 60 / 60 * -(width + margin), 0);
+              let translation = block.elapsed % 60 / 60 * -(width + margin)
+
+              backContext.translate(translation, 0);
 
               do {
                 for (let i = 0; i < 2; i++) {
                   let x = 0;
 
                   for (const segment of line) {
-                    if (segment.highlight) {
-                      backContext.globalAlpha = 1.0;
-                      backContext.fillStyle = `${block.colors.accent}`;
-                    } else {
-                      backContext.globalAlpha = 0.75;
-                      backContext.fillStyle = `${block.colors.main}`;
+                    const textMetrics = backContext.measureText(segment.text);
+                    const width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+
+                    if (translation + offset + x + width >= 0 && translation + offset + x < backCanvas.width) {
+                      if (segment.highlight) {
+                        backContext.globalAlpha = 1.0;
+                        backContext.fillStyle = `${block.colors.accent}`;
+                      } else {
+                        backContext.globalAlpha = 0.75;
+                        backContext.fillStyle = `${block.colors.main}`;
+                      }
+
+                      backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
                     }
 
-                    const textMetrics = backContext.measureText(segment.text);
-
-                    backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
-
-                    x += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+                    x += width;
                   }
 
                   for (const s of inline.source) {
