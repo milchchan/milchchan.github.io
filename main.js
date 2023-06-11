@@ -391,13 +391,13 @@ async function resize(blob, length) {
         if (image.width < image.height) {
           if (image.width > length) {
             canvas.width = length;
-            canvas.height = Math.floor((length / image.width) * image.height);
+            canvas.height = Math.floor(length / image.width * image.height);
           } else {
             canvas.width = image.width;
             canvas.height = image.height;
           }
         } else if (image.height > length) {
-          canvas.width = Math.floor((length / image.height) * image.width);
+          canvas.width = Math.floor(length / image.height * image.width);
           canvas.height = length;
         } else {
           canvas.width = image.width;
