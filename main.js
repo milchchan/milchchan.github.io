@@ -5,7 +5,7 @@ import { initializeAnalytics } from "firebase/analytics";
 
 const background = { updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
-const pinch = { center: null, movement: { x: 0, y: 0 }, radius: 0, velocity: 0 };
+const pinches = [];
 const touches = [];
 const firebaseConfig = {
   apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
@@ -1593,31 +1593,36 @@ window.addEventListener("load", async event => {
           index++;
         }
 
-        if (pinch.center !== null) {
-          if (touches.length === 0) {
+        for (let i = pinches.length - 1; i >= 0; i--) {
+          if (pinches.findIndex(x => x.identifiers.findIndex(y => touches.findIndex(z => y === z.identifier) >= 0) >= 0) >= 0) {
+            backContext.fillStyle = "#000000";
+            backContext.beginPath();
+            backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y - pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+            backContext.fill()
+            backContext.closePath();
+          } else {
             const epsilon = 0.01;
             const tension = 50.0;
             const mass = 1.0;
             const friction = 5.0;
-            const displacement = pinch.radius;
+            const displacement = pinches[i].radius;
             const tensionForce = -tension * displacement;
-            const dampingForce = -friction * pinch.velocity;
+            const dampingForce = -friction * pinches[i].velocity;
             const acceleration = (tensionForce + dampingForce) / mass;
+
+            pinches[i].velocity += acceleration * deltaTime;
+            pinches[i].radius += pinches[i].velocity * deltaTime;
             
-            pinch.velocity += acceleration * deltaTime;
-            pinch.radius += pinch.velocity * deltaTime;
-            
-            if (Math.abs(pinch.velocity) < epsilon) {
-                pinch.radius = 0;
-                pinch.center = null;
+            if (Math.abs(pinches[i].velocity) < epsilon) {
+              pinches.splice(i, 1);
+            } else {
+              backContext.fillStyle = "#000000";
+              backContext.beginPath();
+              backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y - pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+              backContext.fill()
+              backContext.closePath();
             }
           }
-
-          backContext.fillStyle = "#000000";
-          backContext.beginPath();
-          backContext.arc((pinch.center.x + pinch.movement.x - Math.abs(pinch.radius)) * window.devicePixelRatio, (pinch.center.y - pinch.movement.y - Math.abs(pinch.radius)) * window.devicePixelRatio, Math.abs(pinch.radius) * window.devicePixelRatio, 0, 2 * Math.PI);
-          backContext.fill()
-          backContext.closePath();
         }
 
         if (background.particles.length > 0) {
@@ -1662,6 +1667,7 @@ window.addEventListener("load", async event => {
         backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
         if (!tracker.active && (tracker.velocity.x !== 0 || tracker.velocity.y !== 0)) {
+          const epsilon = 0.01;
           const decelerationRate = 10 * 96 / 1000;
 
           if (tracker.velocity.x > 1000) {
@@ -1679,11 +1685,11 @@ window.addEventListener("load", async event => {
           tracker.velocity.x -= tracker.velocity.x * decelerationRate * deltaTime;
           tracker.velocity.y -= tracker.velocity.y * decelerationRate * deltaTime;
 
-          if (Math.abs(tracker.velocity.x) < 0.001) {
+          if (Math.abs(tracker.velocity.x) < epsilon) {
             tracker.velocity.x = 0;
           }
 
-          if (Math.abs(tracker.velocity.y) < 0.001) {
+          if (Math.abs(tracker.velocity.y) < epsilon) {
             tracker.velocity.y = 0;
           }
 
@@ -1915,30 +1921,36 @@ window.addEventListener("touchstart", event => {
   if (touches.length === 1) {
     tracker.active = true;
     tracker.velocity.x = tracker.velocity.y = 0;
-  } else {
+
+    if (background.cache.length > 0 && !background.particles.some(x => touches[0].timestamp - x.timestamp < 0.1)) {
+      for (let i = random(0, 4); i > 0; i--) {
+        background.particles.unshift({ elapsed: -1, x: touches[0].position.x, y: touches[0].position.y, image: background.cache[random(0, background.cache.length)], timestamp: touches[0].timestamp });
+      }
+    }
+  } else if (typeof pinches.find(x => x.identifiers.findIndex(y => touches.findIndex(z => y === z.identifier) >= 0) >= 0) === "undefined") {
     let centerX = 0;
     let centerY = 0;
+    let sum = 0;
+    let identifiers = [];
     
     tracker.active = false;
     tracker.velocity.x = 0;
     tracker.velocity.y = 0;
     
     for (const touch of touches) {
-        centerX += touch.position.x;
-        centerY += touch.position.y;
+      identifiers.push(touch.identifier);
+      centerX += touch.position.x;
+      centerY += touch.position.y;
     }
     
     centerX /= touches.length;
     centerY /= touches.length;
-    
-    pinch.center = { x: centerX, y: centerY };
-    pinch.velocity = 0;
-  }
 
-  if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
-    for (let i = random(0, 4); i > 0; i--) {
-      background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
+    for (const touch of touches) {
+      sum += Math.sqrt((centerX - touch.position.x) * (centerX - touch.position.x) + (centerY - touch.position.y) * (centerY - touch.position.y));
     }
+    
+    pinches.push({identifiers: identifiers, base: { center : { x: centerX, y: centerY }, radius: sum / touches.length }, movement: { x: 0, y: 0 }, radius: 0, velocity: 0 });
   }
 });
 window.addEventListener("touchmove", event => {
@@ -1952,9 +1964,9 @@ window.addEventListener("touchmove", event => {
       const x = touch.clientX - rect.x;
       const y = touch.clientY - rect.y;
       const timestamp = event.timeStamp / 1000;
-      const deltaX = x - touches[i].position.x;
-      const deltaY = y - touches[i].position.y;
-      const deltaTime = timestamp - touches[i].timestamp;
+      const deltaX = x - touches[index].position.x;
+      const deltaY = y - touches[index].position.y;
+      const deltaTime = timestamp - touches[index].timestamp;
 
       touches[index].position.x = x;
       touches[index].position.y = y;
@@ -1974,30 +1986,35 @@ window.addEventListener("touchmove", event => {
     tracker.movement.y = touches[0].movement.y;
     tracker.velocity.x = touches[0].velocity.x;
     tracker.velocity.y = touches[0].velocity.y;
-  } else if (pinch.center !== null) {
-    let movementX = 0;
-    let movementY = 0;
-    let previousSum = 0;
-    let sum = 0;
 
-    for (const touch of touches) {
-      movementX += touch.movement.x;
-      movementY += touch.movement.y;
-      previousSum += Math.sqrt((pinch.center.x - touch.location.x + touch.movement.x) * (pinch.center.x - touch.location.x + touch.movement.x) + (pinch.center.y - touch.location.y + touch.movement.y) * (pinch.center.y - touch.location.y + touch.movement.y));
-      sum += Math.sqrt((pinch.center.x - touch.location.x) * (pinch.center.x - touch.location.x) + (pinch.center.y - touch.location.y) * (pinch.center.y - touch.location.y));
+    if (background.cache.length > 0 && !background.particles.some(x => touches[0].timestamp - x.timestamp < 0.1)) {
+      for (let i = random(0, 4); i > 0; i--) {
+        background.particles.unshift({ elapsed: -1, x: touches[0].position.x, y: touches[0].position.y, image: background.cache[random(0, background.cache.length)], timestamp: touches[0].timestamp });
+      }
     }
+  } else {
+    let index = pinches.findIndex(x => x.identifiers.findIndex(y => touches.findIndex(z => y === z.identifier) >= 0) >= 0);
 
-    movementX /= touches.length;
-    movementY /= touches.length;
+    if (index >= 0) {
+      let movementX = 0;
+      let movementY = 0;
+      let sum = 0;
 
-    pinch.movement.x = movementX;
-    pinch.movement.y = movementY;
-    pinch.radius = Math.max((sum - previousSum) / touches.length, 0.0);
-  }
+      for (const touch of touches) {
+        movementX += touch.movement.x;
+        movementY += touch.movement.y;
+      }
 
-  if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
-    for (let i = random(0, 4); i > 0; i--) {
-      background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
+      movementX /= touches.length;
+      movementY /= touches.length;
+
+      for (const touch of touches) {
+        sum += Math.sqrt((pinches[index].base.center.x + movementX - touch.position.x) * (pinches[index].base.center.x + movementX - touch.position.x) + (pinches[index].base.center.y + movementY - touch.position.y) * (pinches[index].base.center.y + movementY - touch.position.y));
+      }
+
+      pinches[index].movement.x = movementX;
+      pinches[index].movement.y = movementY;
+      pinches[index].radius = Math.max(sum / touches.length - pinches[index].base.radius, 0);
     }
   }
 });
@@ -2010,7 +2027,7 @@ window.addEventListener("touchend", event => {
     const index = touches.findIndex(x => x.identifier === touch.identifier);
 
     if (index >= 0) {
-      touches.slice(index, 1);
+      touches.splice(index, 1);
     }
   }
 });
@@ -2023,7 +2040,7 @@ window.addEventListener("touchcancel", event => {
     const index = touches.findIndex(x => x.identifier === touch.identifier);
 
     if (index >= 0) {
-      touches.slice(index, 1);
+      touches.splice(index, 1);
     }
   }
 });
