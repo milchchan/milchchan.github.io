@@ -2013,7 +2013,7 @@ window.addEventListener("touchend", event => {
       touches.slice(index, 1);
     }
   }
-);
+});
 window.addEventListener("touchcancel", event => {
   event.stopPropagation();
 
