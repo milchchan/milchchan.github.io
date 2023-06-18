@@ -4,7 +4,7 @@ import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytes
 import { initializeAnalytics } from "firebase/analytics";
 
 const background = { updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
-const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
+const tracker = { active: false, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
 const touches = [];
 const firebaseConfig = {
@@ -1837,7 +1837,7 @@ window.addEventListener("resize", event => {
   canvas.style.height = `${height}px`;
 });
 window.addEventListener("mousedown", event => {
-  if (event.button === 0 && tracker.identifier === null) {
+  if (event.button === 0 && touches.length === 0) {
     const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
     const x = event.clientX - rect.x;
     const y = event.clientY - rect.y;
@@ -1864,7 +1864,7 @@ window.addEventListener("mousemove", event => {
   tracker.mouse.x = x;
   tracker.mouse.y = y;
 
-  if (tracker.active && tracker.identifier === null) {
+  if (tracker.active && touches.length === 0) {
     const timestamp = event.timeStamp / 1000;
     const deltaX = x - tracker.position.x;
     const deltaY = y - tracker.position.y;
@@ -1889,7 +1889,7 @@ window.addEventListener("mousemove", event => {
   }
 });
 window.addEventListener("mouseup", event => {
-  if (event.button === 0 && tracker.identifier === null) {
+  if (event.button === 0 && touches.length === 0) {
     tracker.active = false;
   }
 });
