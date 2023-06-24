@@ -1921,6 +1921,8 @@ window.addEventListener("touchstart", event => {
   if (touches.length === 1) {
     tracker.active = true;
     tracker.velocity.x = tracker.velocity.y = 0;
+    touches[0].movement.x = tracker.movement.x;
+    touches[0].movement.y = tracker.movement.y;
 
     if (background.cache.length > 0 && !background.particles.some(x => touches[0].timestamp - x.timestamp < 0.1)) {
       for (let i = random(0, 4); i > 0; i--) {
