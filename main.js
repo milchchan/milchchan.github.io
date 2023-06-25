@@ -886,6 +886,7 @@ window.addEventListener("load", async event => {
           background.image = null;
           background.blocks.splice(0);
           tracker.movement.x = tracker.movement.y = 0;
+          pinches.splice(0);
           animationQueue.splice(0);
 
           for (const item of background.dataset) {
