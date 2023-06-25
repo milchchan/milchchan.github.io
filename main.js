@@ -1597,7 +1597,7 @@ window.addEventListener("load", async event => {
           if (pinches.findIndex(x => x.identifiers.findIndex(y => touches.findIndex(z => y === z.identifier) >= 0) >= 0) >= 0) {
             backContext.fillStyle = "#000000";
             backContext.beginPath();
-            backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y - pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+            backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
             backContext.fill()
             backContext.closePath();
           } else {
@@ -1618,7 +1618,7 @@ window.addEventListener("load", async event => {
             } else {
               backContext.fillStyle = "#000000";
               backContext.beginPath();
-              backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y - pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+              backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
               backContext.fill()
               backContext.closePath();
             }
