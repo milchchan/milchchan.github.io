@@ -1,4 +1,12 @@
 {
+    "$schema": "https://json.schemastore.org/staticwebapp.config.json",
+    "routes": [
+        {
+          "route": "https://www.milchchan.com/*",
+          "redirect": "https://milchchan.com/",
+          "statusCode": 301
+        }
+    ],
     "navigationFallback": {
         "rewrite": "index.html",
         "exclude": [
@@ -11,6 +19,8 @@
         }
     },
     "mimeTypes": {
+        ".xml": "application/xml; charset=utf-8",
+        ".txt": "text/plain",
         ".json": "text/json"
     }
 }
