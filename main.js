@@ -722,10 +722,10 @@ window.addEventListener("load", async event => {
   }
 
   canvas["backBuffer"] = document.createElement("canvas");
-  canvas.width = width * Math.trunc(window.devicePixelRatio);
-  canvas.height = height * Math.trunc(window.devicePixelRatio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
+  canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+  canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+  canvas.style.width = `${Math.floor(rect.width)}px`;
+  canvas.style.height = `${Math.floor(rect.height)}px`;
   canvas.style.backgroundColor = "transparent";
 
   wall.appendChild(canvas);
@@ -1827,13 +1827,11 @@ window.addEventListener("resize", event => {
   const frame = document.body.querySelector("#app>.container>.wrap>.frame");
   const canvas = frame.querySelector(":scope>.wall>canvas");
   const rect = frame.getBoundingClientRect();
-  const width = Math.floor(rect.width);
-  const height = Math.floor(rect.height);
-
-  canvas.width = width * Math.trunc(window.devicePixelRatio);
-  canvas.height = height * Math.trunc(window.devicePixelRatio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
+  
+  canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+  canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+  canvas.style.width = `${Math.floor(rect.width)}px`;
+  canvas.style.height = `${Math.floor(rect.height)}px`;
 });
 window.addEventListener("mousedown", event => {
   if (event.button === 0 && tracker.identifier === null) {
