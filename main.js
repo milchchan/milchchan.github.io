@@ -666,14 +666,13 @@ window.addEventListener("load", async event => {
   }
 
   const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
-  const wrap = document.body.querySelector("#app>.container>.wrap");
-  const wall = wrap.querySelector(":scope>.frame>.wall");
+  const frame = document.body.querySelector("#app>.container>.wrap>.frame");
+  const wall = frame.querySelector(":scope>.wall");
   const stats = document.createElement("div");
   const canvas = document.createElement("canvas");
-  const style = window.getComputedStyle(wrap);
-  const rect = wrap.getBoundingClientRect();
-  const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
-  const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
+  const rect = frame.getBoundingClientRect();
+  const width = Math.floor(rect.width);
+  const height = Math.floor(rect.height);
 
   document.body.classList.remove("is-preloading");
 
@@ -1825,12 +1824,11 @@ window.addEventListener("load", async event => {
   }
 });
 window.addEventListener("resize", event => {
-  const wrap = document.body.querySelector("#app>.container>.wrap");
-  const canvas = wrap.querySelector(":scope>.frame>.wall>canvas");
-  const style = window.getComputedStyle(wrap);
-  const rect = wrap.getBoundingClientRect();
-  const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
-  const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
+  const frame = document.body.querySelector("#app>.container>.wrap>.frame");
+  const canvas = frame.querySelector(":scope>.wall>canvas");
+  const rect = frame.getBoundingClientRect();
+  const width = Math.floor(rect.width);
+  const height = Math.floor(rect.height);
 
   canvas.width = width * window.devicePixelRatio;
   canvas.height = height * window.devicePixelRatio;
