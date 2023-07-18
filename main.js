@@ -461,7 +461,7 @@ async function upload(files) {
   bar.style.width = "0%";
 
   try {
-    const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
+    const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
 
     if (response.ok) {
       const dataURL = await new Promise(async (resolve, reject) => {
@@ -722,8 +722,8 @@ window.addEventListener("load", async event => {
   }
 
   canvas["backBuffer"] = document.createElement("canvas");
-  canvas.width = width * window.devicePixelRatio;
-  canvas.height = height * window.devicePixelRatio;
+  canvas.width = width * Math.trunc(window.devicePixelRatio);
+  canvas.height = height * Math.trunc(window.devicePixelRatio);
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   canvas.style.backgroundColor = "transparent";
@@ -1016,7 +1016,7 @@ window.addEventListener("load", async event => {
             blind.style.transform = "translate3d(0, 100%, 0)";
 
             try {
-              const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${window.devicePixelRatio}x.png` : "images/Background.png");
+              const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Background.png");
 
               if (response.ok) {
                 const blob = await response.blob();
@@ -1062,7 +1062,7 @@ window.addEventListener("load", async event => {
             bar.style.width = "0%";
 
             try {
-              const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
+              const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
 
               if (response.ok) {
                 const dataURL = await new Promise(async (resolve, reject) => {
@@ -1185,7 +1185,7 @@ window.addEventListener("load", async event => {
                         reader.onerror = () => {
                           reject(reader.error);
                         };
-                        reader.readAsDataURL(await resize(blob, Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
+                        reader.readAsDataURL(await resize(blob, Math.floor(Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio)));
                       });
 
                       animationQueue.push(Object.assign({ time: 0, image: image }, frame));
@@ -1213,7 +1213,7 @@ window.addEventListener("load", async event => {
                             reader.onerror = () => {
                               reject(reader.error);
                             };
-                            reader.readAsDataURL(await resize(frame.blob, Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
+                            reader.readAsDataURL(await resize(frame.blob, Math.floor(Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio)));
                           })
                         });
                       }
@@ -1830,8 +1830,8 @@ window.addEventListener("resize", event => {
   const width = Math.floor(rect.width);
   const height = Math.floor(rect.height);
 
-  canvas.width = width * window.devicePixelRatio;
-  canvas.height = height * window.devicePixelRatio;
+  canvas.width = width * Math.trunc(window.devicePixelRatio);
+  canvas.height = height * Math.trunc(window.devicePixelRatio);
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
 });
