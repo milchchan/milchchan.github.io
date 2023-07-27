@@ -886,6 +886,8 @@ window.addEventListener("load", async event => {
           background.image = null;
           background.blocks.splice(0);
           tracker.movement.x = tracker.movement.y = 0;
+          pinches.splice(0);
+          touches.splice(0);
           animationQueue.splice(0);
 
           for (const item of background.dataset) {
@@ -1594,10 +1596,10 @@ window.addEventListener("load", async event => {
         }
 
         for (let i = pinches.length - 1; i >= 0; i--) {
-          if (pinches.findIndex(x => x.identifiers.findIndex(y => touches.findIndex(z => y === z.identifier) >= 0) >= 0) >= 0) {
+          if (pinches[i].identifiers.every(x => touches.findIndex(y => x === y.identifier) >= 0)) {
             backContext.fillStyle = "#000000";
             backContext.beginPath();
-            backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y - pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+            backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
             backContext.fill()
             backContext.closePath();
           } else {
@@ -1612,14 +1614,13 @@ window.addEventListener("load", async event => {
             pinches[i].active = false;
             pinches[i].velocity += acceleration * deltaTime;
             pinches[i].radius += pinches[i].velocity * deltaTime;
-            
+
             if (Math.abs(pinches[i].velocity) < 0.1) {
               pinches.splice(i, 1);
-              console.log("end");
             } else {
               backContext.fillStyle = "#000000";
               backContext.beginPath();
-              backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y - pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+              backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
               backContext.fill()
               backContext.closePath();
             }
@@ -1912,11 +1913,13 @@ window.addEventListener("touchstart", event => {
   event.stopPropagation();
 
   for (const touch of event.changedTouches) {
-    const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
-    const x = touch.clientX - rect.x;
-    const y = touch.clientY - rect.y;
+    if (touches.length < 2) {
+      const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
+      const x = touch.clientX - rect.x;
+      const y = touch.clientY - rect.y;
 
-    touches.push({ identifier: touch.identifier, position: { x: x, y: y }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: event.timeStamp / 1000 });
+      touches.push({ identifier: touch.identifier, position: { x: x, y: y }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: event.timeStamp / 1000 });
+    }
   }
 
   if (touches.length === 1) {
@@ -1933,25 +1936,25 @@ window.addEventListener("touchstart", event => {
     let centerY = 0;
     let sum = 0;
     let identifiers = [];
-    
+
     tracker.active = false;
     tracker.velocity.x = 0;
     tracker.velocity.y = 0;
-    
+
     for (const touch of touches) {
       identifiers.push(touch.identifier);
       centerX += touch.position.x;
       centerY += touch.position.y;
     }
-    
+
     centerX /= touches.length;
     centerY /= touches.length;
 
     for (const touch of touches) {
       sum += Math.sqrt((centerX - touch.position.x) * (centerX - touch.position.x) + (centerY - touch.position.y) * (centerY - touch.position.y));
     }
-    
-    pinches.push({active: true, identifiers: identifiers, base: { center : { x: centerX, y: centerY }, radius: sum / touches.length }, movement: { x: 0, y: 0 }, radius: 0, velocity: 0 });
+
+    pinches.push({ active: true, identifiers: identifiers, base: { center: { x: centerX, y: centerY }, radius: sum / touches.length }, movement: { x: 0, y: 0 }, radius: 0, velocity: 0 });
   }
 });
 window.addEventListener("touchmove", event => {
@@ -1974,7 +1977,7 @@ window.addEventListener("touchmove", event => {
       touches[index].timestamp = timestamp;
       touches[index].movement.x += deltaX;
       touches[index].movement.y += deltaY;
-      
+
       if (deltaTime > 0) {
         touches[index].velocity.x = Math.max(Math.min(deltaX / deltaTime, 1000), -1000);
         touches[index].velocity.y = Math.max(Math.min(deltaY / deltaTime, 1000), -1000);
