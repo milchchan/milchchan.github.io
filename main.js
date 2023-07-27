@@ -461,7 +461,7 @@ async function upload(files) {
   bar.style.width = "0%";
 
   try {
-    const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
+    const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
 
     if (response.ok) {
       const dataURL = await new Promise(async (resolve, reject) => {
@@ -666,14 +666,13 @@ window.addEventListener("load", async event => {
   }
 
   const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
-  const wrap = document.body.querySelector("#app>.container>.wrap");
-  const wall = wrap.querySelector(":scope>.frame>.wall");
+  const frame = document.body.querySelector("#app>.container>.wrap>.frame");
+  const wall = frame.querySelector(":scope>.wall");
   const stats = document.createElement("div");
   const canvas = document.createElement("canvas");
-  const style = window.getComputedStyle(wrap);
-  const rect = wrap.getBoundingClientRect();
-  const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
-  const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
+  const rect = frame.getBoundingClientRect();
+  const width = Math.floor(rect.width);
+  const height = Math.floor(rect.height);
 
   document.body.classList.remove("is-preloading");
 
@@ -723,10 +722,10 @@ window.addEventListener("load", async event => {
   }
 
   canvas["backBuffer"] = document.createElement("canvas");
-  canvas.width = width * window.devicePixelRatio;
-  canvas.height = height * window.devicePixelRatio;
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
+  canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+  canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+  canvas.style.width = `${Math.floor(rect.width)}px`;
+  canvas.style.height = `${Math.floor(rect.height)}px`;
   canvas.style.backgroundColor = "transparent";
 
   wall.appendChild(canvas);
@@ -1019,7 +1018,7 @@ window.addEventListener("load", async event => {
             blind.style.transform = "translate3d(0, 100%, 0)";
 
             try {
-              const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${window.devicePixelRatio}x.png` : "images/Background.png");
+              const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Background.png");
 
               if (response.ok) {
                 const blob = await response.blob();
@@ -1065,7 +1064,7 @@ window.addEventListener("load", async event => {
             bar.style.width = "0%";
 
             try {
-              const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${window.devicePixelRatio}x.png` : "images/Stripes.png");
+              const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
 
               if (response.ok) {
                 const dataURL = await new Promise(async (resolve, reject) => {
@@ -1188,7 +1187,7 @@ window.addEventListener("load", async event => {
                         reader.onerror = () => {
                           reject(reader.error);
                         };
-                        reader.readAsDataURL(await resize(blob, Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
+                        reader.readAsDataURL(await resize(blob, Math.floor(Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio)));
                       });
 
                       animationQueue.push(Object.assign({ time: 0, image: image }, frame));
@@ -1216,7 +1215,7 @@ window.addEventListener("load", async event => {
                             reader.onerror = () => {
                               reject(reader.error);
                             };
-                            reader.readAsDataURL(await resize(frame.blob, Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
+                            reader.readAsDataURL(await resize(frame.blob, Math.floor(Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio)));
                           })
                         });
                       }
@@ -1826,17 +1825,14 @@ window.addEventListener("load", async event => {
   }
 });
 window.addEventListener("resize", event => {
-  const wrap = document.body.querySelector("#app>.container>.wrap");
-  const canvas = wrap.querySelector(":scope>.frame>.wall>canvas");
-  const style = window.getComputedStyle(wrap);
-  const rect = wrap.getBoundingClientRect();
-  const width = Math.floor(rect.width - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10));
-  const height = Math.floor(rect.height - parseInt(style.paddingTop, 10) - parseInt(style.paddingBottom, 10));
-
-  canvas.width = width * window.devicePixelRatio;
-  canvas.height = height * window.devicePixelRatio;
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
+  const frame = document.body.querySelector("#app>.container>.wrap>.frame");
+  const canvas = frame.querySelector(":scope>.wall>canvas");
+  const rect = frame.getBoundingClientRect();
+  
+  canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+  canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+  canvas.style.width = `${Math.floor(rect.width)}px`;
+  canvas.style.height = `${Math.floor(rect.height)}px`;
 });
 window.addEventListener("mousedown", event => {
   if (event.button === 0 && tracker.identifier === null) {
