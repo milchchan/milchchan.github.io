@@ -1927,7 +1927,7 @@ window.addEventListener("touchstart", event => {
         background.particles.unshift({ elapsed: -1, x: touches[0].position.x, y: touches[0].position.y, image: background.cache[random(0, background.cache.length)], timestamp: touches[0].timestamp });
       }
     }
-  } else if (typeof pinches.find(x => x.identifiers.findIndex(y => touches.findIndex(z => y === z.identifier) >= 0) >= 0) === "undefined") {
+  } else if (typeof pinches.find(x => x.identifiers.every(y => touches.findIndex(z => y === z.identifier) >= 0)) === "undefined") {
     let centerX = 0;
     let centerY = 0;
     let sum = 0;
@@ -1993,7 +1993,7 @@ window.addEventListener("touchmove", event => {
       }
     }
   } else {
-    let index = pinches.findIndex(x => x.identifiers.findIndex(y => touches.findIndex(z => y === z.identifier) >= 0) >= 0);
+    let index = pinches.findIndex(x => x.identifiers.every(y => touches.findIndex(z => y === z.identifier) >= 0));
 
     if (index >= 0 && pinches[index].active) {
       let movementX = 0;
