@@ -3,14 +3,14 @@
 
 :root {
     --background-color: #ffffff;
-    --foreground-color: #68e6ff;
+    --foreground-color: #4ef5fe;
     --accent-color: #ffceda;
     --background-font-family: "Fredoka One", "Dela Gothic One", cursive;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --foreground-color: #c1aee6;
+        --foreground-color: #b399e0;
     }
 }
 
