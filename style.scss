@@ -172,7 +172,7 @@ figure {
     transform: translate3d(0, 0%, 0);
     overflow: hidden;
     background: url('public/images/Background.png') 0 0 repeat;
-    background-color: rgb(247, 248, 248);
+    background-color: #f4f4f2;
     background-size: 100px 100px;
     animation: loop 10s linear forwards infinite;
     transition: .5s;
@@ -275,7 +275,7 @@ figure {
                 width: 100%;
                 max-width: 100% !important;
                 height: 100%;
-                background: rgb(247, 248, 248);
+                background: #f4f4f2;
                 overflow: hidden;
                 transform: translate3d(0, 0, 0);
                 transition: .5s;
@@ -810,7 +810,7 @@ div.remarks {
 
     .blind {
         background: url('public/images/Background@2x.png') 0 0 repeat;
-        background-color: rgb(247, 248, 248);
+        background-color: #f4f4f2;
         background-size: 100px 100px;
     }
 }
@@ -825,7 +825,7 @@ div.remarks {
 
     .blind {
         background: url('public/images/Background@3x.png') 0 0 repeat;
-        background-color: rgb(247, 248, 248);
+        background-color: #f4f4f2;
         background-size: 100px 100px;
     }
 }
