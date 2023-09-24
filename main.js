@@ -671,9 +671,7 @@ window.addEventListener("load", async event => {
   const stats = document.createElement("div");
   const canvas = document.createElement("canvas");
   const rect = frame.getBoundingClientRect();
-  const width = Math.floor(rect.width);
-  const height = Math.floor(rect.height);
-
+  
   document.body.classList.remove("is-preloading");
 
   wall.addEventListener("dragenter", e => {
