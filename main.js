@@ -1703,7 +1703,7 @@ window.addEventListener("load", async event => {
 
           frame.time += deltaTime;
 
-          while (frame.time >= delay) {
+          while (frame.time > delay) {
             const time = frame.time - delay;
 
             frame.time = 0;
