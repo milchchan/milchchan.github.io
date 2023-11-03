@@ -1565,7 +1565,7 @@ window.addEventListener("load", async event => {
                         backContext.globalAlpha = 1.0;
                         backContext.fillStyle = `${block.colors.accent}`;
                       } else {
-                        backContext.globalAlpha = 0.75;
+                        backContext.globalAlpha = 0.5;
                         backContext.fillStyle = `${block.colors.main}`;
                       }
 
