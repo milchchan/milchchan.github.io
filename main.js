@@ -671,7 +671,7 @@ window.addEventListener("load", async event => {
   const stats = document.createElement("div");
   const canvas = document.createElement("canvas");
   const rect = frame.getBoundingClientRect();
-  
+
   document.body.classList.remove("is-preloading");
 
   wall.addEventListener("dragenter", e => {
@@ -1482,6 +1482,8 @@ window.addEventListener("load", async event => {
         const lineHeight = backCanvas.height / background.blocks.length;
         const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
         const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
+        const normalFont = `normal normal ${fontSize}px ${fontFamily}`;
+        const boldFont = `normal bold ${fontSize}px ${fontFamily}`;
         const margin = Math.ceil(fontSize / 2);
         let index = 0;
 
@@ -1540,10 +1542,20 @@ window.addEventListener("load", async event => {
               }
 
               backContext.save();
-              backContext.font = `${fontSize}px ${fontFamily}`;
+
 
               for (const s of inline.source) {
-                const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+                let text;
+
+                if (typeof (s) === "string") {
+                  backContext.font = normalFont;
+                  text = s;
+                } else {
+                  backContext.font = boldFont;
+                  text = s.name;
+                }
+
+                const textMetrics = backContext.measureText(text);
 
                 width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
               }
@@ -1558,16 +1570,16 @@ window.addEventListener("load", async event => {
                   let x = 0;
 
                   for (const segment of line) {
+                    if (segment.highlight) {
+                      backContext.font = boldFont;
+                    } else {
+                      backContext.font = normalFont;
+                    }
+
                     const textMetrics = backContext.measureText(segment.text);
                     const width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
 
                     if (translation + offset + x + width >= 0 && translation + offset + x < backCanvas.width) {
-                      if (segment.highlight) {
-                        backContext.fillStyle = `${block.colors.accent}`;
-                      } else {
-                        backContext.fillStyle = `${block.colors.main}`;
-                      }
-
                       backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
                     }
 
@@ -1575,7 +1587,17 @@ window.addEventListener("load", async event => {
                   }
 
                   for (const s of inline.source) {
-                    const textMetrics = backContext.measureText(typeof (s) === "string" ? s : s.name);
+                    let text;
+
+                    if (typeof (s) === "string") {
+                      backContext.font = normalFont;
+                      text = s;
+                    } else {
+                      backContext.font = boldFont;
+                      text = s.name;
+                    }
+
+                    const textMetrics = backContext.measureText(text);
 
                     offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
                   }
@@ -1825,7 +1847,7 @@ window.addEventListener("resize", event => {
   const frame = document.body.querySelector("#app>.container>.wrap>.frame");
   const canvas = frame.querySelector(":scope>.wall>canvas");
   const rect = frame.getBoundingClientRect();
-  
+
   canvas.width = Math.floor(rect.width * window.devicePixelRatio);
   canvas.height = Math.floor(rect.height * window.devicePixelRatio);
   canvas.style.width = `${Math.floor(rect.width)}px`;
