@@ -1551,6 +1551,7 @@ window.addEventListener("load", async event => {
               let translation = block.elapsed % 60 / 60 * -(width + margin)
 
               backContext.translate(translation, 0);
+              backContext.globalAlpha = 1.0;
 
               do {
                 for (let i = 0; i < 2; i++) {
@@ -1562,10 +1563,8 @@ window.addEventListener("load", async event => {
 
                     if (translation + offset + x + width >= 0 && translation + offset + x < backCanvas.width) {
                       if (segment.highlight) {
-                        backContext.globalAlpha = 1.0;
                         backContext.fillStyle = `${block.colors.accent}`;
                       } else {
-                        backContext.globalAlpha = 0.5;
                         backContext.fillStyle = `${block.colors.main}`;
                       }
 
