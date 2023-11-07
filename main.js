@@ -1320,7 +1320,8 @@ window.addEventListener("load", async event => {
 
           background.preloading = false;
 
-          const length = random(8, 16);
+          const maxLines = Math.round(Math.min(window.screen.width, window.screen.height) / Math.ceil(16.0 * 2.0 * 1.5));
+          const length = random(Math.floor(maxLines / 2), maxLines);
           let start = background.dataset[background.index].texts.length - length;
           let samples;
 
