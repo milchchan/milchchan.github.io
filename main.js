@@ -1381,7 +1381,7 @@ window.addEventListener("load", async event => {
               height: 100 / samples.length,
               colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
               inlines: [
-                { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 30, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
+                { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 25, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
               ],
               elapsed: 0,
             });
