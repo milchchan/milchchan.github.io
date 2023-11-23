@@ -3,7 +3,7 @@ import json
 import logging
 import os
 import certifi
-from datetime import datetime, timezone
+from datetime import timezone
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Like, Attribute
