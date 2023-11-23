@@ -6,9 +6,11 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "like",
+      "route": "like/{id}",
       "methods": [
-        "post"
+        "get",
+        "put",
+        "delete"
       ]
     },
     {
