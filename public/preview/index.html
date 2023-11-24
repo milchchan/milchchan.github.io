@@ -19,11 +19,11 @@
     <meta property="twitter:image" content="https://milchchan.com/images/Milch.png">
     <meta property="twitter:url" content="https://milchchan.com/">
     <title>MILCHCHAN.COM</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/touch-icon-ipad-retina.png">
     <style media="screen">
         :root {
             --background-color: #000000;
@@ -62,6 +62,80 @@
             height: 100%;
             min-height: 100%;
             background-color: transparent;
+        }
+
+        .progress {
+            pointer-events: none;
+            z-index: 1;
+            position: absolute;
+            margin: 0 !important;
+            border: 0px solid transparent;
+            border-radius: 0px;
+            padding: 0;
+            width: 100%;
+            height: fit-content;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            backface-visibility: hidden;
+            background: transparent;
+            touch-action: none;
+
+            >.bar {
+                pointer-events: none;
+                z-index: 1;
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 0;
+                padding: 0;
+                border: 0px solid transparent;
+                border-radius: 0px;
+                width: 100%;
+                height: 2px;
+                transform: translate3d(0, 0%, 0);
+                overflow: hidden;
+                background: url('/images/Stripes.png') 0 0 repeat;
+                background-color: #ffee00;
+                background-size: 24px 24px;
+                animation: progress 1s linear forwards infinite;
+                animation-play-state: paused;
+                transition: .5s;
+                backface-visibility: hidden;
+                perspective: 1000;
+            }
+
+            >.bar.animating {
+                animation-play-state: running;
+            }
+        }
+
+        @keyframes progress {
+            0% {
+                background-position: 0px 0px;
+            }
+
+            100% {
+                background-position: -24px 0px;
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 2dppx) {
+            .progress>.bar {
+                background: url('/images/Stripes@2x.png') 0 0 repeat;
+                background-color: #ffee00;
+                background-size: 24px 24px;
+            }
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio: 3),
+        (min-resolution: 3dppx) {
+            .progress>.bar {
+                background: url('/images/Stripes@3x.png') 0 0 repeat;
+                background-color: #ffee00;
+                background-size: 24px 24px;
+            }
         }
     </style>
 </head>
@@ -172,8 +246,21 @@
                 return Math.floor(Math.random() * (max - min)) + min;
             }
 
+            const progress = document.createElement("div");
+            const bar = document.createElement("div");
+            let animation = null;
+
+            document.body.appendChild(renderer.domElement);
+            document.body.appendChild(stats.domElement);
+
+            progress.className = "progress";
+            bar.className = "bar animating";
+            bar.style.width = "0%";
+
+            progress.appendChild(bar);
+            document.body.appendChild(progress);
+
             loader.load(window.location.hostname.endsWith("merkuchan.com") ? "models/Merku.vrm" : "models/Milch.vrm", async gltf => {
-                // retrieve a VRM instance from gltf
                 vrm = gltf.userData.vrm;
                 vrm.scene.visible = false;
                 vrm.scene.rotation.y = Math.PI;
@@ -208,10 +295,37 @@
                 }
 
                 scene.add(vrm.scene);
-            }, progress => console.log('Loading model...', 100.0 * (progress.loaded / progress.total), '%'), error => console.error(error));
 
-            document.body.appendChild(renderer.domElement);
-            document.body.appendChild(stats.domElement);
+                bar.animate([
+                    {
+                        opacity: 0
+                    }
+                ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-in",
+                    composite: "replace"
+                }).onfinish = () => {
+                    progress.remove();
+                };
+            }, progress => {
+                animation = bar.animate([
+                    {
+                        width: `${Math.floor(progress.loaded / progress.total * 100)}%`
+                    }
+                ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "linear",
+                    composite: "replace"
+                }).onfinish = () => {
+                    bar.style.width = `${Math.floor(progress.loaded / progress.total * 100)}%`;
+                };
+            }, error => console.error(error));
 
             function animate() {
                 requestAnimationFrame(animate);
@@ -232,7 +346,7 @@
                         if (animationIndex >= animations.length) {
                             animationIndex = 0;
                         }
-                        
+
                         if (vrm.expressionManager !== null) {
                             blink.time += deltaTime;
 
