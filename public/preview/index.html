@@ -232,19 +232,21 @@
                         if (animationIndex >= animations.length) {
                             animationIndex = 0;
                         }
+                        
+                        if (vrm.expressionManager !== null) {
+                            blink.time += deltaTime;
 
-                        blink.time += deltaTime;
+                            if (blink.time >= blink.duration) {
+                                blink.step += deltaTime * blink.speed;
 
-                        if (blink.time >= blink.duration && vrm.expressionManager !== null) {
-                            blink.step += deltaTime * blink.speed;
-
-                            if (blink.step >= blink.max) {
-                                blink.step = 0.0;
-                                blink.max = _random(0, 2) + 1.0;
-                                blink.time = 0.0;
-                                vrm.expressionManager.setValue("blink", 0.0);
-                            } else {
-                                vrm.expressionManager.setValue("blink", Math.abs(Math.sin(blink.step * Math.PI)));
+                                if (blink.step >= blink.max) {
+                                    blink.step = 0.0;
+                                    blink.max = _random(0, 2) + 1.0;
+                                    blink.time = 0.0;
+                                    vrm.expressionManager.setValue("blink", 0.0);
+                                } else {
+                                    vrm.expressionManager.setValue("blink", Math.abs(Math.sin(blink.step * Math.PI)));
+                                }
                             }
                         }
 
