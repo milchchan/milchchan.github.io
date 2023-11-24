@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="ミルヒちゃんもいっしょに魔法少女しようね">
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f4f2">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f4f4f2">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#1b3c68">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b3c68">
     <meta property="og:title" content="MILCHCHAN.COM">
     <meta property="og:description" content="ミルヒちゃんもいっしょに魔法少女しようね">
     <meta property="og:type" content="website">
@@ -26,7 +26,7 @@
     <link rel="apple-touch-icon" sizes="167x167" href="/touch-icon-ipad-retina.png">
     <style media="screen">
         :root {
-            --background-color: #000000;
+            --background-color: #1b3c68;
         }
 
         html {
@@ -96,7 +96,7 @@
                 transform: translate3d(0, 0%, 0);
                 overflow: hidden;
                 background: url('/images/Stripes.png') 0 0 repeat;
-                background-color: #ffee00;
+                background-color: #bffb4f;
                 background-size: 24px 24px;
                 animation: progress 1s linear forwards infinite;
                 animation-play-state: paused;
@@ -124,7 +124,7 @@
         (min-resolution: 2dppx) {
             .progress>.bar {
                 background: url('/images/Stripes@2x.png') 0 0 repeat;
-                background-color: #ffee00;
+                background-color: #bffb4f;
                 background-size: 24px 24px;
             }
         }
@@ -133,7 +133,7 @@
         (min-resolution: 3dppx) {
             .progress>.bar {
                 background: url('/images/Stripes@3x.png') 0 0 repeat;
-                background-color: #ffee00;
+                background-color: #bffb4f;
                 background-size: 24px 24px;
             }
         }
@@ -209,7 +209,7 @@
 
         scene.add(new THREE.AmbientLight(0xFFFFFF, 0.25));
         scene.add(directionallight);
-        scene.add(new THREE.GridHelper(10, 10));
+        scene.add(new THREE.GridHelper(10, 10, "#ffffff", "#5b7495"));
         scene.add(new THREE.AxesHelper(5));
 
         bloomPass.renderToScreen = true;
