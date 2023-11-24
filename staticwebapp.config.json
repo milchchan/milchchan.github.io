@@ -12,6 +12,6 @@
         }
     },
     "mimeTypes": {
-        ".json": "text/json"
+        ".json": "application/json"
     }
 }
