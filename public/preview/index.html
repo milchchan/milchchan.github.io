@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f4f2">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f4f4f2">
+    <meta property="og:title" content="MILCHCHAN.COM">
+    <meta property="og:description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://milchchan.com/">
+    <meta property="og:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:site" content="@milchchan">
+    <meta property="twitter:title" content="MILCHCHAN.COM">
+    <meta property="twitter:description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta property="twitter:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:url" content="https://milchchan.com/">
+    <title>MILCHCHAN.COM</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
+    <style media="screen">
+        :root {
+            --background-color: #000000;
+        }
+
+        html {
+            touch-action: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background: var(--background-color);
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            min-height: 100dvh;
+            overflow: hidden;
+        }
+
+        body>canvas {
+            position: absolute;
+            display: block;
+            overflow: hidden;
+            outline: none;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            background-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="importmap">
+        {
+            "imports": {
+            "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/",
+            "@pixiv/three-vrm": "https://unpkg.com/@pixiv/three-vrm@2.0.6/lib/three-vrm.module.js"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from "three";
+        import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+        import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+        import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+        import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+        import { UnrealBloomPass } from "./postprocessing/UnrealBloomPass.js";
+        import { HueSaturationShader } from "three/addons/shaders/HueSaturationShader.js";
+        import { CopyShader } from "three/addons/shaders/CopyShader.js";
+        import { OrbitControls } from "three/addons/controls/OrbitControls";
+        import Stats from "three/addons/libs/stats.module";
+        import { VRMLoaderPlugin } from "@pixiv/three-vrm";
+
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+            preserveDrawingBuffer: true
+        });
+        const scene = new THREE.Scene();
+        const directionallight = new THREE.DirectionalLight(0xffffff, 0.5);
+        const clock = new THREE.Clock();
+        const loader = new GLTFLoader();
+        const CAMERA_FOV = 60.0;
+        const CAMERA_Z = 1.5;
+        const camera = new THREE.PerspectiveCamera(CAMERA_FOV, renderer.domElement.width / renderer.domElement.height, 0.1, 1000);
+        const controls = new OrbitControls(camera, renderer.domElement);
+        const lookAtTarget = new THREE.Object3D();
+        const composer = new EffectComposer(renderer);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(renderer.domElement.width, renderer.domElement.height), 0.5, 0.0, 0.5);
+        const hueSaturation = new ShaderPass(HueSaturationShader);
+        const effectCopy = new ShaderPass(CopyShader);
+        const stats = new Stats();
+        let vrm = null;
+        const animations = [];
+        let animationIndex = 0;
+        const animationSkipFrames = 2;
+        const blink = { time: 0, duration: 3.0, step: 0.0, max: 1.0, speed: 2.0 };
+
+        renderer.setClearColor(0xffffff, 0);
+
+        camera.position.set(0.0, 1.5, -CAMERA_Z);
+        camera.add(lookAtTarget);
+
+        controls.enableKeys = true;
+        controls.screenSpacePanning = false;
+        controls.enableDamping = true;
+        controls.minPolarAngle = 0 * Math.PI / 180;
+        controls.maxPolarAngle = 180 * Math.PI / 180;
+        //controls.minAzimuthAngle = -180 * Math.PI / 180;
+        //controls.maxAzimuthAngle = 180 * Math.PI / 180;
+        controls.minDistance = 0.5;
+        controls.maxDistance = 5;
+        controls.target.set(0.0, 1.0, 0.0);
+        controls.update();
+
+        directionallight.position.set(0.0, 0.0, -1.0).normalize();
+
+        scene.add(new THREE.AmbientLight(0xFFFFFF, 0.25));
+        scene.add(directionallight);
+        scene.add(new THREE.GridHelper(10, 10));
+        scene.add(new THREE.AxesHelper(5));
+
+        bloomPass.renderToScreen = true;
+        bloomPass.strength = 0.5;
+        bloomPass.radius = 0.25;
+        bloomPass.threshold = 0.25;
+        //hueSaturation.uniforms.hue.value = 0.1;
+        hueSaturation.uniforms.saturation.value = 0.25;
+        effectCopy.renderToScreen = true;
+
+        composer.setSize(renderer.domElement.width, renderer.domElement.height);
+        composer.setPixelRatio(window.devicePixelRatio);
+        composer.addPass(new RenderPass(scene, camera));
+        composer.addPass(bloomPass);
+        composer.addPass(hueSaturation);
+        composer.addPass(effectCopy);
+
+        stats.domElement.style.position = "fixed";
+        stats.domElement.style.top = "auto";
+        stats.domElement.style.bottom = "0";
+        stats.domElement.style.left = "auto";
+        stats.domElement.style.right = "0";
+
+        loader.register((parser) => {
+            return new VRMLoaderPlugin(parser);
+        });
+        loader.crossOrigin = "anonymous";
+
+        window.addEventListener("load", event => {
+            function _random(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+
+                return Math.floor(Math.random() * (max - min)) + min;
+            }
+
+            loader.load(window.location.hostname.endsWith("merkuchan.com") ? "models/Merku.vrm" : "models/Milch.vrm", async gltf => {
+                // retrieve a VRM instance from gltf
+                vrm = gltf.userData.vrm;
+                vrm.scene.visible = false;
+                vrm.scene.rotation.y = Math.PI;
+
+                if (vrm.lookAt !== undefined) {
+                    vrm.lookAt.target = lookAtTarget;
+                }
+
+                try {
+                    const response = await fetch(encodeURI("animation-idle.json"), {
+                        mode: "cors",
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        }
+                    });
+
+                    if (response.ok) {
+                        const json = await response.json();
+
+                        animations.splice(0);
+
+                        for (const animation of json.data) {
+                            animations.push(animation);
+                        }
+                    }
+                    else {
+                        throw new Error(response.statusText);
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+
+                scene.add(vrm.scene);
+            }, progress => console.log('Loading model...', 100.0 * (progress.loaded / progress.total), '%'), error => console.error(error));
+
+            document.body.appendChild(renderer.domElement);
+            document.body.appendChild(stats.domElement);
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                stats.begin();
+
+                const deltaTime = clock.getDelta();
+
+                if (vrm !== null) {
+                    if (animations.length > 0) {
+                        const animationData = animations[animationIndex];
+                        let isAnimating = false;
+                        let isDeforming = false;
+                        const updatedBlendShapeNames = [];
+
+                        animationIndex += animationSkipFrames;
+
+                        if (animationIndex >= animations.length) {
+                            animationIndex = 0;
+                        }
+
+                        blink.time += deltaTime;
+
+                        if (blink.time >= blink.duration && vrm.expressionManager !== null) {
+                            blink.step += deltaTime * blink.speed;
+
+                            if (blink.step >= blink.max) {
+                                blink.step = 0.0;
+                                blink.max = _random(0, 2) + 1.0;
+                                blink.time = 0.0;
+                                vrm.expressionManager.setValue("blink", 0.0);
+                            } else {
+                                vrm.expressionManager.setValue("blink", Math.abs(Math.sin(blink.step * Math.PI)));
+                            }
+                        }
+
+                        if (animationData) {
+                            for (let animation of animationData.animations) {
+                                switch (animation.bone) {
+                                    case "chest":
+                                    case "head":
+                                    case "hips":
+                                    case "jaw":
+                                    case "leftEye":
+                                    case "leftFoot":
+                                    case "leftHand":
+                                    case "leftIndexDistal":
+                                    case "leftIndexIntermediate":
+                                    case "leftIndexProximal":
+                                    case "leftLittleDistal":
+                                    case "leftLittleIntermediate":
+                                    case "leftLittleProximal":
+                                    case "leftLowerArm":
+                                    case "leftLowerLeg":
+                                    case "leftMiddleDistal":
+                                    case "leftMiddleIntermediate":
+                                    case "leftMiddleProximal":
+                                    case "leftRingDistal":
+                                    case "leftRingIntermediate":
+                                    case "leftRingProximal":
+                                    case "leftShoulder":
+                                    case "leftThumbDistal":
+                                    case "leftThumbIntermediate":
+                                    case "leftThumbProximal":
+                                    case "leftToes":
+                                    case "leftUpperArm":
+                                    case "leftUpperLeg":
+                                    case "neck":
+                                    case "rightEye":
+                                    case "rightFoot":
+                                    case "rightHand":
+                                    case "rightIndexDistal":
+                                    case "rightIndexIntermediate":
+                                    case "rightIndexProximal":
+                                    case "rightLittleDistal":
+                                    case "rightLittleIntermediate":
+                                    case "rightLittleProximal":
+                                    case "rightLowerArm":
+                                    case "rightLowerLeg":
+                                    case "rightMiddleDistal":
+                                    case "rightMiddleIntermediate":
+                                    case "rightMiddleProximal":
+                                    case "rightRingDistal":
+                                    case "rightRingIntermediate":
+                                    case "rightRingProximal":
+                                    case "rightShoulder":
+                                    case "rightThumbDistal":
+                                    case "rightThumbIntermediate":
+                                    case "rightThumbProximal":
+                                    case "rightToes":
+                                    case "rightUpperArm":
+                                    case "rightUpperLeg":
+                                    case "spine":
+                                    case "upperChest":
+                                        break;
+                                    case "eye.L":
+                                        animation.bone = "leftEye";
+                                        break;
+                                    case "foot.L":
+                                        animation.bone = "leftFoot";
+                                        break;
+                                    case "hand.L":
+                                        animation.bone = "leftHand";
+                                        break;
+                                    case "f_index.03.L":
+                                        animation.bone = "leftIndexDistal";
+                                        break;
+                                    case "f_index.02.L":
+                                        animation.bone = "leftIndexIntermediate";
+                                        break;
+                                    case "f_index.01.L":
+                                        animation.bone = "leftIndexProximal";
+                                        break;
+                                    case "f_pinky.03.L":
+                                        animation.bone = "leftLittleDistal";
+                                        break;
+                                    case "f_pinky.02.L":
+                                        animation.bone = "leftLittleIntermediate";
+                                        break;
+                                    case "f_pinky.01.L":
+                                        animation.bone = "leftLittleProximal";
+                                        break;
+                                    case "lower_arm.L":
+                                        animation.bone = "leftLowerArm";
+                                        break;
+                                    case "shin.L":
+                                        animation.bone = "leftLowerLeg";
+                                        break;
+                                    case "f_middle.03.L":
+                                        animation.bone = "leftMiddleDistal";
+                                        break;
+                                    case "f_middle.02.L":
+                                        animation.bone = "leftMiddleIntermediate";
+                                        break;
+                                    case "f_middle.01.L":
+                                        animation.bone = "leftMiddleProximal";
+                                        break;
+                                    case "f_ring.03.L":
+                                        animation.bone = "leftRingDistal";
+                                        break;
+                                    case "f_ring.02.L":
+                                        animation.bone = "leftRingIntermediate";
+                                        break;
+                                    case "f_ring.01.L":
+                                        animation.bone = "leftRingProximal";
+                                        break;
+                                    case "shoulder.L":
+                                        animation.bone = "leftShoulder";
+                                        break;
+                                    case "thumb_distal.L":
+                                        animation.bone = "leftThumbDistal";
+                                        break;
+                                    case "thumb_intermediate.L":
+                                        animation.bone = "leftThumbIntermediate";
+                                        break;
+                                    case "thumb_proximal.L":
+                                        animation.bone = "leftThumbProximal";
+                                        break;
+                                    case "toe.L":
+                                        animation.bone = "leftToes";
+                                        break;
+                                    case "upper_arm.L":
+                                        animation.bone = "leftUpperArm";
+                                        break;
+                                    case "thigh.L":
+                                        animation.bone = "leftUpperLeg";
+                                        break;
+                                    case "eye.R":
+                                        animation.bone = "rightEye";
+                                        break;
+                                    case "foot.R":
+                                        animation.bone = "rightFoot";
+                                        break;
+                                    case "hand.R":
+                                        animation.bone = "rightHand";
+                                        break;
+                                    case "f_index.03.R":
+                                        animation.bone = "rightIndexDistal";
+                                        break;
+                                    case "f_index.02.R":
+                                        animation.bone = "rightIndexIntermediate";
+                                        break;
+                                    case "f_index.01.R":
+                                        animation.bone = "rightIndexProximal";
+                                        break;
+                                    case "f_pinky.03.R":
+                                        animation.bone = "rightLittleDistal";
+                                        break;
+                                    case "f_pinky.02.R":
+                                        animation.bone = "rightLittleIntermediate";
+                                        break;
+                                    case "f_pinky.01.R":
+                                        animation.bone = "rightLittleProximal";
+                                        break;
+                                    case "lower_arm.R":
+                                        animation.bone = "rightLowerArm";
+                                        break;
+                                    case "shin.R":
+                                        animation.bone = "rightLowerLeg";
+                                        break;
+                                    case "f_middle.03.R":
+                                        animation.bone = "rightMiddleDistal";
+                                        break;
+                                    case "f_middle.02.R":
+                                        animation.bone = "rightMiddleIntermediate";
+                                        break;
+                                    case "f_middle.01.R":
+                                        animation.bone = "rightMiddleProximal";
+                                        break;
+                                    case "f_ring.03.R":
+                                        animation.bone = "rightRingDistal";
+                                        break;
+                                    case "f_ring.02.R":
+                                        animation.bone = "rightRingIntermediate";
+                                        break;
+                                    case "f_ring.01.R":
+                                        animation.bone = "rightRingProximal";
+                                        break;
+                                    case "shoulder.R":
+                                        animation.bone = "rightShoulder";
+                                        break;
+                                    case "thumb_distal.R":
+                                        animation.bone = "rightThumbDistal";
+                                        break;
+                                    case "thumb_intermediate.R":
+                                        animation.bone = "rightThumbIntermediate";
+                                        break;
+                                    case "thumb_proximal.R":
+                                        animation.bone = "rightThumbProximal";
+                                        break;
+                                    case "toe.R":
+                                        animation.bone = "rightToes";
+                                        break;
+                                    case "upper_arm.R":
+                                        animation.bone = "rightUpperArm";
+                                        break;
+                                    case "thigh.R":
+                                        animation.bone = "rightUpperLeg";
+                                        break;
+                                    case "upper_chest":
+                                        animation.bone = "upperChest";
+                                        break;
+                                    default:
+                                        animation.bone = null;
+                                }
+
+                                if (animation.bone && animation.rotation.length == 4) {
+                                    const boneNode = vrm.humanoid.getNormalizedBoneNode(animation.bone);
+
+                                    if (boneNode !== null) {
+                                        boneNode.position.set(animation.position[0], animation.position[1], -animation.position[2]);
+                                        boneNode.quaternion.set(animation.rotation[0], -animation.rotation[1], -animation.rotation[2], animation.rotation[3]);
+
+                                        if (!vrm.scene.visible) {
+                                            vrm.scene.visible = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    vrm.update(deltaTime);
+                }
+
+                if (renderer.domElement.width !== renderer.domElement.clientWidth || renderer.domElement.height !== renderer.domElement.clientHeight) {
+                    const width = renderer.domElement.clientWidth;
+                    const height = renderer.domElement.clientHeight;
+
+                    bloomPass.setSize(width, height);
+
+                    renderer.setPixelRatio(window.devicePixelRatio);
+                    renderer.setSize(width, height, false);
+
+                    camera.aspect = width / height;
+                    camera.updateProjectionMatrix();
+
+                    composer.setPixelRatio(window.devicePixelRatio);
+                    composer.setSize(width, height);
+                }
+
+                controls.update();
+
+                //renderer.render(scene, camera);
+                composer.render(deltaTime);
+
+                stats.end();
+            }
+
+            animate();
+        });
+    </script>
+</body>
+
+</html>
