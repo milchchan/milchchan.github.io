@@ -302,6 +302,7 @@
         ]
     },
     {
+        "name": "ミルヒ",
         "type": "Milch",
         "images": [
             {
@@ -380,6 +381,7 @@
         ]
     },
     {
+        "name": "メルク",
         "type": "Merku",
         "images": [
             {
