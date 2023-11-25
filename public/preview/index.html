@@ -539,7 +539,7 @@
 
                         animationDelay += deltaTime;
 
-                        if (animationDelay > animationInterval) {
+                        if (animationDelay >= animationInterval) {
                             animationIndex += 1;
                             animationDelay -= animationInterval;
                         }
