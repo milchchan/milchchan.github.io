@@ -370,7 +370,7 @@
                     progress.remove();
                 };
             }, progress => {
-                animation = bar.animate([
+                bar.animate([
                     {
                         width: `${Math.floor(progress.loaded / progress.total * 100)}%`
                     }
