@@ -228,7 +228,8 @@
         let vrm = null;
         const animations = [];
         let animationIndex = 0;
-        const animationSkipFrames = 2;
+        const animationFrameRate = 60.0;
+        let animationDelay = 0.0;
         const blink = { time: 0, duration: 10.0, step: 0.0, max: 1.0, speed: 2.0 };
 
         renderer.setClearColor(0xffffff, 0);
@@ -534,11 +535,14 @@
                 if (vrm !== null) {
                     if (animations.length > 0) {
                         const animationData = animations[animationIndex];
-                        let isAnimating = false;
-                        let isDeforming = false;
-                        const updatedBlendShapeNames = [];
+                        const animationInterval = 1.0 / animationFrameRate;
 
-                        animationIndex += animationSkipFrames;
+                        animationDelay += deltaTime;
+
+                        if (animationDelay >= animationInterval) {
+                            animationIndex += 1;
+                            animationDelay -= animationInterval;
+                        }
 
                         if (animationIndex >= animations.length) {
                             animationIndex = 0;
