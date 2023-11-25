@@ -19,12 +19,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if req.method == 'GET':
             if req.headers.get('Content-Type') == 'application/json':
                 data = req.get_json()
+                name = data.get('name')
                 language = data.get('language')
                 order = data['order'] if 'order' in data and data['order'] is not None else 'desc'
                 offset = data.get('offset')
                 limit = data.get('limit')
 
             else:
+                name = req.params['name'] if 'name' in req.params else None
                 language = req.params['language'] if 'language' in req.params else None
                 order = req.params['order'] if 'order' in req.params else 'desc'
                 offset = int(req.params['offset']) if 'offset' in req.params else None
@@ -36,6 +38,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             try:
                 likes = []
                 query = session.query(Like)
+
+                if name is not None:
+                    query = query.filter(Like.name.like(name))
 
                 if language is not None:
                     query = query.filter(Like.language.like(language))
