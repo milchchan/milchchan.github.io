@@ -75,7 +75,7 @@
             transition: .5s;
         }
 
-        canvas {
+        .frame>canvas {
             display: block;
             overflow: hidden;
             outline: none;
@@ -83,6 +83,13 @@
             height: 100%;
             min-height: 100%;
             background-color: transparent;
+            opacity: 1;
+            transition: .5s ease-out;
+        }
+
+        .frame>canvas.dragging {
+            opacity: 0.5;
+            transition: .5s ease-in;
         }
 
         .progress {
@@ -281,6 +288,138 @@
 
                 return Math.floor(Math.random() * (max - min)) + min;
             }
+
+            renderer.domElement.addEventListener("dragenter", event => {
+                (event.currentTarget || event.target).classList.add("dragging");
+            });
+            renderer.domElement.addEventListener("dragover", event => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = "copy";
+            }, false);
+            renderer.domElement.addEventListener("drop", async event => {
+                event.stopPropagation();
+                event.preventDefault();
+
+                (event.currentTarget || event.target).classList.remove("dragging");
+
+                for (let file of event.dataTransfer.files) {
+                    const name = file.name.toLowerCase();
+
+                    if (name.toLowerCase().endsWith(".vrm")) {
+                        const progress = document.createElement("div");
+                        const bar = document.createElement("div");
+                        let reader = new FileReader();
+
+                        progress.className = "progress";
+                        bar.className = "bar animating";
+                        bar.style.width = "0%";
+
+                        try {
+                            const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/Stripes.png");
+
+                            if (response.ok) {
+                                const dataURL = await new Promise(async (resolve, reject) => {
+                                    const reader = new FileReader();
+
+                                    reader.onload = () => {
+                                        resolve(reader.result);
+                                    };
+                                    reader.onerror = () => {
+                                        reject(reader.error);
+                                    };
+                                    reader.readAsDataURL(await response.blob());
+                                });
+
+                                if (dataURL !== null) {
+                                    bar.style.backgroundImage = `url('${dataURL}')`;
+                                }
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+
+                        progress.appendChild(bar);
+                        document.body.appendChild(progress);
+
+                        reader.addEventListener("progress", e => {
+                            bar.animate([
+                                {
+                                    width: `${Math.floor(e.loaded / e.total * 100)}%`
+                                }
+                            ], {
+                                delay: 0,
+                                fill: "forwards",
+                                duration: 500,
+                                iterations: 1,
+                                easing: "linear",
+                                composite: "replace"
+                            }).onfinish = () => {
+                                bar.style.width = `${Math.floor(e.loaded / e.total * 100)}%`;
+                            };
+                        });
+                        reader.addEventListener("load", e => {
+                            const loader = new GLTFLoader();
+
+                            loader.register((parser) => {
+                                return new VRMLoaderPlugin(parser);
+                            });
+                            loader.crossOrigin = "anonymous";
+                            loader.load(e.target.result, gltf => {
+                                if (scene.children.includes(vrm.scene)) {
+                                    scene.remove(vrm.scene);
+                                }
+
+                                vrm = gltf.userData.vrm;
+                                vrm.visible = false;
+                                vrm.scene.rotation.y = Math.PI;
+
+                                if (vrm.lookAt !== undefined) {
+                                    vrm.lookAt.target = lookAtTarget;
+                                }
+
+                                scene.add(vrm.scene);
+
+                                bar.animate([
+                                    {
+                                        opacity: 0
+                                    }
+                                ], {
+                                    delay: 0,
+                                    fill: "forwards",
+                                    duration: 500,
+                                    iterations: 1,
+                                    easing: "ease-in",
+                                    composite: "replace"
+                                }).onfinish = () => {
+                                    progress.remove();
+                                };
+                            }, progress => {
+                                const total = progress.total > 0 ? progress.total : file.size;
+
+                                bar.animate([
+                                    {
+                                        width: `${Math.floor(progress.loaded / total * 100)}%`
+                                    }
+                                ], {
+                                    delay: 0,
+                                    fill: "forwards",
+                                    duration: 500,
+                                    iterations: 1,
+                                    easing: "linear",
+                                    composite: "replace"
+                                }).onfinish = () => {
+                                    bar.style.width = `${Math.floor(progress.loaded / total * 100)}%`;
+                                };
+                            }, error => console.error(error));
+                        });
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+            }, false);
+            renderer.domElement.addEventListener("dragleave", event => {
+                (event.currentTarget || event.target).classList.remove("dragging");
+            });
 
             const progress = document.createElement("div");
             const bar = document.createElement("div");
