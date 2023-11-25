@@ -274,7 +274,7 @@
         });
         loader.crossOrigin = "anonymous";
 
-        window.addEventListener("load", event => {
+        window.addEventListener("load", async event => {
             function _random(min, max) {
                 min = Math.ceil(min);
                 max = Math.floor(max);
@@ -284,7 +284,6 @@
 
             const progress = document.createElement("div");
             const bar = document.createElement("div");
-            let animation = null;
 
             document.body.querySelector(".wrap>.frame").appendChild(renderer.domElement);
             document.body.querySelector(".wrap>.frame").appendChild(stats.domElement);
@@ -292,6 +291,30 @@
             progress.className = "progress";
             bar.className = "bar animating";
             bar.style.width = "0%";
+
+            try {
+                const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/Stripes.png");
+
+                if (response.ok) {
+                    const dataURL = await new Promise(async (resolve, reject) => {
+                        const reader = new FileReader();
+
+                        reader.onload = () => {
+                            resolve(reader.result);
+                        };
+                        reader.onerror = () => {
+                            reject(reader.error);
+                        };
+                        reader.readAsDataURL(await response.blob());
+                    });
+
+                    if (dataURL !== null) {
+                        bar.style.backgroundImage = `url('${dataURL}')`;
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+            }
 
             progress.appendChild(bar);
             document.body.appendChild(progress);
