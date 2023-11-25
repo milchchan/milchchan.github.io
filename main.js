@@ -431,7 +431,7 @@ async function resize(blob, length) {
   });
 }
 
-async function upload(files) {
+async function upload(files, name = null) {
   function generateUuid() {
     // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
     // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
@@ -518,7 +518,7 @@ async function upload(files) {
         });
 
         await runTransaction(databaseRef(database, `images/${push(child(databaseRef(database), "images")).key}`), current => {
-          return { path: path, type: file.type, random: Math.random(), timestamp: Math.floor(new Date() / 1000) };
+          return { path: path, type: file.type, random: Math.random(), timestamp: name === null ? Math.floor(new Date() / 1000).toString() : `${name}&${Math.floor(new Date() / 1000).toString()}` };
         });
 
         completed.push(path);
@@ -629,7 +629,7 @@ window.upload = async (event) => {
   if ("files" in target) {
     target.disabled = true;
 
-    const [stack, completed] = await upload(target.files);
+    const [stack, completed] = await upload(target.files, "dataset" in background && "name" in background.dataset[background.index] && background.dataset[background.index] !== null ? background.dataset[background.index] : null);
 
     if (stack.length > 0) {
       background.queue.splice(0);
@@ -691,7 +691,7 @@ window.addEventListener("load", async event => {
     target.classList.remove("dragging");
     input.disabled = true;
 
-    const [stack, completed] = await upload(e.dataTransfer.files);
+    const [stack, completed] = await upload(e.dataTransfer.filestarget.files, "dataset" in background && "name" in background.dataset[background.index] && background.dataset[background.index] !== null ? background.dataset[background.index] : null);
 
     if (stack.length > 0) {
       background.queue.splice(0);
@@ -879,6 +879,8 @@ window.addEventListener("load", async event => {
         }
 
         if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
+          let prefix;
+
           background.preloading = true;
           background.image = null;
           background.blocks.splice(0);
@@ -903,28 +905,56 @@ window.addEventListener("load", async event => {
             }
           }
 
-          try {
-            const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
+          if ("name" in background.dataset[background.index] && background.dataset[background.index] !== null) {
+            const name = background.dataset[background.index].name;
 
-            if (snapshot.exists()) {
-              const likes = snapshot.val();
+            try {
+              const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
 
-              for (const key in likes) {
-                if (Array.isArray(likes[key].text)) {
-                  for (const item of background.dataset) {
-                    if ("type" in item === false) {
-                      item.texts.push(likes[key].text);
+              if (snapshot.exists()) {
+                const likes = snapshot.val();
+
+                for (const item of background.dataset) {
+                  if ("name" in item && item.name === name) {
+                    for (const key in likes) {
+                      if (Array.isArray(likes[key].text)) {
+                        item.texts.push(likes[key].text);
+                      }
                     }
                   }
                 }
               }
+            } catch (error) {
+              console.error(error);
             }
-          } catch (error) {
-            console.error(error);
+
+            prefix = `${name}&`;
+          } else {
+            try {
+              const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
+
+              if (snapshot.exists()) {
+                const likes = snapshot.val();
+
+                for (const item of background.dataset) {
+                  if ("name" in item === false) {
+                    for (const key in likes) {
+                      if (Array.isArray(likes[key].text)) {
+                        item.texts.push(likes[key].text);
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (error) {
+              console.error(error);
+            }
+
+            prefix = ""
           }
 
           try {
-            const snapshot = await get(query(databaseRef(database, "images"), orderByChild("random"), startAt(Math.random()), limitToFirst(10)));
+            const snapshot = await get(query(databaseRef(database, "images"), orderByChild("random"), startAt(`${prefix}${String(Math.random())}`), limitToFirst(10)));
 
             if (snapshot.exists()) {
               function choice(collection, func) {
@@ -970,11 +1000,14 @@ window.addEventListener("load", async event => {
 
               const dictionary = snapshot.val();
               const images = [];
+              const regex = new RegExp(`${prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[0-9]+\\.[0-9]+$`);
 
               for (const key in dictionary) {
-                dictionary[key]["probability"] = 1;
+                if (regex.test(dictionary[key].random)) {
+                  dictionary[key]["probability"] = 1;
 
-                images.push(dictionary[key]);
+                  images.push(dictionary[key]);
+                }
               }
 
               const path = choice(softmax(images, x => x.probability, (x, y) => x.probability = y), x => x.probability).path;
