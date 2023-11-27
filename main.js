@@ -518,7 +518,7 @@ async function upload(files, name = null) {
         });
 
         await runTransaction(databaseRef(database, `images/${push(child(databaseRef(database), "images")).key}`), current => {
-          return { path: path, type: file.type, random: Math.random(), timestamp: name === null ? Math.floor(new Date() / 1000).toString() : `${name}&${Math.floor(new Date() / 1000).toString()}` };
+          return { path: path, type: file.type, random: name === null ? Math.random().toString() : `${name}&${Math.random().toString()}`, timestamp: Math.floor(new Date() / 1000) };
         });
 
         completed.push(path);
