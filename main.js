@@ -691,7 +691,7 @@ window.addEventListener("load", async event => {
     target.classList.remove("dragging");
     input.disabled = true;
 
-    const [stack, completed] = await upload(e.dataTransfer.filestarget.files, "dataset" in background && "name" in background.dataset[background.index] && background.dataset[background.index] !== null ? background.dataset[background.index] : null);
+    const [stack, completed] = await upload(e.dataTransfer.files, "dataset" in background && "name" in background.dataset[background.index] && background.dataset[background.index] !== null ? background.dataset[background.index] : null);
 
     if (stack.length > 0) {
       background.queue.splice(0);
