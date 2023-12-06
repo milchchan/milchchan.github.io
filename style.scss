@@ -3,14 +3,14 @@
 
 :root {
     --background-color: #ffffff;
-    --foreground-color: #00e7ff;
-    --accent-color: #ffc7e5;
+    --foreground-color: #000000;
     --background-font-family: "Fredoka One", "Dela Gothic One", cursive;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --foreground-color: #b399e0;
+        --background-color: #000000;
+        --foreground-color: #ffffff;
     }
 }
 
@@ -24,7 +24,7 @@ html {
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
-    background: var(--background-color);
+    background: #ffffff;
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
 }
@@ -438,8 +438,6 @@ div.sidebar {
                             position: absolute;
                             left: 100%;
                         }
-
-
                     }
                 }
 
@@ -544,14 +542,14 @@ div.sidebar {
 
                 .wrap svg {
                     g:nth-child(odd)>path {
-                        fill: var(--accent-color);
-                        stroke: var(--accent-color);
+                        fill: #ffc7e5;
+                        stroke: #ffc7e5;
                         transition: .5s;
                     }
 
                     g:nth-child(even)>path {
-                        fill: var(--foreground-color);
-                        stroke: var(--foreground-color);
+                        fill: #00e7ff;
+                        stroke: #00e7ff;
                         transition: .5s;
                     }
                 }
@@ -679,10 +677,11 @@ div.remarks {
         margin: 0px;
         border: 0px none transparent !important;
         padding: 16px 32px 16px 32px;
-        background: #ffffff;
+        background: var(--background-color);
         background-clip: padding-box !important;
         height: initial;
         backface-visibility: hidden;
+        transition: .5s;
 
         >.icon {
             display: flex;
@@ -691,7 +690,7 @@ div.remarks {
             height: 16px;
             align-items: center;
             justify-content: center;
-            color: #000000;
+            color: var(--foreground-color);
             opacity: 1;
             transition: .5s;
             backface-visibility: hidden;
