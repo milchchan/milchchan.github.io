@@ -951,7 +951,7 @@ window.addEventListener("load", async event => {
                               content.push(text);
                             }
 
-                            content.push({ name:like.content.splice(index, maxEnd), attributes: attributes[maxEnd] });
+                            content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
                             index = maxEnd
                           } else {
                             text += like.content[index];
@@ -1044,7 +1044,7 @@ window.addEventListener("load", async event => {
                               content.push(text);
                             }
 
-                            content.push({ name:like.content.splice(index, maxEnd), attributes: attributes[maxEnd] });
+                            content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
                             index = maxEnd
                           } else {
                             text += like.content[index];
