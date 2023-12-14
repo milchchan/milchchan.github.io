@@ -909,6 +909,77 @@ window.addEventListener("load", async event => {
             const name = background.dataset[background.index].name;
 
             try {
+              const response = await fetch(encodeURI(`https://milchchan.com/api/likes.json?name=${name}`), {
+                mode: "cors",
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                }
+              });
+          
+              if (response.ok) {
+                const json = await response.json();
+
+                for (const item of background.dataset) {
+                  if ("name" in item && item.name === name) {
+                    for (const like of json) {
+                      if ("attributes" in like) {
+                        let index = 0;
+                        let text = "";
+                        let content = [];
+
+                        while (index < like.content.length) {
+                          let maxEnd = index + 1;
+                          let attributes = {};
+
+                          for (const attribute of like.attributes) {
+                            if (attribute.start === index) {
+                              if (attribute.end > maxEnd) {
+                                maxEnd = attribute.end;
+                              }
+
+                              if (attribute.end in attributes) {
+                                attributes[attribute.end].push(attribute.name);
+                              } else {
+                                attributes[attribute.end] = [attribute.name];
+                              }
+                            }
+                          }
+
+                          if (maxEnd in attributes) {
+                            if (text.length > 0) {
+                              content.push(text);
+                            }
+
+                            content.push({ name:like.content.splice(index, maxEnd), attributes: attributes[maxEnd] });
+                            index = maxEnd
+                          } else {
+                            text += like.content[index];
+                            index++;
+                          }
+                        }
+
+                        if (text.length > 0) {
+                          content.push(text);
+                        }
+                        
+                        item.texts.push(like.content);
+                      } else {
+                        item.texts.push(like.content);
+                      }
+                    }
+
+                    break;
+                  }
+                }
+              } else {
+                throw new Error(response.statusText);
+              }
+            } catch (error) {
+              console.error(error);
+            }
+
+            try {
               const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
 
               if (snapshot.exists()) {
@@ -930,6 +1001,77 @@ window.addEventListener("load", async event => {
 
             prefix = `${name}&`;
           } else {
+            try {
+              const response = await fetch(encodeURI("https://milchchan.com/api/likes.json"), {
+                mode: "cors",
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                }
+              });
+          
+              if (response.ok) {
+                const json = await response.json();
+
+                for (const item of background.dataset) {
+                  if ("name" in item === false) {
+                    for (const like of json) {
+                      if ("attributes" in like) {
+                        let index = 0;
+                        let text = "";
+                        let content = [];
+
+                        while (index < like.content.length) {
+                          let maxEnd = index + 1;
+                          let attributes = {};
+
+                          for (const attribute of like.attributes) {
+                            if (attribute.start === index) {
+                              if (attribute.end > maxEnd) {
+                                maxEnd = attribute.end;
+                              }
+
+                              if (attribute.end in attributes) {
+                                attributes[attribute.end].push(attribute.name);
+                              } else {
+                                attributes[attribute.end] = [attribute.name];
+                              }
+                            }
+                          }
+
+                          if (maxEnd in attributes) {
+                            if (text.length > 0) {
+                              content.push(text);
+                            }
+
+                            content.push({ name:like.content.splice(index, maxEnd), attributes: attributes[maxEnd] });
+                            index = maxEnd
+                          } else {
+                            text += like.content[index];
+                            index++;
+                          }
+                        }
+
+                        if (text.length > 0) {
+                          content.push(text);
+                        }
+                        
+                        item.texts.push(like.content);
+                      } else {
+                        item.texts.push(like.content);
+                      }
+                    }
+
+                    break;
+                  }
+                }
+              } else {
+                throw new Error(response.statusText);
+              }
+            } catch (error) {
+              console.error(error);
+            }
+            
             try {
               const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
 
