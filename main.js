@@ -489,7 +489,7 @@ async function upload(files, name = null) {
 
   for (const file of files) {
     if (file.type.startsWith("image/")) {
-      const uploadTask = uploadBytesResumable(storageRef(storage, `images/${generateUuid()}`), file, {
+      const uploadTask = uploadBytesResumable(storageRef(storage, `uploads/${generateUuid()}`), file, {
         contentType: file.type
       });
 
