@@ -1,11 +1,6 @@
-import re
 import json
 import logging
 import os
-from datetime import datetime, timedelta, timezone
-from io import BytesIO
-from uuid import uuid4
-from base64 import b64decode
 from urllib.parse import urljoin
 
 import azure.functions as func
