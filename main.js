@@ -516,6 +516,8 @@ async function upload(files, name = null) {
             resolve(uploadTask.snapshot.ref.fullPath);
           });
         });
+
+        completed.push([path, file.type]);
       } catch (error) {
         console.error(error);
 
@@ -556,7 +558,7 @@ async function upload(files, name = null) {
           return { path: path, type: file.type, random: name === null ? Math.random().toString() : `${name}&${Math.random().toString()}`, timestamp: Math.floor(new Date() / 1000) };
         });
 
-        completed.push(path);
+        completed.push([path, file.type]);
       } catch (error) {
         console.error(error);
 
@@ -670,7 +672,11 @@ window.upload = async (event) => {
       background.queue.splice(0);
 
       do {
-        background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
+        const [path, contentType] = stack.pop();
+
+        if (contentType.startsWith("image/")) {
+          background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${path}` }] } });
+        }
       } while (stack.length > 0);
 
       background.updated = -background.timeout;
@@ -732,7 +738,11 @@ window.addEventListener("load", async event => {
       background.queue.splice(0);
 
       do {
-        background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${stack.pop()}` }] } });
+        const [path, contentType] = stack.pop();
+
+        if (contentType.startsWith("image/")) {
+          background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${path}` }] } });
+        }
       } while (stack.length > 0);
 
       background.updated = -background.timeout;
@@ -944,7 +954,7 @@ window.addEventListener("load", async event => {
             const name = background.dataset[background.index].name;
 
             try {
-              const response = await fetch(encodeURI(`https://milchchan.com/api/likes.json?name=${name}`), {
+              const response = await fetch(encodeURI(`https://milchchan.com/api/likes?name=${name}`), {
                 mode: "cors",
                 method: "GET",
                 headers: {
@@ -1037,7 +1047,7 @@ window.addEventListener("load", async event => {
             prefix = `${name}&`;
           } else {
             try {
-              const response = await fetch(encodeURI("https://milchchan.com/api/likes.json"), {
+              const response = await fetch(encodeURI("https://milchchan.com/api/likes"), {
                 mode: "cors",
                 method: "GET",
                 headers: {
