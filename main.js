@@ -488,7 +488,42 @@ async function upload(files, name = null) {
   document.body.querySelector("#app").appendChild(progress);
 
   for (const file of files) {
-    if (file.type.startsWith("image/")) {
+    if (file.type === "application/zip") {
+      const uploadTask = uploadBytesResumable(storageRef(storage, `uploads/${generateUuid()}-${file.name}`), file, {
+        contentType: file.type
+      });
+
+      try {
+        const path = await new Promise(function (resolve, reject) {
+          uploadTask.on("state_changed", (snapshot) => {
+            animation = bar.animate([
+              {
+                width: `${Math.floor((snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed.length / files.length) * 100)}%`
+              }
+            ], {
+              delay: 0,
+              fill: "forwards",
+              duration: 500,
+              iterations: 1,
+              easing: "linear",
+              composite: "replace"
+            }).onfinish = () => {
+              bar.style.width = `${Math.floor((completed.length + 1) / files.length * 100)}%`;
+            };
+          }, (error) => {
+            reject(error);
+          }, () => {
+            resolve(uploadTask.snapshot.ref.fullPath);
+          });
+        });
+      } catch (error) {
+        console.error(error);
+
+        animation = null;
+
+        break;
+      }
+    } else if (file.type.startsWith("image/")) {
       const uploadTask = uploadBytesResumable(storageRef(storage, `uploads/${generateUuid()}`), file, {
         contentType: file.type
       });
