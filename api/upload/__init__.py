@@ -18,7 +18,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'POST':
             pattern = 'data:([\\w/\\-\\.]+);(\\w+),(.+)'
-            data = req.get_json() if req.headers.get('Content-Type') == 'application/json' else [req.get_body.decode('utf-8')]
+            data = req.get_json() if req.headers.get('Content-Type') == 'application/json' else [req.get_body().decode('utf-8')]
 
             for item in data:
                 match = re.match(pattern, item)
