@@ -1516,7 +1516,7 @@ window.addEventListener("load", async event => {
               index++;
             }
 
-            for (let i = animationQueue.length - 2; i >= 0; i--) {
+            for (let i = animationQueue.length - 1; i >= 0; i--) {
               animationQueue.push(animationQueue[i]);
             }
 
