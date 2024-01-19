@@ -228,7 +228,10 @@
         min-height: 100%;
         overflow-x: hidden;
         overflow-y: auto;
-        mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent);
+        mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent), linear-gradient(black, black);
+        mask-size: calc(100% - 16px) 100%, 16px 100%;
+        mask-position: 0 0, 100% 0;
+        mask-repeat: no-repeat, no-repeat;
         animation: fade .5s ease-out forwards;
         box-sizing: border-box;
         backface-visibility: hidden;
@@ -372,7 +375,9 @@
 
         body>.overlay {
           padding: 32px;
-          mask-image: linear-gradient(to bottom, transparent, transparent 16px, black 32px, black calc(100% - 32px), transparent calc(100% - 16px), transparent);
+          mask-image: linear-gradient(to bottom, transparent, transparent 16px, black 32px, black calc(100% - 32px), transparent calc(100% - 16px), transparent), linear-gradient(black, black);
+          mask-size: calc(100% - 32px) 100%, 32px 100%;
+          transition: 0.5s;
         }
 
         div.sidebar {
