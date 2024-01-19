@@ -90,7 +90,6 @@
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1.25rem;
         line-height: 2rem;
-        transform: rotate(0.03deg);
       }
 
       ul,
@@ -131,13 +130,13 @@
         backface-visibility: hidden;
         transform: translate3d(0%, 0%, 0);
         transition: 0.5s ease-in;
+      }
 
       a .scrollable>div {
-          -webkit-user-select: none;
-          user-select: none;
-          box-sizing: content-box;
-          vertical-align: middle;
-        }
+        -webkit-user-select: none;
+        user-select: none;
+        box-sizing: content-box;
+        vertical-align: middle;
       }
 
       a .scrollable:hover {
@@ -247,14 +246,14 @@
         padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
       }
 
-      .content a {
+      .content p>a {
         color: var(--foreground-color) !important;
         text-decoration: underline;
         opacity: 1;
         transition: .5s;
       }
 
-      .content a:hover {
+      .content p>a:hover {
         color: var(--foreground-color) !important;
         text-decoration: underline;
         opacity: 0.5;
