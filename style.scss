@@ -350,7 +350,6 @@ div.sidebar {
         >.level-item:not(:first-child) {
             >.level>.level-item {
                 .button {
-
                     >.icon:not(.is-animatable):first-of-type:last-of-type,
                     >.wrap+.icon:not(.is-animatable) {
                         opacity: 1;
@@ -359,7 +358,6 @@ div.sidebar {
                 }
 
                 .button:hover {
-
                     >.icon:not(.is-animatable):first-of-type:last-of-type,
                     >.wrap+.icon:not(.is-animatable) {
                         opacity: 0.5;
@@ -530,8 +528,6 @@ div.sidebar {
                     transform-origin: 50% 50%;
                     transform: translate3d(-50%, 8px, 0) rotate(90deg);
                 }
-
-
             }
 
             .button:hover {
