@@ -1,5 +1,11 @@
 {
     "$schema": "https://json.schemastore.org/staticwebapp.config.json",
+    "routes": [
+        {
+            "route": "/privacy",
+            "rewrite": "/privacy.html"
+        }
+    ],
     "navigationFallback": {
         "rewrite": "index.html",
         "exclude": [
