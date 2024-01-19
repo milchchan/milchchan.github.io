@@ -247,6 +247,20 @@
         padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
       }
 
+      .content a {
+        color: var(--foreground-color) !important;
+        text-decoration: underline;
+        opacity: 1;
+        transition: .5s;
+      }
+
+      .content a:hover {
+        color: var(--foreground-color) !important;
+        text-decoration: underline;
+        opacity: 0.5;
+        transition: .5s;
+      }
+
       div.sidebar {
         -webkit-user-select: none;
         user-select: none;
@@ -475,7 +489,7 @@
         <p>This policy is effective as of 2024-12-31</p>
         <h2>Contact Us</h2>
         <p>
-          If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at milch@milchchan.com.
+          If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at <a href="mailto:milch@milchchan.com">milch@milchchan.com</a>.
         </p>
       </div>
     </div>
