@@ -247,7 +247,7 @@
       }
 
       .content p a {
-        display: inline-block;
+        display: inline;
         margin: 0;
         padding: 0;
         border: 0px solid transparent;
@@ -259,25 +259,21 @@
 
       .content p a .clip {
         position: relative;
-        display: flex;
+        display: inline-flex;
         overflow: hidden;
         box-sizing: border-box;
       }
 
       .content p a .scrollable {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
+        display: inline-flex;
         margin: 0px -4px 0px -4px !important;
       }
 
       .content p a .scrollable span {
-        display: flex;
-        align-items: center;
+        display: inline;
         margin: 0px 4px 0px 4px !important;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
-        vertical-align: middle;
+        line-height: normal;
       }
 
       .content p a .scrollable span:last-child:not(:first-child) {
@@ -392,9 +388,8 @@
         color: #0000;
         background: linear-gradient(var(--foreground-color) 0 0) no-repeat, linear-gradient(var(--foreground-color) 0 0) no-repeat;
         background-size: 0% 100%;
-        -webkit-background-clip: padding-box,text;
-                background-clip: padding-box,text;
-        animation: mask 0.5s 0.0s both, reveal 0.5s 0.5s both; 
+        background-clip: padding-box, text;
+        animation: mask 0.5s ease 0.5s both, reveal 0.5s ease 1.0s both;
       }
 
       @keyframes fade {
@@ -408,10 +403,15 @@
       }
 
       @keyframes mask{
-        to {background-size: 150% 100%} 
+        to {
+          background-size: 150% 100%;
+        }
       }
+
       @keyframes reveal {
-        to {background-position:-200% 0,0 0}
+        to {
+          background-position: -200% 0, 0 0;
+        }
       }
 
       @media screen and (min-width: 769px) and (min-height: 769px) {
@@ -469,7 +469,7 @@
       <div class="content">
         <h1><span class="reveal">Privacy Policy</span></h1>
         <p>
-          <span class="reveal">This SERVICE is provided by <a href="https://milchchan.com/"><span class="wrap has-text-weight-bold"><span class="clip"><span class="scrollable"><span>milchchan.com</span><span>milchchan.com</span></span></span></span></a> and is intended for use as is.</span>
+          <span class="reveal">This SERVICE is provided by </span><a href="https://milchchan.com/"><span class="wrap has-text-weight-bold"><span class="clip"><span class="scrollable"><span class="reveal">milchchan.com</span><span class="reveal">milchchan.com</span></span></span></span></a><span class="reveal"> and is intended for use as is.</span>
         </p>
         <p>
           <span class="reveal">This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.</span>
@@ -490,7 +490,7 @@
         </p>
         <h2><span class="reveal">Cookies</span></h2>
         <p>
-          <span class="reveal"></span>Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory.</span>
+          <span class="reveal">Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory.</span>
         </p>
         <p>
           <span class="reveal">This Service does not use these “cookies” explicitly. However, the app may use third-party code and libraries that use “cookies” to collect information and improve their services. You have the option to either accept or refuse these cookies and know when a cookie is being sent to your device. If you choose to refuse our cookies, you may not be able to use some portions of this Service.</span>
@@ -527,7 +527,7 @@
         <p><span class="reveal">This policy is effective as of 2024-12-31</span></p>
         <h2><span class="reveal">Contact Us</span></h2>
         <p>
-          <span class="reveal">If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at <a href="mailto:milch@milchchan.com"><span class="wrap has-text-weight-bold"><span class="clip"><span class="scrollable"><span>milch@milchchan.com</span><span>milch@milchchan.com</span></span></span></span></a>.</span>
+          <span class="reveal">If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at <a href="mailto:milch@milchchan.com"><span class="wrap has-text-weight-bold"><span class="clip"><span class="scrollable"><span class="reveal">milch@milchchan.com</span><span class="reveal">milch@milchchan.com</span></span></span></span></a>.</span>
         </p>
       </div>
     </div>
