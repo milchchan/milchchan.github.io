@@ -79,7 +79,7 @@
         text-transform: uppercase;
       }
 
-      p + h2 {
+      p+h2 {
         margin: 16px 0px 0px 0px;
       }
 
@@ -121,7 +121,7 @@
       a:active {
         outline: none;
         text-decoration: none;
-        color: #ffffff;
+        color: var(--foreground-color);
       }
 
       a .scrollable {
@@ -246,18 +246,43 @@
         padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
       }
 
-      .content p>a {
-        color: var(--foreground-color) !important;
-        text-decoration: underline;
-        opacity: 1;
-        transition: .5s;
+      .content p a {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        background: transparent;
+        background-clip: padding-box;
+        backface-visibility: hidden;
+        cursor: pointer;
       }
 
-      .content p>a:hover {
-        color: var(--foreground-color) !important;
-        text-decoration: underline;
-        opacity: 0.5;
-        transition: .5s;
+      .content p a .clip {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .content p a .scrollable {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0px -4px 0px -4px !important;
+      }
+
+      .content p a .scrollable span {
+        display: flex;
+        align-items: center;
+        margin: 0px 4px 0px 4px !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        vertical-align: middle;
+      }
+
+      .content p a .scrollable span:last-child:not(:first-child) {
+        position: absolute;
+        left: 100%;
       }
 
       div.sidebar {
@@ -316,7 +341,6 @@
         position: relative;
         display: flex;
         overflow: hidden;
-        box-sizing: content-box;
         height: calc(0.75rem * 1.5);
         transform: translate(0px, -1px);
         box-sizing: border-box;
@@ -334,9 +358,8 @@
         display: flex;
         align-items: center;
         margin: 0px 4px 0px 4px !important;
-        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 0.75rem !important;
-        transform: rotate(0.03deg) !important;
         line-height: 0.75rem !important;
         height: calc(0.75rem * 1.5);
         vertical-align: middle;
@@ -365,6 +388,15 @@
         transition: 0.5s;
       }
 
+      .reveal {
+        color: #0000;
+        background: linear-gradient(var(--foreground-color) 0 0) no-repeat, linear-gradient(var(--foreground-color) 0 0) no-repeat;
+        background-size: 0% 100%;
+        -webkit-background-clip: padding-box,text;
+                background-clip: padding-box,text;
+        animation: mask 0.5s 0.0s both, reveal 0.5s 0.5s both; 
+      }
+
       @keyframes fade {
         from {
           opacity: 0;
@@ -373,6 +405,13 @@
         to {
           opacity: 1;
         }
+      }
+
+      @keyframes mask{
+        to {background-size: 150% 100%} 
+      }
+      @keyframes reveal {
+        to {background-position:-200% 0,0 0}
       }
 
       @media screen and (min-width: 769px) and (min-height: 769px) {
@@ -428,67 +467,67 @@
         </div>
       </div>
       <div class="content">
-        <h1>Privacy Policy</h1>
+        <h1><span class="reveal">Privacy Policy</span></h1>
         <p>
-          Masaaki Kawata built the Apricot app. This SERVICE is provided by Masaaki Kawata and is intended for use as is.
+          <span class="reveal">This SERVICE is provided by <a href="https://milchchan.com/"><span class="wrap has-text-weight-bold"><span class="clip"><span class="scrollable"><span>milchchan.com</span><span>milchchan.com</span></span></span></span></a> and is intended for use as is.</span>
         </p>
         <p>
-          This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.
+          <span class="reveal">This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.</span>
         </p>
         <p>
-          If you choose to use my Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that I collect is used for providing and improving the Service. I will not use or share your information with anyone except as described in this Privacy Policy.
+          <span class="reveal">If you choose to use my Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that I collect is used for providing and improving the Service. I will not use or share your information with anyone except as described in this Privacy Policy.</span>
         </p>
         <p>
-          The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which are accessible at Apricot unless otherwise defined in this Privacy Policy.
+          <span class="reveal">The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which are accessible at Apricot unless otherwise defined in this Privacy Policy.</span>
         </p>
-        <h2>Information Collection and Use</h2>
+        <h2><span class="reveal">Information Collection and Use</span></h2>
         <p>
-          For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information, including but not limited to milch@milchchan.com. The information that I request will be retained on your device and is not collected by me in any way.
+          <span class="reveal">For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information, including but not limited to milch@milchchan.com. The information that I request will be retained on your device and is not collected by me in any way.</span>
         </p>
-        <h2>Log Data</h2>
+        <h2><span class="reveal">Log Data</span></h2>
         <p>
-          I want to inform you that whenever you use my Service, in a case of an error in the app I collect data and information (through third-party products) on your phone called Log Data. This Log Data may include information such as your device Internet Protocol (“IP”) address, device name, operating system version, the configuration of the app when utilizing my Service, the time and date of your use of the Service, and other statistics.
+          <span class="reveal">I want to inform you that whenever you use my Service, in a case of an error in the app I collect data and information (through third-party products) on your phone called Log Data. This Log Data may include information such as your device Internet Protocol (“IP”) address, device name, operating system version, the configuration of the app when utilizing my Service, the time and date of your use of the Service, and other statistics.</span>
         </p>
-        <h2>Cookies</h2>
+        <h2><span class="reveal">Cookies</span></h2>
         <p>
-          Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory.
+          <span class="reveal"></span>Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory.</span>
         </p>
         <p>
-          This Service does not use these “cookies” explicitly. However, the app may use third-party code and libraries that use “cookies” to collect information and improve their services. You have the option to either accept or refuse these cookies and know when a cookie is being sent to your device. If you choose to refuse our cookies, you may not be able to use some portions of this Service.
+          <span class="reveal">This Service does not use these “cookies” explicitly. However, the app may use third-party code and libraries that use “cookies” to collect information and improve their services. You have the option to either accept or refuse these cookies and know when a cookie is being sent to your device. If you choose to refuse our cookies, you may not be able to use some portions of this Service.</span>
         </p>
-        <h2>Service Providers</h2>
+        <h2><span class="reveal">Service Providers</span></h2>
         <p>
-          I may employ third-party companies and individuals due to the following reasons:
+          <span class="reveal">I may employ third-party companies and individuals due to the following reasons:</span>
         </p>
         <ul>
-          <li>To facilitate our Service;</li>
-          <li>To provide the Service on our behalf;</li>
-          <li>To perform Service-related services; or</li>
-          <li>To assist us in analyzing how our Service is used.</li>
+          <li><span class="reveal">To facilitate our Service;</span></li>
+          <li><span class="reveal">To provide the Service on our behalf;</span></li>
+          <li><span class="reveal">To perform Service-related services; or</span></li>
+          <li><span class="reveal">To assist us in analyzing how our Service is used.</span></li>
         </ul>
         <p>
-          I want to inform users of this Service that these third parties have access to their Personal Information. The reason is to perform the tasks assigned to them on our behalf. However, they are obligated not to disclose or use the information for any other purpose.
+          <span class="reveal">I want to inform users of this Service that these third parties have access to their Personal Information. The reason is to perform the tasks assigned to them on our behalf. However, they are obligated not to disclose or use the information for any other purpose.</span>
         </p>
-        <h2>Security</h2>
+        <h2><span class="reveal">Security</span></h2>
         <p>
-          I value your trust in providing us your Personal Information, thus we are striving to use commercially acceptable means of protecting it. But remember that no method of transmission over the internet, or method of electronic storage is 100% secure and reliable, and I cannot guarantee its absolute security.
+          <span class="reveal">I value your trust in providing us your Personal Information, thus we are striving to use commercially acceptable means of protecting it. But remember that no method of transmission over the internet, or method of electronic storage is 100% secure and reliable, and I cannot guarantee its absolute security.</span>
         </p>
-        <h2>Links to Other Sites</h2>
+        <h2><span class="reveal">Links to Other Sites</span></h2>
         <p>
-          This Service may contain links to other sites. If you click on a third-party link, you will be directed to that site. Note that these external sites are not operated by me. Therefore, I strongly advise you to review the Privacy Policy of these websites. I have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.
+          <span class="reveal">This Service may contain links to other sites. If you click on a third-party link, you will be directed to that site. Note that these external sites are not operated by me. Therefore, I strongly advise you to review the Privacy Policy of these websites. I have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</span>
         </p>
-        <h2>Children's Privacy</h2>
+        <h2><span class="reveal">Children's Privacy</span></h2>
         <p>
-          I do not knowingly collect personally identifiable information from children. I encourage all children to never submit any personally identifiable information through the Application and/or Services. I encourage parents and legal guardians to monitor their children's Internet usage and to help enforce this Policy by instructing their children never to provide personally identifiable information through the Application and/or Services without their permission. If you have reason to believe that a child has provided personally identifiable information to us through the Application and/or Services, please contact us. You must also be at least 16 years of age to consent to the processing of your personally identifiable information in your country (in some countries we may allow your parent or guardian to do so on your behalf).
+          <span class="reveal">I do not knowingly collect personally identifiable information from children. I encourage all children to never submit any personally identifiable information through the Application and/or Services. I encourage parents and legal guardians to monitor their children's Internet usage and to help enforce this Policy by instructing their children never to provide personally identifiable information through the Application and/or Services without their permission. If you have reason to believe that a child has provided personally identifiable information to us through the Application and/or Services, please contact us. You must also be at least 16 years of age to consent to the processing of your personally identifiable information in your country (in some countries we may allow your parent or guardian to do so on your behalf).</span>
         </p>
-        <h2>Changes to This Privacy Policy</h2>
+        <h2><span class="reveal">Changes to This Privacy Policy</span></h2>
         <p>
-          I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.
+          <span class="reveal">I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.</span>
         </p>
-        <p>This policy is effective as of 2024-12-31</p>
-        <h2>Contact Us</h2>
+        <p><span class="reveal">This policy is effective as of 2024-12-31</span></p>
+        <h2><span class="reveal">Contact Us</span></h2>
         <p>
-          If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at <a href="mailto:milch@milchchan.com">milch@milchchan.com</a>.
+          <span class="reveal">If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at <a href="mailto:milch@milchchan.com"><span class="wrap has-text-weight-bold"><span class="clip"><span class="scrollable"><span>milch@milchchan.com</span><span>milch@milchchan.com</span></span></span></span></a>.</span>
         </p>
       </div>
     </div>
