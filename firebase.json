@@ -12,16 +12,6 @@
       "type": 404
     },
     {
-      "source": "/privacy.html",
-      "destination": "https://merkuchan.com/privacy",
-      "type": 200
-    },
-    {
-      "source": "/preview/index.html",
-      "destination": "https://merkuchan.com/preview",
-      "type": 200
-    },
-    {
       "source": "/",
       "destination": "https://merkuchan.com/",
       "type": 301
