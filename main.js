@@ -1601,8 +1601,9 @@ window.addEventListener("load", async event => {
               height: 100 / samples.length,
               colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
               inlines: [
-                { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 25, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
+                { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
               ],
+              scroll: { requested: false, step: 0.0 },
               elapsed: 0,
             });
           }
@@ -1687,6 +1688,15 @@ window.addEventListener("load", async event => {
                   inline.current = inline.type.buffer;
                 }
               }
+
+              if (block.scroll.requested) {
+                block.scroll.step += deltaTime;
+
+                if (block.scroll.step >= 1.0) {
+                  block.scroll.requested = false;
+                  block.scroll.step = 0.0;
+                }
+              }
             }
           }
 
@@ -1764,7 +1774,6 @@ window.addEventListener("load", async event => {
 
               backContext.save();
 
-
               for (const s of inline.source) {
                 let text;
 
@@ -1781,7 +1790,7 @@ window.addEventListener("load", async event => {
                 width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
               }
 
-              let translation = block.elapsed % 60 / 60 * -(width + margin)
+              let translation = (block.elapsed % 60 / 60 + Math.sin(block.scroll.step / 2.0 * Math.PI)) % 1.0 * -(width + margin)
 
               backContext.translate(translation, 0);
               backContext.globalAlpha = 1.0;
@@ -2098,9 +2107,23 @@ window.addEventListener("mousemove", event => {
   const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
   const x = event.clientX - rect.x;
   const y = event.clientY - rect.y;
-
+  const canvas = document.body.querySelector("#app>.container>.wrap>.frame>.wall>canvas");
+  
   tracker.mouse.x = x;
   tracker.mouse.y = y;
+  
+  if (canvas !== null) {
+    const lineHeight = canvas.height / window.devicePixelRatio / background.blocks.length;
+    const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
+
+    for (let i = 0; i < background.blocks.length; i++) {
+      const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
+      
+      if (top <= y && y < top + fontSize && !background.blocks[i].scroll.requested) {
+        background.blocks[i].scroll.requested = true;
+      }
+    }
+  }
 
   if (tracker.active && tracker.identifier === null) {
     const timestamp = event.timeStamp / 1000;
@@ -2222,10 +2245,25 @@ window.addEventListener("touchmove", event => {
   }
 
   if (touches.length === 1) {
+    const canvas = document.body.querySelector("#app>.container>.wrap>.frame>.wall>canvas");
+  
     tracker.movement.x = touches[0].movement.x;
     tracker.movement.y = touches[0].movement.y;
     tracker.velocity.x = touches[0].velocity.x;
     tracker.velocity.y = touches[0].velocity.y;
+
+    if (canvas !== null) {
+      const lineHeight = canvas.height / window.devicePixelRatio / background.blocks.length;
+      const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
+  
+      for (let i = 0; i < background.blocks.length; i++) {
+        const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
+        
+        if (top <= touches[0].position.y && touches[0].position.y < top + fontSize && !background.blocks[i].scroll.requested) {
+          background.blocks[i].scroll.requested = true;
+        }
+      }
+    }
 
     if (background.cache.length > 0 && !background.particles.some(x => touches[0].timestamp - x.timestamp < 0.1)) {
       for (let i = random(0, 4); i > 0; i--) {
