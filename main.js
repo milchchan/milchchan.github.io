@@ -950,6 +950,53 @@ window.addEventListener("load", async event => {
             }
           }
 
+          const blind = document.createElement("div");
+            
+          blind.className = "blind";
+          blind.style.transform = "translate3d(0, 100%, 0)";
+
+          try {
+            const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Background.png");
+
+            if (response.ok) {
+              const blob = await response.blob();
+              const dataURL = await new Promise(async (resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                  resolve(reader.result);
+                };
+                reader.onerror = () => {
+                  reject(reader.error);
+                };
+                reader.readAsDataURL(blob);
+              });
+              blind.style.backgroundImage = `url('${dataURL}')`;
+            }
+          } catch (error) {
+            console.error(error);
+          }
+
+          document.body.querySelector("#app>.container>.wrap>.frame>.wall").after(blind);
+
+          await new Promise(async (resolve) => {
+            blind.animate([
+              {
+                transform: "translate3d(0, 0%, 0)"
+              }
+            ], {
+              delay: 0,
+              fill: "forwards",
+              duration: 500,
+              iterations: 1,
+              easing: "ease-out"
+            }).onfinish = () => {
+              blind.style.transform = "translate3d(0, 0%, 0)";
+
+              resolve();
+            };
+          });
+
           if ("name" in background.dataset[background.index] && background.dataset[background.index] !== null) {
             const name = background.dataset[background.index].name;
 
@@ -1226,56 +1273,10 @@ window.addEventListener("load", async event => {
             }
 
             const data = background.queue.shift().data;
-            const blind = document.createElement("div");
             const progress = document.createElement("div");
             const bar = document.createElement("div");
             const timeout = 60 * 60;
             let index = 0;
-
-            blind.className = "blind";
-            blind.style.transform = "translate3d(0, 100%, 0)";
-
-            try {
-              const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Background.png");
-
-              if (response.ok) {
-                const blob = await response.blob();
-                const dataURL = await new Promise(async (resolve, reject) => {
-                  const reader = new FileReader();
-
-                  reader.onload = () => {
-                    resolve(reader.result);
-                  };
-                  reader.onerror = () => {
-                    reject(reader.error);
-                  };
-                  reader.readAsDataURL(blob);
-                });
-                blind.style.backgroundImage = `url('${dataURL}')`;
-              }
-            } catch (error) {
-              console.error(error);
-            }
-
-            document.body.querySelector("#app>.container>.wrap>.frame>.wall").after(blind);
-
-            await new Promise(async (resolve) => {
-              blind.animate([
-                {
-                  transform: "translate3d(0, 0%, 0)"
-                }
-              ], {
-                delay: 0,
-                fill: "forwards",
-                duration: 500,
-                iterations: 1,
-                easing: "ease-out"
-              }).onfinish = () => {
-                blind.style.transform = "translate3d(0, 0%, 0)";
-
-                resolve();
-              };
-            });
 
             progress.className = "progress";
             bar.className = "bar animating";
@@ -1519,24 +1520,24 @@ window.addEventListener("load", async event => {
             for (let i = animationQueue.length - 2; i >= 0; i--) {
               animationQueue.push(animationQueue[i]);
             }
-
-            blind.animate([
-              {
-                transform: "translate3d(0, -100%, 0)"
-              }
-            ], {
-              delay: 0,
-              fill: "forwards",
-              duration: 500,
-              iterations: 1,
-              easing: "ease-out",
-              composite: "replace"
-            }).onfinish = () => {
-              blind.remove();
-            };
           } else {
             background.color = null;
           }
+
+          blind.animate([
+            {
+              transform: "translate3d(0, -100%, 0)"
+            }
+          ], {
+            delay: 0,
+            fill: "forwards",
+            duration: 500,
+            iterations: 1,
+            easing: "ease-out",
+            composite: "replace"
+          }).onfinish = () => {
+            blind.remove();
+          };
 
           background.preloading = false;
 
