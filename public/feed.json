@@ -285,6 +285,120 @@
                         "source": "images/Background-Milch-Najimi-1.png"
                     }
                 ]
+            },
+            {
+                "color": "#ff89ca",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Mitau-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Mitau-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Mitau-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Mitau-1.png"
+                    }
+                ]
+            },
+            {
+                "color": "#9bdde4",
+                "frames": [
+                    {
+                        "delay": 0.5,
+                        "source": "images/Background-Milch-Nekoita-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-2.png"
+                    },
+                    {
+                        "delay": 1.0,
+                        "source": "images/Background-Milch-Nekoita-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-1.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-2.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-3.png"
+                    },
+                    {
+                        "delay": 0.1,
+                        "source": "images/Background-Milch-Nekoita-2.png"
+                    },
+                    {
+                        "delay": 2.5,
+                        "source": "images/Background-Milch-Nekoita-1.png"
+                    }
+                ]
             }
         ],
         "texts": [
