@@ -1406,7 +1406,7 @@ window.addEventListener("load", async event => {
                         reader.onerror = () => {
                           reject(reader.error);
                         };
-                        reader.readAsDataURL(await resize(blob, Math.floor(Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio)));
+                        reader.readAsDataURL(await resize(blob, Math.floor(Math.max(window.screen.width, window.screen.height) / 2.0 * window.devicePixelRatio)));
                       });
 
                       animationQueue.push(Object.assign({ time: 0, image: image }, frame));
@@ -1434,7 +1434,7 @@ window.addEventListener("load", async event => {
                             reader.onerror = () => {
                               reject(reader.error);
                             };
-                            reader.readAsDataURL(await resize(frame.blob, Math.floor(Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio)));
+                            reader.readAsDataURL(await resize(frame.blob, Math.floor(Math.max(window.screen.width, window.screen.height) / 2.0 * window.devicePixelRatio)));
                           })
                         });
                       }
