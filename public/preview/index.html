@@ -472,7 +472,7 @@
             progress.appendChild(bar);
             document.body.appendChild(progress);
 
-            loader.load(window.location.hostname.endsWith("merkuchan.com") ? "models/Merku.vrm" : "models/Milch.vrm", async gltf => {
+            loader.load(window.location.hostname.endsWith("merkuchan.com") ? "/preview/models/Merku.vrm" : "/preview/models/Milch.vrm", async gltf => {
                 vrm = gltf.userData.vrm;
                 vrm.scene.visible = false;
                 vrm.scene.rotation.y = Math.PI;
