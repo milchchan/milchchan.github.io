@@ -268,9 +268,9 @@
         scene.add(new THREE.AxesHelper(5));
 
         bloomPass.renderToScreen = true;
-        bloomPass.strength = 0.5;
-        bloomPass.radius = 0.25;
-        bloomPass.threshold = 0.25;
+        bloomPass.strength = 0.1;
+        bloomPass.radius = 0.5;
+        bloomPass.threshold = 0.5;
         hueSaturation.uniforms.hue.value = -0.01;
         hueSaturation.uniforms.saturation.value = 0.1;
         brightnessContrastShader.uniforms.brightness.value = 0.1;
@@ -280,7 +280,7 @@
         composer.setSize(renderer.domElement.width, renderer.domElement.height);
         composer.setPixelRatio(window.devicePixelRatio);
         composer.addPass(new RenderPass(scene, camera));
-        //composer.addPass(bloomPass);
+        composer.addPass(bloomPass);
         composer.addPass(hueSaturation);
         composer.addPass(brightnessContrastShader);
         composer.addPass(effectCopy);
