@@ -27,7 +27,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 if mime_type in ['application/zip', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
                     bucket_name = 'milchchan.appspot.com'
-                    path = os.path.join('uploads', str(uuid4()))
+                    id = str(uuid4())
+                    path = os.path.join('uploads', id)
                     credentials = service_account.Credentials.from_service_account_info({
                         'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
                         'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
@@ -52,6 +53,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             BytesIO(b64decode(data)), content_type=mime_type)
 
                         return func.HttpResponse(json.dumps({
+                            'id': id,
                             'url': f'gs://{bucket_name}{urljoin("/", path)}',
                             'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
                         }),
