@@ -262,7 +262,7 @@
 
         directionallight.position.set(0.0, 0.0, -1.0).normalize();
 
-        scene.add(new THREE.AmbientLight(0xFFFFFF, 0.25));
+        scene.add(new THREE.AmbientLight(0xFFFFFF, 0.5));
         scene.add(directionallight);
         scene.add(new THREE.GridHelper(10, 10, "#000000", "#000000"));
         scene.add(new THREE.AxesHelper(5));
@@ -280,7 +280,7 @@
         composer.setSize(renderer.domElement.width, renderer.domElement.height);
         composer.setPixelRatio(window.devicePixelRatio);
         composer.addPass(new RenderPass(scene, camera));
-        composer.addPass(bloomPass);
+        //composer.addPass(bloomPass);
         composer.addPass(hueSaturation);
         composer.addPass(brightnessContrastShader);
         composer.addPass(effectCopy);
