@@ -22,7 +22,6 @@
         }
     },
     "mimeTypes": {
-        ".js": "text/javascript",
         ".json": "application/json"
     }
 }
