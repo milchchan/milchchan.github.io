@@ -1619,9 +1619,7 @@ window.addEventListener("load", async event => {
 
                   if (inline.type.elapsed >= 1.0 / inline.type.speed) {
                     if (inline.type.count - 1 < inline.text.length) {
-                      const width = Math.floor(inline.text.length / 2);
-
-                      if (inline.type.buffer.length <= width && inline.type.count > 0) {
+                      if (inline.type.buffer.length <= Math.floor(inline.text.length / 2) && inline.type.count > 0) {
                         inline.type.count -= 1;
                       }
 
@@ -1646,14 +1644,11 @@ window.addEventListener("load", async event => {
                 }
 
                 if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                  const width = Math.floor(inline.text.length / 2);
-                  const length = inline.text.length;
-
-                  if (inline.type.count >= width) {
+                  if (inline.type.count >= Math.floor(inline.text.length / 2)) {
                     inline.type.buffer += inline.text.charAt(inline.type.buffer.length);
                   }
 
-                  if (inline.type.count < length) {
+                  if (inline.type.count < inline.text.length) {
                     inline.type.count += 1;
                   }
 
