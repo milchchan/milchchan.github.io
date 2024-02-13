@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-617KR1WTYP");
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f4f2" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f4f4f2" />
+    <title>MILCHCHAN.COM</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
+    <style media="screen">
+      :root {
+        --background-color: #ffffff;
+        --foreground-color: #000000;
+        --milch-light-background-image: /images/Milchchan.png;
+        --milch-dark-background-image: /images/Background-Milch-Zankuro-1.png;
+        --merku-light-background-image: /images/Merkuchan.png;
+        --merku-dark-background-image: /images/Background-Merku-Zankuro-1.png;
+      }
+
+      html {
+        touch-action: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        background: var(--background-color);
+      }
+
+      body {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        min-height: 100dvh;
+        overflow: hidden;
+      }
+
+      h1 {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0px -4px 0px -4px !important;
+        padding: 0;
+        color: var(--foreground-color) !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 2rem;
+        font-weight: bold;
+        line-height: 2rem;
+        text-transform: uppercase;
+      }
+
+      h1>span {
+        margin: 0px 4px 0px 4px !important;
+      }
+
+      h2 {
+        position: sticky;
+        top: 0px;
+        margin: 0;
+        padding: 0;
+        color: var(--foreground-color) !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+        text-transform: uppercase;
+      }
+
+      p+h2 {
+        margin: 16px 0px 0px 0px;
+      }
+
+      p {
+        margin: 16px 0px 0px 0px;
+        padding: 0;
+        color: var(--foreground-color) !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.25rem;
+        line-height: 2rem;
+      }
+
+      ul,
+      ol {
+        margin-left: 0;
+        padding-left: 0;
+      }
+
+      ul {
+        margin: 16px 0px 0px 0px;
+      }
+
+      ul>li {
+        margin: 0px 0px 0px 16px;
+        padding: 0;
+        list-style-type: none;
+        color: var(--foreground-color) !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        transform: rotate(0.03deg);
+      }
+
+      a,
+      a:focus,
+      a:link,
+      a:visited,
+      a:hover,
+      a:active {
+        outline: none;
+        text-decoration: none;
+        color: var(--foreground-color);
+      }
+
+      a .scrollable {
+        display: inline-block;
+        box-sizing: content-box;
+        backface-visibility: hidden;
+        transform: translate3d(0%, 0%, 0);
+        transition: 0.5s ease-in;
+      }
+
+      a .scrollable>div {
+        -webkit-user-select: none;
+        user-select: none;
+        box-sizing: content-box;
+        vertical-align: middle;
+      }
+
+      a .scrollable:hover {
+        display: inline-block;
+        box-sizing: content-box;
+        backface-visibility: hidden;
+        transform: translate3d(-100%, 0%, 0);
+        transition: 0.5s ease-out;
+      }
+
+      .has-text-weight-bold {
+        font-weight: bold;
+      }
+
+      .is-uppercase {
+        text-transform: uppercase;
+      }
+
+      body>.wrap {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        backface-visibility: hidden;
+        transition: 0.5s;
+      }
+
+      body>.wrap>.frame {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        border-radius: 0px;
+        width: 100%;
+        max-width: 100% !important;
+        height: 100%;
+        overflow: hidden;
+        background-color: #f4f4f2;
+        transition: 0.5s;
+      }
+
+      .background {
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        background-color: transparent;
+        background-position: 50% 0%;
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-size: cover;
+        transform-origin: 50% 50%;
+        backface-visibility: hidden;
+        perspective: 1000;
+      }
+
+      .background::before {
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        background: transparent;
+        content: "";
+      }
+
+      .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        padding: 16px;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent), linear-gradient(black, black);
+        mask-size: calc(100% - 16px) 100%, 16px 100%;
+        mask-position: 0 0, 100% 0;
+        mask-repeat: no-repeat, no-repeat;
+        animation: fade .5s ease-out forwards;
+        box-sizing: border-box;
+        backface-visibility: hidden;
+        perspective: 1000;
+        transition: 0.5s;
+      }
+
+      .overlay>.wrap {
+        position: relative;
+        box-sizing: border-box;
+        margin: 0px 0px 0px calc(48px - 16px);
+        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+      }
+
+      .overlay>.wrap>.content {
+        position: absolute;
+        margin: 0;
+        padding: 0px 0px 16px 0px;
+        transition: padding 0.5s;
+      }
+
+      .overlay>.wrap>.content.content:not(.is-selected) {
+        pointer-events: none;
+      }
+      
+      .content>p+div {
+        margin: 16px 0px 0px 0px;
+      }
+
+      .content>div+div {
+        margin: 16px 0px 0px 0px;
+      }
+
+      .content p a {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        background: transparent;
+        background-clip: padding-box;
+        backface-visibility: hidden;
+        cursor: pointer;
+      }
+
+      .content p a .clip {
+        position: relative;
+        display: inline-flex;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .content p a .scrollable {
+        display: inline-flex;
+        margin: 0px -4px 0px -4px !important;
+      }
+
+      .content p a .scrollable span {
+        display: inline;
+        margin: 0px 4px 0px 4px !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        line-height: normal;
+      }
+
+      .content p a .scrollable span:last-child:not(:first-child) {
+        position: absolute;
+        left: 100%;
+      }
+
+      div.sidebar {
+        -webkit-user-select: none;
+        user-select: none;
+        z-index: 1;
+        position: fixed;
+        left: 0px;
+        padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+        width: fit-content;
+        height: fit-content;
+        background: transparent;
+        transition: 0.5s;
+      }
+
+      div.sidebar .separator {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: center;
+        width: 48px;
+        height: fit-content;
+      }
+
+      div.sidebar .separator>hr {
+        border-width: 0;
+        margin: 32px 0px 32px 0px;
+        padding: 0;
+        width: 16px;
+        height: 1px;
+        background-color: #000000;
+        text-align: center !important;
+      }
+
+      div.sidebar .button.is-selected .wrap {
+        border-bottom: 2px solid #000000;
+        transition: .5s ease-in;
+      }
+
+      div.sidebar .rotation-outer {
+        display: table;
+      }
+
+      div.sidebar .rotation-outer>div.rotation-inner {
+        padding: 50% 0;
+        height: 0;
+      }
+
+      div.sidebar .rotation-outer>div.rotation-inner>div.rotate {
+        display: block;
+        transform-origin: top left;
+        transform: rotate(-90deg) translate(-100%);
+        margin-top: -50%;
+        white-space: nowrap;
+      }
+
+      div.sidebar>.level {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        width: 48px;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+      }
+
+      div.sidebar>.level>.level-item {
+        margin: 0;
+        padding: 0;
+      }
+
+      div.sidebar .button {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        background: transparent;
+        background-clip: padding-box;
+        line-height: calc(0.75rem * 1.5);
+        backface-visibility: hidden;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        height: 48px;
+        cursor: pointer;
+      }
+
+      div.sidebar .button .clip {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        height: calc(0.75rem * 1.5);
+        transform: translate(0px, -1px);
+        box-sizing: border-box;
+      }
+
+      div.sidebar .button .scrollable {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0px -4px 0px -4px !important;
+        transform: translate3d(0%, 0%, 0);
+        transition: 0.5s ease-in;
+      }
+
+      div.sidebar .button .scrollable:hover {
+        transform: translate3d(-100%, 0%, 0);
+        transition: 0.5s ease-out;
+      }
+
+      div.sidebar .button .scrollable div {
+        display: flex;
+        align-items: center;
+        margin: 0px 4px 0px 4px !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 0.75rem !important;
+        line-height: 0.75rem !important;
+        height: calc(0.75rem * 1.5);
+        vertical-align: middle;
+      }
+
+      div.sidebar .button .scrollable div:last-child:not(:first-child) {
+        position: absolute;
+        left: 100%;
+      }
+
+      div.sidebar .button .wrap {
+        position: relative;
+        display: flex;
+        margin: 0;
+        border-top: 2px solid transparent;
+        border-bottom: 2px solid transparent;
+        color: #000000;
+        width: fit-content;
+        height: fit-content;
+        min-height: fit-content;
+        box-sizing: border-box;
+        overflow: hidden;
+        justify-content: flex-start;
+        align-items: center;
+        transform: translate3d(0, 0, 0);
+        transition: 0.5s;
+      }
+
+      .icon {
+        display: inline-block;
+        justify-items: center;
+        margin: 0;
+        padding: 0;
+        color: #000000;
+        width: fit-content;
+        height: fit-content;
+        transition: .5s;
+        line-height: 0;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon>figure {
+        margin: 0;
+      }
+
+      .icon figure>picture {
+        display: block;
+      }
+
+      .icon:first-child+div,
+      .icon:not(:first-of-type) {
+        margin: 0px 0px 0px 16px;
+      }
+
+      .icon.is-animatable>figure {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        overflow: hidden;
+        width: 32px;
+        height: 32px;
+      }
+
+      .icon.is-animatable>figure>picture {
+        margin-left: 0%;
+        width: auto;
+        height: 100%;
+        animation: frame 1.33s steps(4) infinite forwards;
+      }
+
+      .icon.is-animatable>figure>picture>img {
+        object-fit: none;
+        object-position: 0% 0%;
+        width: 100%;
+        height: 100%;
+      }
+
+      .content .reveal {
+        color: #0000;
+        background: linear-gradient(var(--foreground-color) 0 0) no-repeat, linear-gradient(var(--foreground-color) 0 0) no-repeat;
+        background-clip: padding-box, text;
+        background-size: 0% 100%;
+        animation: mask 1.0s ease 0.5s both, reveal 1.0s ease 1.5s both;
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes mask{
+        to {
+          background-size: 150% 100%;
+        }
+      }
+
+      @keyframes reveal {
+        to {
+          background-position: -200% 0, 0 0;
+        }
+      }
+
+      @keyframes frame {
+        0% {
+          margin-left: 0%;
+        }
+
+        100% {
+          margin-left: -400%;
+        }
+      }
+
+      @media screen and (min-width: 769px) and (min-height: 769px) {
+        body>.wrap {
+          padding: 16px;
+          transition: 0.5s;
+        }
+
+        body>.warp>.frame {
+          border-radius: 4px;
+          transition: 0.5s;
+        }
+
+        body>.overlay {
+          padding: 32px;
+          mask-image: linear-gradient(to bottom, transparent, transparent 16px, black 32px, black calc(100% - 32px), transparent calc(100% - 16px), transparent), linear-gradient(black, black);
+          mask-size: calc(100% - 32px) 100%, 32px 100%;
+          transition: 0.5s;
+        }
+
+        .overlay>.wrap>.content {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0px 0px 32px 0px;
+          transition: padding 0.5s;
+        }
+
+        div.sidebar {
+          left: 16px;
+          transition: 0.5s;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="frame">
+      </div>
+    </div>
+    <div class="overlay">
+      <div class="sidebar">
+        <div class="level">
+          <div class="level-item">
+            <div class="rotation-outer">
+              <div class="rotation-inner">
+                <div class="rotate">
+                  <a class="button" href="https://milchchan.com/" title="milchchan.com">
+                    <div class="stack">
+                      <div class="wrap has-text-weight-bold is-uppercase">
+                        <div class="clip">
+                          <div class="scrollable">
+                            <div>milchchan.com</div>
+                            <div>milchchan.com</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="level-item">
+            <div class="separator">
+              <hr>
+            </div>
+          </div>
+          <div class="level-item">
+            <div class="rotation-outer">
+            <div class="rotation-inner">
+                <div class="rotate">
+                <button class="button is-selected" type="button" onclick="select(event);" data-type="milch">
+                    <div class="stack">
+                    <div class="wrap has-text-weight-bold is-uppercase">
+                        <div class="clip">
+                        <div class="scrollable">
+                            <div>Milch</div>
+                            <div>Milch</div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </button>
+                </div>
+            </div>
+            </div>
+          </div>
+          <div class="level-item">
+            <div class="separator">
+              <hr>
+            </div>
+          </div>
+          <div class="level-item">
+            <div class="rotation-outer">
+            <div class="rotation-inner">
+                <div class="rotate">
+                <button class="button" type="button" onclick="select(event);" data-type="merku">
+                    <div class="stack">
+                    <div class="wrap has-text-weight-bold is-uppercase">
+                        <div class="clip">
+                        <div class="scrollable">
+                            <div>Merku</div>
+                            <div>Merku</div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </button>
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="content is-selected" data-type="milch">
+          <h1>
+            <span class="icon is-animatable">
+              <figure>
+                <picture>
+                  <!--<source srcset="images/PixelatedLuna-Transformed.png 1x, images/PixelatedLuna-Transformed@2x.png 2x, images/PixelatedLuna-Transformed@3x.png 3x" media="(prefers-color-scheme: dark)">-->
+                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMilch-Transformed.png 1x, images/PixelatedMilch-Transformed@2x.png 2x, images/PixelatedMilch-Transformed@3x.png 3x" alt="Milch">
+                </picture>
+              </figure>
+            </span>
+            <span class="reveal">Milch</span>
+          </h1>
+          <p>
+            <span class="reveal">ミルヒちゃん</span>
+          </p>
+        </div>
+        <div class="content" data-type="merku">
+          <h1>
+            <span class="icon is-animatable">
+              <figure>
+                <picture>
+                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMerku-Transformed.png 1x, images/PixelatedMerku-Transformed@2x.png 2x, images/PixelatedMerku-Transformed@3x.png 3x" alt="Merku">
+                </picture>
+              </figure>
+            </span>
+            <span class="reveal">Merku</span>
+          </h1>
+          <p>
+            <span class="reveal">メルクちゃん</span>
+          </p>
+          <div>
+            <h2><span class="reveal">メルク</span></h2>
+            <p>
+              <span class="reveal">メルクちゃん</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      async function resize(blob, length) {
+        return await new Promise(async (resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => {
+            const image = new Image();
+
+            image.onload = () => {
+              const canvas = document.createElement("canvas");
+
+              if (image.width>image.height) {
+                if (image.width>length) {
+                  canvas.width = length;
+                  canvas.height = Math.floor(
+                    (length / image.width) * image.height
+                  );
+                } else {
+                  canvas.width = image.width;
+                  canvas.height = image.height;
+                }
+              } else if (image.height>length) {
+                canvas.width = Math.floor(
+                  (length / image.height) * image.width
+                );
+                canvas.height = length;
+              } else {
+                canvas.width = image.width;
+                canvas.height = image.height;
+              }
+
+              const ctx = canvas.getContext("2d");
+
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+              ctx.canvas.toBlob(async (blob) => {
+                resolve(blob);
+
+                ctx.canvas.width = ctx.canvas.height = 0;
+              }, "image/png");
+            };
+            image.onerror = (error) => {
+              reject(error);
+            };
+            image.crossOrigin = "anonymous";
+            image.src = reader.result;
+          };
+          reader.onerror = () => {
+            reject(reader.error);
+          };
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      function shake(element) {
+        element.animate([
+            { transform: "translate3d(0, 0, 0)" },
+            { transform: "translate3d(8px, 0, 0)" },
+            { transform: "translate3d(-8px, 0, 0)" },
+            { transform: "translate3d(7px, 0, 0)" },
+            { transform: "translate3d(-7px, 0, 0)" },
+            { transform: "translate3d(6px, 0, 0)" },
+            { transform: "translate3d(-6px, 0, 0)" },
+            { transform: "translate3d(5px, 0, 0)" },
+            { transform: "translate3d(-5px, 0, 0)" },
+            { transform: "translate3d(4px, 0, 0)" },
+            { transform: "translate3d(-4px, 0, 0)" },
+            { transform: "translate3d(3px, 0, 0)" },
+            { transform: "translate3d(-3px, 0, 0)" },
+            { transform: "translate3d(2px, 0, 0)" },
+            { transform: "translate3d(-2px, 0, 0)" },
+            { transform: "translate3d(1px, 0, 0)" },
+            { transform: "translate3d(-1px, 0, 0)" },
+            { transform: "translate3d(0, 0, 0)" }],
+            { duration: 1000, iterations: 1 });
+      }
+
+      async function change(url) {
+        const background = document.createElement("div");
+
+        background.className = "background";
+        background.style.opacity = 0;
+        background.style.transform = "scale3d(1.1, 1.1, 1.1)";
+
+        document.body.querySelector(".wrap>.frame").prepend(background);
+
+        try {
+            const response = await fetch(url);
+
+            if (response.ok) {
+                background.style.backgroundImage = `url('${await new Promise(
+                async (resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    resolve(reader.result);
+                };
+                reader.onerror = () => {
+                    reject(reader.error);
+                };
+                reader.readAsDataURL(
+                    await resize(
+                    await response.blob(),
+                    Math.max(window.screen.width, window.screen.height) *
+                        window.devicePixelRatio
+                    )
+                );
+                }
+            )}')`;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+        for (const element of document.body.querySelectorAll(".wrap>.frame>.background")) {
+            if (element !== background) {
+                element.animate([
+                    {
+                    opacity: 0,
+                    transform: "scale3d(1.1, 1.1, 1.1)",
+                    },
+                ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-in",
+                }).onfinish = () => {
+                    element.remove();
+                };
+            }
+        }
+
+        background.animate([
+          {
+            opacity: 1,
+            transform: "scale3d(1.0, 1.0, 1.0)",
+          },
+        ], {
+          delay: 0,
+          fill: "forwards",
+          duration: 500,
+          iterations: 1,
+          easing: "ease-out",
+        }).onfinish = () => {
+          background.style.opacity = 1;
+          background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+        };
+      }
+
+      window.select = (event) => {
+        const target = (event.currentTarget || event.target);
+
+        for (const element1 of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
+            if (element1.dataset.type === target.dataset.type) {
+                if (!element1.classList.contains("is-selected")) {
+                    for (const element2 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+                        if (element1.dataset.type === element2.dataset.type) {
+                            if (!element2.classList.contains("is-selected")) {
+                                if (element2.style.display === "none") {
+                                    element2.classList.add("is-selected");
+                                    element2.style.display = "block";
+                                    element2.animate([
+                                      {
+                                        opacity: 1
+                                      }
+                                    ], {
+                                        delay: 0,
+                                        fill: "forwards",
+                                        duration: 500,
+                                        iterations: 1,
+                                        easing: "ease-out",
+                                        composite: "replace"
+                                    }).onfinish = (event) => {
+                                        if (element2.classList.contains("is-selected")) {
+                                            element2.style.opacity = 1;
+                                        }
+                                    };
+
+                                    for (const element3 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+                                        if (element1.dataset.type !== element3.dataset.type && element3.classList.contains("is-selected")) {
+                                            element3.classList.remove("is-selected");
+                                            element3.animate([
+                                            {
+                                                opacity: 0
+                                            }
+                                            ], {
+                                                delay: 0,
+                                                fill: "forwards",
+                                                duration: 500,
+                                                iterations: 1,
+                                                easing: "ease-in",
+                                                composite: "replace"
+                                            }).onfinish = () => {
+                                                if (!element3.classList.contains("is-selected")) {
+                                                    element3.style.display = "none";
+                                                }
+                                            };
+                                        }
+                                    }
+                                } else {
+                                    shake(element1);
+
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    element1.classList.add("is-selected");
+                    
+                    change(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element1.dataset.type}-dark-background-image` : `--${element1.dataset.type}-light-background-image`));
+                }
+
+                for (const element2 of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
+                    if (element2.dataset.type !== target.dataset.type && element2.classList.contains("is-selected")) {
+                        element2.classList.remove("is-selected");
+                    }
+                }
+            }
+        }
+      };
+      window.addEventListener("load", async (event) => {
+        for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+            if (element.classList.contains("is-selected")) {
+                const background = document.createElement("div");
+
+                background.className = "background";
+                background.style.opacity = 0;
+                background.style.transform = "scale3d(1.1, 1.1, 1.1)";
+                
+                document.body.querySelector(".wrap>.frame").prepend(background);
+
+                try {
+                    const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element.dataset.type}-dark-background-image` : `--${element.dataset.type}-light-background-image`));
+
+                    if (response.ok) {
+                        background.style.backgroundImage = `url('${await new Promise(
+                        async (resolve, reject) => {
+                            const reader = new FileReader();
+
+                            reader.onload = () => {
+                                resolve(reader.result);
+                            };
+                            reader.onerror = () => {
+                                reject(reader.error);
+                            };
+                            reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
+                        }
+                        )}')`;
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+                
+                background.animate([
+                  {
+                    opacity: 1,
+                    transform: "scale3d(1.0, 1.0, 1.0)",
+                  },
+                ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out",
+                }).onfinish = () => {
+                    background.style.opacity = 1;
+                    background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+                };
+            } else {
+                element.style.display = "none";
+                element.style.opacity = 0;
+            }
+        }
+      });
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+          if (element.classList.contains("is-selected")) {
+            change(window.getComputedStyle(document.documentElement).getPropertyValue(e.matches ? `--${element.dataset.type}-dark-background-image` : `--${element.dataset.type}-light-background-image`));
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
