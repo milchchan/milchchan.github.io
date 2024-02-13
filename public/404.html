@@ -309,6 +309,8 @@
       background.style.opacity = 0;
       background.style.transform = "scale3d(1.1, 1.1, 1.1)";
 
+      document.body.querySelector(".wrap>.frame").prepend(background);
+
       try {
         const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "--dark-background-image" : "--light-background-image"));
 
@@ -328,8 +330,6 @@
       } catch (error) {
         console.error(error);
       }
-
-      document.body.querySelector(".wrap>.frame").prepend(background);
 
       background.animate([
         {
@@ -354,6 +354,8 @@
       background.style.opacity = 0;
       background.style.transform = "scale3d(1.1, 1.1, 1.1)";
 
+      document.body.querySelector(".wrap>.frame").prepend(background);
+
       try {
         const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(e.matches ? "--dark-background-image" : "--light-background-image"));
 
@@ -375,23 +377,23 @@
       }
 
       for (const element of document.body.querySelectorAll(".wrap>.frame>.background")) {
-        element.animate([
-          {
-            opacity: 0,
-            transform: "scale3d(1.1, 1.1, 1.1)"
-          }
-        ], {
-          delay: 0,
-          fill: "forwards",
-          duration: 500,
-          iterations: 1,
-          easing: "ease-in"
-        }).onfinish = () => {
-          element.remove();
-        };
+        if (element !== background) {
+          element.animate([
+            {
+              opacity: 0,
+              transform: "scale3d(1.1, 1.1, 1.1)"
+            }
+          ], {
+            delay: 0,
+            fill: "forwards",
+            duration: 500,
+            iterations: 1,
+            easing: "ease-in"
+          }).onfinish = () => {
+            element.remove();
+          };
+        }
       }
-
-      document.body.querySelector(".wrap>.frame").prepend(background);
 
       background.animate([
         {
