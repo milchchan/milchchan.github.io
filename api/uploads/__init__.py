@@ -3,6 +3,7 @@ import logging
 import os
 import certifi
 from datetime import timezone
+from urllib.parse import urlparse
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Upload
@@ -47,7 +48,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             for upload in query.all():
                 uploads.append({
-                    'id': upload.id,
+                    'id': os.path.basename(urlparse(upload.url).path),
                     'url': upload.url,
                     'type': upload.type,
                     'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
