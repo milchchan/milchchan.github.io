@@ -616,7 +616,9 @@
         background.className = "background";
         background.style.opacity = 0;
         background.style.transform = "scale3d(1.1, 1.1, 1.1)";
-
+        
+        document.body.querySelector(".wrap>.frame").prepend(background);
+        
         try {
           const response = await fetch(
             window
@@ -654,8 +656,6 @@
           console.error(error);
         }
 
-        document.body.querySelector(".wrap>.frame").prepend(background);
-
         background.animate(
           [
             {
@@ -683,6 +683,8 @@
           background.className = "background";
           background.style.opacity = 0;
           background.style.transform = "scale3d(1.1, 1.1, 1.1)";
+          
+          document.body.querySelector(".wrap>.frame").prepend(background);
 
           try {
             const response = await fetch(
@@ -720,29 +722,27 @@
             console.error(error);
           }
 
-          for (const element of document.body.querySelectorAll(
-            ".wrap>.frame>.background"
-          )) {
-            element.animate(
-              [
+          for (const element of document.body.querySelectorAll(".wrap>.frame>.background")) {
+            if (element !== background) {
+              element.animate(
+                [
+                  {
+                    opacity: 0,
+                    transform: "scale3d(1.1, 1.1, 1.1)",
+                  },
+                ],
                 {
-                  opacity: 0,
-                  transform: "scale3d(1.1, 1.1, 1.1)",
-                },
-              ],
-              {
-                delay: 0,
-                fill: "forwards",
-                duration: 500,
-                iterations: 1,
-                easing: "ease-in",
-              }
-            ).onfinish = () => {
-              element.remove();
-            };
+                  delay: 0,
+                  fill: "forwards",
+                  duration: 500,
+                  iterations: 1,
+                  easing: "ease-in",
+                }
+              ).onfinish = () => {
+                element.remove();
+              };
+            }
           }
-
-          document.body.querySelector(".wrap>.frame").prepend(background);
 
           background.animate(
             [
