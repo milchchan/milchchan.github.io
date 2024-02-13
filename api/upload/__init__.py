@@ -75,6 +75,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             return func.HttpResponse(json.dumps({
                                 'id': id,
                                 'url': url,
+                                'type': mime_type,
                                 'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
                             }),
                                 status_code=201,
