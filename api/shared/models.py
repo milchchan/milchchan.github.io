@@ -26,4 +26,5 @@ class Upload(Base):
     __tablename__ = 'uploads'
     id = Column('id', Integer(), primary_key=True, nullable=False)
     url = Column('url', Text(), nullable=False)
+    type = Column('type', String(255), nullable=False)
     timestamp = Column('timestamp', DateTime(), nullable=False)
