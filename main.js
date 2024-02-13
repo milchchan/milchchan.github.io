@@ -620,7 +620,7 @@ window.select = (event) => {
   const target = (event.currentTarget || event.target);
 
   if ("dataset" in background) {
-    if ("type" in target.dataset) {
+    if ("dataset" in target && "type" in target.dataset) {
       for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
         if ("type" in element.dataset) {
           if (element.dataset.type === target.dataset.type) {
@@ -2164,6 +2164,9 @@ window.addEventListener("wheel", event => {
     }
   }
 }, { passive: false });
+window.addEventListener("dblclick", event => {
+  select(event);
+});
 window.addEventListener("touchstart", event => {
   event.stopPropagation();
 
