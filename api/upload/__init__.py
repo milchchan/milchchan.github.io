@@ -2,16 +2,23 @@ import re
 import json
 import logging
 import os
+import certifi
 from datetime import datetime, timezone
 from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
 from urllib.parse import urljoin
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from shared.models import Upload
 
 import azure.functions as func
 
 from google.oauth2 import service_account
 from google.cloud import storage
+
+
+engine = create_engine(os.environ['MYSQL_CONNECTION_URL'], connect_args={"ssl": {"ca": certifi.where()}}, pool_recycle=60)
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -51,15 +58,35 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     if not blob.exists():
                         blob.upload_from_file(
                             BytesIO(b64decode(data)), content_type=mime_type)
+                        
+                        url = f'gs://{bucket_name}{urljoin("/", path)}'
+                        Session = sessionmaker(bind=engine)
+                        session = Session()
 
-                        return func.HttpResponse(json.dumps({
-                            'id': id,
-                            'url': f'gs://{bucket_name}{urljoin("/", path)}',
-                            'timestamp': int(datetime.utcfromtimestamp(datetime.now(timezone.utc).timestamp()).timestamp())
-                        }),
-                            status_code=201,
-                            mimetype='application/json',
-                            charset='utf-8')
+                        try:
+                            upload = Upload()
+                            upload.url = url
+                            upload.timestamp = datetime.now(timezone.utc)
+
+                            session.add(upload)
+                            session.commit()
+
+                            return func.HttpResponse(json.dumps({
+                                'id': id,
+                                'url': url,
+                                'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
+                            }),
+                                status_code=201,
+                                mimetype='application/json',
+                                charset='utf-8')
+                        
+                        except Exception as e:
+                            session.rollback()
+
+                            raise e
+
+                        finally:
+                            session.close()
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
