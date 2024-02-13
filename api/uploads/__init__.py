@@ -49,6 +49,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 uploads.append({
                     'id': upload.id,
                     'url': upload.url,
+                    'type': upload.type,
                     'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
                 })
 
