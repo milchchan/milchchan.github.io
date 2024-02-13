@@ -66,7 +66,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         try:
                             upload = Upload()
                             upload.url = url
-                            upload.timestamp = datetime.now(timezone.utc)
+                            upload.timestamp = blob.time_created
 
                             session.add(upload)
                             session.commit()
