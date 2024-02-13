@@ -2,6 +2,10 @@
     "$schema": "https://json.schemastore.org/staticwebapp.config.json",
     "routes": [
         {
+            "route": "/about",
+            "rewrite": "/about.html"
+        },
+        {
             "route": "/privacy",
             "rewrite": "/privacy.html"
         },
