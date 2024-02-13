@@ -34,9 +34,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             query = session.query(Upload)
 
             if order == 'asc':
-                query = query.order_by(Like.timestamp)
+                query = query.order_by(Upload.timestamp)
             elif order == 'desc':
-                query = query.order_by(desc(Like.timestamp))
+                query = query.order_by(desc(Upload.timestamp))
             else:
                 return func.HttpResponse(status_code=400, mimetype='', charset='')
 
