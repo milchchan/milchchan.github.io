@@ -20,3 +20,10 @@ class Attribute(Base):
     name = Column('name', String(255), nullable=False)
     start = Column('start', Integer(), nullable=False)
     end = Column('end', Integer(), nullable=False)
+
+
+class Upload(Base):
+    __tablename__ = 'uploads'
+    id = Column('id', Integer(), primary_key=True, nullable=False)
+    url = Column('url', Text(), nullable=False)
+    timestamp = Column('timestamp', DateTime(), nullable=False)
