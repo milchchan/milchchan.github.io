@@ -3,7 +3,7 @@ import { getDatabase, get, push, runTransaction, query, ref as databaseRef, chil
 import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from "firebase/analytics";
 
-const background = { updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
+const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
 const touches = [];
@@ -616,6 +616,39 @@ async function upload(files, name = null) {
   return [completed, completed.length === files.length];
 }
 
+window.play = async (event) => {
+  const target = (event.currentTarget || event.target);
+
+  if (target.dataset.state === "on") {
+    background.running = true;
+
+    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
+      if ("state" in element.dataset) {
+        if (element.dataset.state === "on") {
+          if (!element.classList.contains("is-selected")) {
+            element.classList.add("is-selected");
+          }
+        } else if (element.dataset.state === "off" && element.classList.contains("is-selected")) {
+          element.classList.remove("is-selected");
+        }
+      }
+    }
+  } else if (target.dataset.state === "off") {
+    background.running = false;
+
+    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
+      if ("state" in element.dataset) {
+        if (element.dataset.state === "on") {
+          if (element.classList.contains("is-selected")) {
+            element.classList.remove("is-selected");
+          }
+        } else if (element.dataset.state === "off" && !element.classList.contains("is-selected")) {
+          element.classList.add("is-selected");
+        }
+      }
+    }
+  }
+};
 window.select = (event) => {
   const target = (event.currentTarget || event.target);
 
@@ -761,6 +794,12 @@ window.addEventListener("load", async event => {
   stats.id = "stats";
 
   if (decodeURIComponent(window.location.hash.substring(1)) === "debug") {
+    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item")) {
+      if (element.classList.contains("is-hidden")) {
+        element.classList.remove("is-hidden");
+      }
+    }
+
     stats.className = "is-active";
   }
 
@@ -911,7 +950,7 @@ window.addEventListener("load", async event => {
 
         previousTime = timestamp;
 
-        if (timestamp - background.updated >= background.timeout) {
+        if (background.running && timestamp - background.updated >= background.timeout) {
           for (const block of background.blocks) {
             for (let i = block.inlines.length - 1; i >= 0; i--) {
               if (block.inlines[i].running) {
