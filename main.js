@@ -794,7 +794,7 @@ window.addEventListener("load", async event => {
   stats.id = "stats";
 
   if (decodeURIComponent(window.location.hash.substring(1)) === "debug") {
-    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item")) {
+    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:last-child>.level>.level-item")) {
       if (element.classList.contains("is-hidden")) {
         element.classList.remove("is-hidden");
       }
