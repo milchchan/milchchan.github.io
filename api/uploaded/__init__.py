@@ -28,8 +28,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         blob = Blob.from_string(f'gs://milchchan.appspot.com{urljoin("/", os.path.join("uploads", req.route_params.get("id")))}', client=storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id))
 
         if blob.exists():
-            #return func.HttpResponse(blob.download_as_bytes(), status_code=200, mimetype=blob.content_type)
-            return func.HttpResponse(status_code=302, headers={'Location': blob.generate_signed_url()})
+            return func.HttpResponse(blob.download_as_bytes(), status_code=200, mimetype=blob.content_type)
+            #return func.HttpResponse(status_code=302, headers={'Location': blob.generate_signed_url()})
         
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
