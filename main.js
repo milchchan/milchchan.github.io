@@ -622,7 +622,7 @@ window.play = async (event) => {
   if (target.dataset.state === "on") {
     background.running = true;
 
-    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
+    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item .button")) {
       if ("state" in element.dataset) {
         if (element.dataset.state === "on") {
           if (!element.classList.contains("is-selected")) {
@@ -636,7 +636,7 @@ window.play = async (event) => {
   } else if (target.dataset.state === "off") {
     background.running = false;
 
-    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
+    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item .button")) {
       if ("state" in element.dataset) {
         if (element.dataset.state === "on") {
           if (element.classList.contains("is-selected")) {
@@ -945,12 +945,12 @@ window.addEventListener("load", async event => {
     });
 
     async function render(timestamp) {
-      if (timestamp > previousTime) {
+      if (background.running && timestamp > previousTime) {
         const deltaTime = (timestamp - previousTime) / 1000;
 
         previousTime = timestamp;
 
-        if (background.running && timestamp - background.updated >= background.timeout) {
+        if (timestamp - background.updated >= background.timeout) {
           for (const block of background.blocks) {
             for (let i = block.inlines.length - 1; i >= 0; i--) {
               if (block.inlines[i].running) {
