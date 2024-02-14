@@ -115,6 +115,10 @@ figure {
     font-weight: bold;
 }
 
+.is-uppercase {
+    text-transform: uppercase;
+}
+
 .progress {
     pointer-events: none;
     z-index: 1;
