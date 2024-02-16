@@ -12,6 +12,11 @@
       "type": 404
     },
     {
+      "source": "/privacy",
+      "destination": "/privacy.html",
+      "type": 200
+    },
+    {
       "source": "/",
       "destination": "https://merkuchan.com/",
       "type": 301
