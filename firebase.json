@@ -6,14 +6,15 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [{
-      "source": "**",
-      "destination": "/404.html",
-      "type": 404
-    },
+    "rewrites": [
     {
       "source": "/privacy",
       "destination": "/privacy.html",
+      "type": 200
+    },
+    {
+      "source": "/preview",
+      "destination": "/preview/index.html",
       "type": 200
     },
     {
