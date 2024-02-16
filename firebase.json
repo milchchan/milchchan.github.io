@@ -13,11 +13,6 @@
       "type": 200
     },
     {
-      "source": "/preview",
-      "destination": "/preview/index.html",
-      "type": 200
-    },
-    {
       "source": "/",
       "destination": "https://merkuchan.com/",
       "type": 301
