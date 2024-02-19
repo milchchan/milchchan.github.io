@@ -48,7 +48,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             for upload in query.all():
                 uploads.append({
-                    'id': upload.id,#os.path.basename(urlparse(upload.url).path),
+                    'id': os.path.basename(urlparse(upload.url).path),
                     'url': upload.url,
                     'type': upload.type,
                     'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
