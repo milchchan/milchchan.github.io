@@ -57,7 +57,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(json.dumps(uploads), status_code=200, mimetype='application/json', charset='utf-8')
 
         finally:
-            session.close()        
+            session.close()
 
     except Exception as e:
         logging.error(f'{e}')
