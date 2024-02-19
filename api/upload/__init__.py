@@ -97,10 +97,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             try:
                 query = session.query(Upload)
-                upload = query.filter(Upload.id == random.randrange(query.count())).one()
+                count = query.count()
+                upload = query.filter(Upload.id == random.randrange(count)).one()
 
                 return func.HttpResponse(json.dumps({
-                    'id': url.id,
+                    'count': count,
+                    'id': upload.id,
                     'url': upload.url,
                     'type': upload.type,
                     'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
