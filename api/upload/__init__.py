@@ -115,8 +115,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 blob = Blob.from_string(upload.url, client=storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id))
 
                 if blob.exists():
-                    return func.HttpResponse(blob.download_as_bytes(), status_code=200, mimetype=blob.content_type)
-                    #return func.HttpResponse(status_code=302, headers={'Location': blob.generate_signed_url(version='v4', expiration=timedelta(minutes=15), method='GET')})
+                    #return func.HttpResponse(blob.download_as_bytes(), status_code=200, mimetype=blob.content_type)
+                    return func.HttpResponse(status_code=302, headers={'Location': blob.generate_signed_url(version='v4', expiration=timedelta(minutes=15), method='GET')})
                 
             finally:
                 session.close()
