@@ -98,8 +98,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             try:
                 query = session.query(Upload)
-                count = query.count()
-                upload = query.filter(Upload.id == random.randrange(count)).one()
+                upload = query.filter(Upload.id == random.randrange(query.count())).one()
                 credentials = service_account.Credentials.from_service_account_info({
                     'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
                     'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
