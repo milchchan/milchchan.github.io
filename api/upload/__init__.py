@@ -4,7 +4,7 @@ import json
 import logging
 import os
 import certifi
-from datetime import datetime, timezone
+from datetime import timedelta, timezone
 from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
@@ -17,6 +17,7 @@ import azure.functions as func
 
 from google.oauth2 import service_account
 from google.cloud import storage
+from google.cloud.storage.blob import Blob
 
 
 engine = create_engine(os.environ['MYSQL_CONNECTION_URL'], connect_args={"ssl": {"ca": certifi.where()}}, pool_recycle=60)
@@ -99,15 +100,25 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 query = session.query(Upload)
                 count = query.count()
                 upload = query.filter(Upload.id == random.randrange(count)).one()
+                credentials = service_account.Credentials.from_service_account_info({
+                    'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
+                    'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
+                    'private_key_id': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY_ID'],
+                    'private_key': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
+                    'client_email': os.environ['FIREBASE_CREDENTIALS_CLIENT_EMAIL'],
+                    'client_id': os.environ['FIREBASE_CREDENTIALS_CLIENT_ID'],
+                    'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
+                    'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
+                    'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
+                    'client_x509_cert_url': os.environ['FIREBASE_CREDENTIALS_CLIENT_X509_CERT_URL']
+                })
+                scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
+                blob = Blob.from_string(upload.url, client=storage.Client(credentials=scoped_credentials, project=scoped_credentials.project_id))
 
-                return func.HttpResponse(json.dumps({
-                    'count': count,
-                    'id': upload.id,
-                    'url': upload.url,
-                    'type': upload.type,
-                    'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                }), status_code=200, mimetype='application/json', charset='utf-8')
-
+                if blob.exists():
+                    #return func.HttpResponse(blob.download_as_bytes(), status_code=200, mimetype=blob.content_type)
+                    return func.HttpResponse(status_code=302, headers={'Location': blob.generate_signed_url(version='v4', expiration=timedelta(minutes=15), method='GET')})
+                
             finally:
                 session.close()
 
