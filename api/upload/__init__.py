@@ -95,22 +95,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             try:
                 query = session.query(Upload)
                 id = random.randrange(query.count() + 1)
-                #upload = query.filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).one_or_none()
-                uploads = []
-
-                for upload in query.filter(Upload.id >= id).order_by(Upload.id).limit(100).all():
-                    uploads.append({
-                        'id': upload.id,
-                        'url': upload.url,
-                        'type': upload.type,
-                        'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                })
+                upload = query.filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).one_or_none()
                 
-                return func.HttpResponse(json.dumps(uploads), status_code=200, mimetype='application/json', charset='utf-8')
-                '''
-
                 if upload is None:
-                    upload = query.filter(Upload.id >= id).limit(1).one()
+                    upload = query.filter(Upload.id > id).order_by(Upload.id).limit(1).one()
+                
+                return func.HttpResponse(json.dumps(upload), status_code=200, mimetype='application/json', charset='utf-8')
+                '''
                 
                 credentials = service_account.Credentials.from_service_account_info({
                     'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
