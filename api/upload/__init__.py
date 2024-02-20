@@ -9,7 +9,7 @@ from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
 from urllib.parse import urljoin
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Upload
 
@@ -59,8 +59,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         blob = bucket.blob(path)
 
                         if not blob.exists():
-                            blob.upload_from_file(
-                                BytesIO(b64decode(data)), content_type=mime_type)
+                            blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
                             
                             url = f'gs://{bucket_name}{urljoin("/", path)}'
                             Session = sessionmaker(bind=engine)
@@ -80,10 +79,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     'url': url,
                                     'type': mime_type,
                                     'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                                }),
-                                    status_code=201,
-                                    mimetype='application/json',
-                                    charset='utf-8')
+                                }), status_code=201, mimetype='application/json', charset='utf-8')
                             
                             except Exception as e:
                                 session.rollback()
@@ -99,7 +95,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             try:
                 query = session.query(Upload)
                 id = random.randrange(query.count() + 1)
-                upload = query.filter(Upload.id <= id).limit(1).one_or_none()
+                #upload = query.filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).one_or_none()
+                uploads = []
+
+                for upload in query.filter(Upload.id <= id).order_by(desc(Upload.id)).limit(100).all():
+                    uploads.append({
+                        'id': upload.id,
+                        'url': upload.url,
+                        'type': upload.type,
+                        'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
+                })
+                
+                return func.HttpResponse(json.dumps(uploads), status_code=200, mimetype='application/json', charset='utf-8')
+                '''
 
                 if upload is None:
                     upload = query.filter(Upload.id >= id).limit(1).one()
@@ -122,7 +130,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if blob.exists():
                     #return func.HttpResponse(blob.download_as_bytes(), status_code=200, mimetype=blob.content_type)
                     return func.HttpResponse(status_code=302, headers={'Location': blob.generate_signed_url(version='v4', expiration=timedelta(minutes=15), method='GET')})
-                
+                '''
             finally:
                 session.close()
 
