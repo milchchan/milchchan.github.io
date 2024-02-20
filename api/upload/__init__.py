@@ -9,7 +9,7 @@ from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
 from urllib.parse import urljoin
-from sqlalchemy import create_engine, desc
+from sqlalchemy import create_engine, or_, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Upload
 
@@ -95,14 +95,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             try:
                 query = session.query(Upload)
                 id = random.randrange(query.count() + 1)
-                upload = query.filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).one_or_none()
-                
-                if upload is None:
-                    upload = query.filter(Upload.id > id).order_by(Upload.id).limit(1).one()
-                
-                return func.HttpResponse(json.dumps(upload), status_code=200, mimetype='application/json', charset='utf-8')
-                '''
-                
+                upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > id).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
                 credentials = service_account.Credentials.from_service_account_info({
                     'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
                     'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
@@ -121,7 +114,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if blob.exists():
                     #return func.HttpResponse(blob.download_as_bytes(), status_code=200, mimetype=blob.content_type)
                     return func.HttpResponse(status_code=302, headers={'Location': blob.generate_signed_url(version='v4', expiration=timedelta(minutes=15), method='GET')})
-                '''
+                
             finally:
                 session.close()
 
