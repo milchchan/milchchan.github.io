@@ -98,7 +98,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 #upload = query.filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).one_or_none()
                 uploads = []
 
-                for upload in query.filter(Upload.id <= id).order_by(desc(Upload.id)).limit(100).all():
+                for upload in query.filter(Upload.id >= id).order_by(Upload.id).limit(100).all():
                     uploads.append({
                         'id': upload.id,
                         'url': upload.url,
