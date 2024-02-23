@@ -8,9 +8,7 @@
       "name": "req",
       "route": "upload/{id}",
       "methods": [
-        "get",
-        "put",
-        "delete"
+        "get"
       ]
     },
     {
