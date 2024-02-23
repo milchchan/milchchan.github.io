@@ -6,7 +6,112 @@ info:
 servers:
   - url: https://milchchan.com/api
 paths:
-  /recent:
+  /like:
+    post:
+      summary: Create like
+      tags:
+      - Social
+      requestBody:
+        description: Data
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Like'
+                - type: object
+                  properties:
+                    image:
+                      type: string
+                      readOnly: false
+                      writeOnly: true
+      responses:
+        201:
+          description: Successful insert operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+  /like/{id}:
+    get:
+      summary: Read like by identifier
+      tags:
+      - Social
+      parameters:
+      - name: id
+        in: path
+        description: Identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Successful update operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+    put:
+      summary: Update like by identifier
+      tags:
+      - Social
+      parameters:
+      - name: id
+        in: path
+        description: Identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: Data
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Like'
+                - type: object
+                  properties:
+                    image:
+                      type: string
+                      readOnly: false
+                      writeOnly: true
+      responses:
+        200:
+          description: Successful update operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+    delete:
+      summary: Delete like by identifier
+      tags:
+      - Social
+      parameters:
+      - name: id
+        in: path
+        description: Identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Successful delete operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  timestamp:
+                    type: integer
+                    format: int64
+  /likes:
     get:
       summary: Returns a list of likes
       tags:
@@ -35,43 +140,62 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Like'
-  /share:
+  /upload:
     post:
-      summary: Upsert like
       tags:
-      - Social
+        - Media
+      summary: Upload media
       requestBody:
-        description: Data
+        description: Media data
         required: true
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/Like'
-                - type: object
-                  properties:
-                    image:
-                      type: string
-                      readOnly: false
-                      writeOnly: true
+              type: array
+              items:
+                type: string
+                format: uri
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  url:
+                    type: string
+                    format: uri
+                  type:
+                    type: string
+                    example: "image/png"
+                  timestamp:
+                    type: integer
+                    format: int64
+    get:
+      tags:
+        - Media
+      summary: Get a random uploaded medium
       responses:
         200:
-          description: Successful update operation
+          description: Successful operation
           content:
-            application/json:
+            application/zip:
               schema:
-                $ref: '#/components/schemas/Like'
-        201:
-          description: Successful insert operation
-          content:
-            application/json:
+                type: string
+                format: binary
+            image/*:
               schema:
-                $ref: '#/components/schemas/Like'
-  /share/{id}:
-    delete:
-      summary: Delete like by identifier
+                type: string
+                format: binary
+  /upload/{id}:
+    get:
       tags:
-      - Social
+        - Media
+      summary: Get a uploaded medium
       parameters:
       - name: id
         in: path
@@ -82,18 +206,65 @@ paths:
           format: uuid
       responses:
         200:
-          description: Successful delete operation
+          description: Successful operation
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            image/*:
+              schema:
+                type: string
+                format: binary
+  /uploads:
+    get:
+      tags:
+        - Media
+      summary: Get uploaded media
+      parameters:
+      - name: order
+        in: query
+        description: Order
+        required: false
+        schema:
+          type: string
+          enum: [asc, desc]
+      - name: offset
+        in: query
+        description: Offset
+        required: false
+        schema:
+          type: integer
+          example: 0
+      - name: limit
+        in: query
+        description: Limit
+        required: false
+        schema:
+          type: integer
+          example: 10
+      responses:
+        201:
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    format: uuid
-                  timestamp:
-                    type: integer
-                    format: int64
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    url:
+                      type: string
+                      format: uri
+                    type:
+                      type: string
+                      example: "image/png"
+                    timestamp:
+                      type: integer
+                      format: int64
 components:
   schemas:
     Like:
@@ -103,10 +274,28 @@ components:
           type: string
           format: uuid
           readOnly: true
-        text:
+        name:
           type: string
-        author:
+        content:
           type: string
+        language:
+          type: string
+          nullable: true
+        attributes:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              start:
+                type: integer
+                format: int32
+                minimum: 0
+              end:
+                type: integer
+                format: int32
+                minimum: 0
         image:
           type: string
           format: uri
@@ -129,7 +318,11 @@ components:
           readOnly: true
       required:
         - id
-        - text
+        - name
+        - content
+        - language
+        - attributes
         - timestamp
 tags:
   - name: Social
+  - name: Media
