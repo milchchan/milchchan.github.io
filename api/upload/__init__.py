@@ -89,13 +89,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             finally:
                                 session.close()
         else:
+            type = req.params['type'] if 'type' in req.params else None
             Session = sessionmaker(bind=engine)
             session = Session()
 
             try:
                 query = session.query(Upload)
                 id = random.randrange(query.count() + 1)
-                upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > id).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                
+                if type is None:
+                    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > id).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                else:
+                    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= id, Upload.type.like(f'{type}%')).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > id, Upload.type.like(f'{type}%')).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                
                 credentials = service_account.Credentials.from_service_account_info({
                     'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
                     'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
