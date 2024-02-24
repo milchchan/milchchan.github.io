@@ -179,6 +179,14 @@ paths:
       tags:
         - Media
       summary: Get a random uploaded medium
+      parameters:
+      - name: type
+        in: query
+        description: Type
+        required: false
+        schema:
+          type: string
+          example: "image/png"
       responses:
         200:
           description: Successful operation
@@ -360,22 +368,6 @@ components:
                 type: integer
                 format: int32
                 minimum: 0
-        image:
-          type: string
-          format: uri
-          readOnly: true
-        location:
-          type: object
-          properties:
-            type:
-              type: string
-              example: Point
-            coordinates:
-              type: array
-              items:
-                type: number
-                format: double
-              example: [139.209378, 35.5090627]
         timestamp:
           type: integer
           format: int64
