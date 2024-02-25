@@ -32,8 +32,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 try:
                     upload = session.query(Upload).filter(Upload.url == f'gs://milchchan.appspot.com{urljoin("/", os.path.join("uploads", id))}').one()
-                    pattern = 'data:([\\w/\\-\\.]+);(\\w+),(.+)'
-                    match = re.match(pattern, data)
+                    match = re.match('data:([\\w/\\-\\.]+);(\\w+),(.+)', data)
 
                     if match:
                         mime_type, encoding, data = match.groups()
