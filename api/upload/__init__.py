@@ -88,7 +88,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             elif req.headers.get('Content-Type') == 'application/json':
                 pattern = 'data:([\\w/\\-\\.]+);(\\w+),(.+)'
-                data = req.get_json() if req.headers.get('Content-Type') == 'application/json' else [req.get_body().decode('utf-8')]
+                uploads = []
 
                 for item in req.get_json():
                     match = re.match(pattern, item)
@@ -135,12 +135,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     session.add(upload)
                                     session.commit()
 
-                                    return func.HttpResponse(json.dumps({
+                                    uploads.append({
                                         'id': id,
                                         'url': url,
                                         'type': mime_type,
                                         'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                                    }), status_code=201, mimetype='application/json', charset='utf-8')
+                                    })
                                 
                                 except Exception as e:
                                     session.rollback()
@@ -149,6 +149,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                 finally:
                                     session.close()
+
+                return func.HttpResponse(json.dumps(uploads), status_code=201, mimetype='application/json', charset='utf-8')
 
         else:
             mime_type = req.params['type'] if 'type' in req.params else None
