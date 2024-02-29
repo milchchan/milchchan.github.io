@@ -2220,12 +2220,17 @@ window.addEventListener("touchstart", event => {
   }
 
   if (touches.length === 1) {
+    const timestamp = event.timeStamp / 1000;
+
     tracker.active = true;
+    tracker.position.x = x;
+    tracker.position.y = y;
+    tracker.timestamp = timestamp;
     tracker.velocity.x = tracker.velocity.y = 0;
 
-    if (background.cache.length > 0 && !background.particles.some(x => touches[0].timestamp - x.timestamp < 0.1)) {
+    if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
       for (let i = random(0, 4); i > 0; i--) {
-        background.particles.unshift({ elapsed: -1, x: touches[0].position.x, y: touches[0].position.y, image: background.cache[random(0, background.cache.length)], timestamp: touches[0].timestamp });
+        background.particles.unshift({ elapsed: -1, x: touches[0].position.x, y: touches[0].position.y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
       }
     }
   } else if (typeof pinches.find(x => x.identifiers.every(y => touches.findIndex(z => y === z.identifier) >= 0)) === "undefined") {
