@@ -2223,7 +2223,6 @@ window.addEventListener("touchstart", event => {
     const timestamp = event.timeStamp / 1000;
 
     tracker.active = true;
-    tracker.timestamp = timestamp;
     tracker.velocity.x = tracker.velocity.y = 0;
 
     touches[0].movement.x = tracker.movement.x
