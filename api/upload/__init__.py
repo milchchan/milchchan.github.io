@@ -96,7 +96,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     if match:
                         mime_type, encoding, data = match.groups()
 
-                        if mime_type in ['application/zip', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
+                        if mime_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
                             bucket_name = 'milchchan.appspot.com'
                             id = str(uuid4())
                             path = os.path.join('uploads', id)
