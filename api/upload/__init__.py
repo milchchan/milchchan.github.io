@@ -3,7 +3,6 @@ import re
 import json
 import logging
 import os
-import certifi
 from datetime import timedelta, timezone
 from io import BytesIO
 from uuid import uuid4
@@ -20,7 +19,7 @@ from google.cloud import storage
 from google.cloud.storage.blob import Blob
 
 
-engine = create_engine(os.environ['MYSQL_CONNECTION_URL'], connect_args={"ssl": {"ca": certifi.where()}}, pool_recycle=60)
+engine = create_engine(os.environ['POSTGRESQL_CONNECTION_URL'], pool_recycle=60)
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
