@@ -43,7 +43,7 @@
         overflow-x: hidden;
         overflow-y: auto;
         scroll-behavior: smooth;
-        background: var(--background-color);
+        background: #f4f4f2;
       }
 
       body {
@@ -186,7 +186,7 @@
       .background {
         -webkit-user-select: none;
         user-select: none;
-        position: absolute;
+        position: fixed;
         margin: 0;
         padding: 0;
         width: 100%;
@@ -420,6 +420,10 @@
       }
 
       @media screen and (min-width: 769px) and (min-height: 769px) {
+        html {
+          background: var(--background-color);
+        }
+        
         body>.wrap {
           padding: 16px;
           transition: 0.5s;
