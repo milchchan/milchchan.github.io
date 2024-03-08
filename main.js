@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, get, push, runTransaction, query, ref as databaseRef, child, orderByChild, startAt, limitToFirst, limitToLast, off } from "firebase/database";
+import { getDatabase, get, push, runTransaction, query, ref as databaseRef, child, orderByChild, startAt, limitToFirst } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from "firebase/analytics";
 
@@ -1110,7 +1110,7 @@ window.addEventListener("load", async event => {
               console.error(error);
             }
 
-            try {
+            /*try {
               const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
 
               if (snapshot.exists()) {
@@ -1128,7 +1128,7 @@ window.addEventListener("load", async event => {
               }
             } catch (error) {
               console.error(error);
-            }
+            }*/
 
             prefix = `${name}&`;
           } else {
@@ -1203,7 +1203,7 @@ window.addEventListener("load", async event => {
               console.error(error);
             }
             
-            try {
+            /*try {
               const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
 
               if (snapshot.exists()) {
@@ -1221,7 +1221,7 @@ window.addEventListener("load", async event => {
               }
             } catch (error) {
               console.error(error);
-            }
+            }*/
 
             prefix = ""
           }
