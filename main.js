@@ -1,27 +1,7 @@
-import { initializeApp } from "firebase/app";
-import { getDatabase, get, push, runTransaction, query, ref as databaseRef, child, orderByChild, startAt, limitToFirst } from "firebase/database";
-import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
-import { initializeAnalytics } from "firebase/analytics";
-
 const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], dataset: [{ texts: [], images: [] }], index: 0, queue: [], particles: [], cache: [] };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
 const touches = [];
-const firebaseConfig = {
-  apiKey: "AIzaSyDTVxDJj7rqG9L-Clvba2Tao9B0hkcxjcE",
-  authDomain: "auth.milchchan.com",
-  databaseURL: "https://milchchan.firebaseio.com",
-  projectId: "milchchan",
-  storageBucket: "milchchan.appspot.com",
-  messagingSenderId: "355698971889",
-  appId: "1:355698971889:web:e3653c5c31bd7289cd4550",
-  measurementId: "G-3998FJYNWX"
-};
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
-const storage = getStorage(app);
-
-initializeAnalytics(app);
 
 class APNG {
   constructor() {
@@ -432,25 +412,6 @@ async function resize(blob, length) {
 }
 
 async function upload(files, name = null) {
-  function generateUuid() {
-    // https://github.com/GoogleChrome/chrome-platform-analytics/blob/master/src/internal/identifier.js
-    // const FORMAT: string = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-    let chars = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("");
-
-    for (let i = 0, len = chars.length; i < len; i++) {
-      switch (chars[i]) {
-        case "x":
-          chars[i] = Math.floor(Math.random() * 16).toString(16);
-          break;
-        case "y":
-          chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
-          break;
-      }
-    }
-
-    return chars.join("");
-  }
-
   const progress = document.createElement("div");
   const bar = document.createElement("div");
   const completed = [];
@@ -501,130 +462,33 @@ async function upload(files, name = null) {
   });
 
   for (const file of files) {
-    if (file.type === "application/zip") {
-      const uploadTask = uploadBytesResumable(storageRef(storage, `uploads/${generateUuid()}-${file.name}`), file, {
-        contentType: file.type
-      });
+    try {
+      const formData = new FormData();
 
-      try {
-        const path = await new Promise(function (resolve, reject) {
-          uploadTask.on("state_changed", (snapshot) => {
-            animation = bar.animate([
-              {
-                width: `${Math.floor((snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed.length / files.length) * 100)}%`
-              }
-            ], {
-              delay: 0,
-              fill: "forwards",
-              duration: 500,
-              iterations: 1,
-              easing: "linear",
-              composite: "replace"
-            }).onfinish = () => {
-              bar.style.width = `${Math.floor((completed.length + 1) / files.length * 100)}%`;
-            };
-          }, (error) => {
-            reject(error);
-          }, () => {
-            resolve(uploadTask.snapshot.ref.fullPath);
-          });
-        });
+      formData.append("file", new Blob([file], { type: file.type }));
 
-        completed.push([path, file.type]);
-      } catch (error) {
-        console.error(error);
-
-        animation = null;
-
-        break;
-      }
-    } else if (file.type.startsWith("image/")) {
-      try {
-        /*const dataURL = await new Promise(async (resolve, reject) => {
-          const reader = new FileReader();
-
-          reader.onload = () => {
-              resolve(reader.result);
-          };
-          reader.onerror = () => {
-              reject(reader.error);
-          };
-          reader.readAsDataURL(new Blob([file], { type: file.type }));
-        });
-
-        console.log(dataURL)*/
-
-        const formData = new FormData();
-
-        formData.append("file", new Blob([file], { type: file.type }));
-
-        const response = await fetch("https://milchchan.com/api/upload", {
-            mode: "cors",
-            method: "POST",
-            body: formData
-          }
-        );
-
-        if (response.ok) {
-          const json = await response.json();
-
-          console.log(json);
-          
-          completed.push([`https://milchchan.com/api/upload/${json.id}`, file.type]);
-        } else {
-          throw new Error(response.statusText);
+      const response = await fetch("https://milchchan.com/api/upload", {
+          mode: "cors",
+          method: "POST",
+          body: formData
         }
+      );
 
+      if (response.ok) {
+        const json = await response.json();
         
-      } catch (error) {
-        console.error(error);
-
-        animation = null;
-
-        break;
+        completed.push([`https://milchchan.com/api/upload/${json.id}`, file.type]);
+      } else {
+        throw new Error(response.statusText);
       }
 
-      /*
-      const uploadTask = uploadBytesResumable(storageRef(storage, `uploads/${generateUuid()}`), file, {
-        contentType: file.type
-      });
+      
+    } catch (error) {
+      console.error(error);
 
-      try {
-        const path = await new Promise(function (resolve, reject) {
-          uploadTask.on("state_changed", (snapshot) => {
-            animation = bar.animate([
-              {
-                width: `${Math.floor((snapshot.bytesTransferred / snapshot.totalBytes / files.length + completed.length / files.length) * 100)}%`
-              }
-            ], {
-              delay: 0,
-              fill: "forwards",
-              duration: 500,
-              iterations: 1,
-              easing: "linear",
-              composite: "replace"
-            }).onfinish = () => {
-              bar.style.width = `${Math.floor((completed.length + 1) / files.length * 100)}%`;
-            };
-          }, (error) => {
-            reject(error);
-          }, () => {
-            resolve(uploadTask.snapshot.ref.fullPath);
-          });
-        });
+      animation = null;
 
-        await runTransaction(databaseRef(database, `images/${push(child(databaseRef(database), "images")).key}`), current => {
-          return { path: path, type: file.type, random: name === null ? Math.random().toString() : `${name}&${Math.random().toString()}`, timestamp: Math.floor(new Date() / 1000) };
-        });
-
-        completed.push([path, file.type]);
-      } catch (error) {
-        console.error(error);
-
-        animation = null;
-
-        break;
-      }*/
+      break;
     }
   }
 
@@ -767,7 +631,7 @@ window.upload = async (event) => {
         const [path, contentType] = stack.pop();
 
         if (contentType.startsWith("image/")) {
-          background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${path}` }] } });
+          background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: path }] } });
         }
       } while (stack.length > 0);
 
@@ -833,7 +697,7 @@ window.addEventListener("load", async event => {
         const [path, contentType] = stack.pop();
 
         if (contentType.startsWith("image/")) {
-          background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${path}` }] } });
+          background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: path }] } });
         }
       } while (stack.length > 0);
 
@@ -887,20 +751,6 @@ window.addEventListener("load", async event => {
   });
 
   try {
-    /*const response = await fetch(encodeURI("feed.json"), {
-      mode: "cors",
-      method: "GET",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    });
-
-    if (response.ok) {
-      background["dataset"] = await response.json();
-    } else {
-      throw new Error(response.statusText);
-    }*/
-
     for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
       background.cache.push(await new Promise((resolve, reject) => {
         const image = new Image();
@@ -918,146 +768,303 @@ window.addEventListener("load", async event => {
     console.error(error);
   }
 
-  //if (background["dataset"] !== null) {
-    async function download(url, handler = null) {
-      try {
-        const response = await fetch(url);
+  async function download(url, handler = null) {
+    try {
+      const response = await fetch(url);
 
-        if (response.ok) {
-          const reader = response.body.getReader();
-          const contentType = response.headers.get("Content-Type");
-          const contentLength = +response.headers.get("Content-Length");
-          const chunks = [];
-          let receivedLength = 0;
+      if (response.ok) {
+        const reader = response.body.getReader();
+        const contentType = response.headers.get("Content-Type");
+        const contentLength = +response.headers.get("Content-Length");
+        const chunks = [];
+        let receivedLength = 0;
 
-          while (true) {
-            const { done, value } = await reader.read();
+        while (true) {
+          const { done, value } = await reader.read();
 
-            if (done) {
-              break;
-            }
-
-            chunks.push(value);
-            receivedLength += value.length;
-
-            if (handler !== null) {
-              handler(receivedLength / contentLength);
-            }
+          if (done) {
+            break;
           }
 
-          if (contentType === "application/json") {
-            return new TextDecoder("utf-8").decode(chunks.reduce((x, y) => {
-              x.buffer.set(y, x.position);
-              x.position += chunk.length;
+          chunks.push(value);
+          receivedLength += value.length;
 
-              return x;
-            }, { buffer: new Uint8Array(receivedLength), position: 0 }).buffer);
-          } else {
-            return new Blob(chunks, { type: contentType });
+          if (handler !== null) {
+            handler(receivedLength / contentLength);
           }
         }
-      } catch (error) {
-        console.error(error);
-      }
 
-      return null;
+        if (contentType === "application/json") {
+          return new TextDecoder("utf-8").decode(chunks.reduce((x, y) => {
+            x.buffer.set(y, x.position);
+            x.position += chunk.length;
+
+            return x;
+          }, { buffer: new Uint8Array(receivedLength), position: 0 }).buffer);
+        } else {
+          return new Blob(chunks, { type: contentType });
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
 
-    for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path")) {
-      element.style.animationPlayState = "running";
+    return null;
+  }
+
+  for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path")) {
+    element.style.animationPlayState = "running";
+  }
+
+  logo.animate([
+    {
+      transform: "rotate(360deg)"
     }
+  ], {
+    delay: 0,
+    fill: "forwards",
+    duration: 1000 - animation.currentTime % 1000,
+    iterations: 1,
+    easing: "linear"
+  });
+  animation.cancel();
 
-    logo.animate([
-      {
-        transform: "rotate(360deg)"
+  const cache = {};
+  const animationQueue = [];
+  let previousTime = performance.now();
+  const fps = { time: previousTime, frames: 0, target: document.createElement("span") };
+
+  fps.target.className = "has-text-weight-bold";
+  fps.target.innerText = "0";
+  fps.target.style.opacity = "0";
+
+  stats.appendChild(fps.target);
+  document.body.querySelector("#app>.container>.wrap>.frame").appendChild(stats);
+
+  fps.target.animate([
+    {
+      opacity: "1"
+    }
+  ], {
+    fill: "forwards",
+    duration: 500,
+    iterations: 1,
+    easing: "ease-out"
+  });
+
+  async function render(timestamp) {
+    if (background.running && timestamp > previousTime) {
+      const deltaTime = (timestamp - previousTime) / 1000;
+
+      previousTime = timestamp;
+
+      if (timestamp - background.updated >= background.timeout) {
+        for (const block of background.blocks) {
+          for (let i = block.inlines.length - 1; i >= 0; i--) {
+            if (block.inlines[i].running) {
+              block.inlines[i].type.reverse = true;
+            }
+          }
+        }
+
+        background.updated = timestamp;
       }
-    ], {
-      delay: 0,
-      fill: "forwards",
-      duration: 1000 - animation.currentTime % 1000,
-      iterations: 1,
-      easing: "linear"
-    });
-    animation.cancel();
 
-    const cache = {};
-    const animationQueue = [];
-    let previousTime = performance.now();
-    const fps = { time: previousTime, frames: 0, target: document.createElement("span") };
+      if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse))/* && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0*/) {
+        let prefix;
 
-    fps.target.className = "has-text-weight-bold";
-    fps.target.innerText = "0";
-    fps.target.style.opacity = "0";
+        background.preloading = true;
+        background.image = null;
+        background.blocks.splice(0);
+        tracker.movement.x = tracker.movement.y = 0;
+        pinches.splice(0);
+        touches.splice(0);
+        animationQueue.splice(0);
 
-    stats.appendChild(fps.target);
-    document.body.querySelector("#app>.container>.wrap>.frame").appendChild(stats);
+        for (const item of background.dataset) {
+          /*for (let i = item.texts.length - 1; i >= 0; i--) {
+            if (Array.isArray(item.texts[i])) {
+              item.texts.splice(i, 1);
+            }
+          }*/
 
-    fps.target.animate([
-      {
-        opacity: "1"
-      }
-    ], {
-      fill: "forwards",
-      duration: 500,
-      iterations: 1,
-      easing: "ease-out"
-    });
-
-    async function render(timestamp) {
-      if (background.running && timestamp > previousTime) {
-        const deltaTime = (timestamp - previousTime) / 1000;
-
-        previousTime = timestamp;
-
-        if (timestamp - background.updated >= background.timeout) {
-          for (const block of background.blocks) {
-            for (let i = block.inlines.length - 1; i >= 0; i--) {
-              if (block.inlines[i].running) {
-                block.inlines[i].type.reverse = true;
+          if ("images" in item) {
+            for (let i = item.images.length - 1; i >= 0; i--) {
+              if (item.images[i].frames.some(x => x.source.startsWith("gs:"))) {
+                item.images.splice(i, 1);
+                console.log("gs");
               }
             }
           }
-
-          background.updated = timestamp;
         }
 
-        if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse))/* && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0*/) {
-          let prefix;
+        const blind = document.createElement("div");
+          
+        blind.className = "blind";
+        blind.style.transform = "translate3d(0, 100%, 0)";
 
-          background.preloading = true;
-          background.image = null;
-          background.blocks.splice(0);
-          tracker.movement.x = tracker.movement.y = 0;
-          pinches.splice(0);
-          touches.splice(0);
-          animationQueue.splice(0);
+        try {
+          const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Background.png");
 
-          for (const item of background.dataset) {
-            /*for (let i = item.texts.length - 1; i >= 0; i--) {
-              if (Array.isArray(item.texts[i])) {
-                item.texts.splice(i, 1);
-              }
-            }*/
+          if (response.ok) {
+            const blob = await response.blob();
+            const dataURL = await new Promise(async (resolve, reject) => {
+              const reader = new FileReader();
 
-            if ("images" in item) {
-              for (let i = item.images.length - 1; i >= 0; i--) {
-                if (item.images[i].frames.some(x => x.source.startsWith("gs:"))) {
-                  item.images.splice(i, 1);
+              reader.onload = () => {
+                resolve(reader.result);
+              };
+              reader.onerror = () => {
+                reject(reader.error);
+              };
+              reader.readAsDataURL(blob);
+            });
+            blind.style.backgroundImage = `url('${dataURL}')`;
+          }
+        } catch (error) {
+          console.error(error);
+        }
+
+        document.body.querySelector("#app>.container>.wrap>.frame>.wall").after(blind);
+
+        await new Promise(async (resolve) => {
+          blind.animate([
+            {
+              transform: "translate3d(0, 0%, 0)"
+            }
+          ], {
+            delay: 0,
+            fill: "forwards",
+            duration: 500,
+            iterations: 1,
+            easing: "ease-out"
+          }).onfinish = () => {
+            blind.style.transform = "translate3d(0, 0%, 0)";
+
+            resolve();
+          };
+        });
+        
+        try {
+          const response = await fetch(encodeURI("https://milchchan.com/api/likes"), {
+            mode: "cors",
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          });
+      
+          if (response.ok) {
+            const json = await response.json();
+
+            for (const item of background.dataset) {
+              if ("name" in item === false) {
+                for (const like of json) {
+                  if ("attributes" in like) {
+                    let index = 0;
+                    let text = "";
+                    let content = [];
+
+                    while (index < like.content.length) {
+                      let maxEnd = index + 1;
+                      let attributes = {};
+
+                      for (const attribute of like.attributes) {
+                        if (attribute.start === index) {
+                          if (attribute.end > maxEnd) {
+                            maxEnd = attribute.end;
+                          }
+
+                          if (attribute.end in attributes) {
+                            attributes[attribute.end].push(attribute.name);
+                          } else {
+                            attributes[attribute.end] = [attribute.name];
+                          }
+                        }
+                      }
+
+                      if (maxEnd in attributes) {
+                        if (text.length > 0) {
+                          content.push(text);
+                        }
+
+                        content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
+                        index = maxEnd
+                      } else {
+                        text += like.content[index];
+                        index++;
+                      }
+                    }
+
+                    if (text.length > 0) {
+                      content.push(text);
+                    }
+                    
+                    item.texts.push(like.content);
+                  } else {
+                    item.texts.push(like.content);
+                  }
                 }
+
+                break;
               }
+            }
+          } else {
+            throw new Error(response.statusText);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
+            mode: "cors",
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          });
+      
+          if (response.ok) {
+            for (const item of background.dataset) {
+              if ("type" in item === false && "images" in item) {
+                item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: response.url }] });
+              }
+            }
+          } else {
+            throw new Error(response.statusText);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+
+        if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
+          if (background.queue.some(x => x.index !== background.index)) {
+            background.queue.splice(0);
+          }
+
+          if (background.queue.length === 0) {
+            const boundary = background.dataset[background.index].images.reduce((x, y) => y.frames.some(z => z.source.startsWith("gs:")) ? x : x + 1, 0);
+
+            for (const image of background.dataset[background.index].images.length > boundary ? [background.dataset[background.index].images[random(0, boundary)], background.dataset[background.index].images[random(boundary, background.dataset[background.index].images.length)]] : shuffle(background.dataset[background.index].images)) {
+              background.queue.push({ index: background.index, data: image });
             }
           }
 
-          const blind = document.createElement("div");
-            
-          blind.className = "blind";
-          blind.style.transform = "translate3d(0, 100%, 0)";
+          const data = background.queue.shift().data;
+          const progress = document.createElement("div");
+          const bar = document.createElement("div");
+          const timeout = 60 * 60;
+          let index = 0;
+
+          progress.className = "progress";
+          bar.className = "bar animating";
+          bar.style.width = "0%";
 
           try {
-            const response = await fetch(window.devicePixelRatio > 1 ? `images/Background@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Background.png");
+            const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
 
             if (response.ok) {
-              const blob = await response.blob();
               const dataURL = await new Promise(async (resolve, reject) => {
                 const reader = new FileReader();
 
@@ -1067,530 +1074,42 @@ window.addEventListener("load", async event => {
                 reader.onerror = () => {
                   reject(reader.error);
                 };
-                reader.readAsDataURL(blob);
+                reader.readAsDataURL(await response.blob());
               });
-              blind.style.backgroundImage = `url('${dataURL}')`;
+
+              if (dataURL !== null) {
+                bar.style.backgroundImage = `url('${dataURL}')`;
+              }
             }
           } catch (error) {
             console.error(error);
           }
 
-          document.body.querySelector("#app>.container>.wrap>.frame>.wall").after(blind);
+          progress.appendChild(bar);
+          document.body.querySelector("#app").appendChild(progress);
 
-          await new Promise(async (resolve) => {
-            blind.animate([
-              {
-                transform: "translate3d(0, 0%, 0)"
-              }
-            ], {
-              delay: 0,
-              fill: "forwards",
-              duration: 500,
-              iterations: 1,
-              easing: "ease-out"
-            }).onfinish = () => {
-              blind.style.transform = "translate3d(0, 0%, 0)";
-
-              resolve();
-            };
-          });
-
-          /*if ("name" in background.dataset[background.index] && background.dataset[background.index] !== null) {
-            const name = background.dataset[background.index].name;
-
-            try {
-              const response = await fetch(encodeURI(`https://milchchan.com/api/likes?name=${name}`), {
-                mode: "cors",
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                }
-              });
-          
-              if (response.ok) {
-                const json = await response.json();
-
-                for (const item of background.dataset) {
-                  if ("name" in item && item.name === name) {
-                    for (const like of json) {
-                      if ("attributes" in like) {
-                        let index = 0;
-                        let text = "";
-                        let content = [];
-
-                        while (index < like.content.length) {
-                          let maxEnd = index + 1;
-                          let attributes = {};
-
-                          for (const attribute of like.attributes) {
-                            if (attribute.start === index) {
-                              if (attribute.end > maxEnd) {
-                                maxEnd = attribute.end;
-                              }
-
-                              if (attribute.end in attributes) {
-                                attributes[attribute.end].push(attribute.name);
-                              } else {
-                                attributes[attribute.end] = [attribute.name];
-                              }
-                            }
-                          }
-
-                          if (maxEnd in attributes) {
-                            if (text.length > 0) {
-                              content.push(text);
-                            }
-
-                            content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
-                            index = maxEnd
-                          } else {
-                            text += like.content[index];
-                            index++;
-                          }
-                        }
-
-                        if (text.length > 0) {
-                          content.push(text);
-                        }
-                        
-                        item.texts.push(like.content);
-                      } else {
-                        item.texts.push(like.content);
-                      }
-                    }
-
-                    break;
-                  }
-                }
-              } else {
-                throw new Error(response.statusText);
-              }
-            } catch (error) {
-              console.error(error);
-            }*/
-
-            /*try {
-              const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
-
-              if (snapshot.exists()) {
-                const likes = snapshot.val();
-
-                for (const item of background.dataset) {
-                  if ("name" in item && item.name === name) {
-                    for (const key in likes) {
-                      if (Array.isArray(likes[key].text)) {
-                        item.texts.push(likes[key].text);
-                      }
-                    }
-                  }
-                }
-              }
-            } catch (error) {
-              console.error(error);
-            }*/
-
-            //prefix = `${name}&`;
-          /*} else {*/
-            try {
-              const response = await fetch(encodeURI("https://milchchan.com/api/likes"), {
-                mode: "cors",
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                }
-              });
-          
-              if (response.ok) {
-                const json = await response.json();
-
-                for (const item of background.dataset) {
-                  if ("name" in item === false) {
-                    for (const like of json) {
-                      if ("attributes" in like) {
-                        let index = 0;
-                        let text = "";
-                        let content = [];
-
-                        while (index < like.content.length) {
-                          let maxEnd = index + 1;
-                          let attributes = {};
-
-                          for (const attribute of like.attributes) {
-                            if (attribute.start === index) {
-                              if (attribute.end > maxEnd) {
-                                maxEnd = attribute.end;
-                              }
-
-                              if (attribute.end in attributes) {
-                                attributes[attribute.end].push(attribute.name);
-                              } else {
-                                attributes[attribute.end] = [attribute.name];
-                              }
-                            }
-                          }
-
-                          if (maxEnd in attributes) {
-                            if (text.length > 0) {
-                              content.push(text);
-                            }
-
-                            content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
-                            index = maxEnd
-                          } else {
-                            text += like.content[index];
-                            index++;
-                          }
-                        }
-
-                        if (text.length > 0) {
-                          content.push(text);
-                        }
-                        
-                        item.texts.push(like.content);
-                      } else {
-                        item.texts.push(like.content);
-                      }
-                    }
-
-                    break;
-                  }
-                }
-              } else {
-                throw new Error(response.statusText);
-              }
-            } catch (error) {
-              console.error(error);
-            }
-            
-            /*try {
-              const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
-
-              if (snapshot.exists()) {
-                const likes = snapshot.val();
-
-                for (const item of background.dataset) {
-                  if ("name" in item === false) {
-                    for (const key in likes) {
-                      if (Array.isArray(likes[key].text)) {
-                        item.texts.push(likes[key].text);
-                      }
-                    }
-                  }
-                }
-              }
-            } catch (error) {
-              console.error(error);
-            }*/
-
-            prefix = ""
-          //}
-
-          try {
-            const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
-              mode: "cors",
-              method: "GET",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-              }
-            });
-        
-            if (response.ok) {
-              for (const item of background.dataset) {
-                if ("type" in item === false && "images" in item) {
-                  item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: response.url }] });
-                }
-              }
-            } else {
-              throw new Error(response.statusText);
-            }
-          } catch (error) {
-            console.error(error);
+          if ("color" in data) {
+            background.color = data.color;
+          } else {
+            background.color = null;
           }
 
-          /*try {
-            const snapshot = await get(query(databaseRef(database, "images"), orderByChild("random"), startAt(`${prefix}${String(Math.random())}`), limitToFirst(10)));
+          for (const frame of data.frames) {
+            const timestamp = Math.floor(new Date() / 1000);
 
-            if (snapshot.exists()) {
-              function choice(collection, func) {
-                const r = Math.random();
-                let sum = 0.0;
-                let index = 0;
-
-                for (let item of collection) {
-                  const probability = func(item);
-
-                  if (sum <= r && r < sum + probability) {
-                    break;
-                  }
-
-                  sum += probability;
-                  index++;
-                }
-
-                return collection[index];
-              }
-
-              function softmax(x, func1, func2) {
-                const y = [].concat(x);
-                let max = Number.MIN_VALUE;
-                let sum = 0.0;
-
-                for (let i = 0; i < x.length; i++) {
-                  if (func1(x[i]) > max) {
-                    max = func1(x[i]);
-                  }
-                }
-
-                for (let i = 0; i < x.length; i++) {
-                  sum += Math.exp(func1(x[i]) - max);
-                }
-
-                for (let i = 0; i < x.length; i++) {
-                  func2(y[i], Math.exp(func1(x[i]) - max) / sum);
-                }
-
-                return y;
-              }
-
-              const dictionary = snapshot.val();
-              const images = [];
-              const regex = new RegExp(`${prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[0-9]+\\.[0-9]+$`);
-
-              for (const key in dictionary) {
-                if (regex.test(dictionary[key].random)) {
-                  dictionary[key]["probability"] = 1;
-
-                  images.push(dictionary[key]);
-                }
-              }
-
-              const path = choice(softmax(images, x => x.probability, (x, y) => x.probability = y), x => x.probability).path;
-              const metadata = await getMetadata(storageRef(storage, path));
-
-              if (metadata.contentType.startsWith("image/")) {
-                for (const item of background.dataset) {
-                  if ("type" in item === false && "images" in item) {
-                    item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: `gs://milchchan.appspot.com/${path}` }] });
-                  }
-                }
-              }
-            }
-          } catch (error) {
-            console.error(error);
-          }*/
-
-          if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
-            if (background.queue.some(x => x.index !== background.index)) {
-              background.queue.splice(0);
-            }
-
-            if (background.queue.length === 0) {
-              const boundary = background.dataset[background.index].images.reduce((x, y) => y.frames.some(z => z.source.startsWith("gs:")) ? x : x + 1, 0);
-
-              for (const image of background.dataset[background.index].images.length > boundary ? [background.dataset[background.index].images[random(0, boundary)], background.dataset[background.index].images[random(boundary, background.dataset[background.index].images.length)]] : shuffle(background.dataset[background.index].images)) {
-                background.queue.push({ index: background.index, data: image });
-              }
-            }
-
-            const data = background.queue.shift().data;
-            const progress = document.createElement("div");
-            const bar = document.createElement("div");
-            const timeout = 60 * 60;
-            let index = 0;
-
-            progress.className = "progress";
-            bar.className = "bar animating";
-            bar.style.width = "0%";
-
-            try {
-              const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
-
-              if (response.ok) {
-                const dataURL = await new Promise(async (resolve, reject) => {
-                  const reader = new FileReader();
-
-                  reader.onload = () => {
-                    resolve(reader.result);
-                  };
-                  reader.onerror = () => {
-                    reject(reader.error);
-                  };
-                  reader.readAsDataURL(await response.blob());
-                });
-
-                if (dataURL !== null) {
-                  bar.style.backgroundImage = `url('${dataURL}')`;
-                }
-              }
-            } catch (error) {
-              console.error(error);
-            }
-
-            progress.appendChild(bar);
-            document.body.querySelector("#app").appendChild(progress);
-
-            if ("color" in data) {
-              background.color = data.color;
-            } else {
-              background.color = null;
-            }
-
-            for (const frame of data.frames) {
-              const timestamp = Math.floor(new Date() / 1000);
-
-              if (frame.source in cache === false || timestamp - cache[frame.source].timestamp >= timeout) {
-                const blob = await download(frame.source.startsWith("gs:") ? await getDownloadURL(storageRef(storage, frame.source)) : frame.source, (rate) => {
-                  if (index < data.frames.length - 1 || rate < 1) {
-                    bar.animate([
-                      {
-                        width: `${Math.floor((rate / data.frames.length + index / data.frames.length) * 100)}%`
-                      }
-                    ], {
-                      delay: 0,
-                      fill: "forwards",
-                      duration: 500,
-                      iterations: 1,
-                      easing: "linear",
-                      composite: "replace"
-                    }).onfinish = () => {
-                      bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
-                    };
-                  } else {
-                    bar.animate([
-                      {
-                        width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
-                      }
-                    ], {
-                      delay: 0,
-                      fill: "forwards",
-                      duration: 500,
-                      iterations: 1,
-                      easing: "ease-in",
-                      composite: "replace"
-                    }).onfinish = () => {
-                      bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
-                      bar.animate([
-                        {
-                          opacity: 0
-                        }
-                      ], {
-                        delay: 0,
-                        fill: "forwards",
-                        duration: 500,
-                        iterations: 1,
-                        easing: "ease-in"
-                      }).onfinish = () => {
-                        progress.remove();
-                      };
-                    };
-                  }
-                });
-
-                if (blob === null) {
-                  if (index === data.frames.length - 1) {
-                    bar.animate([
-                      {
-                        opacity: 0
-                      }
-                    ], {
-                      delay: 0,
-                      fill: "forwards",
-                      duration: 500,
-                      iterations: 1,
-                      easing: "ease-in",
-                      composite: "replace"
-                    }).onfinish = () => {
-                      progress.remove();
-                    };
-                  }
-                } else {
-                  try {
-                    const animation = ["image/apng", "image/png"].includes(blob.type) ? await new APNG().load(blob) : null;
-
-                    if (animation === null) {
-                      const image = await new Promise(async (resolve, reject) => {
-                        const reader = new FileReader();
-
-                        reader.onload = () => {
-                          const image = new Image();
-
-                          image.onload = () => {
-                            resolve(image);
-                          };
-                          image.onerror = (error) => {
-                            reject(error);
-                          };
-                          image.crossOrigin = "anonymous";
-                          image.src = reader.result;
-                        };
-                        reader.onerror = () => {
-                          reject(reader.error);
-                        };
-                        reader.readAsDataURL(await resize(blob, Math.floor(Math.max(window.screen.width, window.screen.height) / 2.0 * window.devicePixelRatio)));
-                      });
-
-                      animationQueue.push(Object.assign({ time: 0, image: image }, frame));
-                      cache[frame.source] = { image: image, timestamp: timestamp };
-                    } else {
-                      const frames = [];
-
-                      for (const frame of animation[0]) {
-                        frames.push({
-                          delay: frame.delay, image: await new Promise(async (resolve, reject) => {
-                            const reader = new FileReader();
-
-                            reader.onload = () => {
-                              const image = new Image();
-
-                              image.onload = () => {
-                                resolve(image);
-                              };
-                              image.onerror = (error) => {
-                                reject(error);
-                              };
-                              image.crossOrigin = "anonymous";
-                              image.src = reader.result;
-                            };
-                            reader.onerror = () => {
-                              reject(reader.error);
-                            };
-                            reader.readAsDataURL(await resize(frame.blob, Math.floor(Math.max(window.screen.width, window.screen.height) / 2.0 * window.devicePixelRatio)));
-                          })
-                        });
-                      }
-
-                      if (frames.length > 0) {
-                        for (let i = 1; i < animation[1]; i++) {
-                          for (let j = 0; j < frames.length; j++) {
-                            frames.push(frames[j]);
-                          }
-                        }
-
-                        frames[frames.length - 1].delay += frame.delay;
-
-                        for (const frame of frames) {
-                          animationQueue.push(Object.assign({ time: 0 }, frame));
-                        }
-
-                        cache[frame.source] = { frames: frames, timestamp: timestamp };
-                      }
-                    }
-                  } catch (error) {
-                    console.error(error);
-                  }
-                }
-              } else {
-                if (index < data.frames.length - 1) {
+            if (frame.source in cache === false || timestamp - cache[frame.source].timestamp >= timeout) {
+              const blob = await download(frame.source, (rate) => {
+                if (index < data.frames.length - 1 || rate < 1) {
                   bar.animate([
                     {
-                      width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                      width: `${Math.floor((rate / data.frames.length + index / data.frames.length) * 100)}%`
                     }
                   ], {
                     delay: 0,
                     fill: "forwards",
                     duration: 500,
                     iterations: 1,
-                    easing: "ease-in",
+                    easing: "linear",
                     composite: "replace"
                   }).onfinish = () => {
                     bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
@@ -1624,570 +1143,709 @@ window.addEventListener("load", async event => {
                     };
                   };
                 }
+              });
 
-                if ("frames" in cache[frame.source]) {
-                  for (const data of cache[frame.source].frames) {
-                    animationQueue.push(Object.assign({ time: 0 }, data));
-                  }
-                } else {
-                  animationQueue.push(Object.assign({ time: 0, image: cache[frame.source].image }, frame));
+              if (blob === null) {
+                if (index === data.frames.length - 1) {
+                  bar.animate([
+                    {
+                      opacity: 0
+                    }
+                  ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-in",
+                    composite: "replace"
+                  }).onfinish = () => {
+                    progress.remove();
+                  };
                 }
-              }
+              } else {
+                try {
+                  const animation = ["image/apng", "image/png"].includes(blob.type) ? await new APNG().load(blob) : null;
 
-              index++;
-            }
+                  if (animation === null) {
+                    const image = await new Promise(async (resolve, reject) => {
+                      const reader = new FileReader();
 
-            for (let i = animationQueue.length - 2; i >= 0; i--) {
-              animationQueue.push(animationQueue[i]);
-            }
-          } else {
-            background.color = null;
-          }
+                      reader.onload = () => {
+                        const image = new Image();
 
-          blind.animate([
-            {
-              transform: "translate3d(0, -100%, 0)"
-            }
-          ], {
-            delay: 0,
-            fill: "forwards",
-            duration: 500,
-            iterations: 1,
-            easing: "ease-out",
-            composite: "replace"
-          }).onfinish = () => {
-            blind.remove();
-          };
+                        image.onload = () => {
+                          resolve(image);
+                        };
+                        image.onerror = (error) => {
+                          reject(error);
+                        };
+                        image.crossOrigin = "anonymous";
+                        image.src = reader.result;
+                      };
+                      reader.onerror = () => {
+                        reject(reader.error);
+                      };
+                      reader.readAsDataURL(await resize(blob, Math.floor(Math.max(window.screen.width, window.screen.height) / 2.0 * window.devicePixelRatio)));
+                    });
 
-          background.preloading = false;
-
-          const maxLines = Math.round(Math.min(window.screen.width, window.screen.height) / Math.ceil(16.0 * 2.0 * 1.5));
-          const length = random(Math.floor(maxLines / 2), maxLines);
-          let start = background.dataset[background.index].texts.length - length;
-          let samples;
-
-          if (start >= 0) {
-            start = random(0, start);
-            samples = background.dataset[background.index].texts.slice(start, start + length);
-          } else {
-            samples = background.dataset[background.index].texts;
-          }
-
-          for (const sample of samples) {
-            let text;
-            const attributes = [];
-            const source = [];
-            const letters = [];
-
-            if (typeof (sample) === "string") {
-              text = sample.replace(/\r?\n/g, "");
-              source.push(text);
-            } else {
-              text = Object.keys(sample).sort((x, y) => x - y).reduce((x, y) => {
-                if (typeof (sample[y]) === "string") {
-                  const s = sample[y].replace(/\r?\n/g, "");
-
-                  x.text += s;
-
-                  if (x.source.length > 0 && typeof (x.source[x.source.length - 1]) === "string") {
-                    x.source[x.source.length - 1] += s;
+                    animationQueue.push(Object.assign({ time: 0, image: image }, frame));
+                    cache[frame.source] = { image: image, timestamp: timestamp };
                   } else {
-                    x.source.push(s);
-                  }
-                } else if (Array.isArray(sample[y])) {
-                  const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace(/\r?\n/g, ""), "");
+                    const frames = [];
 
-                  x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
-                  x.text += s;
-                  x.source.push({ name: s });
-                } else {
-                  const text = sample[y].name.replace(/\r?\n/g, "");
+                    for (const frame of animation[0]) {
+                      frames.push({
+                        delay: frame.delay, image: await new Promise(async (resolve, reject) => {
+                          const reader = new FileReader();
 
-                  x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
-                  x.text += text;
-                  x.source.push({ name: text });
-                }
+                          reader.onload = () => {
+                            const image = new Image();
 
-                return x;
-              }, { text: "", attributes: attributes, source: source }).text;
-            }
-
-            for (let i = 0; i < text.length; i++) {
-              if (text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
-                letters.push(text.charAt(i));
-              }
-            }
-
-            background.blocks.push({
-              height: 100 / samples.length,
-              colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
-              inlines: [
-                { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
-              ],
-              scroll: { requested: false, step: 0.0 },
-              elapsed: 0,
-            });
-          }
-        }
-
-        for (const block of background.blocks) {
-          for (const inline of block.inlines) {
-            if (inline.running) {
-              if (inline.type.reverse) {
-                if (inline.type.count > 0) {
-                  inline.type.elapsed += deltaTime * 2;
-
-                  if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                    if (inline.type.count - 1 < inline.text.length) {
-                      if (inline.type.buffer.length <= Math.floor(inline.text.length / 2) && inline.type.count > 0) {
-                        inline.type.count -= 1;
-                      }
-
-                      if (inline.type.buffer.length > 0) {
-                        inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
-                      }
+                            image.onload = () => {
+                              resolve(image);
+                            };
+                            image.onerror = (error) => {
+                              reject(error);
+                            };
+                            image.crossOrigin = "anonymous";
+                            image.src = reader.result;
+                          };
+                          reader.onerror = () => {
+                            reject(reader.error);
+                          };
+                          reader.readAsDataURL(await resize(frame.blob, Math.floor(Math.max(window.screen.width, window.screen.height) / 2.0 * window.devicePixelRatio)));
+                        })
+                      });
                     }
 
-                    inline.type.elapsed = 0;
+                    if (frames.length > 0) {
+                      for (let i = 1; i < animation[1]; i++) {
+                        for (let j = 0; j < frames.length; j++) {
+                          frames.push(frames[j]);
+                        }
+                      }
+
+                      frames[frames.length - 1].delay += frame.delay;
+
+                      for (const frame of frames) {
+                        animationQueue.push(Object.assign({ time: 0 }, frame));
+                      }
+
+                      cache[frame.source] = { frames: frames, timestamp: timestamp };
+                    }
                   }
-                } else {
-                  inline.time = 0;
-                  inline.type.elapsed = -1;
-                  inline.type.reverse = false;
-                  inline.running = false;
+                } catch (error) {
+                  console.error(error);
                 }
-              } else if (inline.type.buffer.length < inline.text.length) {
-                if (inline.type.elapsed >= 0) {
-                  inline.type.elapsed += deltaTime;
-                } else {
-                  inline.type.elapsed = deltaTime;
+              }
+            } else {
+              if (index < data.frames.length - 1) {
+                bar.animate([
+                  {
+                    width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                  }
+                ], {
+                  delay: 0,
+                  fill: "forwards",
+                  duration: 500,
+                  iterations: 1,
+                  easing: "ease-in",
+                  composite: "replace"
+                }).onfinish = () => {
+                  bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                };
+              } else {
+                bar.animate([
+                  {
+                    width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                  }
+                ], {
+                  delay: 0,
+                  fill: "forwards",
+                  duration: 500,
+                  iterations: 1,
+                  easing: "ease-in",
+                  composite: "replace"
+                }).onfinish = () => {
+                  bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                  bar.animate([
+                    {
+                      opacity: 0
+                    }
+                  ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-in"
+                  }).onfinish = () => {
+                    progress.remove();
+                  };
+                };
+              }
+
+              if ("frames" in cache[frame.source]) {
+                for (const data of cache[frame.source].frames) {
+                  animationQueue.push(Object.assign({ time: 0 }, data));
                 }
+              } else {
+                animationQueue.push(Object.assign({ time: 0, image: cache[frame.source].image }, frame));
+              }
+            }
+
+            index++;
+          }
+
+          for (let i = animationQueue.length - 2; i >= 0; i--) {
+            animationQueue.push(animationQueue[i]);
+          }
+        } else {
+          background.color = null;
+        }
+
+        blind.animate([
+          {
+            transform: "translate3d(0, -100%, 0)"
+          }
+        ], {
+          delay: 0,
+          fill: "forwards",
+          duration: 500,
+          iterations: 1,
+          easing: "ease-out",
+          composite: "replace"
+        }).onfinish = () => {
+          blind.remove();
+        };
+
+        background.preloading = false;
+
+        const maxLines = Math.round(Math.min(window.screen.width, window.screen.height) / Math.ceil(16.0 * 2.0 * 1.5));
+        const length = random(Math.floor(maxLines / 2), maxLines);
+        let start = background.dataset[background.index].texts.length - length;
+        let samples;
+
+        if (start >= 0) {
+          start = random(0, start);
+          samples = background.dataset[background.index].texts.slice(start, start + length);
+        } else {
+          samples = background.dataset[background.index].texts;
+        }
+
+        for (const sample of samples) {
+          let text;
+          const attributes = [];
+          const source = [];
+          const letters = [];
+
+          if (typeof (sample) === "string") {
+            text = sample.replace(/\r?\n/g, "");
+            source.push(text);
+          } else {
+            text = Object.keys(sample).sort((x, y) => x - y).reduce((x, y) => {
+              if (typeof (sample[y]) === "string") {
+                const s = sample[y].replace(/\r?\n/g, "");
+
+                x.text += s;
+
+                if (x.source.length > 0 && typeof (x.source[x.source.length - 1]) === "string") {
+                  x.source[x.source.length - 1] += s;
+                } else {
+                  x.source.push(s);
+                }
+              } else if (Array.isArray(sample[y])) {
+                const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace(/\r?\n/g, ""), "");
+
+                x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
+                x.text += s;
+                x.source.push({ name: s });
+              } else {
+                const text = sample[y].name.replace(/\r?\n/g, "");
+
+                x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
+                x.text += text;
+                x.source.push({ name: text });
+              }
+
+              return x;
+            }, { text: "", attributes: attributes, source: source }).text;
+          }
+
+          for (let i = 0; i < text.length; i++) {
+            if (text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
+              letters.push(text.charAt(i));
+            }
+          }
+
+          background.blocks.push({
+            height: 100 / samples.length,
+            colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
+            inlines: [
+              { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
+            ],
+            scroll: { requested: false, step: 0.0 },
+            elapsed: 0,
+          });
+        }
+      }
+
+      for (const block of background.blocks) {
+        for (const inline of block.inlines) {
+          if (inline.running) {
+            if (inline.type.reverse) {
+              if (inline.type.count > 0) {
+                inline.type.elapsed += deltaTime * 2;
 
                 if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                  if (inline.type.count >= Math.floor(inline.text.length / 2)) {
-                    inline.type.buffer += inline.text.charAt(inline.type.buffer.length);
-                  }
+                  if (inline.type.count - 1 < inline.text.length) {
+                    if (inline.type.buffer.length <= Math.floor(inline.text.length / 2) && inline.type.count > 0) {
+                      inline.type.count -= 1;
+                    }
 
-                  if (inline.type.count < inline.text.length) {
-                    inline.type.count += 1;
+                    if (inline.type.buffer.length > 0) {
+                      inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
+                    }
                   }
 
                   inline.type.elapsed = 0;
                 }
               } else {
-                inline.time += deltaTime;
-
-                if (inline.duration !== null && inline.time >= inline.duration) {
-                  inline.type.reverse = true;
-                }
+                inline.time = 0;
+                inline.type.elapsed = -1;
+                inline.type.reverse = false;
+                inline.running = false;
               }
-
-              if (inline.text.length === inline.type.buffer.length) {
-                inline.current = inline.text;
+            } else if (inline.type.buffer.length < inline.text.length) {
+              if (inline.type.elapsed >= 0) {
+                inline.type.elapsed += deltaTime;
               } else {
-                const charArray = inline.letters;
-                let randomBuffer = "";
+                inline.type.elapsed = deltaTime;
+              }
 
-                if (charArray.length > 0) {
-                  for (let i = 0; i < inline.type.count; i++) {
-                    if (inline.text.charAt(i) === "\n") {
-                      randomBuffer += "\n";
-                    } else {
-                      randomBuffer += charArray[~~random(0, charArray.length)];
-                    }
-                  }
+              if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                if (inline.type.count >= Math.floor(inline.text.length / 2)) {
+                  inline.type.buffer += inline.text.charAt(inline.type.buffer.length);
                 }
 
-                if (randomBuffer.length > inline.type.buffer.length) {
-                  inline.current = inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length);
-                } else if (inline.current.length !== inline.type.buffer.length) {
-                  inline.current = inline.type.buffer;
+                if (inline.type.count < inline.text.length) {
+                  inline.type.count += 1;
+                }
+
+                inline.type.elapsed = 0;
+              }
+            } else {
+              inline.time += deltaTime;
+
+              if (inline.duration !== null && inline.time >= inline.duration) {
+                inline.type.reverse = true;
+              }
+            }
+
+            if (inline.text.length === inline.type.buffer.length) {
+              inline.current = inline.text;
+            } else {
+              const charArray = inline.letters;
+              let randomBuffer = "";
+
+              if (charArray.length > 0) {
+                for (let i = 0; i < inline.type.count; i++) {
+                  if (inline.text.charAt(i) === "\n") {
+                    randomBuffer += "\n";
+                  } else {
+                    randomBuffer += charArray[~~random(0, charArray.length)];
+                  }
                 }
               }
 
-              if (block.scroll.requested) {
-                block.scroll.step += deltaTime;
+              if (randomBuffer.length > inline.type.buffer.length) {
+                inline.current = inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length);
+              } else if (inline.current.length !== inline.type.buffer.length) {
+                inline.current = inline.type.buffer;
+              }
+            }
 
-                if (block.scroll.step >= 1.0) {
-                  block.scroll.requested = false;
-                  block.scroll.step = 0.0;
-                }
+            if (block.scroll.requested) {
+              block.scroll.step += deltaTime;
+
+              if (block.scroll.step >= 1.0) {
+                block.scroll.requested = false;
+                block.scroll.step = 0.0;
               }
             }
           }
-
-          block.elapsed += deltaTime;
         }
 
-        const backCanvas = canvas.backBuffer;
+        block.elapsed += deltaTime;
+      }
 
-        backCanvas.width = canvas.width;
-        backCanvas.height = canvas.height;
+      const backCanvas = canvas.backBuffer;
 
-        const backContext = backCanvas.getContext("2d");
-        const frontContext = canvas.getContext("2d");
-        const lineHeight = backCanvas.height / background.blocks.length;
-        const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
-        const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
-        const normalFont = `normal normal ${fontSize}px ${fontFamily}`;
-        const boldFont = `normal bold ${fontSize}px ${fontFamily}`;
-        const margin = Math.ceil(fontSize / 2);
-        let index = 0;
+      backCanvas.width = canvas.width;
+      backCanvas.height = canvas.height;
 
-        backContext.imageSmoothingEnabled = true;
-        backContext.imageSmoothingQuality = "high";
-        backContext.textAlign = "left";
-        backContext.textBaseline = "middle";
-        backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
-        backContext.save();
+      const backContext = backCanvas.getContext("2d");
+      const frontContext = canvas.getContext("2d");
+      const lineHeight = backCanvas.height / background.blocks.length;
+      const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
+      const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--background-font-family");
+      const normalFont = `normal normal ${fontSize}px ${fontFamily}`;
+      const boldFont = `normal bold ${fontSize}px ${fontFamily}`;
+      const margin = Math.ceil(fontSize / 2);
+      let index = 0;
 
-        for (const block of background.blocks) {
-          for (const inline of block.inlines) {
-            if (inline.running && inline.current.length > 0) {
-              const line = [];
-              let i = 0;
-              let width = 0;
-              let offset = 0;
+      backContext.imageSmoothingEnabled = true;
+      backContext.imageSmoothingQuality = "high";
+      backContext.textAlign = "left";
+      backContext.textBaseline = "middle";
+      backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+      backContext.save();
 
-              while (i < inline.current.length) {
-                const j = inline.attributes.findIndex(x => i >= x.start && i < x.end);
+      for (const block of background.blocks) {
+        for (const inline of block.inlines) {
+          if (inline.running && inline.current.length > 0) {
+            const line = [];
+            let i = 0;
+            let width = 0;
+            let offset = 0;
 
-                if (j >= 0) {
-                  if (inline.attributes[j].end <= inline.current.length) {
-                    line.push({ text: inline.current.substring(i, inline.attributes[j].end), highlight: true });
-                    i = inline.attributes[j].end;
-                  } else {
-                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: true });
+            while (i < inline.current.length) {
+              const j = inline.attributes.findIndex(x => i >= x.start && i < x.end);
 
-                    break;
-                  }
+              if (j >= 0) {
+                if (inline.attributes[j].end <= inline.current.length) {
+                  line.push({ text: inline.current.substring(i, inline.attributes[j].end), highlight: true });
+                  i = inline.attributes[j].end;
                 } else {
-                  const minimum = { start: null, distance: Number.MAX_SAFE_INTEGER };
+                  line.push({ text: inline.current.substring(i, inline.current.length), highlight: true });
 
-                  for (const attribute of inline.attributes) {
-                    const distance = attribute.start - i;
+                  break;
+                }
+              } else {
+                const minimum = { start: null, distance: Number.MAX_SAFE_INTEGER };
 
-                    if (distance >= 0 && distance < minimum.distance) {
-                      minimum.distance = distance;
-                      minimum.start = attribute.start;
-                    }
+                for (const attribute of inline.attributes) {
+                  const distance = attribute.start - i;
+
+                  if (distance >= 0 && distance < minimum.distance) {
+                    minimum.distance = distance;
+                    minimum.start = attribute.start;
                   }
+                }
 
-                  if (minimum.start === null) {
-                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
+                if (minimum.start === null) {
+                  line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
 
-                    break;
-                  } else if (minimum.start <= inline.current.length) {
-                    line.push({ text: inline.current.substring(i, minimum.start), highlight: false });
-                    i = minimum.start
-                  } else {
-                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
+                  break;
+                } else if (minimum.start <= inline.current.length) {
+                  line.push({ text: inline.current.substring(i, minimum.start), highlight: false });
+                  i = minimum.start
+                } else {
+                  line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
 
-                    break;
-                  }
+                  break;
                 }
               }
-
-              backContext.save();
-
-              for (const s of inline.source) {
-                let text;
-
-                if (typeof (s) === "string") {
-                  backContext.font = normalFont;
-                  text = s;
-                } else {
-                  backContext.font = boldFont;
-                  text = s.name;
-                }
-
-                const textMetrics = backContext.measureText(text);
-
-                width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
-              }
-
-              let translation = (block.elapsed % 60 / 60 + Math.sin(block.scroll.step / 2.0 * Math.PI)) % 1.0 * -(width + margin)
-
-              backContext.translate(translation, 0);
-              backContext.globalAlpha = 1.0;
-
-              do {
-                for (let i = 0; i < 2; i++) {
-                  let x = 0;
-
-                  for (const segment of line) {
-                    if (segment.highlight) {
-                      backContext.font = boldFont;
-                    } else {
-                      backContext.font = normalFont;
-                    }
-
-                    const textMetrics = backContext.measureText(segment.text);
-                    const width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
-
-                    if (translation + offset + x + width >= 0 && translation + offset + x < backCanvas.width) {
-                      backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
-                    }
-
-                    x += width;
-                  }
-
-                  for (const s of inline.source) {
-                    let text;
-
-                    if (typeof (s) === "string") {
-                      backContext.font = normalFont;
-                      text = s;
-                    } else {
-                      backContext.font = boldFont;
-                      text = s.name;
-                    }
-
-                    const textMetrics = backContext.measureText(text);
-
-                    offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
-                  }
-
-                  offset += margin
-                }
-              } while (offset - margin < backCanvas.width * 2);
-
-              backContext.restore();
             }
-          }
 
-          index++;
+            backContext.save();
+
+            for (const s of inline.source) {
+              let text;
+
+              if (typeof (s) === "string") {
+                backContext.font = normalFont;
+                text = s;
+              } else {
+                backContext.font = boldFont;
+                text = s.name;
+              }
+
+              const textMetrics = backContext.measureText(text);
+
+              width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+            }
+
+            let translation = (block.elapsed % 60 / 60 + Math.sin(block.scroll.step / 2.0 * Math.PI)) % 1.0 * -(width + margin)
+
+            backContext.translate(translation, 0);
+            backContext.globalAlpha = 1.0;
+
+            do {
+              for (let i = 0; i < 2; i++) {
+                let x = 0;
+
+                for (const segment of line) {
+                  if (segment.highlight) {
+                    backContext.font = boldFont;
+                  } else {
+                    backContext.font = normalFont;
+                  }
+
+                  const textMetrics = backContext.measureText(segment.text);
+                  const width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+
+                  if (translation + offset + x + width >= 0 && translation + offset + x < backCanvas.width) {
+                    backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
+                  }
+
+                  x += width;
+                }
+
+                for (const s of inline.source) {
+                  let text;
+
+                  if (typeof (s) === "string") {
+                    backContext.font = normalFont;
+                    text = s;
+                  } else {
+                    backContext.font = boldFont;
+                    text = s.name;
+                  }
+
+                  const textMetrics = backContext.measureText(text);
+
+                  offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+                }
+
+                offset += margin
+              }
+            } while (offset - margin < backCanvas.width * 2);
+
+            backContext.restore();
+          }
         }
 
-        for (let i = pinches.length - 1; i >= 0; i--) {
-          if (pinches[i].identifiers.every(x => touches.findIndex(y => x === y.identifier) >= 0)) {
+        index++;
+      }
+
+      for (let i = pinches.length - 1; i >= 0; i--) {
+        if (pinches[i].identifiers.every(x => touches.findIndex(y => x === y.identifier) >= 0)) {
+          backContext.fillStyle = "#000000";
+          backContext.beginPath();
+          backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+          backContext.fill()
+          backContext.closePath();
+        } else {
+          const tension = 50.0;
+          const mass = 1.0;
+          const friction = 5.0;
+          const displacement = pinches[i].radius;
+          const tensionForce = -tension * displacement;
+          const dampingForce = -friction * pinches[i].velocity;
+          const acceleration = (tensionForce + dampingForce) / mass;
+
+          pinches[i].active = false;
+          pinches[i].velocity += acceleration * deltaTime;
+          pinches[i].radius += pinches[i].velocity * deltaTime;
+
+          if (Math.abs(pinches[i].velocity) < 0.1) {
+            pinches.splice(i, 1);
+          } else {
             backContext.fillStyle = "#000000";
             backContext.beginPath();
             backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
             backContext.fill()
             backContext.closePath();
+          }
+        }
+      }
+
+      if (background.particles.length > 0) {
+        backContext.save();
+
+        for (let i = background.particles.length - 1; i >= 0; i--) {
+          const particle = background.particles[i];
+
+          if (particle.elapsed >= 0) {
+            particle.elapsed += deltaTime;
           } else {
-            const tension = 50.0;
-            const mass = 1.0;
-            const friction = 5.0;
-            const displacement = pinches[i].radius;
-            const tensionForce = -tension * displacement;
-            const dampingForce = -friction * pinches[i].velocity;
-            const acceleration = (tensionForce + dampingForce) / mass;
+            particle.elapsed = deltaTime;
+            particle["radius"] = Math.random() * 64;
+            particle["degrees"] = Math.random() * 360;
+            particle["duration"] = Math.random() * 2.5 + 0.5;
+          }
 
-            pinches[i].active = false;
-            pinches[i].velocity += acceleration * deltaTime;
-            pinches[i].radius += pinches[i].velocity * deltaTime;
+          if (particle.elapsed >= particle.duration) {
+            background.particles.pop();
+          } else {
+            const step = Math.sin(particle.elapsed / particle.duration * Math.PI);
+            const scale = window.devicePixelRatio * step;
 
-            if (Math.abs(pinches[i].velocity) < 0.1) {
-              pinches.splice(i, 1);
-            } else {
-              backContext.fillStyle = "#000000";
-              backContext.beginPath();
-              backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
-              backContext.fill()
-              backContext.closePath();
-            }
+            backContext.save();
+            backContext.scale(scale, scale);
+            backContext.translate(-particle.image.width / 2 + Math.round(particle.x + Math.cos(Math.PI / 180 * particle.degrees) * particle.radius) * window.devicePixelRatio / scale, -particle.image.height / 2 + Math.round(particle.y + Math.sin(Math.PI / 180 * particle.degrees) * particle.radius) * window.devicePixelRatio / scale);
+            backContext.globalAlpha = step;
+            backContext.drawImage(particle.image, 0, 0, particle.image.width, particle.image.height, 0, 0, particle.image.width, particle.image.height);
+            backContext.restore();
           }
         }
-
-        if (background.particles.length > 0) {
-          backContext.save();
-
-          for (let i = background.particles.length - 1; i >= 0; i--) {
-            const particle = background.particles[i];
-
-            if (particle.elapsed >= 0) {
-              particle.elapsed += deltaTime;
-            } else {
-              particle.elapsed = deltaTime;
-              particle["radius"] = Math.random() * 64;
-              particle["degrees"] = Math.random() * 360;
-              particle["duration"] = Math.random() * 2.5 + 0.5;
-            }
-
-            if (particle.elapsed >= particle.duration) {
-              background.particles.pop();
-            } else {
-              const step = Math.sin(particle.elapsed / particle.duration * Math.PI);
-              const scale = window.devicePixelRatio * step;
-
-              backContext.save();
-              backContext.scale(scale, scale);
-              backContext.translate(-particle.image.width / 2 + Math.round(particle.x + Math.cos(Math.PI / 180 * particle.degrees) * particle.radius) * window.devicePixelRatio / scale, -particle.image.height / 2 + Math.round(particle.y + Math.sin(Math.PI / 180 * particle.degrees) * particle.radius) * window.devicePixelRatio / scale);
-              backContext.globalAlpha = step;
-              backContext.drawImage(particle.image, 0, 0, particle.image.width, particle.image.height, 0, 0, particle.image.width, particle.image.height);
-              backContext.restore();
-            }
-          }
-        }
-
-        backContext.globalCompositeOperation = "source-atop";
-
-        if (background.color === null) {
-          backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
-        } else {
-          backContext.fillStyle = background.color;
-        }
-
-        backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
-
-        if (!tracker.active && (tracker.velocity.x !== 0 || tracker.velocity.y !== 0)) {
-          const epsilon = 0.01;
-          const decelerationRate = 10 * 96 / 1000;
-
-          if (tracker.velocity.x > 1000) {
-            tracker.velocity.x = 1000;
-          } else if (tracker.velocity.x < -1000) {
-            tracker.velocity.x = -1000;
-          }
-
-          if (tracker.velocity.y > 1000) {
-            tracker.velocity.y = 1000;
-          } else if (tracker.velocity.y < -1000) {
-            tracker.velocity.y = -1000;
-          }
-
-          tracker.velocity.x -= tracker.velocity.x * decelerationRate * deltaTime;
-          tracker.velocity.y -= tracker.velocity.y * decelerationRate * deltaTime;
-
-          if (Math.abs(tracker.velocity.x) < epsilon) {
-            tracker.velocity.x = 0;
-          }
-
-          if (Math.abs(tracker.velocity.y) < epsilon) {
-            tracker.velocity.y = 0;
-          }
-
-          tracker.movement.x += tracker.velocity.x * deltaTime;
-          tracker.movement.y += tracker.velocity.y * deltaTime;
-        }
-
-        if (animationQueue.length > 0) {
-          let count = animationQueue.length;
-          let frame = animationQueue[0];
-          let delay = Math.max(frame.delay, 0.01);
-
-          frame.time += deltaTime;
-
-          while (frame.time > delay) {
-            const time = frame.time - delay;
-
-            frame.time = 0;
-            animationQueue.push(animationQueue.shift());
-            frame = animationQueue[0];
-            count--;
-
-            if (count > 0) {
-              frame.time += time;
-            } else {
-              break;
-            }
-
-            delay = Math.max(frame.delay, 0.01);
-          }
-
-          if (frame.image !== null) {
-            const top = 0;
-            const left = 0.5;
-            const canvasAspect = backCanvas.width / backCanvas.height;
-            const imageAspect = frame.image.width / frame.image.height;
-            let sx, sy, sw, sh;
-
-            if (canvasAspect > imageAspect) {
-              const ratio = backCanvas.width / frame.image.width;
-
-              sx = 0;
-              sh = backCanvas.height / ratio;
-              sy = Math.max(0, Math.min(frame.image.height - sh, (frame.image.height * ratio - backCanvas.height) / ratio * top - tracker.movement.y * window.devicePixelRatio / ratio));
-              sw = frame.image.width;
-
-              const insetTop = (frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio;
-              const insetBottom = (backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio;
-
-              if (insetTop < tracker.movement.y) {
-                if (tracker.active) {
-                  tracker.edge = true;
-                } else if (!tracker.edge) {
-                  tracker.velocity.y = -Math.abs(tracker.velocity.y);
-                }
-
-                tracker.movement.y = insetTop;
-              } else if (insetBottom > tracker.movement.y) {
-                if (tracker.active) {
-                  tracker.edge = true;
-                } else if (!tracker.edge) {
-                  tracker.velocity.y = Math.abs(tracker.velocity.y);
-                }
-
-                tracker.movement.y = insetBottom;
-              } else if (insetTop === tracker.movement.y || insetBottom === tracker.movement.y) {
-                if (tracker.active) {
-                  tracker.edge = true;
-                }
-              } else {
-                tracker.edge = false;
-              }
-            } else {
-              const ratio = backCanvas.height / frame.image.height;
-
-              sw = backCanvas.width / ratio;
-              sx = Math.max(0, Math.min(frame.image.width - sw, (frame.image.width * ratio - backCanvas.width) / ratio * left - tracker.movement.x * window.devicePixelRatio / ratio));
-              sy = 0;
-              sh = frame.image.height;
-
-              const insetLeft = (frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio;
-              const insetRight = (backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio;
-
-              if (insetLeft < tracker.movement.x) {
-                if (tracker.active) {
-                  tracker.edge = true;
-                } else if (!tracker.edge) {
-                  tracker.velocity.x = -Math.abs(tracker.velocity.x);
-                }
-
-                tracker.movement.x = insetLeft;
-              } else if (insetRight > tracker.movement.x) {
-                if (tracker.active) {
-                  tracker.edge = true;
-                } else if (!tracker.edge) {
-                  tracker.velocity.x = Math.abs(tracker.velocity.x);
-                }
-
-                tracker.movement.x = insetRight;
-              } else if (insetLeft === tracker.movement.x || insetRight === tracker.movement.x) {
-                if (tracker.active) {
-                  tracker.edge = true;
-                }
-              } else {
-                tracker.edge = false;
-              }
-            }
-
-            backContext.drawImage(frame.image, Math.round(sx), Math.round(sy), Math.floor(sw), Math.floor(sh), 0, 0, backCanvas.width, backCanvas.height);
-          }
-        }
-
-        backContext.restore();
-        frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
-        frontContext.drawImage(backCanvas, 0, 0);
-
-        backCanvas.width = backCanvas.height = 0;
       }
 
-      fps.frames++;
+      backContext.globalCompositeOperation = "source-atop";
 
-      if (performance.now() - fps.time >= 1000) {
-        fps.target.innerText = String(fps.frames);
-        fps.time = performance.now();
-        fps.frames = 0;
+      if (background.color === null) {
+        backContext.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color");
+      } else {
+        backContext.fillStyle = background.color;
       }
 
-      requestAnimationFrame(render);
+      backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
+
+      if (!tracker.active && (tracker.velocity.x !== 0 || tracker.velocity.y !== 0)) {
+        const epsilon = 0.01;
+        const decelerationRate = 10 * 96 / 1000;
+
+        if (tracker.velocity.x > 1000) {
+          tracker.velocity.x = 1000;
+        } else if (tracker.velocity.x < -1000) {
+          tracker.velocity.x = -1000;
+        }
+
+        if (tracker.velocity.y > 1000) {
+          tracker.velocity.y = 1000;
+        } else if (tracker.velocity.y < -1000) {
+          tracker.velocity.y = -1000;
+        }
+
+        tracker.velocity.x -= tracker.velocity.x * decelerationRate * deltaTime;
+        tracker.velocity.y -= tracker.velocity.y * decelerationRate * deltaTime;
+
+        if (Math.abs(tracker.velocity.x) < epsilon) {
+          tracker.velocity.x = 0;
+        }
+
+        if (Math.abs(tracker.velocity.y) < epsilon) {
+          tracker.velocity.y = 0;
+        }
+
+        tracker.movement.x += tracker.velocity.x * deltaTime;
+        tracker.movement.y += tracker.velocity.y * deltaTime;
+      }
+
+      if (animationQueue.length > 0) {
+        let count = animationQueue.length;
+        let frame = animationQueue[0];
+        let delay = Math.max(frame.delay, 0.01);
+
+        frame.time += deltaTime;
+
+        while (frame.time > delay) {
+          const time = frame.time - delay;
+
+          frame.time = 0;
+          animationQueue.push(animationQueue.shift());
+          frame = animationQueue[0];
+          count--;
+
+          if (count > 0) {
+            frame.time += time;
+          } else {
+            break;
+          }
+
+          delay = Math.max(frame.delay, 0.01);
+        }
+
+        if (frame.image !== null) {
+          const top = 0;
+          const left = 0.5;
+          const canvasAspect = backCanvas.width / backCanvas.height;
+          const imageAspect = frame.image.width / frame.image.height;
+          let sx, sy, sw, sh;
+
+          if (canvasAspect > imageAspect) {
+            const ratio = backCanvas.width / frame.image.width;
+
+            sx = 0;
+            sh = backCanvas.height / ratio;
+            sy = Math.max(0, Math.min(frame.image.height - sh, (frame.image.height * ratio - backCanvas.height) / ratio * top - tracker.movement.y * window.devicePixelRatio / ratio));
+            sw = frame.image.width;
+
+            const insetTop = (frame.image.height * ratio - backCanvas.height) * top / window.devicePixelRatio;
+            const insetBottom = (backCanvas.height - frame.image.height * ratio + (frame.image.height * ratio - backCanvas.height) * top) / window.devicePixelRatio;
+
+            if (insetTop < tracker.movement.y) {
+              if (tracker.active) {
+                tracker.edge = true;
+              } else if (!tracker.edge) {
+                tracker.velocity.y = -Math.abs(tracker.velocity.y);
+              }
+
+              tracker.movement.y = insetTop;
+            } else if (insetBottom > tracker.movement.y) {
+              if (tracker.active) {
+                tracker.edge = true;
+              } else if (!tracker.edge) {
+                tracker.velocity.y = Math.abs(tracker.velocity.y);
+              }
+
+              tracker.movement.y = insetBottom;
+            } else if (insetTop === tracker.movement.y || insetBottom === tracker.movement.y) {
+              if (tracker.active) {
+                tracker.edge = true;
+              }
+            } else {
+              tracker.edge = false;
+            }
+          } else {
+            const ratio = backCanvas.height / frame.image.height;
+
+            sw = backCanvas.width / ratio;
+            sx = Math.max(0, Math.min(frame.image.width - sw, (frame.image.width * ratio - backCanvas.width) / ratio * left - tracker.movement.x * window.devicePixelRatio / ratio));
+            sy = 0;
+            sh = frame.image.height;
+
+            const insetLeft = (frame.image.width * ratio - backCanvas.width) * left / window.devicePixelRatio;
+            const insetRight = (backCanvas.width - frame.image.width * ratio + (frame.image.width * ratio - backCanvas.width) * left) / window.devicePixelRatio;
+
+            if (insetLeft < tracker.movement.x) {
+              if (tracker.active) {
+                tracker.edge = true;
+              } else if (!tracker.edge) {
+                tracker.velocity.x = -Math.abs(tracker.velocity.x);
+              }
+
+              tracker.movement.x = insetLeft;
+            } else if (insetRight > tracker.movement.x) {
+              if (tracker.active) {
+                tracker.edge = true;
+              } else if (!tracker.edge) {
+                tracker.velocity.x = Math.abs(tracker.velocity.x);
+              }
+
+              tracker.movement.x = insetRight;
+            } else if (insetLeft === tracker.movement.x || insetRight === tracker.movement.x) {
+              if (tracker.active) {
+                tracker.edge = true;
+              }
+            } else {
+              tracker.edge = false;
+            }
+          }
+
+          backContext.drawImage(frame.image, Math.round(sx), Math.round(sy), Math.floor(sw), Math.floor(sh), 0, 0, backCanvas.width, backCanvas.height);
+        }
+      }
+
+      backContext.restore();
+      frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+      frontContext.drawImage(backCanvas, 0, 0);
+
+      backCanvas.width = backCanvas.height = 0;
+    }
+
+    fps.frames++;
+
+    if (performance.now() - fps.time >= 1000) {
+      fps.target.innerText = String(fps.frames);
+      fps.time = performance.now();
+      fps.frames = 0;
     }
 
     requestAnimationFrame(render);
-  //}
+  }
+
+  requestAnimationFrame(render);
 });
 window.addEventListener("resize", event => {
   const frame = document.body.querySelector("#app>.container>.wrap>.frame");
