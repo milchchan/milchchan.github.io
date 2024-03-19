@@ -541,25 +541,23 @@ async function upload(files, name = null) {
 
         console.log(dataURL)*/
 
-        const formData = new FormData()
+        const formData = new FormData();
 
-        formData.append(new Blob([file], { type: file.type }));
+        formData.append("file", new Blob([file], { type: file.type }));
 
         const response = await fetch("https://milchchan.com/api/upload", {
             mode: "cors",
             method: "POST",
-            headers: {
-                "X-Authorization": `Bearer abc`,
-                //"Content-Type": "application/json",
-            },
             body: formData
           }
         );
 
         if (response.ok) {
           const json = await response.json();
+
+          console.log(json);
           
-          completed.push([`https://milchchan.com/api/upload/${json.id}`, file.type]);
+          //completed.push([`https://milchchan.com/api/upload/${json.id}`, file.type]);
         } else {
           throw new Error(response.statusText);
         }
