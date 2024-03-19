@@ -96,7 +96,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             elif content_type.startswith('multipart/form-data;'):
                 for file in req.files.values:
                     
-                    return func.HttpResponse(json.dumps(vars(file)), status_code=201, mimetype='application/json', charset='utf-8')
+                    return func.HttpResponse(json.dumps({
+                        'type': file.content_type
+                    }), status_code=201, mimetype='application/json', charset='utf-8')
 
 
                     #if mime_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
