@@ -458,7 +458,8 @@ async function upload(files, name = null) {
 
   progress.className = "progress";
   bar.className = "bar animating";
-  bar.style.width = "0%";
+  bar.style.opacity = "1";
+  bar.style.width = "100%";
 
   try {
     const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
