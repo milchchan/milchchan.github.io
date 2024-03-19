@@ -25,7 +25,15 @@ engine = create_engine(os.environ['POSTGRESQL_CONNECTION_URL'], pool_recycle=60)
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'POST':
-            if req.headers.get('Content-Type') == 'application/json':
+            content_type = req.headers.get('Content-Type')
+
+            return func.HttpResponse(json.dumps({
+                'type': content_type
+            }), status_code=200, mimetype='application/json', charset='utf-8')
+                            
+
+            '''
+            if content_type == 'application/json':
                 pattern = 'data:([\\w/\\-\\.]+);(\\w+),(.+)'
                 uploads = []
 
@@ -90,7 +98,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     session.close()
 
                 return func.HttpResponse(json.dumps(uploads), status_code=201, mimetype='application/json', charset='utf-8')
-            
+            elif content_type == 'multipart/form-data':
+                for file in req.files.values:
+                    if mime_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
+                
+
             else:
                 match = re.match('data:([\\w/\\-\\.]+);(\\w+),(.+)', req.get_body().decode('utf-8'))
 
@@ -150,7 +162,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             finally:
                                 session.close()
-
+            '''
         else:
             mime_type = req.params['type'] if 'type' in req.params else None
             Session = sessionmaker(bind=engine)
