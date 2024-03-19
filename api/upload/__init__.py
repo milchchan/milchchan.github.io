@@ -160,7 +160,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 session.close()
                             '''
                 
-                if len(upload) > 0:
+                if len(uploads) > 0:
                     return func.HttpResponse(json.dumps({
                         'id': id,
                         'url': url,
