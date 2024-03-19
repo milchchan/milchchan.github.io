@@ -121,7 +121,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         blob = bucket.blob(path)
 
                         if not blob.exists():
-                            blob.upload_from_file(BytesIO(file.stream.read()), content_type=file.content_type)
+                            blob.upload_from_file(file.stream, content_type=file.content_type)
                             
                             url = f'gs://{bucket_name}{urljoin("/", path)}'
 
