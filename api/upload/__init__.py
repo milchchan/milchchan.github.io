@@ -96,7 +96,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             elif content_type.startswith('multipart/form-data;'):
                 for file in req.files.values():
                     return func.HttpResponse(json.dumps({
-                        'type': dir(file)
+                        'type': file.content_type,
+                        'mime_type': file.mimetype
                     }), status_code=200, mimetype='application/json', charset='utf-8')
 
 
