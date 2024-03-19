@@ -448,7 +448,6 @@ async function upload(files, name = null) {
 
   progress.appendChild(bar);
   document.body.querySelector("#app").appendChild(progress);
-
   bar.animate([
     {
       opacity: 1
@@ -481,8 +480,6 @@ async function upload(files, name = null) {
       } else {
         throw new Error(response.statusText);
       }
-
-      
     } catch (error) {
       console.error(error);
 
