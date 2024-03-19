@@ -3,7 +3,7 @@ import { getDatabase, get, push, runTransaction, query, ref as databaseRef, chil
 import { getStorage, ref as storageRef, getDownloadURL, getMetadata, uploadBytesResumable } from "firebase/storage";
 import { initializeAnalytics } from "firebase/analytics";
 
-const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], index: 0, queue: [], particles: [], cache: [] };
+const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], dataset: [{ texts: [], images: [] }], index: 0, queue: [], particles: [], cache: [] };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
 const touches = [];
@@ -526,6 +526,54 @@ async function upload(files, name = null) {
         break;
       }
     } else if (file.type.startsWith("image/")) {
+      try {
+        /*const dataURL = await new Promise(async (resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => {
+              resolve(reader.result);
+          };
+          reader.onerror = () => {
+              reject(reader.error);
+          };
+          reader.readAsDataURL(new Blob([file], { type: file.type }));
+        });
+
+        console.log(dataURL)*/
+
+        const formData = new FormData()
+
+        formData.append(new Blob([file], { type: file.type }));
+
+        const response = await fetch("https://milchchan.com/api/upload", {
+            mode: "cors",
+            method: "POST",
+            headers: {
+                "X-Authorization": `Bearer abc`,
+                //"Content-Type": "application/json",
+            },
+            body: formData
+          }
+        );
+
+        if (response.ok) {
+          const json = await response.json();
+          
+          completed.push([`https://milchchan.com/api/upload/${json.id}`, file.type]);
+        } else {
+          throw new Error(response.statusText);
+        }
+
+        
+      } catch (error) {
+        console.error(error);
+
+        animation = null;
+
+        break;
+      }
+
+      /*
       const uploadTask = uploadBytesResumable(storageRef(storage, `uploads/${generateUuid()}`), file, {
         contentType: file.type
       });
@@ -565,7 +613,7 @@ async function upload(files, name = null) {
         animation = null;
 
         break;
-      }
+      }*/
     }
   }
 
@@ -828,7 +876,7 @@ window.addEventListener("load", async event => {
   });
 
   try {
-    const response = await fetch(encodeURI("feed.json"), {
+    /*const response = await fetch(encodeURI("feed.json"), {
       mode: "cors",
       method: "GET",
       headers: {
@@ -840,7 +888,7 @@ window.addEventListener("load", async event => {
       background["dataset"] = await response.json();
     } else {
       throw new Error(response.statusText);
-    }
+    }*/
 
     for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
       background.cache.push(await new Promise((resolve, reject) => {
@@ -859,7 +907,7 @@ window.addEventListener("load", async event => {
     console.error(error);
   }
 
-  if (background["dataset"] !== null) {
+  //if (background["dataset"] !== null) {
     async function download(url, handler = null) {
       try {
         const response = await fetch(url);
@@ -962,7 +1010,7 @@ window.addEventListener("load", async event => {
           background.updated = timestamp;
         }
 
-        if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse)) && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0) {
+        if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse))/* && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0*/) {
           let prefix;
 
           background.preloading = true;
@@ -974,11 +1022,11 @@ window.addEventListener("load", async event => {
           animationQueue.splice(0);
 
           for (const item of background.dataset) {
-            for (let i = item.texts.length - 1; i >= 0; i--) {
+            /*for (let i = item.texts.length - 1; i >= 0; i--) {
               if (Array.isArray(item.texts[i])) {
                 item.texts.splice(i, 1);
               }
-            }
+            }*/
 
             if ("images" in item) {
               for (let i = item.images.length - 1; i >= 0; i--) {
@@ -1036,7 +1084,7 @@ window.addEventListener("load", async event => {
             };
           });
 
-          if ("name" in background.dataset[background.index] && background.dataset[background.index] !== null) {
+          /*if ("name" in background.dataset[background.index] && background.dataset[background.index] !== null) {
             const name = background.dataset[background.index].name;
 
             try {
@@ -1108,7 +1156,7 @@ window.addEventListener("load", async event => {
               }
             } catch (error) {
               console.error(error);
-            }
+            }*/
 
             /*try {
               const snapshot = await get(query(databaseRef(database, "bot/likes"), orderByChild("timestamp"), limitToLast(100)));
@@ -1130,8 +1178,8 @@ window.addEventListener("load", async event => {
               console.error(error);
             }*/
 
-            prefix = `${name}&`;
-          } else {
+            //prefix = `${name}&`;
+          /*} else {*/
             try {
               const response = await fetch(encodeURI("https://milchchan.com/api/likes"), {
                 mode: "cors",
@@ -1224,9 +1272,31 @@ window.addEventListener("load", async event => {
             }*/
 
             prefix = ""
-          }
+          //}
 
           try {
+            const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
+              mode: "cors",
+              method: "GET",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            });
+        
+            if (response.ok) {
+              for (const item of background.dataset) {
+                if ("type" in item === false && "images" in item) {
+                  item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: response.url }] });
+                }
+              }
+            } else {
+              throw new Error(response.statusText);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+
+          /*try {
             const snapshot = await get(query(databaseRef(database, "images"), orderByChild("random"), startAt(`${prefix}${String(Math.random())}`), limitToFirst(10)));
 
             if (snapshot.exists()) {
@@ -1296,7 +1366,7 @@ window.addEventListener("load", async event => {
             }
           } catch (error) {
             console.error(error);
-          }
+          }*/
 
           if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
             if (background.queue.some(x => x.index !== background.index)) {
@@ -2106,7 +2176,7 @@ window.addEventListener("load", async event => {
     }
 
     requestAnimationFrame(render);
-  }
+  //}
 });
 window.addEventListener("resize", event => {
   const frame = document.body.querySelector("#app>.container>.wrap>.frame");
