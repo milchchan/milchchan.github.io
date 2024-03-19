@@ -487,6 +487,18 @@ async function upload(files, name = null) {
   progress.appendChild(bar);
   document.body.querySelector("#app").appendChild(progress);
 
+  bar.animate([
+    {
+      opacity: 1
+    }
+  ], {
+    delay: 0,
+    fill: "forwards",
+    duration: 500,
+    iterations: 1,
+    easing: "ease-out"
+  });
+
   for (const file of files) {
     if (file.type === "application/zip") {
       const uploadTask = uploadBytesResumable(storageRef(storage, `uploads/${generateUuid()}-${file.name}`), file, {
@@ -557,7 +569,7 @@ async function upload(files, name = null) {
 
           console.log(json);
           
-          //completed.push([`https://milchchan.com/api/upload/${json.id}`, file.type]);
+          completed.push([`https://milchchan.com/api/upload/${json.id}`, file.type]);
         } else {
           throw new Error(response.statusText);
         }
