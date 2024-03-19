@@ -162,10 +162,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 
                 if len(uploads) > 0:
                     return func.HttpResponse(json.dumps({
-                        'id': id,
-                        'url': url,
-                        'type': mime_type,
-                        'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
+                        'id': uploads[0].id,
+                        'url': uploads[0].url,
+                        'type': uploads[0].type,
+                        'timestamp': uploads[0].timestamp
                     } if len(uploads) == 1 else uploads), status_code=201, mimetype='application/json', charset='utf-8')
 
             else:
