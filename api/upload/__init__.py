@@ -97,7 +97,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 for file in req.files.values:
                     
                     return func.HttpResponse(json.dumps({
-                        'type': file.content_type
+                        'type': dir(file)
                     }), status_code=201, mimetype='application/json', charset='utf-8')
 
 
