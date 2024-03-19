@@ -94,19 +94,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 return func.HttpResponse(json.dumps(uploads), status_code=201, mimetype='application/json', charset='utf-8')
             
             elif content_type.startswith('multipart/form-data;'):
-                return func.HttpResponse(json.dumps({
-                    'type': content_type
-                }), status_code=200, mimetype='application/json', charset='utf-8')
-                '''
-                for file in req.files.values:
-                    
+                for file in req.files.values():
                     return func.HttpResponse(json.dumps({
-                        'type': file.contenttype
+                        'type': dir(file)
                     }), status_code=200, mimetype='application/json', charset='utf-8')
 
 
                     #if mime_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
-                '''
+                
 
             else:
                 match = re.match('data:([\\w/\\-\\.]+);(\\w+),(.+)', req.get_body().decode('utf-8'))
