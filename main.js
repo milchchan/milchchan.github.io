@@ -943,7 +943,7 @@ window.addEventListener("load", async event => {
         });
         
         try {
-          const response = await fetch(encodeURI("https://milchchan.com/api/likes"), {
+          const response = await fetch(encodeURI(`https://milchchan.com/api/likes?language=${document.documentElement.lang}`), {
             mode: "cors",
             method: "GET",
             headers: {
