@@ -125,13 +125,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             
                             url = f'gs://{bucket_name}{urljoin("/", path)}'
 
-                            uploads.append({
-                                'id': id,
-                                'url': url,
-                                'type': file.content_type,
-                                'timestamp': int(blob.time_created.replace(tzinfo=timezone.utc).timestamp())
-                            })
-                            '''
                             Session = sessionmaker(bind=engine)
                             session = Session()
 
@@ -158,7 +151,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             finally:
                                 session.close()
-                            '''
                 
                 if len(uploads) > 0:
                     return func.HttpResponse(json.dumps({
