@@ -123,6 +123,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if not blob.exists():
                             blob.upload_from_file(file.stream, content_type=file.content_type)
                             blob = bucket.blob(os.path.join(path, file.filename))
+                            file.stream.seek(0)
                             blob.upload_from_file(file.stream, content_type=file.content_type)
                             
                             url = f'gs://{bucket_name}{urljoin("/", path)}'
@@ -159,7 +160,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         'id': uploads[0]['id'],
                         'url': uploads[0]['url'],
                         'type': uploads[0]['type'],
-                        #'timestamp': uploads[0]['timestamp']
+                        'timestamp': uploads[0]['timestamp']
                     } if len(uploads) == 1 else uploads), status_code=201, mimetype='application/json', charset='utf-8')
 
             else:
