@@ -464,7 +464,7 @@ async function upload(files, name = null) {
     try {
       const formData = new FormData();
 
-      formData.append("file", new Blob([file], { type: file.type }));
+      formData.append("file", new Blob([file], { type: file.type }), file.name);
 
       const response = await fetch("https://milchchan.com/api/upload", {
           mode: "cors",
