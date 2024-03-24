@@ -125,8 +125,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             
                             if file.content_type == 'application/zip':
                                 file.stream.seek(0)
-                                blob = bucket.blob(os.path.join(path, file.filename))
-                                blob.upload_from_file(file.stream, content_type=file.content_type)
+                                temp_blob = bucket.blob(os.path.join(path, file.filename))
+                                temp_blob.upload_from_file(file.stream, content_type=file.content_type)
                             
                             url = f'gs://{bucket_name}{urljoin("/", path)}'
 
