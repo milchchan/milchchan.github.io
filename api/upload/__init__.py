@@ -98,7 +98,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 for file in req.files.values():
                     
                     uploads.append({
-                                    'url': dir(file),
+                                    'id': file.name,
+                                    'url': file.filename,
                                     'type': file.content_type
                                 })
                 '''
@@ -160,7 +161,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 '''
                 if len(uploads) > 0:
                     return func.HttpResponse(json.dumps({
-                        #'id': uploads[0]['id'],
+                        'id': uploads[0]['id'],
                         'url': uploads[0]['url'],
                         'type': uploads[0]['type'],
                         #'timestamp': uploads[0]['timestamp']
