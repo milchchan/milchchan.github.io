@@ -95,7 +95,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             
             elif content_type.startswith('multipart/form-data;'):
                 uploads = []
-
+                for file in req.files.values():
+                    
+                    upload.append({
+                                    'id': file.content_disposition,
+                                    'url': None,
+                                    'type': file.content_type
+                                })
+                '''
                 for file in req.files.values():
                     if file.content_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp']:
                         bucket_name = 'milchchan.appspot.com'
@@ -151,13 +158,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             finally:
                                 session.close()
-                
+                '''
                 if len(uploads) > 0:
                     return func.HttpResponse(json.dumps({
                         'id': uploads[0]['id'],
                         'url': uploads[0]['url'],
                         'type': uploads[0]['type'],
-                        'timestamp': uploads[0]['timestamp']
+                        #'timestamp': uploads[0]['timestamp']
                     } if len(uploads) == 1 else uploads), status_code=201, mimetype='application/json', charset='utf-8')
 
             else:
