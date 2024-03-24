@@ -137,8 +137,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 upload.type = file.content_type
                                 upload.timestamp = blob.time_created
 
-                                #session.add(upload)
-                                #session.commit()
+                                session.add(upload)
+                                session.commit()
 
                                 uploads.append({
                                     'id': id,
