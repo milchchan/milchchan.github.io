@@ -95,14 +95,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             
             elif content_type.startswith('multipart/form-data;'):
                 uploads = []
-                for file in req.files.values():
-                    
-                    uploads.append({
-                                    'id': file.name,
-                                    'url': file.filename.decode('utf-8'),
-                                    'type': file.content_type
-                                })
-                '''
+                
                 for file in req.files.values():
                     if file.content_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp']:
                         bucket_name = 'milchchan.appspot.com'
@@ -129,6 +122,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                         if not blob.exists():
                             blob.upload_from_file(file.stream, content_type=file.content_type)
+                            blob = bucket.blob(os.path.join(path, file.filename))
+                            blob.upload_from_file(file.stream, content_type=file.content_type)
                             
                             url = f'gs://{bucket_name}{urljoin("/", path)}'
 
@@ -141,8 +136,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 upload.type = file.content_type
                                 upload.timestamp = blob.time_created
 
-                                session.add(upload)
-                                session.commit()
+                                #session.add(upload)
+                                #session.commit()
 
                                 uploads.append({
                                     'id': id,
@@ -158,7 +153,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             finally:
                                 session.close()
-                '''
+                
                 if len(uploads) > 0:
                     return func.HttpResponse(json.dumps({
                         'id': uploads[0]['id'],
