@@ -97,9 +97,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 uploads = []
                 for file in req.files.values():
                     
-                    upload.append({
-                                    'id': file.content_disposition,
-                                    'url': None,
+                    uploads.append({
+                                    'url': dir(file),
                                     'type': file.content_type
                                 })
                 '''
