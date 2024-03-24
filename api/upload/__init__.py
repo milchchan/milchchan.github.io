@@ -99,7 +99,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     
                     uploads.append({
                                     'id': file.name,
-                                    'url': file.filename,
+                                    'url': file.filename.decode('utf-8'),
                                     'type': file.content_type
                                 })
                 '''
