@@ -1,4 +1,4 @@
-const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, color: null, blocks: [], dataset: [{ texts: [], images: [] }], index: 0, queue: [], particles: [], cache: [] };
+const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, force: false, color: null, blocks: [], dataset: [{ texts: [], images: [] }], index: 0, queue: [], particles: [], cache: [] };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
 const touches = [];
@@ -597,6 +597,7 @@ window.select = (event) => {
       const index = background.dataset.findIndex(x => "type" in x === false);
 
       if (index >= 0) {
+        background.force = true;
         background.index = index;
         background.updated = -background.timeout;
       } else {
@@ -855,7 +856,7 @@ window.addEventListener("load", async event => {
 
       previousTime = timestamp;
 
-      if (timestamp - background.updated >= background.timeout) {
+      if (timestamp - background.updated >= background.timeout && (background.force || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1))))) {
         for (const block of background.blocks) {
           for (let i = block.inlines.length - 1; i >= 0; i--) {
             if (block.inlines[i].running) {
@@ -865,10 +866,11 @@ window.addEventListener("load", async event => {
         }
 
         background.updated = timestamp;
+        background.force = false;
       }
 
       if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse))/* && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0*/) {
-        let prefix;
+        //let prefix;
 
         background.preloading = true;
         background.image = null;
@@ -889,7 +891,6 @@ window.addEventListener("load", async event => {
             for (let i = item.images.length - 1; i >= 0; i--) {
               if (item.images[i].frames.some(x => x.source.startsWith("gs:"))) {
                 item.images.splice(i, 1);
-                console.log("gs");
               }
             }
           }
@@ -1013,26 +1014,34 @@ window.addEventListener("load", async event => {
           console.error(error);
         }
 
-        try {
-          const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
-            mode: "cors",
-            method: "GET",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
+          for (const item of background.dataset) {
+            if ("type" in item === false && "images" in item) {
+              item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
             }
-          });
-      
-          if (response.ok) {
-            for (const item of background.dataset) {
-              if ("type" in item === false && "images" in item) {
-                item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: response.url }] });
-              }
-            }
-          } else {
-            throw new Error(response.statusText);
           }
-        } catch (error) {
-          console.error(error);
+        } else {
+          try {
+            const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
+              mode: "cors",
+              method: "GET",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            });
+        
+            if (response.ok) {
+              for (const item of background.dataset) {
+                if ("type" in item === false && "images" in item) {
+                  item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: response.url }] });
+                }
+              }
+            } else {
+              throw new Error(response.statusText);
+            }
+          } catch (error) {
+            console.error(error);
+          }
         }
 
         if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
