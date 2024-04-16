@@ -1,4 +1,4 @@
-const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, force: false, color: null, blocks: [], dataset: [{ texts: [], images: [] }], index: 0, queue: [], particles: [], cache: [] };
+const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, force: false, color: null, blocks: [], texts: [], offset: null, images: [], queue: [], particles: [], cache: [] };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
 const touches = [];
@@ -411,7 +411,7 @@ async function resize(blob, length) {
   });
 }
 
-async function upload(files, name = null) {
+async function upload(files) {
   const progress = document.createElement("div");
   const bar = document.createElement("div");
   const completed = [];
@@ -536,11 +536,20 @@ async function upload(files, name = null) {
   return [completed, completed.length === files.length];
 }
 
-window.play = async (event) => {
+window.refresh = (event) => {
+  background.force = true;
+  background.updated = -background.timeout;
+};
+window.select = async (event) => {
   const target = (event.currentTarget || event.target);
 
   if (target.dataset.state === "on") {
-    background.running = true;
+    if (background.offset !== null) {
+      background.offset = null;
+      background.queue.splice(0);
+      background.force = true;
+      background.updated = -background.timeout;
+    }
 
     for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item .button")) {
       if ("state" in element.dataset) {
@@ -554,7 +563,12 @@ window.play = async (event) => {
       }
     }
   } else if (target.dataset.state === "off") {
-    background.running = false;
+    if (background.offset === null) {
+      background.offset = 0;
+      background.queue.splice(0);
+      background.force = true;
+      background.updated = -background.timeout;
+    }
 
     for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item .button")) {
       if ("state" in element.dataset) {
@@ -569,58 +583,13 @@ window.play = async (event) => {
     }
   }
 };
-window.select = (event) => {
-  const target = (event.currentTarget || event.target);
-
-  if ("dataset" in background) {
-    if ("dataset" in target && "type" in target.dataset) {
-      for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
-        if ("type" in element.dataset) {
-          if (element.dataset.type === target.dataset.type) {
-            const index = background.dataset.findIndex(x => x.type === target.dataset.type);
-
-            if (index >= 0) {
-              background.index = index;
-              background.updated = -background.timeout;
-              element.classList.add("is-selected");
-            } else {
-              element.classList.remove("is-selected");
-
-              shake(target.querySelector(":scope .wrap"));
-            }
-          } else {
-            element.classList.remove("is-selected");
-          }
-        }
-      }
-    } else {
-      const index = background.dataset.findIndex(x => "type" in x === false);
-
-      if (index >= 0) {
-        background.force = true;
-        background.index = index;
-        background.updated = -background.timeout;
-      } else {
-        shake(target.querySelector(":scope .wrap"));
-      }
-
-      for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item .button")) {
-        if ("type" in element.dataset) {
-          element.classList.remove("is-selected");
-        }
-      }
-    }
-  } else {
-    shake(target.querySelector(":scope .wrap"));
-  }
-};
 window.upload = async (event) => {
   const target = (event.currentTarget || event.target);
 
   if ("files" in target) {
     target.disabled = true;
 
-    const [stack, completed] = await upload(target.files, "dataset" in background && "name" in background.dataset[background.index] && background.dataset[background.index] !== null ? background.dataset[background.index] : null);
+    const [stack, completed] = await upload(target.files);
 
     if (stack.length > 0) {
       background.queue.splice(0);
@@ -629,7 +598,7 @@ window.upload = async (event) => {
         const [path, contentType] = stack.pop();
 
         if (contentType.startsWith("image/")) {
-          background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: path }] } });
+          background.queue.unshift({ color: "#ffffff", frames: [{ delay: 0, source: path }] });
         }
       } while (stack.length > 0);
 
@@ -669,6 +638,12 @@ window.addEventListener("load", async event => {
 
   document.body.classList.remove("is-preloading");
 
+  logo.addEventListener("mouseenter", e => {
+    background.running = false;
+  });
+  logo.addEventListener("mouseleave", e => {
+    background.running = true;
+  });
   wall.addEventListener("dragenter", e => {
     (e.currentTarget || e.target).classList.add("dragging");
   });
@@ -686,7 +661,7 @@ window.addEventListener("load", async event => {
     target.classList.remove("dragging");
     input.disabled = true;
 
-    const [stack, completed] = await upload(e.dataTransfer.files, "dataset" in background && "name" in background.dataset[background.index] && background.dataset[background.index] !== null ? background.dataset[background.index] : null);
+    const [stack, completed] = await upload(e.dataTransfer.files);
 
     if (stack.length > 0) {
       background.queue.splice(0);
@@ -695,7 +670,7 @@ window.addEventListener("load", async event => {
         const [path, contentType] = stack.pop();
 
         if (contentType.startsWith("image/")) {
-          background.queue.unshift({ index: 0, data: { color: "#ffffff", frames: [{ delay: 0, source: path }] } });
+          background.queue.unshift({ color: "#ffffff", frames: [{ delay: 0, source: path }] });
         }
       } while (stack.length > 0);
 
@@ -880,22 +855,6 @@ window.addEventListener("load", async event => {
         touches.splice(0);
         animationQueue.splice(0);
 
-        for (const item of background.dataset) {
-          /*for (let i = item.texts.length - 1; i >= 0; i--) {
-            if (Array.isArray(item.texts[i])) {
-              item.texts.splice(i, 1);
-            }
-          }*/
-
-          if ("images" in item) {
-            for (let i = item.images.length - 1; i >= 0; i--) {
-              if (item.images[i].frames.some(x => x.source.startsWith("gs:"))) {
-                item.images.splice(i, 1);
-              }
-            }
-          }
-        }
-
         const blind = document.createElement("div");
           
         blind.className = "blind";
@@ -955,56 +914,50 @@ window.addEventListener("load", async event => {
           if (response.ok) {
             const json = await response.json();
 
-            for (const item of background.dataset) {
-              if ("name" in item === false) {
-                for (const like of json) {
-                  if ("attributes" in like) {
-                    let index = 0;
-                    let text = "";
-                    let content = [];
+            for (const like of json) {
+              if ("attributes" in like) {
+                let index = 0;
+                let text = "";
+                let content = [];
 
-                    while (index < like.content.length) {
-                      let maxEnd = index + 1;
-                      let attributes = {};
+                while (index < like.content.length) {
+                  let maxEnd = index + 1;
+                  let attributes = {};
 
-                      for (const attribute of like.attributes) {
-                        if (attribute.start === index) {
-                          if (attribute.end > maxEnd) {
-                            maxEnd = attribute.end;
-                          }
-
-                          if (attribute.end in attributes) {
-                            attributes[attribute.end].push(attribute.name);
-                          } else {
-                            attributes[attribute.end] = [attribute.name];
-                          }
-                        }
+                  for (const attribute of like.attributes) {
+                    if (attribute.start === index) {
+                      if (attribute.end > maxEnd) {
+                        maxEnd = attribute.end;
                       }
 
-                      if (maxEnd in attributes) {
-                        if (text.length > 0) {
-                          content.push(text);
-                        }
-
-                        content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
-                        index = maxEnd
+                      if (attribute.end in attributes) {
+                        attributes[attribute.end].push(attribute.name);
                       } else {
-                        text += like.content[index];
-                        index++;
+                        attributes[attribute.end] = [attribute.name];
                       }
                     }
+                  }
 
+                  if (maxEnd in attributes) {
                     if (text.length > 0) {
                       content.push(text);
                     }
-                    
-                    item.texts.push(like.content);
+
+                    content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
+                    index = maxEnd
                   } else {
-                    item.texts.push(like.content);
+                    text += like.content[index];
+                    index++;
                   }
                 }
 
-                break;
+                if (text.length > 0) {
+                  content.push(text);
+                }
+                
+                background.texts.push(like.content);
+              } else {
+                background.texts.push(like.content);
               }
             }
           } else {
@@ -1015,12 +968,8 @@ window.addEventListener("load", async event => {
         }
 
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
-          for (const item of background.dataset) {
-            if ("type" in item === false && "images" in item) {
-              item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
-            }
-          }
-        } else {
+          background.queue.push({ color: "#ffffff", frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
+        } else if (background.offset === null) {
           try {
             const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
               mode: "cors",
@@ -1031,10 +980,35 @@ window.addEventListener("load", async event => {
             });
         
             if (response.ok) {
-              for (const item of background.dataset) {
-                if ("type" in item === false && "images" in item) {
-                  item.images.push({ color: "#ffffff", frames: [{ delay: 0, source: response.url }] });
-                }
+              background.queue.push({ color: "#ffffff", frames: [{ delay: 0, source: response.url }] });
+            } else {
+              throw new Error(response.statusText);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        } else if (background.queue.length === 0) {
+          try {
+            const limit = 11;
+            const response = await fetch(encodeURI(`https://milchchan.com/api/uploads?offset=${background.offset}&limit=${limit}`), {
+              mode: "cors",
+              method: "GET",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            });
+        
+            if (response.ok) {
+              const json = await response.json();
+
+              for (const item of json) {
+                background.queue.push({ color: "#ffffff", frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${item.id}` }] });
+              }
+
+              if (json.length === limit) {
+                background.offset += 10;
+              } else {
+                background.offset = 0;
               }
             } else {
               throw new Error(response.statusText);
@@ -1044,20 +1018,8 @@ window.addEventListener("load", async event => {
           }
         }
 
-        if ("images" in background.dataset[background.index] && background.dataset[background.index].images.length > 0) {
-          if (background.queue.some(x => x.index !== background.index)) {
-            background.queue.splice(0);
-          }
-
-          if (background.queue.length === 0) {
-            const boundary = background.dataset[background.index].images.reduce((x, y) => y.frames.some(z => z.source.startsWith("gs:")) ? x : x + 1, 0);
-
-            for (const image of background.dataset[background.index].images.length > boundary ? [background.dataset[background.index].images[random(0, boundary)], background.dataset[background.index].images[random(boundary, background.dataset[background.index].images.length)]] : shuffle(background.dataset[background.index].images)) {
-              background.queue.push({ index: background.index, data: image });
-            }
-          }
-
-          const data = background.queue.shift().data;
+        if (background.queue.length > 0) {
+          const data = background.queue.shift();
           const progress = document.createElement("div");
           const bar = document.createElement("div");
           const timeout = 60 * 60;
@@ -1328,14 +1290,14 @@ window.addEventListener("load", async event => {
 
         const maxLines = Math.round(Math.min(window.screen.width, window.screen.height) / Math.ceil(16.0 * 2.0 * 1.5));
         const length = random(Math.floor(maxLines / 2), maxLines);
-        let start = background.dataset[background.index].texts.length - length;
+        let start = background.texts.length - length;
         let samples;
 
         if (start >= 0) {
           start = random(0, start);
-          samples = background.dataset[background.index].texts.slice(start, start + length);
+          samples = background.texts.slice(start, start + length);
         } else {
-          samples = background.dataset[background.index].texts;
+          samples = background.texts;
         }
 
         for (const sample of samples) {
