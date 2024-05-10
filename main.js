@@ -337,6 +337,10 @@ function shuffle(array) {
   return a;
 }
 
+function lerp(a, b, t) {
+  return a + t * (b - a)
+}
+
 function shake(element) {
   element.animate([
     { transform: "translate3d(0, 0, 0)" },
@@ -1588,30 +1592,51 @@ window.addEventListener("load", async event => {
 
       for (let i = pinches.length - 1; i >= 0; i--) {
         if (pinches[i].identifiers.every(x => touches.findIndex(y => x === y.identifier) >= 0)) {
+          const speed = 2.0;
+          const x = pinches[i].center.x + pinches[i].movement.x;
+          const y = pinches[i].center.y + pinches[i].movement.y;
+          const radius = Math.abs(pinches[i].radius);
+                            
+          pinches[i].current.x = lerp(pinches[i].current.x, x, deltaTime * speed);
+          pinches[i].current.y = lerp(pinches[i].current.y, y, deltaTime * speed);
+          pinches[i].current.radius = lerp(pinches[i].current.radius, radius, deltaTime * speed);
+
+          if (Math.round(pinches[i].current.x) === Math.round(x)) {
+            pinches[i].current.x = x;
+          }
+
+          if (Math.round(pinches[i].current.y) === Math.round(y)) {
+            pinches[i].current.y = y;
+          }
+
+          if (Math.round(pinches[i].current.radius) === Math.round(radius)) {
+            pinches[i].current.radius = radius;
+          }
+
           backContext.fillStyle = "#000000";
           backContext.beginPath();
-          backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+          backContext.arc(pinches[i].current.center.x * window.devicePixelRatio, pinches[i].current.center.y * window.devicePixelRatio, pinches[i].current.radius * window.devicePixelRatio, 0, 2 * Math.PI);
           backContext.fill()
           backContext.closePath();
         } else {
           const tension = 50.0;
           const mass = 1.0;
           const friction = 5.0;
-          const displacement = pinches[i].radius;
+          const displacement = pinches[i].current.radius;
           const tensionForce = -tension * displacement;
           const dampingForce = -friction * pinches[i].velocity;
           const acceleration = (tensionForce + dampingForce) / mass;
 
           pinches[i].active = false;
           pinches[i].velocity += acceleration * deltaTime;
-          pinches[i].radius += pinches[i].velocity * deltaTime;
+          pinches[i].current.radius += pinches[i].velocity * deltaTime;
 
           if (Math.abs(pinches[i].velocity) < 0.1) {
             pinches.splice(i, 1);
           } else {
             backContext.fillStyle = "#000000";
             backContext.beginPath();
-            backContext.arc((pinches[i].base.center.x + pinches[i].movement.x) * window.devicePixelRatio, (pinches[i].base.center.y + pinches[i].movement.y) * window.devicePixelRatio, Math.abs(pinches[i].radius) * window.devicePixelRatio, 0, 2 * Math.PI);
+            backContext.arc(pinches[i].current.x * window.devicePixelRatio, pinches[i].current.y * window.devicePixelRatio, Math.abs(pinches[i].current.radius) * window.devicePixelRatio, 0, 2 * Math.PI);
             backContext.fill()
             backContext.closePath();
           }
@@ -1963,7 +1988,7 @@ window.addEventListener("touchstart", event => {
       sum += Math.sqrt((centerX - touch.position.x) * (centerX - touch.position.x) + (centerY - touch.position.y) * (centerY - touch.position.y));
     }
 
-    pinches.push({ active: true, identifiers: identifiers, base: { center: { x: centerX, y: centerY }, radius: sum / touches.length }, movement: { x: 0, y: 0 }, radius: 0, velocity: 0 });
+    pinches.push({ active: true, identifiers: identifiers, center: { x: centerX, y: centerY }, movement: { x: 0, y: 0 }, radius: sum / touches.length, velocity: 0, current: { x: 0, y: 0, radius: 0 } });
   }
 });
 window.addEventListener("touchmove", event => {
@@ -2037,12 +2062,12 @@ window.addEventListener("touchmove", event => {
       movementY /= touches.length;
 
       for (const touch of touches) {
-        sum += Math.sqrt((pinches[index].base.center.x + movementX - touch.position.x) * (pinches[index].base.center.x + movementX - touch.position.x) + (pinches[index].base.center.y + movementY - touch.position.y) * (pinches[index].base.center.y + movementY - touch.position.y));
+        sum += Math.sqrt((pinches[index].center.x + movementX - touch.position.x) * (pinches[index].center.x + movementX - touch.position.x) + (pinches[index].center.y + movementY - touch.position.y) * (pinches[index].center.y + movementY - touch.position.y));
       }
 
       pinches[index].movement.x = movementX;
       pinches[index].movement.y = movementY;
-      pinches[index].radius = Math.max(sum / touches.length - pinches[index].base.radius, 0);
+      pinches[index].radius = sum / touches.length;
     }
   }
 });
