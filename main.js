@@ -2077,10 +2077,18 @@ window.addEventListener("touchend", event => {
   tracker.active = false;
 
   for (const touch of event.changedTouches) {
-    const index = touches.findIndex(x => x.identifier === touch.identifier);
+    let index = touches.findIndex(x => x.identifier === touch.identifier);
 
     if (index >= 0) {
       touches.splice(index, 1);
+    }
+
+    index = pinches.findIndex(x => x.identifiers.some(y => y === touch.identifier));
+
+    if (index >= 0) {
+      for (let i = 0; i < pinches[index].touches.length; i++) {
+        pinches[index].touches[i] = null;
+      }
     }
   }
 });
@@ -2090,10 +2098,18 @@ window.addEventListener("touchcancel", event => {
   tracker.active = false;
 
   for (const touch of event.changedTouches) {
-    const index = touches.findIndex(x => x.identifier === touch.identifier);
+    let index = touches.findIndex(x => x.identifier === touch.identifier);
 
     if (index >= 0) {
       touches.splice(index, 1);
+    }
+
+    index = pinches.findIndex(x => x.identifiers.some(y => y === touch.identifier));
+
+    if (index >= 0) {
+      for (let i = 0; i < pinches[index].touches.length; i++) {
+        pinches[index].touches[i] = null;
+      }
     }
   }
 });
