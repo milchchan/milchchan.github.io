@@ -1599,7 +1599,7 @@ window.addEventListener("load", async event => {
                             
           pinches[i].current.x = lerp(pinches[i].current.x, x, deltaTime * speed);
           pinches[i].current.y = lerp(pinches[i].current.y, y, deltaTime * speed);
-          pinches[i].current.radius = lerp(pinches[i].current.radius, radius, deltaTime * speed);
+          pinches[i].current.radius = lerp(Math.abs(pinches[i].current.radiu), radius, deltaTime * speed);
 
           if (Math.round(pinches[i].current.x) === Math.round(x)) {
             pinches[i].current.x = x;
