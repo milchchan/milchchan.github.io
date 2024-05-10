@@ -1615,7 +1615,7 @@ window.addEventListener("load", async event => {
 
           backContext.fillStyle = "#000000";
           backContext.beginPath();
-          backContext.arc(pinches[i].current.center.x * window.devicePixelRatio, pinches[i].current.center.y * window.devicePixelRatio, pinches[i].current.radius * window.devicePixelRatio, 0, 2 * Math.PI);
+          backContext.arc(pinches[i].center.x * window.devicePixelRatio, pinches[i].center.y * window.devicePixelRatio, pinches[i].current.radius * window.devicePixelRatio, 0, 2 * Math.PI);
           backContext.fill()
           backContext.closePath();
         } else {
