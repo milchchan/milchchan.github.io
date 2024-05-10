@@ -1988,7 +1988,7 @@ window.addEventListener("touchstart", event => {
       sum += Math.sqrt((centerX - touch.position.x) * (centerX - touch.position.x) + (centerY - touch.position.y) * (centerY - touch.position.y));
     }
 
-    pinches.push({ active: true, identifiers: identifiers, center: { x: centerX, y: centerY }, movement: { x: 0, y: 0 }, radius: sum / touches.length, velocity: 0, current: { x: 0, y: 0, radius: 0 } });
+    pinches.push({ active: true, identifiers: identifiers, center: { x: centerX, y: centerY }, movement: { x: 0, y: 0 }, radius: sum / touches.length, velocity: 0, current: { x: centerX, y: centerY, radius: 0 } });
   }
 });
 window.addEventListener("touchmove", event => {
