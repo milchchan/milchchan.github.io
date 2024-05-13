@@ -7,7 +7,7 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        return func.HttpResponse(json.dumps({'timestamp': int(datetime.now(timezone.utc).timestamp.replace(tzinfo=timezone.utc).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
+        return func.HttpResponse(json.dumps({'timestamp': int(datetime.now(timezone.utc).replace(tzinfo=timezone.utc).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
 
     except Exception as e:
         logging.error(f'{e}')
