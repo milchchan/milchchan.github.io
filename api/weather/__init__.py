@@ -26,10 +26,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             'kid': key_id,
             'id': f'{team_id}.{services_id}'
         })
-        request = Request(f'https://weatherkit.apple.com/api/v1/weather/en/{req.route_params.get('latitude')}/{req.route_params.get('longitude')}?dataSets=currentWeather', method='GET', headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'})
-
-        with urlopen(request) as response:
-            return func.HttpResponse(response.read().decode('utf-8'), status_code=200, mimetype='application/json', charset='utf-8')
+        #request = Request(f'https://weatherkit.apple.com/api/v1/weather/en/{req.route_params.get('latitude')}/{req.route_params.get('longitude')}?dataSets=currentWeather', method='GET', headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'})
+        return func.HttpResponse(token, status_code=200, mimetype='application/json', charset='utf-8')
+    
+        #with urlopen(request) as response:
+        #    return func.HttpResponse(response.read().decode('utf-8'), status_code=200, mimetype='application/json', charset='utf-8')
 
     except Exception as e:
         logging.error(f'{e}')
