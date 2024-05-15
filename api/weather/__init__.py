@@ -10,10 +10,10 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        team_id = 'com.milchchan.Weather'#os.environ['WEATHERKIT_TEAM_ID']
-        services_id = 'F9KSLGPDL4'#os.environ['WEATHERKIT_SERVICES_ID']
+        team_id = os.environ['WEATHERKIT_TEAM_ID']
+        services_id = os.environ['WEATHERKIT_SERVICES_ID']
         private_key = "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgq+WcBNbc2LRtcmxw\njBniXBNHA2DV9Mw/+O5EOowRccGhRANCAATJt867R12JT9+4SQvBPB/CuW9ORf24\nVwp0NDb/yk+fgtzQTKbHI3tWiUeINmh7GhX10kNJt6pDzL2hDKwledqP\n-----END PRIVATE KEY-----\n"#os.environ['WEATHERKIT_PRIVATE_KEY']
-        key_id = '5MT3FB7XJP'#os.environ['WEATHERKIT_KEY_ID']
+        key_id = os.environ['WEATHERKIT_KEY_ID']
         now = time.time()
         token = jwt.encode({
             'iss': team_id,
