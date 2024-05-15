@@ -24,7 +24,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'PUT':
             if req.headers.get('Content-Type') == 'text/plain':
-                id = req.route_params.get("id")
+                id = req.route_params.get('id')
                 data = req.get_body().decode('utf-8')
                 Session = sessionmaker(bind=engine)
                 session = Session()
