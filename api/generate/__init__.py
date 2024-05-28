@@ -20,6 +20,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     elif message['role'] == 'assistant':
                         contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
 
+                url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={match.group()[0]}'
+
+
+                return func.HttpResponse(json.dumps({'url': url}), status_code=200, mimetype='application/json', charset='utf-8')
+            
                 request = Request(f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={match.group()[0]}', data=json.dumps({
                     'contents': contents
                 }).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
