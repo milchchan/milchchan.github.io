@@ -20,7 +20,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     elif message['role'] == 'assistant':
                         contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
 
-                request = Request(f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={match.group()[1]}', data=json.dumps({
+                request = Request(f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={match.group()[0]}', data=json.dumps({
                     'contents': contents
                 }).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
 
@@ -30,9 +30,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             if 'text' in part:
                                 match = re.match('```json(.+)```', part['text'], flags=(re.MULTILINE|re.DOTALL))
 
-                                if match:
-                                    return func.HttpResponse(json.dumps(json.loads(match.group(1))), status_code=200, mimetype='application/json', charset='utf-8')                
-
+                                return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=200, mimetype='application/json', charset='utf-8')
+                            
             else:
                 return func.HttpResponse(status_code=401, mimetype='', charset='')
             
