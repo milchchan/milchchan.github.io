@@ -1,3 +1,4 @@
+import re
 import json
 import logging
 from datetime import datetime, timezone
@@ -8,8 +9,17 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'GET' and req.headers.get('Content-Type') == 'application/json':
+            '''
+            match = re.match('Bearer\\s(.+)', req.headers['Authorization'])
+
+            if match:
+                pass
+
+            else:
+                return func.HttpResponse(status_code=401, mimetype='', charset='')
+            '''
             return func.HttpResponse(json.dumps({
-                'authorization': req.headers['Authorization']
+                'authorization': req.headers['Authorization'] if 'Authorization' in req.headers else None
             }), status_code=200, mimetype='application/json', charset='utf-8')
             
             '''
