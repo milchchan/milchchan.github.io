@@ -8,7 +8,7 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        if req.method == 'GET' and req.headers.get('Content-Type') == 'application/json':
+        if req.method == 'GET':# and req.headers.get('Content-Type') == 'application/json':
             '''
             match = re.match('Bearer\\s(.+)', req.headers['Authorization'])
 
