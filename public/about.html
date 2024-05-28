@@ -665,7 +665,7 @@
         </div>
       </div>
       <div class="wrap">
-        <div class="content is-selected" data-type="milch">
+        <div class="content is-selected" data-type="milch" data-prompt="自己紹介してください。お名前、所属、メルクちゃんのことを教えてください。">
           <h1>
             <span class="icon is-animatable">
               <figure>
@@ -698,7 +698,7 @@
             </p>
           </div>
         </div>
-        <div class="content" data-type="merku">
+        <div class="content" data-type="merku" data-prompt="自己紹介してください。お名前、所属、ミルヒちゃんのことを教えてください。">
           <h1>
             <span class="icon is-animatable">
               <figure>
@@ -927,7 +927,7 @@
                                               headers: {
                                                 "Content-Type": "application/json"
                                               },
-                                              body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: "自己紹介"}])
+                                              body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element2.dataset.prompt}])
                                             });
 
                                             if (response2.ok) {
@@ -1065,7 +1065,7 @@
                         headers: {
                           "Content-Type": "application/json"
                         },
-                        body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: "自己紹介"}])
+                        body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element.dataset.prompt}])
                       });
 
                       if (response2.ok) {
