@@ -1950,7 +1950,7 @@ window.addEventListener("wheel", event => {
   }
 }, { passive: false });
 window.addEventListener("dblclick", event => {
-  select(event);
+  refresh(event);
 });
 window.addEventListener("touchstart", event => {
   event.stopPropagation();
