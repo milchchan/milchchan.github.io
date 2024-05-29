@@ -586,7 +586,7 @@ div.sidebar {
             }
 
             >.rotation-outer {
-                display: table;
+                display: inline-flex;
 
                 >div.rotation-inner {
                     padding: 50% 0;
@@ -606,6 +606,14 @@ div.sidebar {
         >.level-item:last-child:not(:first-child) {
             margin: 16px 0px 16px 0px;
             padding: 0;
+
+            >.level>.level-item:last-child {
+                display: flex;
+            }
+
+            >.level>.level-item:last-child:not(:first-child) {
+                margin: 16px 0px 0px 0px;
+            }
 
             .image>button {
                 margin: 0;
