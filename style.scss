@@ -104,7 +104,7 @@ figure {
 }
 
 .is-hidden {
-    display: none;
+    display: none !important;
 }
 
 .is-preloading * {
@@ -607,7 +607,7 @@ div.sidebar {
             margin: 16px 0px 16px 0px;
             padding: 0;
 
-            >.level>.level-item:last-child {
+            >.level>.level-item {
                 display: flex;
             }
 
