@@ -684,6 +684,7 @@ div.remarks {
         background-color: var(--background-color);
         background-clip: padding-box !important;
         backdrop-filter: blur(16px);
+        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
         height: initial;
         backface-visibility: hidden;
         transition: .5s;
@@ -733,6 +734,7 @@ div.center {
         backface-visibility: hidden;
         background-color: var(--background-color);
         backdrop-filter: blur(16px);
+        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
         flex-direction: row;
         align-items: center;
         justify-content: center;
