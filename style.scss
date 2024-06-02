@@ -2,14 +2,14 @@
 @import "@fortawesome/fontawesome-free/css/all.css";
 
 :root {
-    --background-color: #ffffff;
+    --background-color: rgba(255, 255, 255, 0.5);
     --foreground-color: #000000;
     --background-font-family: "Fredoka One", "Dela Gothic One", cursive;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: #000000;
+        --background-color: rgba(0, 0, 0, 0.5);
         --foreground-color: #ffffff;
     }
 }
@@ -681,8 +681,9 @@ div.remarks {
         margin: 0px;
         border: 0px none transparent !important;
         padding: 16px 32px 16px 32px;
-        background: var(--background-color);
+        background-color: var(--background-color);
         background-clip: padding-box !important;
+        backdrop-filter: blur(16px);
         height: initial;
         backface-visibility: hidden;
         transition: .5s;
@@ -719,20 +720,23 @@ div.remarks {
 }
 
 div.center {
-    bottom: 32px;
+    bottom: calc(32px + 16px);
 
     a.button {
         display: flex;
         margin: 0;
-        padding: 0;
+        border-radius: 290486px !important;
+        padding: 8px 16px 8px 16px;
         height: calc(0.75rem * 1.5);
         background-clip: padding-box;
         line-height: calc(0.75rem * 1.5);
         backface-visibility: hidden;
-        background: transparent;
+        background-color: var(--background-color);
+        backdrop-filter: blur(16px);
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
 
         .icon {
             display: flex;
@@ -744,7 +748,7 @@ div.center {
             opacity: 1;
             transition: .5s;
             backface-visibility: hidden;
-            color: #000000;
+            color: var(--foreground-color);
         }
 
         .icon:first-child+div,
@@ -777,7 +781,7 @@ div.center {
         text-transform: uppercase;
         line-height: 0.75rem !important;
         height: calc(0.75rem * 1.5);
-        color: #000000;
+        color: var(--foreground-color);
         transition: .5s;
     }
 }
