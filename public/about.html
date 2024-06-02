@@ -490,8 +490,18 @@
         justify-content: center;
       }
 
-      .icon>figure {
+      .icon figure {
         margin: 0;
+      }
+
+      .button>figure {
+        opacity: 1;
+        transition: .5s;
+      }
+
+      .button:hover>figure {
+        opacity: 0.5;
+        transition: .5s;
       }
 
       .icon figure>picture {
@@ -508,7 +518,7 @@
         right: 0px;
       }
 
-      .icon.is-animatable>figure {
+      .icon.is-animatable figure {
         display: flex;
         justify-content: flex-start;
         align-items: flex-start;
@@ -517,14 +527,14 @@
         height: 32px;
       }
 
-      .icon.is-animatable>figure>picture {
+      .icon.is-animatable figure>picture {
         margin-left: 0%;
         width: auto;
         height: 100%;
         animation: frame 1.33s steps(4) infinite forwards;
       }
 
-      .icon.is-animatable>figure>picture>img {
+      .icon.is-animatable figure>picture>img {
         object-fit: none;
         object-position: 0% 0%;
         width: 100%;
@@ -718,12 +728,14 @@
       <div class="wrap">
         <div class="content is-selected" data-type="milch" data-prompt="自己紹介してください。お名前、所属、メルクちゃんのことを教えてください。">
           <div class="icon is-animatable">
-            <figure>
-              <picture>
-                <!--<source srcset="images/PixelatedLuna-Transformed.png 1x, images/PixelatedLuna-Transformed@2x.png 2x, images/PixelatedLuna-Transformed@3x.png 3x" media="(prefers-color-scheme: dark)">-->
-                <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMilch-Transformed.png 1x, images/PixelatedMilch-Transformed@2x.png 2x, images/PixelatedMilch-Transformed@3x.png 3x" alt="Milch">
-              </picture>
-            </figure>
+            <a class="button" href="https://clock.milchchan.com/" title="Clock">
+              <figure>
+                <picture>
+                  <!--<source srcset="images/PixelatedLuna-Transformed.png 1x, images/PixelatedLuna-Transformed@2x.png 2x, images/PixelatedLuna-Transformed@3x.png 3x" media="(prefers-color-scheme: dark)">-->
+                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMilch-Transformed.png 1x, images/PixelatedMilch-Transformed@2x.png 2x, images/PixelatedMilch-Transformed@3x.png 3x" alt="Milch">
+                </picture>
+              </figure>
+            </a>
           </div>
           <h1>
             <span class="reveal">Milch</span>
@@ -751,11 +763,13 @@
         </div>
         <div class="content" data-type="merku" data-prompt="自己紹介してください。お名前、所属、ミルヒちゃんのことを教えてください。">
           <div class="icon is-animatable">
-            <figure>
-              <picture>
-                <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMerku-Transformed.png 1x, images/PixelatedMerku-Transformed@2x.png 2x, images/PixelatedMerku-Transformed@3x.png 3x" alt="Merku">
-              </picture>
-            </figure>
+            <a class="button" href="https://clock.milchchan.com/" title="Clock">
+              <figure>
+                <picture>
+                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMerku-Transformed.png 1x, images/PixelatedMerku-Transformed@2x.png 2x, images/PixelatedMerku-Transformed@3x.png 3x" alt="Merku">
+                </picture>
+              </figure>
+            </a>
           </div>
           <h1>
             <span class="reveal">Merku</span>
