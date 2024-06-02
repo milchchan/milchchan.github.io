@@ -720,7 +720,7 @@
               <span class="reveal">お友達のミルヒちゃんのことが大好き。</span>
             </p>
             <p>
-              <span class="reveal">ミルヒちゃんのことが大好きすぎて、暴走しちゃいがち。</span>
+              <span class="reveal">ミルヒちゃんのことが大好きすぎて、ミルヒちゃんのことになると暴走しちゃいがち。</span>
             </p>
             <p>
               <span class="reveal">つくった魔法少女の衣装をミルヒちゃんに着せてあげて、いっしょに魔法少女を始めた。</span>
@@ -932,7 +932,11 @@
 
                                             if (response2.ok) {
                                               resolve((await response2.json()).content);
+                                            } else {
+                                              throw new Error(response2.statusText);
                                             }
+                                          } else {
+                                            throw new Error(response1.statusText);
                                           }
                                         } catch (error) {
                                           reject(error);
