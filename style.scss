@@ -629,10 +629,10 @@ div.center {
     -webkit-user-select: none;
     user-select: none;
     position: absolute;
-    bottom: 50%;
+    bottom: 0%;
     left: 50%;
     padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-    transform: translate(-50%, 50%);
+    transform: translate(-50%, 100%);
     width: fit-content;
     height: fit-content;
 }
@@ -719,6 +719,70 @@ div.remarks {
         height: 24px;
         align-items: center;
         justify-content: center;
+    }
+}
+
+div.center {
+    bottom: 32px;
+
+    a.button {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        height: calc(0.75rem * 1.5);
+        background-clip: padding-box;
+        line-height: calc(0.75rem * 1.5);
+        backface-visibility: hidden;
+        background: transparent;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        .icon {
+            display: flex;
+            margin: 0;
+            width: 16px;
+            height: 16px;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: .5s;
+            backface-visibility: hidden;
+            color: #000000;
+        }
+
+        .icon:first-child+div,
+        .icon:not(:first-of-type) {
+            margin: 0px 0px 0px 8px;
+        }
+    }
+
+    a.button:hover .icon {
+        opacity: 0.5;
+        transition: .5s;
+    }
+
+    a.button .clip {
+        overflow: hidden;
+        box-sizing: content-box;
+        height: calc(0.75rem * 1.5);
+    }
+
+    a.button .clip>.scrollable>div {
+        -webkit-user-select: none;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        vertical-align: baseline;
+        font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        line-height: 0.75rem !important;
+        height: calc(0.75rem * 1.5);
+        color: #000000;
+        transition: .5s;
     }
 }
 
