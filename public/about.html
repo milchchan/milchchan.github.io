@@ -86,10 +86,14 @@
         padding: 0;
         color: var(--foreground-color) !important;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
-        font-size: 1.0rem;
+        font-size: 0.75rem;
         font-weight: bold;
-        line-height: 1.0rem;
+        line-height: 0.75rem;
         text-transform: uppercase;
+      }
+
+      h1+h2 {
+        margin: 8px 0px 0px 0px;
       }
 
       p+h2 {
@@ -267,6 +271,7 @@
         position: absolute;
         margin: 0;
         padding: 0px 0px 16px 0px;
+        width: 100%;
         transition: padding 0.5s;
       }
 
@@ -497,6 +502,11 @@
       .icon:not(:first-of-type) {
         margin: 0px 0px 0px 16px;
       }
+      
+      .icon.is-animatable {
+        position: absolute;
+        right: 0px;
+      }
 
       .icon.is-animatable>figure {
         display: flex;
@@ -687,40 +697,14 @@
                 <div class="rotation-outer">
                   <div class="rotation-inner">
                     <div class="rotate">
-                      <a class="button" href="https://clock.milchchan.com/" title="Clock">
+                      <a class="button" href="/privacy" title="Privacy Policy">
                         <div class="wrap has-text-weight-bold is-uppercase">
                           <div class="clip">
                             <div class="scrollable">
-                              <div>Clock</div>
-                              <div>Clock</div>
+                              <div>Privacy</div>
+                              <div>Privacy</div>
                             </div>
                           </div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="level-item">
-                <div class="separator">
-                  <hr>
-                </div>
-              </div>
-              <div class="level-item">
-                <div class="rotation-outer">
-                  <div class="rotation-inner">
-                    <div class="rotate">
-                      <a class="button" href="https://apps.apple.com/jp/app/apricot/id6476104729" target="_blank" title="Apricot">
-                        <div class="wrap has-text-weight-bold is-uppercase">
-                          <div class="clip">
-                            <div class="scrollable">
-                              <div>Apricot</div>
-                              <div>Apricot</div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="icon" onselectstart="return false;" onmousedown="return false;">
-                          <i class="fa-solid fa-up-right-from-square fa-xs"></i>
                         </div>
                       </a>
                     </div>
@@ -733,20 +717,20 @@
       </div>
       <div class="wrap">
         <div class="content is-selected" data-type="milch" data-prompt="自己紹介してください。お名前、所属、メルクちゃんのことを教えてください。">
+          <div class="icon is-animatable">
+            <figure>
+              <picture>
+                <!--<source srcset="images/PixelatedLuna-Transformed.png 1x, images/PixelatedLuna-Transformed@2x.png 2x, images/PixelatedLuna-Transformed@3x.png 3x" media="(prefers-color-scheme: dark)">-->
+                <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMilch-Transformed.png 1x, images/PixelatedMilch-Transformed@2x.png 2x, images/PixelatedMilch-Transformed@3x.png 3x" alt="Milch">
+              </picture>
+            </figure>
+          </div>
           <h1>
-            <span class="icon is-animatable">
-              <figure>
-                <picture>
-                  <!--<source srcset="images/PixelatedLuna-Transformed.png 1x, images/PixelatedLuna-Transformed@2x.png 2x, images/PixelatedLuna-Transformed@3x.png 3x" media="(prefers-color-scheme: dark)">-->
-                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMilch-Transformed.png 1x, images/PixelatedMilch-Transformed@2x.png 2x, images/PixelatedMilch-Transformed@3x.png 3x" alt="Milch">
-                </picture>
-              </figure>
-            </span>
             <span class="reveal">Milch</span>
           </h1>
-          <p>
+          <h2>
             <span class="reveal has-text-weight-bold">ミルヒちゃん</span>
-          </p>
+          </h2>
           <div>
             <p>
               <span class="reveal">天真爛漫で魔法少女のことが好きな小学5年生の女の子。</span>
@@ -766,19 +750,19 @@
           </div>
         </div>
         <div class="content" data-type="merku" data-prompt="自己紹介してください。お名前、所属、ミルヒちゃんのことを教えてください。">
+          <div class="icon is-animatable">
+            <figure>
+              <picture>
+                <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMerku-Transformed.png 1x, images/PixelatedMerku-Transformed@2x.png 2x, images/PixelatedMerku-Transformed@3x.png 3x" alt="Merku">
+              </picture>
+            </figure>
+          </div>
           <h1>
-            <span class="icon is-animatable">
-              <figure>
-                <picture>
-                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMerku-Transformed.png 1x, images/PixelatedMerku-Transformed@2x.png 2x, images/PixelatedMerku-Transformed@3x.png 3x" alt="Merku">
-                </picture>
-              </figure>
-            </span>
             <span class="reveal">Merku</span>
           </h1>
-          <p>
+          <h2>
             <span class="reveal has-text-weight-bold">メルクちゃん</span>
-          </p>
+          </h2>
           <div>
             <p>
               <span class="reveal">おっとりしていてお金持ちの小学5年生の女の子。</span>
