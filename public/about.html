@@ -25,6 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
     <style media="screen">
       :root {
         --background-color: #ffffff;
@@ -319,8 +320,7 @@
         position: fixed;
         left: 0px;
         padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
-        width: fit-content;
-        height: fit-content;
+        height: calc(100% - 32px);
         background: transparent;
         transition: 0.5s;
       }
@@ -371,12 +371,26 @@
         margin: 0;
         padding: 0;
         width: 48px;
+        height: 100%;
         flex-direction: column;
         align-items: flex-start;
-        justify-content: flex-start;
+        justify-content: space-between;
       }
 
-      div.sidebar>.level>.level-item {
+      div.sidebar>.level>.level-item>.level {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      div.sidebar>.level>.level-item>.level>.level-item .icon {
+        transform: rotate(90deg);
+      }
+
+      div.sidebar .level>.level-item {
         margin: 0;
         padding: 0;
       }
@@ -578,6 +592,7 @@
 
         div.sidebar {
           left: 16px;
+          height: calc(100% - 64px);
           transition: 0.5s;
         }
       }
@@ -593,73 +608,125 @@
       <div class="sidebar">
         <div class="level">
           <div class="level-item">
-            <div class="rotation-outer">
-              <div class="rotation-inner">
-                <div class="rotate">
-                  <a class="button" href="https://milchchan.com/" title="milchchan.com">
-                    <div class="stack">
-                      <div class="wrap has-text-weight-bold is-uppercase">
-                        <div class="clip">
-                          <div class="scrollable">
-                            <div>milchchan.com</div>
-                            <div>milchchan.com</div>
+            <div class="level">
+              <div class="level-item">
+                <div class="rotation-outer">
+                  <div class="rotation-inner">
+                    <div class="rotate">
+                      <a class="button" href="https://milchchan.com/" title="milchchan.com">
+                        <div class="stack">
+                          <div class="wrap has-text-weight-bold is-uppercase">
+                            <div class="clip">
+                              <div class="scrollable">
+                                <div>milchchan.com</div>
+                                <div>milchchan.com</div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     </div>
-                  </a>
+                  </div>
+                </div>
+              </div>
+              <div class="level-item">
+                <div class="separator">
+                  <hr>
+                </div>
+              </div>
+              <div class="level-item">
+                <div class="rotation-outer">
+                <div class="rotation-inner">
+                    <div class="rotate">
+                    <button class="button is-selected" type="button" onclick="select(event);" data-type="milch">
+                        <div class="stack">
+                        <div class="wrap has-text-weight-bold is-uppercase">
+                            <div class="clip">
+                            <div class="scrollable">
+                                <div>Milch</div>
+                                <div>Milch</div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </button>
+                    </div>
+                </div>
+                </div>
+              </div>
+              <div class="level-item">
+                <div class="separator">
+                  <hr>
+                </div>
+              </div>
+              <div class="level-item">
+                <div class="rotation-outer">
+                <div class="rotation-inner">
+                    <div class="rotate">
+                    <button class="button" type="button" onclick="select(event);" data-type="merku">
+                        <div class="stack">
+                        <div class="wrap has-text-weight-bold is-uppercase">
+                            <div class="clip">
+                            <div class="scrollable">
+                                <div>Merku</div>
+                                <div>Merku</div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </button>
+                    </div>
+                </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="level-item">
-            <div class="separator">
-              <hr>
-            </div>
-          </div>
-          <div class="level-item">
-            <div class="rotation-outer">
-            <div class="rotation-inner">
-                <div class="rotate">
-                <button class="button is-selected" type="button" onclick="select(event);" data-type="milch">
-                    <div class="stack">
-                    <div class="wrap has-text-weight-bold is-uppercase">
-                        <div class="clip">
-                        <div class="scrollable">
-                            <div>Milch</div>
-                            <div>Milch</div>
+            <div class="level">
+              <div class="level-item">
+                <div class="rotation-outer">
+                  <div class="rotation-inner">
+                    <div class="rotate">
+                      <a class="button" href="https://clock.milchchan.com/" title="Clock">
+                        <div class="wrap has-text-weight-bold is-uppercase">
+                          <div class="clip">
+                            <div class="scrollable">
+                              <div>Clock</div>
+                              <div>Clock</div>
+                            </div>
+                          </div>
                         </div>
-                        </div>
+                      </a>
                     </div>
-                    </div>
-                </button>
+                  </div>
                 </div>
-            </div>
-            </div>
-          </div>
-          <div class="level-item">
-            <div class="separator">
-              <hr>
-            </div>
-          </div>
-          <div class="level-item">
-            <div class="rotation-outer">
-            <div class="rotation-inner">
-                <div class="rotate">
-                <button class="button" type="button" onclick="select(event);" data-type="merku">
-                    <div class="stack">
-                    <div class="wrap has-text-weight-bold is-uppercase">
-                        <div class="clip">
-                        <div class="scrollable">
-                            <div>Merku</div>
-                            <div>Merku</div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </button>
+              </div>
+              <div class="level-item">
+                <div class="separator">
+                  <hr>
                 </div>
-            </div>
+              </div>
+              <div class="level-item">
+                <div class="rotation-outer">
+                  <div class="rotation-inner">
+                    <div class="rotate">
+                      <a class="button" href="https://apps.apple.com/jp/app/apricot/id6476104729" target="_blank" title="Apricot">
+                        <div class="wrap has-text-weight-bold is-uppercase">
+                          <div class="clip">
+                            <div class="scrollable">
+                              <div>Apricot</div>
+                              <div>Apricot</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="icon" onselectstart="return false;" onmousedown="return false;">
+                          <i class="fa-solid fa-up-right-from-square fa-xs"></i>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
