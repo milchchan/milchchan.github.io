@@ -803,6 +803,8 @@
       </div>
     </div>
     <script type="text/javascript">
+      const hash = decodeURIComponent(window.location.hash.substring(1));
+
       async function resize(blob, length) {
         return await new Promise(async (resolve, reject) => {
           const reader = new FileReader();
@@ -954,6 +956,33 @@
         };
       }
 
+      if (hash.length > 0) {
+        for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
+          if(hash === element.dataset.type) {
+            if (!element.classList.contains("is-selected")) {
+              element.classList.add("is-selected");
+            }
+          } else if (element.classList.contains("is-selected")) {
+            element.classList.remove("is-selected");
+          }
+        }
+
+        for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+          if(hash === element.dataset.type) {
+            if (!element.classList.contains("is-selected")) {
+              element.classList.add("is-selected");
+            }
+          } else {
+            if (element.classList.contains("is-selected")) {
+              element.classList.remove("is-selected");
+            }
+
+            element.style.display = "none";
+            element.style.opacity = 0;
+          }
+        }
+      }
+
       window.select = (event) => {
         const target = (event.currentTarget || event.target);
 
@@ -1078,139 +1107,105 @@
         }
       };
       window.addEventListener("load", async (event) => {
-        const load = async (element) => {
-          const background = document.createElement("div");
+        for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+          if (element.classList.contains("is-selected")) {
+            const background = document.createElement("div");
 
-          background.className = "background";
-          background.style.opacity = 0;
-          background.style.transform = "scale3d(1.1, 1.1, 1.1)";
-          
-          document.body.querySelector(".wrap>.frame").prepend(background);
+            background.className = "background";
+            background.style.opacity = 0;
+            background.style.transform = "scale3d(1.1, 1.1, 1.1)";
+            
+            document.body.querySelector(".wrap>.frame").prepend(background);
 
-          try {
-              const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element.dataset.type}-dark-background-image` : `--${element.dataset.type}-light-background-image`));
+            new Promise(async (resolve, reject) => {
+              try {
+                  const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element.dataset.type}-dark-background-image` : `--${element.dataset.type}-light-background-image`));
 
-              if (response.ok) {
-                  background.style.backgroundImage = `url('${await new Promise(
-                  async (resolve, reject) => {
-                      const reader = new FileReader();
+                  if (response.ok) {
+                      background.style.backgroundImage = `url('${await new Promise(
+                      async (resolve, reject) => {
+                          const reader = new FileReader();
 
-                      reader.onload = () => {
-                          resolve(reader.result);
-                      };
-                      reader.onerror = () => {
-                          reject(reader.error);
-                      };
-                      reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
+                          reader.onload = () => {
+                              resolve(reader.result);
+                          };
+                          reader.onerror = () => {
+                              reject(reader.error);
+                          };
+                          reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
+                      }
+                      )}')`;
                   }
-                  )}')`;
+              } catch (error) {
+                  console.error(error);
               }
-          } catch (error) {
-              console.error(error);
-          }
-          
-          background.animate([
-            {
-              opacity: 1,
-              transform: "scale3d(1.0, 1.0, 1.0)",
-            },
-          ], {
-              delay: 0,
-              fill: "forwards",
-              duration: 500,
-              iterations: 1,
-              easing: "ease-out",
-          }).onfinish = () => {
-              background.style.opacity = 1;
-              background.style.transform = "scale3d(1.0, 1.0, 1.0)";
-          };
+              
+              background.animate([
+                {
+                  opacity: 1,
+                  transform: "scale3d(1.0, 1.0, 1.0)",
+                },
+              ], {
+                  delay: 0,
+                  fill: "forwards",
+                  duration: 500,
+                  iterations: 1,
+                  easing: "ease-out",
+              }).onfinish = () => {
+                  background.style.opacity = 1;
+                  background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+              };
 
-          element.dataset["generated"] = false;
+              element.dataset["generated"] = false;
+              
+              try {
+                const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
 
-          new Promise(async (resolve, reject) => {
-            try {
-              const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
+                if (response1.ok) {
+                  const response2 = await fetch(encodeURI("https://milchchan.com/api/generate"), {
+                    mode: "cors",
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element.dataset.prompt}])
+                  });
 
-              if (response1.ok) {
-                const response2 = await fetch(encodeURI("https://milchchan.com/api/generate"), {
-                  mode: "cors",
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json"
-                  },
-                  body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element.dataset.prompt}])
-                });
-
-                if (response2.ok) {
-                  resolve((await response2.json()).content);
+                  if (response2.ok) {
+                    resolve((await response2.json()).content);
+                  } else {
+                    throw new Error(response2.statusText);
+                  }
                 } else {
-                  throw new Error(response2.statusText);
+                  throw new Error(response1.statusText);
                 }
-              } else {
-                throw new Error(response1.statusText);
+              } catch (error) {
+                reject(error);
               }
-            } catch (error) {
-              reject(error);
-            }
-          }).then((data) => {
-            const div = element.querySelector(":scope>div:last-of-type");
+            }).then((data) => {
+              const div = element.querySelector(":scope>div:last-of-type");
 
-            if (div !== null) {
-              const p = document.createElement("p");
-              const span = document.createElement("span");
+              if (div !== null) {
+                const p = document.createElement("p");
+                const span = document.createElement("span");
 
-              span.classList.add("reveal")
-              span.classList.add("is-italic")
-              span.textContent = data;
+                span.classList.add("reveal")
+                span.classList.add("is-italic")
+                span.textContent = data;
 
-              p.appendChild(span);
-              div.appendChild(p);
-            }
-
-            element.dataset["generated"] = true;
-          }).catch((error) => {
-            delete element.dataset["generated"];
-
-            console.error(error);
-          });
-        }
-        let hash = decodeURIComponent(window.location.hash.substring(1));
-
-        if (hash.length > 0) {
-          for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
-            if(hash === element.dataset.type) {
-              if (!element.classList.contains("is-selected")) {
-                element.classList.add("is-selected");
-              }
-            } else if (element.classList.contains("is-selected")) {
-              element.classList.remove("is-selected");
-            }
-          }
-
-          for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-            if(hash === element.dataset.type) {
-              if (!element.classList.contains("is-selected")) {
-                element.classList.add("is-selected");
+                p.appendChild(span);
+                div.appendChild(p);
               }
 
-              load(element);
-            } else {
-              if (element.classList.contains("is-selected")) {
-                element.classList.remove("is-selected");
-              }
+              element.dataset["generated"] = true;
+            }).catch((error) => {
+              delete element.dataset["generated"];
 
-              element.style.display = "none";
-              element.style.opacity = 0;
-            }
-          }
-        } else {
-          for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-              if (element.classList.contains("is-selected")) {
-                  load(element);
-              } else {
-                  element.style.display = "none";
-                  element.style.opacity = 0;
-              }
+              console.error(error);
+            });
+          } else {
+            element.style.display = "none";
+            element.style.opacity = 0;
           }
         }
       });
