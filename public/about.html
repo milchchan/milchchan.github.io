@@ -341,7 +341,7 @@
 
       div.sidebar .separator>hr {
         border-width: 0;
-        margin: 32px 0px 32px 0px;
+        margin: 0;
         padding: 0;
         width: 16px;
         height: 1px;
@@ -384,11 +384,16 @@
 
       div.sidebar>.level>.level-item>.level {
         display: flex;
-        margin: 0;
+        margin: -16px;
         padding: 0;
         flex-direction: column;
         align-items: flex-start;
         justify-content: space-between;
+      }
+
+      div.sidebar>.level>.level-item>.level>.level-item {
+        margin: 0;
+        padding: 16px;
       }
 
       div.sidebar>.level>.level-item>.level>.level-item .icon {
