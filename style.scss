@@ -111,12 +111,16 @@ figure {
     transition: none !important;
 }
 
-.has-text-weight-bold {
-    font-weight: bold;
+.is-rotate {
+    transform: rotate(90deg);
 }
 
 .is-uppercase {
     text-transform: uppercase;
+}
+
+.has-text-weight-bold {
+    font-weight: bold;
 }
 
 .progress {
@@ -371,233 +375,239 @@ div.sidebar {
             }
         }
 
-        >.level-item>.level>.level-item {
-            >.separator {
-                display: flex;
-                flex-direction: row;
-                align-items: flex-start;
-                justify-content: center;
-                width: 48px;
-                height: fit-content;
+        >.level-item>.level {
+            margin: -16px;
 
-                >hr {
-                    border-width: 0;
-                    margin: 32px 0px 32px 0px;
-                    padding: 0;
-                    width: 16px;
-                    height: 1px;
-                    background-color: #000000;
-                    text-align: center !important;
-                }
-            }
-
-            .button {
-                display: flex;
-                align-items: center;
+            >.level-item {
                 margin: 0;
-                padding: 0;
-                border: 0px solid transparent;
-                background: transparent;
-                background-clip: padding-box;
-                line-height: calc(0.75rem * 1.5);
-                backface-visibility: hidden;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                width: fit-content;
-                height: 48px;
-                cursor: pointer;
+                padding: 16px;
 
-                .clip {
-                    position: relative;
+                >.separator {
                     display: flex;
-                    overflow: hidden;
-                    box-sizing: content-box;
-                    height: calc(0.75rem * 1.5);
-                    transform: translate(0px, -1px);
-                    box-sizing: border-box;
-
-                    .scrollable {
-                        display: flex;
-                        flex-direction: row;
-                        align-items: center;
-                        justify-content: flex-start;
-                        margin: 0px -4px 0px -4px !important;
-
-                        div {
-                            display: flex;
-                            align-items: center;
-                            margin: 0px 4px 0px 4px !important;
-                            font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
-                            font-size: 0.75rem !important;
-                            transform: rotate(0.03deg) !important;
-                            line-height: 0.75rem !important;
-                            height: calc(0.75rem * 1.5);
-                            vertical-align: middle;
-                        }
-
-                        div:last-child:not(:first-child) {
-                            position: absolute;
-                            left: 100%;
-                        }
-                    }
-                }
-
-                .wrap {
-                    position: relative;
-                    display: flex;
-                    margin: 0;
-                    border-top: 2px solid transparent;
-                    border-bottom: 2px solid transparent;
-                    color: #000000;
-                    width: fit-content;
+                    flex-direction: row;
+                    align-items: flex-start;
+                    justify-content: center;
+                    width: 48px;
                     height: fit-content;
-                    min-height: fit-content;
-                    box-sizing: border-box;
-                    overflow: hidden;
-                    justify-content: flex-start;
-                    align-items: center;
-                    transform: translate3d(0, 0, 0);
-                    transition: .5s;
 
-                    svg g>path {
-                        fill: #000000;
-                        fill-opacity: 0;
-                        stroke: #000000;
-                        stroke-opacity: 1;
-                        stroke-width: 1;
-                        stroke-dasharray: 250;
-                        stroke-dashoffset: 250;
-                        animation: draw 1s linear forwards;
-                        animation-play-state: paused;
-                        opacity: 1;
-                        transition: .5s;
+                    >hr {
+                        border-width: 0;
+                        margin: 0;
+                        padding: 0;
+                        width: 16px;
+                        height: 1px;
+                        background-color: #000000;
+                        text-align: center !important;
                     }
                 }
 
-                .icon {
+                .button {
                     display: flex;
+                    align-items: center;
                     margin: 0;
                     padding: 0;
-                    color: #000000;
-                    width: fit-content;
-                    height: fit-content;
-                    transform: rotate(90deg);
-                    transition: .5s;
-                    line-height: 0;
+                    border: 0px solid transparent;
+                    background: transparent;
+                    background-clip: padding-box;
+                    line-height: calc(0.75rem * 1.5);
+                    backface-visibility: hidden;
+                    flex-direction: row;
                     align-items: center;
                     justify-content: center;
+                    width: fit-content;
+                    height: 48px;
+                    cursor: pointer;
 
-                    figure>picture {
-                        display: block;
+                    .clip {
+                        position: relative;
+                        display: flex;
+                        overflow: hidden;
+                        box-sizing: content-box;
+                        height: calc(0.75rem * 1.5);
+                        transform: translate(0px, -1px);
+                        box-sizing: border-box;
+
+                        .scrollable {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: flex-start;
+                            margin: 0px -4px 0px -4px !important;
+
+                            div {
+                                display: flex;
+                                align-items: center;
+                                margin: 0px 4px 0px 4px !important;
+                                font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                font-size: 0.75rem !important;
+                                transform: rotate(0.03deg) !important;
+                                line-height: 0.75rem !important;
+                                height: calc(0.75rem * 1.5);
+                                vertical-align: middle;
+                            }
+
+                            div:last-child:not(:first-child) {
+                                position: absolute;
+                                left: 100%;
+                            }
+                        }
+                    }
+
+                    .wrap {
+                        position: relative;
+                        display: flex;
+                        margin: 0;
+                        border-top: 2px solid transparent;
+                        border-bottom: 2px solid transparent;
+                        color: #000000;
+                        width: fit-content;
+                        height: fit-content;
+                        min-height: fit-content;
+                        box-sizing: border-box;
+                        overflow: hidden;
+                        justify-content: flex-start;
+                        align-items: center;
+                        transform: translate3d(0, 0, 0);
+                        transition: .5s;
+
+                        svg g>path {
+                            fill: #000000;
+                            fill-opacity: 0;
+                            stroke: #000000;
+                            stroke-opacity: 1;
+                            stroke-width: 1;
+                            stroke-dasharray: 250;
+                            stroke-dashoffset: 250;
+                            animation: draw 1s linear forwards;
+                            animation-play-state: paused;
+                            opacity: 1;
+                            transition: .5s;
+                        }
+                    }
+
+                    .icon {
+                        display: flex;
+                        margin: 0;
+                        padding: 0;
+                        color: #000000;
+                        width: fit-content;
+                        height: fit-content;
+                        transition: .5s;
+                        line-height: 0;
+                        align-items: center;
+                        justify-content: center;
+
+                        figure>picture {
+                            display: block;
+                        }
+                    }
+
+                    .icon:first-child+div,
+                    .icon:not(:first-of-type) {
+                        margin: 0px 0px 0px 8px;
+                    }
+
+                    .icon.is-animatable>figure {
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: flex-start;
+                        overflow: hidden;
+                        width: 32px;
+                        height: 32px;
+
+                        >picture {
+                            margin-left: 0%;
+                            width: auto;
+                            height: 100%;
+
+                            >img {
+                                object-fit: none;
+                                object-position: 0% 0%;
+                                width: 100%;
+                                height: 100%;
+                            }
+                        }
+                    }
+
+                    .icon:not(.is-animatable) figure>picture>img {
+                        transform-origin: 50% 50%;
+                        transform: scale3d(1, 1, 1);
+                        transition: .5s ease-out;
+                    }
+
+                    .stack .icon {
+                        position: absolute;
+                        margin: 0% 0px 0px 50% !important;
+                        transform-origin: 50% 50%;
+                        transform: translate3d(-50%, 8px, 0) rotate(90deg);
                     }
                 }
 
-                .icon:first-child+div,
-                .icon:not(:first-of-type) {
-                    margin: 0px 0px 0px 16px;
-                }
+                .button:hover {
+                    .icon:not(.is-animatable) figure>picture>img {
+                        transform: scale3d(1.1, 1.1, 1);
+                        transition: .5s ease-in;
+                    }
 
-                .icon.is-animatable>figure {
-                    display: flex;
-                    justify-content: flex-start;
-                    align-items: flex-start;
-                    overflow: hidden;
-                    width: 32px;
-                    height: 32px;
+                    .wrap svg {
+                        g:nth-child(odd)>path {
+                            fill: #ffc7e5;
+                            stroke: #ffc7e5;
+                            transition: .5s;
+                        }
 
-                    >picture {
-                        margin-left: 0%;
-                        width: auto;
-                        height: 100%;
-
-                        >img {
-                            object-fit: none;
-                            object-position: 0% 0%;
-                            width: 100%;
-                            height: 100%;
+                        g:nth-child(even)>path {
+                            fill: #00e7ff;
+                            stroke: #00e7ff;
+                            transition: .5s;
                         }
                     }
                 }
 
-                .icon:not(.is-animatable) figure>picture>img {
-                    transform-origin: 50% 50%;
-                    transform: scale3d(1, 1, 1);
-                    transition: .5s ease-out;
-                }
-
-                .stack .icon {
-                    position: absolute;
-                    margin: 0% 0px 0px 50% !important;
-                    transform-origin: 50% 50%;
-                    transform: translate3d(-50%, 8px, 0) rotate(90deg);
-                }
-            }
-
-            .button:hover {
-                .icon:not(.is-animatable) figure>picture>img {
-                    transform: scale3d(1.1, 1.1, 1);
+                .button.is-selected .wrap {
+                    border-bottom: 2px solid #000000;
                     transition: .5s ease-in;
                 }
 
-                .wrap svg {
-                    g:nth-child(odd)>path {
-                        fill: #ffc7e5;
-                        stroke: #ffc7e5;
-                        transition: .5s;
-                    }
-
-                    g:nth-child(even)>path {
-                        fill: #00e7ff;
-                        stroke: #00e7ff;
-                        transition: .5s;
+                .button:hover,
+                .button.is-selected {
+                    .icon.is-animatable>figure>picture {
+                        animation: frame 1.33s steps(4) infinite forwards;
                     }
                 }
-            }
 
-            .button.is-selected .wrap {
-                border-bottom: 2px solid #000000;
-                transition: .5s ease-in;
-            }
+                label.button {
+                    >input {
+                        pointer-events: none;
+                        left: 0;
+                        top: 0;
+                        opacity: 0;
+                        outline: none;
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                    }
 
-            .button:hover,
-            .button.is-selected {
-                .icon.is-animatable>figure>picture {
-                    animation: frame 1.33s steps(4) infinite forwards;
-                }
-            }
-
-            label.button {
-                >input {
-                    pointer-events: none;
-                    left: 0;
-                    top: 0;
-                    opacity: 0;
-                    outline: none;
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
+                    >input:disabled+.icon {
+                        opacity: 0.5 !important;
+                        transition: .5s;
+                    }
                 }
 
-                >input:disabled+.icon {
-                    opacity: 0.5 !important;
-                    transition: .5s;
-                }
-            }
+                >.rotation-outer {
+                    display: inline-flex;
 
-            >.rotation-outer {
-                display: inline-flex;
+                    >div.rotation-inner {
+                        padding: 50% 0;
+                        height: 0;
 
-                >div.rotation-inner {
-                    padding: 50% 0;
-                    height: 0;
-
-                    >div.rotate {
-                        display: block;
-                        transform-origin: top left;
-                        transform: rotate(-90deg) translate(-100%);
-                        margin-top: -50%;
-                        white-space: nowrap;
+                        >div.rotate {
+                            display: block;
+                            transform-origin: top left;
+                            transform: rotate(-90deg) translate(-100%);
+                            margin-top: -50%;
+                            white-space: nowrap;
+                        }
                     }
                 }
             }
@@ -684,7 +694,6 @@ div.remarks {
         background-color: var(--background-color);
         background-clip: padding-box !important;
         backdrop-filter: blur(16px);
-        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
         height: initial;
         backface-visibility: hidden;
         transition: .5s;
