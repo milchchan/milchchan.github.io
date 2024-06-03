@@ -1138,7 +1138,11 @@
 
                 if (response2.ok) {
                   resolve((await response2.json()).content);
+                } else {
+                  throw new Error(response2.statusText);
                 }
+              } else {
+                throw new Error(response1.statusText);
               }
             } catch (error) {
               reject(error);
