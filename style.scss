@@ -231,6 +231,7 @@ figure {
     width: 100%;
     max-width: 100% !important;
     height: 100%;
+    animation: fade .5s ease-out forwards;
 }
 
 #app {
@@ -837,6 +838,16 @@ div.center {
 #stats:hover {
     opacity: 1;
     transition: .5s;
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes progress {
