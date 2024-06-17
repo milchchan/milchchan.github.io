@@ -26,7 +26,6 @@
         }
     },
     "mimeTypes": {
-        ".txt": "text/plain; charset=utf-8",
         ".json": "application/json"
     }
 }
