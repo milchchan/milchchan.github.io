@@ -30,7 +30,8 @@
  content: "<会話の文章>",
  states: {
   Angry: 0.0-1.0,
-  Confused: 0.0-1.0
+  Confused: 0.0-1.0,
+  Ecstasy: 0.0-1.0,
   Happy: 0.0-1.0,
   Sad: 0.0-1.0,
   Surprised: 0.0-1.0
