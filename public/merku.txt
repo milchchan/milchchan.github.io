@@ -35,6 +35,7 @@
   Happy: 0.0-1.0,
   Relaxed: 0.0-1.0,
   Sad: 0.0-1.0,
+  Shy: 0.0-1.0,
   Surprised: 0.0-1.0
  }
 }
