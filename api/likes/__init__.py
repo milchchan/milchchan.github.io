@@ -58,7 +58,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 for like in query.all():
                     attributes = []
-                    limit = 100
+                    limit = 10
                     subquery = session.query(Attribute).filter(Attribute.like_id == like.id).limit(limit)
                     count = subquery.count()
                     
