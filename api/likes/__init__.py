@@ -57,27 +57,38 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     query = query.offset(offset)
 
                 for like in query.all():
-                    attributes = []
-                    limit = 10
-                    subquery = session.query(Attribute).filter(Attribute.like_id == like.id).limit(limit)
-                    count = subquery.count()
-                    
-                    for index in range(math.ceil(count / limit)):
-                        for attribute in subquery.offset(index * limit).all():
-                            attributes.append({
-                                'name': attribute.name,
-                                'start': attribute.start,
-                                'end': attribute.end
-                            })
-
                     likes.append({
                         'id': like.id,
                         'name': like.name,
                         'content': like.content,
                         'language': like.language,
-                        'attributes': attributes,
                         'timestamp': int(like.timestamp.replace(tzinfo=timezone.utc).timestamp())
                     })
+
+                attributes = {}
+                subquery = session.query(Attribute).filter(Attribute.like_id.in_(map(lambda x: x['id'], likes)))
+                count = subquery.count()
+                limit = 100
+                subquery.limit(limit)
+
+                for index in range(math.ceil(count / limit)):
+                    for attribute in subquery.offset(index * limit).all():
+                        if attribute.like_id in attributes:
+                            attributes[attribute.like_id].append({
+                                'name': attribute.name,
+                                'start': attribute.start,
+                                'end': attribute.end
+                            })
+                        else:
+                            attributes[attribute.like_id] = [{
+                                'name': attribute.name,
+                                'start': attribute.start,
+                                'end': attribute.end
+                            }]
+
+                for like in likes:
+                    if like['id'] in attributes:
+                        like['attributes'] = attributes[like['id']]
 
                 return func.HttpResponse(json.dumps(likes), status_code=200, mimetype='application/json', charset='utf-8')
 
