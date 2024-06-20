@@ -66,10 +66,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     })
 
                 attributes = {}
+                limit = 100
                 subquery = session.query(Attribute).filter(Attribute.like_id.in_(map(lambda x: x['id'], likes)))
                 count = subquery.count()
-                limit = 100
-                subquery.limit(limit)
+                subquery = subquery.limit(limit)
 
                 for index in range(math.ceil(count / limit)):
                     for attribute in subquery.offset(index * limit).all():
