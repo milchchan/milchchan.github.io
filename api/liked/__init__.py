@@ -26,8 +26,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     like = session.query(Like).filter(Like.id == int(req.route_params.get('id'))).one()
                     attributes = []
                     limit = 100
-                    query = session.query(Attribute).filter(Attribute.like_id == like.id).limit(limit)
+                    query = session.query(Attribute).filter(Attribute.like_id == like.id)
                     count = query.count()
+                    query = query.limit(limit)
                     updated = False
                     
                     for index in range(math.ceil(count / limit)):
@@ -97,8 +98,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 like = session.query(Like).filter(Like.id == int(req.route_params.get('id'))).one()
                 attributes = []
                 limit = 100
-                query = session.query(Attribute).filter(Attribute.like_id == like.id).limit(limit)
+                query = session.query(Attribute).filter(Attribute.like_id == like.id)
                 count = query.count()
+                query = query.limit(limit)
                 
                 for index in range(math.ceil(count / limit)):
                     for attribute in query.offset(index * limit).all():
@@ -141,8 +143,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if like is not None:
                     attributes = []
                     limit = 100
-                    subquery = session.query(Attribute).filter(Attribute.like_id == like.id).limit(limit)
+                    subquery = session.query(Attribute).filter(Attribute.like_id == like.id)
                     count = subquery.count()
+                    subquery = subquery.limit(limit)
                     
                     for index in range(math.ceil(count / limit)):
                         for attribute in subquery.offset(index * limit).all():
