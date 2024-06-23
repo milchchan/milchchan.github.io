@@ -2,6 +2,7 @@ const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: 
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
 const touches = [];
+const animations = [];
 
 class APNG {
   constructor() {
@@ -821,7 +822,6 @@ window.addEventListener("load", async event => {
   animation.cancel();
 
   const cache = {};
-  const animationQueue = [];
   let previousTime = performance.now();
   const fps = { time: previousTime, frames: 0, target: document.createElement("span") };
 
@@ -871,7 +871,7 @@ window.addEventListener("load", async event => {
         tracker.movement.x = tracker.movement.y = 0;
         pinches.splice(0);
         touches.splice(0);
-        animationQueue.splice(0);
+        animations.splice(0);
 
         const blind = document.createElement("div");
           
@@ -1174,7 +1174,7 @@ window.addEventListener("load", async event => {
                       reader.readAsDataURL(await resize(blob, Math.floor(Math.max(window.screen.width, window.screen.height) / 2.0 * window.devicePixelRatio)));
                     });
 
-                    animationQueue.push(Object.assign({ time: 0, image: image }, frame));
+                    animations.push(Object.assign({ time: 0, image: image }, frame));
                     cache[frame.source] = { image: image, timestamp: timestamp };
                   } else {
                     const frames = [];
@@ -1214,7 +1214,7 @@ window.addEventListener("load", async event => {
                       frames[frames.length - 1].delay += frame.delay;
 
                       for (const frame of frames) {
-                        animationQueue.push(Object.assign({ time: 0 }, frame));
+                        animations.push(Object.assign({ time: 0 }, frame));
                       }
 
                       cache[frame.source] = { frames: frames, timestamp: timestamp };
@@ -1272,18 +1272,18 @@ window.addEventListener("load", async event => {
 
               if ("frames" in cache[frame.source]) {
                 for (const data of cache[frame.source].frames) {
-                  animationQueue.push(Object.assign({ time: 0 }, data));
+                  animations.push(Object.assign({ time: 0 }, data));
                 }
               } else {
-                animationQueue.push(Object.assign({ time: 0, image: cache[frame.source].image }, frame));
+                animations.push(Object.assign({ time: 0, image: cache[frame.source].image }, frame));
               }
             }
 
             index++;
           }
 
-          for (let i = animationQueue.length - 2; i >= 0; i--) {
-            animationQueue.push(animationQueue[i]);
+          for (let i = animations.length - 2; i >= 0; i--) {
+            animations.push(animations[i]);
           }
         } else {
           background.color = null;
@@ -1318,7 +1318,8 @@ window.addEventListener("load", async event => {
           samples = background.texts;
         }
 
-        for (const sample of samples) {
+        for (let i = 0; i < samples.length; i++) {
+          const sample = samples[i];
           let text;
           const attributes = [];
           const source = [];
@@ -1357,9 +1358,9 @@ window.addEventListener("load", async event => {
             }, { text: "", attributes: attributes, source: source }).text;
           }
 
-          for (let i = 0; i < text.length; i++) {
-            if (text.charAt(i) !== "\n" && text.charAt(i).match(/\s/) === null) {
-              letters.push(text.charAt(i));
+          for (let j = 0; j < text.length; j++) {
+            if (text.charAt(j) !== "\n" && text.charAt(j).match(/\s/) === null) {
+              letters.push(text.charAt(j));
             }
           }
 
@@ -1371,6 +1372,7 @@ window.addEventListener("load", async event => {
             ],
             scroll: { requested: false, step: 0.0 },
             elapsed: 0,
+            rtl: i % 2 === 1
           });
         }
       }
@@ -1729,9 +1731,9 @@ window.addEventListener("load", async event => {
         tracker.movement.y += tracker.velocity.y * deltaTime;
       }
 
-      if (animationQueue.length > 0) {
-        let count = animationQueue.length;
-        let frame = animationQueue[0];
+      if (animations.length > 0) {
+        let count = animations.length;
+        let frame = animations[0];
         let delay = Math.max(frame.delay, 0.01);
 
         frame.time += deltaTime;
@@ -1740,8 +1742,8 @@ window.addEventListener("load", async event => {
           const time = frame.time - delay;
 
           frame.time = 0;
-          animationQueue.push(animationQueue.shift());
-          frame = animationQueue[0];
+          animations.push(animations.shift());
+          frame = animations[0];
           count--;
 
           if (count > 0) {
@@ -1911,16 +1913,28 @@ window.addEventListener("mousemove", event => {
     const deltaX = x - tracker.position.x;
     const deltaY = y - tracker.position.y;
     const deltaTime = timestamp - tracker.timestamp;
-
+    
     tracker.position.x = x;
     tracker.position.y = y;
     tracker.timestamp = timestamp;
-    tracker.movement.x += deltaX;
-    tracker.movement.y += deltaY;
 
-    if (deltaTime > 0) {
-      tracker.velocity.x = Math.max(Math.min(deltaX / deltaTime, 1000), -1000);
-      tracker.velocity.y = Math.max(Math.min(deltaY / deltaTime, 1000), -1000);
+    if (animations.length > 0 && animations[0].image !== null) {
+      const canvasAspect = canvas.width / canvas.height;
+      const imageAspect = animations[0].image.width / animations[0].image.height;
+      
+      if (canvasAspect > imageAspect) {
+        tracker.movement.y += deltaY;
+
+        if (deltaTime > 0) {
+          tracker.velocity.y = Math.max(Math.min(deltaY / deltaTime, 1000), -1000);
+        }
+      } else {
+        tracker.movement.x += deltaX;
+
+        if (deltaTime > 0) {
+          tracker.velocity.x = Math.max(Math.min(deltaX / deltaTime, 1000), -1000);
+        }
+      }
     }
 
     if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
@@ -2035,16 +2049,24 @@ window.addEventListener("touchmove", event => {
 
   if (touches.length === 1) {
     const canvas = document.body.querySelector("#app>.container>.wrap>.frame>.wall>canvas");
-  
-    tracker.movement.x = touches[0].movement.x;
-    tracker.movement.y = touches[0].movement.y;
-    tracker.velocity.x = touches[0].velocity.x;
-    tracker.velocity.y = touches[0].velocity.y;
-
+    
     if (canvas !== null) {
       const lineHeight = canvas.height / window.devicePixelRatio / background.blocks.length;
       const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
-  
+      
+      if (animations.length > 0 && animations[0].image !== null) {
+        const canvasAspect = canvas.width / canvas.height;
+        const imageAspect = animations[0].image.width / animations[0].image.height;
+        
+        if (canvasAspect > imageAspect) {
+          tracker.movement.y = touches[0].movement.y;
+          tracker.velocity.y = touches[0].velocity.y;
+        } else {
+          tracker.movement.x = touches[0].movement.x;
+          tracker.velocity.x = touches[0].velocity.x;
+        }
+      }
+
       for (let i = 0; i < background.blocks.length; i++) {
         const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
         
