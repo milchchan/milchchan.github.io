@@ -1378,86 +1378,175 @@ window.addEventListener("load", async event => {
       }
 
       for (const block of background.blocks) {
-        for (const inline of block.inlines) {
-          if (inline.running) {
-            if (inline.type.reverse) {
-              if (inline.type.count > 0) {
-                inline.type.elapsed += deltaTime * 2;
+        if (block.rtl) {
+          for (const inline of block.inlines) {
+            if (inline.running) {
+              if (inline.type.reverse) {
+                if (inline.type.count > 0) {
+                  inline.type.elapsed += deltaTime * 2;
+
+                  if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                    if (inline.type.count - 1 < inline.text.length) {
+                      if (inline.type.buffer.length <= Math.floor(inline.text.length / 2) && inline.type.count > 0) {
+                        inline.type.count -= 1;
+                      }
+
+                      if (inline.type.buffer.length > 0) {
+                        inline.type.buffer = inline.type.buffer.substring(1, inline.type.buffer.length);
+                      }
+                    }
+
+                    inline.type.elapsed = 0;
+                  }
+                } else {
+                  inline.time = 0;
+                  inline.type.elapsed = -1;
+                  inline.type.reverse = false;
+                  inline.running = false;
+                }
+              } else if (inline.type.buffer.length < inline.text.length) {
+                if (inline.type.elapsed >= 0) {
+                  inline.type.elapsed += deltaTime;
+                } else {
+                  inline.type.elapsed = deltaTime;
+                }
 
                 if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                  if (inline.type.count - 1 < inline.text.length) {
-                    if (inline.type.buffer.length <= Math.floor(inline.text.length / 2) && inline.type.count > 0) {
-                      inline.type.count -= 1;
-                    }
+                  if (inline.type.count >= Math.floor(inline.text.length / 2)) {
+                    inline.type.buffer = inline.text.charAt(inline.text.length - 1 - inline.type.buffer.length) + inline.type.buffer;
+                  }
 
-                    if (inline.type.buffer.length > 0) {
-                      inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
-                    }
+                  if (inline.type.count < inline.text.length) {
+                    inline.type.count += 1;
                   }
 
                   inline.type.elapsed = 0;
                 }
               } else {
-                inline.time = 0;
-                inline.type.elapsed = -1;
-                inline.type.reverse = false;
-                inline.running = false;
+                inline.time += deltaTime;
+
+                if (inline.duration !== null && inline.time >= inline.duration) {
+                  inline.type.reverse = true;
+                }
               }
-            } else if (inline.type.buffer.length < inline.text.length) {
-              if (inline.type.elapsed >= 0) {
-                inline.type.elapsed += deltaTime;
+
+              if (inline.text.length === inline.type.buffer.length) {
+                inline.current = inline.text;
               } else {
-                inline.type.elapsed = deltaTime;
-              }
+                const charArray = inline.letters;
+                let randomBuffer = "";
 
-              if (inline.type.elapsed >= 1.0 / inline.type.speed) {
-                if (inline.type.count >= Math.floor(inline.text.length / 2)) {
-                  inline.type.buffer += inline.text.charAt(inline.type.buffer.length);
-                }
-
-                if (inline.type.count < inline.text.length) {
-                  inline.type.count += 1;
-                }
-
-                inline.type.elapsed = 0;
-              }
-            } else {
-              inline.time += deltaTime;
-
-              if (inline.duration !== null && inline.time >= inline.duration) {
-                inline.type.reverse = true;
-              }
-            }
-
-            if (inline.text.length === inline.type.buffer.length) {
-              inline.current = inline.text;
-            } else {
-              const charArray = inline.letters;
-              let randomBuffer = "";
-
-              if (charArray.length > 0) {
-                for (let i = 0; i < inline.type.count; i++) {
-                  if (inline.text.charAt(i) === "\n") {
-                    randomBuffer += "\n";
-                  } else {
-                    randomBuffer += charArray[~~random(0, charArray.length)];
+                if (charArray.length > 0) {
+                  for (let i = 0; i < inline.type.count; i++) {
+                    if (inline.text.charAt(i) === "\n") {
+                      randomBuffer += "\n";
+                    } else {
+                      randomBuffer += charArray[~~random(0, charArray.length)];
+                    }
                   }
                 }
+
+                if (randomBuffer.length > inline.type.buffer.length) {
+                  inline.current = randomBuffer.substring(0, randomBuffer.length - inline.type.buffer.length) + inline.type.buffer;
+                
+                  //console.log(`${inline.current.length} - ${inline.text.length}`);
+                } else if (inline.current.length !== inline.type.buffer.length) {
+                  inline.current = inline.type.buffer;
+                }
               }
 
-              if (randomBuffer.length > inline.type.buffer.length) {
-                inline.current = inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length);
-              } else if (inline.current.length !== inline.type.buffer.length) {
-                inline.current = inline.type.buffer;
+              if (block.scroll.requested) {
+                block.scroll.step += deltaTime;
+
+                if (block.scroll.step >= 1.0) {
+                  block.scroll.requested = false;
+                  block.scroll.step = 0.0;
+                }
               }
             }
+          }
+        } else {
+          for (const inline of block.inlines) {
+            if (inline.running) {
+              if (inline.type.reverse) {
+                if (inline.type.count > 0) {
+                  inline.type.elapsed += deltaTime * 2;
 
-            if (block.scroll.requested) {
-              block.scroll.step += deltaTime;
+                  if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                    if (inline.type.count - 1 < inline.text.length) {
+                      if (inline.type.buffer.length <= Math.floor(inline.text.length / 2) && inline.type.count > 0) {
+                        inline.type.count -= 1;
+                      }
 
-              if (block.scroll.step >= 1.0) {
-                block.scroll.requested = false;
-                block.scroll.step = 0.0;
+                      if (inline.type.buffer.length > 0) {
+                        inline.type.buffer = inline.type.buffer.substring(0, inline.type.buffer.length - 1);
+                      }
+                    }
+
+                    inline.type.elapsed = 0;
+                  }
+                } else {
+                  inline.time = 0;
+                  inline.type.elapsed = -1;
+                  inline.type.reverse = false;
+                  inline.running = false;
+                }
+              } else if (inline.type.buffer.length < inline.text.length) {
+                if (inline.type.elapsed >= 0) {
+                  inline.type.elapsed += deltaTime;
+                } else {
+                  inline.type.elapsed = deltaTime;
+                }
+
+                if (inline.type.elapsed >= 1.0 / inline.type.speed) {
+                  if (inline.type.count >= Math.floor(inline.text.length / 2)) {
+                    inline.type.buffer += inline.text.charAt(inline.type.buffer.length);
+                  }
+
+                  if (inline.type.count < inline.text.length) {
+                    inline.type.count += 1;
+                  }
+
+                  inline.type.elapsed = 0;
+                }
+              } else {
+                inline.time += deltaTime;
+
+                if (inline.duration !== null && inline.time >= inline.duration) {
+                  inline.type.reverse = true;
+                }
+              }
+
+              if (inline.text.length === inline.type.buffer.length) {
+                inline.current = inline.text;
+              } else {
+                const charArray = inline.letters;
+                let randomBuffer = "";
+
+                if (charArray.length > 0) {
+                  for (let i = 0; i < inline.type.count; i++) {
+                    if (inline.text.charAt(i) === "\n") {
+                      randomBuffer += "\n";
+                    } else {
+                      randomBuffer += charArray[~~random(0, charArray.length)];
+                    }
+                  }
+                }
+
+                if (randomBuffer.length > inline.type.buffer.length) {
+                  inline.current = inline.type.buffer + randomBuffer.substring(inline.type.buffer.length, randomBuffer.length);
+                } else if (inline.current.length !== inline.type.buffer.length) {
+                  inline.current = inline.type.buffer;
+                }
+              }
+
+              if (block.scroll.requested) {
+                block.scroll.step += deltaTime;
+
+                if (block.scroll.step >= 1.0) {
+                  block.scroll.requested = false;
+                  block.scroll.step = 0.0;
+                }
               }
             }
           }
@@ -1489,117 +1578,235 @@ window.addEventListener("load", async event => {
       backContext.save();
 
       for (const block of background.blocks) {
-        for (const inline of block.inlines) {
-          if (inline.running && inline.current.length > 0) {
-            const line = [];
-            let i = 0;
-            let width = 0;
-            let offset = 0;
+        if (block.rtl) {
+          for (const inline of block.inlines) {
+            if (inline.running && inline.current.length > 0) {
+              const line = [];
+              let i = 0;
+              let width = 0;
+              let offset = 0;
 
-            while (i < inline.current.length) {
-              const j = inline.attributes.findIndex(x => i >= x.start && i < x.end);
+              while (i < inline.current.length) {
+                const j = inline.attributes.findIndex(x => i >= x.start && i < x.end);
 
-              if (j >= 0) {
-                if (inline.attributes[j].end <= inline.current.length) {
-                  line.push({ text: inline.current.substring(i, inline.attributes[j].end), highlight: true });
-                  i = inline.attributes[j].end;
-                } else {
-                  line.push({ text: inline.current.substring(i, inline.current.length), highlight: true });
-
-                  break;
-                }
-              } else {
-                const minimum = { start: null, distance: Number.MAX_SAFE_INTEGER };
-
-                for (const attribute of inline.attributes) {
-                  const distance = attribute.start - i;
-
-                  if (distance >= 0 && distance < minimum.distance) {
-                    minimum.distance = distance;
-                    minimum.start = attribute.start;
-                  }
-                }
-
-                if (minimum.start === null) {
-                  line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
-
-                  break;
-                } else if (minimum.start <= inline.current.length) {
-                  line.push({ text: inline.current.substring(i, minimum.start), highlight: false });
-                  i = minimum.start
-                } else {
-                  line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
-
-                  break;
-                }
-              }
-            }
-
-            backContext.save();
-
-            for (const s of inline.source) {
-              let text;
-
-              if (typeof (s) === "string") {
-                backContext.font = normalFont;
-                text = s;
-              } else {
-                backContext.font = boldFont;
-                text = s.name;
-              }
-
-              const textMetrics = backContext.measureText(text);
-
-              width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
-            }
-
-            let translation = (block.elapsed % 60 / 60 + Math.sin(block.scroll.step / 2.0 * Math.PI)) % 1.0 * -(width + margin)
-
-            backContext.translate(translation, 0);
-            backContext.globalAlpha = 1.0;
-
-            do {
-              for (let i = 0; i < 2; i++) {
-                let x = 0;
-
-                for (const segment of line) {
-                  if (segment.highlight) {
-                    backContext.font = boldFont;
+                if (j >= 0) {
+                  if (inline.attributes[j].end <= inline.current.length) {
+                    line.push({ text: inline.current.substring(i, inline.attributes[j].end), highlight: true });
+                    i = inline.attributes[j].end;
                   } else {
-                    backContext.font = normalFont;
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: true });
+
+                    break;
+                  }
+                } else {
+                  const minimum = { start: null, distance: Number.MAX_SAFE_INTEGER };
+
+                  for (const attribute of inline.attributes) {
+                    const distance = attribute.start - i;
+
+                    if (distance >= 0 && distance < minimum.distance) {
+                      minimum.distance = distance;
+                      minimum.start = attribute.start;
+                    }
                   }
 
-                  const textMetrics = backContext.measureText(segment.text);
-                  const width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+                  if (minimum.start === null) {
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
 
-                  if (translation + offset + x + width >= 0 && translation + offset + x < backCanvas.width) {
-                    backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
-                  }
-
-                  x += width;
-                }
-
-                for (const s of inline.source) {
-                  let text;
-
-                  if (typeof (s) === "string") {
-                    backContext.font = normalFont;
-                    text = s;
+                    break;
+                  } else if (minimum.start <= inline.current.length) {
+                    line.push({ text: inline.current.substring(i, minimum.start), highlight: false });
+                    i = minimum.start
                   } else {
-                    backContext.font = boldFont;
-                    text = s.name;
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
+
+                    break;
                   }
+                }
+              }
 
-                  const textMetrics = backContext.measureText(text);
+              line.reverse();
 
-                  offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+              backContext.save();
+
+              for (const s of inline.source) {
+                let text;
+
+                if (typeof (s) === "string") {
+                  backContext.font = normalFont;
+                  text = s;
+                } else {
+                  backContext.font = boldFont;
+                  text = s.name;
                 }
 
-                offset += margin
-              }
-            } while (offset - margin < backCanvas.width * 2);
+                const textMetrics = backContext.measureText(text);
 
-            backContext.restore();
+                width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+              }
+
+              let translation = (block.elapsed % 60 / 60 + Math.sin(block.scroll.step / 2.0 * Math.PI)) % 1.0 * (width + margin)
+
+              backContext.translate(translation, 0);
+              backContext.globalAlpha = 1.0;
+
+              do {
+                for (let i = 0; i < 2; i++) {
+                  let x = 0;
+
+                  for (const segment of line) {
+                    if (segment.highlight) {
+                      backContext.font = boldFont;
+                    } else {
+                      backContext.font = normalFont;
+                    }
+
+                    const textMetrics = backContext.measureText(segment.text);
+                    const width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+
+                    if (offset + translation - x >= 0 && offset + translation - x - width < backCanvas.width) {
+                      backContext.fillText(segment.text, offset - Math.round(x - textMetrics.actualBoundingBoxLeft) - width, Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
+                    }
+
+                    x += width;
+                  }
+
+                  for (const s of inline.source) {
+                    let text;
+
+                    if (typeof (s) === "string") {
+                      backContext.font = normalFont;
+                      text = s;
+                    } else {
+                      backContext.font = boldFont;
+                      text = s.name;
+                    }
+
+                    const textMetrics = backContext.measureText(text);
+
+                    offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+                  }
+
+                  offset += margin
+                }
+              } while (offset - margin < backCanvas.width * 2);
+
+              backContext.restore();
+            }
+          }
+        } else {
+          for (const inline of block.inlines) {
+            if (inline.running && inline.current.length > 0) {
+              const line = [];
+              let i = 0;
+              let width = 0;
+              let offset = 0;
+
+              while (i < inline.current.length) {
+                const j = inline.attributes.findIndex(x => i >= x.start && i < x.end);
+
+                if (j >= 0) {
+                  if (inline.attributes[j].end <= inline.current.length) {
+                    line.push({ text: inline.current.substring(i, inline.attributes[j].end), highlight: true });
+                    i = inline.attributes[j].end;
+                  } else {
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: true });
+
+                    break;
+                  }
+                } else {
+                  const minimum = { start: null, distance: Number.MAX_SAFE_INTEGER };
+
+                  for (const attribute of inline.attributes) {
+                    const distance = attribute.start - i;
+
+                    if (distance >= 0 && distance < minimum.distance) {
+                      minimum.distance = distance;
+                      minimum.start = attribute.start;
+                    }
+                  }
+
+                  if (minimum.start === null) {
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
+
+                    break;
+                  } else if (minimum.start <= inline.current.length) {
+                    line.push({ text: inline.current.substring(i, minimum.start), highlight: false });
+                    i = minimum.start
+                  } else {
+                    line.push({ text: inline.current.substring(i, inline.current.length), highlight: false });
+
+                    break;
+                  }
+                }
+              }
+
+              backContext.save();
+
+              for (const s of inline.source) {
+                let text;
+
+                if (typeof (s) === "string") {
+                  backContext.font = normalFont;
+                  text = s;
+                } else {
+                  backContext.font = boldFont;
+                  text = s.name;
+                }
+
+                const textMetrics = backContext.measureText(text);
+
+                width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+              }
+
+              let translation = (block.elapsed % 60 / 60 + Math.sin(block.scroll.step / 2.0 * Math.PI)) % 1.0 * -(width + margin)
+
+              backContext.translate(translation, 0);
+              backContext.globalAlpha = 1.0;
+
+              do {
+                for (let i = 0; i < 2; i++) {
+                  let x = 0;
+
+                  for (const segment of line) {
+                    if (segment.highlight) {
+                      backContext.font = boldFont;
+                    } else {
+                      backContext.font = normalFont;
+                    }
+
+                    const textMetrics = backContext.measureText(segment.text);
+                    const width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+
+                    if (translation + offset + x + width >= 0 && translation + offset + x < backCanvas.width) {
+                      backContext.fillText(segment.text, Math.round(offset + x - textMetrics.actualBoundingBoxLeft), Math.round(lineHeight * index + (lineHeight - fontSize) / 2 + fontSize / 2));// - textMetrics.actualBoundingBoxDescent + (fontSize - textMetrics.actualBoundingBoxAscent) / 2));
+                    }
+
+                    x += width;
+                  }
+
+                  for (const s of inline.source) {
+                    let text;
+
+                    if (typeof (s) === "string") {
+                      backContext.font = normalFont;
+                      text = s;
+                    } else {
+                      backContext.font = boldFont;
+                      text = s.name;
+                    }
+
+                    const textMetrics = backContext.measureText(text);
+
+                    offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+                  }
+
+                  offset += margin
+                }
+              } while (offset - margin < backCanvas.width * 2);
+
+              backContext.restore();
+            }
           }
         }
 
