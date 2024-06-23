@@ -2325,14 +2325,6 @@ window.addEventListener("touchend", event => {
     if (index >= 0) {
       touches.splice(index, 1);
     }
-
-    index = pinches.findIndex(x => x.identifiers.some(y => y === touch.identifier));
-
-    if (index >= 0) {
-      for (let i = 0; i < pinches[index].touches.length; i++) {
-        pinches[index].touches[i] = null;
-      }
-    }
   }
 });
 window.addEventListener("touchcancel", event => {
@@ -2345,14 +2337,6 @@ window.addEventListener("touchcancel", event => {
 
     if (index >= 0) {
       touches.splice(index, 1);
-    }
-
-    index = pinches.findIndex(x => x.identifiers.some(y => y === touch.identifier));
-
-    if (index >= 0) {
-      for (let i = 0; i < pinches[index].touches.length; i++) {
-        pinches[index].touches[i] = null;
-      }
     }
   }
 });
