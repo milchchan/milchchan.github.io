@@ -862,9 +862,7 @@ window.addEventListener("load", async event => {
         background.force = false;
       }
 
-      if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse))/* && background.dataset.length > 0 && background.dataset[background.index].texts.length > 0*/) {
-        //let prefix;
-
+      if (!background.preloading && !background.blocks.some(x => x.inlines.some(y => y.running || y.type.elapsed >= 0 || y.type.reverse))) {
         background.preloading = true;
         background.image = null;
         background.blocks.splice(0);
@@ -1448,8 +1446,6 @@ window.addEventListener("load", async event => {
 
                 if (randomBuffer.length > inline.type.buffer.length) {
                   inline.current = randomBuffer.substring(0, randomBuffer.length - inline.type.buffer.length) + inline.type.buffer;
-                
-                  //console.log(`${inline.current.length} - ${inline.text.length}`);
                 } else if (inline.current.length !== inline.type.buffer.length) {
                   inline.current = inline.type.buffer;
                 }
