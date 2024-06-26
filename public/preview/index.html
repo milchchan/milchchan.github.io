@@ -196,9 +196,9 @@
     <script type="importmap">
         {
             "imports": {
-            "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/",
-            "@pixiv/three-vrm": "https://unpkg.com/@pixiv/three-vrm@2.0.6/lib/three-vrm.module.js"
+            "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/",
+            "@pixiv/three-vrm": "https://unpkg.com/@pixiv/three-vrm@2.1.2/lib/three-vrm.module.js"
             }
         }
     </script>
@@ -222,7 +222,7 @@
             preserveDrawingBuffer: true
         });
         const scene = new THREE.Scene();
-        const directionallight = new THREE.DirectionalLight(0xffffff, 0.5);
+        const directionallight = new THREE.DirectionalLight(0xffffff, 0.5 * Math.PI);
         const clock = new THREE.Clock();
         const loader = new GLTFLoader();
         const CAMERA_FOV = 60.0;
@@ -262,7 +262,7 @@
 
         directionallight.position.set(0.0, 0.0, -1.0).normalize();
 
-        scene.add(new THREE.AmbientLight(0xFFFFFF, 0.5));
+        scene.add(new THREE.AmbientLight(0xFFFFFF, 0.5 * Math.PI));
         scene.add(directionallight);
         scene.add(new THREE.GridHelper(10, 10, "#000000", "#000000"));
         scene.add(new THREE.AxesHelper(5));
