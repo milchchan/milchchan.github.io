@@ -603,7 +603,7 @@ window.upload = async (event) => {
         const [path, contentType] = stack.pop();
 
         if (contentType.startsWith("image/")) {
-          background.queue.unshift({ color: "#ffffff", frames: [{ delay: 0, source: path }] });
+          background.queue.unshift({ color: null, frames: [{ delay: 0, source: path }] });
         }
       } while (stack.length > 0);
 
@@ -689,7 +689,7 @@ window.addEventListener("load", async event => {
         const [path, contentType] = stack.pop();
 
         if (contentType.startsWith("image/")) {
-          background.queue.unshift({ color: "#ffffff", frames: [{ delay: 0, source: path }] });
+          background.queue.unshift({ color: null, frames: [{ delay: 0, source: path }] });
         }
       } while (stack.length > 0);
 
@@ -984,7 +984,7 @@ window.addEventListener("load", async event => {
         }
 
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
-          background.queue.push({ color: "#ffffff", frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
+          background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
         } else if (background.offset === null) {
           try {
             const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
@@ -996,7 +996,7 @@ window.addEventListener("load", async event => {
             });
         
             if (response.ok) {
-              background.queue.push({ color: "#ffffff", frames: [{ delay: 0, source: response.url }] });
+              background.queue.push({ color: null, frames: [{ delay: 0, source: response.url }] });
             } else {
               throw new Error(response.statusText);
             }
@@ -1018,7 +1018,7 @@ window.addEventListener("load", async event => {
               const json = await response.json();
 
               for (const item of json) {
-                background.queue.push({ color: "#ffffff", frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${item.id}` }] });
+                background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${item.id}` }] });
               }
 
               if (json.length === limit) {
@@ -1073,7 +1073,11 @@ window.addEventListener("load", async event => {
           document.body.querySelector("#app").appendChild(progress);
 
           if ("color" in data) {
-            background.color = data.color;
+            if (data.color === null) {
+              background.color = "#ffffff";
+            } else {
+              background.color = data.color;
+            }
           } else {
             background.color = null;
           }
