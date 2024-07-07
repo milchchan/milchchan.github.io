@@ -537,6 +537,11 @@ div.sidebar {
                         transition: .5s ease-out;
                     }
 
+                    .icon:not(:first-of-type).is-rotate {
+                        margin: 0;
+                        padding: 0px 0px 16px 0px;
+                    }
+
                     .stack .icon {
                         position: absolute;
                         margin: 0% 0px 0px 50% !important;
