@@ -1,6 +1,6 @@
 {
-    "name": "ミルヒちゃん",
-    "short_name": "ミルヒちゃん",
+    "name": "MILCHCHAN.COM",
+    "short_name": "MILCHCHAN.COM",
     "start_url": "index.html?utm_source=homescreen",
     "scope" : "/",
     "icons": [
@@ -13,12 +13,6 @@
             "src": "icon-512.png",
             "sizes": "512x512",
             "type": "image/png"
-        },
-        {
-            "src": "icon-maskable.png",
-            "sizes": "196x196",
-            "type": "image/png",
-            "purpose": "maskable"
         }
     ],
     "theme_color": "#f7f8f8",
