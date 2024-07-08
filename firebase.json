@@ -8,8 +8,18 @@
     ],
     "rewrites": [
     {
+      "source": "/about",
+      "destination": "/about.html",
+      "type": 200
+    },
+    {
       "source": "/privacy",
       "destination": "/privacy.html",
+      "type": 200
+    },
+    {
+      "source": "/preview",
+      "destination": "/preview/index.html",
       "type": 200
     },
     {
