@@ -17,6 +17,7 @@
     "navigationFallback": {
         "rewrite": "index.html",
         "exclude": [
+            "/*.{txt,json,png,jpg,gif}",
             "/images/*.{png,jpg,gif}"
         ]
     },
