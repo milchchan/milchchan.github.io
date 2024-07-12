@@ -40,7 +40,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     for candidate in json.loads(response.read().decode('utf-8'))['candidates']:
                         for part in candidate['content']['parts']:
                             if 'text' in part:
-                                match = re.match('```json(.+)```', part['text'], flags=(re.MULTILINE|re.DOTALL))
+                                match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', part['text'], flags=(re.MULTILINE|re.DOTALL))
 
                                 return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=200, mimetype='application/json', charset='utf-8')
             
