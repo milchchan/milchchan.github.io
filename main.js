@@ -1373,7 +1373,7 @@ window.addEventListener("load", async event => {
               { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
             ],
             scroll: { requested: false, step: 0.0 },
-            elapsed: 0,
+            elapsed: Math.random() * 60.0,
             rtl: i % 2 === 1
           });
         }
