@@ -1463,6 +1463,8 @@ window.addEventListener("load", async event => {
                   block.scroll.step = 0.0;
                 }
               }
+
+              block.elapsed += deltaTime;
             }
           }
         } else {
@@ -1548,11 +1550,11 @@ window.addEventListener("load", async event => {
                   block.scroll.step = 0.0;
                 }
               }
+
+              block.elapsed += deltaTime;
             }
           }
         }
-
-        block.elapsed += deltaTime;
       }
 
       const backCanvas = canvas.backBuffer;
