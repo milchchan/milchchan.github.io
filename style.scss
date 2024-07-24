@@ -426,7 +426,6 @@ div.sidebar {
                         overflow: hidden;
                         box-sizing: content-box;
                         height: calc(0.75rem * 1.5);
-                        transform: translate(0px, -1px);
                         box-sizing: border-box;
 
                         .scrollable {
@@ -440,9 +439,8 @@ div.sidebar {
                                 display: flex;
                                 align-items: center;
                                 margin: 0px 4px 0px 4px !important;
-                                font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+                                font-family: "Barlow", sans-serif;
                                 font-size: 0.75rem !important;
-                                transform: rotate(0.03deg) !important;
                                 line-height: 0.75rem !important;
                                 height: calc(0.75rem * 1.5);
                                 vertical-align: middle;
