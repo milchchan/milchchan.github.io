@@ -190,8 +190,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 #stream.seek(0)
 
                 #return func.HttpResponse(stream.read(), status_code=200, mimetype=response['ContentType'])
-                return func.HttpResponse(status_code=302, headers={'Location': s3.generate_presigned_url(ClientMethod = 'get_object',Params={'Bucket': 'uploads', 'Key': identifier}, ExpiresIn=3600, HttpMethod='GET')})
-                #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
+                #return func.HttpResponse(status_code=302, headers={'Location': s3.generate_presigned_url(ClientMethod = 'get_object',Params={'Bucket': 'uploads', 'Key': identifier}, ExpiresIn=3600, HttpMethod='GET')})
+                return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                 
             '''
             credentials = service_account.Credentials.from_service_account_info({
