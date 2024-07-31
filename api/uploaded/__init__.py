@@ -185,14 +185,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     raise
 
             if response is not None:
-                stream = BytesIO()
-                s3.download_fileobj('uploads', identifier, stream)
-                stream.seek(0)
+                #stream = BytesIO()
+                #s3.download_fileobj('uploads', identifier, stream)
+                #stream.seek(0)
 
-                return func.HttpResponse(stream.read(), status_code=200, mimetype=response['ContentType'])
+                #return func.HttpResponse(stream.read(), status_code=200, mimetype=response['ContentType'])
+                return func.HttpResponse(status_code=302, headers={'Location': s3.generate_presigned_url(ClientMethod = 'get_object',Params={'Bucket': 'uploads', 'Key': identifier}, ExpiresIn=3600, HttpMethod='GET')})
                 #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
-                #return func.HttpResponse(status_code=302, headers={'Location': s3.generate_presigned_url(ClientMethod = 'get_object',Params={'Bucket': 'uploads', 'Key': identifier}, ExpiresIn=3600, HttpMethod='GET')})
-
+                
             '''
             credentials = service_account.Credentials.from_service_account_info({
                 'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
