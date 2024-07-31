@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from datetime import timezone
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Upload
@@ -46,9 +46,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 query = query.offset(offset)
 
             for upload in query.all():
+                identifier = os.path.basename(urlparse(upload.url).path)
                 uploads.append({
-                    'id': os.path.basename(urlparse(upload.url).path),
-                    'url': upload.url,
+                    'id': identifier,
+                    'url': urljoin('https://static.milchchan.com', identifier),
                     'type': upload.type,
                     'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
                 })

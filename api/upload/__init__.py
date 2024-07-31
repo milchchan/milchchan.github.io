@@ -3,11 +3,13 @@ import re
 import json
 import logging
 import os
+import boto3
+import botocore
 from datetime import timedelta, timezone
 from io import BytesIO
 from uuid import uuid4
 from base64 import b64decode
-from urllib.parse import urljoin
+from urllib.parse import urlparse, urljoin
 from sqlalchemy import create_engine, or_, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Upload
@@ -39,8 +41,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                         if mime_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
                             bucket_name = 'milchchan.appspot.com'
-                            id = str(uuid4())
-                            path = os.path.join('uploads', id)
+                            identifier = str(uuid4())
+                            path = os.path.join('uploads', identifier)
                             credentials = service_account.Credentials.from_service_account_info({
                                 'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
                                 'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
@@ -77,7 +79,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     session.commit()
 
                                     uploads.append({
-                                        'id': id,
+                                        'id': identifier,
                                         'url': url,
                                         'type': mime_type,
                                         'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
@@ -97,38 +99,62 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 uploads = []
                 
                 for file in req.files.values():
-                    if file.content_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp']:
-                        bucket_name = 'milchchan.appspot.com'
-                        id = str(uuid4())
-                        path = os.path.join('uploads', id)
-                        credentials = service_account.Credentials.from_service_account_info({
-                            'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
-                            'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
-                            'private_key_id': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY_ID'],
-                            'private_key': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
-                            'client_email': os.environ['FIREBASE_CREDENTIALS_CLIENT_EMAIL'],
-                            'client_id': os.environ['FIREBASE_CREDENTIALS_CLIENT_ID'],
-                            'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
-                            'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
-                            'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
-                            'client_x509_cert_url': os.environ['FIREBASE_CREDENTIALS_CLIENT_X509_CERT_URL']
-                        })
-                        scoped_credentials = credentials.with_scopes(
-                            ['https://www.googleapis.com/auth/cloud-platform'])
-                        storage_client = storage.Client(
-                            credentials=scoped_credentials, project=scoped_credentials.project_id)
-                        bucket = storage_client.bucket(bucket_name)
-                        blob = bucket.blob(path)
+                    if file.content_type in ['image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp']:
+                        identifier = str(uuid4())
+                        file_is_exists = True
+                        s3 = boto3.client(
+                            service_name='s3',
+                            endpoint_url=os.environ['S3_ENDPOINT_URL'],
+                            aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+                            aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+                            region_name='auto'
+                        )
 
-                        if not blob.exists():
-                            blob.upload_from_file(file.stream, content_type=file.content_type)
-                            
-                            if file.content_type == 'application/zip':
-                                file.stream.seek(0)
-                                temp_blob = bucket.blob(os.path.join(path, file.filename))
-                                temp_blob.upload_from_file(file.stream, content_type=file.content_type)
+                        try:
+                            s3.head_object(Bucket='uploads', Key=identifier)
+                        except botocore.exceptions.ClientError as e:
+                            if e.response['Error']['Code'] == '404':
+                                file_is_exists = False
+                            else:
+                                raise
+
+                        if not file_is_exists:
+                            s3.upload_fileobj(file.stream, 'uploads', identifier, ExtraArgs={'ContentType': file.content_type})
+                            response = s3.head_object(Bucket='uploads', Key=identifier)
+                            '''
+                            bucket_name = 'milchchan.appspot.com'
+                            path = os.path.join('uploads', identifier)
+                            credentials = service_account.Credentials.from_service_account_info({
+                                'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
+                                'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
+                                'private_key_id': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY_ID'],
+                                'private_key': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
+                                'client_email': os.environ['FIREBASE_CREDENTIALS_CLIENT_EMAIL'],
+                                'client_id': os.environ['FIREBASE_CREDENTIALS_CLIENT_ID'],
+                                'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
+                                'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
+                                'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
+                                'client_x509_cert_url': os.environ['FIREBASE_CREDENTIALS_CLIENT_X509_CERT_URL']
+                            })
+                            scoped_credentials = credentials.with_scopes(
+                                ['https://www.googleapis.com/auth/cloud-platform'])
+                            storage_client = storage.Client(
+                                credentials=scoped_credentials, project=scoped_credentials.project_id)
+                            bucket = storage_client.bucket(bucket_name)
+                            blob = bucket.blob(path)
+
+                            if not blob.exists():
+                                blob.upload_from_file(file.stream, content_type=file.content_type)
+                                
+                                if file.content_type == 'application/zip':
+                                    file.stream.seek(0)
+                                    temp_blob = bucket.blob(os.path.join(path, file.filename))
+                                    temp_blob.upload_from_file(file.stream, content_type=file.content_type)
                             
                             url = f'gs://{bucket_name}{urljoin("/", path)}'
+                            '''
+
+                            url = urljoin('https://static.milchchan.com', identifier)
 
                             Session = sessionmaker(bind=engine)
                             session = Session()
@@ -137,13 +163,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 upload = Upload()
                                 upload.url = url
                                 upload.type = file.content_type
-                                upload.timestamp = blob.time_created
+                                upload.timestamp = response['LastModified']
 
                                 session.add(upload)
                                 session.commit()
 
                                 uploads.append({
-                                    'id': id,
+                                    'id': identifier,
                                     'url': url,
                                     'type': file.content_type,
                                     'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
@@ -156,6 +182,35 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             finally:
                                 session.close()
+
+                    elif file.content_type == 'application/zip':
+                        identifier = str(uuid4())
+                        file_is_exists = True
+                        s3 = boto3.client(
+                            service_name='s3',
+                            endpoint_url=os.environ['S3_ENDPOINT_URL'],
+                            aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+                            aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+                            region_name='auto'
+                        )
+
+                        try:
+                            s3.head_object(Bucket='uploads', Key=identifier)
+                        except botocore.exceptions.ClientError as e:
+                            if e.response['Error']['Code'] == '404':
+                                file_is_exists = False
+                            else:
+                                raise
+
+                        if not file_is_exists:
+                            s3.upload_fileobj(file.stream, 'uploads', identifier, ExtraArgs={'ContentType': file.content_type, 'Metadata': {'filename': file.filename}})
+                            response = s3.head_object(Bucket='uploads', Key=identifier)
+                            uploads.append({
+                                'id': identifier,
+                                'url': urljoin('https://static.milchchan.com', identifier),
+                                'type': file.content_type,
+                                'timestamp': int(response['LastModified'].replace(tzinfo=timezone.utc).timestamp())
+                            })
                 
                 if len(uploads) > 0:
                     return func.HttpResponse(json.dumps({
@@ -173,8 +228,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                     if mime_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
                         bucket_name = 'milchchan.appspot.com'
-                        id = str(uuid4())
-                        path = os.path.join('uploads', id)
+                        identifier = str(uuid4())
+                        path = os.path.join('uploads', identifier)
                         credentials = service_account.Credentials.from_service_account_info({
                             'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
                             'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
@@ -211,7 +266,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 session.commit()
 
                                 return func.HttpResponse(json.dumps({
-                                    'id': id,
+                                    'id': identifier,
                                     'url': url,
                                     'type': mime_type,
                                     'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
@@ -232,13 +287,35 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             try:
                 query = session.query(Upload)
-                id = random.randrange(query.count() + 1)
+                identifier = random.randrange(query.count() + 1)
                 
                 if mime_type is None:
-                    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= id).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > id).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
                 else:
-                    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= id, Upload.type.like(f'{mime_type}%')).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > id, Upload.type.like(f'{mime_type}%')).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier, Upload.type.like(f'{mime_type}%')).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier, Upload.type.like(f'{mime_type}%')).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
                 
+                identifier = os.path.basename(urlparse(upload.url).path)
+                file_is_exists = True
+                s3 = boto3.client(
+                    service_name='s3',
+                    endpoint_url=os.environ['S3_ENDPOINT_URL'],
+                    aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+                    aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+                    region_name='auto'
+                )
+
+                try:
+                    s3.head_object(Bucket='uploads', Key=identifier)
+                except botocore.exceptions.ClientError as e:
+                    if e.response['Error']['Code'] == '404':
+                        file_is_exists = False
+                    else:
+                        raise
+
+                if file_is_exists:
+                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
+                
+                '''
                 credentials = service_account.Credentials.from_service_account_info({
                     'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
                     'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
@@ -257,7 +334,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if blob.exists():
                     #return func.HttpResponse(blob.download_as_bytes(), status_code=200, mimetype=blob.content_type)
                     return func.HttpResponse(status_code=302, headers={'Location': blob.generate_signed_url(version='v4', expiration=timedelta(minutes=15), method='GET')})
-                
+                '''
+
             finally:
                 session.close()
 
