@@ -8,5 +8,6 @@ psycopg2-binary
 SQLAlchemy
 azure-functions
 azure-cosmos
+boto3
 google-auth
 google-cloud-storage
