@@ -187,7 +187,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if response is not None:
                 stream = BytesIO()
                 s3.download_fileobj('uploads', identifier, stream)
-                stream.stream.seek(0)
+                stream.seek(0)
 
                 return func.HttpResponse(stream.read(), status_code=200, mimetype=response['ContentType'])
                 #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
