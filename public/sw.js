@@ -2,7 +2,7 @@ self.addEventListener("install", event => {
     event.waitUntil(
         caches
             .open("milchchan-cache")
-            .then(function (cache) {
+            .then(cache => {
                 return cache.addAll([
                     "/index.html?utm_source=homescreen"
                 ]);
@@ -13,7 +13,7 @@ self.addEventListener("fetch", event => {
     event.respondWith(
         caches
             .match(event.request)
-            .then(async function (response) {
+            .then(async response => {
                 if (response) {
                     return response
                 }
@@ -26,11 +26,11 @@ self.addEventListener("message", event => {
     if ("command" in event.data) {
         if (event.data.command === "clear") {
             event.waitUntil(
-                caches.keys().then(function (cacheNames) {
+                caches.keys().then(cacheNames => {
                     return Promise.all(
-                        cacheNames.filter(function (cacheName) {
+                        cacheNames.filter(cacheName => {
                             return event.data.caches.indexOf(cacheName) >= 0;
-                        }).map(function (cacheName) {
+                        }).map(cacheName => {
                             return caches.delete(cacheName);
                         })
                     );
@@ -38,7 +38,7 @@ self.addEventListener("message", event => {
             );
         } else if (event.data.command === "caches") {
             event.waitUntil(
-                caches.keys().then(function (cacheNames) {
+                caches.keys().then(cacheNames => {
                     self.clients.matchAll().then(clients => {
                         clients.forEach(client => {
                             if ("id" in client && client.id === event.source.id) {
