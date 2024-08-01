@@ -13,8 +13,12 @@ self.addEventListener("fetch", event => {
     event.respondWith(
         caches
             .match(event.request)
-            .then(function (response) {
-                return response ? response : fetch(event.request);
+            .then(async function (response) {
+                if (response) {
+                    return response
+                }
+
+                return await fetch(event.request);
             })
     );
 });
