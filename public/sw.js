@@ -18,7 +18,15 @@ self.addEventListener("fetch", event => {
                     return response
                 }
 
-                return await fetch(event.request);
+                const responseFromNetwork = await fetch(event.request);
+                
+                if (/\.(png|svg)$/.test(event.request.url)) {
+                    const cache = await caches.open("milchchan-cache");
+                
+                    await cache.put(request, responseFromNetwork.clone());
+                }
+
+                return responseFromNetwork;
             })
     );
 });
