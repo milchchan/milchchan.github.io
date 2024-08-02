@@ -743,18 +743,26 @@ window.addEventListener("load", async event => {
   });
 
   try {
+    const promises = [];
+    
     for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
-      background.cache.push(await new Promise((resolve, reject) => {
+      promises.push(new Promise((resolve) => {
         const image = new Image();
 
         image.onload = () => {
           resolve(image);
         };
         image.onerror = (error) => {
-          reject(error);
+          resolve(error);
         };
         image.src = source
       }));
+    }
+
+    for (const image of await Promise.all(promises)) {
+      if (image instanceof Event == false || image.type !== "error") {
+        background.cache.push(image);
+      }
     }
   } catch (error) {
     console.error(error);
