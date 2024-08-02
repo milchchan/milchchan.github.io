@@ -742,26 +742,6 @@ window.addEventListener("load", async event => {
     easing: "linear"
   });
 
-  for (const image of await Promise.all(["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"].reduce((x, y) => {
-    x.push(new Promise((resolve) => {
-      const image = new Image();
-
-      image.onload = () => {
-        resolve(image);
-      };
-      image.onerror = (error) => {
-        resolve(error);
-      };
-      image.src = y;
-    }));
-
-    return x;
-  }, []))) {
-    if (image instanceof Event == false || image.type !== "error") {
-      background.cache.push(image);
-    }
-  }
-
   async function download(url, handler = null) {
     try {
       const response = await fetch(url);
@@ -809,19 +789,6 @@ window.addEventListener("load", async event => {
   for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item>.level>.level-item .button .wrap svg g>path")) {
     element.style.animationPlayState = "running";
   }
-
-  logo.animate([
-    {
-      transform: "rotate(360deg)"
-    }
-  ], {
-    delay: 0,
-    fill: "forwards",
-    duration: 1000 - animation.currentTime % 1000,
-    iterations: 1,
-    easing: "linear"
-  });
-  animation.cancel();
 
   const cache = {};
   let previousTime = performance.now();
@@ -2091,6 +2058,39 @@ window.addEventListener("load", async event => {
   }
 
   requestAnimationFrame(render);
+
+  for (const image of await Promise.all(["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"].reduce((x, y) => {
+    x.push(new Promise((resolve) => {
+      const image = new Image();
+
+      image.onload = () => {
+        resolve(image);
+      };
+      image.onerror = (error) => {
+        resolve(error);
+      };
+      image.src = y;
+    }));
+
+    return x;
+  }, []))) {
+    if (image instanceof Event == false || image.type !== "error") {
+      background.cache.push(image);
+    }
+  }
+
+  logo.animate([
+    {
+      transform: "rotate(360deg)"
+    }
+  ], {
+    delay: 0,
+    fill: "forwards",
+    duration: 1000 - animation.currentTime % 1000,
+    iterations: 1,
+    easing: "linear"
+  });
+  animation.cancel();
 });
 window.addEventListener("resize", event => {
   const frame = document.body.querySelector("#app>.container>.wrap>.frame");
