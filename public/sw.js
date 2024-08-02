@@ -13,20 +13,24 @@ self.addEventListener("fetch", event => {
     event.respondWith(
         caches
             .match(event.request)
-            .then(async response => {
-                if (response) {
-                    return response
+            .then(async fallbackResponse => {
+                if (fallbackResponse) {
+                    return fallbackResponse
                 }
 
-                const responseFromNetwork = await fetch(event.request);
-
-                if (responseFromNetwork.ok && /\.(png|svg)$/.test(event.request.url)) {
-                    const cache = await caches.open("milchchan-cache");
+                try {
+                    const responseFromNetwork = await fetch(event.request);
+        
+                    if (/\.(png|svg)$/.test(event.request.url)) {
+                        const cache = await caches.open("milchchan-cache");
                 
-                    await cache.put(event.request, responseFromNetwork.clone());
+                        await cache.put(event.request, responseFromNetwork.clone());
+                    }
+    
+                    return responseFromNetwork;
+                } catch (error) {
+                    return new Response(error.messeage, { status: 408, headers: { "Content-Type": "text/plain" } });
                 }
-
-                return responseFromNetwork;
             })
     );
 });
