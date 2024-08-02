@@ -23,7 +23,7 @@ self.addEventListener("fetch", event => {
                 if (/\.(png|svg)$/.test(event.request.url)) {
                     const cache = await caches.open("milchchan-cache");
                 
-                    await cache.put(request, responseFromNetwork.clone());
+                    await cache.put(event.request, responseFromNetwork.clone());
                 }
 
                 return responseFromNetwork;
