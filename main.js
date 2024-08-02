@@ -961,34 +961,33 @@ window.addEventListener("load", async event => {
             }
           }));
         } else if (background.queue.length === 0) {
-          try {
-            const limit = 11;
-            const response = await fetch(encodeURI(`https://milchchan.com/api/uploads?offset=${background.offset}&limit=${limit}`), {
-              mode: "cors",
-              method: "GET",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-              }
-            });
-        
-            if (response.ok) {
-              const json = await response.json();
+          promisess.push(new Promise(async (resolve, reject) => {
+            try {
+              const limit = 11;
+              const response = await fetch(encodeURI(`https://milchchan.com/api/uploads?offset=${background.offset}&limit=${limit}`), {
+                mode: "cors",
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                }
+              });
+          
+              if (response.ok) {
+                const json = await response.json();
+                const urls = [];
+  
+                for (const item of json) {
+                  urls.push(`https://milchchan.com/api/upload/${item.id}`);
+                }
 
-              for (const item of json) {
-                background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${item.id}` }] });
-              }
-
-              if (json.length === limit) {
-                background.offset += 10;
+                resolve(urls);
               } else {
-                background.offset = 0;
+                throw new Error(response.statusText);
               }
-            } else {
-              throw new Error(response.statusText);
+            } catch (error) {
+              reject(error);
             }
-          } catch (error) {
-            console.error(error);
-          }
+          }));
         }
 
         try {
@@ -1042,7 +1041,21 @@ window.addEventListener("load", async event => {
           }
 
           if (results.length > 1) {
-            background.queue.push({ color: null, frames: [{ delay: 0, source: results[1] }] });
+            if (typeof(results[1]) === "string") {
+              background.queue.push({ color: null, frames: [{ delay: 0, source: results[1] }] });
+            } else if (results[1] instanceof Array) {
+              const limit = 11;
+
+              for (const url of results[1]) {
+                background.queue.push({ color: null, frames: [{ delay: 0, source: url }] });
+              }
+
+              if (results[1].length === limit) {
+                background.offset += 10;
+              } else {
+                background.offset = 0;
+              }
+            }
           }
         } catch (error) {
           console.error(error);
