@@ -742,30 +742,24 @@ window.addEventListener("load", async event => {
     easing: "linear"
   });
 
-  try {
-    const promises = [];
-    
-    for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
-      promises.push(new Promise((resolve) => {
-        const image = new Image();
+  for (const image of await Promise.all(["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"].reduce((x, y) => {
+    x.push(new Promise((resolve) => {
+      const image = new Image();
 
-        image.onload = () => {
-          resolve(image);
-        };
-        image.onerror = (error) => {
-          resolve(error);
-        };
-        image.src = source
-      }));
-    }
+      image.onload = () => {
+        resolve(image);
+      };
+      image.onerror = (error) => {
+        resolve(error);
+      };
+      image.src = y;
+    }));
 
-    for (const image of await Promise.all(promises)) {
-      if (image instanceof Event == false || image.type !== "error") {
-        background.cache.push(image);
-      }
+    return x;
+  }, []))) {
+    if (image instanceof Event == false || image.type !== "error") {
+      background.cache.push(image);
     }
-  } catch (error) {
-    console.error(error);
   }
 
   async function download(url, handler = null) {
@@ -925,77 +919,10 @@ window.addEventListener("load", async event => {
             resolve();
           };
         });
-        
-        try {
-          const response = await fetch(encodeURI(`https://milchchan.com/api/likes?language=${document.documentElement.lang}`), {
-            mode: "cors",
-            method: "GET",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            }
-          });
-      
-          if (response.ok) {
-            const json = await response.json();
 
-            for (const like of json) {
-              if ("attributes" in like) {
-                let index = 0;
-                let text = "";
-                let content = [];
-
-                while (index < like.content.length) {
-                  let maxEnd = index + 1;
-                  let attributes = {};
-
-                  for (const attribute of like.attributes) {
-                    if (attribute.start === index) {
-                      if (attribute.end > maxEnd) {
-                        maxEnd = attribute.end;
-                      }
-
-                      if (attribute.end in attributes) {
-                        attributes[attribute.end].push(attribute.name);
-                      } else {
-                        attributes[attribute.end] = [attribute.name];
-                      }
-                    }
-                  }
-
-                  if (maxEnd in attributes) {
-                    if (text.length > 0) {
-                      content.push(text);
-                    }
-
-                    content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
-                    index = maxEnd
-                  } else {
-                    text += like.content[index];
-                    index++;
-                  }
-                }
-
-                if (text.length > 0) {
-                  content.push(text);
-                }
-                
-                background.texts.push(like.content);
-              } else {
-                background.texts.push(like.content);
-              }
-            }
-          } else {
-            throw new Error(response.statusText);
-          }
-        } catch (error) {
-          console.error(error);
-        }
-
-        if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
-          background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
-        } else if (background.offset === null) {
+        const promisess = [new Promise(async (resolve, reject) => {
           try {
-            const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
+            const response = await fetch(encodeURI(`https://milchchan.com/api/likes?language=${document.documentElement.lang}`), {
               mode: "cors",
               method: "GET",
               headers: {
@@ -1004,13 +931,35 @@ window.addEventListener("load", async event => {
             });
         
             if (response.ok) {
-              background.queue.push({ color: null, frames: [{ delay: 0, source: response.url }] });
-            } else {
-              throw new Error(response.statusText);
+              resolve(await response.json());
             }
           } catch (error) {
-            console.error(error);
+            reject(error);
           }
+        })];
+        
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
+          background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
+        } else if (background.offset === null) {
+          promisess.push(new Promise(async (resolve, reject) => {
+            try {
+              const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
+                mode: "cors",
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                }
+              });
+          
+              if (response.ok) {
+                resolve(response.url);
+              } else {
+                throw new Error(response.statusText);
+              }
+            } catch (error) {
+              reject(error);
+            }
+          }));
         } else if (background.queue.length === 0) {
           try {
             const limit = 11;
@@ -1040,6 +989,63 @@ window.addEventListener("load", async event => {
           } catch (error) {
             console.error(error);
           }
+        }
+
+        try {
+          const results = await Promise.all(promisess);
+      
+          for (const like of results[0]) {
+            if ("attributes" in like) {
+              let index = 0;
+              let text = "";
+              let content = [];
+
+              while (index < like.content.length) {
+                let maxEnd = index + 1;
+                let attributes = {};
+
+                for (const attribute of like.attributes) {
+                  if (attribute.start === index) {
+                    if (attribute.end > maxEnd) {
+                      maxEnd = attribute.end;
+                    }
+
+                    if (attribute.end in attributes) {
+                      attributes[attribute.end].push(attribute.name);
+                    } else {
+                      attributes[attribute.end] = [attribute.name];
+                    }
+                  }
+                }
+
+                if (maxEnd in attributes) {
+                  if (text.length > 0) {
+                    content.push(text);
+                  }
+
+                  content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
+                  index = maxEnd
+                } else {
+                  text += like.content[index];
+                  index++;
+                }
+              }
+
+              if (text.length > 0) {
+                content.push(text);
+              }
+              
+              background.texts.push(like.content);
+            } else {
+              background.texts.push(like.content);
+            }
+          }
+
+          if (results.length > 1) {
+            background.queue.push({ color: null, frames: [{ delay: 0, source: results[1] }] });
+          }
+        } catch (error) {
+          console.error(error);
         }
 
         if (background.queue.length > 0) {
