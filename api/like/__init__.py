@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from shared.models import Like, Attribute
+from shared.cache import scan_cache, delete_cache
 
 import azure.functions as func
 
@@ -48,6 +49,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'start': attribute.start,
                             'end': attribute.end
                         })
+
+                cache_names = scan_cache('/likes*')
+
+                if len(cache_names) > 0:
+                    delete_cache(cache_names)
                 
                 return func.HttpResponse(json.dumps({
                     'id': like.id,
