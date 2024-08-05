@@ -13,6 +13,7 @@ from urllib.parse import urlparse, urljoin
 from sqlalchemy import create_engine, or_, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Upload
+from shared.cache import scan_cache, delete_cache
 
 import azure.functions as func
 
@@ -213,6 +214,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             })
                 
                 if len(uploads) > 0:
+                    cache_names = scan_cache('/uploads*')
+
+                    if len(cache_names) > 0:
+                        delete_cache(cache_names)
+
                     return func.HttpResponse(json.dumps({
                         'id': uploads[0]['id'],
                         'url': uploads[0]['url'],
