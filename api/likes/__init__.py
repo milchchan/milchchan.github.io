@@ -3,9 +3,11 @@ import json
 import logging
 import os
 from datetime import timezone
+from urllib.parse import urlparse
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Like, Attribute
+from shared.cache import get_cache, set_cache
 
 import azure.functions as func
 
@@ -31,69 +33,79 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 offset = int(req.params['offset']) if 'offset' in req.params else None
                 limit = int(req.params['limit']) if 'limit' in req.params else None
 
-            Session = sessionmaker(bind=engine)
-            session = Session()
+            cache_name = urlparse(req.url).path
+            cached_data = get_cache(cache_name)
 
-            try:
-                likes = []
-                query = session.query(Like)
+            if cached_data is None:
+                Session = sessionmaker(bind=engine)
+                session = Session()
 
-                if name is not None:
-                    query = query.filter(Like.name.like(name))
+                try:
+                    likes = []
+                    query = session.query(Like)
 
-                if language is not None:
-                    query = query.filter(Like.language.like(language))
+                    if name is not None:
+                        query = query.filter(Like.name.like(name))
 
-                if order == 'asc':
-                    query = query.order_by(Like.timestamp)
-                elif order == 'desc':
-                    query = query.order_by(desc(Like.timestamp))
-                else:
-                    return func.HttpResponse(status_code=400, mimetype='', charset='')
+                    if language is not None:
+                        query = query.filter(Like.language.like(language))
 
-                query = query.limit(100 if limit is None else limit)
+                    if order == 'asc':
+                        query = query.order_by(Like.timestamp)
+                    elif order == 'desc':
+                        query = query.order_by(desc(Like.timestamp))
+                    else:
+                        return func.HttpResponse(status_code=400, mimetype='', charset='')
 
-                if offset is not None:
-                    query = query.offset(offset)
+                    query = query.limit(100 if limit is None else limit)
 
-                for like in query.all():
-                    likes.append({
-                        'id': like.id,
-                        'name': like.name,
-                        'content': like.content,
-                        'language': like.language,
-                        'timestamp': int(like.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                    })
+                    if offset is not None:
+                        query = query.offset(offset)
 
-                attributes = {}
-                limit = 100
-                subquery = session.query(Attribute).filter(Attribute.like_id.in_(map(lambda x: x['id'], likes)))
-                count = subquery.count()
-                subquery = subquery.limit(limit)
+                    for like in query.all():
+                        likes.append({
+                            'id': like.id,
+                            'name': like.name,
+                            'content': like.content,
+                            'language': like.language,
+                            'timestamp': int(like.timestamp.replace(tzinfo=timezone.utc).timestamp())
+                        })
 
-                for index in range(math.ceil(count / limit)):
-                    for attribute in subquery.offset(index * limit).all():
-                        if attribute.like_id in attributes:
-                            attributes[attribute.like_id].append({
-                                'name': attribute.name,
-                                'start': attribute.start,
-                                'end': attribute.end
-                            })
-                        else:
-                            attributes[attribute.like_id] = [{
-                                'name': attribute.name,
-                                'start': attribute.start,
-                                'end': attribute.end
-                            }]
+                    attributes = {}
+                    limit = 100
+                    subquery = session.query(Attribute).filter(Attribute.like_id.in_(map(lambda x: x['id'], likes)))
+                    count = subquery.count()
+                    subquery = subquery.limit(limit)
 
-                for like in likes:
-                    if like['id'] in attributes:
-                        like['attributes'] = attributes[like['id']]
+                    for index in range(math.ceil(count / limit)):
+                        for attribute in subquery.offset(index * limit).all():
+                            if attribute.like_id in attributes:
+                                attributes[attribute.like_id].append({
+                                    'name': attribute.name,
+                                    'start': attribute.start,
+                                    'end': attribute.end
+                                })
+                            else:
+                                attributes[attribute.like_id] = [{
+                                    'name': attribute.name,
+                                    'start': attribute.start,
+                                    'end': attribute.end
+                                }]
 
-                return func.HttpResponse(json.dumps(likes), status_code=200, mimetype='application/json', charset='utf-8')
+                    for like in likes:
+                        if like['id'] in attributes:
+                            like['attributes'] = attributes[like['id']]
 
-            finally:
-                session.close()
+                    json_data = json.dumps(likes)
+                    set_cache(cache_name, json_data)
+
+                    return func.HttpResponse(json_data, status_code=200, mimetype='application/json', charset='utf-8')
+
+                finally:
+                    session.close()
+
+            else:
+                return func.HttpResponse(json.dumps(cached_data), status_code=200, mimetype='application/json', charset='utf-8')
 
     except Exception as e:
         logging.error(f'{e}')
