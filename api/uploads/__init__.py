@@ -28,7 +28,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             limit = int(req.params['limit']) if 'limit' in req.params else None
 
         parsed_url = urlparse(req.url)
-        cache_name = f'{parsed_url.path}?{parsed_url.query}'
+        cache_name = f'{parsed_url.path}?{parsed_url.query}' if len(parsed_url.query) > 0 else parsed_url.path
         cached_data = get_cache(cache_name)
 
         if cached_data is None:
