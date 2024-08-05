@@ -69,7 +69,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 session.close()
 
         else:
-            return func.HttpResponse(cached_data, status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps(cached_data), status_code=200, mimetype='application/json', charset='utf-8')
 
     except Exception as e:
         logging.error(f'{e}')
