@@ -3,9 +3,13 @@ import json
 import logging
 import os
 import jwt
+from uuid import uuid4
+from datetime import datetime, timezone
 from urllib.request import urlopen, Request
+from shared import encode_geohash
 
 import azure.functions as func
+from azure.cosmos.cosmos_client import CosmosClient
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -26,6 +30,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             'kid': key_id,
             'id': f'{team_id}.{services_id}'
         })
+        latitude = float(req.route_params.get('latitude'))
+        longitude = float(req.route_params.get('longitude'))
+        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+        database = client.get_database_client('Milch')
+        container = database.get_container_client('Logs')
+        container.upsert_item({'id': str(uuid4()), 'geohash': encode_geohash(latitude, longitude), 'location': {'type': 'Point', 'coordinates': [longitude, latitude]}, 'timestamp': datetime.fromtimestamp(now, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
         request = Request(f'https://weatherkit.apple.com/api/v1/weather/en/{req.route_params.get("latitude")}/{req.route_params.get("longitude")}?dataSets=currentWeather', method='GET', headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'})
         
         with urlopen(request) as response:
