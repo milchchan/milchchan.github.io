@@ -6,6 +6,7 @@ pyjwt
 cryptography
 psycopg2-binary
 SQLAlchemy
+redis
 azure-functions
 azure-cosmos
 boto3
