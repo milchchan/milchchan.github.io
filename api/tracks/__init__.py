@@ -28,7 +28,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if geohash is None:
                     if from_date is None:
                         items = list(container.query_items(
-                            query=f'SELECT l.id, l.location, l.timestamp FROM Logs AS l ORDER BY l.timestamp {'DESC' if order == 'desc' else 'ASC'} OFFSET @offset LIMIT @limit',
+                            query=f'SELECT l.id, l.location, l.timestamp FROM Logs AS l ORDER BY l.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                             parameters=[
                                 {'name': '@offset', 'value': 0 if offset is None else offset},
                                 {'name': '@limit', 'value': 100 if limit is None else limit}
@@ -38,7 +38,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     else:
                         datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
                         items = list(container.query_items(
-                            query=f'SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.timestamp > @from_date AND l.timestamp <= @to_date ORDER BY l.timestamp {'DESC' if order == 'desc' else 'ASC'} OFFSET @offset LIMIT @limit',
+                            query=f'SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.timestamp > @from_date AND l.timestamp <= @to_date ORDER BY l.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                             parameters=[
                                 {'name': '@offset', 'value': 0 if offset is None else offset},
                                 {'name': '@limit', 'value': 100 if limit is None else limit},
