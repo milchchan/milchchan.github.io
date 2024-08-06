@@ -28,10 +28,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if geohash is None:
                     if from_date is None:
                         items = list(container.query_items(
-                            query=f'SELECT l.id, l.location, l.timestamp FROM Logs AS l ORDER BY l.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                            query=f'SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.timestamp <= @to_date ORDER BY l.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                             parameters=[
                                 {'name': '@offset', 'value': 0 if offset is None else offset},
-                                {'name': '@limit', 'value': 100 if limit is None else limit}
+                                {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
                             ],
                             enable_cross_partition_query=True))
 
@@ -52,10 +53,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                     if from_date is None:
                         items = list(container.query_items(
-                            query=f"SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.geohash LIKE CONCAT(@centergeohash, '%') OR l.geohash LIKE CONCAT(@topgeohash, '%') OR l.geohash LIKE CONCAT(@bottomgeohash, '%') OR l.geohash LIKE CONCAT(@rightgeohash, '%') OR l.geohash LIKE CONCAT(@leftgeohash, '%') OR l.geohash LIKE CONCAT(@topleftgeohash, '%') OR l.geohash LIKE CONCAT(@toprightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomleftgeohash, '%') ORDER BY l.timestamp {'DESC' if order == 'desc' else 'ASC'} OFFSET @offset LIMIT @limit",
+                            query=f"SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.timestamp <= @to_date AND (l.geohash LIKE CONCAT(@centergeohash, '%') OR l.geohash LIKE CONCAT(@topgeohash, '%') OR l.geohash LIKE CONCAT(@bottomgeohash, '%') OR l.geohash LIKE CONCAT(@rightgeohash, '%') OR l.geohash LIKE CONCAT(@leftgeohash, '%') OR l.geohash LIKE CONCAT(@topleftgeohash, '%') OR l.geohash LIKE CONCAT(@toprightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomleftgeohash, '%')) ORDER BY l.timestamp {'DESC' if order == 'desc' else 'ASC'} OFFSET @offset LIMIT @limit",
                             parameters=[
                                 {'name': '@offset', 'value': 0 if offset is None else offset},
                                 {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
                                 {'name': '@centergeohash', 'value': geohash},
                                 {'name': '@topgeohash', 'value': neighbors['top']},
                                 {'name': '@bottomgeohash', 'value': neighbors['bottom']},
