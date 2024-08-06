@@ -44,8 +44,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 {'name': '@order', 'value': 'DESC' if order == 'desc' else 'ASC'},
                                 {'name': '@offset', 'value': 0 if offset is None else offset},
                                 {'name': '@limit', 'value': 100 if limit is None else limit},
-                                {"name": "@from_date", "value": datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
-                                {"name": "@to_date", "value": datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                                {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
+                                {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
                             ],
                             enable_cross_partition_query=True))
 
@@ -54,53 +54,44 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                     if from_date is None:
                         items = list(container.query_items(
-                            query="SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.geohash LIKE CONCAT(@centergeohash, '%') OR l.geohash LIKE CONCAT(@topgeohash, '%') OR l.geohash LIKE CONCAT(@bottomgeohash, '%') OR l.geohash LIKE CONCAT(@rightgeohash, '%') OR l.geohash LIKE CONCAT(@leftgeohash, '%') OR l.geohash LIKE CONCAT(@topleftgeohash, '%') OR l.geohash LIKE CONCAT(@toprightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomleftgeohash, '%') ORDER BY l.timestamp @order OFFSET @offset LIMIT @limit",
+                            query='SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.geohash LIKE CONCAT(@centergeohash, '%') OR l.geohash LIKE CONCAT(@topgeohash, '%') OR l.geohash LIKE CONCAT(@bottomgeohash, '%') OR l.geohash LIKE CONCAT(@rightgeohash, '%') OR l.geohash LIKE CONCAT(@leftgeohash, '%') OR l.geohash LIKE CONCAT(@topleftgeohash, '%') OR l.geohash LIKE CONCAT(@toprightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomleftgeohash, '%') ORDER BY l.timestamp @order OFFSET @offset LIMIT @limit',
                             parameters=[
                                 {'name': '@order', 'value': 'DESC' if order == 'desc' else 'ASC'},
                                 {'name': '@offset', 'value': 0 if offset is None else offset},
                                 {'name': '@limit', 'value': 100 if limit is None else limit},
-                                {"name": "@centergeohash", "value": geohash},
-                                {"name": "@topgeohash", "value": neighbors['top']},
-                                {"name": "@bottomgeohash", "value": neighbors['bottom']},
-                                {"name": "@rightgeohash", "value": neighbors['right']},
-                                {"name": "@leftgeohash", "value": neighbors['left']},
-                                {"name": "@topleftgeohash", "value": neighbors['topleft']},
-                                {"name": "@toprightgeohash",
-                                    "value": neighbors['topright']},
-                                {"name": "@bottomrightgeohash",
-                                    "value": neighbors['bottomright']},
-                                {"name": "@bottomleftgeohash",
-                                    "value": neighbors['bottomleft']}
+                                {'name': '@centergeohash', 'value': geohash},
+                                {'name': '@topgeohash', 'value': neighbors['top']},
+                                {'name': '@bottomgeohash', 'value': neighbors['bottom']},
+                                {'name': '@rightgeohash', 'value': neighbors['right']},
+                                {'name': '@leftgeohash', 'value': neighbors['left']},
+                                {'name': '@topleftgeohash', 'value': neighbors['topleft']},
+                                {'name': '@toprightgeohash', 'value': neighbors['topright']},
+                                {'name': '@bottomrightgeohash', 'value': neighbors['bottomright']},
+                                {'name': '@bottomleftgeohash', 'value': neighbors['bottomleft']}
                             ],
                             enable_cross_partition_query=True))
 
                     else:
                         items = list(container.query_items(
-                            query="SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.timestamp > @from_date AND l.timestamp <= @to_date AND (l.geohash LIKE CONCAT(@centergeohash, '%') OR l.geohash LIKE CONCAT(@topgeohash, '%') OR l.geohash LIKE CONCAT(@bottomgeohash, '%') OR l.geohash LIKE CONCAT(@rightgeohash, '%') OR l.geohash LIKE CONCAT(@leftgeohash, '%') OR l.geohash LIKE CONCAT(@topleftgeohash, '%') OR l.geohash LIKE CONCAT(@toprightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomleftgeohash, '%')) ORDER BY l.timestamp @order OFFSET @offset LIMIT @limit",
+                            query='SELECT l.id, l.location, l.timestamp FROM Logs AS l WHERE l.timestamp > @from_date AND l.timestamp <= @to_date AND (l.geohash LIKE CONCAT(@centergeohash, '%') OR l.geohash LIKE CONCAT(@topgeohash, '%') OR l.geohash LIKE CONCAT(@bottomgeohash, '%') OR l.geohash LIKE CONCAT(@rightgeohash, '%') OR l.geohash LIKE CONCAT(@leftgeohash, '%') OR l.geohash LIKE CONCAT(@topleftgeohash, '%') OR l.geohash LIKE CONCAT(@toprightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomrightgeohash, '%') OR l.geohash LIKE CONCAT(@bottomleftgeohash, '%')) ORDER BY l.timestamp @order OFFSET @offset LIMIT @limit',
                             parameters=[
-                                {"name": "@offset", "value": 0 if offset is None else offset},
-                                {"name": "@limit", "value": 100 if limit is None else limit},
-                                {"name": "@from_date", "value": datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
-                                {"name": "@to_date", "value": datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
-                                {"name": "@centergeohash", "value": geohash},
-                                {"name": "@topgeohash", "value": neighbors['top']},
-                                {"name": "@bottomgeohash", "value": neighbors['bottom']},
-                                {"name": "@rightgeohash", "value": neighbors['right']},
-                                {"name": "@leftgeohash", "value": neighbors['left']},
-                                {"name": "@topleftgeohash", "value": neighbors['topleft']},
-                                {"name": "@toprightgeohash",
-                                    "value": neighbors['topright']},
-                                {"name": "@bottomrightgeohash",
-                                    "value": neighbors['bottomright']},
-                                {"name": "@bottomleftgeohash",
-                                    "value": neighbors['bottomleft']}
+                                {'name': '@offset', 'value': 0 if offset is None else offset},
+                                {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
+                                {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
+                                {'name': '@centergeohash', 'value': geohash},
+                                {'name': '@topgeohash', 'value': neighbors['top']},
+                                {'name': '@bottomgeohash', 'value': neighbors['bottom']},
+                                {'name': '@rightgeohash', 'value': neighbors['right']},
+                                {'name': '@leftgeohash', 'value': neighbors['left']},
+                                {'name': '@topleftgeohash', 'value': neighbors['topleft']},
+                                {'name': '@toprightgeohash', 'value': neighbors['topright']},
+                                {'name': '@bottomrightgeohash', 'value': neighbors['bottomright']},
+                                {'name': '@bottomleftgeohash', 'value': neighbors['bottomleft']}
                             ],
                             enable_cross_partition_query=True))
                         
                 for item in items:
-                    if item['location'] is not None and 'type' in item['location'] and item['location']['type'] == 'Point' and 'coordinates' in item['location']:
-                        item['location'] = {'type': 'Point', 'coordinates': item['location']['coordinates']}
-
                     item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 
                 return func.HttpResponse(json.dumps(items), status_code=200, mimetype='application/json', charset='utf-8')
