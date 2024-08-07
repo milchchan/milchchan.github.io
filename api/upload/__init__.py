@@ -298,7 +298,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if mime_type is None:
                     upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
                 else:
-                    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier, Upload.type.like(f'{mime_type}%')).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier, Upload.type.like(f'{mime_type}%')).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier, Upload.type.like(mime_type)).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier, Upload.type.like(mime_type)).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
                 
                 identifier = os.path.basename(urlparse(upload.url).path)
                 file_is_exists = True
