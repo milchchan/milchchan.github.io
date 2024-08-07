@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from shared.models import Like, Attribute
@@ -50,7 +51,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'end': attribute.end
                         })
 
-                cache_names = scan_cache('*/likes*')
+                cache_names = scan_cache(f'{urlparse(req.url).path}*')
 
                 if len(cache_names) > 0:
                     delete_cache(cache_names)
