@@ -911,7 +911,7 @@ window.addEventListener("load", async event => {
           if (background.updated > 0) {
             promisess.push(new Promise(async (resolve, reject) => {
               try {
-                const response = await fetch(encodeURI("https://milchchan.com/api/upload"), {
+                const response = await fetch(encodeURI("https://milchchan.com/api/upload?type=image/%"), {
                   mode: "cors",
                   method: "GET",
                   headers: {
@@ -931,7 +931,7 @@ window.addEventListener("load", async event => {
           } else {
             promisess.push(new Promise(async (resolve, reject) => {
               try {
-                const response = await fetch(encodeURI("https://milchchan.com/api/uploads"), {
+                const response = await fetch(encodeURI("https://milchchan.com/api/uploads?type=image/%"), {
                   mode: "cors",
                   method: "GET",
                   headers: {
@@ -960,7 +960,7 @@ window.addEventListener("load", async event => {
           promisess.push(new Promise(async (resolve, reject) => {
             try {
               const limit = 11;
-              const response = await fetch(encodeURI(`https://milchchan.com/api/uploads?offset=${background.offset}&limit=${limit}`), {
+              const response = await fetch(encodeURI(`https://milchchan.com/api/uploads?type=image/%&offset=${background.offset}&limit=${limit}`), {
                 mode: "cors",
                 method: "GET",
                 headers: {
