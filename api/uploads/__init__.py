@@ -21,13 +21,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             order = data['order'] if 'order' in data and data['order'] is not None else 'desc'
             offset = data.get('offset')
             limit = data.get('limit')
-            content_type = data.get('type')
+            mime_type = data.get('type')
 
         else:
             order = req.params['order'] if 'order' in req.params else 'desc'
             offset = int(req.params['offset']) if 'offset' in req.params else None
             limit = int(req.params['limit']) if 'limit' in req.params else None
-            content_type = req.params['type'] if 'type' in req.params else None
+            mime_type = req.params['type'] if 'type' in req.params else None
 
         parsed_url = urlparse(req.url)
         cache_name = f'{parsed_url.path}?{parsed_url.query}' if len(parsed_url.query) > 0 else parsed_url.path
@@ -41,8 +41,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 uploads = []
                 query = session.query(Upload)
 
-                if content_type is not None:
-                    query = query.filter(Upload.type.like(content_type))
+                if mime_type is not None:
+                    query = query.filter(Upload.type.like(mime_type))
 
                 if order == 'asc':
                     query = query.order_by(Upload.timestamp)
