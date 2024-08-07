@@ -214,7 +214,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             })
                 
                 if len(uploads) > 0:
-                    cache_names = scan_cache('*/uploads*')
+                    cache_names = scan_cache(f'{urlparse(req.url).path}*')
 
                     if len(cache_names) > 0:
                         delete_cache(cache_names)
