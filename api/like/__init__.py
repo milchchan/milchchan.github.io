@@ -50,7 +50,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'end': attribute.end
                         })
 
-                cache_names = scan_cache('/likes*')
+                cache_names = scan_cache('*/likes*')
 
                 if len(cache_names) > 0:
                     delete_cache(cache_names)
