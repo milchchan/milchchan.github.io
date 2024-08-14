@@ -166,6 +166,10 @@
         transition: 0.5s ease-out;
       }
 
+      .is-hidden {
+        display: none !important;
+      }
+
       .is-uppercase {
         text-transform: uppercase;
       }
@@ -446,7 +450,12 @@
           transition: .5s;
       }
 
-      div.sidebar .button:disabled>.stack .icon {
+      div.sidebar .button>.stack .icon.is-animatable {
+        position: relative;
+        right: initial;
+      }
+
+      div.sidebar .button:disabled>.stack .icon.is-animatable {
         animation: loading 1s linear forwards infinite;
         animation-play-state: running;
       }
@@ -772,8 +781,23 @@
                     <div class="rotate">
                     <button class="button" type="button" title="Reload" onclick="reload(event);">
                         <div class="stack">
-                          <span class="icon">
+                          <span class="icon is-animatable">
                             <i class="fa-solid fa-arrows-rotate"></i>
+                          </span>
+                        </div>
+                    </button>
+                    </div>
+                </div>
+                </div>
+              </div>
+              <div class="level-item is-hidden">
+                <div class="rotation-outer">
+                <div class="rotation-inner">
+                    <div class="rotate">
+                    <button class="button" type="button" title="Reload" data-prompt="続けてください。" onclick="more(event);">
+                        <div class="stack">
+                          <span class="icon">
+                            <i class="fa-solid fa-plus"></i>
                           </span>
                         </div>
                     </button>
@@ -1053,7 +1077,7 @@
         };
       }
 
-      if (hash.length > 0) {
+      if (hash.length > 0 && hash !== "debug") {
         for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
           if(hash === element.dataset.type) {
             if (!element.classList.contains("is-selected")) {
@@ -1112,65 +1136,62 @@
                       };
 
                       if ("generated" in element2.dataset === false) {
-                        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-
-                        if (reloadButton !== null) {
+                        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+                        const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+        
+                        if (reloadButton !== null && moreButton !== null) {
                           reloadButton.disabled = true;
                           reloadButton.dataset["type"] = element2.dataset.type;
-                        }
+                          moreButton.disabled = true;
 
-                        element2.dataset["generated"] = false;
+                          element2.dataset["generated"] = false;
 
-                        new Promise(async (resolve, reject) => {
-                          if ("prompt" in element2.dataset) {
-                            try {
-                              const response1 = await fetch(
-                                encodeURI(`${element2.dataset.type}.txt`)
-                              );
-
-                              if (response1.ok) {
-                                const response2 = await fetch(
-                                  encodeURI(
-                                    `https://milchchan.com/api/generate?temperature=${temperature}`
-                                  ),
-                                  {
-                                    mode: "cors",
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify([
-                                      {
-                                        role: "system",
-                                        content: await response1.text(),
-                                      },
-                                      {
-                                        role: "user",
-                                        content: element2.dataset.prompt,
-                                      },
-                                    ]),
-                                  }
+                          new Promise(async (resolve, reject) => {
+                            if ("prompt" in element2.dataset) {
+                              try {
+                                const response1 = await fetch(
+                                  encodeURI(`${element2.dataset.type}.txt`)
                                 );
 
-                                if (response2.ok) {
-                                  resolve((await response2.json()).content);
+                                if (response1.ok) {
+                                  const response2 = await fetch(
+                                    encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`),
+                                    {
+                                      mode: "cors",
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify([
+                                        {
+                                          role: "system",
+                                          content: await response1.text(),
+                                        },
+                                        {
+                                          role: "user",
+                                          content: element2.dataset.prompt,
+                                        },
+                                      ]),
+                                    }
+                                  );
+
+                                  if (response2.ok) {
+                                    resolve((await response2.json()).content);
+                                  } else {
+                                    throw new Error(response2.statusText);
+                                  }
                                 } else {
-                                  throw new Error(response2.statusText);
+                                  throw new Error(response1.statusText);
                                 }
-                              } else {
-                                throw new Error(response1.statusText);
+                              } catch (error) {
+                                reject(error);
                               }
-                            } catch (error) {
-                              reject(error);
+                            } else {
+                              resolve(null);
                             }
-                          } else {
-                            resolve(null);
-                          }
-                        }).then((data) => {
+                          }).then((data) => {
                             if (data !== null) {
-                              const div = element2.querySelector(
-                                ":scope>div:last-of-type"
-                              );
+                              const div = element2.querySelector(":scope>div:last-of-type");
 
                               if (div !== null) {
                                 for (const content of data.split("\n")) {
@@ -1191,37 +1212,24 @@
                               element2.dataset["generated"] = true;
                             }
 
-                            const reloadButton = document.body.querySelector(
-                              "div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button"
-                            );
-
-                            if (
-                              reloadButton !== null &&
-                              element2.dataset.type === reloadButton.dataset["type"]
-                            ) {
+                            if (element2.dataset.type === reloadButton.dataset["type"]) {
                               reloadButton.disabled = false;
+                              moreButton.disabled = false;
                             }
                           }).catch((error) => {
                             delete element2.dataset["generated"];
 
-                            const reloadButton = document.body.querySelector(
-                              "div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button"
-                            );
-
-                            if (
-                              reloadButton !== null &&
-                              element2.dataset.type === reloadButton.dataset["type"]
-                            ) {
+                            if (element2.dataset.type === reloadButton.dataset["type"]) {
                               reloadButton.disabled = false;
+                              moreButton.disabled = false;
                             }
 
                             console.error(error);
                           });
+                        }
                       }
 
-                      for (const element3 of document.body.querySelectorAll(
-                        "div.overlay>.wrap>.content"
-                      )) {
+                      for (const element3 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
                         if (
                           element1.dataset.type !== element3.dataset.type &&
                           element3.classList.contains("is-selected")
@@ -1271,12 +1279,14 @@
         }
       };
       window.reload = (event) => {
-        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-            
-        if (reloadButton !== null) {
+        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+        const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+        
+        if (reloadButton !== null && moreButton !== null) {
           const type = reloadButton.dataset["type"];
 
           reloadButton.disabled = true;
+          moreButton.disabled = true;
 
           for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
             if (type === element1.dataset.type) {
@@ -1366,18 +1376,16 @@
                         element1.dataset["generated"] = true;
                       }
 
-                      const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-
-                      if (reloadButton !== null && type === reloadButton.dataset["type"]) {
+                      if (type === reloadButton.dataset["type"]) {
                         reloadButton.disabled = false;
+                        moreButton.disabled = false;
                       }
                     }).catch((error) => {
                       delete element2.dataset["generated"];
 
-                      const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-
-                      if (reloadButton !== null && type === reloadButton.dataset["type"]) {
+                      if (type === reloadButton.dataset["type"]) {
                         reloadButton.disabled = false;
+                        moreButton.disabled = false;
                       }
 
                       console.error(error);
@@ -1389,8 +1397,114 @@
           }
         }
       };
+      window.more = (event) => {
+        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+        const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+        
+        if (reloadButton !== null && moreButton !== null) {
+          const type = reloadButton.dataset["type"];
+
+          reloadButton.disabled = true;
+          moreButton.disabled = true;
+
+          for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+            if (type === element1.dataset.type) {
+              if (element1.classList.contains("is-selected")) {
+                const element2 = element1.querySelector(":scope>div:last-of-type");
+
+                new Promise(async (resolve, reject) => {
+                  if ("prompt" in element1.dataset) {
+                    try {
+                      const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
+
+                      if (response1.ok) {
+                        const messages = [{role: "system", content: await response1.text()}, {role: "user", content: element1.dataset.prompt}];
+                        const content = [];
+
+                        for (const element3 of element2.querySelectorAll(":scope>p>span.is-italic")) {
+                          content.push(element3.textContent);
+                        }
+
+                        messages.push({role: "assistant", content: content.join("\n")});
+                        messages.push({role: "user", content: moreButton.dataset.prompt});
+
+                        const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                          mode: "cors",
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json"
+                          },
+                          body: JSON.stringify(messages)
+                        });
+
+                        if (response2.ok) {
+                          resolve((await response2.json()).content);
+                        } else {
+                          throw new Error(response2.statusText);
+                        }
+                      } else {
+                        throw new Error(response1.statusText);
+                      }
+                    } catch (error) {
+                      reject(error);
+                    }
+                  } else {
+                    resolve(null);
+                  }
+                }).then((data) => {
+                  if (data !== null) {
+                    const div = element1.querySelector(":scope>div:last-of-type");
+
+                    if (div !== null) {
+                      for (const content of data.split("\n")) {
+                        if (content.length > 0) {
+                          const p = document.createElement("p");
+                          const span = document.createElement("span");
+
+                          span.classList.add("reveal")
+                          span.classList.add("is-italic")
+                          span.textContent = content;
+
+                          p.appendChild(span);
+                          div.appendChild(p);
+                        }
+                      }
+                    }
+                  }
+
+                  const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+                  const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+        
+                  if (type === reloadButton.dataset["type"]) {
+                    reloadButton.disabled = false;
+                    moreButton.disabled = false;
+                  }
+                }).catch((error) => {
+                  const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+                  const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+        
+                  if (type === reloadButton.dataset["type"]) {
+                    reloadButton.disabled = false;
+                    moreButton.disabled = false;
+                  }
+
+                  console.error(error);
+                });
+              }
+            }
+          }
+        }    
+      };
 
       window.addEventListener("load", async (event) => {
+        if (hash === "debug") {
+          for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child")) {
+            if (element.classList.contains("is-hidden")) {
+              element.classList.remove("is-hidden");
+            }
+          }
+        }
+        
         for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
           if (element.classList.contains("is-selected")) {
             const background = document.createElement("div");
@@ -1401,121 +1515,127 @@
             
             document.body.querySelector(".wrap>.frame").prepend(background);
 
-            const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-            
-            if (reloadButton !== null) {
+            const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+            const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+        
+            if (reloadButton !== null && moreButton !== null) {
               reloadButton.disabled = true;
               reloadButton.dataset["type"] = element.dataset.type;
-            }
-            
-            new Promise(async (resolve, reject) => {
-              try {
-                  const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element.dataset.type}-dark-background-image` : `--${element.dataset.type}-light-background-image`));
+              moreButton.disabled = true;
 
-                  if (response.ok) {
-                      background.style.backgroundImage = `url('${await new Promise(
-                      async (resolve, reject) => {
-                          const reader = new FileReader();
-
-                          reader.onload = () => {
-                              resolve(reader.result);
-                          };
-                          reader.onerror = () => {
-                              reject(reader.error);
-                          };
-                          reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
-                      }
-                      )}')`;
-                  }
-              } catch (error) {
-                  console.error(error);
-              }
-              
-              background.animate([
-                {
-                  opacity: 1,
-                  transform: "scale3d(1.0, 1.0, 1.0)",
-                },
-              ], {
-                  delay: 0,
-                  fill: "forwards",
-                  duration: 500,
-                  iterations: 1,
-                  easing: "ease-out",
-              }).onfinish = () => {
-                  background.style.opacity = 1;
-                  background.style.transform = "scale3d(1.0, 1.0, 1.0)";
-              };
-
-              element.dataset["generated"] = false;
-
-              if ("prompt" in element.dataset) {
+              new Promise(async (resolve, reject) => {
                 try {
-                  const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
+                    const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element.dataset.type}-dark-background-image` : `--${element.dataset.type}-light-background-image`));
 
-                  if (response1.ok) {
-                    const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
-                      mode: "cors",
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json"
-                      },
-                      body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element.dataset.prompt}])
-                    });
+                    if (response.ok) {
+                        background.style.backgroundImage = `url('${await new Promise(
+                        async (resolve, reject) => {
+                            const reader = new FileReader();
 
-                    if (response2.ok) {
-                      resolve((await response2.json()).content);
-                    } else {
-                      throw new Error(response2.statusText);
+                            reader.onload = () => {
+                                resolve(reader.result);
+                            };
+                            reader.onerror = () => {
+                                reject(reader.error);
+                            };
+                            reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
+                        }
+                        )}')`;
                     }
-                  } else {
-                    throw new Error(response1.statusText);
-                  }
                 } catch (error) {
-                  reject(error);
+                    console.error(error);
                 }
-              } else {
-                resolve(null);
-              }
-            }).then((data) => {
-              if (data !== null) {
-                const div = element.querySelector(":scope>div:last-of-type");
+                
+                background.animate([
+                  {
+                    opacity: 1,
+                    transform: "scale3d(1.0, 1.0, 1.0)",
+                  },
+                ], {
+                    delay: 0,
+                    fill: "forwards",
+                    duration: 500,
+                    iterations: 1,
+                    easing: "ease-out",
+                }).onfinish = () => {
+                    background.style.opacity = 1;
+                    background.style.transform = "scale3d(1.0, 1.0, 1.0)";
+                };
 
-                if (div !== null) {
-                  for (const content of data.split("\n")) {
-                    if (content.length > 0) {
-                      const p = document.createElement("p");
-                      const span = document.createElement("span");
+                element.dataset["generated"] = false;
 
-                      span.classList.add("reveal")
-                      span.classList.add("is-italic")
-                      span.textContent = content;
+                if ("prompt" in element.dataset) {
+                  try {
+                    const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
 
-                      p.appendChild(span);
-                      div.appendChild(p);
+                    if (response1.ok) {
+                      const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                        mode: "cors",
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element.dataset.prompt}])
+                      });
+
+                      if (response2.ok) {
+                        resolve((await response2.json()).content);
+                      } else {
+                        throw new Error(response2.statusText);
+                      }
+                    } else {
+                      throw new Error(response1.statusText);
+                    }
+                  } catch (error) {
+                    reject(error);
+                  }
+                } else {
+                  resolve(null);
+                }
+              }).then((data) => {
+                if (data !== null) {
+                  const div = element.querySelector(":scope>div:last-of-type");
+
+                  if (div !== null) {
+                    for (const content of data.split("\n")) {
+                      if (content.length > 0) {
+                        const p = document.createElement("p");
+                        const span = document.createElement("span");
+
+                        span.classList.add("reveal")
+                        span.classList.add("is-italic")
+                        span.textContent = content;
+
+                        p.appendChild(span);
+                        div.appendChild(p);
+                      }
                     }
                   }
+
+                  element.dataset["generated"] = true;
                 }
 
-                element.dataset["generated"] = true;
-              }
+                const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+                const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+          
+                if (element.dataset.type === reloadButton.dataset["type"]) {
+                  reloadButton.disabled = false;
+                  moreButton.disabled = false;
+                }
+              }).catch((error) => {
+                delete element.dataset["generated"];
 
-              const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-            
-              if (reloadButton !== null && element.dataset.type === reloadButton.dataset["type"]) {
-                reloadButton.disabled = false;
-              }
-            }).catch((error) => {
-              delete element.dataset["generated"];
+                const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+                const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+          
+                if (element.dataset.type === reloadButton.dataset["type"]) {
+                  reloadButton.disabled = false;
+                  moreButton.disabled = false;
+                }
 
-              const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-            
-              if (reloadButton !== null && element.dataset.type === reloadButton.dataset["type"]) {
-                reloadButton.disabled = false;
-              }
-
-              console.error(error);
-            });
+                console.error(error);
+              });
+            }
           } else {
             element.style.display = "none";
             element.style.opacity = 0;
