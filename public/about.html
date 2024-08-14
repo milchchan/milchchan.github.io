@@ -960,25 +960,25 @@
 
       function shake(element) {
         element.animate([
-            { transform: "translate3d(0, 0, 0)" },
-            { transform: "translate3d(8px, 0, 0)" },
-            { transform: "translate3d(-8px, 0, 0)" },
-            { transform: "translate3d(7px, 0, 0)" },
-            { transform: "translate3d(-7px, 0, 0)" },
-            { transform: "translate3d(6px, 0, 0)" },
-            { transform: "translate3d(-6px, 0, 0)" },
-            { transform: "translate3d(5px, 0, 0)" },
-            { transform: "translate3d(-5px, 0, 0)" },
-            { transform: "translate3d(4px, 0, 0)" },
-            { transform: "translate3d(-4px, 0, 0)" },
-            { transform: "translate3d(3px, 0, 0)" },
-            { transform: "translate3d(-3px, 0, 0)" },
-            { transform: "translate3d(2px, 0, 0)" },
-            { transform: "translate3d(-2px, 0, 0)" },
-            { transform: "translate3d(1px, 0, 0)" },
-            { transform: "translate3d(-1px, 0, 0)" },
-            { transform: "translate3d(0, 0, 0)" }],
-            { duration: 1000, iterations: 1 });
+          { transform: "translate3d(0, 0, 0)" },
+          { transform: "translate3d(8px, 0, 0)" },
+          { transform: "translate3d(-8px, 0, 0)" },
+          { transform: "translate3d(7px, 0, 0)" },
+          { transform: "translate3d(-7px, 0, 0)" },
+          { transform: "translate3d(6px, 0, 0)" },
+          { transform: "translate3d(-6px, 0, 0)" },
+          { transform: "translate3d(5px, 0, 0)" },
+          { transform: "translate3d(-5px, 0, 0)" },
+          { transform: "translate3d(4px, 0, 0)" },
+          { transform: "translate3d(-4px, 0, 0)" },
+          { transform: "translate3d(3px, 0, 0)" },
+          { transform: "translate3d(-3px, 0, 0)" },
+          { transform: "translate3d(2px, 0, 0)" },
+          { transform: "translate3d(-2px, 0, 0)" },
+          { transform: "translate3d(1px, 0, 0)" },
+          { transform: "translate3d(-1px, 0, 0)" },
+          { transform: "translate3d(0, 0, 0)" }],
+          { duration: 1000, iterations: 1 });
       }
 
       async function change(url) {
@@ -991,50 +991,49 @@
         document.body.querySelector(".wrap>.frame").prepend(background);
 
         try {
-            const response = await fetch(url);
+          const response = await fetch(url);
 
-            if (response.ok) {
-                background.style.backgroundImage = `url('${await new Promise(
-                async (resolve, reject) => {
-                const reader = new FileReader();
+          if (response.ok) {
+            background.style.backgroundImage = `url('${await new Promise(async (resolve, reject) => {
+              const reader = new FileReader();
 
-                reader.onload = () => {
-                    resolve(reader.result);
-                };
-                reader.onerror = () => {
-                    reject(reader.error);
-                };
-                reader.readAsDataURL(
-                    await resize(
-                    await response.blob(),
-                    Math.max(window.screen.width, window.screen.height) *
-                        window.devicePixelRatio
-                    )
-                );
-                }
-            )}')`;
+              reader.onload = () => {
+                resolve(reader.result);
+              };
+              reader.onerror = () => {
+                reject(reader.error);
+              };
+              reader.readAsDataURL(
+                  await resize(
+                  await response.blob(),
+                  Math.max(window.screen.width, window.screen.height) *
+                      window.devicePixelRatio
+                  )
+              );
             }
+          )}')`;
+          }
         } catch (error) {
-            console.error(error);
+          console.error(error);
         }
 
         for (const element of document.body.querySelectorAll(".wrap>.frame>.background")) {
-            if (element !== background) {
-                element.animate([
-                    {
-                    opacity: 0,
-                    transform: "scale3d(1.1, 1.1, 1.1)",
-                    },
-                ], {
-                    delay: 0,
-                    fill: "forwards",
-                    duration: 500,
-                    iterations: 1,
-                    easing: "ease-in",
-                }).onfinish = () => {
-                    element.remove();
-                };
-            }
+          if (element !== background) {
+            element.animate([
+                {
+                opacity: 0,
+                transform: "scale3d(1.1, 1.1, 1.1)",
+                },
+            ], {
+                delay: 0,
+                fill: "forwards",
+                duration: 500,
+                iterations: 1,
+                easing: "ease-in",
+            }).onfinish = () => {
+                element.remove();
+            };
+          }
         }
 
         background.animate([
@@ -1080,157 +1079,195 @@
           }
         }
       }
-
       window.select = (event) => {
         const target = (event.currentTarget || event.target);
 
         for (const element1 of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
-            if (element1.dataset.type === target.dataset.type) {
-                if (!element1.classList.contains("is-selected")) {
-                    for (const element2 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-                        if (element1.dataset.type === element2.dataset.type) {
-                            if (!element2.classList.contains("is-selected")) {
-                                if (element2.style.display === "none") {
-                                    element2.classList.add("is-selected");
-                                    element2.style.display = "block";
-                                    element2.animate([
-                                      {
-                                        opacity: 1
-                                      }
-                                    ], {
-                                        delay: 0,
-                                        fill: "forwards",
-                                        duration: 500,
-                                        iterations: 1,
-                                        easing: "ease-out",
-                                        composite: "replace"
-                                    }).onfinish = (event) => {
-                                        if (element2.classList.contains("is-selected")) {
-                                            element2.style.opacity = 1;
-                                        }
-                                    };
-
-                                    if ("generated" in element2.dataset === false) {
-                                      const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-            
-                                      if (reloadButton !== null) {
-                                        reloadButton.disabled = true;
-                                        reloadButton.dataset["type"] = element2.dataset.type;
-                                      }
-
-                                      element2.dataset["generated"] = false;
-
-                                      new Promise(async (resolve, reject) => {
-                                        if ("prompt" in element2.dataset) {
-                                          try {
-                                            const response1 = await fetch(encodeURI(`${element2.dataset.type}.txt`));
-
-                                            if (response1.ok) {
-                                              const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
-                                                mode: "cors",
-                                                method: "POST",
-                                                headers: {
-                                                  "Content-Type": "application/json"
-                                                },
-                                                body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element2.dataset.prompt}])
-                                              });
-
-                                              if (response2.ok) {
-                                                resolve((await response2.json()).content);
-                                              } else {
-                                                throw new Error(response2.statusText);
-                                              }
-                                            } else {
-                                              throw new Error(response1.statusText);
-                                            }
-                                          } catch (error) {
-                                            reject(error);
-                                          }
-                                        } else {
-                                          resolve(null);
-                                        }
-                                      }).then((data) => {
-                                        if (data !== null) {
-                                          const div = element2.querySelector(":scope>div:last-of-type");
-
-                                          if (div !== null) {
-                                            for (const content of data.split("\n")) {
-                                              if (content.length > 0) {
-                                                const p = document.createElement("p");
-                                                const span = document.createElement("span");
-
-                                                span.classList.add("reveal")
-                                                span.classList.add("is-italic")
-                                                span.textContent = content;
-
-                                                p.appendChild(span);
-                                                div.appendChild(p);
-                                              }
-                                            }
-                                          }
-
-                                          element2.dataset["generated"] = true;
-                                        }
-
-                                        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-            
-                                        if (reloadButton !== null && element2.dataset.type === reloadButton.dataset["type"]) {
-                                          reloadButton.disabled = false;
-                                        }
-                                      }).catch((error) => {
-                                        delete element2.dataset["generated"];
-
-                                        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-            
-                                        if (reloadButton !== null && element2.dataset.type === reloadButton.dataset["type"]) {
-                                          reloadButton.disabled = false;
-                                        }
-
-                                        console.error(error);
-                                      });
-                                    }
-
-                                    for (const element3 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-                                        if (element1.dataset.type !== element3.dataset.type && element3.classList.contains("is-selected")) {
-                                            element3.classList.remove("is-selected");
-                                            element3.animate([
-                                            {
-                                                opacity: 0
-                                            }
-                                            ], {
-                                                delay: 0,
-                                                fill: "forwards",
-                                                duration: 500,
-                                                iterations: 1,
-                                                easing: "ease-in",
-                                                composite: "replace"
-                                            }).onfinish = () => {
-                                                if (!element3.classList.contains("is-selected")) {
-                                                    element3.style.display = "none";
-                                                }
-                                            };
-                                        }
-                                    }
-                                } else {
-                                    shake(element1);
-
-                                    return;
-                                }
-
-                                element1.classList.add("is-selected");
-                    
-                                change(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element1.dataset.type}-dark-background-image` : `--${element1.dataset.type}-light-background-image`));
-                            }
+          if (element1.dataset.type === target.dataset.type) {
+            if (!element1.classList.contains("is-selected")) {
+              for (const element2 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+                if (element1.dataset.type === element2.dataset.type) {
+                  if (!element2.classList.contains("is-selected")) {
+                    if (element2.style.display === "none") {
+                      element2.classList.add("is-selected");
+                      element2.style.display = "block";
+                      element2.animate(
+                        [
+                          {
+                            opacity: 1,
+                          },
+                        ],
+                        {
+                          delay: 0,
+                          fill: "forwards",
+                          duration: 500,
+                          iterations: 1,
+                          easing: "ease-out",
+                          composite: "replace",
                         }
-                    }
-                }
+                      ).onfinish = (event) => {
+                        if (element2.classList.contains("is-selected")) {
+                          element2.style.opacity = 1;
+                        }
+                      };
 
-                for (const element2 of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
-                    if (element2.dataset.type !== target.dataset.type && element2.classList.contains("is-selected")) {
-                        element2.classList.remove("is-selected");
+                      if ("generated" in element2.dataset === false) {
+                        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+
+                        if (reloadButton !== null) {
+                          reloadButton.disabled = true;
+                          reloadButton.dataset["type"] = element2.dataset.type;
+                        }
+
+                        element2.dataset["generated"] = false;
+
+                        new Promise(async (resolve, reject) => {
+                          if ("prompt" in element2.dataset) {
+                            try {
+                              const response1 = await fetch(
+                                encodeURI(`${element2.dataset.type}.txt`)
+                              );
+
+                              if (response1.ok) {
+                                const response2 = await fetch(
+                                  encodeURI(
+                                    `https://milchchan.com/api/generate?temperature=${temperature}`
+                                  ),
+                                  {
+                                    mode: "cors",
+                                    method: "POST",
+                                    headers: {
+                                      "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify([
+                                      {
+                                        role: "system",
+                                        content: await response1.text(),
+                                      },
+                                      {
+                                        role: "user",
+                                        content: element2.dataset.prompt,
+                                      },
+                                    ]),
+                                  }
+                                );
+
+                                if (response2.ok) {
+                                  resolve((await response2.json()).content);
+                                } else {
+                                  throw new Error(response2.statusText);
+                                }
+                              } else {
+                                throw new Error(response1.statusText);
+                              }
+                            } catch (error) {
+                              reject(error);
+                            }
+                          } else {
+                            resolve(null);
+                          }
+                        }).then((data) => {
+                            if (data !== null) {
+                              const div = element2.querySelector(
+                                ":scope>div:last-of-type"
+                              );
+
+                              if (div !== null) {
+                                for (const content of data.split("\n")) {
+                                  if (content.length > 0) {
+                                    const p = document.createElement("p");
+                                    const span = document.createElement("span");
+
+                                    span.classList.add("reveal");
+                                    span.classList.add("is-italic");
+                                    span.textContent = content;
+
+                                    p.appendChild(span);
+                                    div.appendChild(p);
+                                  }
+                                }
+                              }
+
+                              element2.dataset["generated"] = true;
+                            }
+
+                            const reloadButton = document.body.querySelector(
+                              "div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button"
+                            );
+
+                            if (
+                              reloadButton !== null &&
+                              element2.dataset.type === reloadButton.dataset["type"]
+                            ) {
+                              reloadButton.disabled = false;
+                            }
+                          }).catch((error) => {
+                            delete element2.dataset["generated"];
+
+                            const reloadButton = document.body.querySelector(
+                              "div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button"
+                            );
+
+                            if (
+                              reloadButton !== null &&
+                              element2.dataset.type === reloadButton.dataset["type"]
+                            ) {
+                              reloadButton.disabled = false;
+                            }
+
+                            console.error(error);
+                          });
+                      }
+
+                      for (const element3 of document.body.querySelectorAll(
+                        "div.overlay>.wrap>.content"
+                      )) {
+                        if (
+                          element1.dataset.type !== element3.dataset.type &&
+                          element3.classList.contains("is-selected")
+                        ) {
+                          element3.classList.remove("is-selected");
+                          element3.animate(
+                            [
+                              {
+                                opacity: 0,
+                              },
+                            ],
+                            {
+                              delay: 0,
+                              fill: "forwards",
+                              duration: 500,
+                              iterations: 1,
+                              easing: "ease-in",
+                              composite: "replace",
+                            }
+                          ).onfinish = () => {
+                            if (!element3.classList.contains("is-selected")) {
+                              element3.style.display = "none";
+                            }
+                          };
+                        }
+                      }
+                    } else {
+                      shake(element1);
+
+                      return;
                     }
+
+                    element1.classList.add("is-selected");
+
+                    change(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element1.dataset.type}-dark-background-image` : `--${element1.dataset.type}-light-background-image`));
+                  }
                 }
+              }
             }
+
+            for (const element2 of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
+              if (element2.dataset.type !== target.dataset.type && element2.classList.contains("is-selected")) {
+                element2.classList.remove("is-selected");
+              }
+            }
+          }
         }
       };
       window.reload = (event) => {
