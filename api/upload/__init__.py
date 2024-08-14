@@ -350,7 +350,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             else:
                 parsed_url = urlparse(req.url)
-                cache_name = f'{parsed_url.path}?{parsed_url.query}&nonce={nonce}' if len(parsed_url.query) > 0 else f'{parsed_url.path}&nonce={nonce}'
+                cache_name = f'{parsed_url.path}?{parsed_url.query}' if len(parsed_url.query) > 0 else f'{parsed_url.path}'
                 cached_data = get_cache(cache_name)
 
                 if cached_data is None:
