@@ -386,7 +386,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 raise
 
                         if file_is_exists:
-                            set_cache(cache_name, json.dumps({'id': identifier}))
+                            set_cache(cache_name, json.dumps({
+                                'id': identifier,
+                                'url': upload.url,
+                                'type': upload.type,
+                                'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
+                            }))
 
                             return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                         
