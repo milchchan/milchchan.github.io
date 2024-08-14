@@ -1077,32 +1077,41 @@
         };
       }
 
-      if (hash.length > 0 && hash !== "debug") {
-        for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
-          if(hash === element.dataset.type) {
-            if (!element.classList.contains("is-selected")) {
-              element.classList.add("is-selected");
+      if (hash.length > 0) {
+        if (hash === "debug") {
+          for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child")) {
+            if (element.classList.contains("is-hidden")) {
+              element.classList.remove("is-hidden");
             }
-          } else if (element.classList.contains("is-selected")) {
-            element.classList.remove("is-selected");
           }
-        }
-
-        for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-          if(hash === element.dataset.type) {
-            if (!element.classList.contains("is-selected")) {
-              element.classList.add("is-selected");
-            }
-          } else {
-            if (element.classList.contains("is-selected")) {
+        } else {
+          for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
+            if(hash === element.dataset.type) {
+              if (!element.classList.contains("is-selected")) {
+                element.classList.add("is-selected");
+              }
+            } else if (element.classList.contains("is-selected")) {
               element.classList.remove("is-selected");
             }
+          }
 
-            element.style.display = "none";
-            element.style.opacity = 0;
+          for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+            if(hash === element.dataset.type) {
+              if (!element.classList.contains("is-selected")) {
+                element.classList.add("is-selected");
+              }
+            } else {
+              if (element.classList.contains("is-selected")) {
+                element.classList.remove("is-selected");
+              }
+
+              element.style.display = "none";
+              element.style.opacity = 0;
+            }
           }
         }
       }
+
       window.select = (event) => {
         const target = (event.currentTarget || event.target);
 
@@ -1493,18 +1502,10 @@
               }
             }
           }
-        }    
+        }
       };
 
       window.addEventListener("load", async (event) => {
-        if (hash === "debug") {
-          for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child")) {
-            if (element.classList.contains("is-hidden")) {
-              element.classList.remove("is-hidden");
-            }
-          }
-        }
-        
         for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
           if (element.classList.contains("is-selected")) {
             const background = document.createElement("div");
