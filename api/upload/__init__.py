@@ -322,8 +322,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             raise
 
                     if file_is_exists:
-                        return func.HttpResponse(status_code=302, headers={'Location': 'https://milchchan.com'})
-                        #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
+                        return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                     
                     '''
                     credentials = service_account.Credentials.from_service_account_info({
@@ -387,7 +386,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 raise
 
                         if file_is_exists:
-                            set_cache(cache_name, identifier)
+                            set_cache(cache_name, json.dumps({'id': identifier}))
 
                             return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                         
@@ -395,7 +394,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         session.close()
 
                 else:
-                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', cached_data)})
+                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', cached_data['id'])})
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
