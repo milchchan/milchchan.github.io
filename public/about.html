@@ -826,7 +826,7 @@
             </p>
           </div>
         </div>
-        <div class="content" data-type="story" data-prompt="魔法少女、マジカルミルヒちゃんのお話を考えてください。">
+        <div class="content" data-type="story" data-prompt="プロットからギャグ漫画風の即堕ち2コマの要素を含んだメルクちゃん視点のショートショートを書いてください。">
           <div class="icon is-animatable">
             <a class="button" href="https://clock.milchchan.com/" title="Clock">
               <figure>
@@ -844,21 +844,6 @@
             <span class="reveal has-text-weight-bold">ストーリー</span>
           </h2>
           <div>
-            <p>
-              <span class="reveal"></span>
-            </p>
-            <p>
-              <span class="reveal"></span>
-            </p>
-            <p>
-              <span class="reveal"></span>
-            </p>
-            <p>
-              <span class="reveal"></span>
-            </p>
-            <p>
-              <span class="reveal"></span>
-            </p>
           </div>
         </div>
       </div>
@@ -1078,46 +1063,56 @@
                                       element2.dataset["generated"] = false;
 
                                       new Promise(async (resolve, reject) => {
-                                        try {
-                                          const response1 = await fetch(encodeURI(`${element2.dataset.type}.txt`));
+                                        if ("prompt" in element2.dataset) {
+                                          try {
+                                            const response1 = await fetch(encodeURI(`${element2.dataset.type}.txt`));
 
-                                          if (response1.ok) {
-                                            const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
-                                              mode: "cors",
-                                              method: "POST",
-                                              headers: {
-                                                "Content-Type": "application/json"
-                                              },
-                                              body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element2.dataset.prompt}])
-                                            });
+                                            if (response1.ok) {
+                                              const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                                                mode: "cors",
+                                                method: "POST",
+                                                headers: {
+                                                  "Content-Type": "application/json"
+                                                },
+                                                body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element2.dataset.prompt}])
+                                              });
 
-                                            if (response2.ok) {
-                                              resolve((await response2.json()).content);
+                                              if (response2.ok) {
+                                                resolve((await response2.json()).content);
+                                              } else {
+                                                throw new Error(response2.statusText);
+                                              }
                                             } else {
-                                              throw new Error(response2.statusText);
+                                              throw new Error(response1.statusText);
                                             }
-                                          } else {
-                                            throw new Error(response1.statusText);
+                                          } catch (error) {
+                                            reject(error);
                                           }
-                                        } catch (error) {
-                                          reject(error);
+                                        } else {
+                                          resolve(null);
                                         }
                                       }).then((data) => {
-                                        const div = element2.querySelector(":scope>div:last-of-type");
+                                        if (data !== null) {
+                                          const div = element2.querySelector(":scope>div:last-of-type");
 
-                                        if (div !== null) {
-                                          const p = document.createElement("p");
-                                          const span = document.createElement("span");
+                                          if (div !== null) {
+                                            for (const content of data.split("\n")) {
+                                              if (content.length > 0) {
+                                                const p = document.createElement("p");
+                                                const span = document.createElement("span");
 
-                                          span.classList.add("reveal")
-                                          span.classList.add("is-italic")
-                                          span.textContent = data;
+                                                span.classList.add("reveal")
+                                                span.classList.add("is-italic")
+                                                span.textContent = content;
 
-                                          p.appendChild(span);
-                                          div.appendChild(p);
+                                                p.appendChild(span);
+                                                div.appendChild(p);
+                                              }
+                                            }
+                                          }
+
+                                          element2.dataset["generated"] = true;
                                         }
-
-                                        element2.dataset["generated"] = true;
                                       }).catch((error) => {
                                         delete element2.dataset["generated"];
 
@@ -1219,47 +1214,57 @@
               };
 
               element.dataset["generated"] = false;
-              
-              try {
-                const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
 
-                if (response1.ok) {
-                  const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
-                    mode: "cors",
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element.dataset.prompt}])
-                  });
+              if ("prompt" in element.dataset) {
+                try {
+                  const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
 
-                  if (response2.ok) {
-                    resolve((await response2.json()).content);
+                  if (response1.ok) {
+                    const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                      mode: "cors",
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json"
+                      },
+                      body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element.dataset.prompt}])
+                    });
+
+                    if (response2.ok) {
+                      resolve((await response2.json()).content);
+                    } else {
+                      throw new Error(response2.statusText);
+                    }
                   } else {
-                    throw new Error(response2.statusText);
+                    throw new Error(response1.statusText);
                   }
-                } else {
-                  throw new Error(response1.statusText);
+                } catch (error) {
+                  reject(error);
                 }
-              } catch (error) {
-                reject(error);
+              } else {
+                resolve(null);
               }
             }).then((data) => {
-              const div = element.querySelector(":scope>div:last-of-type");
+              if (data !== null) {
+                const div = element.querySelector(":scope>div:last-of-type");
 
-              if (div !== null) {
-                const p = document.createElement("p");
-                const span = document.createElement("span");
+                if (div !== null) {
+                  for (const content of data.split("\n")) {
+                    if (content.length > 0) {
+                      const p = document.createElement("p");
+                      const span = document.createElement("span");
 
-                span.classList.add("reveal")
-                span.classList.add("is-italic")
-                span.textContent = data;
+                      span.classList.add("reveal")
+                      span.classList.add("is-italic")
+                      span.textContent = content;
 
-                p.appendChild(span);
-                div.appendChild(p);
+                      p.appendChild(span);
+                      div.appendChild(p);
+                    }
+                  }
+                }
+
+                element.dataset["generated"] = true;
               }
-
-              element.dataset["generated"] = true;
             }).catch((error) => {
               delete element.dataset["generated"];
 
