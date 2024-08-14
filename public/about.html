@@ -34,6 +34,8 @@
         --milch-dark-background-image: /images/Background-Milch-Zankuro-1.png;
         --merku-light-background-image: /images/Merkuchan.png;
         --merku-dark-background-image: /images/Background-Merku-Zankuro-1.png;
+        --story-light-background-image: /images/Milchchan-Manga-p1.png;
+        --story-dark-background-image: /images/Milchchan-Manga-p2.png;
       }
 
       html {
@@ -703,6 +705,31 @@
                 </div>
                 </div>
               </div>
+              <div class="level-item">
+                <div class="separator">
+                  <hr>
+                </div>
+              </div>
+              <div class="level-item">
+                <div class="rotation-outer">
+                <div class="rotation-inner">
+                    <div class="rotate">
+                    <button class="button" type="button" onclick="select(event);" data-type="story">
+                        <div class="stack">
+                        <div class="wrap has-text-weight-bold is-uppercase">
+                            <div class="clip">
+                            <div class="scrollable">
+                                <div>Story</div>
+                                <div>Story</div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </button>
+                    </div>
+                </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="level-item">
@@ -799,10 +826,46 @@
             </p>
           </div>
         </div>
+        <div class="content" data-type="story" data-prompt="自己紹介してください。お名前、所属、ミルヒちゃんのことを教えてください。">
+          <div class="icon is-animatable">
+            <a class="button" href="https://clock.milchchan.com/" title="Clock">
+              <figure>
+                <picture>
+                  <source srcset="images/PixelatedMerku-Transformed.png 1x, images/PixelatedMerku-Transformed@2x.png 2x, images/PixelatedMerku-Transformed@3x.png 3x" media="(prefers-color-scheme: dark)">
+                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMilch-Transformed.png 1x, images/PixelatedMilch-Transformed@2x.png 2x, images/PixelatedMilch-Transformed@3x.png 3x" alt="Milch">
+                </picture>
+              </figure>
+            </a>
+          </div>
+          <h1>
+            <span class="reveal">Story</span>
+          </h1>
+          <h2>
+            <span class="reveal has-text-weight-bold">ストーリー</span>
+          </h2>
+          <div>
+            <p>
+              <span class="reveal"></span>
+            </p>
+            <p>
+              <span class="reveal"></span>
+            </p>
+            <p>
+              <span class="reveal"></span>
+            </p>
+            <p>
+              <span class="reveal"></span>
+            </p>
+            <p>
+              <span class="reveal"></span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
     <script type="text/javascript">
       const hash = decodeURIComponent(window.location.hash.substring(1));
+      const temperature = new URL(window.location.href).searchParams.get('temperature') ?? 1.0
 
       async function resize(blob, length) {
         return await new Promise(async (resolve, reject) => {
@@ -1019,7 +1082,7 @@
                                           const response1 = await fetch(encodeURI(`${element2.dataset.type}.txt`));
 
                                           if (response1.ok) {
-                                            const response2 = await fetch(encodeURI("https://milchchan.com/api/generate"), {
+                                            const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
                                               mode: "cors",
                                               method: "POST",
                                               headers: {
@@ -1161,7 +1224,7 @@
                 const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
 
                 if (response1.ok) {
-                  const response2 = await fetch(encodeURI("https://milchchan.com/api/generate"), {
+                  const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
                     mode: "cors",
                     method: "POST",
                     headers: {
