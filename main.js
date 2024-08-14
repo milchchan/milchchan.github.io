@@ -908,7 +908,7 @@ window.addEventListener("load", async event => {
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
           background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
         } else if (background.offset === null) {
-          if (background.updated > 0) {
+          //if (background.updated > 0) {
             promisess.push(new Promise(async (resolve, reject) => {
               try {
                 const response = await fetch(encodeURI("https://milchchan.com/api/upload?type=image/%"), {
@@ -928,7 +928,7 @@ window.addEventListener("load", async event => {
                 reject(error);
               }
             }));
-          } else {
+          /*} else {
             promisess.push(new Promise(async (resolve, reject) => {
               try {
                 const response = await fetch(encodeURI("https://milchchan.com/api/uploads?type=image/%"), {
@@ -955,7 +955,7 @@ window.addEventListener("load", async event => {
                 reject(error);
               }
             }));
-          }
+          }*/
         } else if (background.queue.length === 0) {
           promisess.push(new Promise(async (resolve, reject) => {
             try {
