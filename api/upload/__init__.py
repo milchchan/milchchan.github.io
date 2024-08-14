@@ -322,7 +322,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             raise
 
                     if file_is_exists:
-                        return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
+                        return func.HttpResponse(status_code=302, headers={'Location': 'https://milchchan.com'})
+                        #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                     
                     '''
                     credentials = service_account.Credentials.from_service_account_info({
