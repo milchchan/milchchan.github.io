@@ -1211,13 +1211,20 @@
                               const div = element2.querySelector(":scope>div:last-of-type");
 
                               if (div !== null) {
+                                const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+
                                 for (const content of data.split("\n")) {
                                   if (content.length > 0) {
                                     const p = document.createElement("p");
                                     const span = document.createElement("span");
 
+                                    p.classList.add("is-generated");
                                     span.classList.add("reveal");
-                                    span.classList.add("is-italic");
+
+                                    if (italicRequired) {
+                                      span.classList.add("is-italic");
+                                    }
+
                                     span.textContent = content;
 
                                     p.appendChild(span);
@@ -1329,7 +1336,7 @@
                     const tempElements = [];
 
                     for (const element3 of element2.querySelectorAll(":scope>p")) {
-                      if (element3.querySelector(":scope>span.is-italic") === null) {
+                      if (!element3.classList.contains("is-generated")) {
                         tempElements.push(element3);
                       }
                     }
@@ -1377,13 +1384,20 @@
                         const div = element1.querySelector(":scope>div:last-of-type");
 
                         if (div !== null) {
+                          const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+
                           for (const content of data.split("\n")) {
                             if (content.length > 0) {
                               const p = document.createElement("p");
                               const span = document.createElement("span");
 
-                              span.classList.add("reveal")
-                              span.classList.add("is-italic")
+                              p.classList.add("is-generated");
+                              span.classList.add("reveal");
+                              
+                              if (italicRequired) {
+                                span.classList.add("is-italic");
+                              }
+
                               span.textContent = content;
 
                               p.appendChild(span);
@@ -1442,7 +1456,7 @@
                         const messages = [{role: "system", content: await response1.text()}, {role: "user", content: element1.dataset.prompt}];
                         const content = [];
 
-                        for (const element3 of element2.querySelectorAll(":scope>p>span.is-italic")) {
+                        for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
                           content.push(element3.textContent);
                         }
 
@@ -1477,13 +1491,20 @@
                     const div = element1.querySelector(":scope>div:last-of-type");
 
                     if (div !== null) {
+                      const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+
                       for (const content of data.split("\n")) {
                         if (content.length > 0) {
                           const p = document.createElement("p");
                           const span = document.createElement("span");
 
-                          span.classList.add("reveal")
-                          span.classList.add("is-italic")
+                          p.classList.add("is-generated");
+                          span.classList.add("reveal");
+                          
+                          if (italicRequired) {
+                            span.classList.add("is-italic");
+                          }
+                          
                           span.textContent = content;
 
                           p.appendChild(span);
@@ -1493,17 +1514,11 @@
                     }
                   }
 
-                  const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
-                  const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-        
                   if (type === reloadButton.dataset["type"]) {
                     reloadButton.disabled = false;
                     moreButton.disabled = false;
                   }
                 }).catch((error) => {
-                  const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
-                  const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-        
                   if (type === reloadButton.dataset["type"]) {
                     reloadButton.disabled = false;
                     moreButton.disabled = false;
@@ -1612,13 +1627,20 @@
                   const div = element.querySelector(":scope>div:last-of-type");
 
                   if (div !== null) {
+                    const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+
                     for (const content of data.split("\n")) {
                       if (content.length > 0) {
                         const p = document.createElement("p");
                         const span = document.createElement("span");
 
-                        span.classList.add("reveal")
-                        span.classList.add("is-italic")
+                        p.classList.add("is-generated");
+                        span.classList.add("reveal");
+
+                        if (italicRequired) {
+                          span.classList.add("is-italic");
+                        }
+
                         span.textContent = content;
 
                         p.appendChild(span);
@@ -1630,9 +1652,6 @@
                   element.dataset["generated"] = true;
                 }
 
-                const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
-                const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-          
                 if (element.dataset.type === reloadButton.dataset["type"]) {
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
@@ -1640,9 +1659,6 @@
               }).catch((error) => {
                 delete element.dataset["generated"];
 
-                const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
-                const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-          
                 if (element.dataset.type === reloadButton.dataset["type"]) {
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
