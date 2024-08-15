@@ -982,27 +982,50 @@
         });
       }
 
-      function shake(element) {
-        element.animate([
-          { transform: "translate3d(0, 0, 0)" },
-          { transform: "translate3d(8px, 0, 0)" },
-          { transform: "translate3d(-8px, 0, 0)" },
-          { transform: "translate3d(7px, 0, 0)" },
-          { transform: "translate3d(-7px, 0, 0)" },
-          { transform: "translate3d(6px, 0, 0)" },
-          { transform: "translate3d(-6px, 0, 0)" },
-          { transform: "translate3d(5px, 0, 0)" },
-          { transform: "translate3d(-5px, 0, 0)" },
-          { transform: "translate3d(4px, 0, 0)" },
-          { transform: "translate3d(-4px, 0, 0)" },
-          { transform: "translate3d(3px, 0, 0)" },
-          { transform: "translate3d(-3px, 0, 0)" },
-          { transform: "translate3d(2px, 0, 0)" },
-          { transform: "translate3d(-2px, 0, 0)" },
-          { transform: "translate3d(1px, 0, 0)" },
-          { transform: "translate3d(-1px, 0, 0)" },
-          { transform: "translate3d(0, 0, 0)" }],
-          { duration: 1000, iterations: 1 });
+      function shake(element, isRotate = false) {
+        if (isRotate) {
+          element.animate([
+            { transform: "translate3d(0, 0, 0)" },
+            { transform: "translate3d(0, 8px, 0)" },
+            { transform: "translate3d(0, -8px, 0)" },
+            { transform: "translate3d(0, 7px, 0)" },
+            { transform: "translate3d(0, -7px, 0)" },
+            { transform: "translate3d(0, 6px, 0)" },
+            { transform: "translate3d(0, -6px, 0)" },
+            { transform: "translate3d(0, 5px, 0)" },
+            { transform: "translate3d(0, -5px, 0)" },
+            { transform: "translate3d(0, 4px, 0)" },
+            { transform: "translate3d(0, -4px, 0)" },
+            { transform: "translate3d(0, 3px, 0)" },
+            { transform: "translate3d(0, -3px, 0)" },
+            { transform: "translate3d(0, 2px, 0)" },
+            { transform: "translate3d(0, -2px, 0)" },
+            { transform: "translate3d(0, 1px, 0)" },
+            { transform: "translate3d(0, -1px, 0)" },
+            { transform: "translate3d(0, 0, 0)" }],
+            { duration: 1000, iterations: 1 });
+        } else {
+          element.animate([
+            { transform: "translate3d(0, 0, 0)" },
+            { transform: "translate3d(8px, 0, 0)" },
+            { transform: "translate3d(-8px, 0, 0)" },
+            { transform: "translate3d(7px, 0, 0)" },
+            { transform: "translate3d(-7px, 0, 0)" },
+            { transform: "translate3d(6px, 0, 0)" },
+            { transform: "translate3d(-6px, 0, 0)" },
+            { transform: "translate3d(5px, 0, 0)" },
+            { transform: "translate3d(-5px, 0, 0)" },
+            { transform: "translate3d(4px, 0, 0)" },
+            { transform: "translate3d(-4px, 0, 0)" },
+            { transform: "translate3d(3px, 0, 0)" },
+            { transform: "translate3d(-3px, 0, 0)" },
+            { transform: "translate3d(2px, 0, 0)" },
+            { transform: "translate3d(-2px, 0, 0)" },
+            { transform: "translate3d(1px, 0, 0)" },
+            { transform: "translate3d(-1px, 0, 0)" },
+            { transform: "translate3d(0, 0, 0)" }],
+            { duration: 1000, iterations: 1 });
+        }
       }
 
       async function change(url) {
@@ -1399,7 +1422,7 @@
                         moreButton.disabled = false;
                       }
 
-                      shake(reloadButton);
+                      shake(reloadButton, true);
 
                       console.error(error);
                     });
@@ -1501,7 +1524,7 @@
                     moreButton.disabled = false;
                   }
 
-                  shake(moreButton);
+                  shake(moreButton, true);
 
                   console.error(error);
                 });
@@ -1640,7 +1663,7 @@
                   moreButton.disabled = false;
                 }
 
-                shake(reloadButton);
+                shake(reloadButton, true);
 
                 console.error(error);
               });
