@@ -1345,11 +1345,9 @@
                     const div = document.createElement("div");
                     
                     for (const element3 of Array.from(element2.children)) {
-                      if (element3.tagName === "DIV") {
-                        for (element4 of Array.from(element3.children)) {
-                          if (element4.classList.contains("is-generated")) {
-                            element4.remove();
-                          }
+                      for (element4 of Array.from(element3.children)) {
+                        if (element4.classList.contains("is-generated")) {
+                          element4.remove();
                         }
                       }
 
