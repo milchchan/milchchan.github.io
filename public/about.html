@@ -289,6 +289,10 @@
         margin: 16px 0px 0px 0px;
       }
 
+      .content>div:last-of-type {
+        margin: 0 !important;
+      }
+
       .content p a {
         display: inline;
         margin: 0;
@@ -834,28 +838,30 @@
               </figure>
             </a>
           </div>
-          <h1>
-            <span class="reveal">Milch</span>
-          </h1>
-          <h2>
-            <span class="reveal has-text-weight-bold">ミルヒちゃん</span>
-          </h2>
           <div>
-            <p>
-              <span class="reveal">天真爛漫で魔法少女のことが好きな小学5年生の女の子。</span>
-            </p>
-            <p>
-              <span class="reveal">お友達のメルクちゃんとは仲良し。</span>
-            </p>
-            <p>
-              <span class="reveal">魔法少女が好きなことは、メルクちゃんを除いて秘密。</span>
-            </p>
-            <p>
-              <span class="reveal">メルクちゃんの言うことを信じて疑わないので、メルクちゃんのいつも思いのまま。</span>
-            </p>
-            <p>
-              <span class="reveal">メルクちゃんに魔法少女の衣装を着せられてメルクちゃんといっしょに魔法少女をすることになった。</span>
-            </p>
+            <h1>
+              <span class="reveal">Milch</span>
+            </h1>
+            <h2>
+              <span class="reveal has-text-weight-bold">ミルヒちゃん</span>
+            </h2>
+            <div>
+              <p>
+                <span class="reveal">天真爛漫で魔法少女のことが好きな小学5年生の女の子。</span>
+              </p>
+              <p>
+                <span class="reveal">お友達のメルクちゃんとは仲良し。</span>
+              </p>
+              <p>
+                <span class="reveal">魔法少女が好きなことは、メルクちゃんを除いて秘密。</span>
+              </p>
+              <p>
+                <span class="reveal">メルクちゃんの言うことを信じて疑わないので、メルクちゃんのいつも思いのまま。</span>
+              </p>
+              <p>
+                <span class="reveal">メルクちゃんに魔法少女の衣装を着せられてメルクちゃんといっしょに魔法少女をすることになった。</span>
+              </p>
+            </div>
           </div>
         </div>
         <div class="content" data-type="merku" data-prompt="自己紹介してください。お名前、所属、ミルヒちゃんのことを教えてください。">
@@ -868,28 +874,30 @@
               </figure>
             </a>
           </div>
-          <h1>
-            <span class="reveal">Merku</span>
-          </h1>
-          <h2>
-            <span class="reveal has-text-weight-bold">メルクちゃん</span>
-          </h2>
           <div>
-            <p>
-              <span class="reveal">おっとりしていてお金持ちの小学5年生の女の子。</span>
-            </p>
-            <p>
-              <span class="reveal">お友達のミルヒちゃんのことが大好き。</span>
-            </p>
-            <p>
-              <span class="reveal">ミルヒちゃんのことが大好きすぎて、ミルヒちゃんのことになると暴走しちゃいがち。</span>
-            </p>
-            <p>
-              <span class="reveal">つくった魔法少女の衣装をミルヒちゃんに着せてあげて、いっしょに魔法少女を始めた。</span>
-            </p>
-            <p>
-              <span class="reveal">趣味で魔法少女の薄い本を描いているが、ミルヒちゃんには秘密。</span>
-            </p>
+            <h1>
+              <span class="reveal">Merku</span>
+            </h1>
+            <h2>
+              <span class="reveal has-text-weight-bold">メルクちゃん</span>
+            </h2>
+            <div>
+              <p>
+                <span class="reveal">おっとりしていてお金持ちの小学5年生の女の子。</span>
+              </p>
+              <p>
+                <span class="reveal">お友達のミルヒちゃんのことが大好き。</span>
+              </p>
+              <p>
+                <span class="reveal">ミルヒちゃんのことが大好きすぎて、ミルヒちゃんのことになると暴走しちゃいがち。</span>
+              </p>
+              <p>
+                <span class="reveal">つくった魔法少女の衣装をミルヒちゃんに着せてあげて、いっしょに魔法少女を始めた。</span>
+              </p>
+              <p>
+                <span class="reveal">趣味で魔法少女の薄い本を描いているが、ミルヒちゃんには秘密。</span>
+              </p>
+            </div>
           </div>
         </div>
         <div class="content" data-type="story" data-prompt="プロットからメルクちゃん視点で即オチ2コマのような展開のショートショートを書いてください。">
@@ -903,13 +911,15 @@
               </figure>
             </a>
           </div>
-          <h1>
-            <span class="reveal">Story</span>
-          </h1>
-          <h2>
-            <span class="reveal has-text-weight-bold">ストーリー</span>
-          </h2>
           <div>
+            <h1>
+              <span class="reveal">Story</span>
+            </h1>
+            <h2>
+              <span class="reveal has-text-weight-bold">ストーリー</span>
+            </h2>
+            <div>
+            </div>
           </div>
         </div>
       </div>
@@ -1208,7 +1218,7 @@
                             }
                           }).then((data) => {
                             if (data !== null) {
-                              const div = element2.querySelector(":scope>div:last-of-type");
+                              const div = element2.querySelector(":scope>div>div:last-of-type");
 
                               if (div !== null) {
                                 const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
@@ -1318,7 +1328,7 @@
             if (type === element1.dataset.type) {
               if (element1.classList.contains("is-selected")) {
                 const element2 = element1.querySelector(":scope>div:last-of-type");
-                
+
                 if (element2 !== null) {
                   element2.animate([
                     {
@@ -1333,21 +1343,21 @@
                       composite: "replace"
                   }).onfinish = (event) => {
                     const div = document.createElement("div");
-                    const tempElements = [];
-
-                    for (const element3 of element2.querySelectorAll(":scope>p")) {
-                      if (!element3.classList.contains("is-generated")) {
-                        tempElements.push(element3);
+                    
+                    for (const element3 of Array.from(element2.children)) {
+                      if (element3.tagName === "DIV") {
+                        for (element4 of Array.from(element3.children)) {
+                          if (element4.classList.contains("is-generated")) {
+                            element4.remove();
+                          }
+                        }
                       }
-                    }
 
-                    element2.remove();
-                    element1.appendChild(div);
-
-                    for (element3 of tempElements) {
+                      element3.remove();
                       div.appendChild(element3);
                     }
 
+                    element2.replaceWith(div);
                     element1.dataset["generated"] = false;
 
                     new Promise(async (resolve, reject) => {
@@ -1381,10 +1391,10 @@
                       }
                     }).then((data) => {
                       if (data !== null) {
-                        const div = element1.querySelector(":scope>div:last-of-type");
+                        const last = div.querySelector(":scope>div:last-of-type");
 
-                        if (div !== null) {
-                          const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+                        if (last !== null) {
+                          const italicRequired = last.querySelector(":scope>p:not(.is-generated)") !== null;
 
                           for (const content of data.split("\n")) {
                             if (content.length > 0) {
@@ -1401,7 +1411,7 @@
                               span.textContent = content;
 
                               p.appendChild(span);
-                              div.appendChild(p);
+                              last.appendChild(p);
                             }
                           }
                         }
@@ -1414,7 +1424,7 @@
                         moreButton.disabled = false;
                       }
                     }).catch((error) => {
-                      delete element2.dataset["generated"];
+                      delete element1.dataset["generated"];
 
                       if (type === reloadButton.dataset["type"]) {
                         reloadButton.disabled = false;
@@ -1445,7 +1455,7 @@
           for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
             if (type === element1.dataset.type) {
               if (element1.classList.contains("is-selected")) {
-                const element2 = element1.querySelector(":scope>div:last-of-type");
+                const element2 = element1.querySelector(":scope>div>div:last-of-type");
 
                 new Promise(async (resolve, reject) => {
                   if ("prompt" in element1.dataset) {
@@ -1488,7 +1498,7 @@
                   }
                 }).then((data) => {
                   if (data !== null) {
-                    const div = element1.querySelector(":scope>div:last-of-type");
+                    const div = element1.querySelector(":scope>div>div:last-of-type");
 
                     if (div !== null) {
                       const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
@@ -1624,7 +1634,7 @@
                 }
               }).then((data) => {
                 if (data !== null) {
-                  const div = element.querySelector(":scope>div:last-of-type");
+                  const div = element.querySelector(":scope>div>div:last-of-type");
 
                   if (div !== null) {
                     const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
