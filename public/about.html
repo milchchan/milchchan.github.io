@@ -329,8 +329,8 @@
       }
       
       .overlay>.wrap>.content .icon.is-animatable {
-        position: absolute;
-        right: 0px;
+        position: fixed;
+        right: 16px;
       }
 
       div.sidebar {
@@ -658,6 +658,10 @@
           margin: 0;
           padding: 0px 0px 32px 0px;
           transition: padding 0.5s;
+        }
+
+        .overlay>.wrap>.content .icon.is-animatable {
+          right: 32px;
         }
 
         div.sidebar {
