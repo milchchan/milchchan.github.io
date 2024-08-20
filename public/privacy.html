@@ -219,6 +219,34 @@
         content: "";
       }
 
+      .background>div {
+        -webkit-user-select: none;
+        user-select: none;
+        position: relative;
+        opacity: 1;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        background-color: transparent;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-size: contain;
+        transform-origin: 50% 50%;
+        backface-visibility: hidden;
+        content: "";
+        transition: .5s;
+      }
+
+      .background>div.is-touching {
+        opacity: 0.5;
+        transition: .5s;
+      }
+
       .overlay {
         position: absolute;
         left: 0;
@@ -578,6 +606,8 @@
       </div>
     </div>
     <script type="text/javascript">
+      const touches = [];
+
       async function resize(blob, length) {
         return await new Promise(async (resolve, reject) => {
           const reader = new FileReader();
@@ -633,20 +663,92 @@
         });
       }
 
+      for (const element of document.body.querySelectorAll(".overlay>.wrap>.content")) {
+        element.addEventListener("mouseenter", async (event) => {
+          const image = document.body.querySelector(".wrap>.frame>.background>div");
+
+          if (image !== null && !image.classList.contains("is-touching")) {
+            image.classList.add("is-touching");
+          }
+        });
+        element.addEventListener("mouseleave", async (event) => {
+          const image = document.body.querySelector(".wrap>.frame>.background>div");
+
+          if (image !== null && image.classList.contains("is-touching")) {
+            image.classList.remove("is-touching");
+          }
+        });
+        element.addEventListener("touchstart", async (event) => {
+          event.stopPropagation();
+
+          if (touches.length === 0) {
+            const image = document.body.querySelector(".wrap>.frame>.background>div");
+
+            if (image !== null && !image.classList.contains("is-touching")) {
+              image.classList.add("is-touching");
+            }
+          }
+
+          for (const touch of event.changedTouches) {
+            touches.push(touch.identifier);
+          }
+        });
+        element.addEventListener("touchend", async (event) => {
+          event.stopPropagation();
+
+          for (const touch of event.changedTouches) {
+            let index = touches.findIndex(x => x === touch.identifier);
+
+            if (index >= 0) {
+              touches.splice(index, 1);
+            }
+          }
+
+          if (touches.length === 0) {
+            const image = document.body.querySelector(".wrap>.frame>.background>div");
+
+            if (image !== null && !image.classList.contains("is-touching")) {
+              image.classList.add("is-touching");
+            }
+          }
+        });
+        element.addEventListener("touchcancel", async (event) => {
+          event.stopPropagation();
+
+          for (const touch of event.changedTouches) {
+            let index = touches.findIndex(x => x === touch.identifier);
+
+            if (index >= 0) {
+              touches.splice(index, 1);
+            }
+          }
+
+          if (touches.length === 0) {
+            const image = document.body.querySelector(".wrap>.frame>.background>div");
+
+            if (image !== null && !image.classList.contains("is-touching")) {
+              image.classList.add("is-touching");
+            }
+          }
+        });
+      }
+
       window.addEventListener("load", async (event) => {
         const background = document.createElement("div");
+        const image = document.createElement("div");
 
         background.className = "background";
         background.style.opacity = 0;
         background.style.transform = "scale3d(1.1, 1.1, 1.1)";
         
         document.body.querySelector(".wrap>.frame").prepend(background);
+        background.appendChild(image);
         
         try {
           const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "--dark-background-image" : "--light-background-image"));
 
           if (response.ok) {
-            background.style.backgroundImage = `url('${await new Promise(async (resolve, reject) => {
+            image.style.backgroundImage = `url('${await new Promise(async (resolve, reject) => {
               const reader = new FileReader();
 
               reader.onload = () => {
@@ -665,7 +767,7 @@
         background.animate(
           [
             {
-              opacity: 0.75,
+              opacity: 1,
               transform: "scale3d(1.0, 1.0, 1.0)",
             },
           ],
@@ -681,22 +783,22 @@
           background.style.transform = "scale3d(1.0, 1.0, 1.0)";
         };
       });
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .addEventListener("change", async (e) => {
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", async (e) => {
           const background = document.createElement("div");
+          const image = document.createElement("div");
 
           background.className = "background";
           background.style.opacity = 0;
           background.style.transform = "scale3d(1.1, 1.1, 1.1)";
           
           document.body.querySelector(".wrap>.frame").prepend(background);
+          background.appendChild(image);
 
           try {
             const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(e.matches ? "--dark-background-image" : "--light-background-image"));
 
             if (response.ok) {
-              background.style.backgroundImage = `url('${await new Promise(
+                image.style.backgroundImage = `url('${await new Promise(
                 async (resolve, reject) => {
                   const reader = new FileReader();
 
