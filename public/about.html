@@ -1216,8 +1216,8 @@
           if (touches.length === 0) {
             const image = document.body.querySelector(".wrap>.frame>.background>div");
 
-            if (image !== null && !image.classList.contains("is-touching")) {
-              image.classList.add("is-touching");
+            if (image !== null && image.classList.contains("is-touching")) {
+              image.classList.remove("is-touching");
             }
           }
         });
@@ -1235,8 +1235,8 @@
           if (touches.length === 0) {
             const image = document.body.querySelector(".wrap>.frame>.background>div");
 
-            if (image !== null && !image.classList.contains("is-touching")) {
-              image.classList.add("is-touching");
+            if (image !== null && image.classList.contains("is-touching")) {
+              image.classList.remove("is-touching");
             }
           }
         });
