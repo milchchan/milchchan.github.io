@@ -932,6 +932,13 @@
       const hash = decodeURIComponent(window.location.hash.substring(1));
       const temperature = new URL(window.location.href).searchParams.get("temperature") ?? 1.0
 
+      function random(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+
       async function resize(blob, length) {
         return await new Promise(async (resolve, reject) => {
           const reader = new FileReader();
@@ -1178,7 +1185,25 @@
                           element2.dataset["generated"] = false;
 
                           new Promise(async (resolve, reject) => {
-                            if ("prompt" in element2.dataset) {
+                            let prompt = null;
+
+                            if ("prompts" in element2.dataset) {
+                              try {
+                                const prompts = JSON.parse(element2.dataset.prompts);
+
+                                if (prompts.length > 0) {
+                                  prompt = prompts[~~random(0, prompts.length)];
+                                }
+                              } catch (error) {
+                                reject(error);
+                              }
+                            } else if ("prompt" in element2.dataset) {
+                              prompt = element2.dataset.prompt;
+                            }
+
+                            if (prompt === null) {
+                              resolve(null);
+                            } else {
                               try {
                                 const response1 = await fetch(
                                   encodeURI(`${element2.dataset.type}.txt`)
@@ -1200,7 +1225,7 @@
                                         },
                                         {
                                           role: "user",
-                                          content: element2.dataset.prompt,
+                                          content: prompt,
                                         },
                                       ]),
                                     }
@@ -1217,8 +1242,6 @@
                               } catch (error) {
                                 reject(error);
                               }
-                            } else {
-                              resolve(null);
                             }
                           }).then((data) => {
                             if (data !== null) {
@@ -1363,7 +1386,25 @@
                     element1.dataset["generated"] = false;
 
                     new Promise(async (resolve, reject) => {
-                      if ("prompt" in element1.dataset) {
+                      let prompt = null;
+
+                      if ("prompts" in element1.dataset) {
+                        try {
+                          const prompts = JSON.parse(element1.dataset.prompts);
+
+                          if (prompts.length > 0) {
+                            prompt = prompts[~~random(0, prompts.length)];
+                          }
+                        } catch (error) {
+                          reject(error);
+                        }
+                      } else if ("prompt" in element1.dataset) {
+                        prompt = element1.dataset.prompt;
+                      }
+
+                      if (prompt === null) {
+                        resolve(null);
+                      } else {
                         try {
                           const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
 
@@ -1374,7 +1415,7 @@
                               headers: {
                                 "Content-Type": "application/json"
                               },
-                              body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element1.dataset.prompt}])
+                              body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: prompt}])
                             });
 
                             if (response2.ok) {
@@ -1388,8 +1429,6 @@
                         } catch (error) {
                           reject(error);
                         }
-                      } else {
-                        resolve(null);
                       }
                     }).then((data) => {
                       if (data !== null) {
@@ -1460,12 +1499,30 @@
                 const element2 = element1.querySelector(":scope>div>div:last-of-type");
 
                 new Promise(async (resolve, reject) => {
-                  if ("prompt" in element1.dataset) {
+                  let prompt = null;
+
+                  if ("prompts" in element1.dataset) {
+                    try {
+                      const prompts = JSON.parse(element1.dataset.prompts);
+
+                      if (prompts.length > 0) {
+                        prompt = prompts[~~random(0, prompts.length)];
+                      }
+                    } catch (error) {
+                      reject(error);
+                    }
+                  } else if ("prompt" in element1.dataset) {
+                    prompt = element1.dataset.prompt;
+                  }
+
+                  if (prompt === null) {
+                    resolve(null);
+                  } else {
                     try {
                       const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
 
                       if (response1.ok) {
-                        const messages = [{role: "system", content: await response1.text()}, {role: "user", content: element1.dataset.prompt}];
+                        const messages = [{role: "system", content: await response1.text()}, {role: "user", content: prompt}];
                         const content = [];
 
                         for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
@@ -1495,8 +1552,6 @@
                     } catch (error) {
                       reject(error);
                     }
-                  } else {
-                    resolve(null);
                   }
                 }).then((data) => {
                   if (data !== null) {
@@ -1606,7 +1661,25 @@
 
                 element.dataset["generated"] = false;
 
-                if ("prompt" in element.dataset) {
+                let prompt = null;
+
+                if ("prompts" in element.dataset) {
+                  try {
+                    const prompts = JSON.parse(element.dataset.prompts);
+
+                    if (prompts.length > 0) {
+                      prompt = prompts[~~random(0, prompts.length)];
+                    }
+                  } catch (error) {
+                    reject(error);
+                  }
+                } else if ("prompt" in element.dataset) {
+                  prompt = element.dataset.prompt;
+                }
+
+                if (prompt === null) {
+                  resolve(null);
+                } else {
                   try {
                     const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
 
@@ -1617,7 +1690,7 @@
                         headers: {
                           "Content-Type": "application/json"
                         },
-                        body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: element.dataset.prompt}])
+                        body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: prompt}])
                       });
 
                       if (response2.ok) {
@@ -1631,8 +1704,6 @@
                   } catch (error) {
                     reject(error);
                   }
-                } else {
-                  resolve(null);
                 }
               }).then((data) => {
                 if (data !== null) {
