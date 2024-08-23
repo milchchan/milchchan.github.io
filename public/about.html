@@ -1309,9 +1309,7 @@
                               resolve(null);
                             } else {
                               try {
-                                const response1 = await fetch(
-                                  encodeURI(`${element2.dataset.type}.txt`)
-                                );
+                                const response1 = await fetch(encodeURI(`${element2.dataset.type}.txt`));
 
                                 if (response1.ok) {
                                   const response2 = await fetch(
