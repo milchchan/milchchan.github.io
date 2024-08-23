@@ -1395,10 +1395,7 @@
                       }
 
                       for (const element3 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-                        if (
-                          element1.dataset.type !== element3.dataset.type &&
-                          element3.classList.contains("is-selected")
-                        ) {
+                        if (element1.dataset.type !== element3.dataset.type && element3.classList.contains("is-selected")) {
                           element3.classList.remove("is-selected");
                           element3.animate(
                             [
