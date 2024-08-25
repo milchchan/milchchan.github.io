@@ -1364,13 +1364,15 @@
           isRecording = false;
         };
         speechRecognition.onerror = (event) => {
-          const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
-          
-          if (recordButton !== null) {
-            shake(recordButton, true);
-          }
+          if (event.error !== "aborted") {
+            const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+            
+            if (recordButton !== null) {
+              shake(recordButton, true);
+            }
 
-          console.error(event.error);
+            console.error(event.error);
+          }
         };
       }
 
