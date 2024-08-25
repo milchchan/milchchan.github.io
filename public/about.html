@@ -474,6 +474,8 @@
       }
 
       div.sidebar .button .icon {
+        width: 10px;
+        height: 10px;
         font-size: 10px;
         line-height: 0;
         transform: rotate(360deg);
@@ -492,6 +494,11 @@
 
       div.sidebar .button:disabled .icon.is-animatable {
         animation: loading 1s linear forwards infinite;
+        animation-play-state: running;
+      }
+
+      div.sidebar .button.is-recording .icon {
+        animation: recording 1s linear forwards infinite;
         animation-play-state: running;
       }
 
@@ -662,6 +669,20 @@
           }
       }
 
+      @keyframes recording {
+          0% {
+              opacity: 1;
+          }
+
+          50% {
+            opacity: 0.5;
+          }
+
+          100% {
+            opacity: 1;
+          }
+      }
+
       @media screen and (min-width: 769px) and (min-height: 769px) {
         html {
           background: var(--background-color);
@@ -809,6 +830,19 @@
                 </div>
                 </div>
               </div>
+              <div class="level-item is-hidden">
+                <div class="rotation-outer">
+                <div class="rotation-inner">
+                    <div class="rotate">
+                    <button class="button is-animatable" type="button" title="Record" onclick="record(event);">
+                        <span class="icon">
+                          <i class="fa-solid fa-microphone"></i>
+                        </span>
+                    </button>
+                    </div>
+                </div>
+                </div>
+              </div>
               <div class="level-item">
                 <div class="rotation-outer">
                 <div class="rotation-inner">
@@ -822,7 +856,7 @@
                 </div>
                 </div>
               </div>
-              <div class="level-item is-hidden">
+              <div class="level-item">
                 <div class="rotation-outer">
                 <div class="rotation-inner">
                     <div class="rotate">
@@ -963,6 +997,10 @@
       const hash = decodeURIComponent(window.location.hash.substring(1));
       const temperature = new URL(window.location.href).searchParams.get("temperature") ?? 1.0
       const touches = [];
+      let speechRecognition = null;
+      let isRecording = false;
+
+      window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
       function random(min, max) {
         min = Math.ceil(min);
@@ -1141,38 +1179,199 @@
       }
 
       if (hash.length > 0) {
-        if (hash === "debug") {
-          for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child")) {
-            if (element.classList.contains("is-hidden")) {
-              element.classList.remove("is-hidden");
+        for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
+          if(hash === element.dataset.type) {
+            if (!element.classList.contains("is-selected")) {
+              element.classList.add("is-selected");
             }
-          }
-        } else {
-          for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
-            if(hash === element.dataset.type) {
-              if (!element.classList.contains("is-selected")) {
-                element.classList.add("is-selected");
-              }
-            } else if (element.classList.contains("is-selected")) {
-              element.classList.remove("is-selected");
-            }
-          }
-
-          for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-            if(hash === element.dataset.type) {
-              if (!element.classList.contains("is-selected")) {
-                element.classList.add("is-selected");
-              }
-            } else {
-              if (element.classList.contains("is-selected")) {
-                element.classList.remove("is-selected");
-              }
-
-              element.style.display = "none";
-              element.style.opacity = 0;
-            }
+          } else if (element.classList.contains("is-selected")) {
+            element.classList.remove("is-selected");
           }
         }
+
+        for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+          if(hash === element.dataset.type) {
+            if (!element.classList.contains("is-selected")) {
+              element.classList.add("is-selected");
+            }
+          } else {
+            if (element.classList.contains("is-selected")) {
+              element.classList.remove("is-selected");
+            }
+
+            element.style.display = "none";
+            element.style.opacity = 0;
+          }
+        }
+      }
+
+      if ("SpeechRecognition" in window) {
+        const element = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8)");
+        
+        if (element !== null && element.classList.contains("is-hidden")) {
+          element.classList.remove("is-hidden");
+        }
+
+        speechRecognition = new window.SpeechRecognition();
+        speechRecognition.lang = "ja-JP";
+        speechRecognition.onstart = () => {
+          const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+          
+          if (recordButton !== null && !recordButton.classList.contains("is-recording")) {
+            recordButton.classList.add("is-recording");
+            recordButton.disabled = false;
+          }
+
+          isRecording = true;
+        };
+        speechRecognition.onresult = (event) => {
+          for (const result of event.results) {
+            if (result.isFinal) {
+              const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+              const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
+              const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+              
+              if (recordButton !== null && reloadButton !== null && moreButton !== null) {
+                const type = reloadButton.dataset["type"];
+
+                recordButton.disabled = true;
+                reloadButton.disabled = true;
+                moreButton.disabled = true;
+
+                for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+                  if (type === element1.dataset.type) {
+                    if (element1.classList.contains("is-selected")) {
+                      const element2 = element1.querySelector(":scope>div>div:last-of-type");
+
+                      new Promise(async (resolve, reject) => {
+                        let prompt = null;
+
+                        if ("prompts" in element1.dataset) {
+                          try {
+                            const prompts = JSON.parse(element1.dataset.prompts);
+
+                            if (prompts.length > 0) {
+                              prompt = prompts[~~random(0, prompts.length)];
+                            }
+                          } catch (error) {
+                            reject(error);
+                          }
+                        } else if ("prompt" in element1.dataset) {
+                          prompt = element1.dataset.prompt;
+                        }
+
+                        if (prompt === null) {
+                          resolve(null);
+                        } else {
+                          try {
+                            const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
+
+                            if (response1.ok) {
+                              const messages = [{role: "system", content: await response1.text()}, {role: "user", content: prompt}];
+                              
+                              for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
+                                if ("prompt" in element3.dataset) {
+                                  messages.push({role: "user", content: element3.dataset.prompt});
+                                }
+
+                                messages.push({role: "assistant", content: element3.textContent});
+                              }
+
+                              messages.push({role: "user", content: result[0].transcript});
+
+                              const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                                mode: "cors",
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(messages)
+                              });
+
+                              if (response2.ok) {
+                                resolve((await response2.json()).content);
+                              } else {
+                                throw new Error(response2.statusText);
+                              }
+                            } else {
+                              throw new Error(response1.statusText);
+                            }
+                          } catch (error) {
+                            reject(error);
+                          }
+                        }
+                      }).then((data) => {
+                        if (data !== null) {
+                          const div = element1.querySelector(":scope>div>div:last-of-type");
+
+                          if (div !== null) {
+                            const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+
+                            for (const content of data.split("\n")) {
+                              if (content.length > 0) {
+                                const p = document.createElement("p");
+                                const span = document.createElement("span");
+
+                                p.classList.add("is-generated");
+                                span.classList.add("reveal");
+                                span.dataset["prompt"] = result[0].transcript;
+                                
+                                if (italicRequired) {
+                                  span.classList.add("is-italic");
+                                }
+                                
+                                span.textContent = content;
+
+                                p.appendChild(span);
+                                div.appendChild(p);
+                              }
+                            }
+                          }
+                        }
+
+                        if (type === reloadButton.dataset["type"]) {
+                          recordButton.disabled = false;
+                          reloadButton.disabled = false;
+                          moreButton.disabled = false;
+                        }
+                      }).catch((error) => {
+                        if (type === reloadButton.dataset["type"]) {
+                          recordButton.disabled = false;
+                          reloadButton.disabled = false;
+                          moreButton.disabled = false;
+                        }
+
+                        shake(moreButton, true);
+
+                        console.error(error);
+                      });
+                    }
+                  }
+                }
+              }
+
+              break;
+            }
+          }
+        };
+        speechRecognition.onend = (event) => {
+          const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+          
+          if (recordButton !== null && recordButton.classList.contains("is-recording")) {
+            recordButton.classList.remove("is-recording");
+          }
+
+          isRecording = false;
+        };
+        speechRecognition.onerror = (event) => {
+          const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+          
+          if (recordButton !== null) {
+            shake(recordButton, true);
+          }
+
+          console.error(event.error);
+        };
       }
 
       for (const element of document.body.querySelectorAll(".overlay>.wrap>.content")) {
@@ -1245,6 +1444,21 @@
         });
       }
 
+      window.record = (event) => {        
+        if (speechRecognition === null) {
+          shake(event.currentTarget || event.target, true);
+        } else if (isRecording) {
+          speechRecognition.stop();
+        } else {
+          const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+          
+          if (recordButton !== null) {
+            recordButton.disabled = true;
+          }
+
+          speechRecognition.start();
+        }
+      };
       window.select = (event) => {
         const target = (event.currentTarget || event.target);
 
@@ -1278,10 +1492,12 @@
                       };
 
                       if ("generated" in element2.dataset === false) {
-                        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+                        const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+                        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
                         const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
         
-                        if (reloadButton !== null && moreButton !== null) {
+                        if (recordButton !== null && reloadButton !== null && moreButton !== null) {
+                          recordButton.disabled = true;
                           reloadButton.disabled = true;
                           reloadButton.dataset["type"] = element2.dataset.type;
                           moreButton.disabled = true;
@@ -1376,6 +1592,7 @@
                             }
 
                             if (element2.dataset.type === reloadButton.dataset["type"]) {
+                              recordButton.disabled = false;
                               reloadButton.disabled = false;
                               moreButton.disabled = false;
                             }
@@ -1383,6 +1600,7 @@
                             delete element2.dataset["generated"];
 
                             if (element2.dataset.type === reloadButton.dataset["type"]) {
+                              recordButton.disabled = false;
                               reloadButton.disabled = false;
                               moreButton.disabled = false;
                             }
@@ -1441,12 +1659,14 @@
         }
       };
       window.reload = (event) => {
-        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+        const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
         const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
         
-        if (reloadButton !== null && moreButton !== null) {
+        if (recordButton !== null && reloadButton !== null && moreButton !== null) {
           const type = reloadButton.dataset["type"];
 
+          recordButton.disabled = true;
           reloadButton.disabled = true;
           moreButton.disabled = true;
 
@@ -1560,6 +1780,7 @@
                       }
 
                       if (type === reloadButton.dataset["type"]) {
+                        recordButton.disabled = false;
                         reloadButton.disabled = false;
                         moreButton.disabled = false;
                       }
@@ -1567,6 +1788,7 @@
                       delete element1.dataset["generated"];
 
                       if (type === reloadButton.dataset["type"]) {
+                        recordButton.disabled = false;
                         reloadButton.disabled = false;
                         moreButton.disabled = false;
                       }
@@ -1583,12 +1805,14 @@
         }
       };
       window.more = (event) => {
-        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+        const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
         const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
         
-        if (reloadButton !== null && moreButton !== null) {
+        if (recordButton !== null && reloadButton !== null && moreButton !== null) {
           const type = reloadButton.dataset["type"];
 
+          recordButton.disabled = true;
           reloadButton.disabled = true;
           moreButton.disabled = true;
 
@@ -1622,13 +1846,15 @@
 
                       if (response1.ok) {
                         const messages = [{role: "system", content: await response1.text()}, {role: "user", content: prompt}];
-                        const content = [];
-
+                        
                         for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
-                          content.push(element3.textContent);
+                          if ("prompt" in element3.dataset) {
+                            messages.push({role: "user", content: element3.dataset.prompt});
+                          }
+
+                          messages.push({role: "assistant", content: element3.textContent});
                         }
 
-                        messages.push({role: "assistant", content: content.join("\n")});
                         messages.push({role: "user", content: moreButton.dataset.prompt});
 
                         const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
@@ -1666,6 +1892,7 @@
 
                           p.classList.add("is-generated");
                           span.classList.add("reveal");
+                          span.dataset["prompt"] = moreButton.dataset.prompt;
                           
                           if (italicRequired) {
                             span.classList.add("is-italic");
@@ -1681,11 +1908,13 @@
                   }
 
                   if (type === reloadButton.dataset["type"]) {
+                    recordButton.disabled = false;
                     reloadButton.disabled = false;
                     moreButton.disabled = false;
                   }
                 }).catch((error) => {
                   if (type === reloadButton.dataset["type"]) {
+                    recordButton.disabled = false;
                     reloadButton.disabled = false;
                     moreButton.disabled = false;
                   }
@@ -1712,11 +1941,13 @@
             
             document.body.querySelector(".wrap>.frame").prepend(background);
             background.appendChild(image);
-
-            const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+            
+            const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+            const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
             const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
         
-            if (reloadButton !== null && moreButton !== null) {
+            if (recordButton !== null && reloadButton !== null && moreButton !== null) {
+              recordButton.disabled = true;
               reloadButton.disabled = true;
               reloadButton.dataset["type"] = element.dataset.type;
               moreButton.disabled = true;
@@ -1837,6 +2068,7 @@
                 }
 
                 if (element.dataset.type === reloadButton.dataset["type"]) {
+                  recordButton.disabled = false;
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
                 }
@@ -1844,6 +2076,7 @@
                 delete element.dataset["generated"];
 
                 if (element.dataset.type === reloadButton.dataset["type"]) {
+                  recordButton.disabled = false;
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
                 }
