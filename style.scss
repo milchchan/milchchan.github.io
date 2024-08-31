@@ -493,7 +493,9 @@ div.sidebar {
                         width: fit-content;
                         height: fit-content;
                         transition: .5s;
-                        font-size: 10px;
+                        width: 0.5rem;
+                        height: 0.5rem;
+                        font-size: 0.5rem;
                         line-height: 0;
                         align-items: center;
                         justify-content: center;
