@@ -22,7 +22,7 @@
   "devDependencies": {
     "mocha": "^10.2.0",
     "sass": "^1.60.0",
-    "sinon": "^18.0.0",
+    "sinon": "^19.0.2",
     "vite": "^5.0.2"
   },
   "dependencies": {
