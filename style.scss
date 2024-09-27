@@ -493,9 +493,6 @@ div.sidebar {
                         width: fit-content;
                         height: fit-content;
                         transition: .5s;
-                        width: 0.5rem;
-                        height: 0.5rem;
-                        font-size: 0.5rem;
                         line-height: 0;
                         align-items: center;
                         justify-content: center;
@@ -600,6 +597,18 @@ div.sidebar {
                         opacity: 0.5 !important;
                         transition: .5s;
                     }
+
+                    .icon {
+                        width: 0.5rem;
+                        height: 0.5rem;
+                        font-size: 0.5rem;
+                    }
+                }
+
+                a.button .icon {
+                    width: 0.5rem;
+                    height: 0.5rem;
+                    font-size: 0.5rem;
                 }
 
                 >.rotation-outer {
