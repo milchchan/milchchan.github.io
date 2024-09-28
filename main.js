@@ -910,7 +910,7 @@ window.addEventListener("load", async event => {
         } else if (background.offset === null) {
           promisess.push(new Promise(async (resolve, reject) => {
             try {
-              const response = await fetch(encodeURI(`https://milchchan.com/api/upload?type=image/%&nonce=${~~random(0, 100)}`), {
+              const response = await fetch(encodeURI(`https://milchchan.com/api/upload?type=image/%`), {//&nonce=${~~random(0, 100)}`), {
                 mode: "cors",
                 method: "GET",
                 headers: {
