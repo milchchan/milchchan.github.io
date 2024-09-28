@@ -322,7 +322,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             raise
 
                     if file_is_exists:
-                        return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
+                        return func.HttpResponse(status_code=302, headers={'Origin': req.headers['Origin'], 'Location': urljoin('https://static.milchchan.com', identifier)} if 'Origin' in req.headers else {'Location': urljoin('https://static.milchchan.com', identifier)})
                     
                     '''
                     credentials = service_account.Credentials.from_service_account_info({
@@ -393,13 +393,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
                             }))
 
-                            return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
+                            return func.HttpResponse(status_code=302, headers={'Origin': req.headers['Origin'], 'Location': urljoin('https://static.milchchan.com', identifier)} if 'Origin' in req.headers else {'Location': urljoin('https://static.milchchan.com', identifier)})
                         
                     finally:
                         session.close()
 
                 else:
-                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', cached_data['id'])})
+                    return func.HttpResponse(status_code=302, headers={'Origin': req.headers['Origin'], 'Location': urljoin('https://static.milchchan.com', cached_data['id'])} if 'Origin' in req.headers else {'Location': urljoin('https://static.milchchan.com', cached_data['id'])})
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
