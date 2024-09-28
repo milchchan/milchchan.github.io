@@ -430,13 +430,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             raise
 
                     if file_is_exists:
-                        set_cache(cache_name, json.dumps({
-                            'id': identifier,
-                            'url': upload.url,
-                            'type': upload.type,
-                            'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                        }))
-
                         with io.BytesIO() as f:
                             s3.download_fileobj('uploads', identifier, f)
                             f.seek(0)
