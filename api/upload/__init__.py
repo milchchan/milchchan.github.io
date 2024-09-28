@@ -1,4 +1,5 @@
 import random
+import io
 import re
 import json
 import logging
@@ -322,7 +323,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             raise
 
                     if file_is_exists:
-                        return func.HttpResponse(status_code=302, headers={'Origin': req.headers['Origin'], 'Location': urljoin('https://static.milchchan.com', identifier)} if 'Origin' in req.headers else {'Location': urljoin('https://static.milchchan.com', identifier)})
+                        with io.BytesIO() as f:
+                            s3.download_fileobj('uploads', identifier, f)
+                            f.seek(0)
+
+                            return func.HttpResponse(f.read(), status_code=200, mimetype=upload.type)
+                        
+                        #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                     
                     '''
                     credentials = service_account.Credentials.from_service_account_info({
@@ -393,13 +400,50 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
                             }))
 
-                            return func.HttpResponse(status_code=302, headers={'Origin': req.headers['Origin'], 'Location': urljoin('https://static.milchchan.com', identifier)} if 'Origin' in req.headers else {'Location': urljoin('https://static.milchchan.com', identifier)})
+                            with io.BytesIO() as f:
+                                s3.download_fileobj('uploads', identifier, f)
+                                f.seek(0)
+
+                                return func.HttpResponse(f.read(), status_code=200, mimetype=upload.type)
+                            #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                         
                     finally:
                         session.close()
 
                 else:
-                    return func.HttpResponse(status_code=302, headers={'Origin': req.headers['Origin'], 'Location': urljoin('https://static.milchchan.com', cached_data['id'])} if 'Origin' in req.headers else {'Location': urljoin('https://static.milchchan.com', cached_data['id'])})
+                    identifier = cached_data['id']
+                    file_is_exists = True
+                    s3 = boto3.client(
+                        service_name='s3',
+                        endpoint_url=os.environ['S3_ENDPOINT_URL'],
+                        aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+                        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+                        region_name='auto'
+                    )
+
+                    try:
+                        s3.head_object(Bucket='uploads', Key=identifier)
+                    except botocore.exceptions.ClientError as e:
+                        if e.response['Error']['Code'] == '404':
+                            file_is_exists = False
+                        else:
+                            raise
+
+                    if file_is_exists:
+                        set_cache(cache_name, json.dumps({
+                            'id': identifier,
+                            'url': upload.url,
+                            'type': upload.type,
+                            'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
+                        }))
+
+                        with io.BytesIO() as f:
+                            s3.download_fileobj('uploads', identifier, f)
+                            f.seek(0)
+
+                            return func.HttpResponse(f.read(), status_code=200, mimetype=cached_data['type'])
+                    
+                    #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', cached_data['id'])})
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
