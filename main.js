@@ -887,9 +887,72 @@ window.addEventListener("load", async event => {
           };
         });
 
-        const promisess = [new Promise(async (resolve, reject) => {
+        try {
+          const response = await fetch(encodeURI(`https://milchchan.com/api/likes?language=${document.documentElement.lang}`), {
+            mode: "cors",
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          });
+      
+          if (response.ok) {
+            for (const like of await response.json()) {
+              if ("attributes" in like) {
+                let index = 0;
+                let text = "";
+                let content = [];
+  
+                while (index < like.content.length) {
+                  let maxEnd = index + 1;
+                  let attributes = {};
+  
+                  for (const attribute of like.attributes) {
+                    if (attribute.start === index) {
+                      if (attribute.end > maxEnd) {
+                        maxEnd = attribute.end;
+                      }
+  
+                      if (attribute.end in attributes) {
+                        attributes[attribute.end].push(attribute.name);
+                      } else {
+                        attributes[attribute.end] = [attribute.name];
+                      }
+                    }
+                  }
+  
+                  if (maxEnd in attributes) {
+                    if (text.length > 0) {
+                      content.push(text);
+                    }
+  
+                    content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
+                    index = maxEnd
+                  } else {
+                    text += like.content[index];
+                    index++;
+                  }
+                }
+  
+                if (text.length > 0) {
+                  content.push(text);
+                }
+                
+                background.texts.push(like.content);
+              } else {
+                background.texts.push(like.content);
+              }
+            }
+          }
+        } catch (error) {
+          console.error(error);
+        }
+        
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
+          background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
+        } else if (background.offset === null) {
           try {
-            const response = await fetch(encodeURI(`https://milchchan.com/api/likes?language=${document.documentElement.lang}`), {
+            const response = await fetch(encodeURI(`https://milchchan.com/api/upload?type=image/%&nonce=${~~random(0, 10)}`), {
               mode: "cors",
               method: "GET",
               headers: {
@@ -898,134 +961,42 @@ window.addEventListener("load", async event => {
             });
         
             if (response.ok) {
-              resolve(await response.json());
+              background.queue.push({ color: null, frames: [{ delay: 0, source: response.url }] });
+            } else {
+              throw new Error(response.statusText);
             }
           } catch (error) {
-            reject(error);
+            console.error(error);
           }
-        })];
-        
-        if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
-          background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
-        } else if (background.offset === null) {
-          promisess.push(new Promise(async (resolve, reject) => {
-            try {
-              const response = await fetch(encodeURI(`https://milchchan.com/api/upload?type=image/%`), {//&nonce=${~~random(0, 100)}`), {
-                mode: "cors",
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                }
-              });
-          
-              if (response.ok) {
-                resolve(response.url);
-              } else {
-                throw new Error(response.statusText);
-              }
-            } catch (error) {
-              reject(error);
-            }
-          }));
         } else if (background.queue.length === 0) {
-          promisess.push(new Promise(async (resolve, reject) => {
-            try {
-              const limit = 11;
-              const response = await fetch(encodeURI(`https://milchchan.com/api/uploads?type=image/%&offset=${background.offset}&limit=${limit}`), {
-                mode: "cors",
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                }
-              });
-          
-              if (response.ok) {
-                const json = await response.json();
-                const urls = [];
-  
-                for (const item of json) {
-                  urls.push(`https://milchchan.com/api/upload/${item.id}`);
-                }
-
-                resolve(urls);
-              } else {
-                throw new Error(response.statusText);
+          try {
+            const limit = 11;
+            const response = await fetch(encodeURI(`https://milchchan.com/api/uploads?type=image/%&offset=${background.offset}&limit=${limit}`), {
+              mode: "cors",
+              method: "GET",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
               }
-            } catch (error) {
-              reject(error);
-            }
-          }));
-        }
-
-        try {
-          const results = await Promise.all(promisess);
-      
-          for (const like of results[0]) {
-            if ("attributes" in like) {
-              let index = 0;
-              let text = "";
-              let content = [];
-
-              while (index < like.content.length) {
-                let maxEnd = index + 1;
-                let attributes = {};
-
-                for (const attribute of like.attributes) {
-                  if (attribute.start === index) {
-                    if (attribute.end > maxEnd) {
-                      maxEnd = attribute.end;
-                    }
-
-                    if (attribute.end in attributes) {
-                      attributes[attribute.end].push(attribute.name);
-                    } else {
-                      attributes[attribute.end] = [attribute.name];
-                    }
-                  }
-                }
-
-                if (maxEnd in attributes) {
-                  if (text.length > 0) {
-                    content.push(text);
-                  }
-
-                  content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
-                  index = maxEnd
-                } else {
-                  text += like.content[index];
-                  index++;
-                }
-              }
-
-              if (text.length > 0) {
-                content.push(text);
-              }
+            });
+        
+            if (response.ok) {
+              const json = await response.json();
               
-              background.texts.push(like.content);
-            } else {
-              background.texts.push(like.content);
-            }
-          }
-
-          if (results.length > 1) {
-            if (typeof(results[1]) === "string") {
-              background.queue.push({ color: null, frames: [{ delay: 0, source: results[1] }] });
-            } else if (results[1] instanceof Array) {
-              const limit = 11;
-
-              for (const url of results[1]) {
-                background.queue.push({ color: null, frames: [{ delay: 0, source: url }] });
+              for (const item of json) {
+                background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${item.id}` }] });
               }
 
-              if (results[1].length === limit) {
+              if (background.queue.length === limit) {
                 background.offset += 10;
               } else {
                 background.offset = 0;
               }
+            } else {
+              throw new Error(response.statusText);
             }
+          } catch (error) {
+            console.error(error);
           }
-        } catch (error) {
-          console.error(error);
         }
 
         if (background.queue.length > 0) {
