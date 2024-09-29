@@ -400,17 +400,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
                             }))
 
-                            with io.BytesIO() as f:
-                                s3.download_fileobj('uploads', identifier, f)
-                                f.seek(0)
+                            #with io.BytesIO() as f:
+                            #    s3.download_fileobj('uploads', identifier, f)
+                            #    f.seek(0)
 
-                                return func.HttpResponse(f.read(), status_code=200, mimetype=upload.type)
-                            #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
+                            #    return func.HttpResponse(f.read(), status_code=200, mimetype=upload.type)
+                            return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                         
                     finally:
                         session.close()
 
                 else:
+                    '''
                     identifier = cached_data['id']
                     file_is_exists = True
                     s3 = boto3.client(
@@ -435,8 +436,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             f.seek(0)
 
                             return func.HttpResponse(f.read(), status_code=200, mimetype=cached_data['type'])
-                    
-                    #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', cached_data['id'])})
+                    '''
+                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', cached_data['id'])})
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
