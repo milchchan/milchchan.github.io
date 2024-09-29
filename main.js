@@ -636,7 +636,10 @@ window.addEventListener("load", async event => {
 
   new Promise(async (resolve) => {
     try {
-      const response = await fetch("https://milchchan.com/api/now");
+      const response = await fetch("https://milchchan.com/api/now", {
+        mode: "cors",
+        method: "GET"
+      });
 
       if (response.ok) {
         await response.json();
@@ -744,7 +747,10 @@ window.addEventListener("load", async event => {
 
   async function download(url, handler = null) {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        mode: "cors",
+        method: "GET"
+      });
 
       if (response.ok) {
         const reader = response.body.getReader();
