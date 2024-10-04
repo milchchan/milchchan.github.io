@@ -59,11 +59,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     
                     for file in req.files.values():
                         array.append(file.content_type)
-                        if file.content_type == 'audio/wav':
-                            audio_data = file.stream.read()
+                        #if file.content_type == 'audio/wav':
+                        #    audio_data = file.stream.read()
 
-                        elif file.content_type == 'application/json':
-                            json_data = file.stream.read()
+                        #elif file.content_type == 'application/json':
+                        #    json_data = file.stream.read()
                     
                     return func.HttpResponse(json.dumps(array), status_code=201, mimetype='application/json', charset='utf-8')
 
