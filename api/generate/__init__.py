@@ -53,48 +53,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 tts_url = os.environ.get('TTS_URL')
 
                 if tts_url is not None:
-                    audio_data = None
-                    json_data = None
-                    array = [tts_url]
-                    
-                    for file in req.files.values():
-                        array.append(file.content_type)
-                        #if file.content_type == 'audio/wav':
-                        #    audio_data = file.stream.read()
+                    request = Request(tts_url, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
-                        #elif file.content_type == 'application/json':
-                        #    json_data = file.stream.read()
-
-                    array.append(req.get_json())
-                    
-                    return func.HttpResponse(json.dumps(array), status_code=201, mimetype='application/json', charset='utf-8')
-
-                    '''
-                    
-                    '''
-                    if audio_data is not None and json_data is not None:
-                        boundary = md5(str(random.randint(0, 32000)).encode()).hexdigest()
-
-                        data = f'--{boundary}\r\n'.encode()
-                        data += 'Content-Disposition: form-data; name="file"; filename="prompt.wav"\r\n'.encode()
-                        data += f'Content-Type: audio/wav\r\n'.encode()
-                        data += 'Content-Transfer-Encoding: binary\r\n\r\n'.encode()
-                        data += audio_data
-                        data += f'\r\n'.encode()
-                        data += f'--{boundary}\r\n'.encode()
-                        data += 'Content-Disposition: form-data; name="data"\r\n'.encode()
-                        data += f'Content-Type: application/json\r\n\r\n'.encode()
-                        data += json_data
-                        data += f'\r\n'.encode()
-                        data += f'--{boundary}--\r\n'.encode()
-
-                        request = Request(tts_url, headers={'Content-Type': f'multipart/form-data; boundary={boundary}'}, data=data, method='POST')
-
-                        with urlopen(request) as response:
-                            return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
-
-                    else:
-                        return func.HttpResponse(json.dumps(array), status_code=201, mimetype='application/json', charset='')
+                    with urlopen(request) as response:
+                        return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
                     
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
