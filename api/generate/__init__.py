@@ -55,17 +55,20 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if tts_url is not None:
                     audio_data = None
                     json_data = None
-                    #array = ['test']
-                    return func.HttpResponse(json.dumps(['test']), status_code=201, mimetype='application/json', charset='utf-8')
-
-                    '''
+                    array = ['test']
+                    
                     for file in req.files.values():
-                        #array.append(file.content_type)
+                        array.append(file.content_type)
                         if file.content_type == 'audio/wav':
                             audio_data = file.stream.read()
 
                         elif file.content_type == 'application/json':
                             json_data = file.stream.read()
+                    
+                    return func.HttpResponse(json.dumps(['test']), status_code=201, mimetype='application/json', charset='utf-8')
+
+                    '''
+                    
                     '''
                     if audio_data is not None and json_data is not None:
                         boundary = md5(str(random.randint(0, 32000)).encode()).hexdigest()
