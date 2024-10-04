@@ -55,8 +55,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if tts_url is not None:
                     audio_data = None
                     json_data = None
+                    array = []
 
                     for file in req.files.values():
+                        array.append(file.content_type)
                         if file.content_type == 'audio/wav':
                             audio_data = file.stream.read()
 
@@ -85,7 +87,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
 
                     else:
-                        return func.HttpResponse(status_code=401, mimetype='', charset='')
+                        return func.HttpResponse(status_code=json.dumps(array), mimetype='application/json', charset='')
                     
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
