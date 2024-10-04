@@ -65,7 +65,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         elif file.content_type == 'application/json':
                             json_data = file.stream.read()
                     
-                    return func.HttpResponse(json.dumps(['test']), status_code=201, mimetype='application/json', charset='utf-8')
+                    return func.HttpResponse(json.dumps(array), status_code=201, mimetype='application/json', charset='utf-8')
 
                     '''
                     
