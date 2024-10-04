@@ -84,6 +84,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         with urlopen(request) as response:
                             return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
 
+                    else:
+                        return func.HttpResponse(status_code=401, mimetype='', charset='')
+                    
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
     except Exception as e:
