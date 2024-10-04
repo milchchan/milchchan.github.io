@@ -57,6 +57,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     json_data = None
                     array = ['test']
 
+                    '''
                     for file in req.files.values():
                         #array.append(file.content_type)
                         if file.content_type == 'audio/wav':
@@ -64,7 +65,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                         elif file.content_type == 'application/json':
                             json_data = file.stream.read()
-
+                    '''
                     if audio_data is not None and json_data is not None:
                         boundary = md5(str(random.randint(0, 32000)).encode()).hexdigest()
 
