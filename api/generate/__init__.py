@@ -47,10 +47,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 if 'text' in part:
                                     match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', part['text'], flags=(re.MULTILINE|re.DOTALL))
 
-                                    return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=200, mimetype='application/json', charset='utf-8')
+                                    return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=201, mimetype='application/json', charset='utf-8')
             
             elif content_type.startswith('multipart/form-data;'):
-                tts_url = os.environ['TTS_URL']
+                tts_url = os.environ.get('TTS_URL')
 
                 if tts_url is not None:
                     audio_data = None
