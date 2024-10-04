@@ -56,7 +56,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     audio_data = None
                     json_data = None
                     #array = ['test']
-                    return func.HttpResponse(json.dumps([]), status_code=201, mimetype='application/json', charset='')
+                    return func.HttpResponse(json.dumps(['test']), status_code=201, mimetype='application/json', charset='utf-8')
 
                     '''
                     for file in req.files.values():
