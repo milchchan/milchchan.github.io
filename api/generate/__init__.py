@@ -87,7 +87,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
 
                     else:
-                        return func.HttpResponse(status_code=json.dumps(array), mimetype='application/json', charset='')
+                        return func.HttpResponse(json.dumps(array), status_code=201, mimetype='application/json', charset='')
                     
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
