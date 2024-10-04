@@ -55,10 +55,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if tts_url is not None:
                     audio_data = None
                     json_data = None
-                    array = []
+                    array = ['test']
 
                     for file in req.files.values():
-                        array.append(file.content_type)
+                        #array.append(file.content_type)
                         if file.content_type == 'audio/wav':
                             audio_data = file.stream.read()
 
