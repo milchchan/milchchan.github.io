@@ -55,7 +55,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if tts_url is not None:
                     audio_data = None
                     json_data = None
-                    array = ['test']
+                    #array = ['test']
+                    return func.HttpResponse(json.dumps([]), status_code=201, mimetype='application/json', charset='')
 
                     '''
                     for file in req.files.values():
