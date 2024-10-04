@@ -55,7 +55,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if tts_url is not None:
                     audio_data = None
                     json_data = None
-                    array = ['test']
+                    array = [tts_url]
                     
                     for file in req.files.values():
                         array.append(file.content_type)
@@ -64,6 +64,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                         #elif file.content_type == 'application/json':
                         #    json_data = file.stream.read()
+
+                    array.append(req.get_json())
                     
                     return func.HttpResponse(json.dumps(array), status_code=201, mimetype='application/json', charset='utf-8')
 
