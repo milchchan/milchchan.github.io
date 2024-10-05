@@ -53,12 +53,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 tts_url = os.environ.get('TTS_URL')
 
                 if tts_url is not None:
-                    return func.HttpResponse(json.dumps({'url': tts_url}), status_code=201, mimetype='application/json', charset='utf-8')
-
                     request = Request(tts_url, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
                     with urlopen(request, timeout=60.0) as response:
-                        return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
+                        content_type = response.info().get_content_type()
+
+                        return func.HttpResponse(response.read(), status_code=201, mimetype=content_type)
                     
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
