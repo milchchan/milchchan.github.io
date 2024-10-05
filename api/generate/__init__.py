@@ -31,13 +31,25 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 
                 else:
                     temperature = float(req.params['temperature']) if 'temperature' in req.params else None
+                    data = req.get_json()
                     contents = []
 
-                    for message in req.get_json():
-                        if message['role'] == 'system' or message['role'] == 'user':
-                            contents.append({'role': 'user', 'parts': [{'text': message['content']}]})
-                        elif message['role'] == 'assistant':
-                            contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
+                    if isinstance(data, dict):
+                        if 'temperature' in data:
+                            temperature = data['temperature']
+
+                        for message in data['messages']:
+                            if message['role'] == 'system' or message['role'] == 'user':
+                                contents.append({'role': 'user', 'parts': [{'text': message['content']}]})
+                            elif message['role'] == 'assistant':
+                                contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
+
+                    elif isinstance(data, list):
+                        for message in data:
+                            if message['role'] == 'system' or message['role'] == 'user':
+                                contents.append({'role': 'user', 'parts': [{'text': message['content']}]})
+                            elif message['role'] == 'assistant':
+                                contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
 
                     request = Request(f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={api_key}', data=json.dumps({'contents': contents} if temperature is None else {'contents': contents, 'generationConfig': {'temperature': temperature}}).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
 
