@@ -55,7 +55,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if tts_url is not None:
                     request = Request(tts_url, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
-                    with urlopen(request) as response:
+                    with urlopen(request, timeout=30.0) as response:
                         return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
                     
         return func.HttpResponse(status_code=400, mimetype='', charset='')
