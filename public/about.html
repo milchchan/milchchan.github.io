@@ -1282,13 +1282,13 @@
 
                               messages.push({role: "user", content: result[0].transcript});
 
-                              const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                              const response2 = await fetch("https://milchchan.com/api/generate", {
                                 mode: "cors",
                                 method: "POST",
                                 headers: {
                                   "Content-Type": "application/json"
                                 },
-                                body: JSON.stringify(messages)
+                                body: JSON.stringify({temperature: temperature, messages: messages})
                               });
 
                               if (response2.ok) {
@@ -1533,24 +1533,14 @@
                                 const response1 = await fetch(encodeURI(`${element2.dataset.type}.txt`));
 
                                 if (response1.ok) {
-                                  const response2 = await fetch(
-                                    encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`),
+                                  const response2 = await fetch("https://milchchan.com/api/generate",
                                     {
                                       mode: "cors",
                                       method: "POST",
                                       headers: {
                                         "Content-Type": "application/json",
                                       },
-                                      body: JSON.stringify([
-                                        {
-                                          role: "system",
-                                          content: await response1.text(),
-                                        },
-                                        {
-                                          role: "user",
-                                          content: prompt,
-                                        },
-                                      ]),
+                                      body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: prompt}]}),
                                     }
                                   );
 
@@ -1733,13 +1723,13 @@
                           const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
 
                           if (response1.ok) {
-                            const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                            const response2 = await fetch("https://milchchan.com/api/generate", {
                               mode: "cors",
                               method: "POST",
                               headers: {
                                 "Content-Type": "application/json"
                               },
-                              body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: prompt}])
+                              body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: prompt}]})
                             });
 
                             if (response2.ok) {
@@ -1862,13 +1852,13 @@
 
                         messages.push({role: "user", content: moreButton.dataset.prompt});
 
-                        const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                        const response2 = await fetch("https://milchchan.com/api/generate", {
                           mode: "cors",
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json"
                           },
-                          body: JSON.stringify(messages)
+                          body: JSON.stringify({temperature: temperature, messages: messages})
                         });
 
                         if (response2.ok) {
@@ -2021,13 +2011,13 @@
                     const response1 = await fetch(encodeURI(`${element.dataset.type}.txt`));
 
                     if (response1.ok) {
-                      const response2 = await fetch(encodeURI(`https://milchchan.com/api/generate?temperature=${temperature}`), {
+                      const response2 = await fetch("https://milchchan.com/api/generate", {
                         mode: "cors",
                         method: "POST",
                         headers: {
                           "Content-Type": "application/json"
                         },
-                        body: JSON.stringify([{role: "system", content: await response1.text()}, {role: "user", content: prompt}])
+                        body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: prompt}]})
                       });
 
                       if (response2.ok) {
