@@ -64,7 +64,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             elif content_type.startswith('multipart/form-data;'):
                 tts_url = os.environ.get('TTS_URL')
 
-                if tts_url is None:
+                if tts_url is None or len(tts_url) == 0:
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
                 
                 request = Request(tts_url, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
