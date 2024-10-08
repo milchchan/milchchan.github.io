@@ -98,13 +98,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     content_type = header.decode('utf-8')
                                     content_type = content_type.split(':')[1].strip()
 
-                    if name == 'file' and content_type == 'audio/wav':
-                        audio_data = content
-                    elif name == 'data' and content_type == 'application/json':
-                        json_data = json.loads(content)
+                            if name == 'file' and content_type == 'audio/wav':
+                                audio_data = content
+                            elif name == 'data' and content_type == 'application/json':
+                                json_data = json.loads(content)
 
-                    return func.HttpResponse(audio_data, status_code=201, mimetype='audio/wav')
-                    '''
                     if audio_data is not None and json_data is not None:
                         with tempfile.NamedTemporaryFile() as t:
                             with open(t.name, 'wb') as f:
@@ -115,8 +113,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             
                             with open(output_path, mode='rb') as f:
                                 return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
-                    '''
-
+                    
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
     except Exception as e:
