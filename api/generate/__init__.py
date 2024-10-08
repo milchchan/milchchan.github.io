@@ -74,11 +74,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
                 
                 elif 'boundary=' in content_type:
-                    #boundary = f'--{content_type.split('boundary=')[-1]}'.encode()
+                    boundary = f'--{content_type.split("boundary=")[-1]}'.encode()
                     audio_data = None
                     json_data = None
 
-                    return func.HttpResponse(json.dump({'s': 'ok'}), status_code=201, mimetype='application/json', charset='utf-8')
+                    return func.HttpResponse(json.dumps({'s': 'ok'}), status_code=201, mimetype='application/json', charset='utf-8')
                 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
