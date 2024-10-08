@@ -102,7 +102,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             elif name == 'data' and content_type == 'application/json':
                                 json_data = json.loads(content)
 
-                    return func.HttpResponse(json.dumps({'s': 'ok'}), status_code=201, mimetype='application/json', charset='utf-8')
+                    if audio_data is not None and json_data is not None:
+                        with tempfile.NamedTemporaryFile() as t:
+                            with open(t.name, 'wb') as f:
+                                f.write(audio_data)
+
+                            client = Client('milchchan/MilchTTS')
+                            output_path = client.predict(handle_file(t.name), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0)
+            
+                            with open(output_path, mode='rb') as f:
+                                return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
                 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
