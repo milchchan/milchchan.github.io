@@ -2,9 +2,9 @@ import re
 import os
 import json
 import logging
-import tempfile
+#import tempfile
 from urllib.request import urlopen, Request
-from gradio_client import Client, handle_file
+#from gradio_client import Client, handle_file
 
 import azure.functions as func
 
