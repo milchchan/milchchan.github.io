@@ -75,6 +75,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 
                 elif 'boundary=' in content_type:
                     boundary = f'--{content_type.split('boundary=')[-1]}'.encode()
+                    audio_data = None
+                    json_data = None
 
                     for part in req.get_body().split(boundary)[1:-1]:
                         index = part.find(b'\r\n\r\n')
@@ -84,9 +86,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             content = part[index + 4:].strip(b'--').strip()
                             name = None
                             content_type = None
-                            audio_data = None
-                            json_data = None
-
+                            
                             for header in headers:
                                 if header.startswith(b'Content-Disposition'):
                                     match = re.search(r'name="([^"]+)"(?:;\sfilename="([^"]+)")?', header.decode('utf-8'))
@@ -98,24 +98,24 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     content_type = header.decode('utf-8')
                                     content_type = content_type.split(':')[1].strip()
 
-                            if name == 'file' and content_type == 'audio/wav':
-                                audio_data = content
-                            elif name == 'data' and content_type == 'application/json':
-                                json_data = json.loads(content)
+                    if name == 'file' and content_type == 'audio/wav':
+                        audio_data = content
+                    elif name == 'data' and content_type == 'application/json':
+                        json_data = json.loads(content)
 
-                            return func.HttpResponse(audio_data, status_code=201, mimetype='audio/wav')
-                            '''
-                            if audio_data is not None and json_data is not None:
-                                with tempfile.NamedTemporaryFile() as t:
-                                    with open(t.name, 'wb') as f:
-                                        f.write(audio_data)
+                    return func.HttpResponse(audio_data, status_code=201, mimetype='audio/wav')
+                    '''
+                    if audio_data is not None and json_data is not None:
+                        with tempfile.NamedTemporaryFile() as t:
+                            with open(t.name, 'wb') as f:
+                                f.write(audio_data)
 
-                                    client = Client(tts_url)
-                                    output_path = client.predict(handle_file(t.name), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0)
-                                    
-                                    with open(output_path, mode='rb') as f:
-                                        return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
-                            '''
+                            client = Client(tts_url)
+                            output_path = client.predict(handle_file(t.name), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0)
+                            
+                            with open(output_path, mode='rb') as f:
+                                return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
+                    '''
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
