@@ -74,7 +74,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
                 
                 elif 'boundary=' in content_type:
-                    boundary = f'--{content_type.split('boundary=')[-1]}'.encode()
+                    #boundary = f'--{content_type.split('boundary=')[-1]}'.encode()
                     audio_data = None
                     json_data = None
 
