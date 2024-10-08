@@ -78,12 +78,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     audio_data = None
                     json_data = None
 
-                    for part in req.get_body().split(boundary)[1:-1]:
-                        index = part.find(b'\r\n\r\n')
-
-                        if index >= 0:
-                            headers = part[:index].split(b'\r\n')
-
                     return func.HttpResponse(json.dump({'s': 'ok'}), status_code=201, mimetype='application/json', charset='utf-8')
                 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
