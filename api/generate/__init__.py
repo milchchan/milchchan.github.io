@@ -78,7 +78,32 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     audio_data = None
                     json_data = None
 
-                    return func.HttpResponse(json.dumps({'s': boundary}), status_code=201, mimetype='application/json', charset='utf-8')
+                    for part in req.get_body().split(boundary)[1:-1]:
+                        index = part.find(b'\r\n\r\n')
+
+                        if index >= 0:
+                            headers = part[:index].split(b'\r\n')
+                            content = part[index + 4:].strip(b'--').strip()
+                            name = None
+                            content_type = None
+
+                            for header in headers:
+                                if header.startswith(b'Content-Disposition'):
+                                    match = re.search(r'name="([^"]+)"(?:;\sfilename="([^"]+)")?', header.decode('utf-8'))
+
+                                    if match:
+                                        name = match.groups()[0]
+
+                                elif header.startswith(b'Content-Type'):
+                                    content_type = header.decode('utf-8')
+                                    content_type = content_type.split(':')[1].strip()
+
+                            if name == 'file' and content_type == 'audio/wav':
+                                audio_data = content
+                            elif name == 'data' and content_type == 'application/json':
+                                json_data = json.loads(content)
+
+                    return func.HttpResponse(audio_data, status_code=201, mimetype='audio/wav')
                 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
