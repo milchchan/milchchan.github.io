@@ -107,7 +107,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             with open(t.name, 'wb') as f:
                                 f.write(audio_data)
 
-                            client = Client('milchchan/MilchTTS')
+                            client = Client(tts_url)
                             output_path = client.predict(handle_file(t.name), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0)
             
                             with open(output_path, mode='rb') as f:
