@@ -62,9 +62,24 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=201, mimetype='application/json', charset='utf-8')
             
             elif content_type.startswith('multipart/form-data;'):
-                return func.HttpResponse(json.dumps({'s': 'ok'}), status_code=201, mimetype='application/json', charset='utf-8')
+                tts_url = os.environ.get('TTS_URL')
+                    
+                if tts_url is None or len(tts_url) == 0:
+                    return func.HttpResponse(status_code=503, mimetype='', charset='')
                 
+                elif tts_url.startswith('https://'):
+                    request = Request(tts_url, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
+                    with urlopen(request, timeout=60.0) as response:
+                        return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
+                
+                elif 'boundary=' in content_type:
+                    boundary = f'--{content_type.split('boundary=')[-1]}'.encode()
+                    audio_data = None
+                    json_data = None
+
+                    return func.HttpResponse(json.dumps({'s': boundary}), status_code=201, mimetype='application/json', charset='utf-8')
+                
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
     except Exception as e:
