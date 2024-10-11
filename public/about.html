@@ -1045,6 +1045,8 @@
       let speechRecognition = null;
       let isRecording = false;
       let isPlaying = false;
+      let time = 0.0;
+      let audioStream = null;
       let audioContext = null;
 
       window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
@@ -1261,18 +1263,35 @@
                   reader.readAsArrayBuffer(blob);
                 });
 
+                audioStream = audioStream ?? await navigator.mediaDevices.getUserMedia({ audio: {
+                  sampleRate: sampleRate,
+                  sampleSize: { ideal: 16 }
+                }, video: false });
                 audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
                 
                 const buffer = await audioContext.decodeAudioData(arrayBuffer);
                 const source = audioContext.createBufferSource();
+                const currentTime = audioContext.currentTime;
 
                 source.buffer = buffer;
                 source.connect(audioContext.destination);
                 source.onended = () => {
+                  audioStream.getTracks().forEach((track) => track.stop());
+                  audioStream = null;
                   source.disconnect();
+                  audioContext.close();
+                  audioContext = null;
                   isPlaying = false;
                 };
-                source.start(0);
+
+                if (currentTime < time) {
+                  source.start(time);
+                  time += buffer.duration;
+                } else {
+                  source.start(currentTime);
+                  time = currentTime + buffer.duration;
+                }
+
                 isPlaying = true;
               } else {
                 throw new Error(response2.statusText);
