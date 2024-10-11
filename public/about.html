@@ -265,6 +265,8 @@
         backface-visibility: hidden;
         content: "";
         transition: .5s;
+
+        opacity: 0;
       }
 
       .background>div.is-touching {
@@ -501,7 +503,7 @@
       }
 
       div.sidebar .button.is-recording .icon {
-        animation: recording 1s linear forwards infinite;
+        animation: processing 1s linear forwards infinite;
         animation-play-state: running;
       }
 
@@ -630,6 +632,27 @@
         animation: mask 1.0s ease 0.5s both, reveal 1.0s ease 1.5s both;
       }
 
+      .content>div>div>div.is-playable {
+        opacity: 1.0;
+        transition: .5s;
+      }
+
+      .content>div>div>div.is-playable:hover {
+        cursor: pointer;
+        opacity: 0.5;
+        transition: .5s;
+      }
+
+      .content>div>div>div>p.is-generated {
+        opacity: 1.0;
+        transition: .5s;
+      }
+
+      .content>div>div>div>p.is-generated.is-loading {
+        animation: processing 1s linear forwards infinite;
+        animation-play-state: running;
+      }
+
       @keyframes fade {
         from {
           opacity: 0;
@@ -672,7 +695,7 @@
           }
       }
 
-      @keyframes recording {
+      @keyframes processing {
           0% {
               opacity: 1;
           }
@@ -692,6 +715,7 @@
         }
 
         body>.wrap {
+          z-index: 1;
           padding: 16px;
           transition: 0.5s;
         }
@@ -899,7 +923,7 @@
         </div>
       </div>
       <div class="wrap">
-        <div class="content is-selected" data-type="milch" data-prompt="自己紹介してください。お名前、所属、メルクちゃんのことを教えてください。">
+        <div class="content is-selected" data-type="milch" data-prompt="自己紹介してください。お名前、所属、メルクちゃんのことを教えてください。" data-language="ja">
           <div class="icon is-animatable">
             <a class="button" href="https://clock.milchchan.com/" title="Clock">
               <figure>
@@ -918,25 +942,35 @@
               <span class="reveal has-text-weight-bold">ミルヒちゃん</span>
             </h2>
             <div>
-              <p>
-                <span class="reveal">天真爛漫で魔法少女のことが好きな小学5年生の女の子。</span>
-              </p>
-              <p>
-                <span class="reveal">お友達のメルクちゃんとは仲良し。</span>
-              </p>
-              <p>
-                <span class="reveal">魔法少女が好きなことは、メルクちゃんを除いて秘密。</span>
-              </p>
-              <p>
-                <span class="reveal">メルクちゃんの言うことを信じて疑わないので、メルクちゃんのいつも思いのまま。</span>
-              </p>
-              <p>
-                <span class="reveal">メルクちゃんに魔法少女の衣装を着せられてメルクちゃんといっしょに魔法少女をすることになった。</span>
-              </p>
+              <div>
+                <p>
+                  <span class="reveal">天真爛漫で魔法少女のことが好きな小学5年生の女の子。</span>
+                </p>
+              </div>
+              <div>
+                <p>
+                  <span class="reveal">お友達のメルクちゃんとは仲良し。</span>
+                </p>
+              </div>
+              <div>
+                <p>
+                  <span class="reveal">魔法少女が好きなことは、メルクちゃんを除いて秘密。</span>
+                </p>
+              </div>
+              <div>
+                <p>
+                  <span class="reveal">メルクちゃんの言うことを信じて疑わないので、メルクちゃんのいつも思いのまま。</span>
+                </p>
+              </div>
+              <div>
+                <p>
+                  <span class="reveal">メルクちゃんに魔法少女の衣装を着せられてメルクちゃんといっしょに魔法少女をすることになった。</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        <div class="content" data-type="merku" data-prompt="自己紹介してください。お名前、所属、ミルヒちゃんのことを教えてください。">
+        <div class="content" data-type="merku" data-prompt="自己紹介してください。お名前、所属、ミルヒちゃんのことを教えてください。" data-language="ja">
           <div class="icon is-animatable">
             <a class="button" href="https://clock.milchchan.com/" title="Clock">
               <figure>
@@ -954,21 +988,31 @@
               <span class="reveal has-text-weight-bold">メルクちゃん</span>
             </h2>
             <div>
-              <p>
-                <span class="reveal">おっとりしていてお金持ちの小学5年生の女の子。</span>
-              </p>
-              <p>
-                <span class="reveal">お友達のミルヒちゃんのことが大好き。</span>
-              </p>
-              <p>
-                <span class="reveal">ミルヒちゃんのことが大好きすぎて、ミルヒちゃんのことになると暴走しちゃいがち。</span>
-              </p>
-              <p>
-                <span class="reveal">つくった魔法少女の衣装をミルヒちゃんに着せてあげて、いっしょに魔法少女を始めた。</span>
-              </p>
-              <p>
-                <span class="reveal">趣味で魔法少女の薄い本を描いているが、ミルヒちゃんには秘密。</span>
-              </p>
+              <div>
+                <p>
+                  <span class="reveal">おっとりしていてお金持ちの小学5年生の女の子。</span>
+                </p>
+              </div>
+              <div>
+                <p>
+                  <span class="reveal">お友達のミルヒちゃんのことが大好き。</span>
+                </p>
+              </div>
+              <div>
+                <p>
+                  <span class="reveal">ミルヒちゃんのことが大好きすぎて、ミルヒちゃんのことになると暴走しちゃいがち。</span>
+                </p>
+              </div>
+              <div>
+                <p>
+                  <span class="reveal">つくった魔法少女の衣装をミルヒちゃんに着せてあげて、いっしょに魔法少女を始めた。</span>
+                </p>
+              </div>
+              <div>
+                <p>
+                  <span class="reveal">趣味で魔法少女の薄い本を描いているが、ミルヒちゃんには秘密。</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -1002,6 +1046,8 @@
       const touches = [];
       let speechRecognition = null;
       let isRecording = false;
+      let isPlaying = false;
+      let audioContext = null;
 
       window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
@@ -1181,6 +1227,65 @@
         };
       }
 
+      async function synthesize(prompt, input, language, temperature = 1.0) {
+        if (!isPlaying) {
+          try {
+            const response1 = await fetch(encodeURI(prompt));
+
+            if (response1.ok) {
+              const promptBlob = await response1.blob();
+              const formData = new FormData();
+
+              formData.append("file", promptBlob, "prompt.wav");
+              formData.append("data", new Blob([JSON.stringify({ input: input, language: language, temperature: temperature })], { type: "application/json" }));
+
+              const response2 = await fetch("https://milchchan.com/api/generate", {
+                mode: "cors",
+                method: "POST",
+                body: formData
+              });
+
+              if (response2.ok) {
+                const blob = await response2.blob();
+                const arrayBuffer = await new Promise(async (resolve, reject) => {
+                  const reader = new FileReader();
+
+                  reader.onload = () => {
+                    resolve(reader.result);
+                  };
+                  reader.onerror = () => {
+                    reject(reader.error);
+                  };
+                  reader.readAsArrayBuffer(blob);
+                });
+
+                audioContext = audioContext ?? new window.AudioContext({ sampleRate: 32000 });
+                
+                const chunk = new Int16Array(arrayBuffer);
+                const data = Float32Array.from(chunk, (x) => Math.max(-1.0, Math.min(1.0, x / 32767.0)));
+                const buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+                const source = audioContext.createBufferSource();
+
+                buffer.getChannelData(0).set(data);
+                source.buffer = buffer;
+                source.connect(audioContext.destination);
+                source.onended = () => {
+                  source.disconnect();
+                  isPlaying = false;
+                };
+                source.start(0);
+                isPlaying = true;
+              } else {
+                throw new Error(response2.statusText);
+              }
+
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+
       if (hash.length > 0) {
         for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
           if(hash === element.dataset.type) {
@@ -1308,14 +1413,30 @@
                           const div = element1.querySelector(":scope>div>div:last-of-type");
 
                           if (div !== null) {
-                            const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+                            const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
                             for (const content of data.split("\n")) {
                               if (content.length > 0) {
+                                const wrap = document.createElement("div");
                                 const p = document.createElement("p");
                                 const span = document.createElement("span");
 
                                 p.classList.add("is-generated");
+
+                                if ("language" in element1.dataset) {
+                                  wrap.classList.add("is-playable");
+
+                                  p.onclick = async () => {
+                                    if (!p.classList.contains("is-loading")) {
+                                      p.classList.add("is-loading");
+
+                                      await synthesize(`sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+
+                                      p.classList.remove("is-loading");
+                                    }
+                                  };
+                                }
+
                                 span.classList.add("reveal");
                                 span.dataset["prompt"] = result[0].transcript;
                                 
@@ -1326,7 +1447,8 @@
                                 span.textContent = content;
 
                                 p.appendChild(span);
-                                div.appendChild(p);
+                                wrap.appendChild(p);
+                                div.appendChild(wrap);
                               }
                             }
                           }
@@ -1561,14 +1683,30 @@
                               const div = element2.querySelector(":scope>div>div:last-of-type");
 
                               if (div !== null) {
-                                const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+                                const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
                                 for (const content of data.split("\n")) {
                                   if (content.length > 0) {
+                                    const wrap = document.createElement("div");
                                     const p = document.createElement("p");
                                     const span = document.createElement("span");
 
                                     p.classList.add("is-generated");
+
+                                    if ("language" in element2.dataset) {
+                                      wrap.classList.add("is-playable");
+
+                                      p.onclick = async () => {
+                                        if (!p.classList.contains("is-loading")) {
+                                          p.classList.add("is-loading");
+
+                                          await synthesize(`sounds/${element2.dataset.type}.${element2.dataset.language}.wav`, content, element2.dataset.language, temperature);
+
+                                          p.classList.remove("is-loading");
+                                        }
+                                      };
+                                    }
+
                                     span.classList.add("reveal");
 
                                     if (italicRequired) {
@@ -1578,7 +1716,8 @@
                                     span.textContent = content;
 
                                     p.appendChild(span);
-                                    div.appendChild(p);
+                                    wrap.appendChild(p);
+                                    div.appendChild(wrap);
                                   }
                                 }
                               }
@@ -1749,14 +1888,30 @@
                         const last = div.querySelector(":scope>div:last-of-type");
 
                         if (last !== null) {
-                          const italicRequired = last.querySelector(":scope>p:not(.is-generated)") !== null;
+                          const italicRequired = last.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
                           for (const content of data.split("\n")) {
                             if (content.length > 0) {
+                              const wrap = document.createElement("div");
                               const p = document.createElement("p");
                               const span = document.createElement("span");
 
                               p.classList.add("is-generated");
+
+                              if ("language" in element1.dataset) {
+                                wrap.classList.add("is-playable");
+
+                                p.onclick = async () => {
+                                  if (!p.classList.contains("is-loading")) {
+                                    p.classList.add("is-loading");
+
+                                    await synthesize(`sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+
+                                    p.classList.remove("is-loading");
+                                  }
+                                };
+                              }
+
                               span.classList.add("reveal");
                               
                               if (italicRequired) {
@@ -1766,7 +1921,8 @@
                               span.textContent = content;
 
                               p.appendChild(span);
-                              last.appendChild(p);
+                              wrap.appendChild(p);
+                              last.appendChild(wrap);
                             }
                           }
                         }
@@ -1878,14 +2034,30 @@
                     const div = element1.querySelector(":scope>div>div:last-of-type");
 
                     if (div !== null) {
-                      const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+                      const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
                       for (const content of data.split("\n")) {
                         if (content.length > 0) {
+                          const wrap = document.createElement("div");
                           const p = document.createElement("p");
                           const span = document.createElement("span");
 
                           p.classList.add("is-generated");
+
+                          if ("language" in element1.dataset) {
+                            wrap.classList.add("is-playable");
+
+                            p.onclick = async () => {
+                              if (!p.classList.contains("is-loading")) {
+                                p.classList.add("is-loading");
+
+                                await synthesize(`sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+
+                                p.classList.remove("is-loading");
+                              }
+                            };
+                          }
+
                           span.classList.add("reveal");
                           span.dataset["prompt"] = moreButton.dataset.prompt;
                           
@@ -1896,7 +2068,8 @@
                           span.textContent = content;
 
                           p.appendChild(span);
-                          div.appendChild(p);
+                          wrap.appendChild(p);
+                          div.appendChild(wrap);
                         }
                       }
                     }
@@ -2037,14 +2210,30 @@
                   const div = element.querySelector(":scope>div>div:last-of-type");
 
                   if (div !== null) {
-                    const italicRequired = div.querySelector(":scope>p:not(.is-generated)") !== null;
+                    const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
                     for (const content of data.split("\n")) {
                       if (content.length > 0) {
+                        const wrap = document.createElement("div");
                         const p = document.createElement("p");
                         const span = document.createElement("span");
 
                         p.classList.add("is-generated");
+                        
+                        if ("language" in element.dataset) {
+                          wrap.classList.add("is-playable");
+
+                          p.onclick = async () => {
+                            if (!p.classList.contains("is-loading")) {
+                              p.classList.add("is-loading");
+
+                              await synthesize(`sounds/${element.dataset.type}.${element.dataset.language}.wav`, content, element.dataset.language, temperature);
+
+                              p.classList.remove("is-loading");
+                            }
+                          };
+                        }
+                        
                         span.classList.add("reveal");
 
                         if (italicRequired) {
@@ -2054,7 +2243,8 @@
                         span.textContent = content;
 
                         p.appendChild(span);
-                        div.appendChild(p);
+                        wrap.appendChild(p);
+                        div.appendChild(wrap);
                       }
                     }
                   }
