@@ -634,7 +634,8 @@
 
       .content>div>div>div.is-playable {
         opacity: 1.0;
-        transition: .5s;
+        backface-visibility: hidden;
+        transition: opacity .5s;
       }
 
       .content>div>div>div.is-playable:hover {
@@ -643,12 +644,12 @@
         transition: .5s;
       }
 
-      .content>div>div>div>p.is-generated {
+      .content>div>div>div.is-playable>p.is-generated {
         opacity: 1.0;
         transition: .5s;
       }
 
-      .content>div>div>div>p.is-generated.is-loading {
+      .content>div>div>div.is-playable>p.is-generated.is-loading {
         animation: processing 1s linear forwards infinite;
         animation-play-state: running;
       }
