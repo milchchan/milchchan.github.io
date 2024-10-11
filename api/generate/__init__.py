@@ -107,7 +107,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             with open(t.name, 'wb') as f:
                                 f.write(audio_data)
 
-                            client = Client(tts_url, hf_token=os.environ['HF_TOKEN'])
+                            client = Client(tts_url)#, hf_token=os.environ['HF_TOKEN'])
                             result = client.predict(handle_file(t.name), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0, api_name='/predict')
             
                             with open(result, mode='rb') as f:
