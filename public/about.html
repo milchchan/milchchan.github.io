@@ -1456,13 +1456,13 @@
                         }
                       }
 
-                      if (type === reloadButton.dataset["type"]) {
+                      if (element1.dataset.type === reloadButton.dataset["type"]) {
                         recordButton.disabled = false;
                         reloadButton.disabled = false;
                         moreButton.disabled = false;
                       }
                     }).catch((error) => {
-                      if (type === reloadButton.dataset["type"]) {
+                      if (element1.dataset.type === reloadButton.dataset["type"]) {
                         recordButton.disabled = false;
                         reloadButton.disabled = false;
                         moreButton.disabled = false;
@@ -1941,7 +1941,7 @@
                       element1.dataset["generated"] = true;
                     }
 
-                    if (type === reloadButton.dataset["type"]) {
+                    if (element1.dataset.type === reloadButton.dataset["type"]) {
                       recordButton.disabled = false;
                       reloadButton.disabled = false;
                       moreButton.disabled = false;
@@ -1949,7 +1949,7 @@
                   }).catch((error) => {
                     delete element1.dataset["generated"];
 
-                    if (type === reloadButton.dataset["type"]) {
+                    if (element1.dataset.type === reloadButton.dataset["type"]) {
                       recordButton.disabled = false;
                       reloadButton.disabled = false;
                       moreButton.disabled = false;
@@ -2089,13 +2089,13 @@
                   }
                 }
 
-                if (type === reloadButton.dataset["type"]) {
+                if (element1.dataset.type === reloadButton.dataset["type"]) {
                   recordButton.disabled = false;
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
                 }
               }).catch((error) => {
-                if (type === reloadButton.dataset["type"]) {
+                if (element1.dataset.type === reloadButton.dataset["type"]) {
                   recordButton.disabled = false;
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
