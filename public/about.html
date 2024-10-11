@@ -265,6 +265,8 @@
         backface-visibility: hidden;
         content: "";
         transition: .5s;
+
+        opacity: 0;
       }
 
       .background>div.is-touching {
@@ -367,7 +369,7 @@
       div.sidebar {
         -webkit-user-select: none;
         user-select: none;
-        z-index: 1;
+        z-index: 0;
         position: fixed;
         left: 0px;
         padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
@@ -713,7 +715,6 @@
         }
 
         body>.wrap {
-          z-index: 1;
           padding: 16px;
           transition: 0.5s;
         }
@@ -1245,11 +1246,15 @@
 
               if (response2.ok) {
                 const blob = await response2.blob();
-                const arrayBuffer = await new Promise(async (resolve, reject) => {
+                const [sampleRate, arrayBuffer] = await new Promise(async (resolve, reject) => {
                   const reader = new FileReader();
 
                   reader.onload = () => {
-                    resolve(reader.result);
+                    const arrayBuffer = reader.result;
+                    const view = new DataView(arrayBuffer);
+                    const sampleRate = view.getUint32(24, true);
+                    
+                    resolve([sampleRate, arrayBuffer]);
                   };
                   reader.onerror = () => {
                     reject(reader.error);
@@ -1257,14 +1262,11 @@
                   reader.readAsArrayBuffer(blob);
                 });
 
-                audioContext = audioContext ?? new window.AudioContext({ sampleRate: 32000 });
+                audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
                 
-                const chunk = new Int16Array(arrayBuffer);
-                const data = Float32Array.from(chunk, (x) => Math.max(-1.0, Math.min(1.0, x / 32767.0)));
-                const buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+                const buffer = await audioContext.decodeAudioData(arrayBuffer);
                 const source = audioContext.createBufferSource();
 
-                buffer.getChannelData(0).set(data);
                 source.buffer = buffer;
                 source.connect(audioContext.destination);
                 source.onended = () => {
