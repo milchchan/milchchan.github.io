@@ -104,8 +104,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 json_data = json.loads(content)
 
                     if audio_data is not None and json_data is not None:
-                        with tempfile.TemporaryDirectory() as temporary_directory:
-                            path = os.path.join(temporary_directory, audio_data[0])
+                        with tempfile.TemporaryDirectory() as tmpdirname:
+                            path = os.path.join(tmpdirname, audio_data[0])
 
                             with open(path, 'wb') as f:
                                 f.write(audio_data[1])
