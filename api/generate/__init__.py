@@ -85,6 +85,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             headers = part[:index].split(b'\r\n')
                             content = part[index + 4:].strip(b'--').strip()
                             name = None
+                            filename = None
                             content_type = None
                             
                             for header in headers:
@@ -92,23 +93,25 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     match = re.search(r'name="([^"]+)"(?:;\sfilename="([^"]+)")?', header.decode('utf-8'))
 
                                     if match:
-                                        name = match.groups()[0]
+                                        name, filename = match.groups()
                             
                                 elif header.startswith(b'Content-Type'):
                                     content_type = header.decode('utf-8').split(':')[1].strip()
 
-                            if name == 'file' and content_type == 'audio/wav':
-                                audio_data = content
+                            if name == 'file' and filename is not None and content_type == 'audio/wav':
+                                audio_data = (filename, content)
                             elif name == 'data' and content_type == 'application/json':
                                 json_data = json.loads(content)
 
                     if audio_data is not None and json_data is not None:
-                        with tempfile.NamedTemporaryFile() as t:
-                            with open(t.name, 'wb') as f:
-                                f.write(audio_data)
+                        with tempfile.TemporaryDirectory() as temporary_directory:
+                            path = os.path.join(temporary_directory, audio_data[0])
 
-                            client = Client(tts_url)#, hf_token=os.environ['HF_TOKEN'])
-                            result = client.predict(handle_file(t.name), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0, api_name='/predict')
+                            with open(path, 'wb') as f:
+                                f.write(audio_data[1])
+
+                            client = Client(tts_url, hf_token=os.environ['HF_TOKEN'])
+                            result = client.predict(handle_file(path), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0, api_name='/predict')
                             
                             with open(result, mode='rb') as f:
                                 return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
