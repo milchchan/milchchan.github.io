@@ -1338,143 +1338,140 @@
               const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
               
               if (recordButton !== null && reloadButton !== null && moreButton !== null) {
-                const type = reloadButton.dataset["type"];
-
-                recordButton.disabled = true;
-                reloadButton.disabled = true;
-                moreButton.disabled = true;
-
                 for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-                  if (type === element1.dataset.type) {
-                    if (element1.classList.contains("is-selected")) {
-                      const element2 = element1.querySelector(":scope>div>div:last-of-type");
+                  if (element1.classList.contains("is-selected")) {
+                    const element2 = element1.querySelector(":scope>div>div:last-of-type");
 
-                      new Promise(async (resolve, reject) => {
-                        let prompt = null;
+                    recordButton.disabled = true;
+                    reloadButton.disabled = true;
+                    reloadButton.dataset["type"] = element1.dataset.type;
+                    moreButton.disabled = true;
 
-                        if ("prompts" in element1.dataset) {
-                          try {
-                            const prompts = JSON.parse(element1.dataset.prompts);
+                    new Promise(async (resolve, reject) => {
+                      let prompt = null;
 
-                            if (prompts.length > 0) {
-                              prompt = prompts[~~random(0, prompts.length)];
-                            }
-                          } catch (error) {
-                            reject(error);
+                      if ("prompts" in element1.dataset) {
+                        try {
+                          const prompts = JSON.parse(element1.dataset.prompts);
+
+                          if (prompts.length > 0) {
+                            prompt = prompts[~~random(0, prompts.length)];
                           }
-                        } else if ("prompt" in element1.dataset) {
-                          prompt = element1.dataset.prompt;
+                        } catch (error) {
+                          reject(error);
                         }
+                      } else if ("prompt" in element1.dataset) {
+                        prompt = element1.dataset.prompt;
+                      }
 
-                        if (prompt === null) {
-                          resolve(null);
-                        } else {
-                          try {
-                            const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
+                      if (prompt === null) {
+                        resolve(null);
+                      } else {
+                        try {
+                          const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
 
-                            if (response1.ok) {
-                              const messages = [{role: "system", content: await response1.text()}, {role: "user", content: prompt}];
-                              
-                              for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
-                                if ("prompt" in element3.dataset) {
-                                  messages.push({role: "user", content: element3.dataset.prompt});
-                                }
-
-                                messages.push({role: "assistant", content: element3.textContent});
+                          if (response1.ok) {
+                            const messages = [{role: "system", content: await response1.text()}, {role: "user", content: prompt}];
+                            
+                            for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
+                              if ("prompt" in element3.dataset) {
+                                messages.push({role: "user", content: element3.dataset.prompt});
                               }
 
-                              messages.push({role: "user", content: result[0].transcript});
+                              messages.push({role: "assistant", content: element3.textContent});
+                            }
 
-                              const response2 = await fetch("https://milchchan.com/api/generate", {
-                                mode: "cors",
-                                method: "POST",
-                                headers: {
-                                  "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({temperature: temperature, messages: messages})
-                              });
+                            messages.push({role: "user", content: result[0].transcript});
 
-                              if (response2.ok) {
-                                resolve((await response2.json()).content);
-                              } else {
-                                throw new Error(response2.statusText);
-                              }
+                            const response2 = await fetch("https://milchchan.com/api/generate", {
+                              mode: "cors",
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json"
+                              },
+                              body: JSON.stringify({temperature: temperature, messages: messages})
+                            });
+
+                            if (response2.ok) {
+                              resolve((await response2.json()).content);
                             } else {
-                              throw new Error(response1.statusText);
+                              throw new Error(response2.statusText);
                             }
-                          } catch (error) {
-                            reject(error);
+                          } else {
+                            throw new Error(response1.statusText);
                           }
+                        } catch (error) {
+                          reject(error);
                         }
-                      }).then((data) => {
-                        if (data !== null) {
-                          const div = element1.querySelector(":scope>div>div:last-of-type");
+                      }
+                    }).then((data) => {
+                      if (data !== null) {
+                        const div = element1.querySelector(":scope>div>div:last-of-type");
 
-                          if (div !== null) {
-                            const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
+                        if (div !== null) {
+                          const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
-                            for (const content of data.split("\n")) {
-                              if (content.length > 0) {
-                                const wrap = document.createElement("div");
-                                const p = document.createElement("p");
-                                const span = document.createElement("span");
+                          for (const content of data.split("\n")) {
+                            if (content.length > 0) {
+                              const wrap = document.createElement("div");
+                              const p = document.createElement("p");
+                              const span = document.createElement("span");
 
-                                p.classList.add("is-generated");
+                              p.classList.add("is-generated");
 
-                                if ("language" in element1.dataset) {
-                                  wrap.classList.add("is-playable");
+                              if ("language" in element1.dataset) {
+                                wrap.classList.add("is-playable");
 
-                                  p.onclick = async () => {
-                                    if (!p.classList.contains("is-loading") && !isPlaying) {
-                                      p.classList.add("is-loading");
+                                p.onclick = async () => {
+                                  if (!p.classList.contains("is-loading") && !isPlaying) {
+                                    p.classList.add("is-loading");
 
-                                      audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
-                                      
-                                      const source = audioContext.createBufferSource();
+                                    audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
+                                    
+                                    const source = audioContext.createBufferSource();
 
-                                      source.connect(audioContext.destination);
+                                    source.connect(audioContext.destination);
 
-                                      await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                                    await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
 
-                                      p.classList.remove("is-loading");
-                                    }
-                                  };
-                                }
-
-                                span.classList.add("reveal");
-                                span.dataset["prompt"] = result[0].transcript;
-                                
-                                if (italicRequired) {
-                                  span.classList.add("is-italic");
-                                }
-                                
-                                span.textContent = content;
-
-                                p.appendChild(span);
-                                wrap.appendChild(p);
-                                div.appendChild(wrap);
+                                    p.classList.remove("is-loading");
+                                  }
+                                };
                               }
+
+                              span.classList.add("reveal");
+                              span.dataset["prompt"] = result[0].transcript;
+                              
+                              if (italicRequired) {
+                                span.classList.add("is-italic");
+                              }
+                              
+                              span.textContent = content;
+
+                              p.appendChild(span);
+                              wrap.appendChild(p);
+                              div.appendChild(wrap);
                             }
                           }
                         }
+                      }
 
-                        if (type === reloadButton.dataset["type"]) {
-                          recordButton.disabled = false;
-                          reloadButton.disabled = false;
-                          moreButton.disabled = false;
-                        }
-                      }).catch((error) => {
-                        if (type === reloadButton.dataset["type"]) {
-                          recordButton.disabled = false;
-                          reloadButton.disabled = false;
-                          moreButton.disabled = false;
-                        }
+                      if (type === reloadButton.dataset["type"]) {
+                        recordButton.disabled = false;
+                        reloadButton.disabled = false;
+                        moreButton.disabled = false;
+                      }
+                    }).catch((error) => {
+                      if (type === reloadButton.dataset["type"]) {
+                        recordButton.disabled = false;
+                        reloadButton.disabled = false;
+                        moreButton.disabled = false;
+                      }
 
-                        shake(moreButton, true);
+                      shake(moreButton, true);
 
-                        console.error(error);
-                      });
-                    }
+                      console.error(error);
+                    });
                   }
                 }
               }
@@ -1625,135 +1622,132 @@
                       }
                     };
 
-                    if (recordButton !== null && reloadButton !== null && moreButton !== null) {
+                    if ("generated" in element2.dataset === false && recordButton !== null && reloadButton !== null && moreButton !== null) {
+                      recordButton.disabled = true;
+                      reloadButton.disabled = true;
                       reloadButton.dataset["type"] = element2.dataset.type;
-                    
-                      if ("generated" in element2.dataset === false) {
-                        recordButton.disabled = true;
-                        reloadButton.disabled = true;
-                        moreButton.disabled = true;
+                      moreButton.disabled = true;
 
-                        element2.dataset["generated"] = false;
+                      element2.dataset["generated"] = false;
 
-                        new Promise(async (resolve, reject) => {
-                          let prompt = null;
+                      new Promise(async (resolve, reject) => {
+                        let prompt = null;
 
-                          if ("prompts" in element2.dataset) {
-                            try {
-                              const prompts = JSON.parse(element2.dataset.prompts);
+                        if ("prompts" in element2.dataset) {
+                          try {
+                            const prompts = JSON.parse(element2.dataset.prompts);
 
-                              if (prompts.length > 0) {
-                                prompt = prompts[~~random(0, prompts.length)];
-                              }
-                            } catch (error) {
-                              reject(error);
+                            if (prompts.length > 0) {
+                              prompt = prompts[~~random(0, prompts.length)];
                             }
-                          } else if ("prompt" in element2.dataset) {
-                            prompt = element2.dataset.prompt;
+                          } catch (error) {
+                            reject(error);
                           }
+                        } else if ("prompt" in element2.dataset) {
+                          prompt = element2.dataset.prompt;
+                        }
 
-                          if (prompt === null) {
-                            resolve(null);
-                          } else {
-                            try {
-                              const response1 = await fetch(encodeURI(`${element2.dataset.type}.txt`));
+                        if (prompt === null) {
+                          resolve(null);
+                        } else {
+                          try {
+                            const response1 = await fetch(encodeURI(`${element2.dataset.type}.txt`));
 
-                              if (response1.ok) {
-                                const response2 = await fetch("https://milchchan.com/api/generate",
-                                  {
-                                    mode: "cors",
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: prompt}]}),
-                                  }
-                                );
-
-                                if (response2.ok) {
-                                  resolve((await response2.json()).content);
-                                } else {
-                                  throw new Error(response2.statusText);
+                            if (response1.ok) {
+                              const response2 = await fetch("https://milchchan.com/api/generate",
+                                {
+                                  mode: "cors",
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: prompt}]}),
                                 }
+                              );
+
+                              if (response2.ok) {
+                                resolve((await response2.json()).content);
                               } else {
-                                throw new Error(response1.statusText);
+                                throw new Error(response2.statusText);
                               }
-                            } catch (error) {
-                              reject(error);
+                            } else {
+                              throw new Error(response1.statusText);
                             }
+                          } catch (error) {
+                            reject(error);
                           }
-                        }).then((data) => {
-                          if (data !== null) {
-                            const div = element2.querySelector(":scope>div>div:last-of-type");
+                        }
+                      }).then((data) => {
+                        if (data !== null) {
+                          const div = element2.querySelector(":scope>div>div:last-of-type");
 
-                            if (div !== null) {
-                              const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
+                          if (div !== null) {
+                            const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
-                              for (const content of data.split("\n")) {
-                                if (content.length > 0) {
-                                  const wrap = document.createElement("div");
-                                  const p = document.createElement("p");
-                                  const span = document.createElement("span");
+                            for (const content of data.split("\n")) {
+                              if (content.length > 0) {
+                                const wrap = document.createElement("div");
+                                const p = document.createElement("p");
+                                const span = document.createElement("span");
 
-                                  p.classList.add("is-generated");
+                                p.classList.add("is-generated");
 
-                                  if ("language" in element2.dataset) {
-                                    wrap.classList.add("is-playable");
+                                if ("language" in element2.dataset) {
+                                  wrap.classList.add("is-playable");
 
-                                    p.onclick = async () => {
-                                      if (!p.classList.contains("is-loading") && !isPlaying) {
-                                        p.classList.add("is-loading");
+                                  p.onclick = async () => {
+                                    if (!p.classList.contains("is-loading") && !isPlaying) {
+                                      p.classList.add("is-loading");
 
-                                        audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
-                                    
-                                        const source = audioContext.createBufferSource();
-                                        
-                                        source.connect(audioContext.destination);
+                                      audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
+                                  
+                                      const source = audioContext.createBufferSource();
+                                      
+                                      source.connect(audioContext.destination);
 
-                                        await synthesize(source, `sounds/${element2.dataset.type}.${element2.dataset.language}.wav`, content, element2.dataset.language, temperature);
+                                      await synthesize(source, `sounds/${element2.dataset.type}.${element2.dataset.language}.wav`, content, element2.dataset.language, temperature);
 
-                                        p.classList.remove("is-loading");
-                                      }
-                                    };
-                                  }
-
-                                  span.classList.add("reveal");
-
-                                  if (italicRequired) {
-                                    span.classList.add("is-italic");
-                                  }
-
-                                  span.textContent = content;
-
-                                  p.appendChild(span);
-                                  wrap.appendChild(p);
-                                  div.appendChild(wrap);
+                                      p.classList.remove("is-loading");
+                                    }
+                                  };
                                 }
+
+                                span.classList.add("reveal");
+
+                                if (italicRequired) {
+                                  span.classList.add("is-italic");
+                                }
+
+                                span.textContent = content;
+
+                                p.appendChild(span);
+                                wrap.appendChild(p);
+                                div.appendChild(wrap);
                               }
                             }
-
-                            element2.dataset["generated"] = true;
                           }
 
-                          if (element2.dataset.type === reloadButton.dataset["type"]) {
-                            recordButton.disabled = false;
-                            reloadButton.disabled = false;
-                            moreButton.disabled = false;
-                          }
-                        }).catch((error) => {
-                          delete element2.dataset["generated"];
+                          element2.dataset["generated"] = true;
+                        }
 
-                          if (element2.dataset.type === reloadButton.dataset["type"]) {
-                            recordButton.disabled = false;
-                            reloadButton.disabled = false;
-                            moreButton.disabled = false;
-                          }
+                        if (element2.dataset.type === reloadButton.dataset["type"]) {
+                          recordButton.disabled = false;
+                          reloadButton.disabled = false;
+                          moreButton.disabled = false;
+                        }
+                      }).catch((error) => {
+                        delete element2.dataset["generated"];
 
-                          shake(element1);
+                        if (element2.dataset.type === reloadButton.dataset["type"]) {
+                          recordButton.disabled = false;
+                          reloadButton.disabled = false;
+                          moreButton.disabled = false;
+                        }
 
-                          console.error(error);
-                        });
-                      }
+                        shake(element1);
+
+                        console.error(error);
+                      });
                     }
 
                     for (const element3 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
@@ -1807,17 +1801,16 @@
         const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
         
         if (recordButton !== null && reloadButton !== null && moreButton !== null) {
-          const type = reloadButton.dataset["type"];
-
-          recordButton.disabled = true;
-          reloadButton.disabled = true;
-          moreButton.disabled = true;
-
           for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-            if (type === element1.dataset.type && element1.classList.contains("is-selected")) {
+            if (element1.classList.contains("is-selected")) {
               const element2 = element1.querySelector(":scope>div:last-of-type");
 
               if (element2 !== null) {
+                recordButton.disabled = true;
+                reloadButton.disabled = true;
+                reloadButton.dataset["type"] = element1.dataset.type;
+                moreButton.disabled = true;
+              
                 element2.animate([
                   {
                     opacity: 0
@@ -1978,14 +1971,13 @@
         const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
         
         if (recordButton !== null && reloadButton !== null && moreButton !== null) {
-          const type = reloadButton.dataset["type"];
-
           for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-            if (type === element1.dataset.type && element1.classList.contains("is-selected")) {
+            if (element1.classList.contains("is-selected")) {
               const element2 = element1.querySelector(":scope>div>div:last-of-type");
 
               recordButton.disabled = true;
               reloadButton.disabled = true;
+              reloadButton.dataset["type"] = element1.dataset.type;
               moreButton.disabled = true;
 
               new Promise(async (resolve, reject) => {
