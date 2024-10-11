@@ -12,4 +12,4 @@ azure-cosmos
 boto3
 google-auth
 google-cloud-storage
-gradio_client==1.3.0
+gradio_client==1.4.0
