@@ -103,8 +103,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 json_data = json.loads(content)
 
                     if audio_data is not None and json_data is not None:
-                        return func.HttpResponse(audio_data, status_code=201, mimetype='audio/wav')
-                        '''
                         with tempfile.NamedTemporaryFile() as t:
                             with open(t.name, 'wb') as f:
                                 f.write(audio_data)
@@ -114,7 +112,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             
                             with open(result, mode='rb') as f:
                                 return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
-                        '''
                 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
