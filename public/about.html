@@ -1284,14 +1284,7 @@
                   isPlaying = false;
                 };
 
-                if (currentTime < time) {
-                  source.start(time);
-                  time += buffer.duration;
-                } else {
-                  source.start(currentTime);
-                  time = currentTime + buffer.duration;
-                }
-
+                source.start(0);
                 isPlaying = true;
               } else {
                 throw new Error(response2.statusText);
