@@ -1231,10 +1231,9 @@
           const response1 = await fetch(encodeURI(prompt));
 
           if (response1.ok) {
-            const promptBlob = await response1.blob();
             const formData = new FormData();
 
-            formData.append("file", promptBlob, "prompt.wav");
+            formData.append("file", await response1.blob(), "prompt.wav");
             formData.append("data", new Blob([JSON.stringify({ input: input, language: language, temperature: temperature })], { type: "application/json" }));
 
             const response2 = await fetch("https://milchchan.com/api/generate", {
