@@ -2159,6 +2159,21 @@ window.addEventListener("mousemove", event => {
 });
 window.addEventListener("mouseup", event => {
   if (event.button === 0 && tracker.identifier === null) {
+    const canvas = document.body.querySelector("#app>.container>.wrap>.frame>.wall>canvas");
+
+    if (canvas !== null) {
+      const lineHeight = canvas.height / window.devicePixelRatio / background.blocks.length;
+      const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
+  
+      for (let i = 0; i < background.blocks.length; i++) {
+        const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
+        
+        if (top <= y && y < top + fontSize && !background.blocks[i].scroll.requested) {
+          background.blocks[i].scroll.requested = true;
+        }
+      }
+    }
+
     tracker.active = false;
   }
 });
@@ -2324,6 +2339,23 @@ window.addEventListener("touchend", event => {
   event.stopPropagation();
 
   tracker.active = false;
+
+  if (touches.length === 1) {
+    const canvas = document.body.querySelector("#app>.container>.wrap>.frame>.wall>canvas");
+    
+    if (canvas !== null) {
+      const lineHeight = canvas.height / window.devicePixelRatio / background.blocks.length;
+      const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
+      
+      for (let i = 0; i < background.blocks.length; i++) {
+        const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
+        
+        if (top <= touches[0].position.y && touches[0].position.y < top + fontSize && !background.blocks[i].scroll.requested) {
+          background.blocks[i].scroll.requested = true;
+        }
+      }
+    }
+  }
 
   for (const touch of event.changedTouches) {
     let index = touches.findIndex(x => x.identifier === touch.identifier);
