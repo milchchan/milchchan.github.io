@@ -541,6 +541,63 @@ async function upload(files) {
   return [completed, completed.length === files.length];
 }
 
+async function synthesize(source, prompt, input, language, temperature = 1.0) {
+  try {
+    const response1 = await fetch(encodeURI(prompt));
+
+    if (response1.ok) {
+      const formData = new FormData();
+
+      formData.append("file", await response1.blob(), "prompt.wav");
+      formData.append("data", new Blob([JSON.stringify({ input: input, language: language, temperature: temperature })], { type: "application/json" }));
+
+      const response2 = await fetch("https://milchchan.com/api/generate", {
+        mode: "cors",
+        method: "POST",
+        body: formData
+      });
+
+      if (response2.ok) {
+        const blob = await response2.blob();
+        const [arrayBuffer, sr] = await new Promise(async (resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => {
+            const arrayBuffer = reader.result;
+            const view = new DataView(arrayBuffer);
+            const sampleRate = view.getUint32(24, true);
+            
+            resolve([arrayBuffer, sampleRate]);
+          };
+          reader.onerror = () => {
+            reject(reader.error);
+          };
+          reader.readAsArrayBuffer(blob);
+        });
+
+        const buffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        sampleRate = sr;
+        
+        source.buffer = buffer;
+        source.onended = () => {
+          source.disconnect();
+          audioContext.close();
+          audioContext = null;
+          isPlaying = false;
+        };
+        source.start(0);
+        isPlaying = true;
+      } else {
+        throw new Error(response2.statusText);
+      }
+
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 window.refresh = (event) => {
   background.force = true;
   background.updated = -background.timeout;
@@ -2162,14 +2219,17 @@ window.addEventListener("mouseup", event => {
     const canvas = document.body.querySelector("#app>.container>.wrap>.frame>.wall>canvas");
 
     if (canvas !== null) {
+      const y = event.clientY - document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect().y;
       const lineHeight = canvas.height / window.devicePixelRatio / background.blocks.length;
       const fontSize = Math.ceil(background.blocks.length === 1 ? lineHeight : lineHeight / 1.5);
   
       for (let i = 0; i < background.blocks.length; i++) {
         const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
         
-        if (top <= y && y < top + fontSize && !background.blocks[i].scroll.requested) {
-          background.blocks[i].scroll.requested = true;
+        if (top <= y && y < top + fontSize) {
+          if (!background.blocks[i].scroll.requested) {
+            background.blocks[i].scroll.requested = true;
+          }
         }
       }
     }
@@ -2350,8 +2410,10 @@ window.addEventListener("touchend", event => {
       for (let i = 0; i < background.blocks.length; i++) {
         const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
         
-        if (top <= touches[0].position.y && touches[0].position.y < top + fontSize && !background.blocks[i].scroll.requested) {
-          background.blocks[i].scroll.requested = true;
+        if (top <= touches[0].position.y && touches[0].position.y < top + fontSize) {
+          if (!background.blocks[i].scroll.requested) {
+            background.blocks[i].scroll.requested = true;
+          }
         }
       }
     }
