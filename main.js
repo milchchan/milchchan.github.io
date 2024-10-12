@@ -886,6 +886,7 @@ window.addEventListener("load", async event => {
           for (let i = block.inlines.length - 1; i >= 0; i--) {
             if (block.inlines[i].running) {
               block.inlines[i].type.reverse = true;
+              block.index = null;
             }
           }
         }
@@ -1001,9 +1002,9 @@ window.addEventListener("load", async event => {
                   content.push(text);
                 }
                 
-                background.texts.push(like.content);
+                background.texts.push([content, like.name]);
               } else {
-                background.texts.push(like.content);
+                background.texts.push([like.content, like.name]);
               }
             }
           }
@@ -1349,7 +1350,7 @@ window.addEventListener("load", async event => {
         }
 
         for (let i = 0; i < samples.length; i++) {
-          const sample = samples[i];
+          const [sample, name] = samples[i];
           let text;
           const attributes = [];
           const source = [];
@@ -1402,7 +1403,12 @@ window.addEventListener("load", async event => {
             ],
             scroll: { requested: false, step: 0.0 },
             elapsed: Math.random() * 60.0,
-            rtl: i % 2 === 1
+            rtl: i % 2 === 1,
+            index: null,
+            caches: [
+              { text: text, attributes: attributes, source: source },
+              { text: name, attributes: [], source: [name] },
+            ]
           });
         }
       }
@@ -1432,7 +1438,29 @@ window.addEventListener("load", async event => {
                   inline.time = 0;
                   inline.type.elapsed = -1;
                   inline.type.reverse = false;
-                  inline.running = false;
+
+                  if (block.index === null) {
+                    inline.running = false;
+                  } else {
+                    const index = block.index % block.caches.length;
+                    const text = block.caches[index].text;
+                    const letters = [];
+
+                    for (let j = 0; j < text.length; j++) {
+                      if (text.charAt(j) !== "\n" && text.charAt(j).match(/\s/) === null) {
+                        letters.push(text.charAt(j));
+                      }
+                    }
+
+                    inline.text = text;
+                    inline.attributes = block.caches[index].attributes;
+                    inline.source = block.caches[index].source;
+                    inline.letters = letters;
+
+                    if (index === 0) {
+                      block.index = null;
+                    }
+                  }
                 }
               } else if (inline.type.buffer.length < inline.text.length) {
                 if (inline.type.elapsed >= 0) {
@@ -1519,7 +1547,29 @@ window.addEventListener("load", async event => {
                   inline.time = 0;
                   inline.type.elapsed = -1;
                   inline.type.reverse = false;
-                  inline.running = false;
+
+                  if (block.index === null) {
+                    inline.running = false;
+                  } else {
+                    const index = block.index % block.caches.length;
+                    const text = block.caches[index].text;
+                    const letters = [];
+
+                    for (let j = 0; j < text.length; j++) {
+                      if (text.charAt(j) !== "\n" && text.charAt(j).match(/\s/) === null) {
+                        letters.push(text.charAt(j));
+                      }
+                    }
+
+                    inline.text = text;
+                    inline.attributes = block.caches[index].attributes;
+                    inline.source = block.caches[index].source;
+                    inline.letters = letters;
+
+                    if (index === 0) {
+                      block.index = null;
+                    }
+                  }
                 }
               } else if (inline.type.buffer.length < inline.text.length) {
                 if (inline.type.elapsed >= 0) {
@@ -2227,6 +2277,18 @@ window.addEventListener("mouseup", event => {
         const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
         
         if (top <= y && y < top + fontSize) {
+          for (let j = background.blocks[i].inlines.length - 1; j >= 0; j--) {
+            if (background.blocks[i].inlines[j].running) {
+              background.blocks[i].inlines[j].type.reverse = true;
+
+              if (background.blocks[i].index === null) {
+                background.blocks[i].index = 1;
+              } else {
+                background.blocks[i].index++;
+              }
+            }
+          }
+
           if (!background.blocks[i].scroll.requested) {
             background.blocks[i].scroll.requested = true;
           }
@@ -2273,8 +2335,8 @@ window.addEventListener("touchstart", event => {
     tracker.active = true;
     tracker.velocity.x = tracker.velocity.y = 0;
 
-    touches[0].movement.x = tracker.movement.x
-    touches[0].movement.y = tracker.movement.y
+    touches[0].movement.x = tracker.movement.x;
+    touches[0].movement.y = tracker.movement.y;
 
     if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
       for (let i = random(0, 4); i > 0; i--) {
@@ -2411,6 +2473,12 @@ window.addEventListener("touchend", event => {
         const top = (lineHeight - fontSize) / 2.0 + lineHeight * i;
         
         if (top <= touches[0].position.y && touches[0].position.y < top + fontSize) {
+          for (let j = background.blocks[i].inlines.length - 1; j >= 0; j--) {
+            if (background.blocks[i].inlines[j].running) {
+              background.blocks[i].inlines[j].type.reverse = true;
+            }
+          }
+
           if (!background.blocks[i].scroll.requested) {
             background.blocks[i].scroll.requested = true;
           }
