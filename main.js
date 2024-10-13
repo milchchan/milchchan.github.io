@@ -887,6 +887,7 @@ window.addEventListener("load", async event => {
             if (block.inlines[i].running) {
               block.inlines[i].type.reverse = true;
               block.index = null;
+              block.caches.splice(0);
             }
           }
         }
@@ -2278,7 +2279,7 @@ window.addEventListener("mouseup", event => {
         
         if (top <= y && y < top + fontSize) {
           for (let j = background.blocks[i].inlines.length - 1; j >= 0; j--) {
-            if (background.blocks[i].inlines[j].running) {
+            if (background.blocks[i].caches.length > 0 && background.blocks[i].inlines[j].running) {
               background.blocks[i].inlines[j].type.reverse = true;
 
               if (background.blocks[i].index === null) {
@@ -2474,8 +2475,14 @@ window.addEventListener("touchend", event => {
         
         if (top <= touches[0].position.y && touches[0].position.y < top + fontSize) {
           for (let j = background.blocks[i].inlines.length - 1; j >= 0; j--) {
-            if (background.blocks[i].inlines[j].running) {
+            if (background.blocks[i].caches.length > 0 && background.blocks[i].inlines[j].running) {
               background.blocks[i].inlines[j].type.reverse = true;
+
+              if (background.blocks[i].index === null) {
+                background.blocks[i].index = 1;
+              } else {
+                background.blocks[i].index++;
+              }
             }
           }
 
