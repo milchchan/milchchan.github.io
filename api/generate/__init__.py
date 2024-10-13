@@ -83,9 +83,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         matches = re.findall(r'<start_of_turn>model\n(.+?)(?:(?:<end_of_turn>)|$)', result, re.DOTALL)
 
                         if len(matches) > 0:
-                            match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', matches[len(matches) - 1], flags=(re.MULTILINE|re.DOTALL))
+                            result = matches[len(matches) - 1]
+                            match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
 
-                            return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=201, mimetype='application/json', charset='utf-8')
+                            return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=201, mimetype='application/json', charset='utf-8')
 
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
 
