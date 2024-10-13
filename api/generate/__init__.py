@@ -15,7 +15,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             content_type = req.headers.get('Content-Type')
 
             if content_type == 'application/json':
-                llm_url = None #os.environ.get('LLM_URL')
+                llm_url = os.environ.get('LLM_URL')
 
                 if llm_url is None or len(llm_url) == 0:
                     api_key = None
@@ -73,9 +73,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                         for message in data['messages']:
                             if message['role'] == 'system' or message['role'] == 'user':
-                                input_text += f'<start_of_turn>user\n{message['content']}<end_of_turn>\n'
+                                input_text += f"<start_of_turn>user\n{message['content']}<end_of_turn>\n"
                             elif message['role'] == 'assistant':
-                                input_text += f'<start_of_turn>model\n{message['content']}<end_of_turn>\n'
+                                input_text += f"<start_of_turn>model\n{message['content']}<end_of_turn>\n"
 
                     if len(input_text) > 0:
                         client = Client(llm_url, hf_token=os.environ['HF_TOKEN'])
