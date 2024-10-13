@@ -15,7 +15,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             content_type = req.headers.get('Content-Type')
 
             if content_type == 'application/json':
-                llm_url = os.environ.get('LLM_URL')
+                llm_url = None #os.environ.get('LLM_URL')
 
                 if llm_url is None or len(llm_url) == 0:
                     api_key = None
