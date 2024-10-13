@@ -87,8 +87,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
 
                             return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=201, mimetype='application/json', charset='utf-8')
+                        
+                        else:
+                            return func.HttpResponse(status_code=503, mimetype='', charset='')
 
-                    return func.HttpResponse(status_code=503, mimetype='', charset='')
+                    return func.HttpResponse(status_code=400, mimetype='', charset='')
 
             elif content_type.startswith('multipart/form-data;'):
                 tts_url = os.environ.get('TTS_URL')
