@@ -64,6 +64,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                         return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=201, mimetype='application/json', charset='utf-8')
                 
+                elif llm_source.startswith('https://'):
+                    request = Request(llm_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
+
+                    with urlopen(request, timeout=60.0) as response:
+                        for choice in json.loads(response.read().decode('utf-8'))['choices']:
+                            match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
+
+                            return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=201, mimetype='application/json', charset='utf-8')
+
+                    return func.HttpResponse(status_code=503, mimetype='', charset='')
+                
                 else:
                     temperature = 1.0
                     input_text = ''
