@@ -15,9 +15,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             content_type = req.headers.get('Content-Type')
 
             if content_type == 'application/json':
-                llm_url = os.environ.get('LLM_URL')
+                llm_source = os.environ.get('LLM_SOURCE')
 
-                if llm_url is None or len(llm_url) == 0:
+                if llm_source is None or len(llm_source) == 0:
                     api_key = None
 
                     if 'X-Authorization' in req.headers:
@@ -78,7 +78,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 input_text += f"<start_of_turn>model\n{message['content']}<end_of_turn>\n"
 
                     if len(input_text) > 0:
-                        client = Client(llm_url, hf_token=os.environ['HF_TOKEN'])
+                        client = Client(llm_source, hf_token=os.environ['HF_TOKEN'])
                         result = client.predict(input_text + '<start_of_turn>model\n', temperature, api_name='/generate')
                         matches = re.findall(r'<start_of_turn>model\n(.+?)(?:(?:<end_of_turn>)|$)', result, re.DOTALL)
 
@@ -94,13 +94,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(status_code=400, mimetype='', charset='')
 
             elif content_type.startswith('multipart/form-data;'):
-                tts_url = os.environ.get('TTS_URL')
+                tts_source = os.environ.get('TTS_SOURCE')
                     
-                if tts_url is None or len(tts_url) == 0:
+                if tts_source is None or len(tts_source) == 0:
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
                 
-                elif tts_url.startswith('https://'):
-                    request = Request(tts_url, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
+                elif tts_source.startswith('https://'):
+                    request = Request(tts_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
                     with urlopen(request, timeout=60.0) as response:
                         return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
@@ -142,7 +142,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             with open(path, 'wb') as f:
                                 f.write(audio_data[1])
 
-                            client = Client(tts_url, hf_token=os.environ['HF_TOKEN'])
+                            client = Client(tts_source, hf_token=os.environ['HF_TOKEN'])
                             result = client.predict(handle_file(path), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0, api_name='/synthesize')
                             
                             with open(result, mode='rb') as f:
