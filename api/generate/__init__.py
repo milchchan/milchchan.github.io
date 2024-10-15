@@ -138,7 +138,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                 if name == 'file' and filename is not None and content_type == 'audio/wav':
                                     audio_data = (filename, content)
-                                elif name == 'data' and content_type == 'application/json':
+                                elif name == 'data':
                                     json_data = json.loads(content)
 
                         if audio_data is not None and json_data is not None:
