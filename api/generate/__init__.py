@@ -64,18 +64,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                         return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=201, mimetype='application/json', charset='utf-8')
                 
-                elif llm_source.startswith('https://'):
-                    request = Request(llm_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
-
-                    with urlopen(request, timeout=60.0) as response:
-                        for choice in json.loads(response.read().decode('utf-8'))['choices']:
-                            match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
-
-                            return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=201, mimetype='application/json', charset='utf-8')
-
-                    return func.HttpResponse(status_code=503, mimetype='', charset='')
-                
-                else:
+                elif re.match(r'https?://', llm_source) is None:
                     temperature = 1.0
                     input_text = ''
 
@@ -103,6 +92,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             return func.HttpResponse(status_code=503, mimetype='', charset='')
 
                     return func.HttpResponse(status_code=400, mimetype='', charset='')
+                
+                else:
+                    request = Request(llm_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
+
+                    with urlopen(request, timeout=60.0) as response:
+                        for choice in json.loads(response.read().decode('utf-8'))['choices']:
+                            match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
+
+                            return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=201, mimetype='application/json', charset='utf-8')
+
+                    return func.HttpResponse(status_code=503, mimetype='', charset='')
 
             elif content_type.startswith('multipart/form-data;'):
                 tts_source = os.environ.get('TTS_SOURCE')
@@ -110,54 +110,55 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if tts_source is None or len(tts_source) == 0:
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
                 
-                elif tts_source.startswith('https://'):
+                elif re.match(r'https?://', tts_source) is None:
+                    if 'boundary=' in content_type:
+                        boundary = f'--{content_type.split("boundary=")[-1]}'.encode()
+                        audio_data = None
+                        json_data = None
+
+                        for part in req.get_body().split(boundary)[1:-1]:
+                            index = part.find(b'\r\n\r\n')
+
+                            if index >= 0:
+                                headers = part[:index].split(b'\r\n')
+                                content = part[index + 4:].strip(b'--').strip()
+                                name = None
+                                filename = None
+                                content_type = None
+                                
+                                for header in headers:
+                                    if header.startswith(b'Content-Disposition'):
+                                        match = re.search(r'name="([^"]+)"(?:;\sfilename="([^"]+)")?', header.decode('utf-8'))
+
+                                        if match:
+                                            name, filename = match.groups()
+                                
+                                    elif header.startswith(b'Content-Type'):
+                                        content_type = header.decode('utf-8').split(':')[1].strip()
+
+                                if name == 'file' and filename is not None and content_type == 'audio/wav':
+                                    audio_data = (filename, content)
+                                elif name == 'data' and content_type == 'application/json':
+                                    json_data = json.loads(content)
+
+                        if audio_data is not None and json_data is not None:
+                            with tempfile.TemporaryDirectory() as tmpdirname:
+                                path = os.path.join(tmpdirname, audio_data[0])
+
+                                with open(path, 'wb') as f:
+                                    f.write(audio_data[1])
+
+                                client = Client(tts_source, hf_token=os.environ['HF_TOKEN'])
+                                result = client.predict(handle_file(path), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0, api_name='/synthesize')
+                                
+                                with open(result, mode='rb') as f:
+                                    return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
+                
+                else:
                     request = Request(tts_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
                     with urlopen(request, timeout=60.0) as response:
                         return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
-                
-                elif 'boundary=' in content_type:
-                    boundary = f'--{content_type.split("boundary=")[-1]}'.encode()
-                    audio_data = None
-                    json_data = None
-
-                    for part in req.get_body().split(boundary)[1:-1]:
-                        index = part.find(b'\r\n\r\n')
-
-                        if index >= 0:
-                            headers = part[:index].split(b'\r\n')
-                            content = part[index + 4:].strip(b'--').strip()
-                            name = None
-                            filename = None
-                            content_type = None
-                            
-                            for header in headers:
-                                if header.startswith(b'Content-Disposition'):
-                                    match = re.search(r'name="([^"]+)"(?:;\sfilename="([^"]+)")?', header.decode('utf-8'))
-
-                                    if match:
-                                        name, filename = match.groups()
-                            
-                                elif header.startswith(b'Content-Type'):
-                                    content_type = header.decode('utf-8').split(':')[1].strip()
-
-                            if name == 'file' and filename is not None and content_type == 'audio/wav':
-                                audio_data = (filename, content)
-                            elif name == 'data' and content_type == 'application/json':
-                                json_data = json.loads(content)
-
-                    if audio_data is not None and json_data is not None:
-                        with tempfile.TemporaryDirectory() as tmpdirname:
-                            path = os.path.join(tmpdirname, audio_data[0])
-
-                            with open(path, 'wb') as f:
-                                f.write(audio_data[1])
-
-                            client = Client(tts_source, hf_token=os.environ['HF_TOKEN'])
-                            result = client.predict(handle_file(path), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0, api_name='/synthesize')
-                            
-                            with open(result, mode='rb') as f:
-                                return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
                 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
