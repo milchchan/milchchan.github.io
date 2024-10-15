@@ -1234,7 +1234,7 @@
             const formData = new FormData();
 
             formData.append("file", await response1.blob(), "prompt.wav");
-            formData.append("data", new Blob([JSON.stringify({ input: input, language: language, temperature: temperature })], { type: "application/json" }));
+            formData.append("data", JSON.stringify({ input: input, language: language, temperature: temperature }));
 
             const response2 = await fetch("https://milchchan.com/api/generate", {
               mode: "cors",
