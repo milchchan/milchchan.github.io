@@ -248,7 +248,7 @@
         -webkit-user-select: none;
         user-select: none;
         position: relative;
-        opacity: 1;
+        opacity: 0.5;
         margin: 0;
         padding: 0;
         width: 100%;
@@ -1501,7 +1501,7 @@
         };
       }
 
-      for (const element of document.body.querySelectorAll(".overlay>.wrap>.content")) {
+      /*for (const element of document.body.querySelectorAll(".overlay>.wrap>.content")) {
         element.addEventListener("mouseenter", async (event) => {
           const image = document.body.querySelector(".wrap>.frame>.background>div");
 
@@ -1569,7 +1569,7 @@
             }
           }
         });
-      }
+      }*/
 
       window.record = (event) => {        
         if (speechRecognition === null) {
