@@ -65,17 +65,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=201, mimetype='application/json', charset='utf-8')
                 
                 elif re.match(r'https?://', llm_source) is None:
+                    data = req.get_json()
                     temperature = 1.0
                     input_text = ''
 
-                    if 'temperature' in req.get_json():
+                    if 'temperature' in data:
                         temperature = data['temperature']
 
-                        for message in data['messages']:
-                            if message['role'] == 'system' or message['role'] == 'user':
-                                input_text += f"<start_of_turn>user\n{message['content']}<end_of_turn>\n"
-                            elif message['role'] == 'assistant':
-                                input_text += f"<start_of_turn>model\n{message['content']}<end_of_turn>\n"
+                    for message in data['messages']:
+                        if message['role'] == 'system' or message['role'] == 'user':
+                            input_text += f"<start_of_turn>user\n{message['content']}<end_of_turn>\n"
+                        elif message['role'] == 'assistant':
+                            input_text += f"<start_of_turn>model\n{message['content']}<end_of_turn>\n"
 
                     if len(input_text) > 0:
                         client = Client(llm_source, hf_token=os.environ['HF_TOKEN'])
