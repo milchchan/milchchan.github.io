@@ -1227,59 +1227,55 @@
       }
 
       async function synthesize(source, prompt, input, language, temperature = 1.0) {
-        try {
-          const response1 = await fetch(encodeURI(prompt));
+        const response1 = await fetch(encodeURI(prompt));
 
-          if (response1.ok) {
-            const formData = new FormData();
+        if (response1.ok) {
+          const formData = new FormData();
 
-            formData.append("file", await response1.blob(), "prompt.wav");
-            formData.append("data", JSON.stringify({ input: input, language: language, temperature: temperature }));
+          formData.append("file", await response1.blob(), "prompt.wav");
+          formData.append("data", JSON.stringify({ input: input, language: language, temperature: temperature }));
 
-            const response2 = await fetch("https://milchchan.com/api/generate", {
-              mode: "cors",
-              method: "POST",
-              body: formData
+          const response2 = await fetch("https://milchchan.com/api/generate", {
+            mode: "cors",
+            method: "POST",
+            body: formData
+          });
+
+          if (response2.ok) {
+            const blob = await response2.blob();
+            const [arrayBuffer, sr] = await new Promise(async (resolve, reject) => {
+              const reader = new FileReader();
+
+              reader.onload = () => {
+                const arrayBuffer = reader.result;
+                const view = new DataView(arrayBuffer);
+                const sampleRate = view.getUint32(24, true);
+                
+                resolve([arrayBuffer, sampleRate]);
+              };
+              reader.onerror = () => {
+                reject(reader.error);
+              };
+              reader.readAsArrayBuffer(blob);
             });
 
-            if (response2.ok) {
-              const blob = await response2.blob();
-              const [arrayBuffer, sr] = await new Promise(async (resolve, reject) => {
-                const reader = new FileReader();
+            const buffer = await audioContext.decodeAudioData(arrayBuffer);
 
-                reader.onload = () => {
-                  const arrayBuffer = reader.result;
-                  const view = new DataView(arrayBuffer);
-                  const sampleRate = view.getUint32(24, true);
-                  
-                  resolve([arrayBuffer, sampleRate]);
-                };
-                reader.onerror = () => {
-                  reject(reader.error);
-                };
-                reader.readAsArrayBuffer(blob);
-              });
-
-              const buffer = await audioContext.decodeAudioData(arrayBuffer);
-
-              sampleRate = sr;
-              
-              source.buffer = buffer;
-              source.onended = () => {
-                source.disconnect();
-                audioContext.close();
-                audioContext = null;
-                isPlaying = false;
-              };
-              source.start(0);
-              isPlaying = true;
-            } else {
-              throw new Error(response2.statusText);
-            }
-
+            sampleRate = sr;
+            
+            source.buffer = buffer;
+            source.onended = () => {
+              source.disconnect();
+              audioContext.close();
+              audioContext = null;
+              isPlaying = false;
+            };
+            source.start(0);
+            isPlaying = true;
+          } else {
+            throw new Error(response2.statusText);
           }
-        } catch (error) {
-          console.error(error);
+
         }
       }
 
@@ -1431,7 +1427,13 @@
 
                                     source.connect(audioContext.destination);
 
-                                    await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                                    try {
+                                      await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                                    } catch (error) {
+                                      shake(p);
+
+                                      console.error(error);
+                                    }
 
                                     p.classList.remove("is-loading");
                                   }
@@ -1704,7 +1706,13 @@
                                       
                                       source.connect(audioContext.destination);
 
-                                      await synthesize(source, `sounds/${element2.dataset.type}.${element2.dataset.language}.wav`, content, element2.dataset.language, temperature);
+                                      try {
+                                        await synthesize(source, `sounds/${element2.dataset.type}.${element2.dataset.language}.wav`, content, element2.dataset.language, temperature);
+                                      } catch (error) {
+                                        shake(p);
+
+                                        console.error(error);
+                                      }
 
                                       p.classList.remove("is-loading");
                                     }
@@ -1915,7 +1923,13 @@
                                   
                                   source.connect(audioContext.destination);
 
-                                  await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                                  try {
+                                    await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                                  } catch (error) {
+                                    shake(p);
+
+                                    console.error(error);
+                                  }
 
                                   p.classList.remove("is-loading");
                                 }
@@ -2064,7 +2078,13 @@
                                     
                               source.connect(audioContext.destination);
 
-                              await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                              try {
+                                await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                              } catch (error) {
+                                shake(p);
+
+                                console.error(error);
+                              }
 
                               p.classList.remove("is-loading");
                             }
@@ -2245,7 +2265,13 @@
                               
                               source.connect(audioContext.destination);
 
-                              await synthesize(source, `sounds/${element.dataset.type}.${element.dataset.language}.wav`, content, element.dataset.language, temperature);
+                              try {
+                                await synthesize(source, `sounds/${element.dataset.type}.${element.dataset.language}.wav`, content, element.dataset.language, temperature);
+                              } catch (error) {
+                                shake(p);
+                                
+                                console.error(error);
+                              }
 
                               p.classList.remove("is-loading");
                             }
