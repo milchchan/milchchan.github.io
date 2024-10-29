@@ -146,15 +146,16 @@ paths:
         - Media
       summary: Upload media
       requestBody:
-        description: Media data
+        description: Media file
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              type: array
-              items:
-                type: string
-                format: uri
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
       responses:
         201:
           description: Successful operation
@@ -337,6 +338,51 @@ paths:
                     timestamp:
                       type: integer
                       format: int64
+  /generate:
+    post:
+      tags:
+        - AI
+      summary: Generate a content by AI
+      requestBody:
+        description: Media data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        example: "user"
+                      content:
+                        type: string
+                        example: "Hello, world!"
+                input:
+                  type: string
+                  example: "Hello, world!"
+                language:
+                  type: string
+                  example: "en"  
+                temperature:
+                  type: number
+                  example: 1.0
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+            audio/wav:
+              schema:
+                type: string
+                format: binary
 components:
   schemas:
     Like:
@@ -382,3 +428,4 @@ components:
 tags:
   - name: Social
   - name: Media
+  - name: AI
