@@ -691,7 +691,7 @@ window.addEventListener("load", async event => {
     });
   }
 
-  new Promise(async (resolve) => {
+  /*new Promise(async (resolve) => {
     try {
       const response = await fetch("https://milchchan.com/api/now", {
         mode: "cors",
@@ -706,7 +706,7 @@ window.addEventListener("load", async event => {
     }
     
     resolve();
-  });
+  });*/
 
   const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
   const frame = document.body.querySelector("#app>.container>.wrap>.frame");
