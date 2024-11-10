@@ -129,7 +129,6 @@
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1.25rem;
         line-height: 2rem;
-        transform: rotate(0.03deg);
       }
 
       a,
@@ -412,7 +411,7 @@
       div.sidebar .rotation-outer>div.rotation-inner>div.rotate {
         display: block;
         transform-origin: top left;
-        transform: rotate(-90deg) translate(-100%);
+        transform: rotate(-90deg) translate(0%, 100%) rotate(180deg);
         margin-top: -50%;
         white-space: nowrap;
       }
@@ -444,7 +443,7 @@
       }
 
       div.sidebar>.level>.level-item>.level>.level-item .icon {
-        transform: rotate(90deg);
+        transform: rotate(-90deg);
       }
 
       div.sidebar .level>.level-item {
@@ -481,7 +480,6 @@
         height: 0.5rem;
         font-size: 0.5rem;
         line-height: 0;
-        transform: rotate(360deg);
         transition: .5s;
       }
 
