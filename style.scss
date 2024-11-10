@@ -112,7 +112,7 @@ figure {
 }
 
 .is-rotate {
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
 }
 
 .is-uppercase {
@@ -544,7 +544,7 @@ div.sidebar {
                         position: absolute;
                         margin: 0% 0px 0px 50% !important;
                         transform-origin: 50% 50%;
-                        transform: translate3d(-50%, 8px, 0) rotate(90deg);
+                        transform: translate3d(-50%, 8px, 0) rotate(-90deg);
                     }
                 }
 
@@ -621,7 +621,7 @@ div.sidebar {
                         >div.rotate {
                             display: block;
                             transform-origin: top left;
-                            transform: rotate(-90deg) translate(-100%);
+                            transform: rotate(-90deg) translate(0%, 100%) rotate(180deg);
                             margin-top: -50%;
                             white-space: nowrap;
                         }
