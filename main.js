@@ -344,25 +344,24 @@ function lerp(a, b, t) {
 
 function shake(element) {
   element.animate([
-    { transform: "translate3d(0, 0, 0)" },
-    { transform: "translate3d(8px, 0, 0)" },
-    { transform: "translate3d(-8px, 0, 0)" },
-    { transform: "translate3d(7px, 0, 0)" },
-    { transform: "translate3d(-7px, 0, 0)" },
-    { transform: "translate3d(6px, 0, 0)" },
-    { transform: "translate3d(-6px, 0, 0)" },
     { transform: "translate3d(5px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
     { transform: "translate3d(-5px, 0, 0)" },
     { transform: "translate3d(4px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
     { transform: "translate3d(-4px, 0, 0)" },
     { transform: "translate3d(3px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
     { transform: "translate3d(-3px, 0, 0)" },
     { transform: "translate3d(2px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
     { transform: "translate3d(-2px, 0, 0)" },
     { transform: "translate3d(1px, 0, 0)" },
-    { transform: "translate3d(-1px, 0, 0)" },
-    { transform: "translate3d(0, 0, 0)" }],
-    { duration: 1000, iterations: 1 });
+    { transform: "translate3d(0, 0, 0)" },
+    { transform: "translate3d(-1px, 0, 0)" }],
+    { fill: "forwards", duration: 500, iterations: 1 }).onfinish = () => {
+      element.style.transform = "translate3d(0, 0, 0)";
+    };
 }
 
 async function resize(blob, length) {
