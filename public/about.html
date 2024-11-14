@@ -1012,7 +1012,7 @@
             </div>
           </div>
         </div>
-        <div class="content" data-type="story" data-prompts='["魔法少女ごっこしていたらミルヒちゃんがおしっこをおもらししちゃうオチのメルクちゃん視点の短編小説を書いてください。", "同人誌即売会をテーマにした百合百合なメルクちゃん視点の短編小説を書いてください。", "メルクちゃんがミルヒちゃんにあんなことこんなことすることを妄想するメルクちゃん視点の短編小説を書いてください。"]'>
+        <div class="content" data-type="story" data-prompts='["今日のメルクちゃんの日記で綴るミルヒちゃんとメルクちゃんの日常の短編小説を書いてください。", "魔法少女ごっこしていたらミルヒちゃんがおしっこをおもらししちゃうオチのメルクちゃん視点の短編小説を書いてください。", "同人誌即売会をテーマにした百合百合なメルクちゃん視点の短編小説を書いてください。", "メルクちゃんがミルヒちゃんにあんなことこんなことすることを妄想するメルクちゃん視点の短編小説を書いてください。"]'>
           <div class="icon is-animatable">
             <a class="button" href="https://clock.milchchan.com/" title="Clock">
               <figure>
@@ -1362,7 +1362,7 @@
                           const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
 
                           if (response1.ok) {
-                            const messages = [{role: "system", content: await response1.text()}, {role: "user", content: prompt}];
+                            const messages = [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}];
                             
                             for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
                               if ("prompt" in element3.dataset) {
@@ -1658,7 +1658,7 @@
                                   headers: {
                                     "Content-Type": "application/json",
                                   },
-                                  body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: prompt}]}),
+                                  body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}]}),
                                 }
                               );
 
@@ -1876,7 +1876,7 @@
                             headers: {
                               "Content-Type": "application/json"
                             },
-                            body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: prompt}]})
+                            body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}]})
                           });
 
                           if (response2.ok) {
@@ -2013,7 +2013,7 @@
                     const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
 
                     if (response1.ok) {
-                      const messages = [{role: "system", content: await response1.text()}, {role: "user", content: prompt}];
+                      const messages = [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}];
                       
                       for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
                         if ("prompt" in element3.dataset) {
@@ -2218,7 +2218,7 @@
                         headers: {
                           "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: prompt}]})
+                        body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}]})
                       });
 
                       if (response2.ok) {
