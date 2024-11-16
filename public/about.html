@@ -1179,8 +1179,7 @@
                 reject(reader.error);
               };
               reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
-            }
-          )}')`;
+            })}')`;
           }
         } catch (error) {
           console.error(error);
@@ -1343,13 +1342,19 @@
 
                       if ("prompts" in element1.dataset) {
                         try {
-                          const prompts = JSON.parse(element1.dataset.prompts);
-
-                          if (prompts.length > 0) {
-                            prompt = prompts[~~random(0, prompts.length)];
-                          }
+                          prompts = await new Promise(async (resolve, reject) => {
+                            try {
+                              resolve(JSON.parse(element1.dataset.prompts));
+                            } catch (error) {
+                              reject(error);
+                            }
+                          });
                         } catch (error) {
                           reject(error);
+                        }
+
+                        if (prompts.length > 0) {
+                          prompt = prompts[~~random(0, prompts.length)];
                         }
                       } else if ("prompt" in element1.dataset) {
                         prompt = element1.dataset.prompt;
@@ -1632,13 +1637,19 @@
 
                         if ("prompts" in element2.dataset) {
                           try {
-                            const prompts = JSON.parse(element2.dataset.prompts);
-
-                            if (prompts.length > 0) {
-                              prompt = prompts[~~random(0, prompts.length)];
-                            }
+                            prompts = await new Promise(async (resolve, reject) => {
+                              try {
+                                resolve(JSON.parse(element2.dataset.prompts));
+                              } catch (error) {
+                                reject(error);
+                              }
+                            });
                           } catch (error) {
                             reject(error);
+                          }
+
+                          if (prompts.length > 0) {
+                            prompt = prompts[~~random(0, prompts.length)];
                           }
                         } else if ("prompt" in element2.dataset) {
                           prompt = element2.dataset.prompt;
@@ -1851,13 +1862,19 @@
 
                     if ("prompts" in element1.dataset) {
                       try {
-                        const prompts = JSON.parse(element1.dataset.prompts);
-
-                        if (prompts.length > 0) {
-                          prompt = prompts[~~random(0, prompts.length)];
-                        }
+                        prompts = await new Promise(async (resolve, reject) => {
+                          try {
+                            resolve(JSON.parse(element1.dataset.prompts));
+                          } catch (error) {
+                            reject(error);
+                          }
+                        });
                       } catch (error) {
                         reject(error);
+                      }
+
+                      if (prompts.length > 0) {
+                        prompt = prompts[~~random(0, prompts.length)];
                       }
                     } else if ("prompt" in element1.dataset) {
                       prompt = element1.dataset.prompt;
@@ -1994,13 +2011,19 @@
 
                 if ("prompts" in element1.dataset) {
                   try {
-                    const prompts = JSON.parse(element1.dataset.prompts);
-
-                    if (prompts.length > 0) {
-                      prompt = prompts[~~random(0, prompts.length)];
-                    }
+                    prompts = await new Promise(async (resolve, reject) => {
+                      try {
+                        resolve(JSON.parse(element1.dataset.prompts));
+                      } catch (error) {
+                        reject(error);
+                      }
+                    });
                   } catch (error) {
                     reject(error);
+                  }
+
+                  if (prompts.length > 0) {
+                    prompt = prompts[~~random(0, prompts.length)];
                   }
                 } else if ("prompt" in element1.dataset) {
                   prompt = element1.dataset.prompt;
@@ -2153,8 +2176,7 @@
                     const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? `--${element.dataset.type}-dark-background-image` : `--${element.dataset.type}-light-background-image`));
 
                     if (response.ok) {
-                        image.style.backgroundImage = `url('${await new Promise(
-                        async (resolve, reject) => {
+                        image.style.backgroundImage = `url('${await new Promise(async (resolve, reject) => {
                             const reader = new FileReader();
 
                             reader.onload = () => {
@@ -2164,8 +2186,7 @@
                                 reject(reader.error);
                             };
                             reader.readAsDataURL(await resize(await response.blob(), Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio));
-                        }
-                        )}')`;
+                        })}')`;
                     }
                 } catch (error) {
                     console.error(error);
@@ -2193,13 +2214,19 @@
 
                 if ("prompts" in element.dataset) {
                   try {
-                    const prompts = JSON.parse(element.dataset.prompts);
-
-                    if (prompts.length > 0) {
-                      prompt = prompts[~~random(0, prompts.length)];
-                    }
+                    prompts = await new Promise(async (resolve, reject) => {
+                      try {
+                        resolve(JSON.parse(element.dataset.prompts));
+                      } catch (error) {
+                        reject(error);
+                      }
+                    });
                   } catch (error) {
                     reject(error);
+                  }
+
+                  if (prompts.length > 0) {
+                    prompt = prompts[~~random(0, prompts.length)];
                   }
                 } else if ("prompt" in element.dataset) {
                   prompt = element.dataset.prompt;
