@@ -54,7 +54,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 elif message['role'] == 'assistant':
                                     contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
 
-                        request = Request(f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key={api_key}', data=json.dumps({'contents': contents} if temperature is None else {'contents': contents, 'generationConfig': {'temperature': temperature}}).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
+                        request = Request(f'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-8b:generateContent?key={api_key}', data=json.dumps({'contents': contents} if temperature is None else {'contents': contents, 'generationConfig': {'temperature': temperature}}).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
 
                         with urlopen(request) as response:
                             for candidate in json.loads(response.read().decode('utf-8'))['candidates']:
