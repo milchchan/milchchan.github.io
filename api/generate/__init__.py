@@ -1,12 +1,16 @@
+import time
 import re
 import os
 import json
 import logging
 import tempfile
+from uuid import uuid4
+from datetime import datetime, timezone
 from urllib.request import urlopen, Request
 from gradio_client import Client, handle_file
 
 import azure.functions as func
+from azure.cosmos.cosmos_client import CosmosClient
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -37,22 +41,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         data = req.get_json()
                         contents = []
 
-                        if isinstance(data, dict):
-                            if 'temperature' in data:
-                                temperature = data['temperature']
+                        if 'temperature' in data:
+                            temperature = data['temperature']
 
-                            for message in data['messages']:
-                                if message['role'] == 'system' or message['role'] == 'user':
-                                    contents.append({'role': 'user', 'parts': [{'text': message['content']}]})
-                                elif message['role'] == 'assistant':
-                                    contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
-
-                        elif isinstance(data, list):
-                            for message in data:
-                                if message['role'] == 'system' or message['role'] == 'user':
-                                    contents.append({'role': 'user', 'parts': [{'text': message['content']}]})
-                                elif message['role'] == 'assistant':
-                                    contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
+                        for message in data['messages']:
+                            if message['role'] == 'system' or message['role'] == 'user':
+                                contents.append({'role': 'user', 'parts': [{'text': message['content']}]})
+                            elif message['role'] == 'assistant':
+                                contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
 
                         request = Request(f'https://generativelanguage.googleapis.com/v1/models/{os.environ["GEMINI_API_MODEL"]}:generateContent?key={api_key}', data=json.dumps({'contents': contents} if temperature is None else {'contents': contents, 'generationConfig': {'temperature': temperature}}).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
 
@@ -61,6 +57,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 for part in candidate['content']['parts']:
                                     if 'text' in part:
                                         match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', part['text'], flags=(re.MULTILINE|re.DOTALL))
+                                        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                                        database = client.get_database_client('Milch')
+                                        container = database.get_container_client('Logs')
+                                        data['messages'].append({'role': 'assistant', 'content': part['text']})
+                                        container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                         return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=201, mimetype='application/json', charset='utf-8')
                 
@@ -86,6 +87,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if len(matches) > 0:
                             result = matches[len(matches) - 1]
                             match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
+                            client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                            database = client.get_database_client('Milch')
+                            container = database.get_container_client('Logs')
+                            data['messages'].append({'role': 'assistant', 'content': result})
+                            container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                             return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=201, mimetype='application/json', charset='utf-8')
                         
@@ -100,6 +106,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     with urlopen(request, timeout=60.0) as response:
                         for choice in json.loads(response.read().decode('utf-8'))['choices']:
                             match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
+                            client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                            database = client.get_database_client('Milch')
+                            container = database.get_container_client('Logs')
+                            data['messages'].append({'role': 'assistant', 'content': choice['content']})
+                            container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                             return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=201, mimetype='application/json', charset='utf-8')
 
