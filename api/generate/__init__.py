@@ -101,7 +101,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(status_code=400, mimetype='', charset='')
                 
                 else:
-                    request = Request(llm_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
+                    data = req.get_body()
+                    request = Request(llm_source, headers={'Content-Type': content_type}, data=data, method='POST')
 
                     with urlopen(request, timeout=60.0) as response:
                         for choice in json.loads(response.read().decode('utf-8'))['choices']:
