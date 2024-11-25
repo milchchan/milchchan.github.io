@@ -95,10 +95,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 elif geohash is None:
                     if from_date is None:
                         items = list(container.query_items(
-                            query=f'SELECT l.id, l.data, l.location, l.timestamp FROM Logs AS l WHERE l.timestamp <= @to_date ORDER BY l.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                            query=f'SELECT l.id, l.data, l.location, l.timestamp FROM Logs AS l WHERE l.path = @path AND l.timestamp <= @to_date ORDER BY l.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                             parameters=[
                                 {'name': '@offset', 'value': 0 if offset is None else offset},
                                 {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@path', 'value': path},
                                 {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
                             ],
                             enable_cross_partition_query=True))
@@ -106,10 +107,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     else:
                         datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
                         items = list(container.query_items(
-                            query=f'SELECT l.id, l.data, l.location, l.timestamp FROM Logs AS l WHERE l.timestamp > @from_date AND l.timestamp <= @to_date ORDER BY l.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                            query=f'SELECT l.id, l.data, l.location, l.timestamp FROM Logs AS l WHERE l.path = @path AND l.timestamp > @from_date AND l.timestamp <= @to_date ORDER BY l.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                             parameters=[
                                 {'name': '@offset', 'value': 0 if offset is None else offset},
                                 {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@path', 'value': path},
                                 {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
                                 {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
                             ],
