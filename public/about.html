@@ -1330,7 +1330,7 @@
               if (recordButton !== null && reloadButton !== null && moreButton !== null) {
                 for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
                   if (element1.classList.contains("is-selected")) {
-                    const element2 = element1.querySelector(":scope>div>div:last-of-type");
+                    const element2 = element1.querySelector(":scope>div:last-of-type>div:last-of-type");
 
                     recordButton.disabled = true;
                     reloadButton.disabled = true;
@@ -1369,7 +1369,7 @@
                           if (response1.ok) {
                             const messages = [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}];
                             
-                            for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
+                            for (const element3 of element2.querySelectorAll(":scope>div>p.is-generated>span")) {
                               if ("prompt" in element3.dataset) {
                                 messages.push({role: "user", content: element3.dataset.prompt});
                               }
@@ -1999,7 +1999,7 @@
         if (recordButton !== null && reloadButton !== null && moreButton !== null) {
           for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
             if (element1.classList.contains("is-selected")) {
-              const element2 = element1.querySelector(":scope>div>div:last-of-type");
+              const element2 = element1.querySelector(":scope>div:last-of-type>div:last-of-type");
 
               recordButton.disabled = true;
               reloadButton.disabled = true;
@@ -2038,7 +2038,7 @@
                     if (response1.ok) {
                       const messages = [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}];
                       
-                      for (const element3 of element2.querySelectorAll(":scope>p.is-generated>span")) {
+                      for (const element3 of element2.querySelectorAll(":scope>div>p.is-generated>span")) {
                         if ("prompt" in element3.dataset) {
                           messages.push({role: "user", content: element3.dataset.prompt});
                         }
