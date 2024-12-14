@@ -37,6 +37,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             api_key = os.environ['GOOGLE_API_KEY']
 
                         else:
+                            data = req.get_json()
                             request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'messages': data['messagess']} if 'temperature' in data else {'model': os.environ['OPENAI_MODEL'], 'messages': data['messagess'], 'temperature': data['temperature']}).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
 
                             with urlopen(request) as response:
