@@ -31,8 +31,29 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             api_key = match.group(1)
 
                     else:
-                        api_key = os.environ['GOOGLE_API_KEY']
-                        
+                        api_key = os.environ.get('OPENAI_API_KEY')
+
+                        if api_key is None:
+                            api_key = os.environ['GOOGLE_API_KEY']
+
+                        else:
+                            request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'messages': data['messagess']} if 'temperature' in data else {'model': os.environ['OPENAI_MODEL'], 'messages': data['messagess'], 'temperature': data['temperature']}).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
+
+                            with urlopen(request) as response:
+                                for choice in json.loads(response.read().decode('utf-8'))['choices']:
+                                    if choice['role'] == 'assistant':
+                                        match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
+                                        #client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                                        #database = client.get_database_client('Milch')
+                                        #container = database.get_container_client('Logs')
+                                        data['messages'].append({'role': 'assistant', 'content': choice['content']})
+                                        #container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+
+                                        return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=201, mimetype='application/json', charset='utf-8')
+                                    
+                                    else:
+                                        return func.HttpResponse(status_code=500, mimetype='', charset='')
+
                     if api_key is None:
                         return func.HttpResponse(status_code=401, mimetype='', charset='')
                     
