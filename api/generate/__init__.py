@@ -42,15 +42,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             with urlopen(request) as response:
                                 for choice in json.loads(response.read().decode('utf-8'))['choices']:
-                                    if choice['role'] == 'assistant':
-                                        match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
+                                    if choice['message']['role'] == 'assistant':
+                                        match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
                                         #client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                         #database = client.get_database_client('Milch')
                                         #container = database.get_container_client('Logs')
-                                        data['messages'].append({'role': 'assistant', 'content': choice['content']})
+                                        data['messages'].append({'role': 'assistant', 'content': choice['message']['content']})
                                         #container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
-                                        return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=201, mimetype='application/json', charset='utf-8')
+                                        return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['message']['content'])), status_code=201, mimetype='application/json', charset='utf-8')
                                     
                                     else:
                                         return func.HttpResponse(status_code=500, mimetype='', charset='')
