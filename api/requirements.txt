@@ -4,7 +4,8 @@
 
 pyjwt
 cryptography
-psycopg2-binary
+certifi
+mysql-connector-python
 SQLAlchemy
 redis
 azure-functions
