@@ -23,7 +23,7 @@ from google.cloud import storage
 #from google.cloud.storage.blob import Blob
 
 
-engine = create_engine(os.environ['POSTGRESQL_CONNECTION_URL'], pool_recycle=60)
+engine = create_engine(os.environ['POSTGRESQL_CONNECTION_URL'], pool_recycle=300)
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:

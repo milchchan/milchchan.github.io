@@ -11,7 +11,7 @@ from shared.cache import get_cache, set_cache
 import azure.functions as func
 
 
-engine = create_engine(os.environ['POSTGRESQL_CONNECTION_URL'], pool_recycle=60)
+engine = create_engine(os.environ['POSTGRESQL_CONNECTION_URL'], pool_recycle=300)
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
