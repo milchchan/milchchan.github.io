@@ -2,6 +2,7 @@ import math
 import json
 import logging
 import os
+import certifi
 from datetime import timezone
 from urllib.parse import urlparse
 from sqlalchemy import create_engine, desc
@@ -12,7 +13,7 @@ from shared.cache import get_cache, set_cache
 import azure.functions as func
 
 
-engine = create_engine(os.environ['POSTGRESQL_CONNECTION_URL'], pool_recycle=300)
+engine = create_engine(os.environ['MYSQL_CONNECTION_URL'], connect_args={'ssl_ca': certifi.where(), 'ssl_verify_cert': True, 'ssl_verify_identity': True}, pool_recycle=300)
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:

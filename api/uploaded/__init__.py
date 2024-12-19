@@ -2,6 +2,7 @@ import re
 import json
 import logging
 import os
+import certifi
 import boto3
 import botocore
 from datetime import timezone
@@ -19,7 +20,7 @@ from google.cloud import storage
 #from google.cloud.storage.blob import Blob
 
 
-engine = create_engine(os.environ['POSTGRESQL_CONNECTION_URL'], pool_recycle=300)
+engine = create_engine(os.environ['MYSQL_CONNECTION_URL'], connect_args={'ssl_ca': certifi.where(), 'ssl_verify_cert': True, 'ssl_verify_identity': True}, pool_recycle=300)
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
