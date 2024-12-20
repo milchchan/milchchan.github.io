@@ -992,6 +992,7 @@ window.addEventListener("load", async event => {
   
                     content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
                     index = maxEnd
+                    text = "";
                   } else {
                     text += like.content[index];
                     index++;
