@@ -27,7 +27,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 attributes = []
 
                 like = Like()
-                like.name = data.get('name')
+                like.name = data['name']
                 like.content = data['content']
                 like.language = data.get('language')
                 like.timestamp = datetime.now(timezone.utc)
@@ -39,7 +39,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     for item in data['attributes']:
                         attribute = Attribute()
                         attribute.like_id = like.id
-                        attribute.name = item['name']
+                        attribute.name = item.get('name')
                         attribute.start = item['start']
                         attribute.end = item['end']
 
