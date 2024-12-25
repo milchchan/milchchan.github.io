@@ -17,7 +17,7 @@ class Attribute(Base):
     __tablename__ = 'attributes'
     id = Column('id', Integer(), primary_key=True, nullable=False)
     like_id = Column('like_id', Integer(), nullable=False)
-    name = Column('name', String(256), nullable=False)
+    name = Column('name', String(256), nullable=True)
     start = Column('start', Integer(), nullable=False)
     end = Column('end', Integer(), nullable=False)
 
