@@ -405,7 +405,7 @@ components:
             type: object
             properties:
               name:
-                type: string
+                type: ["string", "null"]
               start:
                 type: integer
                 format: int32
