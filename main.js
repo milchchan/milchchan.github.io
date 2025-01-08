@@ -2159,7 +2159,7 @@ window.addEventListener("load", async event => {
 
     return x;
   }, []))) {
-    if (image instanceof Event == false || image.type !== "error") {
+    if (!(image instanceof Event) || image.type !== "error") {
       background.cache.push(image);
     }
   }
