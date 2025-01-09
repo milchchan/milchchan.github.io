@@ -2026,7 +2026,7 @@ window.addEventListener("load", async event => {
 
         frame.time += deltaTime;
 
-        while (frame.time > delay) {
+        while (frame.time >= delay) {
           const time = frame.time - delay;
 
           frame.time = 0;
@@ -2035,7 +2035,7 @@ window.addEventListener("load", async event => {
           count--;
 
           if (count > 0) {
-            frame.time += time;
+            frame.time = time;
           } else {
             break;
           }
