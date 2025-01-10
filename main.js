@@ -1,4 +1,4 @@
-const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, force: false, color: null, blocks: [], texts: [], offset: null, images: [], queue: [], particles: [], cache: [] };
+const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, force: false, color: null, blocks: [], texts: [], offset: null, images: [], queue: [], particles: [], cache: null };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
 const touches = [];
@@ -706,24 +706,6 @@ window.addEventListener("load", async event => {
     
     resolve();
   });*/
-  
-  try {
-    for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
-      background.cache.push(await new Promise((resolve, reject) => {
-        const image = new Image();
-
-        image.onload = () => {
-          resolve(image);
-        };
-        image.onerror = (error) => {
-          reject(error);
-        };
-        image.src = source
-      }));
-    }
-  } catch (error) {
-    console.error(error);
-  }
 
   const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
   const frame = document.body.querySelector("#app>.container>.wrap>.frame");
@@ -2185,7 +2167,7 @@ window.addEventListener("resize", event => {
   canvas.style.width = `${Math.floor(rect.width)}px`;
   canvas.style.height = `${Math.floor(rect.height)}px`;
 });
-window.addEventListener("mousedown", event => {
+window.addEventListener("mousedown", async event => {
   if (event.button === 0 && tracker.identifier === null) {
     const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
     const x = event.clientX - rect.x;
@@ -2198,14 +2180,38 @@ window.addEventListener("mousedown", event => {
     tracker.timestamp = timestamp;
     tracker.velocity.x = tracker.velocity.y = 0;
 
-    if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+    if (background.cache === null) {
+      background.cache = [];
+
+      try {
+        for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
+          background.cache.push(await new Promise((resolve, reject) => {
+            const image = new Image();
+
+            image.onload = () => {
+              resolve(image);
+            };
+            image.onerror = (error) => {
+              reject(error);
+            };
+            image.src = source
+          }));
+        }
+      } catch (error) {
+        console.error(error);
+
+        background.cache = null;
+      }
+    }
+
+    if (background.cache !== null && background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
       for (let i = random(0, 4); i > 0; i--) {
         background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
       }
     }
   }
 });
-window.addEventListener("mousemove", event => {
+window.addEventListener("mousemove", async event => {
   const rect = document.body.querySelector("#app>.container>.wrap>.frame>.wall").getBoundingClientRect();
   const x = event.clientX - rect.x;
   const y = event.clientY - rect.y;
@@ -2256,7 +2262,31 @@ window.addEventListener("mousemove", event => {
       }
     }
 
-    if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+    if (background.cache === null) {
+      background.cache = [];
+      
+      try {
+        for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
+          background.cache.push(await new Promise((resolve, reject) => {
+            const image = new Image();
+
+            image.onload = () => {
+              resolve(image);
+            };
+            image.onerror = (error) => {
+              reject(error);
+            };
+            image.src = source
+          }));
+        }
+      } catch (error) {
+        console.error(error);
+
+        background.cache = null;
+      }
+    }
+
+    if (background.cache !== null && background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
       for (let i = random(0, 4); i > 0; i--) {
         background.particles.unshift({ elapsed: -1, x: x, y: y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
       }
@@ -2298,7 +2328,7 @@ window.addEventListener("mouseup", event => {
     tracker.active = false;
   }
 });
-window.addEventListener("wheel", event => {
+window.addEventListener("wheel", async event => {
   event.preventDefault();
 
   const timestamp = event.timeStamp / 1000;
@@ -2306,7 +2336,31 @@ window.addEventListener("wheel", event => {
   tracker.movement.x -= event.deltaX;
   tracker.movement.y -= event.deltaY;
 
-  if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+  if (background.cache === null) {
+    background.cache = [];
+    
+    try {
+      for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
+        background.cache.push(await new Promise((resolve, reject) => {
+          const image = new Image();
+
+          image.onload = () => {
+            resolve(image);
+          };
+          image.onerror = (error) => {
+            reject(error);
+          };
+          image.src = source
+        }));
+      }
+    } catch (error) {
+      console.error(error);
+
+      background.cache = null;
+    }
+  }
+
+  if (background.cache !== null && background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
     for (let i = random(0, 4); i > 0; i--) {
       background.particles.unshift({ elapsed: -1, x: tracker.mouse.x, y: tracker.mouse.y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
     }
@@ -2315,7 +2369,7 @@ window.addEventListener("wheel", event => {
 window.addEventListener("dblclick", event => {
   refresh(event);
 });
-window.addEventListener("touchstart", event => {
+window.addEventListener("touchstart", async event => {
   event.stopPropagation();
 
   for (const touch of event.changedTouches) {
@@ -2337,7 +2391,31 @@ window.addEventListener("touchstart", event => {
     touches[0].movement.x = tracker.movement.x;
     touches[0].movement.y = tracker.movement.y;
 
-    if (background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
+    if (background.cache === null) {
+      background.cache = [];
+      
+      try {
+        for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
+          background.cache.push(await new Promise((resolve, reject) => {
+            const image = new Image();
+
+            image.onload = () => {
+              resolve(image);
+            };
+            image.onerror = (error) => {
+              reject(error);
+            };
+            image.src = source
+          }));
+        }
+      } catch (error) {
+        console.error(error);
+
+        background.cache = null;
+      }
+    }
+
+    if (background.cache !== null && background.cache.length > 0 && !background.particles.some(x => timestamp - x.timestamp < 0.1)) {
       for (let i = random(0, 4); i > 0; i--) {
         background.particles.unshift({ elapsed: -1, x: touches[0].position.x, y: touches[0].position.y, image: background.cache[random(0, background.cache.length)], timestamp: timestamp });
       }
@@ -2368,7 +2446,7 @@ window.addEventListener("touchstart", event => {
     pinches.push({ active: true, identifiers: identifiers, center: { x: centerX, y: centerY }, movement: { x: 0, y: 0 }, radius: sum / touches.length, velocity: 0, current: { x: centerX, y: centerY, radius: 0 } });
   }
 });
-window.addEventListener("touchmove", event => {
+window.addEventListener("touchmove", async event => {
   event.stopPropagation();
 
   for (const touch of event.changedTouches) {
@@ -2425,7 +2503,31 @@ window.addEventListener("touchmove", event => {
       }
     }
 
-    if (background.cache.length > 0 && !background.particles.some(x => touches[0].timestamp - x.timestamp < 0.1)) {
+    if (background.cache === null) {
+      background.cache = [];
+      
+      try {
+        for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
+          background.cache.push(await new Promise((resolve, reject) => {
+            const image = new Image();
+
+            image.onload = () => {
+              resolve(image);
+            };
+            image.onerror = (error) => {
+              reject(error);
+            };
+            image.src = source
+          }));
+        }
+      } catch (error) {
+        console.error(error);
+
+        background.cache = null;
+      }
+    }
+
+    if (background.cache !== null && background.cache.length > 0 && !background.particles.some(x => touches[0].timestamp - x.timestamp < 0.1)) {
       for (let i = random(0, 4); i > 0; i--) {
         background.particles.unshift({ elapsed: -1, x: touches[0].position.x, y: touches[0].position.y, image: background.cache[random(0, background.cache.length)], timestamp: touches[0].timestamp });
       }
