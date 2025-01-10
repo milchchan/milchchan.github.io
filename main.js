@@ -706,6 +706,24 @@ window.addEventListener("load", async event => {
     
     resolve();
   });*/
+  
+  try {
+    for (const source of ["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"]) {
+      background.cache.push(await new Promise((resolve, reject) => {
+        const image = new Image();
+
+        image.onload = () => {
+          resolve(image);
+        };
+        image.onerror = (error) => {
+          reject(error);
+        };
+        image.src = source
+      }));
+    }
+  } catch (error) {
+    console.error(error);
+  }
 
   const logo = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:first-child .button .icon figure");
   const frame = document.body.querySelector("#app>.container>.wrap>.frame");
@@ -2143,26 +2161,6 @@ window.addEventListener("load", async event => {
   }
 
   requestAnimationFrame(render);
-
-  for (const image of await Promise.all(["images/Star1-Light.svg", "images/Star1-Dark.svg", "images/Star2-Light.svg", "images/Star2-Dark.svg", "images/Star3-Light.svg", "images/Star3-Dark.svg", "images/Star4-Light.svg", "images/Star4-Dark.svg"].reduce((x, y) => {
-    x.push(new Promise((resolve) => {
-      const image = new Image();
-
-      image.onload = () => {
-        resolve(image);
-      };
-      image.onerror = (error) => {
-        resolve(error);
-      };
-      image.src = y;
-    }));
-
-    return x;
-  }, []))) {
-    if (!(image instanceof Event) || image.type !== "error") {
-      background.cache.push(image);
-    }
-  }
 
   logo.animate([
     {
