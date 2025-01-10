@@ -79,12 +79,14 @@ export class Agent {
     this.messageHeight = 0;
     this.messageQueue = [];
     this.animationQueue = [];
+    this.commandQueue = [];
     this.cachedImages = {};
     this.textColor = "rgb(255 255 255)";
     this.lineHeight = 32;
     this.fontSize = 16;
     this.fontWeight = "bold";
     this.fontFamily = fontFamily.length === 0 ? "sans-serif" : fontFamily;
+    this.idleTime = 0.0;
   }
 
   async load(url) {
@@ -179,6 +181,15 @@ export class Agent {
       characterCanvas.style.width = `${Math.floor(width)}px`;
       characterCanvas.style.height = `${Math.floor(height)}px`;
       characterCanvas.style.backgroundColor = "transparent";
+      characterCanvas.addEventListener("click", (event) => {
+        const messages = ["こんにちは。ミルヒだよ。", "こんにちは。ミルヒだよ。メルクちゃんといっしょに魔法少女してるよ。", "こんにちは。ミルヒだよ。メルクちゃんといっしょに魔法少女してるよ。\nメルクちゃんは大切なお友達なの。"];
+        const animations = this.character.animations.filter(x => x.name === "Idle");
+        const animation = animations[~~random(0, animations.length)];
+
+        this.commandQueue.push(messages[~~random(0, messages.length)]);
+        this.commandQueue.push(new Animation(animation.name, animation.repeats, animation.frames));
+        this.commandQueue.push(null);
+      });
 
       balloonCanvas.classList.add("balloon");
       balloonCanvas["backBuffer"] = document.createElement("canvas");
@@ -236,19 +247,34 @@ export class Agent {
   
         self.previousTime = timestamp;
 
-        if (self.balloonCanvas.style.visibility !== "visible") {
-          const messages = ["こんにちは。ミルヒだよ。", "こんにちは。ミルヒだよ。メルクちゃんといっしょに魔法少女してるよ。", "こんにちは。ミルヒだよ。メルクちゃんといっしょに魔法少女してるよ。\nメルクちゃんは大切なお友達なの。"];
-          
-          self.show(messages[~~random(0, messages.length)]);
-          
-          if (self.animationQueue.length === 0) {
-            const animations = self.character.animations.filter(x => x.name === "Idle");
-            const animation = animations[~~random(0, animations.length)];
+        if (self.animationQueue.length === 0 && self.balloonCanvas.style.visibility !== "visible") {
+          if (self.commandQueue.length > 0) {
+            do {
+              const command = self.commandQueue.shift();
 
-            animation.time = 0.0;
-    
-            self.animationQueue.push(animation);
+              if (command === null) {
+                break;
+              } else if (typeof command === "string") {
+                self.show(command);
+              } else if (command instanceof Animation) {
+                self.animationQueue.push(command);
+              }
+            } while (self.commandQueue.length > 0);
+            
+            self.idleTime = 0.0;
+          } else {
+            self.idleTime += deltaTime;
+
+            if (self.idleTime >= 10.0) {
+              const animations = self.character.animations.filter(x => x.name === "Idle");
+              const animation = animations[~~random(0, animations.length)];
+      
+              self.animationQueue.push(new Animation(animation.name, animation.repeats, animation.frames));
+              self.idleTime = 0.0;
+            }
           }
+        } else {
+          self.idleTime = 0.0;
         }
 
         self.renderCharacter(deltaTime);
