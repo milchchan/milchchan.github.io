@@ -89,20 +89,21 @@ export class Agent {
 
   async load(url) {
     try {
-      const response1 = await fetch(url, {
+      let response = await fetch(url, {
         mode: "cors",
         method: "GET"
       });
 
-      if (response1.ok) {
-        const character = await response1.json();
-        const response2 = await fetch(character.prompt, {
+      if (response.ok) {
+        const character = await response.json();
+        
+        response = await fetch(character.prompt, {
           mode: "cors",
           method: "GET"
         });
   
-        if (response2.ok) {
-          character.prompt = await response2.text();
+        if (response.ok) {
+          character.prompt = await response.text();
           character.animations = character.animations.reduce((x, y) => {
             const frames = [];
 
