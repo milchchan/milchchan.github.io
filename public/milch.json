@@ -2,33 +2,33 @@
   "name": "ミルヒ",
   "x": 0,
   "y": -8,
-  "width": 534,
-  "height": 661,
+  "width": 267,
+  "height": 330,
   "prompt": "milch.txt",
   "animations": [
     {
       "name": "Start",
       "repeats": 1,
-      "frames": [{ "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-ClosedMouth.svg" }]
+      "frames": [{ "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-ClosedMouth.svg" }]
     },
     {
       "name": "Idle",
       "repeats": 1,
       "frames": [
-        { "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-Half-ClosedEyes-ClosedMouth.svg" },
-        { "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-ClosedEyes-ClosedMouth.svg" },
-        { "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-Half-ClosedEyes-ClosedMouth.svg" },
-        { "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-ClosedMouth.svg" }
+        { "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-Half-ClosedEyes-ClosedMouth.svg" },
+        { "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-ClosedEyes-ClosedMouth.svg" },
+        { "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-Half-ClosedEyes-ClosedMouth.svg" },
+        { "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-ClosedMouth.svg" }
       ]
     },
     {
       "name": "Idle",
       "repeats": 2,
       "frames": [
-        { "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-Half-ClosedEyes-ClosedMouth.svg" },
-        { "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-ClosedEyes-ClosedMouth.svg" },
-        { "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-Half-ClosedEyes-ClosedMouth.svg" },
-        { "delay": 0.1, "x": 0, "y": 0, "width": 534, "height": 661, "opacity": 1, "url": "images/Milch-ClosedMouth.svg" }
+        { "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-Half-ClosedEyes-ClosedMouth.svg" },
+        { "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-ClosedEyes-ClosedMouth.svg" },
+        { "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-Half-ClosedEyes-ClosedMouth.svg" },
+        { "delay": 0.1, "x": 0, "y": 0, "width": 267, "height": 330, "opacity": 1, "url": "images/Milch-ClosedMouth.svg" }
       ]
     }
   ]
