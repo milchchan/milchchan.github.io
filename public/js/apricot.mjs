@@ -158,8 +158,7 @@ export class Agent {
       const parentElement = document.createElement("div");
       const characterCanvas = document.createElement("canvas");
       const balloonCanvas = document.createElement("canvas");
-      const balloonWidth = this.character.width / 2;
-
+      
       parentElement.id = "apricot";
       parentElement.style.display = "flex";
       parentElement.style.position = "absolute";
@@ -183,11 +182,11 @@ export class Agent {
       balloonCanvas.classList.add("balloon");
       balloonCanvas["backBuffer"] = document.createElement("canvas");
       balloonCanvas.style.position = "absolute";
-      balloonCanvas.width = Math.floor(balloonWidth * window.devicePixelRatio);
+      balloonCanvas.width = Math.floor(this.character.width * window.devicePixelRatio);
       balloonCanvas.height = 0;
-      balloonCanvas.style.left = `${Math.floor(-(balloonWidth - this.character.width * this.scale) / 2 + this.character.x)}px`;
+      balloonCanvas.style.left = `${Math.floor(-(this.character.width - this.character.width * this.scale) / 2 + this.character.x)}px`;
       balloonCanvas.style.bottom = `${Math.floor(height - this.character.y)}px`;
-      balloonCanvas.style.width = `${Math.floor(balloonWidth)}px`;
+      balloonCanvas.style.width = `${Math.floor(this.character.width)}px`;
       balloonCanvas.style.height = "0px";
       balloonCanvas.style.backgroundColor = "transparent";
       balloonCanvas.style.opacity = 0;
