@@ -344,7 +344,8 @@ export class Agent {
 
     new Promise(async (resolve) => {
       const messages = [{ role: "system", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
-      const commands = [];
+      let message = null;
+      let animation = null;
       const choices = [];
       const logs = [];
 
@@ -378,7 +379,7 @@ export class Agent {
           }
 
           if ("content" in json) {
-            commands.push(json.content);
+            message = json.content;
             logs.push({ role: "assistant", content: json.content });
 
             if ("choices" in json) {
@@ -400,11 +401,9 @@ export class Agent {
                 const animations = this.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(state));
 
                 if (animations.length > 0) {
-                  const animation = animations[~~random(0, animations.length)];
-
-                  commands.push(new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                  animation = animations[~~random(0, animations.length)];
                   
-                  resolve([commands, choices, logs]);
+                  resolve([message, animation, choices, logs]);
 
                   return;
                 }
@@ -413,11 +412,7 @@ export class Agent {
 
             const animations = this.character.animations.filter(x => x.name === "Emote" && x.state === null);
 
-            if (animations.length > 0) {
-              const animation = animations[~~random(0, animations.length)];
-
-              commands.push(new Animation(animation.name, animation.state, animation.repeats, animation.frames));
-            }
+            animation = animations[~~random(0, animations.length)];
           }
         }
       } catch (error) {
@@ -426,16 +421,12 @@ export class Agent {
         commands.splice(0);
       }
 
-      resolve([commands, choices, logs]);
-    }).then((results) => {
-      const [commands, choices, logs] = results;
+      resolve([message, animation, choices, logs]);
+    }).then((value) => {
+      const [message, animation, choices, logs] = value;
 
-      if (commands.length > 0) {
-        for (const command of commands) {
-          this.commandQueue.push(command);
-        }
-
-        this.commandQueue.push(null);
+      if (message !== null && animation !== null) {
+        this.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
 
         if (choices.length > 0) {
           const maxLogSize = 4;
@@ -456,6 +447,12 @@ export class Agent {
 
       this.isLoading = false;
     });
+  }
+
+  speak(message, animation) {
+    this.commandQueue.push(message);
+    this.commandQueue.push(animation);
+    this.commandQueue.push(null);
   }
 
   renderCharacter(deltaTime) {
