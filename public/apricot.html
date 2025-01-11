@@ -827,8 +827,9 @@
       import { Agent } from "apricot";
 
       window.addEventListener("load", async (event) => {
-        const agent = new Agent(0.5);
+        const agent = new Agent(0.75);
 
+        agent.isDebug = true;
         agent.fontFamily = "Barlow";
         document.body.appendChild(await agent.load("milch.json"));
         
