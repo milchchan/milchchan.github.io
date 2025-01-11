@@ -6,8 +6,9 @@ function random(min, max) {
 }
 
 class Animation {
-  constructor(name, repeats = 1, frames = []) {
+  constructor(name, state = null, repeats = 1, frames = []) {
     this.name = name;
+    this.state = state;
     this.repeats = repeats;
     this.time = 0.0;
     this.frames = frames;
@@ -63,14 +64,17 @@ class Animation {
 }
 
 export class Agent {
-  constructor(scale = 1.0) {
+  constructor(scale = 1.0, temperature = 1.0) {
     const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--apricot-font-family");
 
     this.isDebug = true;
+    this.isLoading = false;
     this.domElement = null;
     this.scale = scale;
+    this.temperature = temperature;
     this.character = null;
     this.characterCanvas = null;
+    this.loadingCanvas = null;
     this.balloonCanvas = null;
     this.previousTime = performance.now();
     this.stats = { time: this.previousTime, frames: 0, target: document.createElement("span") };
@@ -87,6 +91,12 @@ export class Agent {
     this.fontWeight = "bold";
     this.fontFamily = fontFamily.length === 0 ? "sans-serif" : fontFamily;
     this.idleTime = 0.0;
+    this.loadingStep = null;
+    this.blinkStep = 0.0;
+    this.choices = [];
+    this.logs = [];
+    this.apiUrl = "https://milchchan.com/api/generate";
+    this.apiKey = null;
   }
 
   async load(url) {
@@ -119,7 +129,7 @@ export class Agent {
               frames.push(frame);
             }
 
-            x.push(new Animation(y.name, "repeats" in y ? y.repeats : 1, frames));
+            x.push(new Animation(y.name, y.state, "repeats" in y ? y.repeats : 1, frames));
 
             return x;
           }, []);
@@ -155,12 +165,13 @@ export class Agent {
       }
     }
 
-    const [parentElement, characterCanvas, balloonCanvas] = await new Promise(async (resolve, reject) => {
+    const [parentElement, characterCanvas, balloonCanvas, loadingCanvas] = await new Promise(async (resolve, reject) => {
       const width = this.character.width * this.scale;
       const height = this.character.height * this.scale;
       const parentElement = document.createElement("div");
       const characterCanvas = document.createElement("canvas");
       const balloonCanvas = document.createElement("canvas");
+      const loadingCanvas = document.createElement("canvas");
       
       parentElement.id = "apricot";
       parentElement.style.display = "flex";
@@ -182,13 +193,13 @@ export class Agent {
       characterCanvas.style.height = `${Math.floor(height)}px`;
       characterCanvas.style.backgroundColor = "transparent";
       characterCanvas.addEventListener("click", (event) => {
-        const messages = ["こんにちは。ミルヒだよ。", "こんにちは。ミルヒだよ。メルクちゃんといっしょに魔法少女してるよ。", "こんにちは。ミルヒだよ。メルクちゃんといっしょに魔法少女してるよ。\nメルクちゃんは大切なお友達なの。"];
-        const animations = this.character.animations.filter(x => x.name === "Idle");
-        const animation = animations[~~random(0, animations.length)];
-
-        this.commandQueue.push(messages[~~random(0, messages.length)]);
-        this.commandQueue.push(new Animation(animation.name, animation.repeats, animation.frames));
-        this.commandQueue.push(null);
+        if (!this.isLoading) {
+          if (this.choices.length > 0) {
+            this.talk(this.choices[~~random(0, this.choices.length)]);
+          } else {
+            this.talk();
+          }
+        }
       });
 
       balloonCanvas.classList.add("balloon");
@@ -213,10 +224,23 @@ export class Agent {
         }
       });
 
-      parentElement.appendChild(characterCanvas);
-      parentElement.appendChild(balloonCanvas);
+      loadingCanvas.classList.add("loading");
+      loadingCanvas["backBuffer"] = document.createElement("canvas");
+      loadingCanvas.style.position = "absolute";
+      loadingCanvas.width = 8.0 * 5.0 * window.devicePixelRatio;
+      loadingCanvas.height = 8.0 * window.devicePixelRatio;
+      loadingCanvas.style.left = `${Math.floor(-(8.0 * 5.0 - this.character.width * this.scale) / 2 + this.character.x)}px`;
+      loadingCanvas.style.bottom = `${Math.floor(height - this.character.y)}px`;
+      loadingCanvas.style.width = `${Math.floor(8.0 * 5.0)}px`;
+      loadingCanvas.style.height = `${Math.floor(8.0)}px`;
+      loadingCanvas.style.backgroundColor = "transparent";
+      loadingCanvas.style.visibility = "collapse";
 
-      resolve([parentElement, characterCanvas, balloonCanvas]);
+      parentElement.appendChild(characterCanvas);
+      parentElement.appendChild(loadingCanvas);
+      parentElement.appendChild(balloonCanvas);
+      
+      resolve([parentElement, characterCanvas, balloonCanvas, loadingCanvas]);
     });
 
     this.stats.target.classList.add("stats");
@@ -230,6 +254,7 @@ export class Agent {
     this.domElement = parentElement;
     this.characterCanvas = characterCanvas;
     this.balloonCanvas = balloonCanvas;
+    this.loadingCanvas = loadingCanvas;
     this.domElement.appendChild(this.stats.target);
 
     return this.domElement;
@@ -240,6 +265,7 @@ export class Agent {
     const animations = this.character.animations.filter(x => x.name === "Start");
     
     this.animationQueue.push(animations[~~random(0, animations.length)]);
+    this.talk();
 
     function render(timestamp) {
       if (timestamp > self.previousTime) {
@@ -267,9 +293,13 @@ export class Agent {
 
             if (self.idleTime >= 10.0) {
               const animations = self.character.animations.filter(x => x.name === "Idle");
-              const animation = animations[~~random(0, animations.length)];
+
+              if (animations.length > 0) {
+                const animation = animations[~~random(0, animations.length)];
       
-              self.animationQueue.push(new Animation(animation.name, animation.repeats, animation.frames));
+                self.animationQueue.push(new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+              }
+
               self.idleTime = 0.0;
             }
           }
@@ -278,6 +308,7 @@ export class Agent {
         }
 
         self.renderCharacter(deltaTime);
+        self.renderLoading(deltaTime);
         self.renderBalloon(deltaTime);
       }
 
@@ -303,6 +334,126 @@ export class Agent {
       duration: 500,
       iterations: 1,
       easing: "ease-out"
+    });
+  }
+
+  talk(content = null) {
+    this.isLoading = true;
+
+    new Promise(async (resolve) => {
+      const messages = [{ role: "system", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
+      const commands = [];
+      const choices = [];
+      const logs = [];
+
+      for (const log of this.logs) {
+        messages.push(log);
+      }
+      
+      if (content !== null) {
+        messages.push({ role: "user", content: content });
+        logs.push({ role: "user", content: content });
+      }
+      
+      try {
+        const response = await fetch(this.apiUrl, {
+          mode: "cors",
+          method: "POST",
+          headers: this.apiKey === null ? { "Content-Type": "application/json" } : { "Authorization": `Bearer ${this.apiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ model: "gpt-4o", temperature: this.temperature, messages: messages })
+        });
+
+        if (response.ok) {
+          let json = await response.json();
+
+          if ("choices" in json && json.choices.length > 0) {
+            const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
+
+            if (match === null) {
+              json = JSON.parse(json.choices[0].message.content);
+            } else {
+              json = JSON.parse(match[1]);
+            }
+          }
+
+          if ("content" in json) {
+            commands.push(json.content);
+            logs.push({ role: "assistant", content: json.content });
+
+            if ("choices" in json) {
+              choices.push(...json.choices);
+            }
+
+            if ("states" in json) {
+              let maxScore = Number.MIN_SAFE_INTEGER;
+              let state = null;
+
+              for (const key in json.states) {
+                if (json.states[key] > maxScore) {
+                  state = key;
+                  maxScore = json.states[key];
+                }
+              }
+
+              if (state !== null) {
+                const animations = this.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(state));
+
+                if (animations.length > 0) {
+                  const animation = animations[~~random(0, animations.length)];
+
+                  commands.push(new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                  
+                  resolve([commands, choices, logs]);
+
+                  return;
+                }
+              }
+            }
+
+            const animations = this.character.animations.filter(x => x.name === "Emote" && x.state === null);
+
+            if (animations.length > 0) {
+              const animation = animations[~~random(0, animations.length)];
+
+              commands.push(new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+
+        commands.splice(0);
+      }
+
+      resolve([commands, choices, logs]);
+    }).then((results) => {
+      const [commands, choices, logs] = results;
+
+      if (commands.length > 0) {
+        for (const command of commands) {
+          this.commandQueue.push(command);
+        }
+
+        this.commandQueue.push(null);
+
+        if (choices.length > 0) {
+          const maxLogSize = 4;
+
+          this.choices.splice(0);
+          this.choices.push(...choices);
+          this.logs.push(...logs);
+
+          if (this.logs.length > maxLogSize) {
+            this.logs.splice(0, this.logs.length - maxLogSize);
+          }
+        } else {
+          this.logs.splice(0);
+        }
+      } else {
+        this.logs.splice(0);
+      }
+
+      this.isLoading = false;
     });
   }
 
@@ -340,6 +491,74 @@ export class Agent {
         this.animationQueue.shift();
       }
     }
+  }
+
+  renderLoading(deltaTime) {
+    if (this.isLoading) {
+      if (this.loadingStep === null) {
+        this.loadingStep = deltaTime;
+        this.loadingCanvas.style.visibility = "visible";
+      } else if (this.loadingStep < 1.0) {
+        this.loadingStep += deltaTime;
+
+        if (this.loadingStep > 1.0) {
+          this.loadingStep = 1.0;
+        }
+      }
+
+      this.blinkStep += deltaTime;
+    } else if (this.loadingStep === null) {
+      return
+    } else {
+      this.loadingStep -= deltaTime;
+
+      if (this.loadingStep <= 0.0) {
+        this.loadingStep = null;
+        this.loadingCanvas.style.visibility = "collapse";
+        this.blinkStep = 0.0;
+      } else {
+        this.blinkStep += deltaTime;
+      }
+    }
+
+    const backCanvas = this.loadingCanvas.backBuffer;
+
+    backCanvas.width = this.loadingCanvas.width;
+    backCanvas.height = this.loadingCanvas.height;
+
+    const backContext = backCanvas.getContext("2d");
+    const frontContext = this.loadingCanvas.getContext("2d");
+    const dotRadius = 4.0 * window.devicePixelRatio;
+    const blinkInterval = 3.0;
+    const currentTime = this.blinkStep;
+    let x = dotRadius;
+    
+    backContext.imageSmoothingEnabled = true;
+    backContext.imageSmoothingQuality = "high";
+    backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+    backContext.save();
+    
+    for (let i = 0; i < 3; i++) {
+      const phase = (currentTime - (i * 0.5) + blinkInterval) % blinkInterval;
+      
+      backContext.save();
+      backContext.globalAlpha = 0.5 + 0.5 * Math.sin((phase / blinkInterval) * Math.PI * 2);
+      backContext.beginPath();
+      backContext.arc(x, dotRadius, dotRadius, 0, Math.PI * 2.0);
+      backContext.fillStyle = this.backgroundColor;
+      backContext.fill();
+      backContext.closePath();
+      backContext.restore();
+
+      x += dotRadius * 4.0;
+    }
+
+    backContext.restore();
+    frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+    frontContext.globalAlpha = Math.sin(this.loadingStep / 2.0 * Math.PI);
+    frontContext.drawImage(backCanvas, 0, 0);
+
+    backCanvas.width = backCanvas.height = 0;
   }
 
   renderBalloon(deltaTime) {
