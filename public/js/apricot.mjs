@@ -340,6 +340,8 @@ export class Agent {
   talk(content = null) {
     this.isLoading = true;
 
+    console.log(content);
+
     new Promise(async (resolve) => {
       const messages = [{ role: "system", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
       const commands = [];
@@ -360,15 +362,14 @@ export class Agent {
           mode: "cors",
           method: "POST",
           headers: this.apiKey === null ? { "Content-Type": "application/json" } : { "Authorization": `Bearer ${this.apiKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ model: "gpt-4o", temperature: this.temperature, messages: messages })
+          body: JSON.stringify(this.apiKey === null ? { temperature: this.temperature, messages: messages } : { model: "gpt-4o", temperature: this.temperature, messages: messages })
         });
 
         if (response.ok) {
           let json = await response.json();
 
-          if ("choices" in json && json.choices.length > 0) {
+          if ("id" in json && "model" in json && "choices" in json && json.choices.length > 0) {
             const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
-
             if (match === null) {
               json = JSON.parse(json.choices[0].message.content);
             } else {
