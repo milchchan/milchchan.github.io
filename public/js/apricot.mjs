@@ -67,7 +67,7 @@ export class Agent {
   constructor(scale = 1.0, temperature = 1.0) {
     const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--apricot-font-family");
 
-    this.isDebug = true;
+    this.isDebug = false;
     this.isLoading = false;
     this.domElement = null;
     this.scale = scale;
