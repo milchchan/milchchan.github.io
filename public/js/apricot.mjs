@@ -80,6 +80,7 @@ export class Agent {
     this.stats = { time: this.previousTime, frames: 0, target: document.createElement("span") };
     this.balloonBackgroundColor = "rgb(0 0 0 / 0.75)";
     this.balloonRadius = 48;
+    this.balloonWidth = null;
     this.messageHeight = 0;
     this.messageQueue = [];
     this.animationQueue = [];
@@ -139,6 +140,10 @@ export class Agent {
       }
     } catch (error) {
       console.error(error);
+    }
+
+    if (this.balloonWidth === null) {
+      this.balloonWidth = this.character.width;
     }
 
     for (const animation of this.character.animations) {
@@ -205,11 +210,11 @@ export class Agent {
       balloonCanvas.classList.add("balloon");
       balloonCanvas["backBuffer"] = document.createElement("canvas");
       balloonCanvas.style.position = "absolute";
-      balloonCanvas.width = Math.floor(this.character.width * window.devicePixelRatio);
+      balloonCanvas.width = Math.floor(this.balloonWidth * window.devicePixelRatio);
       balloonCanvas.height = 0;
-      balloonCanvas.style.left = `${Math.floor(-(this.character.width - this.character.width * this.scale) / 2 + this.character.x)}px`;
+      balloonCanvas.style.left = `${Math.floor(-(this.balloonWidth - this.character.width * this.scale) / 2 + this.character.x)}px`;
       balloonCanvas.style.bottom = `${Math.floor(height - this.character.y)}px`;
-      balloonCanvas.style.width = `${Math.floor(this.character.width)}px`;
+      balloonCanvas.style.width = `${Math.floor(this.balloonWidth)}px`;
       balloonCanvas.style.height = "0px";
       balloonCanvas.style.backgroundColor = "transparent";
       balloonCanvas.style.opacity = 0;
@@ -681,7 +686,7 @@ export class Agent {
             backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
             backContext.save();
 
-            this.drawBalloonPath(backContext, this.balloonCanvas.width, Math.ceil((this.messageHeight + this.lineHeight * 2) * window.devicePixelRatio), Math.ceil(11 * window.devicePixelRatio), Math.ceil(11 * window.devicePixelRatio), Math.ceil(this.balloonRadius * window.devicePixelRatio));
+            this.drawBalloonPath(backContext, Math.floor(this.balloonWidth * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight * 2) * window.devicePixelRatio), Math.floor(11 * window.devicePixelRatio), Math.floor(11 * window.devicePixelRatio), Math.floor(this.balloonRadius * window.devicePixelRatio));
             backContext.fillStyle = this.balloonBackgroundColor;
             backContext.fill();
             
@@ -775,7 +780,7 @@ export class Agent {
   }
 
   show(message, duration = 5.0, speed = 50) {
-    const maxLineWidth = Math.ceil(this.balloonCanvas.width - this.lineHeight * 2 * window.devicePixelRatio);
+    const maxLineWidth = Math.ceil((this.balloonWidth - this.lineHeight * 2) * window.devicePixelRatio);
     const fontSize = this.fontSize * window.devicePixelRatio;
     const backCanvas = this.balloonCanvas.backBuffer;
     let text = String();
@@ -875,7 +880,7 @@ export class Agent {
     }
 
     this.messageHeight = this.lineHeight * count;
-    this.balloonCanvas.height = Math.ceil((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
+    this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
     this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2)}px`;
     this.balloonCanvas.style.visibility = "visible";
     this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false });
@@ -883,7 +888,7 @@ export class Agent {
     backCanvas.width = this.balloonCanvas.width;
     backCanvas.height = this.balloonCanvas.height;
     
-    this.drawBalloonPath(backContext, this.balloonCanvas.width, Math.ceil((this.messageHeight + this.lineHeight * 2) * window.devicePixelRatio), Math.ceil(11 * window.devicePixelRatio), Math.ceil(11 * window.devicePixelRatio), Math.ceil(this.balloonRadius * window.devicePixelRatio));
+    this.drawBalloonPath(backContext, Math.floor(this.balloonWidth * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight * 2) * window.devicePixelRatio), Math.floor(11 * window.devicePixelRatio), Math.floor(11 * window.devicePixelRatio), Math.floor(this.balloonRadius * window.devicePixelRatio));
     backContext.fillStyle = this.balloonBackgroundColor;
     backContext.fill();
 
