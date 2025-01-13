@@ -65,37 +65,39 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             bucket = storage_client.bucket(bucket_name)
                             blob = bucket.blob(path)
 
-                            if not blob.exists():
-                                blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
-                                
-                                url = f'gs://{bucket_name}{urljoin("/", path)}'
-                                Session = sessionmaker(bind=engine)
-                                session = Session()
+                            if blob.exists():
+                                return func.HttpResponse(status_code=409, mimetype='', charset='')
+                            
+                            blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
+                            
+                            url = f'gs://{bucket_name}{urljoin("/", path)}'
+                            Session = sessionmaker(bind=engine)
+                            session = Session()
 
-                                try:
-                                    upload = Upload()
-                                    upload.url = url
-                                    upload.type = mime_type
-                                    upload.random = random.random()
-                                    upload.timestamp = blob.time_created
+                            try:
+                                upload = Upload()
+                                upload.url = url
+                                upload.type = mime_type
+                                upload.random = random.random()
+                                upload.timestamp = blob.time_created
 
-                                    session.add(upload)
-                                    session.commit()
+                                session.add(upload)
+                                session.commit()
 
-                                    uploads.append({
-                                        'id': identifier,
-                                        'url': url,
-                                        'type': mime_type,
-                                        'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                                    })
-                                
-                                except Exception as e:
-                                    session.rollback()
+                                uploads.append({
+                                    'id': identifier,
+                                    'url': url,
+                                    'type': mime_type,
+                                    'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
+                                })
+                            
+                            except Exception as e:
+                                session.rollback()
 
-                                    raise e
+                                raise e
 
-                                finally:
-                                    session.close()
+                            finally:
+                                session.close()
 
                 return func.HttpResponse(json.dumps(uploads), status_code=201, mimetype='application/json', charset='utf-8')
             
@@ -122,71 +124,73 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             else:
                                 raise
 
-                        if not file_is_exists:
-                            s3.upload_fileobj(file.stream, 'uploads', identifier, ExtraArgs={'ContentType': file.content_type})
-                            response = s3.head_object(Bucket='uploads', Key=identifier)
-                            '''
-                            bucket_name = 'milchchan.appspot.com'
-                            path = os.path.join('uploads', identifier)
-                            credentials = service_account.Credentials.from_service_account_info({
-                                'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
-                                'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
-                                'private_key_id': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY_ID'],
-                                'private_key': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
-                                'client_email': os.environ['FIREBASE_CREDENTIALS_CLIENT_EMAIL'],
-                                'client_id': os.environ['FIREBASE_CREDENTIALS_CLIENT_ID'],
-                                'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
-                                'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
-                                'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
-                                'client_x509_cert_url': os.environ['FIREBASE_CREDENTIALS_CLIENT_X509_CERT_URL']
+                        if file_is_exists:
+                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+                        
+                        s3.upload_fileobj(file.stream, 'uploads', identifier, ExtraArgs={'ContentType': file.content_type})
+                        response = s3.head_object(Bucket='uploads', Key=identifier)
+                        '''
+                        bucket_name = 'milchchan.appspot.com'
+                        path = os.path.join('uploads', identifier)
+                        credentials = service_account.Credentials.from_service_account_info({
+                            'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
+                            'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
+                            'private_key_id': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY_ID'],
+                            'private_key': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
+                            'client_email': os.environ['FIREBASE_CREDENTIALS_CLIENT_EMAIL'],
+                            'client_id': os.environ['FIREBASE_CREDENTIALS_CLIENT_ID'],
+                            'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
+                            'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
+                            'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
+                            'client_x509_cert_url': os.environ['FIREBASE_CREDENTIALS_CLIENT_X509_CERT_URL']
+                        })
+                        scoped_credentials = credentials.with_scopes(
+                            ['https://www.googleapis.com/auth/cloud-platform'])
+                        storage_client = storage.Client(
+                            credentials=scoped_credentials, project=scoped_credentials.project_id)
+                        bucket = storage_client.bucket(bucket_name)
+                        blob = bucket.blob(path)
+
+                        if not blob.exists():
+                            blob.upload_from_file(file.stream, content_type=file.content_type)
+                            
+                            if file.content_type == 'application/zip':
+                                file.stream.seek(0)
+                                temp_blob = bucket.blob(os.path.join(path, file.filename))
+                                temp_blob.upload_from_file(file.stream, content_type=file.content_type)
+                        
+                        url = f'gs://{bucket_name}{urljoin("/", path)}'
+                        '''
+
+                        url = urljoin('https://static.milchchan.com', identifier)
+
+                        Session = sessionmaker(bind=engine)
+                        session = Session()
+
+                        try:
+                            upload = Upload()
+                            upload.url = url
+                            upload.type = file.content_type
+                            upload.random = random.random()
+                            upload.timestamp = response['LastModified']
+
+                            session.add(upload)
+                            session.commit()
+
+                            uploads.append({
+                                'id': identifier,
+                                'url': url,
+                                'type': file.content_type,
+                                'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
                             })
-                            scoped_credentials = credentials.with_scopes(
-                                ['https://www.googleapis.com/auth/cloud-platform'])
-                            storage_client = storage.Client(
-                                credentials=scoped_credentials, project=scoped_credentials.project_id)
-                            bucket = storage_client.bucket(bucket_name)
-                            blob = bucket.blob(path)
+                        
+                        except Exception as e:
+                            session.rollback()
 
-                            if not blob.exists():
-                                blob.upload_from_file(file.stream, content_type=file.content_type)
-                                
-                                if file.content_type == 'application/zip':
-                                    file.stream.seek(0)
-                                    temp_blob = bucket.blob(os.path.join(path, file.filename))
-                                    temp_blob.upload_from_file(file.stream, content_type=file.content_type)
-                            
-                            url = f'gs://{bucket_name}{urljoin("/", path)}'
-                            '''
+                            raise e
 
-                            url = urljoin('https://static.milchchan.com', identifier)
-
-                            Session = sessionmaker(bind=engine)
-                            session = Session()
-
-                            try:
-                                upload = Upload()
-                                upload.url = url
-                                upload.type = file.content_type
-                                upload.random = random.random()
-                                upload.timestamp = response['LastModified']
-
-                                session.add(upload)
-                                session.commit()
-
-                                uploads.append({
-                                    'id': identifier,
-                                    'url': url,
-                                    'type': file.content_type,
-                                    'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                                })
-                            
-                            except Exception as e:
-                                session.rollback()
-
-                                raise e
-
-                            finally:
-                                session.close()
+                        finally:
+                            session.close()
 
                     elif file.content_type == 'application/zip':
                         identifier = str(uuid4())
@@ -207,15 +211,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             else:
                                 raise
 
-                        if not file_is_exists:
-                            s3.upload_fileobj(file.stream, 'uploads', identifier, ExtraArgs={'ContentType': file.content_type, 'Metadata': {'filename': file.filename}})
-                            response = s3.head_object(Bucket='uploads', Key=identifier)
-                            uploads.append({
-                                'id': identifier,
-                                'url': urljoin('https://static.milchchan.com', identifier),
-                                'type': file.content_type,
-                                'timestamp': int(response['LastModified'].replace(tzinfo=timezone.utc).timestamp())
-                            })
+                        if file_is_exists:
+                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+                        
+                        s3.upload_fileobj(file.stream, 'uploads', identifier, ExtraArgs={'ContentType': file.content_type, 'Metadata': {'filename': file.filename}})
+                        response = s3.head_object(Bucket='uploads', Key=identifier)
+                        uploads.append({
+                            'id': identifier,
+                            'url': urljoin('https://static.milchchan.com', identifier),
+                            'type': file.content_type,
+                            'timestamp': int(response['LastModified'].replace(tzinfo=timezone.utc).timestamp())
+                        })
                 
                 if len(uploads) > 0:
                     cache_names = scan_cache(f'{urlparse(req.url).path}*')
@@ -259,37 +265,39 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         bucket = storage_client.bucket(bucket_name)
                         blob = bucket.blob(path)
 
-                        if not blob.exists():
-                            blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
-                            
-                            url = f'gs://{bucket_name}{urljoin("/", path)}'
-                            Session = sessionmaker(bind=engine)
-                            session = Session()
+                        if blob.exists():
+                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+                        
+                        blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
+                        
+                        url = f'gs://{bucket_name}{urljoin("/", path)}'
+                        Session = sessionmaker(bind=engine)
+                        session = Session()
 
-                            try:
-                                upload = Upload()
-                                upload.url = url
-                                upload.type = mime_type
-                                upload.random = random.random()
-                                upload.timestamp = blob.time_created
+                        try:
+                            upload = Upload()
+                            upload.url = url
+                            upload.type = mime_type
+                            upload.random = random.random()
+                            upload.timestamp = blob.time_created
 
-                                session.add(upload)
-                                session.commit()
+                            session.add(upload)
+                            session.commit()
 
-                                return func.HttpResponse(json.dumps({
-                                    'id': identifier,
-                                    'url': url,
-                                    'type': mime_type,
-                                    'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                                }), status_code=201, mimetype='application/json', charset='utf-8')
-                            
-                            except Exception as e:
-                                session.rollback()
+                            return func.HttpResponse(json.dumps({
+                                'id': identifier,
+                                'url': url,
+                                'type': mime_type,
+                                'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
+                            }), status_code=201, mimetype='application/json', charset='utf-8')
+                        
+                        except Exception as e:
+                            session.rollback()
 
-                                raise e
+                            raise e
 
-                            finally:
-                                session.close()
+                        finally:
+                            session.close()
 
         else:
             nonce = req.params['nonce'] if 'nonce' in req.params else None
