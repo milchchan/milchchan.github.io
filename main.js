@@ -951,7 +951,7 @@ window.addEventListener("load", async event => {
           };
         });
 
-        const promisess = [new Promise(async (resolve, reject) => {
+        /*const promisess = [new Promise(async (resolve, reject) => {
           try {
             const response = await fetch(encodeURI(`https://milchchan.com/api/likes?language=${document.documentElement.lang}`), {
               mode: "cors",
@@ -1091,9 +1091,9 @@ window.addEventListener("load", async event => {
           }
         } catch (error) {
           console.error(error);
-        }
+        }*/
         
-        /*try {
+        try {
           const response = await fetch(encodeURI(`https://milchchan.com/api/likes?language=${document.documentElement.lang}`), {
             mode: "cors",
             method: "GET",
@@ -1204,7 +1204,7 @@ window.addEventListener("load", async event => {
           } catch (error) {
             console.error(error);
           }
-        }*/
+        }
 
         if (background.queue.length > 0) {
           const data = background.queue.shift();
