@@ -447,6 +447,13 @@ export class Agent {
           this.logs.splice(0);
         }
       } else {
+        const animations = this.character.animations.filter(x => x.name === "Error");
+    
+        if (animations.length > 0) {
+          this.animationQueue.push(animations[~~random(0, animations.length)]);
+          this.animationQueue.push(null);
+        }
+
         this.logs.splice(0);
       }
 
@@ -482,7 +489,7 @@ export class Agent {
         backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
         backContext.save();
         backContext.globalAlpha = frame.opacity;
-        backContext.drawImage(this.cachedImages[frame.url], frame.x * this.scale * window.devicePixelRatio, frame.y * this.scale * window.devicePixelRatio, frame.width * this.scale * window.devicePixelRatio, frame.height * this.scale * window.devicePixelRatio);
+        backContext.drawImage(this.cachedImages[frame.url], (this.character.x + frame.x) * this.scale * window.devicePixelRatio, (this.character.y + frame.y) * this.scale * window.devicePixelRatio, frame.width * this.scale * window.devicePixelRatio, frame.height * this.scale * window.devicePixelRatio);
         backContext.restore();
         frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
         frontContext.drawImage(backCanvas, 0, 0);
