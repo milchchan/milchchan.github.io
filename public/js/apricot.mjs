@@ -368,7 +368,7 @@ export class Agent {
           mode: "cors",
           method: "POST",
           headers: this.apiKey === null ? { "Content-Type": "application/json" } : { "Authorization": `Bearer ${this.apiKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify(this.apiKey === null ? { temperature: this.temperature, messages: messages } : { model: "gpt-4o", temperature: this.temperature, messages: messages })
+          body: JSON.stringify(this.apiKey === null ? { temperature: this.temperature, messages: messages } : { model: "chatgpt-4o-latest", temperature: this.temperature, messages: messages })
         });
 
         if (response.ok) {
