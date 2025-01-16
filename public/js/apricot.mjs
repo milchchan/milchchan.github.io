@@ -451,7 +451,6 @@ export class Agent {
     
         if (animations.length > 0) {
           this.animationQueue.push(animations[~~random(0, animations.length)]);
-          this.animationQueue.push(null);
         }
 
         this.logs.splice(0);
