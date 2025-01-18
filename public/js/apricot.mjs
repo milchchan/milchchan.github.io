@@ -348,7 +348,7 @@ export class Agent {
     console.log(content);
 
     new Promise(async (resolve) => {
-      const messages = [{ role: "system", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
+      const messages = [{ role: "developer", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
       let message = null;
       let animation = null;
       const choices = [];
