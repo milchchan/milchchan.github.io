@@ -38,7 +38,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                         else:
                             data = req.get_json()
-                            request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'messages': data['messages']} if 'temperature' in data else {'model': os.environ['OPENAI_MODEL'], 'messages': data['messages'], 'temperature': data['temperature']}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
+                            messages = []
+
+                            for message in data['messages']:
+                                if message['role'] == 'system':
+                                    contents.append({'role': 'developer', 'content': message['content']})
+                                else:
+                                    contents.append(message)
+
+                            request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': data['temperature']} if 'temperature' in data else {'model': os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
                             with urlopen(request) as response:
                                 for choice in json.loads(response.read().decode('utf-8'))['choices']:
