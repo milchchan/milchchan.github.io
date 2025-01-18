@@ -199,10 +199,27 @@ export class Agent {
       characterCanvas.style.backgroundColor = "transparent";
       characterCanvas.addEventListener("click", (event) => {
         if (!this.isLoading) {
-          if (this.choices.length > 0) {
-            this.talk(this.choices[~~random(0, this.choices.length)]);
-          } else {
-            this.talk();
+          const popupElement = document.body.querySelector("#apricot div.popup");
+
+          if (popupElement === null) {
+            if (this.choices.length > 0) {
+              this.popup(this.choices);
+            }
+          } else if (popupElement.dataset.state !== "animating") {
+            popupElement.dataset.state = "animating";
+            popupElement.animate([
+              {
+                transform: "translate3d(-50%, -50%, 0) scale(1.1, 1.1)",
+                opacity: "0"
+              }
+            ], {
+              fill: "forwards",
+              duration: 500,
+              iterations: 1,
+              easing: "ease-in"
+            }).onfinish = () => {
+              popupElement.remove();
+            };
           }
         }
       });
@@ -464,6 +481,84 @@ export class Agent {
     this.commandQueue.push(message);
     this.commandQueue.push(animation);
     this.commandQueue.push(null);
+  }
+
+  popup(choices) {
+    const popupElement = document.createElement("div");
+
+    popupElement.classList.add("popup");
+    popupElement.style.display = "flex";
+    popupElement.style.flexDirection = "column";
+    popupElement.style.position = "absolute";
+    popupElement.style.left = "50%";
+    popupElement.style.top = "50%";
+    popupElement.style.borderRadius = `${Math.floor(this.balloonRadius / 2)}px`;
+    popupElement.style.padding = "0px";
+    popupElement.style.width = "fit-content";
+    popupElement.style.height = "fit-content";
+    popupElement.style.width = `${Math.floor(this.balloonWidth)}px`;
+    popupElement.style.background = this.balloonBackgroundColor;
+    popupElement.style.transform = "translate3d(-50%, -50%, 0) scale(1.1, 1.1)";
+    popupElement.style.opacity = 0.0;
+    popupElement.style.overflow = "hidden";
+
+    for (let i = 0; i < choices.length; i++) {
+      const buttonElement = document.createElement("button");
+
+      buttonElement.dataset["choice"] = choices[i];
+      buttonElement.textContent = choices[i];
+      buttonElement.style.backgroundColor = "transparent";
+      buttonElement.style.borderLeft = "0px solid transparent";
+      buttonElement.style.borderTop = i > 0 ? `1px solid ${this.balloonBackgroundColor}` : "0px solid transparent";
+      buttonElement.style.borderRight = "0px solid transparent";
+      buttonElement.style.borderBottom = "0px solid transparent";
+      buttonElement.style.padding = `${Math.floor(this.lineHeight / 4)}px`;
+      buttonElement.style.fontFamily = this.fontFamily;
+      buttonElement.style.fontSize = `${this.fontSize}px`;
+      buttonElement.style.fontWeight = "bold";
+      buttonElement.style.lineHeight = `${this.lineHeight}px`;
+      buttonElement.style.color = this.textColor;
+      buttonElement.addEventListener("click", (event) => {
+        const target = (event.currentTarget || event.target);
+
+        this.talk(target.dataset['choice']);
+
+        if (!popupElement.dataset.state !== "animating") {
+          popupElement.dataset.state = "animating";
+          popupElement.animate([
+            {
+              transform: "translate3d(-50%, -50%, 0) scale(1.1, 1.1)",
+              opacity: "0"
+            }
+          ], {
+            fill: "forwards",
+            duration: 500,
+            iterations: 1,
+            easing: "ease-in"
+          }).onfinish = () => {
+            popupElement.remove();
+          };
+        }
+      });
+
+      popupElement.appendChild(buttonElement);
+    }
+
+    this.balloonCanvas.after(popupElement);
+
+    popupElement.animate([
+      {
+        transform: "translate3d(-50%, -50%, 0) scale(1, 1)",
+        opacity: "1"
+      }
+    ], {
+      fill: "forwards",
+      duration: 500,
+      iterations: 1,
+      easing: "ease-out"
+    }).onfinish = () => {
+      popupElement.style.opacity = 1;
+    };
   }
 
   renderCharacter(deltaTime) {
