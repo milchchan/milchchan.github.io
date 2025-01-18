@@ -650,8 +650,6 @@
         animation-play-state: running;
       }
 
-
-
       @keyframes fade {
         from {
           opacity: 0;
@@ -748,6 +746,23 @@
         }
       }
 
+      div.popup {
+        background: rgb(255 255 255 / 1.0) !important;
+        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
+      }
+
+      div.popup>button {
+        color: #000000 !important;
+      }
+
+      div.popup>button {
+        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif !important;
+      }
+
+      div.popup>button:not(:last-child) {
+        border-bottom: 1px solid hsl(0, 0%, 93%) !important;
+      }
+
       span.stats {
         margin: 0;
         padding: 1px;
@@ -761,12 +776,12 @@
         color: #ffffff;
         opacity: 0;
         transition: .5s;
-    }
+      }
 
-    span.stats:hover {
+      span.stats:hover {
         opacity: 1;
         transition: .5s;
-    }
+      }
     </style>
   </head>
 
