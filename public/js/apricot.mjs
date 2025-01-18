@@ -87,6 +87,7 @@ export class Agent {
     this.commandQueue = [];
     this.cachedImages = {};
     this.textColor = "rgb(255 255 255)";
+    this.accentColor = "#ffc7e5";
     this.lineHeight = 32;
     this.fontSize = 16;
     this.fontWeight = "bold";
@@ -95,6 +96,7 @@ export class Agent {
     this.loadingStep = null;
     this.blinkStep = 0.0;
     this.choices = [];
+    this.likability = null;
     this.logs = [];
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
@@ -362,13 +364,12 @@ export class Agent {
   talk(content = null) {
     this.isLoading = true;
 
-    console.log(content);
-
     new Promise(async (resolve) => {
       const messages = [{ role: "developer", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
       let message = null;
       let animation = null;
       const choices = [];
+      let likability = null;
       const logs = [];
 
       for (const log of this.logs) {
@@ -408,6 +409,10 @@ export class Agent {
               choices.push(...json.choices);
             }
 
+            if ("likability" in json) {
+              likability = json.likability;
+            }
+
             if ("states" in json) {
               let maxScore = Number.MIN_SAFE_INTEGER;
               let state = null;
@@ -443,12 +448,16 @@ export class Agent {
         commands.splice(0);
       }
 
-      resolve([message, animation, choices, logs]);
+      resolve([message, animation, choices, likability, logs]);
     }).then((value) => {
-      const [message, animation, choices, logs] = value;
+      const [message, animation, choices, likability, logs] = value;
 
       if (message !== null && animation !== null) {
         this.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+
+        if (likability !== null) {
+          this.likability = likability;
+        }
 
         if (choices.length > 0) {
           const maxLogSize = 4;
@@ -774,7 +783,7 @@ export class Agent {
             const backContext = backCanvas.getContext("2d");
             const frontContext = this.balloonCanvas.getContext("2d");
             const squarePath = new Path2D();
-
+            
             backContext.imageSmoothingEnabled = true;
             backContext.imageSmoothingQuality = "high";
             backContext.textAlign = "left";
@@ -787,6 +796,27 @@ export class Agent {
             this.drawBalloonPath(backContext, Math.floor(this.balloonWidth * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight * 2) * window.devicePixelRatio), Math.floor(11 * window.devicePixelRatio), Math.floor(11 * window.devicePixelRatio), Math.floor(this.balloonRadius * window.devicePixelRatio));
             backContext.fillStyle = this.balloonBackgroundColor;
             backContext.fill();
+
+            if (this.likability !== null) {
+              const heartSize = 16;
+              const clipPath = new Path2D();
+              
+              clipPath.rect(Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0 + Math.ceil(heartSize * (1.0 - this.likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * this.likability) * window.devicePixelRatio))
+              
+              backContext.save();
+              this.drawHeart(backContext, Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+              backContext.globalAlpha = 0.5;
+              backContext.fillStyle = this.accentColor;
+              backContext.fill();
+              backContext.restore();
+
+              backContext.save();
+              backContext.clip(clipPath);
+              this.drawHeart(backContext, Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+              backContext.fillStyle = this.accentColor;
+              backContext.fill();
+              backContext.restore();
+            }
             
             backContext.fillStyle = this.textColor;
             squarePath.rect(Math.floor(this.lineHeight * window.devicePixelRatio), Math.floor(this.lineHeight * window.devicePixelRatio), Math.ceil(this.balloonCanvas.width - this.lineHeight * 2 * window.devicePixelRatio), Math.ceil(this.messageHeight * window.devicePixelRatio));
@@ -979,7 +1009,7 @@ export class Agent {
 
     this.messageHeight = this.lineHeight * count;
     this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
-    this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2)}px`;
+    this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2 + 11)}px`;
     this.balloonCanvas.style.visibility = "visible";
     this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false });
   
@@ -989,6 +1019,25 @@ export class Agent {
     this.drawBalloonPath(backContext, Math.floor(this.balloonWidth * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight * 2) * window.devicePixelRatio), Math.floor(11 * window.devicePixelRatio), Math.floor(11 * window.devicePixelRatio), Math.floor(this.balloonRadius * window.devicePixelRatio));
     backContext.fillStyle = this.balloonBackgroundColor;
     backContext.fill();
+
+    if (this.likability !== null) {
+      const heartSize = 16;
+      const clipPath = new Path2D();
+      
+      clipPath.rect(Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0 + Math.ceil(heartSize * (1.0 - this.likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * this.likability) * window.devicePixelRatio))
+      
+      backContext.save();
+      this.drawHeart(backContext, Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+      backContext.globalAlpha = 0.5;
+      backContext.fillStyle = this.accentColor;
+      backContext.fill();
+      backContext.restore();
+
+      backContext.clip(clipPath);
+      this.drawHeart(backContext, Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+      backContext.fillStyle = this.accentColor;
+      backContext.fill();
+    }
 
     backContext.restore();
     frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
@@ -1013,6 +1062,18 @@ export class Agent {
     ctx.bezierCurveTo(radius * (1.0 - k), messageHeight, 0.0, messageHeight - radius * (1.0 - k), 0.0, messageHeight - radius);
     ctx.lineTo(0.0, radius);
     ctx.bezierCurveTo(0.0, radius * (1.0 - k), radius * (1.0 - k), 0.0, radius, 0.0);
+    ctx.closePath();
+  }
+
+  drawHeart(ctx, x, y, width, height) {
+    const topCurveHeight = height * 0.3;
+
+    ctx.beginPath();
+    ctx.moveTo(x + width / 2, y + topCurveHeight);
+    ctx.bezierCurveTo(x + width / 2, y, x, y, x, y + topCurveHeight);
+    ctx.bezierCurveTo(x, y + (height + topCurveHeight) / 2, x + width / 2, y + (height + topCurveHeight) / 2, x + width / 2, y + height);
+    ctx.bezierCurveTo(x + width / 2, y + (height + topCurveHeight) / 2, x + width, y + (height + topCurveHeight) / 2, x + width, y + topCurveHeight);
+    ctx.bezierCurveTo(x + width, y, x + width / 2, y, x + width / 2, y + topCurveHeight);
     ctx.closePath();
   }
 }
