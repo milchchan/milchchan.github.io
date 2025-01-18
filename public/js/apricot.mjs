@@ -798,21 +798,18 @@ export class Agent {
             backContext.fill();
 
             if (this.likability !== null) {
-              const heartSize = 16;
+              const heartSize = 12;
               const clipPath = new Path2D();
               
-              clipPath.rect(Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0 + Math.ceil(heartSize * (1.0 - this.likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * this.likability) * window.devicePixelRatio))
+              clipPath.rect(Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0 + Math.ceil(heartSize * (1.0 - this.likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * this.likability) * window.devicePixelRatio))
               
               backContext.save();
-              this.drawHeart(backContext, Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+              this.drawHeart(backContext, Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
               backContext.globalAlpha = 0.5;
               backContext.fillStyle = this.accentColor;
               backContext.fill();
-              backContext.restore();
-
-              backContext.save();
               backContext.clip(clipPath);
-              this.drawHeart(backContext, Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+              this.drawHeart(backContext, Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
               backContext.fillStyle = this.accentColor;
               backContext.fill();
               backContext.restore();
@@ -1021,22 +1018,21 @@ export class Agent {
     backContext.fill();
 
     if (this.likability !== null) {
-      const heartSize = 16;
+      const heartSize = 12;
       const clipPath = new Path2D();
       
-      clipPath.rect(Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0 + Math.ceil(heartSize * (1.0 - this.likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * this.likability) * window.devicePixelRatio))
+      clipPath.rect(Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0 + Math.ceil(heartSize * (1.0 - this.likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * this.likability) * window.devicePixelRatio))
       
       backContext.save();
-      this.drawHeart(backContext, Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+      this.drawHeart(backContext, Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
       backContext.globalAlpha = 0.5;
       backContext.fillStyle = this.accentColor;
       backContext.fill();
-      backContext.restore();
-
       backContext.clip(clipPath);
-      this.drawHeart(backContext, Math.floor((this.balloonWidth - this.lineHeight - heartSize) * window.devicePixelRatio), Math.floor((this.messageHeight + this.lineHeight + (this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+      this.drawHeart(backContext, Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
       backContext.fillStyle = this.accentColor;
       backContext.fill();
+      backContext.restore();
     }
 
     backContext.restore();
