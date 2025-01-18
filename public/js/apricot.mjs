@@ -209,7 +209,7 @@ export class Agent {
             popupElement.dataset.state = "animating";
             popupElement.animate([
               {
-                transform: "translate3d(-50%, -50%, 0) scale(1.1, 1.1)",
+                transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
                 opacity: "0"
               }
             ], {
@@ -489,17 +489,16 @@ export class Agent {
     popupElement.classList.add("popup");
     popupElement.style.display = "flex";
     popupElement.style.flexDirection = "column";
-    popupElement.style.position = "absolute";
+    popupElement.style.position = "fixed";
     popupElement.style.left = "50%";
-    popupElement.style.top = "50%";
+    popupElement.style.bottom = "50%";
     popupElement.style.borderRadius = `${Math.floor(this.balloonRadius / 2)}px`;
-    popupElement.style.padding = "0px";
     popupElement.style.width = "fit-content";
     popupElement.style.height = "fit-content";
     popupElement.style.width = `${Math.floor(this.balloonWidth)}px`;
     popupElement.style.background = this.balloonBackgroundColor;
-    popupElement.style.transform = "translate3d(-50%, -50%, 0) scale(1.1, 1.1)";
-    popupElement.style.opacity = 0.0;
+    popupElement.style.transform = "translate3d(-50%, 50%, 0) scale(1.1, 1.1)";
+    popupElement.style.opacity = 0;
     popupElement.style.overflow = "hidden";
 
     for (let i = 0; i < choices.length; i++) {
@@ -508,11 +507,8 @@ export class Agent {
       buttonElement.dataset["choice"] = choices[i];
       buttonElement.textContent = choices[i];
       buttonElement.style.backgroundColor = "transparent";
-      buttonElement.style.borderLeft = "0px solid transparent";
-      buttonElement.style.borderTop = i > 0 ? `1px solid ${this.balloonBackgroundColor}` : "0px solid transparent";
-      buttonElement.style.borderRight = "0px solid transparent";
-      buttonElement.style.borderBottom = "0px solid transparent";
-      buttonElement.style.padding = `${Math.floor(this.lineHeight / 4)}px`;
+      buttonElement.style.border = "0px solid transparent";;
+      buttonElement.style.padding = `${Math.floor(this.lineHeight / 2)}px ${Math.floor(this.lineHeight)}px`;
       buttonElement.style.fontFamily = this.fontFamily;
       buttonElement.style.fontSize = `${this.fontSize}px`;
       buttonElement.style.fontWeight = "bold";
@@ -527,7 +523,7 @@ export class Agent {
           popupElement.dataset.state = "animating";
           popupElement.animate([
             {
-              transform: "translate3d(-50%, -50%, 0) scale(1.1, 1.1)",
+              transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
               opacity: "0"
             }
           ], {
@@ -548,7 +544,7 @@ export class Agent {
 
     popupElement.animate([
       {
-        transform: "translate3d(-50%, -50%, 0) scale(1, 1)",
+        transform: "translate3d(-50%, 50%, 0) scale(1, 1)",
         opacity: "1"
       }
     ], {
@@ -557,6 +553,7 @@ export class Agent {
       iterations: 1,
       easing: "ease-out"
     }).onfinish = () => {
+      popupElement.style.transform = "translate3d(-50%, 50%, 0) scale(1, 1)";
       popupElement.style.opacity = 1;
     };
   }
