@@ -1873,14 +1873,14 @@
                     const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
     
                     if (element2.dataset.type === "milch") {
-                      agent.domElement.classList.add("is-active");
-                      agent.domElement.style.pointerEvents = "auto";
+                      agent.dom.classList.add("is-active");
+                      agent.dom.style.pointerEvents = "auto";
                     } else {
-                      if (agent.domElement.classList.contains("is-active")) {
-                        agent.domElement.classList.remove("is-active");
+                      if (agent.dom.classList.contains("is-active")) {
+                        agent.dom.classList.remove("is-active");
                       }
 
-                      agent.domElement.style.pointerEvents = "none";
+                      agent.dom.style.pointerEvents = "none";
                     }
 
                     element2.classList.add("is-selected");
@@ -2350,14 +2350,14 @@
             background.appendChild(image);
 
             if (element.dataset.type === "milch") {
-              agent.domElement.classList.add("is-active");
-              agent.domElement.style.pointerEvents = "auto";
+              agent.dom.classList.add("is-active");
+              agent.dom.style.pointerEvents = "auto";
             } else {
-              if (agent.domElement.classList.contains("is-active")) {
-                agent.domElement.classList.remove("is-active");
+              if (agent.dom.classList.contains("is-active")) {
+                agent.dom.classList.remove("is-active");
               }
 
-              agent.domElement.style.pointerEvents = "none";
+              agent.dom.style.pointerEvents = "none";
             }
             
             const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
