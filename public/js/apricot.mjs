@@ -114,6 +114,10 @@ export class Agent {
       this.talk(choice);
     }
   }
+  
+  get dom() {
+    return this.domElement;
+  }
 
   async load(url) {
     try {
