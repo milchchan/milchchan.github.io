@@ -116,34 +116,37 @@ export class Agent {
 
       if (response.ok) {
         const character = await response.json();
-        
-        response = await fetch(character.prompt, {
-          mode: "cors",
-          method: "GET"
-        });
-  
-        if (response.ok) {
-          character.prompt = await response.text();
-          character.animations = character.animations.reduce((x, y) => {
-            const frames = [];
 
-            for (const frame of y.frames) {
-              frame.delay = Math.max(frame.delay, 0.01);
+        if (/\.txt$/i.test(character.prompt)) {
+          response = await fetch(character.prompt, {
+            mode: "cors",
+            method: "GET"
+          });
+    
+          if (response.ok) {
+            character.prompt = await response.text();
+          }
+        }
 
-              if ("opacity" in frame === false) {
-                frame["opacity"] = 1.0;
-              }
+        character.animations = character.animations.reduce((x, y) => {
+          const frames = [];
 
-              frames.push(frame);
+          for (const frame of y.frames) {
+            frame.delay = Math.max(frame.delay, 0.01);
+
+            if ("opacity" in frame === false) {
+              frame["opacity"] = 1.0;
             }
 
-            x.push(new Animation(y.name, y.state, "repeats" in y ? y.repeats : 1, frames));
+            frames.push(frame);
+          }
 
-            return x;
-          }, []);
+          x.push(new Animation(y.name, y.state, "repeats" in y ? y.repeats : 1, frames));
 
-          this.character = character;
-        } 
+          return x;
+        }, []);
+
+        this.character = character;
       }
     } catch (error) {
       console.error(error);
