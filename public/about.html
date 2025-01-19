@@ -1398,13 +1398,7 @@
                       });
 
                       if (response2.ok) {
-                        const data = agent.parse(await response2.json());
-
-                        if (data[0] === null) {
-                          resolve(null);
-                        } else {
-                          resolve(data);
-                        }
+                        resolve(agent.parse(await response2.json()));
                       } else {
                         throw new Error(response2.statusText);
                       }
@@ -1416,8 +1410,8 @@
                   }
                 }
               }).then((data) => {
-                if (data !== null) {
-                  const [message, choices, likability, state] = data;
+                if (data !== null && data[0] !== null) {
+                  const [message, likability, state, choices] = data;
                   const div = element1.querySelector(":scope>div>div:last-of-type");
 
                   if (div !== null) {
@@ -1640,13 +1634,7 @@
                             });
 
                             if (response2.ok) {
-                              const data = agent.parse(await response2.json());
-
-                              if (data[0] === null) {
-                                resolve(null);
-                              } else {
-                                resolve(data);
-                              }
+                              resolve(agent.parse(await response2.json()));
                             } else {
                               throw new Error(response2.statusText);
                             }
@@ -1658,8 +1646,8 @@
                         }
                       }
                     }).then((data) => {
-                      if (data !== null) {
-                        const [message, choices, likability, state] = data;
+                      if (data !== null && data[0] !== null) {
+                        const [message, likability, state, choices] = data;
                         const div = element1.querySelector(":scope>div>div:last-of-type");
 
                         if (div !== null) {
@@ -1969,13 +1957,7 @@
                               );
 
                               if (response2.ok) {
-                                const data = agent.parse(await response2.json());
-
-                                if (data[0] === null) {
-                                  resolve(null);
-                                } else {
-                                  resolve(data);
-                                }
+                                resolve(agent.parse(await response2.json()));
                               } else {
                                 throw new Error(response2.statusText);
                               }
@@ -1987,8 +1969,8 @@
                           }
                         }
                       }).then((data) => {
-                        if (data !== null) {
-                          const [message, choices, likability, state] = data;
+                        if (data !== null && data[0] !== null) {
+                          const [message, likability, state, choices] = data;
                           const div = element2.querySelector(":scope>div>div:last-of-type");
 
                           if (div !== null) {
@@ -2223,13 +2205,7 @@
                           });
 
                           if (response2.ok) {
-                            const data = agent.parse(await response2.json());
-
-                            if (data[0] === null) {
-                              resolve(null);
-                            } else {
-                              resolve(data);
-                            }
+                            resolve(agent.parse(await response2.json()));
                           } else {
                             throw new Error(response2.statusText);
                           }
@@ -2241,8 +2217,8 @@
                       }
                     }
                   }).then((data) => {
-                    if (data !== null) {
-                      const [message, choices, likability, state] = data;
+                    if (data !== null && data[0] !== null) {
+                      const [message, likability, state, choices] = data;
                       const last = div.querySelector(":scope>div:last-of-type");
 
                       if (last !== null) {
@@ -2472,13 +2448,7 @@
                       });
 
                       if (response2.ok) {
-                        const data = agent.parse(await response2.json());
-
-                        if (data[0] === null) {
-                          resolve(null);
-                        } else {
-                          resolve(data);
-                        }
+                        resolve(agent.parse(await response2.json()));
                       } else {
                         throw new Error(response2.statusText);
                       }
@@ -2490,8 +2460,8 @@
                   }
                 }
               }).then((data) => {
-                if (data !== null) {
-                  const [message, choices, likability, state] = data;
+                if (data !== null && data[0] !== null) {
+                  const [message, likability, state, choices] = data;
                   const div = element.querySelector(":scope>div>div:last-of-type");
 
                   if (div !== null) {
