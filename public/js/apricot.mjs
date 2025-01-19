@@ -9,7 +9,7 @@ function lerp(a, b, t) {
   return a + t * (b - a)
 }
 
-class Animation {
+export class Animation {
   constructor(name, state = null, repeats = 1, frames = []) {
     this.name = name;
     this.state = state;
@@ -206,7 +206,6 @@ export class Agent {
       parentElement.style.margin = "0 auto";
       parentElement.style.width = "fit-content";
       parentElement.style.height = "fit-content";
-      parentElement.style.opacity = 0;
 
       characterCanvas.classList.add("character");
       characterCanvas["backBuffer"] = document.createElement("canvas");
@@ -216,30 +215,29 @@ export class Agent {
       characterCanvas.style.width = `${Math.floor(width)}px`;
       characterCanvas.style.height = `${Math.floor(height)}px`;
       characterCanvas.style.backgroundColor = "transparent";
+      characterCanvas.style.opacity = 0;
       characterCanvas.addEventListener("click", (event) => {
         if (!this.isLoading) {
-          const popupElement = document.body.querySelector("#apricot div.popup");
-
-          if (popupElement === null) {
-            if (this.choices.length > 0) {
-              this.popup(this.choices);
-            }
-          } else if (this.isPopup) {
+          if (this.isPopup) {
             this.isPopup = false;
 
-            popupElement.animate([
-              {
-                transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
-                opacity: "0"
-              }
-            ], {
-              fill: "forwards",
-              duration: 500,
-              iterations: 1,
-              easing: "ease-in"
-            }).onfinish = () => {
-              popupElement.remove();
-            };
+            for (const popupElement of document.body.querySelectorAll("#apricot div.popup")) {
+              popupElement.animate([
+                {
+                  transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
+                  opacity: "0"
+                }
+              ], {
+                fill: "forwards",
+                duration: 500,
+                iterations: 1,
+                easing: "ease-in"
+              }).onfinish = () => {
+                popupElement.remove();
+              };
+            }
+          } else if (this.choices.length > 0) {
+            this.popup(this.choices);
           }
         }
       });
@@ -266,7 +264,7 @@ export class Agent {
         }
       });
 
-      likabilityCanvas.classList.add("loading");
+      likabilityCanvas.classList.add("likability");
       likabilityCanvas["backBuffer"] = document.createElement("canvas");
       likabilityCanvas.style.position = "absolute";
       likabilityCanvas.width = 16.0 * window.devicePixelRatio;
@@ -277,6 +275,7 @@ export class Agent {
       likabilityCanvas.style.height = `${Math.floor(16.0)}px`;
       likabilityCanvas.style.backgroundColor = "transparent";
       likabilityCanvas.style.visibility = "collapse";
+      likabilityCanvas.style.pointerEvents = "none";
 
       loadingCanvas.classList.add("loading");
       loadingCanvas["backBuffer"] = document.createElement("canvas");
@@ -289,6 +288,7 @@ export class Agent {
       loadingCanvas.style.height = `${Math.floor(8.0)}px`;
       loadingCanvas.style.backgroundColor = "transparent";
       loadingCanvas.style.visibility = "collapse";
+      loadingCanvas.style.pointerEvents = "none";
 
       parentElement.appendChild(characterCanvas);
       parentElement.appendChild(likabilityCanvas);
@@ -387,7 +387,7 @@ export class Agent {
 
     requestAnimationFrame(render);
 
-    this.domElement.animate([
+    this.characterCanvas.animate([
       {
         opacity: "1"
       }
@@ -396,7 +396,9 @@ export class Agent {
       duration: 500,
       iterations: 1,
       easing: "ease-out"
-    });
+    }).onfinish = () => {
+      this.characterCanvas.style.opacity = 1;
+    };
   }
 
   talk(content = null) {
@@ -428,50 +430,27 @@ export class Agent {
         });
 
         if (response.ok) {
-          let json = await response.json();
+          const data = this.parse(await response.json());
 
-          if ("id" in json && "model" in json && "choices" in json && json.choices.length > 0) {
-            const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
-            if (match === null) {
-              json = JSON.parse(json.choices[0].message.content);
-            } else {
-              json = JSON.parse(match[1]);
+          if (data[0] !== null) {
+            message = data[0];
+            logs.push({ role: "assistant", content: message });
+            
+            if (data[1] !== null) {
+              choices.push(...data[1]);
             }
-          }
+            
+            likability = data[2];
+            
+            if (data[3] !== null) {
+              const animations = this.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
 
-          if ("content" in json) {
-            message = json.content;
-            logs.push({ role: "assistant", content: json.content });
+              if (animations.length > 0) {
+                animation = animations[~~random(0, animations.length)];
+                
+                resolve([message, animation, choices, logs]);
 
-            if ("choices" in json) {
-              choices.push(...json.choices);
-            }
-
-            if ("likability" in json) {
-              likability = json.likability;
-            }
-
-            if ("states" in json) {
-              let maxScore = Number.MIN_SAFE_INTEGER;
-              let state = null;
-
-              for (const key in json.states) {
-                if (json.states[key] > maxScore) {
-                  state = key;
-                  maxScore = json.states[key];
-                }
-              }
-
-              if (state !== null) {
-                const animations = this.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(state));
-
-                if (animations.length > 0) {
-                  animation = animations[~~random(0, animations.length)];
-                  
-                  resolve([message, animation, choices, logs]);
-
-                  return;
-                }
+                return;
               }
             }
 
@@ -609,6 +588,47 @@ export class Agent {
       popupElement.style.transform = "translate3d(-50%, 50%, 0) scale(1, 1)";
       popupElement.style.opacity = 1;
     };
+  }
+
+  parse(json) {
+    let content = null;
+    let choices = null;
+    let likability = null;
+    let state = null;
+
+    if ("id" in json && "model" in json && "choices" in json && json.choices.length > 0) {
+      const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
+      if (match === null) {
+        json = JSON.parse(json.choices[0].message.content);
+      } else {
+        json = JSON.parse(match[1]);
+      }
+    }
+
+    if ("content" in json) {
+      content = json.content;
+    }
+      
+    if ("choices" in json) {
+      choices = json.choices;
+    }
+
+    if ("likability" in json) {
+      likability = json.likability;
+    }
+
+    if ("states" in json) {
+      let maxScore = Number.MIN_SAFE_INTEGER;
+      
+      for (const key in json.states) {
+        if (json.states[key] > maxScore) {
+          state = key;
+          maxScore = json.states[key];
+        }
+      }
+    }
+
+    return [content, choices, likability, state];
   }
 
   renderCharacter(deltaTime) {
