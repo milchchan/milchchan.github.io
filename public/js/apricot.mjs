@@ -417,9 +417,9 @@ export class Agent {
     new Promise(async (resolve) => {
       const messages = [{ role: "developer", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
       let message = null;
+      let likability = null;
       let animation = null;
       const choices = [];
-      let likability = null;
       const logs = [];
 
       for (const log of this.logs) {
@@ -445,20 +445,19 @@ export class Agent {
           if (data[0] !== null) {
             message = data[0];
             logs.push({ role: "assistant", content: message });
-            
-            if (data[1] !== null) {
-              choices.push(...data[1]);
-            }
-            
-            likability = data[2];
+            likability = data[1];
             
             if (data[3] !== null) {
-              const animations = this.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+              choices.push(...data[1]);
+            }
+
+            if (data[2] !== null) {
+              const animations = this.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[2]));
 
               if (animations.length > 0) {
                 animation = animations[~~random(0, animations.length)];
                 
-                resolve([message, animation, choices, logs]);
+                resolve([message, likability, animation, choices, logs]);
 
                 return;
               }
@@ -475,9 +474,9 @@ export class Agent {
         commands.splice(0);
       }
 
-      resolve([message, animation, choices, likability, logs]);
+      resolve([message, likability, animation, choices, logs]);
     }).then((value) => {
-      const [message, animation, choices, likability, logs] = value;
+      const [message, likability, animation, choices, logs] = value;
 
       if (message !== null && animation !== null) {
         this.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
@@ -602,10 +601,10 @@ export class Agent {
 
   parse(json) {
     let content = null;
-    let choices = null;
     let likability = null;
     let state = null;
-
+    let choices = null;
+    
     if ("id" in json && "model" in json && "choices" in json && json.choices.length > 0) {
       const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
       if (match === null) {
@@ -617,10 +616,6 @@ export class Agent {
 
     if ("content" in json) {
       content = json.content;
-    }
-      
-    if ("choices" in json) {
-      choices = json.choices;
     }
 
     if ("likability" in json) {
@@ -638,7 +633,11 @@ export class Agent {
       }
     }
 
-    return [content, choices, likability, state];
+    if ("choices" in json) {
+      choices = json.choices;
+    }
+
+    return [content, likability, state, choices];
   }
 
   renderCharacter(deltaTime) {
