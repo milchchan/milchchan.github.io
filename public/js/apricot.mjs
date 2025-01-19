@@ -71,6 +71,7 @@ export class Agent {
     this.isLoading = false;
     this.domElement = null;
     this.scale = scale;
+    this.model = null;
     this.temperature = temperature;
     this.character = null;
     this.characterCanvas = null;
@@ -407,7 +408,7 @@ export class Agent {
           mode: "cors",
           method: "POST",
           headers: this.apiKey === null ? { "Content-Type": "application/json" } : { "Authorization": `Bearer ${this.apiKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify(this.apiKey === null ? { temperature: this.temperature, messages: messages } : { model: "chatgpt-4o-latest", temperature: this.temperature, messages: messages })
+          body: JSON.stringify(this.model === null ? { temperature: this.temperature, messages: messages } : { model: this.model, temperature: this.temperature, messages: messages })
         });
 
         if (response.ok) {
