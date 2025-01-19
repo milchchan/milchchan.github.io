@@ -448,7 +448,7 @@ export class Agent {
             likability = data[1];
             
             if (data[3] !== null) {
-              choices.push(...data[1]);
+              choices.push(...data[3]);
             }
 
             if (data[2] !== null) {
