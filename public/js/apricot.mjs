@@ -5,6 +5,10 @@ function random(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function lerp(a, b, t) {
+  return a + t * (b - a)
+}
+
 class Animation {
   constructor(name, state = null, repeats = 1, frames = []) {
     this.name = name;
@@ -677,7 +681,7 @@ export class Agent {
       if (this.likability.a === this.likability.b) {
         likability = this.likability.a;
       } else {
-        likability = this.lerp(this.likability.a, this.likability.b, deltaTime);
+        likability = lerp(this.likability.a, this.likability.b, deltaTime);
 
         if (Math.floor(heartSize * likability) === Math.floor(heartSize * this.likability.b)) {
           this.likability.a = this.likability.b;
@@ -1152,9 +1156,5 @@ export class Agent {
     ctx.bezierCurveTo(x + width / 2, y + (height + topCurveHeight) / 2, x + width, y + (height + topCurveHeight) / 2, x + width, y + topCurveHeight);
     ctx.bezierCurveTo(x + width, y, x + width / 2, y, x + width / 2, y + topCurveHeight);
     ctx.closePath();
-  }
-
-  lerp(a, b, t) {
-    return a + t * (b - a)
   }
 }
