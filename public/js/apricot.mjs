@@ -207,6 +207,7 @@ export class Agent {
       parentElement.style.width = "fit-content";
       parentElement.style.height = "fit-content";
       parentElement.style.userSelect = "none";
+      parentElement.style.setProperty("-webkit-user-select", "none");
 
       characterCanvas.classList.add("character");
       characterCanvas["backBuffer"] = document.createElement("canvas");
@@ -218,6 +219,7 @@ export class Agent {
       characterCanvas.style.backgroundColor = "transparent";
       characterCanvas.style.opacity = 0;
       characterCanvas.style.userSelect = "none";
+      characterCanvas.style.setProperty("-webkit-user-select", "none");
       characterCanvas.addEventListener("click", (event) => {
         if (!this.isLoading) {
           if (this.isPopup) {
@@ -260,6 +262,7 @@ export class Agent {
       balloonCanvas.style.transformOrigin = "50% 100%";
       balloonCanvas.style.transform = "scale(0.0, 0.0)";
       balloonCanvas.style.userSelect = "none";
+      balloonCanvas.style.setProperty("-webkit-user-select", "none");
       balloonCanvas.addEventListener("click", (event) => {
         if (this.messageQueue.length > 0) {
           this.messageQueue[0].speed = 2.0;
@@ -280,6 +283,7 @@ export class Agent {
       likabilityCanvas.style.visibility = "collapse";
       likabilityCanvas.style.pointerEvents = "none";
       likabilityCanvas.style.userSelect = "none";
+      likabilityCanvas.style.setProperty("-webkit-user-select", "none");
 
       loadingCanvas.classList.add("loading");
       loadingCanvas["backBuffer"] = document.createElement("canvas");
@@ -294,6 +298,7 @@ export class Agent {
       loadingCanvas.style.visibility = "collapse";
       loadingCanvas.style.pointerEvents = "none";
       loadingCanvas.style.userSelect = "none";
+      loadingCanvas.style.setProperty("-webkit-user-select", "none");
 
       parentElement.appendChild(characterCanvas);
       parentElement.appendChild(likabilityCanvas);
