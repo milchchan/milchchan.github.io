@@ -105,6 +105,7 @@ export class Agent {
     this.logs = [];
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
+    this.ongenerated = null;
   }
 
   async load(url) {
@@ -493,6 +494,10 @@ export class Agent {
 
           if (this.logs.length > maxLogSize) {
             this.logs.splice(0, this.logs.length - maxLogSize);
+          }
+
+          if (this.ongenerated !== null) {
+            this.ongenerated();
           }
         } else {
           this.logs.splice(0);
