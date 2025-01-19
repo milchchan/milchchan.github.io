@@ -650,6 +650,58 @@
         animation-play-state: running;
       }
 
+      #apricot:not(.is-active) {
+        opacity: 0;
+        transform: translate3d(0%, 100%, 0);
+        transition: .5s;
+      }
+
+      #apricot.is-active {
+        opacity: 1;
+        transform: translate3d(0%, 0%, 0);
+        transition: .5s;
+      }
+
+      #apricot div.popup {
+        background: rgb(255 255 255 / 1.0) !important;
+        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
+      }
+
+      #apricot div.popup>button {
+        color: #000000 !important;
+      }
+
+      #apricot div.popup>button {
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.0rem !important;
+        font-weight: bold !important;
+        line-height: 2.0rem !important;
+      }
+
+      #apricot div.popup>button:not(:last-child) {
+        border-bottom: 1px solid hsl(0, 0%, 93%) !important;
+      }
+
+      #apricot span.stats {
+        margin: 0;
+        padding: 1px;
+        background-color: #000000;
+        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+        font-size: 0.75rem;
+        font-weight: bold;
+        line-height: 0.75rem;
+        height: 0.75rem;
+        vertical-align: middle;
+        color: #ffffff;
+        opacity: 0;
+        transition: .5s;
+      }
+
+      #apricot span.stats:hover {
+        opacity: 1;
+        transition: .5s;
+      }
+
       @keyframes fade {
         from {
           opacity: 0;
@@ -1036,7 +1088,15 @@
         </div>
       </div>
     </div>
-    <script type="text/javascript">
+    <script type="importmap">
+      {
+          "imports": {
+          "apricot": "./js/apricot.mjs"
+          }
+      }
+    </script>
+    <script type="module">
+      import { Agent, Animation } from "apricot";
       const hash = decodeURIComponent(window.location.hash.substring(1));
       const temperature = new URL(window.location.href).searchParams.get("temperature") ?? 1.0;
       const touches = [];
@@ -1045,6 +1105,7 @@
       let isPlaying = false;
       let audioContext = null;
       let sampleRate = 32000;
+      const agent = new Agent(0.5);
 
       window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
@@ -1274,6 +1335,200 @@
         }
       }
 
+      function more(choice = null) {
+        const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
+        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
+        const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
+        
+        if (recordButton !== null && reloadButton !== null && moreButton !== null) {
+          for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
+            if (element1.classList.contains("is-selected")) {
+              const element2 = element1.querySelector(":scope>div:last-of-type>div:last-of-type");
+
+              recordButton.disabled = true;
+              reloadButton.disabled = true;
+              reloadButton.dataset["type"] = element1.dataset.type;
+              moreButton.disabled = true;
+
+              new Promise(async (resolve, reject) => {
+                let prompt = null;
+
+                if ("prompts" in element1.dataset) {
+                  try {
+                    prompts = await new Promise(async (resolve, reject) => {
+                      try {
+                        resolve(JSON.parse(element1.dataset.prompts));
+                      } catch (error) {
+                        reject(error);
+                      }
+                    });
+                  } catch (error) {
+                    reject(error);
+                  }
+
+                  if (prompts.length > 0) {
+                    prompt = prompts[~~random(0, prompts.length)];
+                  }
+                } else if ("prompt" in element1.dataset) {
+                  prompt = element1.dataset.prompt;
+                }
+
+                if (prompt === null) {
+                  resolve(null);
+                } else {
+                  try {
+                    const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
+
+                    if (response1.ok) {
+                      const messages = [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}];
+                      
+                      for (const element3 of element2.querySelectorAll(":scope>div>p.is-generated>span")) {
+                        if ("prompt" in element3.dataset) {
+                          messages.push({role: "user", content: element3.dataset.prompt});
+                        }
+
+                        messages.push({role: "assistant", content: element3.textContent});
+                      }
+
+                      messages.push({role: "user", content: choice === null ? moreButton.dataset.prompt : choice});
+
+                      const response2 = await fetch("https://milchchan.com/api/generate", {
+                        mode: "cors",
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({temperature: temperature, messages: messages})
+                      });
+
+                      if (response2.ok) {
+                        const data = agent.parse(await response2.json());
+
+                        if (data[0] === null) {
+                          resolve(null);
+                        } else {
+                          resolve(data);
+                        }
+                      } else {
+                        throw new Error(response2.statusText);
+                      }
+                    } else {
+                      throw new Error(response1.statusText);
+                    }
+                  } catch (error) {
+                    reject(error);
+                  }
+                }
+              }).then((data) => {
+                if (data !== null) {
+                  const [message, choices, likability, state] = data;
+                  const div = element1.querySelector(":scope>div>div:last-of-type");
+
+                  if (div !== null) {
+                    const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
+
+                    for (const content of message.split("\n")) {
+                      if (content.length > 0) {
+                        const wrap = document.createElement("div");
+                        const p = document.createElement("p");
+                        const span = document.createElement("span");
+
+                        p.classList.add("is-generated");
+
+                        if ("language" in element1.dataset) {
+                          wrap.classList.add("is-playable");
+
+                          p.onclick = async () => {
+                            if (!p.classList.contains("is-loading") && !isPlaying) {
+                              p.classList.add("is-loading");
+                              
+                              audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
+                                    
+                              const source = audioContext.createBufferSource();
+                                    
+                              source.connect(audioContext.destination);
+
+                              try {
+                                await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                              } catch (error) {
+                                shake(p);
+
+                                console.error(error);
+                              }
+
+                              p.classList.remove("is-loading");
+                            }
+                          };
+                        }
+
+                        span.classList.add("reveal");
+                        span.dataset["prompt"] = moreButton.dataset.prompt;
+                        
+                        if (italicRequired) {
+                          span.classList.add("is-italic");
+                        }
+                        
+                        span.textContent = content;
+
+                        p.appendChild(span);
+                        wrap.appendChild(p);
+                        div.appendChild(wrap);
+                      }
+                    }
+                  }
+
+                  if (element1.dataset.type === "milch" && state !== null) {
+                    const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                    let animation;
+
+                    if (animations.length > 0) {
+                      animation = animations[~~random(0, animations.length)];
+                    } else {
+                      const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+
+                      animation = animations[~~random(0, animations.length)];
+                    }
+
+                    agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                    
+                    if (likability !== null) {
+                      agent.likability = {a: agent.likability.a, b: likability};
+                    }
+
+                    if (choices !== null) {
+                      agent.choices.splice(0);
+                      agent.choices.push(...choices);
+                    }
+                  }
+                }
+
+                if (element1.dataset.type === reloadButton.dataset["type"]) {
+                  recordButton.disabled = false;
+                  reloadButton.disabled = false;
+                  moreButton.disabled = false;
+                }
+              }).catch((error) => {
+                if (element1.dataset.type === reloadButton.dataset["type"]) {
+                  recordButton.disabled = false;
+                  reloadButton.disabled = false;
+                  moreButton.disabled = false;
+                }
+
+                shake(moreButton, true);
+
+                console.error(error);
+              });
+            }
+          }
+        }
+      }
+
+      agent.isDebug = true;
+      agent.fontFamily = "Barlow";
+      agent.onchose = (choice) => {
+        more(choice);
+      }
+
       if (hash.length > 0) {
         for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
           if(hash === element.dataset.type) {
@@ -1389,7 +1644,13 @@
                             });
 
                             if (response2.ok) {
-                              resolve((await response2.json()).content);
+                              const data = agent.parse(await response2.json());
+
+                              if (data[0] === null) {
+                                resolve(null);
+                              } else {
+                                resolve(data);
+                              }
                             } else {
                               throw new Error(response2.statusText);
                             }
@@ -1402,12 +1663,13 @@
                       }
                     }).then((data) => {
                       if (data !== null) {
+                        const [message, choices, likability, state] = data;
                         const div = element1.querySelector(":scope>div>div:last-of-type");
 
                         if (div !== null) {
                           const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
-                          for (const content of data.split("\n")) {
+                          for (const content of message.split("\n")) {
                             if (content.length > 0) {
                               const wrap = document.createElement("div");
                               const p = document.createElement("p");
@@ -1454,6 +1716,30 @@
                               wrap.appendChild(p);
                               div.appendChild(wrap);
                             }
+                          }
+                        }
+
+                        if (element1.dataset.type === "milch" && state !== null) {
+                          const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                          let animation;
+
+                          if (animations.length > 0) {
+                            animation = animations[~~random(0, animations.length)];
+                          } else {
+                            const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+
+                            animation = animations[~~random(0, animations.length)];
+                          }
+
+                          agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                          
+                          if (likability !== null) {
+                            agent.likability = {a: agent.likability.a, b: likability};
+                          }
+
+                          if (choices !== null) {
+                            agent.choices.splice(0);
+                            agent.choices.push(...choices);
                           }
                         }
                       }
@@ -1574,7 +1860,7 @@
         });
       }*/
 
-      window.record = (event) => {        
+      window.record = (event) => {
         if (speechRecognition === null) {
           shake(event.currentTarget || event.target, true);
         } else if (isRecording) {
@@ -1602,6 +1888,17 @@
                     const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
                     const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
     
+                    if (element2.dataset.type === "milch") {
+                      agent.domElement.classList.add("is-active");
+                      agent.domElement.style.pointerEvents = "auto";
+                    } else {
+                      if (agent.domElement.classList.contains("is-active")) {
+                        agent.domElement.classList.remove("is-active");
+                      }
+
+                      agent.domElement.style.pointerEvents = "none";
+                    }
+
                     element2.classList.add("is-selected");
                     element2.style.display = "block";
                     element2.animate(
@@ -1636,6 +1933,8 @@
                         let prompt = null;
 
                         if ("prompts" in element2.dataset) {
+                          let prompts;
+
                           try {
                             prompts = await new Promise(async (resolve, reject) => {
                               try {
@@ -1674,7 +1973,13 @@
                               );
 
                               if (response2.ok) {
-                                resolve((await response2.json()).content);
+                                const data = agent.parse(await response2.json());
+
+                                if (data[0] === null) {
+                                  resolve(null);
+                                } else {
+                                  resolve(data);
+                                }
                               } else {
                                 throw new Error(response2.statusText);
                               }
@@ -1687,12 +1992,13 @@
                         }
                       }).then((data) => {
                         if (data !== null) {
+                          const [message, choices, likability, state] = data;
                           const div = element2.querySelector(":scope>div>div:last-of-type");
 
                           if (div !== null) {
                             const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
-                            for (const content of data.split("\n")) {
+                            for (const content of message.split("\n")) {
                               if (content.length > 0) {
                                 const wrap = document.createElement("div");
                                 const p = document.createElement("p");
@@ -1742,6 +2048,30 @@
                           }
 
                           element2.dataset["generated"] = true;
+
+                          if (element2.dataset.type === "milch" && state !== null) {
+                            const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                            let animation;
+
+                            if (animations.length > 0) {
+                              animation = animations[~~random(0, animations.length)];
+                            } else {
+                              const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+
+                              animation = animations[~~random(0, animations.length)];
+                            }
+
+                            agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                            
+                            if (likability !== null) {
+                              agent.likability = {a: agent.likability.a, b: likability};
+                            }
+
+                            if (choices !== null) {
+                              agent.choices.splice(0);
+                              agent.choices.push(...choices);
+                            }
+                          }
                         }
 
                         if (element2.dataset.type === reloadButton.dataset["type"]) {
@@ -1840,8 +2170,8 @@
                   const div = document.createElement("div");
                   
                   for (const element3 of Array.from(element2.children)) {
-                    for (element4 of Array.from(element3.children)) {
-                      for (element5 of Array.from(element4.children)) {
+                    for (const element4 of Array.from(element3.children)) {
+                      for (const element5 of Array.from(element4.children)) {
                         if (element5.classList.contains("is-generated")) {
                           element4.remove();
                           
@@ -1897,7 +2227,13 @@
                           });
 
                           if (response2.ok) {
-                            resolve((await response2.json()).content);
+                            const data = agent.parse(await response2.json());
+
+                            if (data[0] === null) {
+                              resolve(null);
+                            } else {
+                              resolve(data);
+                            }
                           } else {
                             throw new Error(response2.statusText);
                           }
@@ -1910,12 +2246,13 @@
                     }
                   }).then((data) => {
                     if (data !== null) {
+                      const [message, choices, likability, state] = data;
                       const last = div.querySelector(":scope>div:last-of-type");
 
                       if (last !== null) {
                         const italicRequired = last.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
-                        for (const content of data.split("\n")) {
+                        for (const content of message.split("\n")) {
                           if (content.length > 0) {
                             const wrap = document.createElement("div");
                             const p = document.createElement("p");
@@ -1965,6 +2302,30 @@
                       }
 
                       element1.dataset["generated"] = true;
+                    
+                      if (element1.dataset.type === "milch" && state !== null) {
+                        const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                        let animation;
+
+                        if (animations.length > 0) {
+                          animation = animations[~~random(0, animations.length)];
+                        } else {
+                          const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+
+                          animation = animations[~~random(0, animations.length)];
+                        }
+
+                        agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                        
+                        if (likability !== null) {
+                          agent.likability = {a: agent.likability.a, b: likability};
+                        }
+
+                        if (choices !== null) {
+                          agent.choices.splice(0);
+                          agent.choices.push(...choices);
+                        }
+                      }
                     }
 
                     if (element1.dataset.type === reloadButton.dataset["type"]) {
@@ -1992,163 +2353,18 @@
         }
       };
       window.more = (event) => {
-        const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
-        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
-        const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-        
-        if (recordButton !== null && reloadButton !== null && moreButton !== null) {
-          for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-            if (element1.classList.contains("is-selected")) {
-              const element2 = element1.querySelector(":scope>div:last-of-type>div:last-of-type");
-
-              recordButton.disabled = true;
-              reloadButton.disabled = true;
-              reloadButton.dataset["type"] = element1.dataset.type;
-              moreButton.disabled = true;
-
-              new Promise(async (resolve, reject) => {
-                let prompt = null;
-
-                if ("prompts" in element1.dataset) {
-                  try {
-                    prompts = await new Promise(async (resolve, reject) => {
-                      try {
-                        resolve(JSON.parse(element1.dataset.prompts));
-                      } catch (error) {
-                        reject(error);
-                      }
-                    });
-                  } catch (error) {
-                    reject(error);
-                  }
-
-                  if (prompts.length > 0) {
-                    prompt = prompts[~~random(0, prompts.length)];
-                  }
-                } else if ("prompt" in element1.dataset) {
-                  prompt = element1.dataset.prompt;
-                }
-
-                if (prompt === null) {
-                  resolve(null);
-                } else {
-                  try {
-                    const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
-
-                    if (response1.ok) {
-                      const messages = [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}];
-                      
-                      for (const element3 of element2.querySelectorAll(":scope>div>p.is-generated>span")) {
-                        if ("prompt" in element3.dataset) {
-                          messages.push({role: "user", content: element3.dataset.prompt});
-                        }
-
-                        messages.push({role: "assistant", content: element3.textContent});
-                      }
-
-                      messages.push({role: "user", content: moreButton.dataset.prompt});
-
-                      const response2 = await fetch("https://milchchan.com/api/generate", {
-                        mode: "cors",
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({temperature: temperature, messages: messages})
-                      });
-
-                      if (response2.ok) {
-                        resolve((await response2.json()).content);
-                      } else {
-                        throw new Error(response2.statusText);
-                      }
-                    } else {
-                      throw new Error(response1.statusText);
-                    }
-                  } catch (error) {
-                    reject(error);
-                  }
-                }
-              }).then((data) => {
-                if (data !== null) {
-                  const div = element1.querySelector(":scope>div>div:last-of-type");
-
-                  if (div !== null) {
-                    const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
-
-                    for (const content of data.split("\n")) {
-                      if (content.length > 0) {
-                        const wrap = document.createElement("div");
-                        const p = document.createElement("p");
-                        const span = document.createElement("span");
-
-                        p.classList.add("is-generated");
-
-                        if ("language" in element1.dataset) {
-                          wrap.classList.add("is-playable");
-
-                          p.onclick = async () => {
-                            if (!p.classList.contains("is-loading") && !isPlaying) {
-                              p.classList.add("is-loading");
-                              
-                              audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
-                                    
-                              const source = audioContext.createBufferSource();
-                                    
-                              source.connect(audioContext.destination);
-
-                              try {
-                                await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
-                              } catch (error) {
-                                shake(p);
-
-                                console.error(error);
-                              }
-
-                              p.classList.remove("is-loading");
-                            }
-                          };
-                        }
-
-                        span.classList.add("reveal");
-                        span.dataset["prompt"] = moreButton.dataset.prompt;
-                        
-                        if (italicRequired) {
-                          span.classList.add("is-italic");
-                        }
-                        
-                        span.textContent = content;
-
-                        p.appendChild(span);
-                        wrap.appendChild(p);
-                        div.appendChild(wrap);
-                      }
-                    }
-                  }
-                }
-
-                if (element1.dataset.type === reloadButton.dataset["type"]) {
-                  recordButton.disabled = false;
-                  reloadButton.disabled = false;
-                  moreButton.disabled = false;
-                }
-              }).catch((error) => {
-                if (element1.dataset.type === reloadButton.dataset["type"]) {
-                  recordButton.disabled = false;
-                  reloadButton.disabled = false;
-                  moreButton.disabled = false;
-                }
-
-                shake(moreButton, true);
-
-                console.error(error);
-              });
-            }
-          }
-        }
+        more();
       };
 
       window.addEventListener("load", async (event) => {
+        document.body.appendChild(await agent.load("milch.json"));
+        
+        agent.run(() => {
+          const animations = agent.character.animations.filter(x => x.name === "Start");
+    
+          agent.animationQueue.push(animations[~~random(0, animations.length)]);
+        });
+
         for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
           if (element.classList.contains("is-selected")) {
             const background = document.createElement("div");
@@ -2160,6 +2376,17 @@
             
             document.body.querySelector(".wrap>.frame").prepend(background);
             background.appendChild(image);
+
+            if (element.dataset.type === "milch") {
+              agent.domElement.classList.add("is-active");
+              agent.domElement.style.pointerEvents = "auto";
+            } else {
+              if (agent.domElement.classList.contains("is-active")) {
+                agent.domElement.classList.remove("is-active");
+              }
+
+              agent.domElement.style.pointerEvents = "none";
+            }
             
             const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
             const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
@@ -2249,7 +2476,13 @@
                       });
 
                       if (response2.ok) {
-                        resolve((await response2.json()).content);
+                        const data = agent.parse(await response2.json());
+
+                        if (data[0] === null) {
+                          resolve(null);
+                        } else {
+                          resolve(data);
+                        }
                       } else {
                         throw new Error(response2.statusText);
                       }
@@ -2262,12 +2495,13 @@
                 }
               }).then((data) => {
                 if (data !== null) {
+                  const [message, choices, likability, state] = data;
                   const div = element.querySelector(":scope>div>div:last-of-type");
 
                   if (div !== null) {
                     const italicRequired = div.querySelector(":scope>div>p:not(.is-generated)") !== null;
 
-                    for (const content of data.split("\n")) {
+                    for (const content of message.split("\n")) {
                       if (content.length > 0) {
                         const wrap = document.createElement("div");
                         const p = document.createElement("p");
@@ -2317,6 +2551,30 @@
                   }
 
                   element.dataset["generated"] = true;
+
+                  if (element.dataset.type === "milch" && state !== null) {
+                    const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                    let animation;
+
+                    if (animations.length > 0) {
+                      animation = animations[~~random(0, animations.length)];
+                    } else {
+                      const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+
+                      animation = animations[~~random(0, animations.length)];
+                    }
+
+                    agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                    
+                    if (likability !== null) {
+                      agent.likability = {a: agent.likability.a, b: likability};
+                    }
+
+                    if (choices !== null) {
+                      agent.choices.splice(0);
+                      agent.choices.push(...choices);
+                    }
+                  }
                 }
 
                 if (element.dataset.type === reloadButton.dataset["type"]) {
