@@ -74,6 +74,7 @@ export class Agent {
     this.temperature = temperature;
     this.character = null;
     this.characterCanvas = null;
+    this.likabilityCanvas = null;
     this.loadingCanvas = null;
     this.balloonCanvas = null;
     this.previousTime = performance.now();
@@ -95,8 +96,11 @@ export class Agent {
     this.idleTime = 0.0;
     this.loadingStep = null;
     this.blinkStep = 0.0;
+    this.isPopup = false;
+    this.revealStep = null;
+    this.likabilityStep = 0.0;
     this.choices = [];
-    this.likability = null;
+    this.likability = {a: 0.0, b: null};
     this.logs = [];
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
@@ -172,12 +176,13 @@ export class Agent {
       }
     }
 
-    const [parentElement, characterCanvas, balloonCanvas, loadingCanvas] = await new Promise(async (resolve, reject) => {
+    const [parentElement, characterCanvas, balloonCanvas, likabilityCanvas, loadingCanvas] = await new Promise(async (resolve, reject) => {
       const width = this.character.width * this.scale;
       const height = this.character.height * this.scale;
       const parentElement = document.createElement("div");
       const characterCanvas = document.createElement("canvas");
       const balloonCanvas = document.createElement("canvas");
+      const likabilityCanvas = document.createElement("canvas");
       const loadingCanvas = document.createElement("canvas");
       
       parentElement.id = "apricot";
@@ -207,8 +212,9 @@ export class Agent {
             if (this.choices.length > 0) {
               this.popup(this.choices);
             }
-          } else if (popupElement.dataset.state !== "animating") {
-            popupElement.dataset.state = "animating";
+          } else if (this.isPopup) {
+            this.isPopup = false;
+
             popupElement.animate([
               {
                 transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
@@ -248,6 +254,18 @@ export class Agent {
         }
       });
 
+      likabilityCanvas.classList.add("loading");
+      likabilityCanvas["backBuffer"] = document.createElement("canvas");
+      likabilityCanvas.style.position = "absolute";
+      likabilityCanvas.width = 16.0 * window.devicePixelRatio;
+      likabilityCanvas.height = 16.0 * window.devicePixelRatio;
+      likabilityCanvas.style.left = `${Math.floor(-(16.0 - this.character.width * this.scale) / 2 + this.character.x)}px`;
+      likabilityCanvas.style.bottom = `${Math.floor(height - this.character.y + 16.0)}px`;
+      likabilityCanvas.style.width = `${Math.floor(16.0)}px`;
+      likabilityCanvas.style.height = `${Math.floor(16.0)}px`;
+      likabilityCanvas.style.backgroundColor = "transparent";
+      likabilityCanvas.style.visibility = "collapse";
+
       loadingCanvas.classList.add("loading");
       loadingCanvas["backBuffer"] = document.createElement("canvas");
       loadingCanvas.style.position = "absolute";
@@ -261,10 +279,11 @@ export class Agent {
       loadingCanvas.style.visibility = "collapse";
 
       parentElement.appendChild(characterCanvas);
+      parentElement.appendChild(likabilityCanvas);
       parentElement.appendChild(loadingCanvas);
       parentElement.appendChild(balloonCanvas);
       
-      resolve([parentElement, characterCanvas, balloonCanvas, loadingCanvas]);
+      resolve([parentElement, characterCanvas, balloonCanvas, likabilityCanvas, loadingCanvas]);
     });
 
     this.stats.target.classList.add("stats");
@@ -278,6 +297,7 @@ export class Agent {
     this.domElement = parentElement;
     this.characterCanvas = characterCanvas;
     this.balloonCanvas = balloonCanvas;
+    this.likabilityCanvas = likabilityCanvas;
     this.loadingCanvas = loadingCanvas;
     this.domElement.appendChild(this.stats.target);
 
@@ -332,6 +352,7 @@ export class Agent {
         }
 
         self.renderCharacter(deltaTime);
+        self.renderLikability(deltaTime);
         self.renderLoading(deltaTime);
         self.renderBalloon(deltaTime);
       }
@@ -456,7 +477,7 @@ export class Agent {
         this.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
 
         if (likability !== null) {
-          this.likability = likability;
+          this.likability = {a: this.likability.a, b: likability};
         }
 
         if (choices.length > 0) {
@@ -528,8 +549,9 @@ export class Agent {
 
         this.talk(target.dataset['choice']);
 
-        if (!popupElement.dataset.state !== "animating") {
-          popupElement.dataset.state = "animating";
+        if (this.isPopup) {
+          this.isPopup = false;
+
           popupElement.animate([
             {
               transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
@@ -550,6 +572,7 @@ export class Agent {
     }
 
     this.balloonCanvas.after(popupElement);
+    this.isPopup = true;
 
     popupElement.animate([
       {
@@ -603,6 +626,81 @@ export class Agent {
     }
   }
 
+  renderLikability(deltaTime) {
+    if (this.likability.b !== null) {
+      if (this.isLoading || this.isPopup) {
+        if (this.revealStep === null) {
+          this.revealStep = deltaTime;
+          this.likabilityCanvas.style.visibility = "visible";
+        } else if (this.revealStep < 1.0) {
+          this.revealStep += deltaTime;
+  
+          if (this.revealStep > 1.0) {
+            this.revealStep = 1.0;
+          }
+        } else {
+          return;
+        }
+      } else if (this.revealStep === null) {
+        return;
+      } else {
+        this.revealStep -= deltaTime;
+
+        if (this.revealStep <= 0.0) {
+          this.revealStep = null;
+          this.likabilityCanvas.style.visibility = "collapse";
+
+          return;
+        }
+      }
+
+      const heartSize = 16;
+      let likability;
+      
+      if (this.likability.a === this.likability.b) {
+        likability = this.likability.a;
+      } else {
+        likability = this.lerp(this.likability.a, this.likability.b, deltaTime);
+
+        if (Math.floor(heartSize * likability) === Math.floor(heartSize * this.likability.b)) {
+          this.likability.a = this.likability.b;
+        } else {
+          this.likability.a = likability;
+        }
+      }
+
+      const backCanvas = this.likabilityCanvas.backBuffer;
+      
+      backCanvas.width = this.likabilityCanvas.width;
+      backCanvas.height = this.likabilityCanvas.height;
+
+      const backContext = backCanvas.getContext("2d");
+      const frontContext = this.likabilityCanvas.getContext("2d");
+      const clipPath = new Path2D();
+      
+      clipPath.rect(0.0, Math.floor((Math.ceil(heartSize * (1.0 - likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * likability) * window.devicePixelRatio))
+      
+      backContext.imageSmoothingEnabled = true;
+      backContext.imageSmoothingQuality = "high";
+      backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+      backContext.save();
+      this.drawHeart(backContext, 0.0, 0.0, Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+      backContext.globalAlpha = 0.5;
+      backContext.fillStyle = this.accentColor;
+      backContext.fill();
+      backContext.clip(clipPath);
+      this.drawHeart(backContext, 0.0, 0.0, Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+      backContext.fillStyle = this.accentColor;
+      backContext.fill();
+      backContext.restore();
+      frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+      frontContext.globalAlpha = Math.sin(this.revealStep / 2.0 * Math.PI);
+      frontContext.drawImage(backCanvas, 0, 0);
+
+      backCanvas.width = backCanvas.height = 0;
+    }
+  }
+
   renderLoading(deltaTime) {
     if (this.isLoading) {
       if (this.loadingStep === null) {
@@ -626,6 +724,8 @@ export class Agent {
         this.loadingStep = null;
         this.loadingCanvas.style.visibility = "collapse";
         this.blinkStep = 0.0;
+
+        return;
       } else {
         this.blinkStep += deltaTime;
       }
@@ -797,24 +897,6 @@ export class Agent {
             backContext.fillStyle = this.balloonBackgroundColor;
             backContext.fill();
 
-            if (this.likability !== null) {
-              const heartSize = 12;
-              const clipPath = new Path2D();
-              
-              clipPath.rect(Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0 + Math.ceil(heartSize * (1.0 - this.likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * this.likability) * window.devicePixelRatio))
-              
-              backContext.save();
-              this.drawHeart(backContext, Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
-              backContext.globalAlpha = 0.5;
-              backContext.fillStyle = this.accentColor;
-              backContext.fill();
-              backContext.clip(clipPath);
-              this.drawHeart(backContext, Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
-              backContext.fillStyle = this.accentColor;
-              backContext.fill();
-              backContext.restore();
-            }
-            
             backContext.fillStyle = this.textColor;
             squarePath.rect(Math.floor(this.lineHeight * window.devicePixelRatio), Math.floor(this.lineHeight * window.devicePixelRatio), Math.ceil(this.balloonCanvas.width - this.lineHeight * 2 * window.devicePixelRatio), Math.ceil(this.messageHeight * window.devicePixelRatio));
             backContext.clip(squarePath);
@@ -1017,24 +1099,6 @@ export class Agent {
     backContext.fillStyle = this.balloonBackgroundColor;
     backContext.fill();
 
-    if (this.likability !== null) {
-      const heartSize = 12;
-      const clipPath = new Path2D();
-      
-      clipPath.rect(Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0 + Math.ceil(heartSize * (1.0 - this.likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * this.likability) * window.devicePixelRatio))
-      
-      backContext.save();
-      this.drawHeart(backContext, Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
-      backContext.globalAlpha = 0.5;
-      backContext.fillStyle = this.accentColor;
-      backContext.fill();
-      backContext.clip(clipPath);
-      this.drawHeart(backContext, Math.floor((this.balloonWidth - heartSize) / 2 * window.devicePixelRatio), Math.floor(((this.lineHeight - heartSize) / 2.0) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
-      backContext.fillStyle = this.accentColor;
-      backContext.fill();
-      backContext.restore();
-    }
-
     backContext.restore();
     frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
     frontContext.drawImage(backCanvas, 0, 0);
@@ -1071,5 +1135,9 @@ export class Agent {
     ctx.bezierCurveTo(x + width / 2, y + (height + topCurveHeight) / 2, x + width, y + (height + topCurveHeight) / 2, x + width, y + topCurveHeight);
     ctx.bezierCurveTo(x + width, y, x + width / 2, y, x + width / 2, y + topCurveHeight);
     ctx.closePath();
+  }
+
+  lerp(a, b, t) {
+    return a + t * (b - a)
   }
 }
