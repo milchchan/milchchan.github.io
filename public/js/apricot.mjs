@@ -106,6 +106,9 @@ export class Agent {
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
     this.ongenerated = null;
+    this.onchose = (choice) => {
+      this.talk(choice);
+    }
   }
 
   async load(url) {
@@ -309,13 +312,18 @@ export class Agent {
     return this.domElement;
   }
 
-  run() {
-    const self = this;
+  run(startup = () => {
     const animations = this.character.animations.filter(x => x.name === "Start");
     
     this.animationQueue.push(animations[~~random(0, animations.length)]);
     this.talk();
+  }) {
+    const self = this;
 
+    if (startup !== null) {
+      startup();
+    }
+    
     function render(timestamp) {
       if (timestamp > self.previousTime) {
         const deltaTime = (timestamp - self.previousTime) / 1000;
@@ -556,7 +564,7 @@ export class Agent {
       buttonElement.addEventListener("click", (event) => {
         const target = (event.currentTarget || event.target);
 
-        this.talk(target.dataset['choice']);
+        this.onchose(target.dataset['choice']);
 
         if (this.isPopup) {
           this.isPopup = false;
