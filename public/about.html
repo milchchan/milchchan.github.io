@@ -1346,6 +1346,10 @@
               reloadButton.dataset["type"] = element1.dataset.type;
               moreButton.disabled = true;
 
+              if (element1.dataset.type === "milch") {
+                agent.isLoading = true;
+              }
+
               new Promise(async (resolve, reject) => {
                 let prompt = null;
 
@@ -1467,29 +1471,35 @@
                     }
                   }
 
-                  if (element1.dataset.type === "milch" && state !== null) {
-                    const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
-                    let animation;
+                  if (agent.isLoading) {
+                    agent.isLoading = false;
 
-                    if (animations.length > 0) {
-                      animation = animations[~~random(0, animations.length)];
-                    } else {
-                      const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+                    if (state !== null) {
+                      const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                      let animation;
 
-                      animation = animations[~~random(0, animations.length)];
-                    }
+                      if (animations.length > 0) {
+                        animation = animations[~~random(0, animations.length)];
+                      } else {
+                        const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
 
-                    agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
-                    
-                    if (likability !== null) {
-                      agent.likability = {a: agent.likability.a, b: likability};
-                    }
+                        animation = animations[~~random(0, animations.length)];
+                      }
 
-                    if (choices !== null) {
-                      agent.choices.splice(0);
-                      agent.choices.push(...choices);
+                      agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                      
+                      if (likability !== null) {
+                        agent.likability = {a: agent.likability.a, b: likability};
+                      }
+
+                      if (choices !== null) {
+                        agent.choices.splice(0);
+                        agent.choices.push(...choices);
+                      }
                     }
                   }
+                } else if (agent.isLoading) {
+                  agent.isLoading = false;
                 }
 
                 if (element1.dataset.type === reloadButton.dataset["type"]) {
@@ -1498,6 +1508,10 @@
                   moreButton.disabled = false;
                 }
               }).catch((error) => {
+                if (agent.isLoading) {
+                  agent.isLoading = false;
+                }
+
                 if (element1.dataset.type === reloadButton.dataset["type"]) {
                   recordButton.disabled = false;
                   reloadButton.disabled = false;
@@ -1581,6 +1595,10 @@
                     reloadButton.disabled = true;
                     reloadButton.dataset["type"] = element1.dataset.type;
                     moreButton.disabled = true;
+
+                    if (element1.dataset.type === "milch") {
+                      agent.isLoading = true;
+                    }
 
                     new Promise(async (resolve, reject) => {
                       let prompt = null;
@@ -1703,29 +1721,35 @@
                           }
                         }
 
-                        if (element1.dataset.type === "milch" && state !== null) {
-                          const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
-                          let animation;
+                        if (agent.isLoading) {
+                          agent.isLoading = false;
 
-                          if (animations.length > 0) {
-                            animation = animations[~~random(0, animations.length)];
-                          } else {
-                            const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+                          if (state !== null) {
+                            const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                            let animation;
 
-                            animation = animations[~~random(0, animations.length)];
-                          }
+                            if (animations.length > 0) {
+                              animation = animations[~~random(0, animations.length)];
+                            } else {
+                              const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
 
-                          agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
-                          
-                          if (likability !== null) {
-                            agent.likability = {a: agent.likability.a, b: likability};
-                          }
+                              animation = animations[~~random(0, animations.length)];
+                            }
 
-                          if (choices !== null) {
-                            agent.choices.splice(0);
-                            agent.choices.push(...choices);
+                            agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                            
+                            if (likability !== null) {
+                              agent.likability = {a: agent.likability.a, b: likability};
+                            }
+
+                            if (choices !== null) {
+                              agent.choices.splice(0);
+                              agent.choices.push(...choices);
+                            }
                           }
                         }
+                      } else if (agent.isLoading) {
+                        agent.isLoading = false;
                       }
 
                       if (element1.dataset.type === reloadButton.dataset["type"]) {
@@ -1734,6 +1758,10 @@
                         moreButton.disabled = false;
                       }
                     }).catch((error) => {
+                      if (agent.isLoading) {
+                        agent.isLoading = false;
+                      }
+
                       if (element1.dataset.type === reloadButton.dataset["type"]) {
                         recordButton.disabled = false;
                         reloadButton.disabled = false;
@@ -1913,6 +1941,10 @@
 
                       element2.dataset["generated"] = false;
 
+                      if (element2.dataset.type === "milch") {
+                        agent.isLoading = true;
+                      }
+
                       new Promise(async (resolve, reject) => {
                         let prompt = null;
 
@@ -2027,29 +2059,35 @@
 
                           element2.dataset["generated"] = true;
 
-                          if (element2.dataset.type === "milch" && state !== null) {
-                            const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
-                            let animation;
+                          if (agent.isLoading) {
+                            agent.isLoading = false;
 
-                            if (animations.length > 0) {
-                              animation = animations[~~random(0, animations.length)];
-                            } else {
-                              const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+                            if (state !== null) {
+                              const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                              let animation;
 
-                              animation = animations[~~random(0, animations.length)];
-                            }
+                              if (animations.length > 0) {
+                                animation = animations[~~random(0, animations.length)];
+                              } else {
+                                const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
 
-                            agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
-                            
-                            if (likability !== null) {
-                              agent.likability = {a: agent.likability.a, b: likability};
-                            }
+                                animation = animations[~~random(0, animations.length)];
+                              }
 
-                            if (choices !== null) {
-                              agent.choices.splice(0);
-                              agent.choices.push(...choices);
+                              agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                              
+                              if (likability !== null) {
+                                agent.likability = {a: agent.likability.a, b: likability};
+                              }
+
+                              if (choices !== null) {
+                                agent.choices.splice(0);
+                                agent.choices.push(...choices);
+                              }
                             }
                           }
+                        } else if (agent.isLoading) {
+                          agent.isLoading = false;
                         }
 
                         if (element2.dataset.type === reloadButton.dataset["type"]) {
@@ -2058,6 +2096,10 @@
                           moreButton.disabled = false;
                         }
                       }).catch((error) => {
+                        if (agent.isLoading) {
+                          agent.isLoading = false;
+                        }
+
                         delete element2.dataset["generated"];
 
                         if (element2.dataset.type === reloadButton.dataset["type"]) {
@@ -2164,6 +2206,10 @@
 
                   element2.replaceWith(div);
                   element1.dataset["generated"] = false;
+
+                  if (element1.dataset.type === "milch") {
+                    agent.isLoading = true;
+                  }
 
                   new Promise(async (resolve, reject) => {
                     let prompt = null;
@@ -2275,29 +2321,35 @@
 
                       element1.dataset["generated"] = true;
                     
-                      if (element1.dataset.type === "milch" && state !== null) {
-                        const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
-                        let animation;
+                      if (agent.isLoading) {
+                        agent.isLoading = false;
 
-                        if (animations.length > 0) {
-                          animation = animations[~~random(0, animations.length)];
-                        } else {
-                          const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+                        if (state !== null) {
+                          const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                          let animation;
 
-                          animation = animations[~~random(0, animations.length)];
-                        }
+                          if (animations.length > 0) {
+                            animation = animations[~~random(0, animations.length)];
+                          } else {
+                            const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
 
-                        agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
-                        
-                        if (likability !== null) {
-                          agent.likability = {a: agent.likability.a, b: likability};
-                        }
+                            animation = animations[~~random(0, animations.length)];
+                          }
 
-                        if (choices !== null) {
-                          agent.choices.splice(0);
-                          agent.choices.push(...choices);
+                          agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                          
+                          if (likability !== null) {
+                            agent.likability = {a: agent.likability.a, b: likability};
+                          }
+
+                          if (choices !== null) {
+                            agent.choices.splice(0);
+                            agent.choices.push(...choices);
+                          }
                         }
                       }
+                    } else if (agent.isLoading) {
+                      agent.isLoading = false;
                     }
 
                     if (element1.dataset.type === reloadButton.dataset["type"]) {
@@ -2306,6 +2358,10 @@
                       moreButton.disabled = false;
                     }
                   }).catch((error) => {
+                    if (agent.isLoading) {
+                      agent.isLoading = false;
+                    }
+
                     delete element1.dataset["generated"];
 
                     if (element1.dataset.type === reloadButton.dataset["type"]) {
@@ -2369,6 +2425,10 @@
               reloadButton.disabled = true;
               reloadButton.dataset["type"] = element.dataset.type;
               moreButton.disabled = true;
+
+              if (element.dataset.type === "milch") {
+                agent.isLoading = true;
+              }
 
               new Promise(async (resolve, reject) => {
                 try {
@@ -2518,29 +2578,35 @@
 
                   element.dataset["generated"] = true;
 
-                  if (element.dataset.type === "milch" && state !== null) {
-                    const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
-                    let animation;
-
-                    if (animations.length > 0) {
-                      animation = animations[~~random(0, animations.length)];
-                    } else {
-                      const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
-
-                      animation = animations[~~random(0, animations.length)];
-                    }
-
-                    agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                  if (agent.isLoading) {
+                    agent.isLoading = false;
                     
-                    if (likability !== null) {
-                      agent.likability = {a: agent.likability.a, b: likability};
-                    }
+                    if (state !== null) {
+                      const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
+                      let animation;
 
-                    if (choices !== null) {
-                      agent.choices.splice(0);
-                      agent.choices.push(...choices);
+                      if (animations.length > 0) {
+                        animation = animations[~~random(0, animations.length)];
+                      } else {
+                        const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
+
+                        animation = animations[~~random(0, animations.length)];
+                      }
+
+                      agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                      
+                      if (likability !== null) {
+                        agent.likability = {a: agent.likability.a, b: likability};
+                      }
+
+                      if (choices !== null) {
+                        agent.choices.splice(0);
+                        agent.choices.push(...choices);
+                      }
                     }
                   }
+                } else if (agent.isLoading) {
+                  agent.isLoading = false;
                 }
 
                 if (element.dataset.type === reloadButton.dataset["type"]) {
@@ -2549,6 +2615,10 @@
                   moreButton.disabled = false;
                 }
               }).catch((error) => {
+                if (agent.isLoading) {
+                  agent.isLoading = false;
+                }
+
                 delete element.dataset["generated"];
 
                 if (element.dataset.type === reloadButton.dataset["type"]) {
