@@ -1102,6 +1102,8 @@
       let audioContext = null;
       let sampleRate = 32000;
       const agent = new Agent(0.5);
+      let modifiers = [];
+      let words = [];
 
       window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
@@ -1529,6 +1531,23 @@
 
       agent.isDebug = true;
       agent.fontFamily = "Barlow";
+      agent.ongenerated = () => {
+        if (words.length > 0) {
+          const word = words[random(0, words.length)];
+
+          if (modifiers.length > 0 && Math.random() < 0.5) {
+            const modifier = modifiers[random(0, modifiers.length)];
+
+            if (Array.from(modifier).every(x => /^[\x00-\x7F]*$/.test(x)) && Array.from(word).every(x => /^[\x00-\x7F]*$/.test(x))) {
+              agent.choices.unshift(`${modifiers} ${word}`);
+            } else {
+              agent.choices.unshift(modifiers + word);
+            }
+          } else {
+            agent.choices.unshift(word);
+          }
+        }
+      }
       agent.onchose = (choice) => {
         more(choice);
       }
@@ -2636,6 +2655,73 @@
             element.style.display = "none";
             element.style.opacity = 0;
           }
+        }
+      
+        try {
+          const response = await fetch(encodeURI("https://milchchan.com/api/likes?language=ja"), {
+            mode: "cors",
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          });
+      
+          if (response.ok) {
+            for (const like of await response.json()) {
+              if ("attributes" in like) {
+                let index = 0;
+  
+                while (index < like.content.length) {
+                  let maxEnd = index;
+                  
+                  for (const attribute of like.attributes) {
+                    if (attribute.start === index && attribute.end > maxEnd) {
+                      maxEnd = attribute.end;
+                    }
+                  }
+
+                  if (index !== maxEnd) {
+                    let boundaryIndex = index;
+
+                    for (const attribute of like.attributes) {
+                      if (attribute.end === maxEnd) {
+                        if (attribute.start > boundaryIndex) {
+                          boundaryIndex = attribute.start;
+                        }
+                      }
+                    }
+
+                    if (boundaryIndex === index) {
+                      const word = like.content.substring(index, maxEnd);
+
+                      if (!words.includes(word)) {
+                        words.push(word);
+                      }
+                    } else {
+                      const modifier = like.content.substring(index, boundaryIndex).trim();
+                      const word = like.content.substring(boundaryIndex, maxEnd);
+
+                      if (!modifiers.includes(modifier)) {
+                        modifiers.push(modifier);
+                      }
+
+                      if (!words.includes(word)) {
+                        words.push(word);
+                      }
+                    }
+                  
+                    index = maxEnd;
+
+                    continue;
+                  }
+
+                  index++;
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error(error);
         }
       });
       window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
