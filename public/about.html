@@ -2678,24 +2678,16 @@
   
                 while (index < like.content.length) {
                   let maxEnd = index;
+                  let boundaryIndex = index;
                   
                   for (const attribute of like.attributes) {
                     if (attribute.start === index && attribute.end > maxEnd) {
+                      boundaryIndex = maxEnd;
                       maxEnd = attribute.end;
                     }
                   }
 
                   if (index !== maxEnd) {
-                    let boundaryIndex = index;
-
-                    for (const attribute of like.attributes) {
-                      if (attribute.end === maxEnd) {
-                        if (attribute.start > boundaryIndex) {
-                          boundaryIndex = attribute.start;
-                        }
-                      }
-                    }
-
                     if (boundaryIndex === index) {
                       const word = like.content.substring(index, maxEnd);
 
