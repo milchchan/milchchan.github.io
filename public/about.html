@@ -1497,6 +1497,7 @@
                       if (choices !== null) {
                         agent.choices.splice(0);
                         agent.choices.push(...choices);
+                        agent.ongenerated();
                       }
                     }
                   }
@@ -1764,6 +1765,7 @@
                             if (choices !== null) {
                               agent.choices.splice(0);
                               agent.choices.push(...choices);
+                              agent.ongenerated();
                             }
                           }
                         }
@@ -2102,6 +2104,7 @@
                               if (choices !== null) {
                                 agent.choices.splice(0);
                                 agent.choices.push(...choices);
+                                agent.ongenerated();
                               }
                             }
                           }
@@ -2364,6 +2367,7 @@
                           if (choices !== null) {
                             agent.choices.splice(0);
                             agent.choices.push(...choices);
+                            agent.ongenerated();
                           }
                         }
                       }
@@ -2621,6 +2625,7 @@
                       if (choices !== null) {
                         agent.choices.splice(0);
                         agent.choices.push(...choices);
+                        agent.ongenerated();
                       }
                     }
                   }
