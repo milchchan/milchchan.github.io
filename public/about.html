@@ -1539,7 +1539,7 @@
           if (modifiers.length > 0 && Math.random() < 0.5) {
             const modifier = modifiers[random(0, modifiers.length)];
 
-            if (Array.from(modifier).every(x => /^[\x00-\x7F]*$/.test(x)) && Array.from(word).every(x => /^[\x00-\x7F]*$/.test(x))) {
+            if ([...modifier].every(x => /^[\x00-\x7F]*$/.test(x)) && [...word].every(x => /^[\x00-\x7F]*$/.test(x))) {
               agent.choices.unshift(`${modifiers} ${word}`);
             } else {
               agent.choices.unshift(modifiers + word);
