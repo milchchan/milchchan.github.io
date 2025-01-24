@@ -111,7 +111,7 @@ export class Agent {
     this.apiKey = null;
     this.ongenerated = null;
     this.onchose = (choice) => {
-      this.talk(choice);
+      this.ask(choice);
     }
   }
   
@@ -334,7 +334,7 @@ export class Agent {
     const animations = this.character.animations.filter(x => x.name === "Start");
     
     this.animationQueue.push(animations[~~random(0, animations.length)]);
-    this.talk();
+    this.ask();
   }) {
     const self = this;
 
@@ -415,7 +415,7 @@ export class Agent {
     };
   }
 
-  talk(content = null) {
+  ask(content = null) {
     this.isLoading = true;
 
     new Promise(async (resolve) => {
