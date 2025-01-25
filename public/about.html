@@ -1060,7 +1060,7 @@
             </div>
           </div>
         </div>
-        <div class="content" data-type="story" data-prompts='["今日のメルクちゃんの日記で綴るミルヒちゃんとメルクちゃんの日常の短編小説を書いてください。今日の日付も日記に記載してください。", "プロットから短編小説を書いてください。", "魔法少女ごっこしていたらミルヒちゃんがおしっこをおもらししちゃうオチのメルクちゃん視点の短編小説を書いてください。", "同人誌即売会をテーマにした百合百合なメルクちゃん視点の短編小説を書いてください。", "メルクちゃんがミルヒちゃんにあんなことこんなことすることを妄想するメルクちゃん視点の短編小説を書いてください。"]'>
+        <div class="content" data-type="story" data-prompts='["今日のメルクちゃんの日記で綴るミルヒちゃんとメルクちゃんの日常の短編小説を書いてください。今日の日付も日記に記載してください。", "プロットから短編小説を書いてください。", "同人誌即売会をテーマにした百合百合なメルクちゃん視点の短編小説を書いてください。"]'>
           <div class="icon is-animatable">
             <a class="button" href="https://clock.milchchan.com/" title="Clock">
               <figure>
@@ -1356,6 +1356,8 @@
                 let prompt = null;
 
                 if ("prompts" in element1.dataset) {
+                  let prompts;
+
                   try {
                     prompts = await new Promise(async (resolve, reject) => {
                       try {
@@ -1366,6 +1368,8 @@
                     });
                   } catch (error) {
                     reject(error);
+
+                    return;
                   }
 
                   if (prompts.length > 0) {
@@ -1624,6 +1628,8 @@
                       let prompt = null;
 
                       if ("prompts" in element1.dataset) {
+                        let prompts;
+
                         try {
                           prompts = await new Promise(async (resolve, reject) => {
                             try {
@@ -1634,6 +1640,8 @@
                           });
                         } catch (error) {
                           reject(error);
+
+                          return;
                         }
 
                         if (prompts.length > 0) {
@@ -1982,6 +1990,8 @@
                             });
                           } catch (error) {
                             reject(error);
+
+                            return;
                           }
 
                           if (prompts.length > 0) {
@@ -2237,6 +2247,8 @@
                     let prompt = null;
 
                     if ("prompts" in element1.dataset) {
+                      let prompts;
+
                       try {
                         prompts = await new Promise(async (resolve, reject) => {
                           try {
@@ -2247,6 +2259,8 @@
                         });
                       } catch (error) {
                         reject(error);
+
+                        return;
                       }
 
                       if (prompts.length > 0) {
@@ -2495,6 +2509,8 @@
                 let prompt = null;
 
                 if ("prompts" in element.dataset) {
+                  let prompts;
+
                   try {
                     prompts = await new Promise(async (resolve, reject) => {
                       try {
@@ -2505,6 +2521,8 @@
                     });
                   } catch (error) {
                     reject(error);
+
+                    return;
                   }
 
                   if (prompts.length > 0) {
