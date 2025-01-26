@@ -363,7 +363,7 @@ export class Agent {
               } else if (typeof command === "string") {
                 self.show(command);
               } else if (command instanceof Animation) {
-                self.animationQueue.push(command);
+                self.animationQueue.push(new Animation(command.name, command.state, command.repeats, command.frames));
               }
             } while (self.commandQueue.length > 0);
             
@@ -488,7 +488,7 @@ export class Agent {
       const [message, likability, animation, choices, logs] = value;
 
       if (message !== null && animation !== null) {
-        this.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+        this.speak(message, animation);
 
         if (likability !== null) {
           this.likability = {a: this.likability.a, b: likability};
