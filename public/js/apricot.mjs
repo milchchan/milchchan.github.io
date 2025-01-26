@@ -109,6 +109,7 @@ export class Agent {
     this.logs = [];
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
+    this.onclick = null;
     this.ongenerated = null;
     this.onchose = (choice) => {
       this.ask(choice);
@@ -225,6 +226,10 @@ export class Agent {
       characterCanvas.style.userSelect = "none";
       characterCanvas.style.setProperty("-webkit-user-select", "none");
       characterCanvas.addEventListener("click", (event) => {
+        if (this.onclick !== null) {
+          this.onclick();
+        }
+
         if (!this.isLoading) {
           if (this.isPopup) {
             this.isPopup = false;
