@@ -2435,8 +2435,9 @@
         
         agent.run(() => {
           const animations = agent.character.animations.filter(x => x.name === "Start");
-    
-          agent.animationQueue.push(animations[~~random(0, animations.length)]);
+          
+          agent.commandQueue.push(animations[~~random(0, animations.length)]);
+          agent.commandQueue.push(null);
         });
 
         for (const element of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
