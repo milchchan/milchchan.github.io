@@ -89,9 +89,11 @@ export class Agent {
     this.balloonWidth = null;
     this.messageHeight = 0;
     this.messageQueue = [];
-    this.animationQueue = [];
+    this.currentAnimations = [];
     this.commandQueue = [];
     this.cachedImages = {};
+    this.elapsedTime = 0.0;
+    this.maxDuration = 0.0;
     this.textColor = "rgb(255 255 255)";
     this.accentColor = "#ffc7e5";
     this.lineHeight = 32;
@@ -146,6 +148,10 @@ export class Agent {
 
           for (const frame of y.frames) {
             frame.delay = Math.max(frame.delay, 0.01);
+
+            if ("z" in frame === false) {
+              frame["z"] = 0;
+            }
 
             if ("opacity" in frame === false) {
               frame["opacity"] = 1.0;
@@ -338,7 +344,8 @@ export class Agent {
   run(startup = () => {
     const animations = this.character.animations.filter(x => x.name === "Start");
     
-    this.animationQueue.push(animations[~~random(0, animations.length)]);
+    this.commandQueue.push(animations[~~random(0, animations.length)]);
+    this.commandQueue.push(null);
     this.ask();
   }) {
     const self = this;
@@ -353,7 +360,7 @@ export class Agent {
   
         self.previousTime = timestamp;
 
-        if (self.animationQueue.length === 0 && self.balloonCanvas.style.visibility !== "visible") {
+        if (self.currentAnimations.length === 0 && self.balloonCanvas.style.visibility !== "visible") {
           if (self.commandQueue.length > 0) {
             do {
               const command = self.commandQueue.shift();
@@ -363,7 +370,31 @@ export class Agent {
               } else if (typeof command === "string") {
                 self.show(command);
               } else if (command instanceof Animation) {
-                self.animationQueue.push(new Animation(command.name, command.state, command.repeats, command.frames));
+                
+                self.elapsedTime = 0.0;
+                self.maxDuration = 0.0;
+                
+                for (const z of command.frames.reduce((x, y) => {
+                  if (!x.includes(y.z)) {
+                    x.push(y.z);
+                  }
+
+                  return x;
+                }, []).toSorted((a, b) => a - b)) {
+                  for (const frame of command.frames) {
+                    const animation = new Animation(command.name, command.state, command.repeats);
+
+                    if (frame.z === z) {
+                      animation.frames.push(frame);
+                    }
+
+                    if (animation.duration > self.maxDuration) {
+                      self.maxDuration = animation.duration;
+                    }
+
+                    self.currentAnimations.push(animation);
+                  }
+                }
               }
             } while (self.commandQueue.length > 0);
             
@@ -375,9 +406,32 @@ export class Agent {
               const animations = self.character.animations.filter(x => x.name === "Idle");
 
               if (animations.length > 0) {
-                const animation = animations[~~random(0, animations.length)];
-      
-                self.animationQueue.push(new Animation(animation.name, animation.state, animation.repeats, animation.frames));
+                const command = animations[~~random(0, animations.length)];
+                
+                self.elapsedTime = 0.0;
+                self.maxDuration = 0.0;
+                
+                for (const z of command.frames.reduce((x, y) => {
+                  if (!x.includes(y.z)) {
+                    x.push(y.z);
+                  }
+
+                  return x;
+                }, []).toSorted((a, b) => a - b)) {
+                  for (const frame of command.frames) {
+                    const animation = new Animation(command.name, command.state, command.repeats);
+
+                    if (frame.z === z) {
+                      animation.frames.push(frame);
+                    }
+
+                    if (animation.duration > self.maxDuration) {
+                      self.maxDuration = animation.duration;
+                    }
+
+                    self.currentAnimations.push(animation);
+                  }
+                }
               }
 
               self.idleTime = 0.0;
@@ -515,7 +569,7 @@ export class Agent {
         const animations = this.character.animations.filter(x => x.name === "Error");
     
         if (animations.length > 0) {
-          this.animationQueue.push(animations[~~random(0, animations.length)]);
+          this.currentAnimations.push(animations[~~random(0, animations.length)]);
         }
 
         this.logs.splice(0);
@@ -650,37 +704,41 @@ export class Agent {
   }
 
   renderCharacter(deltaTime) {
-    if (this.animationQueue.length > 0) {
-      const animation = this.animationQueue[0];
-      
-      animation.time += deltaTime;
+    if (this.elapsedTime < this.maxDuration) {
+      const backCanvas = this.characterCanvas.backBuffer;
 
-      const frame = animation.current;
+      backCanvas.width = this.characterCanvas.width;
+      backCanvas.height = this.characterCanvas.height;
 
-      if (frame.url in this.cachedImages) {
-        const backCanvas = this.characterCanvas.backBuffer;
+      const backContext = backCanvas.getContext("2d");
+      const frontContext = this.characterCanvas.getContext("2d");
 
-        backCanvas.width = this.characterCanvas.width;
-        backCanvas.height = this.characterCanvas.height;
-  
-        const backContext = backCanvas.getContext("2d");
-        const frontContext = this.characterCanvas.getContext("2d");
-  
-        backContext.imageSmoothingEnabled = true;
-        backContext.imageSmoothingQuality = "high";
-        backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
-        backContext.save();
-        backContext.globalAlpha = frame.opacity;
-        backContext.drawImage(this.cachedImages[frame.url], (this.character.x + frame.x) * this.scale * window.devicePixelRatio, (this.character.y + frame.y) * this.scale * window.devicePixelRatio, frame.width * this.scale * window.devicePixelRatio, frame.height * this.scale * window.devicePixelRatio);
-        backContext.restore();
-        frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
-        frontContext.drawImage(backCanvas, 0, 0);
-  
-        backCanvas.width = backCanvas.height = 0;
+      backContext.imageSmoothingEnabled = true;
+      backContext.imageSmoothingQuality = "high";
+      backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+
+      for (const animation of this.currentAnimations) {
+        animation.time += deltaTime;
+
+        const frame = animation.current;
+
+        if (frame.url in this.cachedImages) {
+          backContext.save();
+          backContext.globalAlpha = frame.opacity;
+          backContext.drawImage(this.cachedImages[frame.url], (this.character.x + frame.x) * this.scale * window.devicePixelRatio, (this.character.y + frame.y) * this.scale * window.devicePixelRatio, frame.width * this.scale * window.devicePixelRatio, frame.height * this.scale * window.devicePixelRatio);
+          backContext.restore();
+        }
       }
 
-      if (animation.time >= animation.duration) {
-        this.animationQueue.shift();
+      frontContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+      frontContext.drawImage(backCanvas, 0, 0);
+
+      backCanvas.width = backCanvas.height = 0;
+
+      this.elapsedTime += deltaTime;
+
+      if (this.elapsedTime >= this.maxDuration) {
+        this.currentAnimations.splice(0);
       }
     }
   }
