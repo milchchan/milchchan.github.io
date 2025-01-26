@@ -1499,8 +1499,8 @@
                       }
 
                       if (choices !== null) {
-                        agent.choices.splice(0);
-                        agent.choices.push(...choices);
+                        agent._choices.splice(0);
+                        agent._choices.push(...choices);
                         agent.ongenerated();
                       }
                     }
@@ -1534,9 +1534,13 @@
         }
       }
 
+      agent["_choices"] = [];
       agent.isDebug = true;
       agent.fontFamily = "Barlow";
-      agent.ongenerated = () => {
+      agent.onclick = (e) => {
+        agent.choices.splice(0);
+        agent.choices.push(...agent._choices);
+
         if (words.length > 0) {
           const word = words[random(0, words.length)];
 
@@ -1551,6 +1555,11 @@
           } else {
             agent.choices.unshift(word);
           }
+        }
+      }
+      agent.ongenerated = () => {
+        for (const element of document.body.querySelectorAll("[data-apricot-prompt]")) {
+          agent.choices.push(element.dataset.prompt);
         }
       }
       agent.onchose = (choice) => {
@@ -1771,8 +1780,8 @@
                             }
 
                             if (choices !== null) {
-                              agent.choices.splice(0);
-                              agent.choices.push(...choices);
+                              agent._choices.splice(0);
+                              agent._choices.push(...choices);
                               agent.ongenerated();
                             }
                           }
@@ -2112,8 +2121,8 @@
                               }
 
                               if (choices !== null) {
-                                agent.choices.splice(0);
-                                agent.choices.push(...choices);
+                                agent._choices.splice(0);
+                                agent._choices.push(...choices);
                                 agent.ongenerated();
                               }
                             }
@@ -2379,8 +2388,8 @@
                           }
 
                           if (choices !== null) {
-                            agent.choices.splice(0);
-                            agent.choices.push(...choices);
+                            agent._choices.splice(0);
+                            agent._choices.push(...choices);
                             agent.ongenerated();
                           }
                         }
@@ -2641,8 +2650,8 @@
                       }
 
                       if (choices !== null) {
-                        agent.choices.splice(0);
-                        agent.choices.push(...choices);
+                        agent._choices.splice(0);
+                        agent._choices.push(...choices);
                         agent.ongenerated();
                       }
                     }
