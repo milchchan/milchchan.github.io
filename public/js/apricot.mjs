@@ -227,7 +227,7 @@ export class Agent {
       characterCanvas.style.setProperty("-webkit-user-select", "none");
       characterCanvas.addEventListener("click", (event) => {
         if (this.onclick !== null) {
-          this.onclick();
+          this.onclick(event);
         }
 
         if (!this.isLoading) {
