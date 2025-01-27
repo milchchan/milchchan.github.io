@@ -367,8 +367,8 @@ export class Agent {
 
               if (command === null) {
                 break;
-              } else if ("text" in command, "url" in command) {
-                self.show(command.text, command.url);
+              } else if (typeof command === "string") {
+                self.show(command);
               } else if (command instanceof Animation) {
                 
                 self.elapsedTime = 0.0;
@@ -507,7 +507,7 @@ export class Agent {
 
           if (data[0] !== null) {
             message = data[0];
-            logs.push({ role: "assistant", content: message.text });
+            logs.push({ role: "assistant", content: message });
             likability = data[1];
             
             if (data[3] !== null) {
@@ -579,14 +579,7 @@ export class Agent {
   }
 
   speak(message, animation) {
-    if (typeof message === "string") {
-      this.commandQueue.push({text: message, url: null});
-    } else if ("url" in message && message.url !== null) {
-      this.commandQueue.push(message);
-    } else {
-      this.commandQueue.push({text: message.text, url: null});
-    }
-
+    this.commandQueue.push(message);
     this.commandQueue.push(animation);
     this.commandQueue.push(null);
   }
@@ -719,12 +712,6 @@ export class Agent {
 
     if ("content" in json) {
       content = json.content;
-
-      if (typeof content === "string") {
-        content = { text: content, url: null };
-      } else if ("url" in content === false || content.url === null || content.url.length === 0) {
-        content = { text: content.text, url: null };
-      }
     }
 
     if ("likability" in json) {
@@ -1004,10 +991,6 @@ export class Agent {
             if (this.messageQueue[0].duration >= 0.0 && this.messageQueue[0].time >= this.messageQueue[0].duration) {
               this.messageQueue[0].step = 1.0;
               this.messageQueue[0].index = -1;
-
-              if (this.messageQueue[0].url !== null) {
-                this.open(this.messageQueue[0].url);
-              }
             }
           }
 
@@ -1163,7 +1146,7 @@ export class Agent {
     }
   }
 
-  show(message, url = null, duration = 5.0, speed = 50) {
+  show(message, duration = 5.0, speed = 50) {
     const maxLineWidth = Math.ceil((this.balloonWidth - this.lineHeight * 2) * window.devicePixelRatio);
     const fontSize = this.fontSize * window.devicePixelRatio;
     const backCanvas = this.balloonCanvas.backBuffer;
@@ -1267,7 +1250,7 @@ export class Agent {
     this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
     this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2 + 11)}px`;
     this.balloonCanvas.style.visibility = "visible";
-    this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false, url: url });
+    this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false });
   
     backCanvas.width = this.balloonCanvas.width;
     backCanvas.height = this.balloonCanvas.height;
@@ -1281,10 +1264,6 @@ export class Agent {
     frontContext.drawImage(backCanvas, 0, 0);
 
     backCanvas.width = backCanvas.height = 0;
-
-    if (url !== null) {
-      this.choices.unshift({ text: null, url: url });
-    }
   }
 
   open(url) {
