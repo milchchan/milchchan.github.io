@@ -367,8 +367,8 @@ export class Agent {
 
               if (command === null) {
                 break;
-              } else if (typeof command === "string") {
-                self.show(command);
+              } else if ("text" in command, "url" in command) {
+                self.show(command.text, command.url);
               } else if (command instanceof Animation) {
                 
                 self.elapsedTime = 0.0;
@@ -381,19 +381,19 @@ export class Agent {
 
                   return x;
                 }, []).toSorted((a, b) => a - b)) {
-                  for (const frame of command.frames) {
-                    const animation = new Animation(command.name, command.state, command.repeats);
+                  const animation = new Animation(command.name, command.state, command.repeats);
 
+                  for (const frame of command.frames) {
                     if (frame.z === z) {
                       animation.frames.push(frame);
                     }
-
-                    if (animation.duration > self.maxDuration) {
-                      self.maxDuration = animation.duration;
-                    }
-
-                    self.currentAnimations.push(animation);
                   }
+
+                  if (animation.duration > self.maxDuration) {
+                    self.maxDuration = animation.duration;
+                  }
+
+                  self.currentAnimations.push(animation);
                 }
               }
             } while (self.commandQueue.length > 0);
@@ -507,7 +507,7 @@ export class Agent {
 
           if (data[0] !== null) {
             message = data[0];
-            logs.push({ role: "assistant", content: message });
+            logs.push({ role: "assistant", content: message.text });
             likability = data[1];
             
             if (data[3] !== null) {
@@ -533,8 +533,6 @@ export class Agent {
         }
       } catch (error) {
         console.error(error);
-
-        commands.splice(0);
       }
 
       resolve([message, likability, animation, choices, logs]);
@@ -569,7 +567,8 @@ export class Agent {
         const animations = this.character.animations.filter(x => x.name === "Error");
     
         if (animations.length > 0) {
-          this.currentAnimations.push(animations[~~random(0, animations.length)]);
+          this.commandQueue.push(animations[~~random(0, animations.length)]);
+          this.commandQueue.push(null);
         }
 
         this.logs.splice(0);
@@ -580,7 +579,14 @@ export class Agent {
   }
 
   speak(message, animation) {
-    this.commandQueue.push(message);
+    if (typeof message === "string") {
+      this.commandQueue.push({text: message, url: null});
+    } else if ("url" in message && message.url !== null) {
+      this.commandQueue.push(message);
+    } else {
+      this.commandQueue.push({text: message.text, url: null});
+    }
+
     this.commandQueue.push(animation);
     this.commandQueue.push(null);
   }
@@ -604,10 +610,22 @@ export class Agent {
     popupElement.style.overflow = "hidden";
 
     for (let i = 0; i < choices.length; i++) {
+      const choice = choices[i];
       const buttonElement = document.createElement("button");
 
-      buttonElement.dataset["choice"] = choices[i];
-      buttonElement.textContent = choices[i];
+      if (typeof choice === "string") {
+        buttonElement.dataset["choice"] = choice;
+        buttonElement.textContent = choice;
+      } else {
+        buttonElement.dataset["choice"] = choice.text;
+
+        if ("url" in choice && choice.url !== null) {
+          buttonElement.dataset["url"] = choice.url;
+        }
+
+        buttonElement.textContent = choice.text;
+      }
+
       buttonElement.style.backgroundColor = "transparent";
       buttonElement.style.border = "0px solid transparent";;
       buttonElement.style.padding = `${Math.floor(this.lineHeight / 2)}px ${Math.floor(this.lineHeight)}px`;
@@ -618,8 +636,19 @@ export class Agent {
       buttonElement.style.color = this.textColor;
       buttonElement.addEventListener("click", (event) => {
         const target = (event.currentTarget || event.target);
+        let choseRequired = true;
 
-        this.onchose(target.dataset['choice']);
+        if ("url" in target.dataset) {
+          this.open(target.dataset.url);
+
+          if (buttonElement.textContent === target.dataset.url) {
+            choseRequired = false;
+          }
+        }
+
+        if (choseRequired) {
+          this.onchose(target.dataset["choice"]);
+        }
 
         if (this.isPopup) {
           this.isPopup = false;
@@ -667,7 +696,7 @@ export class Agent {
     let likability = null;
     let state = null;
     let choices = null;
-    
+
     if ("id" in json && "model" in json && "choices" in json && json.choices.length > 0) {
       const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
       if (match === null) {
@@ -679,6 +708,12 @@ export class Agent {
 
     if ("content" in json) {
       content = json.content;
+
+      if (typeof content === "string") {
+        content = { text: content, url: null };
+      } else if ("url" in content === false || content.url === null || content.url.length === 0) {
+        content = { text: content.text, url: null };
+      }
     }
 
     if ("likability" in json) {
@@ -697,7 +732,17 @@ export class Agent {
     }
 
     if ("choices" in json) {
-      choices = json.choices;
+      choices = []
+
+      for (const choice of json.choices) {
+        if (typeof choice === "string") {
+          choices.push({ text: choice, url: null });
+        } else if ("url" in choice === false || choice.url === null || choice.url.length === 0) {
+          choices.push({ text: choice.text, url: null });
+        } else {
+          choice.push(choice);
+        }
+      }
     }
 
     return [content, likability, state, choices];
@@ -948,6 +993,10 @@ export class Agent {
             if (this.messageQueue[0].duration >= 0.0 && this.messageQueue[0].time >= this.messageQueue[0].duration) {
               this.messageQueue[0].step = 1.0;
               this.messageQueue[0].index = -1;
+
+              if (this.messageQueue[0].url !== null) {
+                this.open(this.messageQueue[0].url);
+              }
             }
           }
 
@@ -1103,7 +1152,7 @@ export class Agent {
     }
   }
 
-  show(message, duration = 5.0, speed = 50) {
+  show(message, url = null, duration = 5.0, speed = 50) {
     const maxLineWidth = Math.ceil((this.balloonWidth - this.lineHeight * 2) * window.devicePixelRatio);
     const fontSize = this.fontSize * window.devicePixelRatio;
     const backCanvas = this.balloonCanvas.backBuffer;
@@ -1207,7 +1256,7 @@ export class Agent {
     this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
     this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2 + 11)}px`;
     this.balloonCanvas.style.visibility = "visible";
-    this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false });
+    this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false, url: url });
   
     backCanvas.width = this.balloonCanvas.width;
     backCanvas.height = this.balloonCanvas.height;
@@ -1221,6 +1270,35 @@ export class Agent {
     frontContext.drawImage(backCanvas, 0, 0);
 
     backCanvas.width = backCanvas.height = 0;
+
+    if (url !== null) {
+      this.choices.unshift({ text: url, url: url });
+    }
+  }
+
+  open(url) {
+    if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url)) {
+      const targetUrl = new URL(url, window.location.origin);
+
+      if (window.location.pathname.replace(/\/$/, "") === targetUrl.pathname.replace(/\/$/, "") && targetUrl.hash.length > 0) {
+        const element = document.body.querySelector(targetUrl.hash);
+
+        if (element === null) {
+          const animations = this.character.animations.filter(x => x.name === "Error");
+    
+          if (animations.length > 0) {
+            this.commandQueue.push(animations[~~random(0, animations.length)]);
+            this.commandQueue.push(null);
+          }
+        } else {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+
+        return;
+      }
+    }
+
+    window.open(url, "_blank");
   }
 
   drawBalloonPath(ctx, messageWidth,  messageHeight, balloonPartWidth, balloonPartHeight, radius, n = 2.5) {
