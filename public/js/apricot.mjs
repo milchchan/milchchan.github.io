@@ -708,8 +708,6 @@ export class Agent {
       }
     }
 
-    console.log(json);
-
     if ("content" in json) {
       content = json.content;
     }
