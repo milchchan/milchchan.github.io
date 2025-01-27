@@ -732,7 +732,7 @@ export class Agent {
     }
 
     if ("choices" in json) {
-      choices = []
+      choices = [];
 
       for (const choice of json.choices) {
         if (typeof choice === "string") {
@@ -1280,7 +1280,7 @@ export class Agent {
     if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url)) {
       const targetUrl = new URL(url, window.location.origin);
 
-      if (window.location.pathname.replace(/\/$/, "") === targetUrl.pathname.replace(/\/$/, "") && targetUrl.hash.length > 0) {
+      if (window.location.pathname.toLowerCase().replace(/\/$/, "") === targetUrl.pathname.toLowerCase().replace(/\/$/, "") && targetUrl.hash.length > 0) {
         const element = document.body.querySelector(targetUrl.hash);
 
         if (element === null) {
