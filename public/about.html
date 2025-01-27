@@ -1345,7 +1345,7 @@
 
               recordButton.disabled = true;
               reloadButton.disabled = true;
-              reloadButton.dataset["type"] = element1.dataset.type;
+              reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) + 1;
               moreButton.disabled = true;
 
               if (element1.dataset.type === "milch") {
@@ -1509,7 +1509,9 @@
                   agent.isLoading = false;
                 }
 
-                if (element1.dataset.type === reloadButton.dataset["type"]) {
+                reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                if (reloadButton.dataset["counter"] === "0") {
                   recordButton.disabled = false;
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
@@ -1519,7 +1521,9 @@
                   agent.isLoading = false;
                 }
 
-                if (element1.dataset.type === reloadButton.dataset["type"]) {
+                reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                if (reloadButton.dataset["counter"] === "0") {
                   recordButton.disabled = false;
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
@@ -1626,7 +1630,7 @@
 
                     recordButton.disabled = true;
                     reloadButton.disabled = true;
-                    reloadButton.dataset["type"] = element1.dataset.type;
+                    reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) + 1;
                     moreButton.disabled = true;
 
                     if (element1.dataset.type === "milch") {
@@ -1790,7 +1794,9 @@
                         agent.isLoading = false;
                       }
 
-                      if (element1.dataset.type === reloadButton.dataset["type"]) {
+                      reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                      if (reloadButton.dataset["counter"] === "0") {
                         recordButton.disabled = false;
                         reloadButton.disabled = false;
                         moreButton.disabled = false;
@@ -1800,7 +1806,9 @@
                         agent.isLoading = false;
                       }
 
-                      if (element1.dataset.type === reloadButton.dataset["type"]) {
+                      reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                      if (reloadButton.dataset["counter"] === "0") {
                         recordButton.disabled = false;
                         reloadButton.disabled = false;
                         moreButton.disabled = false;
@@ -1974,7 +1982,7 @@
                     if ("generated" in element2.dataset === false && recordButton !== null && reloadButton !== null && moreButton !== null) {
                       recordButton.disabled = true;
                       reloadButton.disabled = true;
-                      reloadButton.dataset["type"] = element2.dataset.type;
+                      reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) + 1;
                       moreButton.disabled = true;
 
                       element2.dataset["generated"] = false;
@@ -2131,7 +2139,9 @@
                           agent.isLoading = false;
                         }
 
-                        if (element2.dataset.type === reloadButton.dataset["type"]) {
+                        reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                        if (reloadButton.dataset["counter"] === "0") {
                           recordButton.disabled = false;
                           reloadButton.disabled = false;
                           moreButton.disabled = false;
@@ -2143,7 +2153,9 @@
 
                         delete element2.dataset["generated"];
 
-                        if (element2.dataset.type === reloadButton.dataset["type"]) {
+                        reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                        if (reloadButton.dataset["counter"] === "0") {
                           recordButton.disabled = false;
                           reloadButton.disabled = false;
                           moreButton.disabled = false;
@@ -2213,7 +2225,7 @@
               if (element2 !== null) {
                 recordButton.disabled = true;
                 reloadButton.disabled = true;
-                reloadButton.dataset["type"] = element1.dataset.type;
+                reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) + 1;
                 moreButton.disabled = true;
               
                 element2.animate([
@@ -2398,7 +2410,9 @@
                       agent.isLoading = false;
                     }
 
-                    if (element1.dataset.type === reloadButton.dataset["type"]) {
+                    reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                    if (reloadButton.dataset["counter"] === "0") {
                       recordButton.disabled = false;
                       reloadButton.disabled = false;
                       moreButton.disabled = false;
@@ -2410,7 +2424,9 @@
 
                     delete element1.dataset["generated"];
 
-                    if (element1.dataset.type === reloadButton.dataset["type"]) {
+                    reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                    if (reloadButton.dataset["counter"] === "0") {
                       recordButton.disabled = false;
                       reloadButton.disabled = false;
                       moreButton.disabled = false;
@@ -2470,7 +2486,7 @@
             if (recordButton !== null && reloadButton !== null && moreButton !== null) {
               recordButton.disabled = true;
               reloadButton.disabled = true;
-              reloadButton.dataset["type"] = element.dataset.type;
+              reloadButton.dataset["counter"] = 1;
               moreButton.disabled = true;
 
               if (element.dataset.type === "milch") {
@@ -2661,7 +2677,9 @@
                   agent.isLoading = false;
                 }
 
-                if (element.dataset.type === reloadButton.dataset["type"]) {
+                reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                if (reloadButton.dataset["counter"] === "0") {
                   recordButton.disabled = false;
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
@@ -2673,7 +2691,9 @@
 
                 delete element.dataset["generated"];
 
-                if (element.dataset.type === reloadButton.dataset["type"]) {
+                reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                if (reloadButton.dataset["counter"] === "0") {
                   recordButton.disabled = false;
                   reloadButton.disabled = false;
                   moreButton.disabled = false;
