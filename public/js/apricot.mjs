@@ -715,6 +715,8 @@ export class Agent {
       }
     }
 
+    console.log(json);
+
     if ("content" in json) {
       content = json.content;
 
@@ -749,7 +751,7 @@ export class Agent {
         } else if ("url" in choice === false || choice.url === null || choice.url.length === 0) {
           choices.push({ text: choice.text, url: null });
         } else {
-          choice.push(choice);
+          choices.push(choice);
         }
       }
     }
