@@ -638,17 +638,10 @@ export class Agent {
       buttonElement.style.color = this.textColor;
       buttonElement.addEventListener("click", (event) => {
         const target = (event.currentTarget || event.target);
-        let choseRequired = true;
-
+        
         if ("url" in target.dataset) {
           this.open(target.dataset.url);
-
-          if (buttonElement.textContent === target.dataset.url) {
-            choseRequired = false;
-          }
-        }
-
-        if (choseRequired) {
+        } else {
           this.onchose(target.dataset["choice"]);
         }
 
