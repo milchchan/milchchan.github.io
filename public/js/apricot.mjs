@@ -617,13 +617,22 @@ export class Agent {
         buttonElement.dataset["choice"] = choice;
         buttonElement.textContent = choice;
       } else {
-        buttonElement.dataset["choice"] = choice.text;
+        if (choice.text === null) {
+          if ("url" in choice === false || choice.url === null) {
+            continue;
+          }
 
-        if ("url" in choice && choice.url !== null) {
           buttonElement.dataset["url"] = choice.url;
-        }
+          buttonElement.dataset["choice"] = choice.url;
+          buttonElement.textContent = choice.url;
+        } else {
+          if ("url" in choice && choice.url !== null) {
+            buttonElement.dataset["url"] = choice.url;
+          }
 
-        buttonElement.textContent = choice.text;
+          buttonElement.dataset["choice"] = choice.text;
+          buttonElement.textContent = choice.text;
+        }
       }
 
       buttonElement.style.backgroundColor = "transparent";
@@ -1272,7 +1281,7 @@ export class Agent {
     backCanvas.width = backCanvas.height = 0;
 
     if (url !== null) {
-      this.choices.unshift({ text: url, url: url });
+      this.choices.unshift({ text: null, url: url });
     }
   }
 
