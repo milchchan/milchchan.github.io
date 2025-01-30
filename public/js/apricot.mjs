@@ -976,7 +976,7 @@ export class Agent {
             }
           } else if (index < this.messageQueue[0].lines.length - 1) {
             this.messageQueue[0].index += 1;
-          } else {
+          } else if (!this.isPopup) {
             this.messageQueue[0].time += deltaTime;
             
             if (this.messageQueue[0].duration >= 0.0 && this.messageQueue[0].time >= this.messageQueue[0].duration) {
