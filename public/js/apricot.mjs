@@ -1258,25 +1258,23 @@ export class Agent {
   }
 
   open(url) {
-    if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url)) {
-      const targetUrl = new URL(url, window.location.origin);
-
-      if (window.location.pathname.toLowerCase().replace(/\/$/, "") === targetUrl.pathname.toLowerCase().replace(/\/$/, "") && targetUrl.hash.length > 0) {
-        const element = document.body.querySelector(targetUrl.hash);
-
-        if (element === null) {
-          const animations = this.character.animations.filter(x => x.name === "Error");
+    const targetUrl = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url) ? new URL(url) : new URL(url, window.location.origin);
     
-          if (animations.length > 0) {
-            this.commandQueue.push(animations[~~random(0, animations.length)]);
-            this.commandQueue.push(null);
-          }
-        } else {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
+    if (window.location.origin.toLowerCase() === targetUrl.origin.toLowerCase() && window.location.pathname.toLowerCase().replace(/\/$/, "") === targetUrl.pathname.toLowerCase().replace(/\/$/, "") && targetUrl.hash.length > 0) {
+      const element = document.body.querySelector(targetUrl.hash);
 
-        return;
+      if (element === null) {
+        const animations = this.character.animations.filter(x => x.name === "Error");
+  
+        if (animations.length > 0) {
+          this.commandQueue.push(animations[~~random(0, animations.length)]);
+          this.commandQueue.push(null);
+        }
+      } else {
+        element.scrollIntoView({ behavior: "smooth" });
       }
+
+      return;
     }
 
     window.open(url, "_blank");
