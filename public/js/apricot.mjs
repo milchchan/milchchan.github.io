@@ -370,13 +370,14 @@ export class Agent {
               } else if (typeof command === "string") {
                 self.show(command);
               } else if (command instanceof Animation) {
-                
                 self.elapsedTime = 0.0;
                 self.maxDuration = 0.0;
                 
                 for (const z of command.frames.reduce((x, y) => {
-                  if (!x.includes(y.z)) {
-                    x.push(y.z);
+                  const z = Math.floor(y.z);
+
+                  if (!x.includes(z)) {
+                    x.push(z);
                   }
 
                   return x;
@@ -384,7 +385,7 @@ export class Agent {
                   const animation = new Animation(command.name, command.state, command.repeats);
 
                   for (const frame of command.frames) {
-                    if (frame.z === z) {
+                    if (Math.floor(frame.z) === z) {
                       animation.frames.push(frame);
                     }
                   }
@@ -412,25 +413,27 @@ export class Agent {
                 self.maxDuration = 0.0;
                 
                 for (const z of command.frames.reduce((x, y) => {
-                  if (!x.includes(y.z)) {
-                    x.push(y.z);
+                  const z = Math.floor(y.z);
+
+                  if (!x.includes(z)) {
+                    x.push(z);
                   }
 
                   return x;
                 }, []).toSorted((a, b) => a - b)) {
-                  for (const frame of command.frames) {
-                    const animation = new Animation(command.name, command.state, command.repeats);
+                  const animation = new Animation(command.name, command.state, command.repeats);
 
-                    if (frame.z === z) {
+                  for (const frame of command.frames) {
+                    if (Math.floor(frame.z) === z) {
                       animation.frames.push(frame);
                     }
-
-                    if (animation.duration > self.maxDuration) {
-                      self.maxDuration = animation.duration;
-                    }
-
-                    self.currentAnimations.push(animation);
                   }
+
+                  if (animation.duration > self.maxDuration) {
+                    self.maxDuration = animation.duration;
+                  }
+
+                  self.currentAnimations.push(animation);
                 }
               }
 
@@ -750,7 +753,7 @@ export class Agent {
       backContext.imageSmoothingEnabled = true;
       backContext.imageSmoothingQuality = "high";
       backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
-
+      
       for (const animation of this.currentAnimations) {
         animation.time += deltaTime;
 
