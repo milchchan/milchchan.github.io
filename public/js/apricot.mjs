@@ -370,32 +370,11 @@ export class Agent {
               } else if (typeof command === "string") {
                 self.show(command);
               } else if (command instanceof Animation) {
+                const [nextAnimations, maxDuration] = self.setupAnimations(command);
+
+                self.currentAnimations.push(...nextAnimations);
                 self.elapsedTime = 0.0;
-                self.maxDuration = 0.0;
-                
-                for (const z of command.frames.reduce((x, y) => {
-                  const z = Math.floor(y.z);
-
-                  if (!x.includes(z)) {
-                    x.push(z);
-                  }
-
-                  return x;
-                }, []).toSorted((a, b) => a - b)) {
-                  const animation = new Animation(command.name, command.state, command.repeats);
-
-                  for (const frame of command.frames) {
-                    if (Math.floor(frame.z) === z) {
-                      animation.frames.push(frame);
-                    }
-                  }
-
-                  if (animation.duration > self.maxDuration) {
-                    self.maxDuration = animation.duration;
-                  }
-
-                  self.currentAnimations.push(animation);
-                }
+                self.maxDuration = maxDuration;
               }
             } while (self.commandQueue.length > 0);
             
@@ -407,34 +386,11 @@ export class Agent {
               const animations = self.character.animations.filter(x => x.name === "Idle");
 
               if (animations.length > 0) {
-                const command = animations[~~random(0, animations.length)];
-                
+                const [nextAnimations, maxDuration] = self.setupAnimations(animations[~~random(0, animations.length)]);
+
+                self.currentAnimations.push(...nextAnimations);
                 self.elapsedTime = 0.0;
-                self.maxDuration = 0.0;
-                
-                for (const z of command.frames.reduce((x, y) => {
-                  const z = Math.floor(y.z);
-
-                  if (!x.includes(z)) {
-                    x.push(z);
-                  }
-
-                  return x;
-                }, []).toSorted((a, b) => a - b)) {
-                  const animation = new Animation(command.name, command.state, command.repeats);
-
-                  for (const frame of command.frames) {
-                    if (Math.floor(frame.z) === z) {
-                      animation.frames.push(frame);
-                    }
-                  }
-
-                  if (animation.duration > self.maxDuration) {
-                    self.maxDuration = animation.duration;
-                  }
-
-                  self.currentAnimations.push(animation);
-                }
+                self.maxDuration = maxDuration;
               }
 
               self.idleTime = 0.0;
@@ -738,6 +694,37 @@ export class Agent {
     }
 
     return [content, likability, state, choices];
+  }
+
+  setupAnimations(animation) {
+    const animations = [];
+    let maxDuration = 0.0;
+    
+    for (const z of animation.frames.reduce((x, y) => {
+      const z = Math.floor(y.z);
+
+      if (!x.includes(z)) {
+        x.push(z);
+      }
+
+      return x;
+    }, []).toSorted((a, b) => a - b)) {
+      const layeredAnimation = new Animation(animation.name, animation.state, animation.repeats);
+
+      for (const frame of animation.frames) {
+        if (Math.floor(frame.z) === z) {
+          layeredAnimation.frames.push(frame);
+        }
+      }
+
+      if (layeredAnimation.duration > maxDuration) {
+        maxDuration = layeredAnimation.duration;
+      }
+
+      animations.push(layeredAnimation);
+    }
+
+    return [animations, maxDuration];
   }
 
   renderCharacter(deltaTime) {
