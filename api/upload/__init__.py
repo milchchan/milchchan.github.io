@@ -383,7 +383,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if mime_type is None:
                             upload = query.filter(Upload.random <= random.random()).order_by(desc(Upload.random)).limit(1).one()
                         else:
-                            upload = query.filter(Upload.random <= random.random(), Upload.type.like(mime_type)).order_by(desc(Upload.random)).limit(1).one()
+                            upload = query.filter(Upload.type.like(mime_type), Upload.random <= random.random()).order_by(desc(Upload.random)).limit(1).one()
                         
                         identifier = os.path.basename(urlparse(upload.url).path)
                         file_is_exists = True
