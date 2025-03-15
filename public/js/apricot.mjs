@@ -519,8 +519,6 @@ export class Agent {
           if (this.ongenerated !== null) {
             this.ongenerated();
           }
-        } else {
-          this.logs.splice(0);
         }
       } else {
         const animations = this.character.animations.filter(x => x.name === "Error");
