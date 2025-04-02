@@ -499,26 +499,24 @@ export class Agent {
       const [message, likability, animation, choices, logs] = value;
 
       if (message !== null && animation !== null) {
+        const maxLogSize = 4;
+
         this.speak(message, animation);
 
         if (likability !== null) {
           this.likability = {a: this.likability.a, b: likability};
         }
+        
+        this.choices.splice(0);
+        this.choices.push(...choices);
+        this.logs.push(...logs);
 
-        if (choices.length > 0) {
-          const maxLogSize = 4;
+        if (this.logs.length > maxLogSize) {
+          this.logs.splice(0, this.logs.length - maxLogSize);
+        }
 
-          this.choices.splice(0);
-          this.choices.push(...choices);
-          this.logs.push(...logs);
-
-          if (this.logs.length > maxLogSize) {
-            this.logs.splice(0, this.logs.length - maxLogSize);
-          }
-
-          if (this.ongenerated !== null) {
-            this.ongenerated();
-          }
+        if (this.ongenerated !== null) {
+          this.ongenerated();
         }
       } else {
         const animations = this.character.animations.filter(x => x.name === "Error");
@@ -652,7 +650,11 @@ export class Agent {
     if ("id" in json && "model" in json && "choices" in json && json.choices.length > 0) {
       const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
       if (match === null) {
-        json = JSON.parse(json.choices[0].message.content);
+        if (typeof json.choices[0].message.content === "string") {
+          return [json.choices[0].message.content, null, null, []];
+        } else {
+          json = JSON.parse(json.choices[0].message.content);
+        }
       } else {
         json = JSON.parse(match[1]);
       }
