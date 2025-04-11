@@ -41,10 +41,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             messages = []
 
                             for message in data['messages']:
-                                if message['role'] == 'system':
-                                    messages.append({'role': 'developer', 'content': message['content']})
+                                if isinstance(message['content'], list):
+                                    content = []
+
+                                    for part in message['content']:
+                                        if part['type'] =='image':
+                                            content.append({'type': 'image_url', 'image_url': {'url': part['image']}})
+                                        else:
+                                            content.append(part)
+
                                 else:
-                                    messages.append(message)
+                                    content = message['content']
+
+                                if message['role'] == 'system':
+                                    messages.append({'role': 'developer', 'content': content})
+                                else:
+                                    messages.append({'role': message['role'], 'content': content})
 
                             request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
