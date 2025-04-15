@@ -663,6 +663,18 @@
         box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
       }
 
+      #apricot div.popup::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+        transform: translateX(-200%) skewX(-45deg);
+        animation: shine 5s infinite;
+        z-index: 1;
+        pointer-events: none;
+      }
+
       #apricot div.popup>button {
         color: #000000 !important;
       }
@@ -752,6 +764,15 @@
           100% {
             opacity: 1;
           }
+      }
+
+      @keyframes shine {
+        0% {
+          transform: translateX(-200%) skewX(-45deg);
+        }
+        100% {
+          transform: translateX(200%) skewX(-45deg);
+        }
       }
 
       @media screen and (min-width: 769px) and (min-height: 769px) {
