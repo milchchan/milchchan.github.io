@@ -74,6 +74,7 @@ export class Agent {
     this.isDebug = false;
     this.isLoading = false;
     this.domElement = null;
+    this.size = { width: 0, height: 0 };
     this.scale = scale;
     this.model = null;
     this.temperature = temperature;
@@ -111,6 +112,7 @@ export class Agent {
     this.logs = [];
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
+    this.onresized = null;
     this.onclick = null;
     this.ongenerated = null;
     this.onchose = (choice) => {
@@ -267,7 +269,7 @@ export class Agent {
       balloonCanvas.width = Math.floor(this.balloonWidth * window.devicePixelRatio);
       balloonCanvas.height = 0;
       balloonCanvas.style.left = `${Math.floor(-(this.balloonWidth - this.character.width * this.scale) / 2 + this.character.x)}px`;
-      balloonCanvas.style.bottom = `${Math.floor(height - this.character.y)}px`;
+      balloonCanvas.style.bottom = `${Math.floor(height - this.character.y * this.scale)}px`;
       balloonCanvas.style.width = `${Math.floor(this.balloonWidth)}px`;
       balloonCanvas.style.height = "0px";
       balloonCanvas.style.backgroundColor = "transparent";
@@ -290,11 +292,13 @@ export class Agent {
       likabilityCanvas.style.position = "absolute";
       likabilityCanvas.width = 16.0 * window.devicePixelRatio;
       likabilityCanvas.height = 16.0 * window.devicePixelRatio;
-      likabilityCanvas.style.left = `${Math.floor(-(16.0 - this.character.width * this.scale) / 2 + this.character.x)}px`;
-      likabilityCanvas.style.bottom = `${Math.floor(height - this.character.y + 16.0)}px`;
+      likabilityCanvas.style.left = `${Math.floor(-(32.0 - this.character.width * this.scale) / 2 + this.character.x)}px`;
+      likabilityCanvas.style.bottom = "24px";
+      likabilityCanvas.style.borderRadius = "16px";
+      likabilityCanvas.style.padding = "8px";
       likabilityCanvas.style.width = `${Math.floor(16.0)}px`;
       likabilityCanvas.style.height = `${Math.floor(16.0)}px`;
-      likabilityCanvas.style.backgroundColor = "transparent";
+      likabilityCanvas.style.backgroundColor = this.balloonBackgroundColor;
       likabilityCanvas.style.visibility = "collapse";
       likabilityCanvas.style.pointerEvents = "none";
       likabilityCanvas.style.userSelect = "none";
@@ -306,7 +310,7 @@ export class Agent {
       loadingCanvas.width = 8.0 * 5.0 * window.devicePixelRatio;
       loadingCanvas.height = 8.0 * window.devicePixelRatio;
       loadingCanvas.style.left = `${Math.floor(-(8.0 * 5.0 - this.character.width * this.scale) / 2 + this.character.x)}px`;
-      loadingCanvas.style.bottom = `${Math.floor(height - this.character.y)}px`;
+      loadingCanvas.style.bottom = "8px";
       loadingCanvas.style.width = `${Math.floor(8.0 * 5.0)}px`;
       loadingCanvas.style.height = `${Math.floor(8.0)}px`;
       loadingCanvas.style.backgroundColor = "transparent";
@@ -323,6 +327,9 @@ export class Agent {
       resolve([parentElement, characterCanvas, balloonCanvas, likabilityCanvas, loadingCanvas]);
     });
 
+    this.size.width = Math.max(this.character.width * this.scale, this.balloonWidth * 1.1);
+    this.size.height = this.character.height * this.scale;
+
     this.stats.target.classList.add("stats");
     this.stats.target.innerText = "0";
     this.stats.target.style.visibility = this.isDebug ? "visible" : "collapse";
@@ -330,13 +337,17 @@ export class Agent {
     this.stats.target.style.right = "0";
     this.stats.target.style.bottom = "0";
     this.stats.target.style.fontFamily = this.fontFamily;
-
+    
     this.domElement = parentElement;
     this.characterCanvas = characterCanvas;
     this.balloonCanvas = balloonCanvas;
     this.likabilityCanvas = likabilityCanvas;
     this.loadingCanvas = loadingCanvas;
     this.domElement.appendChild(this.stats.target);
+
+    if (this.onresized !== null) {
+      this.onresized();
+    }
 
     return this.domElement;
   }
@@ -1228,6 +1239,7 @@ export class Agent {
     }
 
     this.messageHeight = this.lineHeight * count;
+    this.size.height = Math.max(Math.max(this.character.height * this.scale, (this.character.height - this.character.y) * this.scale + 32), (this.character.height - this.character.y) * this.scale + (this.messageHeight + this.lineHeight * 2 + 11) * 1.1);
     this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
     this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2 + 11)}px`;
     this.balloonCanvas.style.visibility = "visible";
@@ -1245,6 +1257,10 @@ export class Agent {
     frontContext.drawImage(backCanvas, 0, 0);
 
     backCanvas.width = backCanvas.height = 0;
+
+    if (this.onresized !== null) {
+      this.onresized();
+    }
   }
 
   open(url) {
