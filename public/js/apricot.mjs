@@ -293,7 +293,7 @@ export class Agent {
       likabilityCanvas.width = 16.0 * window.devicePixelRatio;
       likabilityCanvas.height = 16.0 * window.devicePixelRatio;
       likabilityCanvas.style.left = `${Math.floor(-(32.0 - this.character.width * this.scale) / 2 + this.character.x)}px`;
-      likabilityCanvas.style.bottom = "24px";
+      likabilityCanvas.style.bottom = "8px";
       likabilityCanvas.style.borderRadius = "16px";
       likabilityCanvas.style.padding = "8px";
       likabilityCanvas.style.width = `${Math.floor(16.0)}px`;
@@ -310,7 +310,7 @@ export class Agent {
       loadingCanvas.width = 8.0 * 5.0 * window.devicePixelRatio;
       loadingCanvas.height = 8.0 * window.devicePixelRatio;
       loadingCanvas.style.left = `${Math.floor(-(8.0 * 5.0 - this.character.width * this.scale) / 2 + this.character.x)}px`;
-      loadingCanvas.style.bottom = "8px";
+      loadingCanvas.style.bottom = `${Math.floor(height - this.character.y * this.scale)}px`;
       loadingCanvas.style.width = `${Math.floor(8.0 * 5.0)}px`;
       loadingCanvas.style.height = `${Math.floor(8.0)}px`;
       loadingCanvas.style.backgroundColor = "transparent";
@@ -328,7 +328,7 @@ export class Agent {
     });
 
     this.size.width = Math.max(this.character.width * this.scale, this.balloonWidth * 1.1);
-    this.size.height = this.character.height * this.scale;
+    this.size.height = Math.max(this.character.height * this.scale, this.character.height * this.scale - this.character.y * this.scale + 8);
 
     this.stats.target.classList.add("stats");
     this.stats.target.innerText = "0";
@@ -782,14 +782,17 @@ export class Agent {
     if (this.likability.b !== null) {
       if (this.isLoading || this.isPopup) {
         if (this.revealStep === null) {
-          this.revealStep = deltaTime;
+          this.revealStep = deltaTime * 2.0;
           this.likabilityCanvas.style.visibility = "visible";
+          this.likabilityCanvas.style.opacity = deltaTime;
         } else if (this.revealStep < 1.0) {
-          this.revealStep += deltaTime;
+          this.revealStep += deltaTime * 2.0;
   
           if (this.revealStep > 1.0) {
             this.revealStep = 1.0;
           }
+
+          this.likabilityCanvas.style.opacity = this.revealStep;
         } else {
           return;
         }
@@ -801,8 +804,11 @@ export class Agent {
         if (this.revealStep <= 0.0) {
           this.revealStep = null;
           this.likabilityCanvas.style.visibility = "collapse";
+          this.likabilityCanvas.style.opacity = 0.0;
 
           return;
+        } else {
+          this.likabilityCanvas.style.opacity = this.revealStep;
         }
       }
 
@@ -1239,7 +1245,7 @@ export class Agent {
     }
 
     this.messageHeight = this.lineHeight * count;
-    this.size.height = Math.max(Math.max(this.character.height * this.scale, (this.character.height - this.character.y) * this.scale + 32), (this.character.height - this.character.y) * this.scale + (this.messageHeight + this.lineHeight * 2 + 11) * 1.1);
+    this.size.height = Math.max(Math.max(this.character.height * this.scale, (this.character.height - this.character.y) * this.scale + 8), (this.character.height - this.character.y) * this.scale + (this.messageHeight + this.lineHeight * 2 + 11) * 1.1);
     this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
     this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2 + 11)}px`;
     this.balloonCanvas.style.visibility = "visible";
