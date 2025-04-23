@@ -88,7 +88,7 @@ export class Agent {
     this.balloonBackgroundColor = "rgb(0 0 0 / 0.75)";
     this.balloonRadius = 48;
     this.balloonWidth = null;
-    this.maxMessages = 10;
+    this.maxLines = 5;
     this.messageHeight = 0;
     this.messageQueue = [];
     this.currentAnimations = [];
@@ -329,7 +329,7 @@ export class Agent {
     });
 
     this.size.width = Math.max(this.character.width * this.scale, this.balloonWidth * 1.1);
-    this.size.height = Math.max(Math.max(this.character.height * this.scale, (this.character.height - this.character.y) * this.scale + 8), (this.character.height - this.character.y) * this.scale + (this.lineHeight * this.maxMessages + this.lineHeight * 2 + 11) * 1.1);
+    this.size.height = Math.max(Math.max(this.character.height * this.scale, (this.character.height - this.character.y) * this.scale + 8), (this.character.height - this.character.y) * this.scale + (this.lineHeight * this.maxLines + this.lineHeight * 2 + 11) * 1.1);
 
     this.stats.target.classList.add("stats");
     this.stats.target.innerText = "0";
@@ -953,7 +953,7 @@ export class Agent {
                   lines += 1;
                 }
   
-                if (lines >= this.maxMessages && lines - this.maxMessages === this.messageQueue[0].slide.index - 1 && this.messageQueue[0].lines[index].breaks.includes(this.messageQueue[0].lines[index].type.count)) {
+                if (lines >= this.maxLines && lines - this.maxLines === this.messageQueue[0].slide.index - 1 && this.messageQueue[0].lines[index].breaks.includes(this.messageQueue[0].lines[index].type.count)) {
                   this.messageQueue[0].slide.index -= 1;
                   this.messageQueue[0].slide.step = 1.0;
                 }
@@ -1005,7 +1005,7 @@ export class Agent {
                 lines += 1;
               }
 
-              if (lines >= this.maxMessages && lines - this.maxMessages === this.messageQueue[0].slide.index && this.messageQueue[0].lines[index].breaks.includes(this.messageQueue[0].lines[index].type.buffer.length)) {
+              if (lines >= this.maxLines && lines - this.maxLines === this.messageQueue[0].slide.index && this.messageQueue[0].lines[index].breaks.includes(this.messageQueue[0].lines[index].type.buffer.length)) {
                 this.messageQueue[0].slide.step = 0.0;
               }
             }
@@ -1300,7 +1300,7 @@ export class Agent {
       lines.push({ text: text, offset: offset, breaks: breaks, step: null, type: { elapsed: -1.0, speed: speed, buffer: String(), count: 0 }, current: String() });
     }
 
-    this.messageHeight = this.lineHeight * Math.min(count, this.maxMessages);
+    this.messageHeight = this.lineHeight * Math.min(count, this.maxLines);
     this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
     this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2 + 11)}px`;
     this.balloonCanvas.style.visibility = "visible";
