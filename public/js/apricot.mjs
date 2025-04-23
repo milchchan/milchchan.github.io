@@ -88,6 +88,7 @@ export class Agent {
     this.balloonBackgroundColor = "rgb(0 0 0 / 0.75)";
     this.balloonRadius = 48;
     this.balloonWidth = null;
+    this.maxMessages = 10;
     this.messageHeight = 0;
     this.messageQueue = [];
     this.currentAnimations = [];
@@ -328,7 +329,7 @@ export class Agent {
     });
 
     this.size.width = Math.max(this.character.width * this.scale, this.balloonWidth * 1.1);
-    this.size.height = Math.max(this.character.height * this.scale, this.character.height * this.scale - this.character.y * this.scale + 8);
+    this.size.height = Math.max(Math.max(this.character.height * this.scale, (this.character.height - this.character.y) * this.scale + 8), (this.character.height - this.character.y) * this.scale + (this.lineHeight * this.maxMessages + this.lineHeight * 2 + 11) * 1.1);
 
     this.stats.target.classList.add("stats");
     this.stats.target.innerText = "0";
@@ -939,22 +940,49 @@ export class Agent {
 
           if (this.messageQueue[0].reverse) {
             if (message.type.count > 0) {
-              this.messageQueue[0].lines[index].type.elapsed += deltaTime * this.messageQueue[0].speed;
-              
-              if (message.type.elapsed >= 1.0 / message.type.speed) {
-                if (message.type.count - 1 < message.text.length) {
-                  const width = message.text.length / 2;
-                  
-                  if (message.type.buffer.length <= width && message.type.count > 0) {
-                    this.messageQueue[0].lines[index].type.count -= 1;
+              if (this.messageQueue[0].slide.step === null) {
+                let lines = 0;
+  
+                for (let i = 0; i <= index; i++) {
+                  for (let j = 1; j < this.messageQueue[0].lines[i].type.count; j++) {
+                    if (this.messageQueue[0].lines[i].breaks.includes(j)) {
+                      lines += 1;
+                    }
                   }
-                  
-                  if (message.type.buffer.length > 0) {
-                    this.messageQueue[0].lines[index].type.buffer = this.messageQueue[0].lines[index].type.buffer.substring(0, this.messageQueue[0].lines[index].type.buffer.length - 1);
-                  }
+  
+                  lines += 1;
                 }
-                  
-                this.messageQueue[0].lines[index].type.elapsed = 0.0;
+  
+                if (lines >= this.maxMessages && lines - this.maxMessages === this.messageQueue[0].slide.index - 1 && this.messageQueue[0].lines[index].breaks.includes(this.messageQueue[0].lines[index].type.count)) {
+                  this.messageQueue[0].slide.index -= 1;
+                  this.messageQueue[0].slide.step = 1.0;
+                }
+              }
+
+              if (this.messageQueue[0].slide.step === null) {
+                this.messageQueue[0].lines[index].type.elapsed += deltaTime * this.messageQueue[0].speed;
+              
+                if (message.type.elapsed >= 1.0 / message.type.speed) {
+                  if (message.type.count - 1 < message.text.length) {
+                    const width = message.text.length / 2;
+                    
+                    if (message.type.buffer.length <= width && message.type.count > 0) {
+                      this.messageQueue[0].lines[index].type.count -= 1;
+                    }
+                    
+                    if (message.type.buffer.length > 0) {
+                      this.messageQueue[0].lines[index].type.buffer = this.messageQueue[0].lines[index].type.buffer.substring(0, this.messageQueue[0].lines[index].type.buffer.length - 1);
+                    }
+                  }
+                    
+                  this.messageQueue[0].lines[index].type.elapsed = 0.0;
+                }
+              } else {
+                this.messageQueue[0].slide.step -= deltaTime;
+
+                if (this.messageQueue[0].slide.step <= 0.0) {
+                  this.messageQueue[0].slide.step = null;
+                }
               }
             } else if (index > 0) {
               this.messageQueue[0].index -= 1;
@@ -964,22 +992,49 @@ export class Agent {
               this.messageQueue[0].index = -1;
             }
           } else if (message.type.buffer.length < message.text.length) {
-            if (message.type.elapsed >= 0.0) {
-              this.messageQueue[0].lines[index].type.elapsed += deltaTime * this.messageQueue[0].speed;
-            } else {
-              this.messageQueue[0].lines[index].type.elapsed = deltaTime * this.messageQueue[0].speed;
+            if (this.messageQueue[0].slide.step === null) {
+              let lines = 0;
+
+              for (let i = 0; i <= index; i++) {
+                for (let j = 1; j < this.messageQueue[0].lines[i].type.buffer.length; j++) {
+                  if (this.messageQueue[0].lines[i].breaks.includes(j)) {
+                    lines += 1;
+                  }
+                }
+
+                lines += 1;
+              }
+
+              if (lines >= this.maxMessages && lines - this.maxMessages === this.messageQueue[0].slide.index && this.messageQueue[0].lines[index].breaks.includes(this.messageQueue[0].lines[index].type.buffer.length)) {
+                this.messageQueue[0].slide.step = 0.0;
+              }
             }
             
-            if (message.type.elapsed >= 1.0 / message.type.speed) {
-              if (message.type.count >= message.text.length / 2) {
-                this.messageQueue[0].lines[index].type.buffer += message.text.charAt(message.type.buffer.length);
+            if (this.messageQueue[0].slide.step === null) {
+              if (message.type.elapsed >= 0.0) {
+                this.messageQueue[0].lines[index].type.elapsed += deltaTime * this.messageQueue[0].speed;
+              } else {
+                this.messageQueue[0].lines[index].type.elapsed = deltaTime * this.messageQueue[0].speed;
               }
               
-              if (message.type.count < message.text.length) {
-                this.messageQueue[0].lines[index].type.count += 1;
-              }
+              if (message.type.elapsed >= 1.0 / message.type.speed) {
+                if (message.type.count >= message.text.length / 2) {
+                  this.messageQueue[0].lines[index].type.buffer += message.text.charAt(message.type.buffer.length);
+                }
                 
-              this.messageQueue[0].lines[index].type.elapsed = 0.0;
+                if (message.type.count < message.text.length) {
+                  this.messageQueue[0].lines[index].type.count += 1;
+                }
+                  
+                this.messageQueue[0].lines[index].type.elapsed = 0.0;
+              }
+            } else{
+              this.messageQueue[0].slide.step += deltaTime;
+
+              if (this.messageQueue[0].slide.step >= 1.0) {
+                this.messageQueue[0].slide.index += 1;
+                this.messageQueue[0].slide.step = null;
+              }
             }
           } else if (index < this.messageQueue[0].lines.length - 1) {
             this.messageQueue[0].index += 1;
@@ -1058,6 +1113,7 @@ export class Agent {
             backContext.fillStyle = this.textColor;
             squarePath.rect(Math.floor(this.lineHeight * window.devicePixelRatio), Math.floor(this.lineHeight * window.devicePixelRatio), Math.ceil(this.balloonCanvas.width - this.lineHeight * 2 * window.devicePixelRatio), Math.ceil(this.messageHeight * window.devicePixelRatio));
             backContext.clip(squarePath);
+            backContext.translate(0.0, -(this.lineHeight * window.devicePixelRatio * this.messageQueue[0].slide.index + this.lineHeight * window.devicePixelRatio * (this.messageQueue[0].slide.step ?? 0.0)));
 
             for (let i = 0; i < index; i++) {
               const lines = [];
@@ -1244,12 +1300,11 @@ export class Agent {
       lines.push({ text: text, offset: offset, breaks: breaks, step: null, type: { elapsed: -1.0, speed: speed, buffer: String(), count: 0 }, current: String() });
     }
 
-    this.messageHeight = this.lineHeight * count;
-    this.size.height = Math.max(Math.max(this.character.height * this.scale, (this.character.height - this.character.y) * this.scale + 8), (this.character.height - this.character.y) * this.scale + (this.messageHeight + this.lineHeight * 2 + 11) * 1.1);
+    this.messageHeight = this.lineHeight * Math.min(count, this.maxMessages);
     this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
     this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2 + 11)}px`;
     this.balloonCanvas.style.visibility = "visible";
-    this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false });
+    this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false, slide: { index: 0, step: null } });
   
     backCanvas.width = this.balloonCanvas.width;
     backCanvas.height = this.balloonCanvas.height;
@@ -1263,10 +1318,6 @@ export class Agent {
     frontContext.drawImage(backCanvas, 0, 0);
 
     backCanvas.width = backCanvas.height = 0;
-
-    if (this.onresized !== null) {
-      this.onresized();
-    }
   }
 
   open(url) {
