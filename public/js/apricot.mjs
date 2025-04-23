@@ -1304,7 +1304,7 @@ export class Agent {
     this.balloonCanvas.height = Math.floor((this.messageHeight + this.lineHeight * 2 + 11) * window.devicePixelRatio);
     this.balloonCanvas.style.height = `${Math.floor(this.messageHeight + this.lineHeight * 2 + 11)}px`;
     this.balloonCanvas.style.visibility = "visible";
-    this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, reverse: false, slide: { index: 0, step: null } });
+    this.messageQueue.push({ step: 0.0, index: 0, lines: lines, time: 0.0, speed: 1.0, duration: duration, slide: { index: 0, step: null }, reverse: false });
   
     backCanvas.width = this.balloonCanvas.width;
     backCanvas.height = this.balloonCanvas.height;
