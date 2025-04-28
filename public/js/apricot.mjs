@@ -119,6 +119,7 @@ export class Agent {
     this.onchose = (choice) => {
       this.ask(choice);
     }
+    this.onquit = null;
   }
   
   get dom() {
@@ -239,28 +240,26 @@ export class Agent {
           this.onclick(event);
         }
 
-        if (!this.isLoading) {
-          if (this.isPopup) {
-            this.isPopup = false;
+        if (this.isPopup) {
+          this.isPopup = false;
 
-            for (const popupElement of document.body.querySelectorAll("#apricot div.popup")) {
-              popupElement.animate([
-                {
-                  transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
-                  opacity: "0"
-                }
-              ], {
-                fill: "forwards",
-                duration: 500,
-                iterations: 1,
-                easing: "ease-in"
-              }).onfinish = () => {
-                popupElement.remove();
-              };
-            }
-          } else if (this.choices.length > 0) {
-            this.popup(this.choices);
+          for (const popupElement of document.body.querySelectorAll("#apricot div.popup")) {
+            popupElement.animate([
+              {
+                transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
+                opacity: "0"
+              }
+            ], {
+              fill: "forwards",
+              duration: 500,
+              iterations: 1,
+              easing: "ease-in"
+            }).onfinish = () => {
+              popupElement.remove();
+            };
           }
+        } else if (!this.isLoading && this.choices.length > 0 || this.onquit !== null) {
+          this.popup(this.choices);
         }
       });
 
@@ -612,6 +611,44 @@ export class Agent {
           this.onchose(target.dataset["choice"]);
         }
 
+        if (this.isPopup) {
+          this.isPopup = false;
+
+          popupElement.animate([
+            {
+              transform: "translate3d(-50%, 50%, 0) scale(1.1, 1.1)",
+              opacity: "0"
+            }
+          ], {
+            fill: "forwards",
+            duration: 500,
+            iterations: 1,
+            easing: "ease-in"
+          }).onfinish = () => {
+            popupElement.remove();
+          };
+        }
+      });
+
+      popupElement.appendChild(buttonElement);
+    }
+
+    if (this.onquit !== null) {
+      const buttonElement = document.createElement("button");
+      const quit = this.onquit;
+
+      buttonElement.classList.add("quit");
+      buttonElement.style.backgroundColor = "transparent";
+      buttonElement.style.border = "0px solid transparent";;
+      buttonElement.style.padding = `${Math.floor(this.lineHeight / 2)}px ${Math.floor(this.lineHeight)}px`;
+      buttonElement.style.fontFamily = this.fontFamily;
+      buttonElement.style.fontSize = `${this.fontSize}px`;
+      buttonElement.style.fontWeight = "bold";
+      buttonElement.style.lineHeight = `${this.lineHeight}px`;
+      buttonElement.style.color = this.textColor;
+      buttonElement.addEventListener("click", (event) => {
+        quit();
+        
         if (this.isPopup) {
           this.isPopup = false;
 
