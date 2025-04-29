@@ -116,6 +116,7 @@ export class Agent {
     this.onresized = null;
     this.onclick = null;
     this.ongenerated = null;
+    this.onidle = null;
     this.onchose = (choice) => {
       this.ask(choice);
     }
@@ -390,7 +391,7 @@ export class Agent {
             } while (self.commandQueue.length > 0);
             
             self.idleTime = 0.0;
-          } else {
+          } else if (this.onidle === null) {
             self.idleTime += deltaTime;
 
             if (self.idleTime >= 10.0) {
@@ -406,6 +407,8 @@ export class Agent {
 
               self.idleTime = 0.0;
             }
+          } else {
+            this.onidle();
           }
         } else {
           self.idleTime = 0.0;
