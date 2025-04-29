@@ -116,10 +116,10 @@ export class Agent {
     this.onresized = null;
     this.onclick = null;
     this.ongenerated = null;
-    this.onidle = null;
     this.onchose = (choice) => {
       this.ask(choice);
     }
+    this.onidle = null;
     this.onquit = null;
   }
   
@@ -391,24 +391,26 @@ export class Agent {
             } while (self.commandQueue.length > 0);
             
             self.idleTime = 0.0;
-          } else if (this.onidle === null) {
+          } else {
             self.idleTime += deltaTime;
 
-            if (self.idleTime >= 10.0) {
-              const animations = self.character.animations.filter(x => x.name === "Idle");
+            if (self.onidle === null) {
+              if (self.idleTime >= 10.0) {
+                const animations = self.character.animations.filter(x => x.name === "Idle");
 
-              if (animations.length > 0) {
-                const [nextAnimations, maxDuration] = self.setupAnimations(animations[~~random(0, animations.length)]);
+                if (animations.length > 0) {
+                  const [nextAnimations, maxDuration] = self.setupAnimations(animations[~~random(0, animations.length)]);
 
-                self.currentAnimations.push(...nextAnimations);
-                self.elapsedTime = 0.0;
-                self.maxDuration = maxDuration;
+                  self.currentAnimations.push(...nextAnimations);
+                  self.elapsedTime = 0.0;
+                  self.maxDuration = maxDuration;
+                }
+
+                self.idleTime = 0.0;
               }
-
-              self.idleTime = 0.0;
+            } else {
+              self.onidle();
             }
-          } else {
-            this.onidle();
           }
         } else {
           self.idleTime = 0.0;
