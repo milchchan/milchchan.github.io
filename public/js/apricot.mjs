@@ -111,6 +111,7 @@ export class Agent {
     this.choices = [];
     this.likability = {a: 0.0, b: null};
     this.logs = [];
+    this.maxLogs = 10;
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
     this.onresized = null;
@@ -515,8 +516,6 @@ export class Agent {
       const [message, likability, animation, choices, logs] = value;
 
       if (message !== null && animation !== null) {
-        const maxLogSize = 4;
-
         this.speak(message, animation);
 
         if (likability !== null) {
@@ -527,8 +526,8 @@ export class Agent {
         this.choices.push(...choices);
         this.logs.push(...logs);
 
-        if (this.logs.length > maxLogSize) {
-          this.logs.splice(0, this.logs.length - maxLogSize);
+        if (this.logs.length > this.maxLogs) {
+          this.logs.splice(0, this.logs.length - this.maxLogs);
         }
 
         if (this.ongenerated !== null) {
