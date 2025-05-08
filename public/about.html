@@ -1415,7 +1415,9 @@
                           messages.push({role: "user", content: element3.dataset.prompt});
                         }
 
-                        messages.push({role: "assistant", content: element3.textContent});
+                        if ("output" in element3.dataset) {
+                          messages.push({role: "assistant", content: element3.dataset.output});
+                        }
                       }
 
                       messages.push({role: "user", content: choice === null ? moreButton.dataset.prompt : choice});
@@ -1443,7 +1445,7 @@
                 }
               }).then((data) => {
                 if (data !== null && data[0] !== null) {
-                  const [message, likability, state, choices] = data;
+                  const [message, likability, state, choices, raw] = data;
                   const div = element1.querySelector(":scope>div>div:last-of-type");
 
                   if (div !== null) {
@@ -1485,6 +1487,7 @@
 
                         span.classList.add("reveal");
                         span.dataset["prompt"] = moreButton.dataset.prompt;
+                        span.dataset["output"] = raw;
                         
                         if (italicRequired) {
                           span.classList.add("is-italic");
@@ -1700,7 +1703,9 @@
                                 messages.push({role: "user", content: element3.dataset.prompt});
                               }
 
-                              messages.push({role: "assistant", content: element3.textContent});
+                              if ("output" in element3.dataset) {
+                                messages.push({role: "assistant", content: element3.dataset.output});
+                              }
                             }
 
                             messages.push({role: "user", content: result[0].transcript});
@@ -1728,7 +1733,7 @@
                       }
                     }).then((data) => {
                       if (data !== null && data[0] !== null) {
-                        const [message, likability, state, choices] = data;
+                        const [message, likability, state, choices, raw] = data;
                         const div = element1.querySelector(":scope>div>div:last-of-type");
 
                         if (div !== null) {
@@ -1770,6 +1775,7 @@
 
                               span.classList.add("reveal");
                               span.dataset["prompt"] = result[0].transcript;
+                              span.dataset["output"] = raw;
                               
                               if (italicRequired) {
                                 span.classList.add("is-italic");
@@ -2072,7 +2078,7 @@
                         }
                       }).then((data) => {
                         if (data !== null && data[0] !== null) {
-                          const [message, likability, state, choices] = data;
+                          const [message, likability, state, choices, raw] = data;
                           const div = element2.querySelector(":scope>div>div:last-of-type");
 
                           if (div !== null) {
@@ -2113,6 +2119,7 @@
                                 }
 
                                 span.classList.add("reveal");
+                                span.dataset["output"] = raw;
 
                                 if (italicRequired) {
                                   span.classList.add("is-italic");
@@ -2343,7 +2350,7 @@
                     }
                   }).then((data) => {
                     if (data !== null && data[0] !== null) {
-                      const [message, likability, state, choices] = data;
+                      const [message, likability, state, choices, raw] = data;
                       const last = div.querySelector(":scope>div:last-of-type");
 
                       if (last !== null) {
@@ -2384,6 +2391,7 @@
                             }
 
                             span.classList.add("reveal");
+                            span.dataset["output"] = raw;
                             
                             if (italicRequired) {
                               span.classList.add("is-italic");
@@ -2610,7 +2618,7 @@
                 }
               }).then((data) => {
                 if (data !== null && data[0] !== null) {
-                  const [message, likability, state, choices] = data;
+                  const [message, likability, state, choices, raw] = data;
                   const div = element.querySelector(":scope>div>div:last-of-type");
 
                   if (div !== null) {
@@ -2651,6 +2659,7 @@
                         }
                         
                         span.classList.add("reveal");
+                        span.dataset["output"] = raw;
 
                         if (italicRequired) {
                           span.classList.add("is-italic");
