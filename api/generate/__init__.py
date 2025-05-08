@@ -161,6 +161,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
 
             elif content_type.startswith('multipart/form-data;'):
+                return func.HttpResponse(status_code=503, mimetype='', charset='')
+                '''
                 tts_source = os.environ.get('TTS_SOURCE')
                     
                 if tts_source is None or len(tts_source) == 0:
@@ -217,6 +219,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                     with urlopen(request, timeout=60.0) as response:
                         return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
+                '''
                 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
