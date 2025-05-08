@@ -26,8 +26,6 @@ jobs:
         run: |
           cd api
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip cache purge
       - name: Test
         run: cd api && python -m unittest discover -s test -p "test_*.py"
       - name: Build And Deploy
