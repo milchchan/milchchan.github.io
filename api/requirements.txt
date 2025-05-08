@@ -11,6 +11,6 @@ redis
 azure-functions
 azure-cosmos
 boto3
-#google-auth
-#google-cloud-storage
-gradio_client
+google-auth
+google-cloud-storage
+gradio_client==1.9.1
