@@ -482,7 +482,7 @@ export class Agent {
 
           if (data[0] !== null) {
             message = data[0];
-            logs.push({ role: "assistant", content: message });
+            logs.push({ role: "assistant", content: data[4] });
             likability = data[1];
             
             if (data[3] !== null) {
@@ -747,7 +747,7 @@ export class Agent {
       }
     }
 
-    return [content, likability, state, choices];
+    return [content, likability, state, choices, JSON.stringify(json)];
   }
 
   setupAnimations(animation) {
