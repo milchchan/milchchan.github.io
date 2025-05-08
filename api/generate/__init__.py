@@ -220,7 +220,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     with urlopen(request, timeout=60.0) as response:
                         return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
                 '''
-                
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
     except Exception as e:
