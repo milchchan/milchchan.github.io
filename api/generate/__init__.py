@@ -7,7 +7,6 @@ import tempfile
 from uuid import uuid4
 from datetime import datetime, timezone
 from urllib.request import urlopen, Request
-from gradio_client import Client, handle_file
 
 import azure.functions as func
 from azure.cosmos.cosmos_client import CosmosClient
@@ -122,6 +121,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             input_text += f"<start_of_turn>model\n{message['content']}<end_of_turn>\n"
 
                     if len(input_text) > 0:
+                        from gradio_client import Client
+                        
                         client = Client(llm_source, hf_token=os.environ['HF_TOKEN'])
                         result = client.predict(input_text + '<start_of_turn>model\n', temperature, api_name='/generate')
                         matches = re.findall(r'<start_of_turn>model\n(.+?)(?:(?:<end_of_turn>)|$)', result, re.DOTALL)
@@ -197,6 +198,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     json_data = json.loads(content)
 
                         if audio_data is not None and json_data is not None:
+                            from gradio_client import Client, handle_file
+
                             with tempfile.TemporaryDirectory() as tmpdirname:
                                 path = os.path.join(tmpdirname, audio_data[0])
 
