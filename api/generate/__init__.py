@@ -161,8 +161,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
 
             elif content_type.startswith('multipart/form-data;'):
-                return func.HttpResponse(status_code=503, mimetype='', charset='')
-                '''
                 tts_source = os.environ.get('TTS_SOURCE')
                     
                 if tts_source is None or len(tts_source) == 0:
@@ -200,6 +198,48 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     json_data = json.loads(content)
 
                         if audio_data is not None and json_data is not None:
+                            api_url = f"https://{tts_source.replace('/', '-').lower()}.hf.space/gradio_api"
+                            boundary = '----gradioBoundary'
+                            data = f'--{boundary}\r\n'.encode()
+                            data += f'Content-Disposition: form-data; name="files"; filename="{os.path.basename(audio_data[0])}"\r\n'.encode()
+                            data += f'Content-Type: audio/wav\r\n\r\n'.encode()
+                            data += audio_data[1]
+                            data += f'\r\n--{boundary}--\r\n'.encode()
+
+                            with urlopen(Request(api_url + '/upload', data=data, headers={'Content-Type': f'multipart/form-data; boundary={boundary}'}, method='POST')) as response:
+                                path = json.loads(response.read().decode('utf-8'))[0]
+                            
+                            with urlopen(Request(api_url + '/call/synthesize', data=json.dumps({'data': [{'path': path}, json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0]}).encode(), headers={'Content-Type': 'application/json'}, method='POST')) as response:
+                                event_id = json.loads(response.read().decode('utf-8'))['event_id']
+                            
+                            path = None
+
+                            with urlopen(Request(f'{api_url}/call/synthesize/{event_id}', headers={'Accept': 'text/event-stream'})) as response:
+                                for raw in response:
+                                    line = raw.decode().rstrip()
+
+                                    if line.startswith('event: '):
+                                        event = line[7:]
+
+                                        if event == 'error':
+                                            break
+
+                                    elif line.startswith('data: '):
+                                        body = line[6:]
+
+                                        if body and body != 'null':
+                                            try:
+                                                path = json.loads(body)[0]['path']
+
+                                                break
+
+                                            except json.JSONDecodeError:
+                                                pass
+
+                            if path is not None:
+                                with urlopen(Request(api_url + '/file=' + path)) as response:
+                                    return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
+                            '''
                             from gradio_client import Client, handle_file
 
                             with tempfile.TemporaryDirectory() as tmpdirname:
@@ -213,13 +253,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 
                                 with open(result, mode='rb') as f:
                                     return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
-                
+                            '''
                 else:
                     request = Request(tts_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
                     with urlopen(request, timeout=60.0) as response:
                         return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
-                '''
+                    
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
     except Exception as e:
