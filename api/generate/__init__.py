@@ -3,7 +3,6 @@ import re
 import os
 import json
 import logging
-import ssl
 from uuid import uuid4
 from datetime import datetime, timezone
 from urllib.request import urlopen, Request
@@ -121,19 +120,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             input_text += f"<start_of_turn>model\n{message['content']}<end_of_turn>\n"
 
                     if len(input_text) > 0:
-                        api_url = f"https://{tts_source.replace('/', '-').lower()}.hf.space/gradio_api"
+                        api_url = f"https://{llm_source.replace('/', '-').lower()}.hf.space/gradio_api"
                         session = uuid4().hex[:10]
-                        boundary = '----gradioBoundary'
                         
                         with urlopen(Request(api_url + '/queue/join', data=json.dumps({
                             'data': [input_text + '<start_of_turn>model\n', temperature],
                             'event_data': None,
                             'fn_index': 0,
                             'session_hash': session
-                        }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'}), context=ssl._create_unverified_context()) as response:
+                        }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
                             event_id = json.loads(response.read().decode('utf-8'))['event_id']
                         
-                        with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'}), context=ssl._create_unverified_context()) as response:
+                        with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'})) as response:
                             for raw in iter(lambda: response.readline() or None, None):
                                 if not raw: # EOF
                                     break
@@ -246,10 +244,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 'event_data': None,
                                 'fn_index': 1,
                                 'session_hash': session
-                            }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'}), context=ssl._create_unverified_context()) as response:
+                            }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
                                 event_id = json.loads(response.read().decode('utf-8'))['event_id']
                             
-                            with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'}), context=ssl._create_unverified_context()) as response:
+                            with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'})) as response:
                                 for raw in iter(lambda: response.readline() or None, None):
                                     if not raw: # EOF
                                         break
