@@ -3,7 +3,7 @@ import re
 import os
 import json
 import logging
-import tempfile
+import ssl
 from uuid import uuid4
 from datetime import datetime, timezone
 from urllib.request import urlopen, Request
@@ -121,25 +121,56 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             input_text += f"<start_of_turn>model\n{message['content']}<end_of_turn>\n"
 
                     if len(input_text) > 0:
-                        from gradio_client import Client
+                        api_url = f"https://{tts_source.replace('/', '-').lower()}.hf.space/gradio_api"
+                        session = uuid4().hex[:10]
+                        boundary = '----gradioBoundary'
                         
-                        client = Client(llm_source, hf_token=os.environ['HF_TOKEN'])
-                        result = client.predict(input_text + '<start_of_turn>model\n', temperature, api_name='/generate')
-                        matches = re.findall(r'<start_of_turn>model\n(.+?)(?:(?:<end_of_turn>)|$)', result, re.DOTALL)
-
-                        if len(matches) > 0:
-                            result = matches[len(matches) - 1]
-                            match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
-                            client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
-                            database = client.get_database_client('Milch')
-                            container = database.get_container_client('Logs')
-                            data['messages'].append({'role': 'assistant', 'content': result})
-                            container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
-
-                            return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=201, mimetype='application/json', charset='utf-8')
+                        with urlopen(Request(api_url + '/queue/join', data=json.dumps({
+                            'data': [input_text + '<start_of_turn>model\n', temperature],
+                            'event_data': None,
+                            'fn_index': 0,
+                            'session_hash': session
+                        }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'}), context=ssl._create_unverified_context()) as response:
+                            event_id = json.loads(response.read().decode('utf-8'))['event_id']
                         
-                        else:
-                            return func.HttpResponse(status_code=503, mimetype='', charset='')
+                        with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'}), context=ssl._create_unverified_context()) as response:
+                            for raw in iter(lambda: response.readline() or None, None):
+                                if not raw: # EOF
+                                    break
+
+                                line = raw.decode('utf-8').strip()
+
+                                if line.startswith('data:'):
+                                    msg = json.loads(line[5:].lstrip())
+                                    msg_type = msg.get('msg')
+
+                                    if msg_type == 'heartbeat':
+                                        continue
+                                    elif msg_type == 'queue_full' or msg_type == 'unexpected_error':
+                                        return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                    elif msg_type == 'process_completed':
+                                        if msg['event_id'] == event_id:
+                                            if 'data' in msg['output']:
+                                                result = msg['output']['data'][0]
+                                                matches = re.findall(r'<start_of_turn>model\n(.+?)(?:(?:<end_of_turn>)|$)', result, re.DOTALL)
+
+                                                if len(matches) > 0:
+                                                    result = matches[len(matches) - 1]
+                                                    match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
+                                                    client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                                                    database = client.get_database_client('Milch')
+                                                    container = database.get_container_client('Logs')
+                                                    data['messages'].append({'role': 'assistant', 'content': result})
+                                                    container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+
+                                                    return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=201, mimetype='application/json', charset='utf-8')
+                                                
+                                                else:
+                                                    return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                            else:
+                                                return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                        
+                                        break
 
                     return func.HttpResponse(status_code=400, mimetype='', charset='')
                 
@@ -199,6 +230,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                         if audio_data is not None and json_data is not None:
                             api_url = f"https://{tts_source.replace('/', '-').lower()}.hf.space/gradio_api"
+                            session = uuid4().hex[:10]
                             boundary = '----gradioBoundary'
                             data = f'--{boundary}\r\n'.encode()
                             data += f'Content-Disposition: form-data; name="files"; filename="{os.path.basename(audio_data[0])}"\r\n'.encode()
@@ -209,51 +241,39 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             with urlopen(Request(api_url + '/upload', data=data, headers={'Content-Type': f'multipart/form-data; boundary={boundary}'}, method='POST')) as response:
                                 path = json.loads(response.read().decode('utf-8'))[0]
                             
-                            with urlopen(Request(api_url + '/call/synthesize', data=json.dumps({'data': [{'path': path}, json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0]}).encode(), headers={'Content-Type': 'application/json'}, method='POST')) as response:
+                            with urlopen(Request(api_url + '/queue/join', data=json.dumps({
+                                'data': [{'path': path, 'meta': {'_type': 'gradio.FileData'}}, json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0],
+                                'event_data': None,
+                                'fn_index': 1,
+                                'session_hash': session
+                            }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'}), context=ssl._create_unverified_context()) as response:
                                 event_id = json.loads(response.read().decode('utf-8'))['event_id']
                             
-                            path = None
+                            with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'}), context=ssl._create_unverified_context()) as response:
+                                for raw in iter(lambda: response.readline() or None, None):
+                                    if not raw: # EOF
+                                        break
 
-                            with urlopen(Request(f'{api_url}/call/synthesize/{event_id}', headers={'Accept': 'text/event-stream'})) as response:
-                                for raw in response:
-                                    line = raw.decode().rstrip()
+                                    line = raw.decode('utf-8').strip()
 
-                                    if line.startswith('event: '):
-                                        event = line[7:]
+                                    if line.startswith('data:'):
+                                        msg = json.loads(line[5:].lstrip())
+                                        msg_type = msg.get('msg')
 
-                                        if event == 'error':
+                                        if msg_type == 'heartbeat':
+                                            continue
+                                        elif msg_type == 'queue_full' or msg_type == 'unexpected_error':
+                                            return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                        elif msg_type == 'process_completed':
+                                            if msg['event_id'] == event_id:
+                                                if 'data' in msg['output']:
+                                                    with urlopen(Request(f'{api_url}/file={msg['output']['data'][0]['path']}')) as response:
+                                                        return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
+                                                else:
+                                                    return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                            
                                             break
 
-                                    elif line.startswith('data: '):
-                                        body = line[6:]
-
-                                        if body and body != 'null':
-                                            try:
-                                                path = json.loads(body)[0]['path']
-
-                                                break
-
-                                            except json.JSONDecodeError:
-                                                pass
-
-                            if path is not None:
-                                with urlopen(Request(api_url + '/file=' + path)) as response:
-                                    return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
-                            '''
-                            from gradio_client import Client, handle_file
-
-                            with tempfile.TemporaryDirectory() as tmpdirname:
-                                path = os.path.join(tmpdirname, audio_data[0])
-
-                                with open(path, 'wb') as f:
-                                    f.write(audio_data[1])
-
-                                client = Client(tts_source, hf_token=os.environ['HF_TOKEN'])
-                                result = client.predict(handle_file(path), json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0, api_name='/synthesize')
-                                
-                                with open(result, mode='rb') as f:
-                                    return func.HttpResponse(f.read(), status_code=201, mimetype='audio/wav')
-                            '''
                 else:
                     request = Request(tts_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
