@@ -131,6 +131,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
                             event_id = json.loads(response.read().decode('utf-8'))['event_id']
                         
+                        result = None
+                        
                         with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'})) as response:
                             for raw in iter(lambda: response.readline() or None, None):
                                 if not raw: # EOF
@@ -145,30 +147,31 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     if msg_type == 'heartbeat':
                                         continue
                                     elif msg_type == 'queue_full' or msg_type == 'unexpected_error':
-                                        return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                        break
                                     elif msg_type == 'process_completed':
-                                        if msg['event_id'] == event_id:
-                                            if 'data' in msg['output']:
-                                                result = msg['output']['data'][0]
-                                                matches = re.findall(r'<start_of_turn>model\n(.+?)(?:(?:<end_of_turn>)|$)', result, re.DOTALL)
-
-                                                if len(matches) > 0:
-                                                    result = matches[len(matches) - 1]
-                                                    match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
-                                                    client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
-                                                    database = client.get_database_client('Milch')
-                                                    container = database.get_container_client('Logs')
-                                                    data['messages'].append({'role': 'assistant', 'content': result})
-                                                    container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
-
-                                                    return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=201, mimetype='application/json', charset='utf-8')
-                                                
-                                                else:
-                                                    return func.HttpResponse(status_code=503, mimetype='', charset='')
-                                            else:
-                                                return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                        if msg['event_id'] == event_id and 'data' in msg['output']:
+                                            result = msg['output']['data'][0]
                                         
                                         break
+
+                        if result is None:
+                            return func.HttpResponse(status_code=503, mimetype='', charset='')
+                        else:
+                            matches = re.findall(r'<start_of_turn>model\n(.+?)(?:(?:<end_of_turn>)|$)', result, re.DOTALL)
+
+                            if len(matches) > 0:
+                                result = matches[len(matches) - 1]
+                                match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
+                                client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                                database = client.get_database_client('Milch')
+                                container = database.get_container_client('Logs')
+                                data['messages'].append({'role': 'assistant', 'content': result})
+                                container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+
+                                return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=201, mimetype='application/json', charset='utf-8')
+                            
+                            else:
+                                return func.HttpResponse(status_code=503, mimetype='', charset='')
 
                     return func.HttpResponse(status_code=400, mimetype='', charset='')
                 
@@ -247,6 +250,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
                                 event_id = json.loads(response.read().decode('utf-8'))['event_id']
                             
+                            path = None
+
                             with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'})) as response:
                                 for raw in iter(lambda: response.readline() or None, None):
                                     if not raw: # EOF
@@ -261,16 +266,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         if msg_type == 'heartbeat':
                                             continue
                                         elif msg_type == 'queue_full' or msg_type == 'unexpected_error':
-                                            return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                            break
                                         elif msg_type == 'process_completed':
-                                            if msg['event_id'] == event_id:
-                                                if 'data' in msg['output']:
-                                                    with urlopen(Request(f'{api_url}/file={msg['output']['data'][0]['path']}')) as response:
-                                                        return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
-                                                else:
-                                                    return func.HttpResponse(status_code=503, mimetype='', charset='')
+                                            if msg['event_id'] == event_id and 'data' in msg['output']:
+                                                path = msg['output']['data'][0]['path']
                                             
                                             break
+
+                            if path is None:
+                                return func.HttpResponse(status_code=503, mimetype='', charset='')
+                            else:
+                                with urlopen(Request(f'{api_url}/file={path}')) as response:
+                                    return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
 
                 else:
                     request = Request(tts_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
