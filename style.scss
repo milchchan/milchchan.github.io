@@ -557,13 +557,17 @@ div.sidebar {
                     .wrap svg {
                         g:nth-child(odd)>path {
                             fill: #ffc7e5;
+                            fill: color(display-p3 1.0 0.780 0.898);
                             stroke: #ffc7e5;
+                            stroke: color(display-p3 1.0 0.780 0.898);
                             transition: .5s;
                         }
 
                         g:nth-child(even)>path {
                             fill: #00e7ff;
+                            fill: color(display-p3 0.0 0.906 1.0);
                             stroke: #00e7ff;
+                            stroke: color(display-p3 0.0 0.906 1.0);
                             transition: .5s;
                         }
                     }
