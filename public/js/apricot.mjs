@@ -938,7 +938,8 @@ export class Agent {
 
     const backContext = backCanvas.getContext("2d");
     const frontContext = this.loadingCanvas.getContext("2d");
-    const offscreenContext = new OffscreenCanvas(1, 1).getContext("2d");
+    const offscreenCanvas = new OffscreenCanvas(1, 1)
+    const offscreenContext = offscreenCanvas.getContext("2d");
     const dotRadius = 4.0 * window.devicePixelRatio;
     const blinkInterval = 3.0;
     const currentTime = this.blinkStep;
@@ -949,6 +950,8 @@ export class Agent {
 
     const toColor = offscreenContext.getImageData(0, 0, 1, 1).data;
     const fromColor = Math.max(Math.max(toColor[0], toColor[1]), toColor[2]) < 128 ? [255, 255, 255] : [0, 0, 0];
+    
+    offscreenCanvas.width = offscreenCanvas.height = 0;
     
     backContext.imageSmoothingEnabled = true;
     backContext.imageSmoothingQuality = "high";
