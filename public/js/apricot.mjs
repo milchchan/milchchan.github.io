@@ -938,10 +938,17 @@ export class Agent {
 
     const backContext = backCanvas.getContext("2d");
     const frontContext = this.loadingCanvas.getContext("2d");
+    const offscreenContext = new OffscreenCanvas(1, 1).getContext("2d");
     const dotRadius = 4.0 * window.devicePixelRatio;
     const blinkInterval = 3.0;
     const currentTime = this.blinkStep;
     let x = dotRadius;
+
+    offscreenContext.fillStyle = this.backgroundColor;
+    offscreenContext.fillRect(0, 0, 1, 1);
+
+    const toColor = offscreenContext.getImageData(0, 0, 1, 1).data;
+    const fromColor = Math.max(Math.max(toColor[0], toColor[1]), toColor[2]) < 128 ? [255, 255, 255] : [0, 0, 0];
     
     backContext.imageSmoothingEnabled = true;
     backContext.imageSmoothingQuality = "high";
@@ -950,11 +957,12 @@ export class Agent {
     
     for (let i = 0; i < 3; i++) {
       const phase = (currentTime - (i * 0.5) + blinkInterval) % blinkInterval;
-      
+      const time = (Math.sin((phase / blinkInterval) * Math.PI * 2.0) + 1.0) / 2.0;
+
       backContext.save();
-      backContext.globalAlpha = 0.5 + 0.5 * Math.sin((phase / blinkInterval) * Math.PI * 2);
       backContext.beginPath();
       backContext.arc(x, dotRadius, dotRadius, 0, Math.PI * 2.0);
+      backContext.fillStyle = `rgb(${lerp(fromColor[0], toColor[0], time)}, ${lerp(fromColor[1], toColor[1], time)}, ${lerp(fromColor[2], toColor[2], time)})`;
       backContext.fillStyle = this.backgroundColor;
       backContext.fill();
       backContext.closePath();
