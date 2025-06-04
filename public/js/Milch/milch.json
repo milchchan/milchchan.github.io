@@ -1,0 +1,144 @@
+{
+  "name": "ミルヒちゃん",
+  "x": 0,
+  "y": 0,
+  "width": 287,
+  "height": 338,
+  "language": "ja",
+  "preview": "Images/Milch-Preview.png",
+  "prompt": "Prompt.txt",
+  "animations": [
+    {
+      "name": "Start",
+      "repeats": 1,
+      "frames": [{ "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }]
+    },
+    {
+      "name": "Idle",
+      "repeats": 1,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-Half-ClosedEyes-ClosedMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedEyes-ClosedMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-Half-ClosedEyes-ClosedMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Idle",
+      "repeats": 2,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-Half-ClosedEyes-ClosedMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedEyes-ClosedMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-Half-ClosedEyes-ClosedMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "DoubleClick",
+      "repeats": 1,
+      "frames": [
+        { "delay": 0.033, "x": 0, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 20, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 1, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 19, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 2, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 18, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 3, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 17, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 4, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 16, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 5, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 15, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 6, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 14, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 7, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 13, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 8, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 12, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 9, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 11, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" },
+        { "delay": 0.033, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Emote",
+      "repeats": 5,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-OpenMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Emote",
+      "state": "Angry",
+      "repeats": 5,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-OpenMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Emote",
+      "state": "Confused",
+      "repeats": 5,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-OpenMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Emote",
+      "state": "Happy",
+      "repeats": 5,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-OpenMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Emote",
+      "state": "Relaxed",
+      "repeats": 5,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-OpenMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Emote",
+      "state": "Sad",
+      "repeats": 5,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-OpenMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Emote",
+      "state": "Shy",
+      "repeats": 5,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-OpenMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    },
+    {
+      "name": "Emote",
+      "state": "Surprised",
+      "repeats": 5,
+      "frames": [
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-OpenMouth.png" },
+        { "delay": 0.1, "x": 10, "y": 8, "width": 267, "height": 330, "opacity": 1, "url": "Images/Milch-ClosedMouth.png" }
+      ]
+    }
+  ]
+}
