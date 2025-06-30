@@ -13,15 +13,12 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        with urlopen(Request('https://news.yahoo.co.jp/rss/topics/top-picks.xml', method='GET')) as response:
+        with urlopen(Request(unquote(req.route_params.get('url')), method='GET')) as response:
             response_body = response.read().decode('utf-8')
 
         return func.HttpResponse(response_body, status_code=200, mimetype='application/xml', charset='utf-8')
 
         llm_source = os.environ.get('LLM_SOURCE')
-
-
-        #url = unquote(req.route_params.get('url'))
 
         if llm_source is None or len(llm_source) == 0:
             api_key = None
