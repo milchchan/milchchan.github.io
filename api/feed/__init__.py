@@ -13,17 +13,13 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
+        with urlopen(Request('https://news.yahoo.co.jp/rss/topics/top-picks.xml', method='GET')) as response:
+            response_body = response.read().decode('utf-8')
+
+        return func.HttpResponse(response_body, status_code=200, mimetype='application/xml', charset='utf-8')
+
         llm_source = os.environ.get('LLM_SOURCE')
-        system_prompt = '''内容を下記の出力形式に変換してください。
-# 出力形式
-出力形式は以下のJSONフォーマットとします。このフォーマット以外で会話しないでください。
-```json
-[
- "content":  "<内容>",
- "url": "<URLまたはnull>",
- "timestamp": "<ISO 8601形式またはnull>"
-]
-```'''
+
 
         #url = unquote(req.route_params.get('url'))
 
