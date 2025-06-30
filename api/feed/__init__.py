@@ -13,6 +13,16 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         llm_source = os.environ.get('LLM_SOURCE')
+        system_prompt = '''内容を下記の出力形式に変換してください。
+# 出力形式
+出力形式は以下のJSONフォーマットとします。このフォーマット以外で会話しないでください。
+```json
+[
+ "content":  "<内容>",
+ "url": "<URLまたはnull>",
+ "timestamp": "<ISO 8601形式またはnull>"
+]
+```'''
 
         if llm_source is None or len(llm_source) == 0:
             api_key = None
@@ -35,16 +45,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     with urlopen(request) as response:
                         response_body = response.read().decode("utf-8")
 
-                    request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': [{'role': 'developer', 'content': '''内容を下記の出力形式に変換してください。
-# 出力形式
-出力形式は以下のJSONフォーマットとします。このフォーマット以外で会話しないでください。
-```json
-[
- "content":  "<内容>",
- "url": "<URLまたはnull>",
- "timestamp": "<ISO 8601形式またはnull>"
-]
-```'''}, {'role': 'user', 'content': response_body}], 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
+                    request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': [{'role': 'developer', 'content': system_prompt}, {'role': 'user', 'content': response_body}], 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
                     with urlopen(request) as response:
                         for choice in json.loads(response.read().decode('utf-8'))['choices']:
