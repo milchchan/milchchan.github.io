@@ -49,7 +49,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     with urlopen(request) as response:
                         for choice in json.loads(response.read().decode('utf-8'))['choices']:
                             if choice['message']['role'] == 'assistant':
-                                match = re.match('(?:```json)?(?:[^[]]+)?({.+}).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
+                                match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
                                 
                                 return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['message']['content'])), status_code=200, mimetype='application/json', charset='utf-8')
                             
