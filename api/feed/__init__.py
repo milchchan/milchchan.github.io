@@ -5,15 +5,15 @@ import json
 import logging
 from uuid import uuid4
 from datetime import datetime, timezone
-from urllib.request import urlopen, Request
 from urllib.parse import unquote
+from urllib.request import urlopen, Request
 
 import azure.functions as func
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        with urlopen(Request(unquote(req.route_params.get('url')), method='GET')) as response:
+        with urlopen(Request(unquote(req.route_params.get('path')), method='GET')) as response:
             response_body = response.read().decode('utf-8')
 
         return func.HttpResponse(response_body, status_code=200, mimetype='application/xml', charset='utf-8')
