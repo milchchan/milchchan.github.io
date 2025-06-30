@@ -47,6 +47,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': req.params['model'] if 'model' in req.params else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': req.params['temperature']} if 'temperature' in req.params else {'model': req.params['model'] if 'model' in req.params else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
                     with urlopen(request) as response:
+                        return func.HttpResponse(json.dumps(json.loads(response.read().decode('utf-8'))), status_code=200, mimetype='application/json', charset='utf-8')
+                        
                         for choice in json.loads(response.read().decode('utf-8'))['choices']:
                             if choice['message']['role'] == 'assistant':
                                 match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
