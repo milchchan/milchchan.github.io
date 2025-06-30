@@ -6,7 +6,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "feed",
+      "route": "feed/{url}",
       "methods": [
         "get"
       ]

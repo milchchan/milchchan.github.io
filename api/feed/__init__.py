@@ -6,6 +6,7 @@ import logging
 from uuid import uuid4
 from datetime import datetime, timezone
 from urllib.request import urlopen, Request
+from urllib.parse import unquote
 
 import azure.functions as func
 
@@ -24,6 +25,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 ]
 ```'''
 
+        #url = unquote(req.route_params.get('url'))
+
         if llm_source is None or len(llm_source) == 0:
             api_key = None
 
@@ -40,10 +43,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     api_key = os.environ['GOOGLE_API_KEY']
 
                 else:
-                    response = urlopen(Request('https://news.yahoo.co.jp/rss/topics/top-picks.xml', method='GET'))
-
-                    with urlopen(request) as response:
-                        response_body = response.read().decode("utf-8")
+                    with urlopen(Request('https://news.yahoo.co.jp/rss/topics/top-picks.xml', method='GET')) as response:
+                        response_body = response.read().decode('utf-8')
 
                     request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': [{'role': 'developer', 'content': system_prompt}, {'role': 'user', 'content': response_body}], 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
