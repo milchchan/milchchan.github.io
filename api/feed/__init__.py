@@ -1,10 +1,8 @@
-import time
 import re
 import os
 import json
 import logging
 from uuid import uuid4
-from datetime import datetime, timezone
 from urllib.parse import unquote
 from urllib.request import urlopen, Request
 
@@ -16,8 +14,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         with urlopen(Request(unquote(req.params['url']), method='GET')) as response:
             response_body = response.read().decode('utf-8')
 
-        return func.HttpResponse(response_body, status_code=200, mimetype='application/xml', charset='utf-8')
+        system_prompt = '''内容を下記の出力形式に変換してください。
 
+# 出力形式
+出力形式は以下のJSONフォーマットとします。このフォーマット以外で会話しないでください。
+```json
+[
+ "content":  "内容",
+ "url": "<URL>",
+ "timestamp": "<ISO 8601形式>"
+]
+```'''
         llm_source = os.environ.get('LLM_SOURCE')
 
         if llm_source is None or len(llm_source) == 0:
@@ -36,11 +43,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     api_key = os.environ['GOOGLE_API_KEY']
 
                 else:
-                    with urlopen(Request('https://news.yahoo.co.jp/rss/topics/top-picks.xml', method='GET')) as response:
-                        response_body = response.read().decode('utf-8')
-
-                    return func.HttpResponse(response_body, status_code=200, mimetype='application/xml', charset='utf-8')
-
                     messages = [{'role': 'developer', 'content': system_prompt}, {'role': 'user', 'content': response_body}]
                     request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
