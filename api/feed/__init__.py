@@ -13,7 +13,7 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        with urlopen(Request(unquote(req.route_params.get('id')), method='GET')) as response:
+        with urlopen(Request(unquote(req.params['url']), method='GET')) as response:
             response_body = response.read().decode('utf-8')
 
         return func.HttpResponse(response_body, status_code=200, mimetype='application/xml', charset='utf-8')
