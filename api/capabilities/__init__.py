@@ -7,17 +7,17 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         return func.HttpResponse(json.dumps({
-            "schema_version": "2025-03-26",
-            "tools": [
+            'schema_version': '2025-03-26',
+            'tools': [
             {
-                "name": "fetch",
-                "description": "指定されたURLからコンテンツを取得",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "url": { "type": "string" }
+                'name': 'fetch',
+                'description': '指定されたURLからコンテンツを取得',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'url': { 'type': 'string' }
                     },
-                    "required": ["url"]
+                    'required': ['url']
                 }
             }]
         }), status_code=200, mimetype='application/json', charset='utf-8')
