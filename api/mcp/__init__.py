@@ -29,10 +29,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if params is None or not isinstance(params, dict) or 'tool' not in params or params['tool'] != 'fetch' or 'arguments' not in params or not isinstance(params['arguments'], dict) or 'url' not in params['arguments']:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, mimetype='application/json', charset='utf-8')
     
+    arguments = params['arguments']
+
     try:
         result = []
 
-        with urlopen(Request(unquote(params['url']), method='GET')) as response:
+        with urlopen(Request(unquote(arguments['url']), method='GET')) as response:
             response_body = response.read().decode('utf-8')
 
         system_prompt = '''内容を下記の出力形式に変換してください。
@@ -59,7 +61,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             api_key = os.environ['OPENAI_API_KEY']
 
         messages = [{'role': 'developer', 'content': system_prompt}, {'role': 'user', 'content': response_body}]
-        request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': params['model'] if 'model' in params else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': params['temperature']} if 'temperature' in params else {'model': params['model'] if 'model' in params else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
+        request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': arguments['model'] if 'model' in arguments else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': arguments['temperature']} if 'temperature' in arguments else {'model': arguments['model'] if 'model' in arguments else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
         with urlopen(request) as response:
             for choice in json.loads(response.read().decode('utf-8'))['choices']:
