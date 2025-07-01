@@ -4,8 +4,6 @@ import redis
 
 
 def get_cache(name):
-    return None
-    '''
     r = redis.Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), password=os.environ['REDIS_PASSWORD'], ssl=True)
 
     try:
@@ -13,12 +11,9 @@ def get_cache(name):
     
     except:
         return None
-    '''
-
+    
 
 def set_cache(name, value, expire=3600):
-    return False
-    '''
     r = redis.Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), password=os.environ['REDIS_PASSWORD'], ssl=True)
 
     try:
@@ -26,12 +21,9 @@ def set_cache(name, value, expire=3600):
 
     except:
         return False
-    '''
     
 
 def scan_cache(match):
-    return []
-    '''
     r = redis.Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), password=os.environ['REDIS_PASSWORD'], ssl=True)
     names = []
 
@@ -43,12 +35,9 @@ def scan_cache(match):
     
     except:
         return []
-    '''
-        
+
 
 def delete_cache(names):
-    return -1
-    '''
     r = redis.Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), password=os.environ['REDIS_PASSWORD'], ssl=True)
 
     try:
@@ -56,5 +45,4 @@ def delete_cache(names):
 
     except:
         return -1
-    '''
 
