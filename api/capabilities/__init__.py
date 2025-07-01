@@ -15,7 +15,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 'parameters': {
                     'type': 'object',
                     'properties': {
-                        'url': { 'type': 'string' }
+                        'url': {'type': 'string'}
                     },
                     'required': ['url']
                 }
