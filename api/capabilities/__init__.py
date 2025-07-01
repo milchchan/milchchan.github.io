@@ -11,7 +11,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             'tools': [
             {
                 'name': 'fetch',
-                'description': '指定されたURLからコンテンツを取得',
+                'description': 'Retrieves content from the given URL',
                 'parameters': {
                     'type': 'object',
                     'properties': {
