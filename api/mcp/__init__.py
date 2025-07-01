@@ -26,7 +26,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if method != 'invoke':
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=400, mimetype='application/json', charset='utf-8')
 
-    if params is None or not isinstance(params, dict) or 'url' not in params:
+    if params is None or not isinstance(params, dict) or 'tool' not in params or params['tool'] != 'fetch' or 'arguments' not in params or not isinstance(params['arguments'], dict) or 'url' not in params['arguments']:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, mimetype='application/json', charset='utf-8')
     
     try:
