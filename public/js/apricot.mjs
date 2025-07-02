@@ -965,7 +965,7 @@ export class Agent {
       backContext.save();
       backContext.beginPath();
       backContext.arc(x, dotRadius, dotRadius, 0, Math.PI * 2.0);
-      backContext.fillStyle = `rgb(${lerp(fromColor[0], toColor[0], time)}, ${lerp(fromColor[1], toColor[1], time)}, ${lerp(fromColor[2], toColor[2], time)})`;
+      backContext.fillStyle = `rgb(${lerp(fromColor[0], toColor[0], time)} ${lerp(fromColor[1], toColor[1], time)} ${lerp(fromColor[2], toColor[2], time)} / ${lerp(0.5, 1.0, time)})`;
       backContext.fillStyle = this.backgroundColor;
       backContext.fill();
       backContext.closePath();
