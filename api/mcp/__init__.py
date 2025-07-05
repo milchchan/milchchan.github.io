@@ -15,20 +15,20 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     
     elif req.method == 'GET':
         try:
-            segments = req.route_params.get('segments')
+            #segments = req.route_params.get('segments')
 
-            if segments == 'capabilities' or segments == 'tools/list' or segments == 'capabilities/' or segments == 'tools/list/':
-                return func.HttpResponse(json.dumps({'schema_version': '2025-03-26', 'tools': [{
-                    'name': 'news',
-                    'description': 'Retrieves the latest news',
-                    'parameters': {
-                        'type': 'object',
-                        'properties': {},
-                        'required': []
-                    }
-                }]}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
-            else:
-                return func.HttpResponse(json.dumps({'schema_version': '2025-03-26'}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
+            #if segments == 'capabilities' or segments == 'tools/list' or segments == 'capabilities/' or segments == 'tools/list/':
+            return func.HttpResponse(json.dumps({'schema_version': '2025-03-26', 'tools': [{
+                'name': 'news',
+                'description': 'Retrieves the latest news',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {},
+                    'required': []
+                }
+            }]}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
+            #else:
+            #    return func.HttpResponse(json.dumps({'schema_version': '2025-03-26'}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
 
         except Exception as e:
             logging.error(f'{e}')
