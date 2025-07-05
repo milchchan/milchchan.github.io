@@ -702,6 +702,7 @@ export class Agent {
 
     if ("id" in json && "model" in json && "choices" in json && json.choices.length > 0) {
       const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
+      
       if (match === null) {
         if (typeof json.choices[0].message.content === "string") {
           return [json.choices[0].message.content, null, null, []];
