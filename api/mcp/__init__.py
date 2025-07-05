@@ -74,7 +74,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     if choice['message']['role'] == 'assistant':
                         match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
                         result = json.loads(match.group(1) if match else choice['message']['content'])
-                        set_cache(cache_name, json.dumps(result), expire=3600)
+                        set_cache(cache_name, json.dumps(result), expire=1800)
                     
                     else:
                         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32603, 'message': 'Internal error'}}), status_code=400, mimetype='application/json', charset='utf-8')
