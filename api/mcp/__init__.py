@@ -23,7 +23,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 'description': 'Retrieves the latest news',
                 'parameters': {
                     'type': 'object',
-                    'properties': {},
+                    'properties': {
+                        'noop': {
+                            'type': 'boolean',
+                            'description': 'Unused'
+                        }
+                    },
                     'required': []
                 }
             }]}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
@@ -64,7 +69,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         'description': 'Retrieves the latest news',
                         'parameters': {
                             'type': 'object',
-                            'properties': {},
+                            'properties': {
+                                'noop': {
+                                    'type': 'boolean',
+                                    'description': 'Unused'
+                                }
+                            },
                             'required': []
                         }
                     }]
