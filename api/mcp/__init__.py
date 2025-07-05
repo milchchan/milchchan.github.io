@@ -18,14 +18,30 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     jsonrpc = body.get('jsonrpc')
     identifier = body.get('id')
     method = body.get('method')
-    params = body.get('params')
 
     if jsonrpc != '2.0' or identifier is None or method is None:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, mimetype='application/json', charset='utf-8')
 
-    if method != 'tools/call':
+    if method == 'tools/list':
+        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
+            'tools': [
+                {
+                    'name': 'news',
+                    'description': 'Retrieves the latest news',
+                    'inputSchema': {
+                        'type': 'object',
+                        'properties': {},
+                        'required': []
+                    }
+                }],
+            'nextCursor': None  
+        }}), status_code=200, mimetype='application/json', charset='utf-8')
+    
+    elif method != 'tools/call':
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=400, mimetype='application/json', charset='utf-8')
 
+    params = body.get('params')
+    
     if params is None or not isinstance(params, dict) or 'name' not in params or params['name'] != 'news' or 'arguments' not in params or not isinstance(params['arguments'], dict):# or 'url' not in params['arguments']:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, mimetype='application/json', charset='utf-8')
     
