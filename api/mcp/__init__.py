@@ -23,10 +23,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if jsonrpc != '2.0' or identifier is None or method is None:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, mimetype='application/json', charset='utf-8')
 
-    if method != 'invoke':
+    if method != 'tools/call':
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=400, mimetype='application/json', charset='utf-8')
 
-    if params is None or not isinstance(params, dict) or 'tool' not in params or params['tool'] != 'news' or 'arguments' not in params or not isinstance(params['arguments'], dict):# or 'url' not in params['arguments']:
+    if params is None or not isinstance(params, dict) or 'name' not in params or params['name'] != 'news' or 'arguments' not in params or not isinstance(params['arguments'], dict):# or 'url' not in params['arguments']:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, mimetype='application/json', charset='utf-8')
     
     arguments = params['arguments']
