@@ -8,7 +8,7 @@
       "name": "req",
       "route": "mcp/tools/list",
       "methods": [
-        "get"
+        "post"
       ]
     },
     {

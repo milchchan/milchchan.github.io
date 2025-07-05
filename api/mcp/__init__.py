@@ -24,22 +24,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, mimetype='application/json', charset='utf-8')
 
     if method == 'tools/list':
-        if params is None or not isinstance(params, dict):
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, mimetype='application/json', charset='utf-8')
-    
-        else:
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
-                'tools': [
-                    {
-                        'name': 'news',
-                        'description': 'Retrieves the latest news',
-                        'parameters': {
-                            'type': 'object',
-                            'properties': {},
-                            'required': []
-                        }
-                    }]
-            }}), status_code=200, mimetype='application/json', charset='utf-8')
+        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
+            'tools': [
+                {
+                    'name': 'news',
+                    'description': 'Retrieves the latest news',
+                    'parameters': {
+                        'type': 'object',
+                        'properties': {},
+                        'required': []
+                    }
+                }]
+        }}), status_code=200, mimetype='application/json', charset='utf-8')
     
     elif method != 'tools/call':
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=400, mimetype='application/json', charset='utf-8')
