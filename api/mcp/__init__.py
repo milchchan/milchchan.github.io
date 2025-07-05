@@ -28,7 +28,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     }
                 }]}), status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
             else:
-                return func.HttpResponse(status_code=404, mimetype='', charset='')
+                return func.HttpResponse(status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='', charset='')
 
         except Exception as e:
             logging.error(f'{e}')
