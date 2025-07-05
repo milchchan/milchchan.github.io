@@ -78,10 +78,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     else:
                         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32603, 'message': 'Internal error'}}), status_code=400, mimetype='application/json', charset='utf-8')
 
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': result}]}}, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': result}], 'isError': False}}, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
         
         else:
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': cached_data}]}}, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': cached_data}], 'isError': False}}, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
     except Exception as e:
         logging.error(f'{e}')
