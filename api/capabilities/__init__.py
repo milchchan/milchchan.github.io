@@ -8,16 +8,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         return func.HttpResponse(json.dumps({
             'schema_version': '2025-03-26',
-            'tools': [
-            {
-                'name': 'news',
-                'description': 'Retrieves the latest news',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {},
-                    'required': []
-                }
-            }]
+            'result': {
+                'tools': [
+                    {
+                        'name': 'news',
+                        'description': 'Retrieves the latest news',
+                        'parameters': {
+                            'type': 'object',
+                            'properties': {},
+                            'required': []
+                        }
+                    }],
+                'nextCursor': None  
+            }
         }), status_code=200, mimetype='application/json', charset='utf-8')
 
     except Exception as e:
