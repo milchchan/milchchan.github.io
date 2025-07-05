@@ -38,8 +38,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'properties': {},
                             'required': []
                         }
-                    }],
-                'nextCursor': None  
+                    }]
             }}), status_code=200, mimetype='application/json', charset='utf-8')
     
     elif method != 'tools/call':
