@@ -11,14 +11,14 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     if req.method == 'HEAD':
-        return func.HttpResponse(status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='', charset='')
+        return func.HttpResponse(status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='', charset='')
     
     elif req.method == 'GET':
         try:
             segments = req.route_params.get('segments')
 
             if segments == 'capabilities' or segments == 'tools/list':
-                return func.HttpResponse(json.dumps({'schema_version': '2025-06-18', 'tools': [{
+                return func.HttpResponse(json.dumps({'schema_version': '2025-03-26', 'tools': [{
                     'name': 'news',
                     'description': 'Retrieves the latest news',
                     'parameters': {
@@ -26,9 +26,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         'properties': {},
                         'required': []
                     }
-                }]}), status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+                }]}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
             else:
-                return func.HttpResponse(json.dumps({'schema_version': '2025-06-18'}), status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps({'schema_version': '2025-03-26'}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
 
         except Exception as e:
             logging.error(f'{e}')
@@ -46,7 +46,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         try:
             body = json.loads(req.get_body())
         except json.JSONDecodeError as e:
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32700, 'message': 'Parse error', 'data': str(e)}}), status_code=400, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32700, 'message': 'Parse error', 'data': str(e)}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
         
         jsonrpc = body.get('jsonrpc')
         identifier = body.get('id')
@@ -54,7 +54,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         params = body.get('params')
 
         if jsonrpc != '2.0' or identifier is None or method is None:
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
 
         if method == 'tools/list':
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
@@ -68,13 +68,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'required': []
                         }
                     }]
-            }}), status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+            }}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
         
         elif method != 'tools/call':
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
 
         if params is None or not isinstance(params, dict) or 'name' not in params or params['name'] != 'news' or 'arguments' not in params or not isinstance(params['arguments'], dict):# or 'url' not in params['arguments']:
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
         
         arguments = params['arguments']
 
@@ -123,14 +123,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             set_cache(cache_name, result, expire=1800)
                         
                         else:
-                            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32603, 'message': 'Internal error'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+                            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32603, 'message': 'Internal error'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
 
-                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': result}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': result}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
             
             else:
-                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': cached_data}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': cached_data}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
         
         except Exception as e:
             logging.error(f'{e}')
 
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32603, 'message': 'Internal error', 'data': str(e)}}), status_code=400, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32603, 'message': 'Internal error', 'data': str(e)}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
