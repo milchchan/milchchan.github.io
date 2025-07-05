@@ -7,7 +7,7 @@ def get_cache(name):
     r = redis.Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), password=os.environ['REDIS_PASSWORD'], ssl=True)
 
     try:
-        return json.loads(r.get(name).decode('utf-8'))
+        return r.get(name).decode('utf-8')
     
     except:
         return None
