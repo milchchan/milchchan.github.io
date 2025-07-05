@@ -7,13 +7,12 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         return func.HttpResponse(json.dumps({
-            'schema_version': '2025-03-26',
             'result': {
                 'tools': [
                     {
                         'name': 'news',
                         'description': 'Retrieves the latest news',
-                        'parameters': {
+                        'inputSchema': {
                             'type': 'object',
                             'properties': {},
                             'required': []
