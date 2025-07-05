@@ -10,7 +10,10 @@ import azure.functions as func
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    if req.method == 'GET':
+    if req.method == 'HEAD':
+        return func.HttpResponse(status_code=200, headers={'MCP-Protocol-Version': '2025-06-18'}, mimetype='', charset='')
+    
+    elif req.method == 'GET':
         try:
             segments = req.route_params.get('segments')
 
