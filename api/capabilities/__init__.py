@@ -10,14 +10,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             'schema_version': '2025-03-26',
             'tools': [
             {
-                'name': 'fetch',
-                'description': 'Retrieves content from the given URL',
+                'name': 'news',
+                'description': 'Retrieves the latest news',
                 'parameters': {
                     'type': 'object',
-                    'properties': {
-                        'url': {'type': 'string'}
-                    },
-                    'required': ['url']
+                    'properties': {},
+                    'required': []
                 }
             }]
         }), status_code=200, mimetype='application/json', charset='utf-8')

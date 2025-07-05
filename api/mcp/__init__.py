@@ -26,7 +26,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if method != 'invoke':
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=400, mimetype='application/json', charset='utf-8')
 
-    if params is None or not isinstance(params, dict) or 'tool' not in params or params['tool'] != 'fetch' or 'arguments' not in params or not isinstance(params['arguments'], dict) or 'url' not in params['arguments']:
+    if params is None or not isinstance(params, dict) or 'tool' not in params or params['tool'] != 'news':# or 'arguments' not in params or not isinstance(params['arguments'], dict) or 'url' not in params['arguments']:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, mimetype='application/json', charset='utf-8')
     
     arguments = params['arguments']
@@ -34,7 +34,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         result = []
 
-        with urlopen(Request(unquote(arguments['url']), method='GET')) as response:
+        #with urlopen(Request(unquote(arguments['url']), method='GET')) as response:
+        with urlopen(Request(unquote('https://news.yahoo.co.jp/rss/topics/top-picks.xml'), method='GET')) as response:
             response_body = response.read().decode('utf-8')
 
         system_prompt = '''内容を下記の出力形式に変換してください。
