@@ -14,7 +14,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         try:
             segments = req.route_params.get('segments')
 
-            if segments == 'tools/list':
+            if segments == 'capabilities' or segments == 'tools/list':
                 return func.HttpResponse(json.dumps({'schema_version': '2025-06-18', 'tools': [{
                     'name': 'news',
                     'description': 'Retrieves the latest news',
