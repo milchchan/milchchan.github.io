@@ -29,7 +29,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'description': 'Unused'
                         }
                     },
-                    'required': []
+                    'required': ['noop']
                 }
             }]}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
             #else:
@@ -75,7 +75,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     'description': 'Unused'
                                 }
                             },
-                            'required': []
+                            'required': ['noop']
                         }
                     }]
             }}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
