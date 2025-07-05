@@ -33,7 +33,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     {
                         'name': 'news',
                         'description': 'Retrieves the latest news',
-                        'inputSchema': {
+                        'parameters': {
                             'type': 'object',
                             'properties': {},
                             'required': []
