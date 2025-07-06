@@ -10,8 +10,10 @@ import azure.functions as func
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    SUPPORTED_VERSION = '2025-03-26'
+
     if req.method == 'GET':
-        return func.HttpResponse(status_code=204, mimetype='', charset='')
+        return func.HttpResponse(status_code=204, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
     
     else:
         try:
@@ -19,7 +21,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         except json.JSONDecodeError as e:
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32700, 'message': 'Parse error', 'data': str(e)}}), status_code=400, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         
-        SUPPORTED_VERSION = '2025-03-26'
         jsonrpc = body.get('jsonrpc')
         identifier = body.get('id')
         method = body.get('method')
@@ -38,7 +39,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     'serverInfo': {'name': 'milchchan-mcp', 'version': '0.1.0'}
                 }}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         elif method == 'notifications/initialized':
-            return func.HttpResponse(status_code=204, mimetype='', charset='')
+            return func.HttpResponse(status_code=202, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
         elif method == 'tools/list':
             if identifier is None:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
