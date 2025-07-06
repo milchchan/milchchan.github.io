@@ -61,9 +61,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                     messages.append({'role': message['role'], 'content': content})
 
-                            request = Request('https://api.openai.com/v1/responses', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature'], 'tools': data['tools']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'tools': data['tools']} if 'tools' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
-
-                            with urlopen(request) as response:
+                            with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0, 'tools': data['tools']} if 'tools' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
                                 for output in json.loads(response.read().decode('utf-8'))['output']:
                                     if output['type'] == 'message':
                                         for content in output['content']:
@@ -100,9 +98,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             elif message['role'] == 'assistant':
                                 contents.append({'role': 'model', 'parts': [{'text': message['content']}]})
 
-                        request = Request(f'https://generativelanguage.googleapis.com/v1beta/{os.environ["GEMINI_MODEL_CODE"]}:generateContent?key={api_key}', data=json.dumps({'contents': contents} if temperature is None else {'contents': contents, 'generationConfig': {'temperature': temperature}}).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})
-
-                        with urlopen(request) as response:
+                        with urlopen(Request(f'https://generativelanguage.googleapis.com/v1beta/{os.environ["GEMINI_MODEL_CODE"]}:generateContent?key={api_key}', data=json.dumps({'contents': contents} if temperature is None else {'contents': contents, 'generationConfig': {'temperature': temperature}}).encode('utf-8'), method='POST', headers={'Content-Type': 'application/json'})) as response:
                             for candidate in json.loads(response.read().decode('utf-8'))['candidates']:
                                 for part in candidate['content']['parts']:
                                     if 'text' in part:
@@ -187,9 +183,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 
                 else:
                     data = req.get_body()
-                    request = Request(llm_source, headers={'Content-Type': content_type}, data=data, method='POST')
-
-                    with urlopen(request, timeout=60.0) as response:
+                    
+                    with urlopen(Request(llm_source, headers={'Content-Type': content_type}, data=data, method='POST'), timeout=60.0) as response:
                         for choice in json.loads(response.read().decode('utf-8'))['choices']:
                             match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
                             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
@@ -290,9 +285,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     return func.HttpResponse(response.read(), status_code=200, mimetype='audio/wav')
 
                 else:
-                    request = Request(tts_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
-
-                    with urlopen(request, timeout=60.0) as response:
+                    with urlopen(Request(tts_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST'), timeout=60.0) as response:
                         return func.HttpResponse(response.read(), status_code=200, mimetype=response.info().get_content_type())
                     
         return func.HttpResponse(status_code=400, mimetype='', charset='')
