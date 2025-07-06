@@ -8,6 +8,7 @@
       "name": "req",
       "route": "mcp/{*segments}",
       "methods": [
+        "get",
         "post"
       ]
     },
