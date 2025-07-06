@@ -37,7 +37,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     'serverInfo': {'name': 'milchchan-mcp', 'version': '0.1.0'}
                 }}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
         elif method == 'notifications/initialized':
-            return func.HttpResponse(status_code=204, mimetype='', charset='')
+            return func.HttpResponse(status_code=200, mimetype='', charset='')
         elif method == 'tools/list':
             if identifier is None:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
