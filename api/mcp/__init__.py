@@ -77,7 +77,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 with urlopen(Request(unquote('https://news.yahoo.co.jp/rss/topics/top-picks.xml'), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
                     response_body = response.read().decode('utf-8')
 
-                with urlopen(Request(unquote('/fetch.txt'), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
+                with urlopen(Request(unquote('https://milchchan.com/fetch.txt'), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
                     system_prompt = response.read().decode('utf-8')
 
                 api_key = None
