@@ -39,37 +39,47 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             messages = []
 
                             for message in data['messages']:
-                                if isinstance(message['content'], list):
+                                if message['role'] == 'system' or message['role'] == 'developer':
+                                    messages.append({'role': 'developer', 'content': message['content']})
+
+                                else:
                                     content = []
+                                    
+                                    if message['role'] == 'user':
+                                        if isinstance(message['content'], list):
+                                            for part in message['content']:
+                                                if part['type'] =='image':
+                                                    content.append({'type': 'input_image', 'image_url': part['image']})
+                                                else:
+                                                    content.append({'type': 'input_text', 'text': part['text']})
 
-                                    for part in message['content']:
-                                        if part['type'] =='image':
-                                            content.append({'type': 'image_url', 'image_url': {'url': part['image']}})
                                         else:
-                                            content.append(part)
+                                            content.append({'type': 'input_text', 'text': message['content']})
 
-                                else:
-                                    content = message['content']
+                                    else:
+                                        content.append({'type': 'output_text', 'text': message['content']})
 
-                                if message['role'] == 'system':
-                                    messages.append({'role': 'developer', 'content': content})
-                                else:
                                     messages.append({'role': message['role'], 'content': content})
 
-                            request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
+                            request = Request('https://api.openai.com/v1/responses', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
                             with urlopen(request) as response:
-                                for choice in json.loads(response.read().decode('utf-8'))['choices']:
-                                    if choice['message']['role'] == 'assistant':
-                                        match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
-                                        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
-                                        database = client.get_database_client('Milch')
-                                        container = database.get_container_client('Logs')
-                                        data['messages'].append({'role': 'assistant', 'content': choice['message']['content']})
-                                        container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                for output in json.loads(response.read().decode('utf-8'))['output']:
+                                    if output['type'] == 'message':
+                                        for content in output['content']:
+                                            if content['type'] == 'output_text':
+                                                match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', content['text'], flags=(re.MULTILINE|re.DOTALL))
+                                                client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                                                database = client.get_database_client('Milch')
+                                                container = database.get_container_client('Logs')
+                                                data['messages'].append({'role': 'assistant', 'content': content['text']})
+                                                container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
-                                        return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['message']['content'])), status_code=201, mimetype='application/json', charset='utf-8')
-                                    
+                                                return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else content['text'])), status_code=200, mimetype='application/json', charset='utf-8')
+                                            
+                                            else:
+                                                return func.HttpResponse(status_code=500, mimetype='', charset='')
+                                            
                                     else:
                                         return func.HttpResponse(status_code=500, mimetype='', charset='')
 
@@ -103,7 +113,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         data['messages'].append({'role': 'assistant', 'content': part['text']})
                                         container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
-                                        return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=201, mimetype='application/json', charset='utf-8')
+                                        return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=200, mimetype='application/json', charset='utf-8')
                 
                 elif re.match(r'https?://', llm_source) is None:
                     data = req.get_json()
@@ -168,7 +178,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 data['messages'].append({'role': 'assistant', 'content': result})
                                 container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
-                                return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=201, mimetype='application/json', charset='utf-8')
+                                return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=200, mimetype='application/json', charset='utf-8')
                             
                             else:
                                 return func.HttpResponse(status_code=503, mimetype='', charset='')
@@ -188,7 +198,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             data['messages'].append({'role': 'assistant', 'content': choice['content']})
                             container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
-                            return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=201, mimetype='application/json', charset='utf-8')
+                            return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=200, mimetype='application/json', charset='utf-8')
 
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
 
@@ -277,13 +287,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 return func.HttpResponse(status_code=503, mimetype='', charset='')
                             else:
                                 with urlopen(Request(f'{api_url}/file={path}')) as response:
-                                    return func.HttpResponse(response.read(), status_code=201, mimetype='audio/wav')
+                                    return func.HttpResponse(response.read(), status_code=200, mimetype='audio/wav')
 
                 else:
                     request = Request(tts_source, headers={'Content-Type': content_type}, data=req.get_body(), method='POST')
 
                     with urlopen(request, timeout=60.0) as response:
-                        return func.HttpResponse(response.read(), status_code=201, mimetype=response.info().get_content_type())
+                        return func.HttpResponse(response.read(), status_code=200, mimetype=response.info().get_content_type())
                     
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
