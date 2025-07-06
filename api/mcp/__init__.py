@@ -13,7 +13,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     SUPPORTED_VERSION = '2025-03-26'
 
     if req.method == 'GET':
-        return func.HttpResponse(status_code=204, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
+        return func.HttpResponse(status_code=405, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
     
     else:
         try:
