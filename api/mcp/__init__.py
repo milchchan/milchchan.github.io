@@ -20,30 +20,38 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     method = body.get('method')
     params = body.get('params')
 
-    if jsonrpc != '2.0' or identifier is None or method is None:
+    if jsonrpc != '2.0' or method is None:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
 
     if method == 'initialize':
-        return func.HttpResponse(json.dump({'jsonrpc': '2.0', 'id': identifier, 'result': {
-            'protocolVersion': '2025-03-26',
-            'capabilities': { "tools": { "listChanged": False } },
-            'serverInfo': {'name': 'milchchan-mcp', 'version': '0.1.0'}
-        }}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
+        if identifier is None:
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
+        else:
+            return func.HttpResponse(json.dump({'jsonrpc': '2.0', 'id': identifier, 'result': {
+                'protocolVersion': '2025-03-26',
+                'capabilities': { "tools": { "listChanged": False } },
+                'serverInfo': {'name': 'milchchan-mcp', 'version': '0.1.0'}
+            }}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
     elif method == 'notifications/initialized':
         return func.HttpResponse(status_code=204, mimetype='', charset='')
     elif method == 'tools/list':
-        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
-            'tools': [
-                {
-                    'name': 'news',
-                    'description': 'Retrieves the latest news',
-                    'inputSchema': {
-                        'type': 'object',
-                        'properties': {},
-                        'required': []
-                    }
-                }]
-        }}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
+        if identifier is None:
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
+        else:
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
+                'tools': [
+                    {
+                        'name': 'news',
+                        'description': 'Retrieves the latest news',
+                        'inputSchema': {
+                            'type': 'object',
+                            'properties': {},
+                            'required': []
+                        }
+                    }]
+            }}), status_code=200, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
+    elif identifier is None:
+        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
     elif method != 'tools/call':
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=400, headers={'MCP-Protocol-Version': '2025-03-26'}, mimetype='application/json', charset='utf-8')
 
