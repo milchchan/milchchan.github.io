@@ -504,7 +504,7 @@ export class Agent {
         }
         
         if (content !== null) {
-          messages.push({ role: "user", content: [{ type: "input_text", content: content }] });
+          messages.push({ role: "user", content: [{ type: "input_text", text: content }] });
           logs.push({ role: "user", content: content });
         }
 
