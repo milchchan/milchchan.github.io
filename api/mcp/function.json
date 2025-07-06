@@ -9,8 +9,7 @@
       "route": "mcp/{*segments}",
       "methods": [
         "get",
-        "post",
-        "head"
+        "post"
       ]
     },
     {
