@@ -61,7 +61,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                     messages.append({'role': message['role'], 'content': content})
 
-                            request = Request('https://api.openai.com/v1/responses', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
+                            request = Request('https://api.openai.com/v1/responses', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature'], 'tools': data['tools']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'tools': data['tools']} if 'tools' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature']} if 'temperature' in data else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
 
                             with urlopen(request) as response:
                                 for output in json.loads(response.read().decode('utf-8'))['output']:
