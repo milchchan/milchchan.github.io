@@ -114,6 +114,7 @@ export class Agent {
     this.maxLogs = 10;
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
+    this.tools = null;
     this.onresized = null;
     this.onclick = null;
     this.ongenerated = null;
@@ -454,29 +455,76 @@ export class Agent {
     this.isLoading = true;
 
     new Promise(async (resolve) => {
-      const messages = [{ role: "developer", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
       let message = null;
       let likability = null;
       let animation = null;
       const choices = [];
       const logs = [];
+      const messages = [{ role: "developer", content: `Today: ${new Date().toLocaleDateString()}\n\n${this.character.prompt}` }];
+      const options = { mode: "cors", method: "POST" };
 
-      for (const log of this.logs) {
-        messages.push(log);
-      }
-      
-      if (content !== null) {
-        messages.push({ role: "user", content: content });
-        logs.push({ role: "user", content: content });
+      if (this.apiKey === null) {
+        for (const log of this.logs) {
+          messages.push(log);
+        }
+        
+        if (content !== null) {
+          messages.push({ role: "user", content: content });
+          logs.push({ role: "user", content: content });
+        }
+
+        options["headers"] = { "Content-Type": "application/json" };
+
+        if (this.tools === null) {
+          if (this.model === null) {
+            options["body"] = JSON.stringify({ temperature: this.temperature, messages: messages });
+          } else {
+            options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, messages: messages });
+          }
+        } else if (this.model === null) {
+          options["body"] = JSON.stringify({ temperature: this.temperature, messages: messages, tools: this.tools });
+        } else {
+          options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, messages: messages, tools: this.tools });
+        }
+      } else {
+        for (const log of this.logs) {
+          if (log.role === "developer") {
+            messages.push(log);
+          } else {
+            const content = [];
+
+            if (log.role === "user") {
+              content.push({ type: "input_text", text: log.content });
+            } else {
+              content.push({ type: "output_text", text: log.content });
+            }
+
+            messages.push({ role: log.role, content: content });
+          }
+        }
+        
+        if (content !== null) {
+          messages.push({ role: "user", content: [{ type: "input_text", content: content }] });
+          logs.push({ role: "user", content: content });
+        }
+
+        options["headers"] = { "Authorization": `Bearer ${this.apiKey}`, "Content-Type": "application/json" };
+
+        if (this.tools === null) {
+          if (this.model === null) {
+            options["body"] = JSON.stringify({ temperature: this.temperature, input: messages });
+          } else {
+            options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, input: messages });
+          }
+        } else if (this.model === null) {
+          options["body"] = JSON.stringify({ temperature: this.temperature, input: messages, tools: this.tools });
+        } else {
+          options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, input: messages, tools: this.tools });
+        }
       }
       
       try {
-        const response = await fetch(this.apiUrl, {
-          mode: "cors",
-          method: "POST",
-          headers: this.apiKey === null ? { "Content-Type": "application/json" } : { "Authorization": `Bearer ${this.apiKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify(this.model === null ? { temperature: this.temperature, messages: messages } : { model: this.model, temperature: this.temperature, messages: messages })
-        });
+        let response = await fetch(this.apiUrl, options);
 
         if (response.ok) {
           const data = this.parse(await response.json());
@@ -700,17 +748,35 @@ export class Agent {
     let state = null;
     let choices = null;
 
-    if ("id" in json && "model" in json && "choices" in json && json.choices.length > 0) {
-      const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(json.choices[0].message.content);
+    if ("id" in json && "model" in json && "output" in json && json.output.length > 0) {
+      let text = null;
+
+      for (const output of json.output) {
+        if (output.type === "message") {
+          for (const content of output.content) {
+            if (content.type === "output_text") {
+              text = content.text;
+
+              break;
+            }
+          }
+
+          if (text !== null) {
+            const match = /(?:```json)?(?:[^{]+)?({.+}).*(?:```)?/gs.exec(text);
       
-      if (match === null) {
-        if (typeof json.choices[0].message.content === "string") {
-          return [json.choices[0].message.content, null, null, []];
-        } else {
-          json = JSON.parse(json.choices[0].message.content);
+            if (match === null) {
+              try {
+                json = JSON.parse(text);
+              } catch {
+                return [text, null, null, []];
+              }
+            } else {
+              json = JSON.parse(match[1]);
+            }
+
+            break;
+          }
         }
-      } else {
-        json = JSON.parse(match[1]);
       }
     }
 
