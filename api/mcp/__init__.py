@@ -71,8 +71,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             cached_data = get_cache(cache_name)
 
             if cached_data is None:
-                result = ''
-
                 #with urlopen(Request(unquote(arguments['url']), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
                 with urlopen(Request(unquote('https://news.yahoo.co.jp/rss/topics/top-picks.xml'), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
                     response_body = response.read().decode('utf-8')
@@ -93,6 +91,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 messages = [{'role': 'developer', 'content': system_prompt}, {'role': 'user', 'content': response_body}]
                 request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': arguments['model'] if 'model' in arguments else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': arguments['temperature']} if 'temperature' in arguments else {'model': arguments['model'] if 'model' in arguments else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
+                result = ''
                 
                 with urlopen(request) as response:
                     for choice in json.loads(response.read().decode('utf-8'))['choices']:
