@@ -2,9 +2,10 @@ import re
 import os
 import json
 import logging
+from datetime import datetime, timedelta, timezone
 from urllib.parse import unquote
 from urllib.request import urlopen, Request
-from shared.cache import get_cache, set_cache
+from shared.cache import get_cache, set_cache, scan_cache
 
 import azure.functions as func
 
@@ -36,7 +37,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
                     'protocolVersion': SUPPORTED_VERSION,
                     'capabilities': { "tools": { "listChanged": False } },
-                    'serverInfo': {'name': 'milchchan-mcp', 'version': '0.1.0'}
+                    'serverInfo': {'name': 'milchchan-mcp', 'version': '1.0.0'}
                 }}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         elif method == 'notifications/initialized':
             return func.HttpResponse(status_code=202, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
@@ -51,7 +52,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'description': 'Retrieves the latest news',
                             'inputSchema': {
                                 'type': 'object',
-                                'properties': {},
+                                'properties': {
+                                    'limit': {
+                                        'type': 'integer',
+                                        'minimum': 1,
+                                        'maximum': 50,
+                                        'description': 'Maximum items'
+                                    }
+                                },
                                 'required': []
                             }
                         }]
@@ -61,52 +69,34 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         elif method != 'tools/call':
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
 
-        if params is None or not isinstance(params, dict) or 'name' not in params or params['name'] != 'news' or 'arguments' not in params or not isinstance(params['arguments'], dict):# or 'url' not in params['arguments']:
+        if params is None or not isinstance(params, dict) or 'name' not in params or params['name'] != 'news' or 'arguments' not in params or not isinstance(params['arguments'], dict):
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         
         arguments = params['arguments']
+        limit = int(arguments['limit']) if 'limit' in arguments else 50
 
         try:
-            cache_name = 'news'
-            cached_data = get_cache(cache_name)
+            cutoff = datetime.now(timezone.utc) - timedelta(hours=24)    
+            merged_data = []
 
-            if cached_data is None:
-                #with urlopen(Request(unquote(arguments['url']), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
-                with urlopen(Request(unquote('https://news.yahoo.co.jp/rss/topics/top-picks.xml'), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
-                    response_body = response.read().decode('utf-8')
-
-                with urlopen(Request(unquote('https://milchchan.com/fetch.txt'), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
-                    system_prompt = response.read().decode('utf-8')
-
-                api_key = None
-
-                if 'X-Authorization' in req.headers:
-                    match = re.match('Bearer\\s(.+)', req.headers['X-Authorization'])
-
-                    if match:
-                        api_key = match.group(1)
-
-                else:
-                    api_key = os.environ['OPENAI_API_KEY']
-
-                messages = [{'role': 'developer', 'content': system_prompt}, {'role': 'user', 'content': response_body}]
-                request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': arguments['model'] if 'model' in arguments else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': arguments['temperature']} if 'temperature' in arguments else {'model': arguments['model'] if 'model' in arguments else os.environ['OPENAI_MODEL'], 'messages': messages}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
-                result = ''
+            for cache_name in scan_cache(f'fetch/*'):
+                cached_data = json.loads(get_cache(cache_name))
                 
-                with urlopen(request) as response:
-                    for choice in json.loads(response.read().decode('utf-8'))['choices']:
-                        if choice['message']['role'] == 'assistant':
-                            match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
-                            result = f"```json\n{match.group(1) if match else choice['message']['content']}\n```"
-                            set_cache(cache_name, result, expire=1800)
-                        
-                        else:
-                            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32603, 'message': 'Internal error'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+                if isinstance(cached_data, list):
+                    for item in cached_data:
+                        if isinstance(item, dict) and 'content' in item and 'timestamp' in item:
+                            timestamp = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
 
-                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': result}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+                            if timestamp > cutoff:
+                                merged_data.append({'content': item['content'], 'timestamp': timestamp})
+
+            merged_data.sort(key=lambda x: x['timestamp'], reverse=True)
+            merged_data = merged_data[:limit]
+
+            for item in merged_data:
+                item['timestamp'] = item['timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ')
             
-            else:
-                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': cached_data}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': f'```json\n{json.dumps(merged_data, ensure_ascii=False)}\n```'}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         
         except Exception as e:
             logging.error(f'{e}')
