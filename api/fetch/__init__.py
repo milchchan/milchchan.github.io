@@ -37,7 +37,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(json.dumps(merged_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
-            data = req.get_json()
+            data = None#req.get_json()
             url = FETCH_URLS[random.randrange(len(FETCH_URLS))]
             cache_name = f'fetch/{url}'
             cached_data = get_cache(cache_name)
