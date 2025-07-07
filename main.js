@@ -1198,6 +1198,8 @@ window.addEventListener("load", async event => {
               } else {
                 background.offset = 0;
               }
+
+              background.queue.pop();
             } else {
               throw new Error(response.statusText);
             }
