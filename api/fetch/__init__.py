@@ -31,11 +31,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 merged_data.append({'content': item['content'], 'timestamp': timestamp})
 
             merged_data.sort(key=lambda x: x['timestamp'], reverse=True)
+            merged_data = merged_data[:limit]
 
             for item in merged_data:
                 item['timestamp'] = int(datetime.fromisoformat(item['timestamp']).timestamp())
 
-            return func.HttpResponse(json.dumps(merged_data[:limit], ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps(merged_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
             segments = req.route_params.get('segments')
