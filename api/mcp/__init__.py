@@ -70,11 +70,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         
         arguments = params['arguments']
         limit = int(arguments['limit']) if 'limit' in arguments else 50
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=24)    
+        merged_data = []
 
         try:
-            cutoff = datetime.now(timezone.utc) - timedelta(hours=24)    
-            merged_data = []
-
             for cache_name in scan_cache(f'fetch/*'):
                 cached_data = json.loads(get_cache(cache_name))
                 
