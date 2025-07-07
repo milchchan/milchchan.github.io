@@ -15,7 +15,8 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'GET':
-            cutoff = datetime.now(timezone.utc)      - timedelta(hours=24)    
+            limit = req.params['limit'] if 'limit' in req.params else 100
+            cutoff = datetime.now(timezone.utc) - timedelta(hours=24)    
             merged_data = []
 
             for cache_name in scan_cache(f'fetch/*'):
@@ -24,7 +25,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if isinstance(cached_data, list):
                     for item in cached_data:
                         if isinstance(item, dict) and 'content' in item and 'timestamp' in item:
-                            timestamp = datetime.fromisoformat(item['timestamp'])
+                            timestamp = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
 
                             if timestamp > cutoff:
                                 merged_data.append({'content': item['content'], 'timestamp': timestamp})
@@ -32,12 +33,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             merged_data.sort(key=lambda x: x['timestamp'], reverse=True)
 
             for item in merged_data:
-                item['timestamp'] = item['timestamp'].isoformat()
+                item['timestamp'] = item['timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ')
 
-            return func.HttpResponse(json.dumps(merged_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps(merged_data[:limit], ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
-            data = None#req.get_json()
+            body = req.get_body()
+            data = json.loads(body) if len(body) > 0 else None
             url = FETCH_URLS[random.randrange(len(FETCH_URLS))]
             cache_name = f'fetch/{url}'
             cached_data = get_cache(cache_name)
