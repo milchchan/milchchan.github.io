@@ -309,12 +309,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 try:
                     query = session.query(Upload)
-                    identifier = random.randrange(query.count() + 1)
+                    #identifier = random.randrange(query.count() + 1)
+                    
+                    #if mime_type is None:
+                    #    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                    #else:
+                    #    upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier, Upload.type.like(mime_type)).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier, Upload.type.like(mime_type)).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
                     
                     if mime_type is None:
-                        upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                        upload = query.filter(Upload.random <= random.random()).order_by(desc(Upload.random)).limit(1).one()
                     else:
-                        upload = query.filter(or_(Upload.id.in_(session.query(Upload.id).filter(Upload.id <= identifier, Upload.type.like(mime_type)).order_by(desc(Upload.id)).limit(1).subquery()), Upload.id.in_(session.query(Upload.id).filter(Upload.id > identifier, Upload.type.like(mime_type)).order_by(Upload.id).limit(1).subquery()))).order_by(Upload.id).limit(1).one()
+                        upload = query.filter(Upload.type.like(mime_type), Upload.random <= random.random()).order_by(desc(Upload.random)).limit(1).one()
                     
                     identifier = os.path.basename(urlparse(upload.url).path)
                     file_is_exists = True
