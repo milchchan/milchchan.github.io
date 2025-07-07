@@ -1195,11 +1195,10 @@ window.addEventListener("load", async event => {
 
               if (background.queue.length === limit) {
                 background.offset += 10;
+                background.queue.pop();
               } else {
                 background.offset = 0;
               }
-
-              background.queue.pop();
             } else {
               throw new Error(response.statusText);
             }
