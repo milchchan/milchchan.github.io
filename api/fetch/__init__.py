@@ -6,7 +6,7 @@ import logging
 from urllib.parse import unquote
 from urllib.request import urlopen, Request
 from shared import FETCH_URLS, FETCH_PROMPT
-from shared.cache import get_cache, set_cache
+from shared.cache import get_cache, set_cache, scan_cache
 
 import azure.functions as func
 
@@ -14,7 +14,16 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'GET':
-            return func.HttpResponse(status_code=405, mimetype='', charset='')
+            for cache_name in scan_cache(f'fetch/*'):
+                cached_data = json.loads(get_cache(cache_name))
+                merged_data = []
+
+                if isinstance(cached_data, list):
+                    for item in cached_data:
+                        if isinstance(item, dict) and 'content' in item and 'timestamp' in item:
+                            merged_data.append({"content": item["content"], "timestamp": item["timestamp"]})
+
+            return func.HttpResponse(json.dumps(merged_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
             data = req.get_json()
@@ -45,8 +54,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     for choice in json.loads(response.read().decode('utf-8'))['choices']:
                         if choice['message']['role'] == 'assistant':
                             match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
-                            result = match.group(1) if match else choice['message']['content']
-                            set_cache(cache_name, result, expire=1800)
+                            text = match.group(1) if match else choice['message']['content']
+                            result = json.loads(text)
+                            set_cache(cache_name, text, expire=1800)
                         
                         else:
                             return func.HttpResponse(status_code=500, mimetype='', charset='')
@@ -54,7 +64,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 return func.HttpResponse(json.dumps(result, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
             
             else:
-                return func.HttpResponse(json.dumps(cached_data, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps(json.loads(cached_data), ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
         
     except Exception as e:
         logging.error(f'{e}')
