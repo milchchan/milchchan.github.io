@@ -33,7 +33,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             merged_data.sort(key=lambda x: x['timestamp'], reverse=True)
 
             for item in merged_data:
-                item['timestamp'] = item['timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ')
+                item['timestamp'] = int(datetime.fromisoformat(item['timestamp']).timestamp())
 
             return func.HttpResponse(json.dumps(merged_data[:limit], ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
