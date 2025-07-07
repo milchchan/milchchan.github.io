@@ -1127,6 +1127,13 @@
       let modifiers = [];
       let words = [];
 
+      agent.tools = [{
+        "type": "mcp",
+        "server_label": "milchandotcom",
+        "server_url": "https://milchchan.com/api/mcp",
+        "require_approval": "never"
+      }];
+
       window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
       function random(min, max) {
