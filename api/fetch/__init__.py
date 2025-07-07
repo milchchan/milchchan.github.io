@@ -58,24 +58,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     api_key = os.environ['OPENAI_API_KEY']
 
                 messages = [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}]
-                request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
-                result = ''
+                request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': 1.0} if data is None else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
                 
                 with urlopen(request) as response:
                     for choice in json.loads(response.read().decode('utf-8'))['choices']:
                         if choice['message']['role'] == 'assistant':
                             match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
                             text = match.group(1) if match else choice['message']['content']
-                            result = json.loads(text)
+                            items = json.loads(text)
                             set_cache(cache_name, text, expire=1800)
-                        
-                        else:
-                            return func.HttpResponse(status_code=500, mimetype='', charset='')
 
-                return func.HttpResponse(json.dumps([], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                            return func.HttpResponse(json.dumps(items, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+            
+                return func.HttpResponse(status_code=500, mimetype='', charset='')
             
             else:
-                return func.HttpResponse(json.dumps([], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps(json.loads(cached_data), ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
         
     except Exception as e:
         logging.error(f'{e}')
