@@ -72,10 +72,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         else:
                             return func.HttpResponse(status_code=500, mimetype='', charset='')
 
-                return func.HttpResponse(json.dumps(result, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps([], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
             
             else:
-                return func.HttpResponse(json.dumps(json.loads(cached_data), ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps([], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
         
     except Exception as e:
         logging.error(f'{e}')
