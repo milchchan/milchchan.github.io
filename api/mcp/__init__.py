@@ -3,9 +3,7 @@ import os
 import json
 import logging
 from datetime import datetime, timedelta, timezone
-from urllib.parse import unquote
-from urllib.request import urlopen, Request
-from shared.cache import get_cache, set_cache, scan_cache
+from shared.cache import get_cache, scan_cache
 
 import azure.functions as func
 
