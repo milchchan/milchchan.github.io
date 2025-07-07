@@ -12,11 +12,11 @@ import azure.functions as func
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    if req.method == 'GET':
-        return func.HttpResponse(status_code=405, mimetype='', charset='')
+    try:
+        if req.method == 'GET':
+            return func.HttpResponse(status_code=405, mimetype='', charset='')
     
-    else:
-        try:
+        else:
             data = req.get_json()
             url = FETCH_URLS[random.randrange(len(FETCH_URLS))]
             cache_name = f'fetch/{url}'
@@ -56,14 +56,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             else:
                 return func.HttpResponse(json.dumps(cached_data, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
         
-        except Exception as e:
-            logging.error(f'{e}')
+    except Exception as e:
+        logging.error(f'{e}')
 
-            return func.HttpResponse(json.dumps({
-                'error': {
-                    'message': str(e),
-                    'type': type(e).__name__}
-            }),
-                status_code=400,
-                mimetype='application/json',
-                charset='utf-8')
+        return func.HttpResponse(json.dumps({
+            'error': {
+                'message': str(e),
+                'type': type(e).__name__}
+        }),
+            status_code=400,
+            mimetype='application/json',
+            charset='utf-8')
