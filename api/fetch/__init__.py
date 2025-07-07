@@ -34,7 +34,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             merged_data = merged_data[:limit]
 
             for item in merged_data:
-                item['timestamp'] = int(datetime.fromisoformat(item['timestamp']).timestamp())
+                item['timestamp'] = int(item['timestamp'].timestamp())
 
             return func.HttpResponse(json.dumps(merged_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
