@@ -38,9 +38,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(json.dumps(merged_data[:limit], ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
+            segments = req.route_params.get('segments')
             body = req.get_body()
             data = json.loads(body) if len(body) > 0 else None
-            url = FETCH_URLS[random.randrange(len(FETCH_URLS))]
+            url = FETCH_URLS[random.randrange(len(FETCH_URLS))] if segments is None else segments
             cache_name = f'fetch/{url}'
             cached_data = get_cache(cache_name)
 
