@@ -3,7 +3,7 @@ import re
 import os
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from urllib.parse import unquote
 from urllib.request import urlopen, Request
 from shared import FETCH_URLS, FETCH_PROMPT
@@ -15,6 +15,7 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'GET':
+            cutoff = datetime.now(timezone.utc)      - timedelta(hours=24)    
             merged_data = []
 
             for cache_name in scan_cache(f'fetch/*'):
@@ -22,8 +23,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 
                 if isinstance(cached_data, list):
                     for item in cached_data:
-                        if isinstance(item, dict) and 'content' in item and 'timestamp' in item:                            
-                            merged_data.append({'content': item['content'], 'timestamp': datetime.fromisoformat(item['timestamp'])})
+                        if isinstance(item, dict) and 'content' in item and 'timestamp' in item:
+                            timestamp = datetime.fromisoformat(item['timestamp'])
+
+                            if timestamp > cutoff:
+                                merged_data.append({'content': item['content'], 'timestamp': timestamp})
 
             merged_data.sort(key=lambda x: x['timestamp'], reverse=True)
 
