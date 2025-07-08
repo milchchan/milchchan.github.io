@@ -40,6 +40,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     
         else:
             segments = req.route_params.get('segments')
+
+            if segments is None:
+                return func.HttpResponse(json.dumps({'url': segments}, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+
+
             body = req.get_body()
             data = json.loads(body) if len(body) > 0 else None
             url = FETCH_URLS[random.randrange(len(FETCH_URLS))] if segments is None else segments
