@@ -6,7 +6,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "fetch/{*segments}",
+      "route": "fetch",
       "methods": [
         "get",
         "post"

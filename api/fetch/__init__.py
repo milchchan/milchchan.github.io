@@ -39,15 +39,23 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(json.dumps(merged_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
-            segments = req.route_params.get('segments')
+            if req.headers.get('Content-Type') == 'application/json':
+                body = req.get_body()
 
-            if segments is not None:
-                return func.HttpResponse(json.dumps({'url': segments, 'unquote': unquote(segments)}, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
-
-
-            body = req.get_body()
-            data = json.loads(body) if len(body) > 0 else None
-            url = FETCH_URLS[random.randrange(len(FETCH_URLS))] if segments is None else segments
+                if len(body) > 0:
+                    data = json.loads(body)
+                    url = data['url'] if 'url' in data else None
+                    model = data.get('model')
+                    temperature = data['temperature'] if 'temperature' in data else 1.0
+                else:
+                    url = url = FETCH_URLS[random.randrange(len(FETCH_URLS))]
+                    model = None
+                    temperature = 1.0
+            else:
+                url = req.params['url'] if 'url' in req.params else FETCH_URLS[random.randrange(len(FETCH_URLS))]
+                model = req.params.get('model')
+                temperature = req.params['temperature'] if 'temperature' in req.params else 1.0
+            
             cache_name = f'fetch/{url}'
             cached_data = get_cache(cache_name)
 
@@ -67,7 +75,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     api_key = os.environ['OPENAI_API_KEY']
 
                 messages = [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}]
-                request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': 1.0} if data is None else {'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'messages': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
+                request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': messages, 'temperature': temperature}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
                 
                 with urlopen(request) as response:
                     for choice in json.loads(response.read().decode('utf-8'))['choices']:
