@@ -30,7 +30,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
 
         if method == 'initialize':
-            if identifier is None or params is None or not isinstance(params, dict) or 'protocolVersion' not in params or params['protocolVersion'] != SUPPORTED_VERSION or 'capabilities' not in params or not isinstance(params['capabilities'], dict):
+            if identifier is None or params is None or not isinstance(params, dict) or 'protocolVersion' not in params or datetime.strptime(params['protocolVersion'], '%Y-%m-%d') < datetime.strptime(SUPPORTED_VERSION, '%Y-%m-%d') or 'capabilities' not in params or not isinstance(params['capabilities'], dict):
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
             else:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
