@@ -74,9 +74,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         arguments = params['arguments']
         limit = int(arguments['limit']) if 'limit' in arguments else 10
         cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
-        filtered_data = []
         merged_data = []
-
+        filtered_data = []
+        
         try:
             for cache_name in scan_cache(f'fetch/*'):
                 cached_data = json.loads(get_cache(cache_name))
@@ -90,13 +90,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             if timestamp > cutoff:
                                 filtered_data.append({'content': item['content'], 'timestamp': timestamp})
 
-            recent_data = sorted(key=lambda x: x['timestamp'], reverse=True)
-            recent_data = recent_data[:limit]
-
             if len(filtered_data) > 0:
                 recent_data = sorted(filtered_data, key=lambda x: x['timestamp'], reverse=True)
             else:       
                 recent_data = sorted(merged_data, key=lambda x: x['timestamp'], reverse=True)
+            
+            recent_data = sorted(recent_data, key=lambda x: x['timestamp'], reverse=True)
+            recent_data = recent_data[:limit]
             
             for item in recent_data:
                 item['timestamp'] = item['timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ')
