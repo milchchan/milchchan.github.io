@@ -7,7 +7,7 @@ import azure.functions as func
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    SUPPORTED_VERSION = '2025-03-26'
+    SUPPORTED_VERSION = '2025-06-18'
 
     if req.method == 'GET':
         return func.HttpResponse(status_code=405, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
