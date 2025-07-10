@@ -16,7 +16,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'GET':
             limit = req.params['limit'] if 'limit' in req.params else 100
-            cutoff = datetime.now(timezone.utc) - timedelta(hours=24)    
+            cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+            filtered_data = []
             merged_data = []
 
             for cache_name in scan_cache(f'fetch/*'):
@@ -26,17 +27,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     for item in cached_data:
                         if isinstance(item, dict) and 'content' in item and 'timestamp' in item:
                             timestamp = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
+                            merged_data.append({'content': item['content'], 'timestamp': timestamp})
 
                             if timestamp > cutoff:
-                                merged_data.append({'content': item['content'], 'timestamp': timestamp})
+                                filtered_data.append({'content': item['content'], 'timestamp': timestamp})
 
-            merged_data.sort(key=lambda x: x['timestamp'], reverse=True)
-            merged_data = merged_data[:limit]
+            if len(filtered_data) > 0:
+                recent_data = sorted(filtered_data, key=lambda x: x['timestamp'], reverse=True)
+            else:       
+                recent_data = sorted(merged_data, key=lambda x: x['timestamp'], reverse=True)
+            
+            recent_data = recent_data[:limit]
 
-            for item in merged_data:
+            for item in recent_data:
                 item['timestamp'] = int(item['timestamp'].timestamp())
 
-            return func.HttpResponse(json.dumps(merged_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps(recent_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
             if req.headers.get('Content-Type') == 'application/json':
