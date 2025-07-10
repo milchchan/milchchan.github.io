@@ -1028,14 +1028,18 @@ export class Agent {
     for (let i = 0; i < 3; i++) {
       const phase = (currentTime - (i * 0.5) + blinkInterval) % blinkInterval;
       const time = (Math.sin((phase / blinkInterval) * Math.PI * 2.0) + 1.0) / 2.0;
+      const scale = lerp(0.5, 1.0, time);
 
       backContext.save();
+      backContext.translate(x, dotRadius);
+      backContext.scale(scale, scale);
       backContext.beginPath();
-      backContext.arc(x, dotRadius, dotRadius, 0, Math.PI * 2.0);
+      backContext.arc(0.0, 0.0, dotRadius, 0, Math.PI * 2.0);
       backContext.fillStyle = `rgb(${lerp(fromColor[0], toColor[0], time)} ${lerp(fromColor[1], toColor[1], time)} ${lerp(fromColor[2], toColor[2], time)} / ${lerp(0.5, 1.0, time)})`;
       backContext.fillStyle = this.backgroundColor;
       backContext.fill();
       backContext.closePath();
+      backContext.translate(-dotRadius, -dotRadius);
       backContext.restore();
 
       x += dotRadius * 4.0;
