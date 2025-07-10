@@ -62,7 +62,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     messages.append({'role': message['role'], 'content': content})
 
                             if 'tools' not in data:
-                                data['tools'] = [{'type': 'mcp', 'server_label': 'milchandotcom', 'server_url': 'https://milchchan.com/api/mcp', 'require_approval': 'never'}]
+                                data['tools'] = [{
+                                    'type': 'mcp',
+                                    'server_label': 'milchchan-mcp',
+                                    'server_url': "https://milchchan.com/api/mcp",
+                                    'require_approval': 'never'
+                                }]
 
                             with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0, 'tools': data['tools']}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
                                 for output in json.loads(response.read().decode('utf-8'))['output']:
