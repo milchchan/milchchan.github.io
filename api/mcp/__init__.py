@@ -72,8 +72,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         
         arguments = params['arguments']
-        limit = int(arguments['limit']) if 'limit' in arguments else 50
-        cutoff = datetime.now(timezone.utc) - timedelta(hours=24)    
+        limit = int(arguments['limit']) if 'limit' in arguments else 10
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+        filtered_data = []
         merged_data = []
 
         try:
@@ -84,17 +85,23 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     for item in cached_data:
                         if isinstance(item, dict) and 'content' in item and 'timestamp' in item:
                             timestamp = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
+                            merged_data.append({'content': item['content'], 'timestamp': timestamp})
 
                             if timestamp > cutoff:
-                                merged_data.append({'content': item['content'], 'timestamp': timestamp})
+                                filtered_data.append({'content': item['content'], 'timestamp': timestamp})
 
-            merged_data.sort(key=lambda x: x['timestamp'], reverse=True)
-            merged_data = merged_data[:limit]
+            recent_data = sorted(key=lambda x: x['timestamp'], reverse=True)
+            recent_data = recent_data[:limit]
 
-            for item in merged_data:
+            if len(filtered_data) > 0:
+                recent_data = sorted(filtered_data, key=lambda x: x['timestamp'], reverse=True)
+            else:       
+                recent_data = sorted(merged_data, key=lambda x: x['timestamp'], reverse=True)
+            
+            for item in recent_data:
                 item['timestamp'] = item['timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ')
             
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': f'```json\n{json.dumps(merged_data, ensure_ascii=False)}\n```'}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': f'```json\n{json.dumps(recent_data, ensure_ascii=False)}\n```'}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         
         except Exception as e:
             logging.error(f'{e}')
