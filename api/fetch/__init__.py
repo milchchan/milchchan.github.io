@@ -17,9 +17,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if req.method == 'GET':
             limit = req.params['limit'] if 'limit' in req.params else 100
             cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
-            filtered_data = []
             merged_data = []
-
+            filtered_data = []
+            
             for cache_name in scan_cache(f'fetch/*'):
                 cached_data = json.loads(get_cache(cache_name))
                 
