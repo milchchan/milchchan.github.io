@@ -952,7 +952,7 @@ export class Agent {
       backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
       backContext.save();
       this.drawHeart(backContext, 0.0, 0.0, Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
-      backContext.globalAlpha = 0.5;
+      backContext.globalAlpha = 0.25;
       backContext.fillStyle = this.accentColor;
       backContext.fill();
       backContext.clip(clipPath);
