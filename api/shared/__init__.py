@@ -3,7 +3,8 @@ from shared.geohash import encode_geohash, decode_geohash, get_neighbors
 
 FETCH_URLS = [
     'https://hnrss.org/best',
-    'https://news.yahoo.co.jp/rss/topics/top-picks.xml'
+    'https://news.yahoo.co.jp/rss/topics/top-picks.xml',
+    'https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf'
 ]
 FETCH_PROMPT = '''内容を下記の出力形式に変換してください。
 
