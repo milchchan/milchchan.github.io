@@ -25,12 +25,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 
                 if isinstance(cached_data, list):
                     for item in cached_data:
-                        if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item:
+                        if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item and 'score' in item:
                             timestamp = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
-                            merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp})
+                            merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score']})
 
                             if timestamp > cutoff:
-                                filtered_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp})
+                                filtered_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score']})
 
             if len(filtered_data) > 0:
                 recent_data = sorted(filtered_data, key=lambda x: x['timestamp'], reverse=True)
