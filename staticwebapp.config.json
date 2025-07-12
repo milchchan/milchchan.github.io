@@ -6,6 +6,10 @@
             "rewrite": "/about.html"
         },
         {
+            "route": "/news",
+            "rewrite": "/news/index.html"
+        },
+        {
             "route": "/privacy",
             "rewrite": "/privacy.html"
         },
