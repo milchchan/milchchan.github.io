@@ -12,7 +12,7 @@ FETCH_PROMPT = '''内容を下記の出力形式に変換してください。
 ```json
 [{
     "content":  "内容",
-    "url": "<URL>",
+    "url": "<URLまたはnull>",
     "timestamp": "<ISO 8601形式>"
 }]
 ```'''
