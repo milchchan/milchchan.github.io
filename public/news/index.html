@@ -661,6 +661,22 @@
         transition: .5s;
       }
 
+      .content>div>div>div .graph {
+        position: relative;
+        margin: 8px 0px 0px 0px;
+        width: 64px;
+        height: 4px;
+        background-color: rgb(0 231 255 / 0.25);
+        background-color: color(display-p3 0.0 0.906 1.0 / 0.25);
+      }
+
+      .content>div>div>div .graph>.bar {
+        position: absolute;
+        height: 100%;
+        background-color: #00e7ff;
+        background-color: color(display-p3 0.0 0.906 1.0);
+      }
+
       .content>div>div>div.is-playable {
         opacity: 1.0;
         backface-visibility: hidden;
@@ -915,24 +931,9 @@
         </div>
       </div>
     </div>
-    <script type="importmap">
-      {
-          "imports": {
-          "apricot": "./js/apricot.mjs"
-          }
-      }
-    </script>
     <script type="module">
-      //import { Agent, Animation } from "apricot";
+      const threshold = new URL(window.location.href).searchParams.get("threshold") ?? 0.0;
       const temperature = new URL(window.location.href).searchParams.get("temperature") ?? 1.0;
-      //const agent = new Agent(0.5);
-      
-      /*agent.tools = [{
-        "type": "mcp",
-        "server_label": "milchchan-mcp",
-        "server_url": "https://milchchan.com/api/mcp",
-        "require_approval": "never"
-      }];*/
 
       function random(min, max) {
         min = Math.ceil(min);
@@ -1106,38 +1107,6 @@
           background.style.transform = "scale3d(1.0, 1.0, 1.0)";
         };
       }
-
-      /*agent["_choices"] = [];
-      agent.isDebug = true;
-      agent.fontFamily = "Barlow";
-      agent.onclick = (e) => {
-        agent.choices.splice(0);
-        agent.choices.push(...agent._choices);
-
-        if (words.length > 0) {
-          const word = words[random(0, words.length)];
-
-          if (modifiers.length > 0 && Math.random() < 0.5) {
-            const modifier = modifiers[random(0, modifiers.length)];
-
-            if ([...modifier].every(x => /^[\x00-\x7F]*$/.test(x)) && [...word].every(x => /^[\x00-\x7F]*$/.test(x))) {
-              agent.choices.unshift(`${modifiers} ${word}`);
-            } else {
-              agent.choices.unshift(modifiers + word);
-            }
-          } else {
-            agent.choices.unshift(word);
-          }
-        }
-      }
-      agent.ongenerated = () => {
-        for (const element of document.body.querySelectorAll("[data-apricot-prompt]")) {
-          agent.choices.push(element.dataset.prompt);
-        }
-      }
-      agent.onchose = (choice) => {
-        more(choice);
-      }*/
       
       window.reload = (event) => {
         const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
@@ -1386,7 +1355,6 @@
           if (reloadButton !== null) {
             reloadButton.disabled = true;
             reloadButton.dataset["counter"] = 1;
-            console.log("ok1");
             
             new Promise(async (resolve, reject) => {
               try {
@@ -1440,42 +1408,66 @@
               }
             }).then((data) => {
               if (data !== null) {
-                console.log(data);
                 const div = element.querySelector(":scope>div>div:last-of-type");
 
                 if (div !== null) {
                   for (const item of data) {
-                    const wrap = document.createElement("div");
-                    const section1 = document.createElement("div");
-                    const section2 = document.createElement("div");
-                    const p = document.createElement("p");
-                    const a = document.createElement("a");
-                    const span1 = document.createElement("span");
-                    const span2 = document.createElement("span");
-                    const span3 = document.createElement("span");
+                    if (item["score"] >= threshold) {
+                      const wrap = document.createElement("div");
+                      const section1 = document.createElement("div");
+                      const section2 = document.createElement("div");
+                      const graph = document.createElement("div");
+                      const bar = document.createElement("div");
+                      const p = document.createElement("p");
+                      const a = document.createElement("a");
+                      const span1 = document.createElement("span");
+                      const span2 = document.createElement("span");
+                      const span3 = document.createElement("span");
 
-                    p.classList.add("is-generated");
-                    a.href = item["url"];
-                    a.target = "_blank";
-                    a.rel = "noopener noreferrer";
-                    span1.classList.add("reveal");
-                    span1.textContent = item["content"];
-                    section1.classList.add("is-generated");
-                    span2.classList.add("reveal");
-                    span2.textContent = new Date(item["timestamp"] * 1000).toLocaleString();
-                    section1.classList.add("is-generated");
-                    span3.classList.add("reveal");
-                    span3.textContent = new URL(item["url"]).host;
-                    section2.classList.add("is-generated");
+                      p.classList.add("is-generated");
+                      a.href = item["url"];
+                      a.target = "_blank";
+                      a.rel = "noopener noreferrer";
+                      span1.classList.add("reveal");
+                      span1.textContent = item["content"];
+                      section1.classList.add("is-generated");
+                      span2.classList.add("reveal");
+                      span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
+                      section1.classList.add("is-generated");
+                      span3.classList.add("reveal");
+                      span3.textContent = new URL(item["url"]).host;
+                      section2.classList.add("is-generated");
+                      graph.classList.add("is-generated");
+                      graph.classList.add("graph");
+                      graph.style.opacity = 0;
+                      bar.classList.add("bar");
+                      bar.style.width = `${Math.floor(item["score"] * 100)}%`;
 
-                    a.appendChild(span1);
-                    p.appendChild(a);
-                    wrap.appendChild(p);
-                    section1.appendChild(span2);
-                    section2.appendChild(span3);
-                    wrap.appendChild(section1);
-                    wrap.appendChild(section2);
-                    div.appendChild(wrap);
+                      a.appendChild(span1);
+                      p.appendChild(a);
+                      wrap.appendChild(p);
+                      section1.appendChild(span2);
+                      section2.appendChild(span3);
+                      graph.appendChild(bar);
+                      wrap.appendChild(section1);
+                      wrap.appendChild(section2);
+                      wrap.appendChild(graph);
+                      div.appendChild(wrap);
+
+                      graph.animate([
+                        {
+                          opacity: 1,
+                        },
+                      ], {
+                          delay: 0,
+                          fill: "forwards",
+                          duration: 500,
+                          iterations: 1,
+                          easing: "ease-out"
+                      }).onfinish = () => {
+                          graph.style.opacity = 1;
+                      };
+                    }
                   }
                 }
 
