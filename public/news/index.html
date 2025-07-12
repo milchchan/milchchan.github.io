@@ -1462,10 +1462,10 @@
                     span1.textContent = item["content"];
                     section1.classList.add("is-generated");
                     span2.classList.add("reveal");
-                    span2.textContent = new URL(item["url"]).host;
+                    span2.textContent = new Date(item["timestamp"] * 1000).toLocaleString();
                     section1.classList.add("is-generated");
                     span3.classList.add("reveal");
-                    span3.textContent = new Date(item["timestamp"] * 1000).toLocaleString();
+                    span3.textContent = new URL(item["url"]).host;
                     section2.classList.add("is-generated");
 
                     a.appendChild(span1);
