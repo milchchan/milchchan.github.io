@@ -664,17 +664,42 @@
       .content>div>div>div .graph {
         position: relative;
         margin: 8px 0px 0px 0px;
-        width: 64px;
+        width: 48px;
         height: 4px;
         background-color: rgb(0 231 255 / 0.25);
         background-color: color(display-p3 0.0 0.906 1.0 / 0.25);
+        overflow: hidden;
       }
 
       .content>div>div>div .graph>.bar {
         position: absolute;
         height: 100%;
+        background: url('/images/Stripes.png') 0 0 repeat;
         background-color: #00e7ff;
         background-color: color(display-p3 0.0 0.906 1.0);
+        background-size: 24px 24px;
+        overflow: hidden;
+        animation: progress 10s linear forwards infinite;
+      }
+
+      .content>div>div>div .graph>.bar>div {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+      }
+
+      .content>div>div>div .graph>.bar>div::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, rgb(255 255 255 / 0.5) 50%, transparent 100%);
+        transform: translateX(-200%) skewX(-45deg);
+        animation: shine 5s infinite;
+        z-index: 1;
+        pointer-events: none;
       }
 
       .content>div>div>div.is-playable {
@@ -818,6 +843,16 @@
           }
       }
 
+      @keyframes progress {
+          0% {
+              background-position: 0px 0px;
+          }
+
+          100% {
+              background-position: -24px 0px;
+          }
+      }
+
       @keyframes shine {
         0% {
           transform: translateX(-200%) skewX(-45deg);
@@ -825,6 +860,26 @@
         100% {
           transform: translateX(200%) skewX(-45deg);
         }
+      }
+
+      @media screen and (-webkit-min-device-pixel-ratio: 2),
+      (min-resolution: 2dppx) {
+          .content>div>div>div .graph>.bar {
+              background: url('/images/Stripes@2x.png') 0 0 repeat;
+              background-color: #00e7ff;
+              background-color: color(display-p3 0.0 0.906 1.0);
+              background-size: 24px 24px;
+          }
+      }
+
+      @media screen and (-webkit-min-device-pixel-ratio: 3),
+      (min-resolution: 3dppx) {
+          .content>div>div>div .graph>.bar {
+              background: url('/images/Stripes@3x.png') 0 0 repeat;
+              background-color: #00e7ff;
+              background-color: color(display-p3 0.0 0.906 1.0);
+              background-size: 24px 24px;
+          }
       }
 
       @media screen and (min-width: 769px) and (min-height: 769px) {
@@ -1214,6 +1269,7 @@
                       wrap.appendChild(p);
                       section1.appendChild(span2);
                       section2.appendChild(span3);
+                      bar.appendChild(document.createElement("div"));
                       graph.appendChild(bar);
                       wrap.appendChild(section1);
                       wrap.appendChild(section2);
@@ -1443,6 +1499,7 @@
                   wrap.appendChild(p);
                   section1.appendChild(span2);
                   section2.appendChild(span3);
+                  bar.appendChild(document.createElement("div"));
                   graph.appendChild(bar);
                   wrap.appendChild(section1);
                   wrap.appendChild(section2);
