@@ -1109,230 +1109,147 @@
       }
       
       window.reload = (event) => {
-        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
+        const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(2) .button");
         
         if (reloadButton !== null) {
           for (const element1 of document.body.querySelectorAll("div.overlay>.wrap>.content")) {
-            if (element1.classList.contains("is-selected")) {
-              const element2 = element1.querySelector(":scope>div:last-of-type");
+            const element2 = element1.querySelector(":scope>div:last-of-type");
 
-              if (element2 !== null) {
-                recordButton.disabled = true;
-                reloadButton.disabled = true;
-                reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) + 1;
-                moreButton.disabled = true;
+            if (element2 !== null) {
+              reloadButton.disabled = true;
+              reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) + 1;
               
-                element2.animate([
-                  {
-                    opacity: 0
-                  }
-                ], {
-                    delay: 0,
-                    fill: "forwards",
-                    duration: 500,
-                    iterations: 1,
-                    easing: "ease-in",
-                    composite: "replace"
-                }).onfinish = (event) => {
-                  const div = document.createElement("div");
-                  
-                  for (const element3 of Array.from(element2.children)) {
-                    for (const element4 of Array.from(element3.children)) {
-                      for (const element5 of Array.from(element4.children)) {
-                        if (element5.classList.contains("is-generated")) {
-                          element4.remove();
-                          
-                          break;
-                        }
+              element2.animate([
+                {
+                  opacity: 0
+                }
+              ], {
+                  delay: 0,
+                  fill: "forwards",
+                  duration: 500,
+                  iterations: 1,
+                  easing: "ease-in",
+                  composite: "replace"
+              }).onfinish = (event) => {
+                const div = document.createElement("div");
+                
+                for (const element3 of Array.from(element2.children)) {
+                  for (const element4 of Array.from(element3.children)) {
+                    for (const element5 of Array.from(element4.children)) {
+                      if (element5.classList.contains("is-generated")) {
+                        element4.remove();
+                        
+                        break;
                       }
                     }
-
-                    element3.remove();
-                    div.appendChild(element3);
                   }
 
-                  element2.replaceWith(div);
-                  element1.dataset["generated"] = false;
+                  element3.remove();
+                  div.appendChild(element3);
+                }
 
-                  if (element1.dataset.type === "milch") {
-                    agent.isLoading = true;
-                  }
+                element2.replaceWith(div);
+                element1.dataset["generated"] = false;
 
-                  new Promise(async (resolve, reject) => {
-                    let prompt = null;
+                new Promise(async (resolve, reject) => {
+                  try {
+                    const response = await fetch(encodeURI("https://milchchan.com/api/fetch"));
 
-                    if ("prompts" in element1.dataset) {
-                      let prompts;
-
-                      try {
-                        prompts = await new Promise(async (resolve, reject) => {
-                          try {
-                            resolve(JSON.parse(element1.dataset.prompts));
-                          } catch (error) {
-                            reject(error);
-                          }
-                        });
-                      } catch (error) {
-                        reject(error);
-
-                        return;
-                      }
-
-                      if (prompts.length > 0) {
-                        prompt = prompts[~~random(0, prompts.length)];
-                      }
-                    } else if ("prompt" in element1.dataset) {
-                      prompt = element1.dataset.prompt;
-                    }
-
-                    if (prompt === null) {
-                      resolve(null);
+                    if (response.ok) {
+                      resolve(await response.json());
                     } else {
-                      try {
-                        const response1 = await fetch(encodeURI(`${element1.dataset.type}.txt`));
+                      throw new Error(response.statusText);
+                    }
+                  } catch (error) {
+                    reject(error);
+                  }
+                }).then((data) => {
+                  if (data !== null) {
+                    const last = div.querySelector(":scope>div:last-of-type");
 
-                        if (response1.ok) {
-                          const response2 = await fetch("https://milchchan.com/api/generate", {
-                            mode: "cors",
-                            method: "POST",
-                            headers: {
-                              "Content-Type": "application/json"
+                    if (last !== null) {
+                      for (const item of data) {
+                        if (item["score"] >= threshold) {
+                          const wrap = document.createElement("div");
+                          const section1 = document.createElement("div");
+                          const section2 = document.createElement("div");
+                          const graph = document.createElement("div");
+                          const bar = document.createElement("div");
+                          const p = document.createElement("p");
+                          const a = document.createElement("a");
+                          const span1 = document.createElement("span");
+                          const span2 = document.createElement("span");
+                          const span3 = document.createElement("span");
+
+                          p.classList.add("is-generated");
+                          a.href = item["url"];
+                          a.target = "_blank";
+                          a.rel = "noopener noreferrer";
+                          span1.classList.add("reveal");
+                          span1.textContent = item["content"];
+                          section1.classList.add("is-generated");
+                          span2.classList.add("reveal");
+                          span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
+                          section1.classList.add("is-generated");
+                          span3.classList.add("reveal");
+                          span3.textContent = new URL(item["url"]).host;
+                          section2.classList.add("is-generated");
+                          graph.classList.add("is-generated");
+                          graph.classList.add("graph");
+                          graph.style.opacity = 0;
+                          bar.classList.add("bar");
+                          bar.style.width = `${Math.floor(item["score"] * 100)}%`;
+
+                          a.appendChild(span1);
+                          p.appendChild(a);
+                          wrap.appendChild(p);
+                          section1.appendChild(span2);
+                          section2.appendChild(span3);
+                          graph.appendChild(bar);
+                          wrap.appendChild(section1);
+                          wrap.appendChild(section2);
+                          wrap.appendChild(graph);
+                          div.appendChild(wrap);
+
+                          graph.animate([
+                            {
+                              opacity: 1,
                             },
-                            body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: `今日は${new Date().toLocaleDateString()}です。\n\n${await response1.text()}`}, {role: "user", content: prompt}]})
-                          });
-
-                          if (response2.ok) {
-                            resolve(agent.parse(await response2.json()));
-                          } else {
-                            throw new Error(response2.statusText);
-                          }
-                        } else {
-                          throw new Error(response1.statusText);
-                        }
-                      } catch (error) {
-                        reject(error);
-                      }
-                    }
-                  }).then((data) => {
-                    if (data !== null && data[0] !== null) {
-                      const [message, likability, state, choices, raw] = data;
-                      const last = div.querySelector(":scope>div:last-of-type");
-
-                      if (last !== null) {
-                        const italicRequired = last.querySelector(":scope>div>p:not(.is-generated)") !== null;
-
-                        for (const content of message.split("\n")) {
-                          if (content.length > 0) {
-                            const wrap = document.createElement("div");
-                            const p = document.createElement("p");
-                            const span = document.createElement("span");
-
-                            p.classList.add("is-generated");
-
-                            if ("language" in element1.dataset) {
-                              wrap.classList.add("is-playable");
-
-                              p.onclick = async () => {
-                                if (!p.classList.contains("is-loading") && !isPlaying) {
-                                  p.classList.add("is-loading");
-                                  
-                                  audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
-                                  
-                                  const source = audioContext.createBufferSource();
-                                  
-                                  source.connect(audioContext.destination);
-
-                                  try {
-                                    await synthesize(source, `sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
-                                  } catch (error) {
-                                    shake(p);
-
-                                    console.error(error);
-                                  }
-
-                                  p.classList.remove("is-loading");
-                                }
-                              };
-                            }
-
-                            span.classList.add("reveal");
-                            span.dataset["output"] = raw;
-                            
-                            if (italicRequired) {
-                              span.classList.add("is-italic");
-                            }
-
-                            span.textContent = content;
-
-                            p.appendChild(span);
-                            wrap.appendChild(p);
-                            last.appendChild(wrap);
-                          }
+                          ], {
+                              delay: 0,
+                              fill: "forwards",
+                              duration: 500,
+                              iterations: 1,
+                              easing: "ease-out"
+                          }).onfinish = () => {
+                              graph.style.opacity = 1;
+                          };
                         }
                       }
-
-                      element1.dataset["generated"] = true;
-                    
-                      if (agent.isLoading) {
-                        agent.isLoading = false;
-
-                        if (state !== null) {
-                          const animations = agent.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[3]));
-                          let animation;
-
-                          if (animations.length > 0) {
-                            animation = animations[~~random(0, animations.length)];
-                          } else {
-                            const animations = agent.character.animations.filter(x => x.name === "Emote" && x.state === null);
-
-                            animation = animations[~~random(0, animations.length)];
-                          }
-
-                          agent.speak(message, new Animation(animation.name, animation.state, animation.repeats, animation.frames));
-                          
-                          if (likability !== null) {
-                            agent.likability = {a: agent.likability.a, b: likability};
-                          }
-
-                          if (choices !== null) {
-                            agent._choices.splice(0);
-                            agent._choices.push(...choices);
-                            agent.ongenerated();
-                          }
-                        }
-                      }
-                    } else if (agent.isLoading) {
-                      agent.isLoading = false;
                     }
 
-                    reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+                    element1.dataset["generated"] = true;
+                  }
 
-                    if (reloadButton.dataset["counter"] === "0") {
-                      recordButton.disabled = false;
-                      reloadButton.disabled = false;
-                      moreButton.disabled = false;
-                    }
-                  }).catch((error) => {
-                    if (agent.isLoading) {
-                      agent.isLoading = false;
-                    }
+                  reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
 
-                    delete element1.dataset["generated"];
+                  if (reloadButton.dataset["counter"] === "0") {
+                    reloadButton.disabled = false;
+                  }
+                }).catch((error) => {
+                  delete element1.dataset["generated"];
 
-                    reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+                  reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
 
-                    if (reloadButton.dataset["counter"] === "0") {
-                      recordButton.disabled = false;
-                      reloadButton.disabled = false;
-                      moreButton.disabled = false;
-                    }
+                  if (reloadButton.dataset["counter"] === "0") {
+                    reloadButton.disabled = false;
+                  }
 
-                    shake(reloadButton, true);
+                  shake(reloadButton, true);
 
-                    console.error(error);
-                  });
-                };
-              }
+                  console.error(error);
+                });
+              };
             }
           }
         }
