@@ -917,7 +917,7 @@
         </div>
       </div>
       <div class="wrap">
-        <div class="content is-selected" data-type="milch" data-prompt="自己紹介してください。お名前、所属、メルクちゃんのことを教えてください。" data-language="ja">
+        <div class="content" data-type="milch" data-prompt="ニュースをまとめてレビューしてください">
           <div>
             <h1>
               <span class="reveal">News</span>
@@ -1156,7 +1156,16 @@
                     const response = await fetch(encodeURI("https://milchchan.com/api/fetch"));
 
                     if (response.ok) {
-                      resolve(await response.json());
+                      const json = await response.json();
+                      const items = [];
+
+                      for (const item of json) {
+                        if (item["score"] >= threshold) {
+                          items.push(item);
+                        }
+                      }
+
+                      resolve([items, JSON.stringify(items)]);
                     } else {
                       throw new Error(response.statusText);
                     }
@@ -1164,73 +1173,133 @@
                     reject(error);
                   }
                 }).then((data) => {
-                  if (data !== null) {
-                    const last = div.querySelector(":scope>div:last-of-type");
+                  const last = div.querySelector(":scope>div:last-of-type");
 
-                    if (last !== null) {
-                      for (const item of data) {
-                        if (item["score"] >= threshold) {
-                          const wrap = document.createElement("div");
-                          const section1 = document.createElement("div");
-                          const section2 = document.createElement("div");
-                          const graph = document.createElement("div");
-                          const bar = document.createElement("div");
-                          const p = document.createElement("p");
-                          const a = document.createElement("a");
-                          const span1 = document.createElement("span");
-                          const span2 = document.createElement("span");
-                          const span3 = document.createElement("span");
+                  if (last !== null) {
+                    const [items, raw] = data;
 
-                          p.classList.add("is-generated");
-                          a.href = item["url"];
-                          a.target = "_blank";
-                          a.rel = "noopener noreferrer";
-                          span1.classList.add("reveal");
-                          span1.textContent = item["content"];
-                          section1.classList.add("is-generated");
-                          span2.classList.add("reveal");
-                          span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
-                          section1.classList.add("is-generated");
-                          span3.classList.add("reveal");
-                          span3.textContent = new URL(item["url"]).host;
-                          section2.classList.add("is-generated");
-                          graph.classList.add("is-generated");
-                          graph.classList.add("graph");
-                          graph.style.opacity = 0;
-                          bar.classList.add("bar");
-                          bar.style.width = `${Math.floor(item["score"] * 100)}%`;
+                    for (const item of items) {
+                      const wrap = document.createElement("div");
+                      const section1 = document.createElement("div");
+                      const section2 = document.createElement("div");
+                      const graph = document.createElement("div");
+                      const bar = document.createElement("div");
+                      const p = document.createElement("p");
+                      const a = document.createElement("a");
+                      const span1 = document.createElement("span");
+                      const span2 = document.createElement("span");
+                      const span3 = document.createElement("span");
 
-                          a.appendChild(span1);
-                          p.appendChild(a);
-                          wrap.appendChild(p);
-                          section1.appendChild(span2);
-                          section2.appendChild(span3);
-                          graph.appendChild(bar);
-                          wrap.appendChild(section1);
-                          wrap.appendChild(section2);
-                          wrap.appendChild(graph);
-                          div.appendChild(wrap);
+                      p.classList.add("is-generated");
+                      a.href = item["url"];
+                      a.target = "_blank";
+                      a.rel = "noopener noreferrer";
+                      span1.classList.add("reveal");
+                      span1.textContent = item["content"];
+                      section1.classList.add("is-generated");
+                      span2.classList.add("reveal");
+                      span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
+                      section1.classList.add("is-generated");
+                      span3.classList.add("reveal");
+                      span3.textContent = new URL(item["url"]).host;
+                      section2.classList.add("is-generated");
+                      graph.classList.add("is-generated");
+                      graph.classList.add("graph");
+                      graph.style.opacity = 0;
+                      bar.classList.add("bar");
+                      bar.style.width = `${Math.floor(item["score"] * 100)}%`;
 
-                          graph.animate([
-                            {
-                              opacity: 1,
-                            },
-                          ], {
-                              delay: 0,
-                              fill: "forwards",
-                              duration: 500,
-                              iterations: 1,
-                              easing: "ease-out"
-                          }).onfinish = () => {
-                              graph.style.opacity = 1;
-                          };
-                        }
-                      }
+                      a.appendChild(span1);
+                      p.appendChild(a);
+                      wrap.appendChild(p);
+                      section1.appendChild(span2);
+                      section2.appendChild(span3);
+                      graph.appendChild(bar);
+                      wrap.appendChild(section1);
+                      wrap.appendChild(section2);
+                      wrap.appendChild(graph);
+                      last.appendChild(wrap);
+
+                      graph.animate([
+                        {
+                          opacity: 1,
+                        },
+                      ], {
+                          delay: 0,
+                          fill: "forwards",
+                          duration: 1000,
+                          iterations: 1,
+                          easing: "ease-out"
+                      }).onfinish = () => {
+                          graph.style.opacity = 1;
+                      };
                     }
 
-                    element1.dataset["generated"] = true;
+                    new Promise(async (resolve, reject) => {
+                      try {
+                        const response1 = await fetch(encodeURI(`/${element1.dataset.type}.txt`));
+
+                        if (response1.ok) {
+                          const response2 = await fetch("https://milchchan.com/api/generate", {
+                            mode: "cors",
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element1.dataset.prompt}\n\n\`\`\`\njson${raw}\n\`\`\``}], tools: []})
+                          });
+
+                          if (response2.ok) {
+                            resolve((await response2.json()).content);
+                          } else {
+                            throw new Error(response2.statusText);
+                          }
+                        } else {
+                          throw new Error(response1.statusText);
+                        }
+                      } catch (error) {
+                        reject(error);
+                      }
+
+
+                    }).then((data) => {
+                      const wrap = document.createElement("div");
+                      const p = document.createElement("p");
+                      const span = document.createElement("span");
+                      
+                      p.classList.add("is-generated");
+                      span.classList.add("reveal");
+                      span.classList.add("is-italic");
+                      span.textContent = data;
+
+                      p.appendChild(span);
+                      wrap.appendChild(p);
+                      last.appendChild(wrap);
+
+                      element1.dataset["generated"] = true;
+                      reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                      if (reloadButton.dataset["counter"] === "0") {
+                        reloadButton.disabled = false;
+                      }
+                    }).catch((error) => {
+                      delete element1.dataset["generated"];
+
+                      reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                      if (reloadButton.dataset["counter"] === "0") {
+                        reloadButton.disabled = false;
+                      }
+
+                      shake(reloadButton, true);
+
+                      console.error(error);
+                    });
+
+                    return;
                   }
 
+                  element1.dataset["generated"] = true;
                   reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
 
                   if (reloadButton.dataset["counter"] === "0") {
@@ -1316,7 +1385,16 @@
                 const response = await fetch(encodeURI("https://milchchan.com/api/fetch"));
 
                 if (response.ok) {
-                  resolve(await response.json());
+                  const json = await response.json();
+                  const items = [];
+
+                  for (const item of json) {
+                    if (item["score"] >= threshold) {
+                      items.push(item);
+                    }
+                  }
+
+                  resolve([items, JSON.stringify(items)]);
                 } else {
                   throw new Error(response.statusText);
                 }
@@ -1324,73 +1402,131 @@
                 reject(error);
               }
             }).then((data) => {
-              if (data !== null) {
-                const div = element.querySelector(":scope>div>div:last-of-type");
+              const div = element.querySelector(":scope>div>div:last-of-type");
 
-                if (div !== null) {
-                  for (const item of data) {
-                    if (item["score"] >= threshold) {
-                      const wrap = document.createElement("div");
-                      const section1 = document.createElement("div");
-                      const section2 = document.createElement("div");
-                      const graph = document.createElement("div");
-                      const bar = document.createElement("div");
-                      const p = document.createElement("p");
-                      const a = document.createElement("a");
-                      const span1 = document.createElement("span");
-                      const span2 = document.createElement("span");
-                      const span3 = document.createElement("span");
+              if (div !== null) {
+                const [items, raw] = data;
 
-                      p.classList.add("is-generated");
-                      a.href = item["url"];
-                      a.target = "_blank";
-                      a.rel = "noopener noreferrer";
-                      span1.classList.add("reveal");
-                      span1.textContent = item["content"];
-                      section1.classList.add("is-generated");
-                      span2.classList.add("reveal");
-                      span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
-                      section1.classList.add("is-generated");
-                      span3.classList.add("reveal");
-                      span3.textContent = new URL(item["url"]).host;
-                      section2.classList.add("is-generated");
-                      graph.classList.add("is-generated");
-                      graph.classList.add("graph");
-                      graph.style.opacity = 0;
-                      bar.classList.add("bar");
-                      bar.style.width = `${Math.floor(item["score"] * 100)}%`;
+                for (const item of items) {
+                  const wrap = document.createElement("div");
+                  const section1 = document.createElement("div");
+                  const section2 = document.createElement("div");
+                  const graph = document.createElement("div");
+                  const bar = document.createElement("div");
+                  const p = document.createElement("p");
+                  const a = document.createElement("a");
+                  const span1 = document.createElement("span");
+                  const span2 = document.createElement("span");
+                  const span3 = document.createElement("span");
 
-                      a.appendChild(span1);
-                      p.appendChild(a);
-                      wrap.appendChild(p);
-                      section1.appendChild(span2);
-                      section2.appendChild(span3);
-                      graph.appendChild(bar);
-                      wrap.appendChild(section1);
-                      wrap.appendChild(section2);
-                      wrap.appendChild(graph);
-                      div.appendChild(wrap);
+                  p.classList.add("is-generated");
+                  a.href = item["url"];
+                  a.target = "_blank";
+                  a.rel = "noopener noreferrer";
+                  span1.classList.add("reveal");
+                  span1.textContent = item["content"];
+                  section1.classList.add("is-generated");
+                  span2.classList.add("reveal");
+                  span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
+                  section1.classList.add("is-generated");
+                  span3.classList.add("reveal");
+                  span3.textContent = new URL(item["url"]).host;
+                  section2.classList.add("is-generated");
+                  graph.classList.add("is-generated");
+                  graph.classList.add("graph");
+                  graph.style.opacity = 0;
+                  bar.classList.add("bar");
+                  bar.style.width = `${Math.floor(item["score"] * 100)}%`;
 
-                      graph.animate([
-                        {
-                          opacity: 1,
-                        },
-                      ], {
-                          delay: 0,
-                          fill: "forwards",
-                          duration: 500,
-                          iterations: 1,
-                          easing: "ease-out"
-                      }).onfinish = () => {
-                          graph.style.opacity = 1;
-                      };
-                    }
-                  }
+                  a.appendChild(span1);
+                  p.appendChild(a);
+                  wrap.appendChild(p);
+                  section1.appendChild(span2);
+                  section2.appendChild(span3);
+                  graph.appendChild(bar);
+                  wrap.appendChild(section1);
+                  wrap.appendChild(section2);
+                  wrap.appendChild(graph);
+                  div.appendChild(wrap);
+
+                  graph.animate([
+                    {
+                      opacity: 1,
+                    },
+                  ], {
+                      delay: 0,
+                      fill: "forwards",
+                      duration: 1000,
+                      iterations: 1,
+                      easing: "ease-out"
+                  }).onfinish = () => {
+                      graph.style.opacity = 1;
+                  };
                 }
 
-                element.dataset["generated"] = true;
+                new Promise(async (resolve, reject) => {
+                  try {
+                    const response1 = await fetch(encodeURI(`/${element.dataset.type}.txt`));
+
+                    if (response1.ok) {
+                      const response2 = await fetch("https://milchchan.com/api/generate", {
+                        mode: "cors",
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element.dataset.prompt}\n\n\`\`\`json\n${raw}\n\`\`\``}], tools: []})
+                      });
+
+                      if (response2.ok) {
+                        resolve((await response2.json()).content);
+                      } else {
+                        throw new Error(response2.statusText);
+                      }
+                    } else {
+                      throw new Error(response1.statusText);
+                    }
+                  } catch (error) {
+                    reject(error);
+                  }
+                }).then((data) => {
+                  const wrap = document.createElement("div");
+                  const p = document.createElement("p");
+                  const span = document.createElement("span");
+                  
+                  p.classList.add("is-generated");
+                  span.classList.add("reveal");
+                  span.classList.add("is-italic");
+                  span.textContent = data;
+
+                  p.appendChild(span);
+                  wrap.appendChild(p);
+                  div.appendChild(wrap);
+
+                  element.dataset["generated"] = true;
+                  reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                  if (reloadButton.dataset["counter"] === "0") {
+                    reloadButton.disabled = false;
+                  }
+                }).catch((error) => {
+                  delete element.dataset["generated"];
+
+                  reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
+
+                  if (reloadButton.dataset["counter"] === "0") {
+                    reloadButton.disabled = false;
+                  }
+
+                  shake(reloadButton, true);
+
+                  console.error(error);
+                });
+
+                return;
               }
 
+              element.dataset["generated"] = true;
               reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
 
               if (reloadButton.dataset["counter"] === "0") {
