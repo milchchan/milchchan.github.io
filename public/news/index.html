@@ -385,6 +385,12 @@
         right: 16px;
       }
 
+      .overlay>.wrap>.content>div>div>.icon.is-animatable {
+        position: relative;
+        right: auto;
+        margin: 16px 0px 0px 0px;
+      }
+
       div.sidebar {
         -webkit-user-select: none;
         user-select: none;
@@ -640,6 +646,14 @@
         object-position: 0% 0%;
         width: 100%;
         height: 100%;
+      }
+
+      .icon.is-animatable+div {
+        margin: 0;
+      }
+
+      .icon.is-animatable+div>p {
+        margin: 8px 0px 0px 0px;
       }
 
       .content .reveal {
@@ -972,7 +986,7 @@
         </div>
       </div>
       <div class="wrap">
-        <div class="content" data-type="milch" data-prompt="ニュースをわかりやすくまとめてレビューし、結果を日記調で書いてください" data-language="ja">
+        <div class="content" data-type="milch" data-prompt="ニュースをわかりやすくまとめてレビューし、結果を日記であることは明示せず日記調で書いてください" data-language="ja">
           <div>
             <h1>
               <span class="reveal">News</span>
@@ -1362,7 +1376,25 @@
                           });
 
                           if (response2.ok) {
-                            resolve((await response2.json()).content);
+                            const response3 = await fetch(window.devicePixelRatio > 1 ? `/images/PixelatedMilch-Transformed@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/PixelatedMilch-Transformed.png");
+
+                            if (response3.ok) {
+                                const dataURL = await new Promise(async (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                  resolve(reader.result);
+                                };
+                                reader.onerror = () => {
+                                  reject(reader.error);
+                                };
+                                reader.readAsDataURL(await response3.blob());
+                              });
+
+                              resolve([(await response2.json()).content, dataURL]);
+                            } else {
+                              throw new Error(response3.statusText);
+                            }
                           } else {
                             throw new Error(response2.statusText);
                           }
@@ -1373,7 +1405,28 @@
                         reject(error);
                       }
                     }).then((data) => {
-                      for (const content of data.split("\n")) {
+                      const [text, dataURL] = data;
+                      const icon = document.createElement("div");
+                      const figure = document.createElement("figure");
+                      const picture = document.createElement("picture");
+                      const img = document.createElement("img");
+
+                      icon.classList.add("icon");
+                      icon.classList.add("is-animatable");
+                      icon.style.opacity = 0;
+                      figure.classList.add("is-generated");
+
+                      icon.classList.add("icon");
+                      figure.classList.add("is-generated");
+                      picture.classList.add("is-animatable");
+                      img.srcset = `${dataURL} ${window.devicePixelRatio > 1 ? `${Math.trunc(window.devicePixelRatio)}` : "1"}x`;
+
+                      picture.appendChild(img);
+                      figure.appendChild(picture);
+                      icon.appendChild(figure);
+                      last.appendChild(icon);
+
+                      for (const content of text.split("\n")) {
                         const wrap = document.createElement("div");
                         const p = document.createElement("p");
                         const span = document.createElement("span");
@@ -1414,6 +1467,20 @@
                         wrap.appendChild(p);
                         last.appendChild(wrap);
                       }
+
+                      icon.animate([
+                        {
+                          opacity: 1,
+                        },
+                      ], {
+                          delay: 1000,
+                          fill: "forwards",
+                          duration: 1000,
+                          iterations: 1,
+                          easing: "ease-out"
+                      }).onfinish = () => {
+                          icon.style.opacity = 1;
+                      };
 
                       element1.dataset["generated"] = true;
                       reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
@@ -1619,7 +1686,25 @@
                       });
 
                       if (response2.ok) {
-                        resolve((await response2.json()).content);
+                        const response3 = await fetch(window.devicePixelRatio > 1 ? `/images/PixelatedMilch-Transformed@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/PixelatedMilch-Transformed.png");
+
+                        if (response3.ok) {
+                          const dataURL = await new Promise(async (resolve, reject) => {
+                            const reader = new FileReader();
+
+                            reader.onload = () => {
+                              resolve(reader.result);
+                            };
+                            reader.onerror = () => {
+                              reject(reader.error);
+                            };
+                            reader.readAsDataURL(await response3.blob());
+                          });
+
+                          resolve([(await response2.json()).content, dataURL]);
+                        } else {
+                          throw new Error(response3.statusText);
+                        }
                       } else {
                         throw new Error(response2.statusText);
                       }
@@ -1630,7 +1715,24 @@
                     reject(error);
                   }
                 }).then((data) => {
-                  for (const content of data.split("\n")) {
+                  const [text, dataURL] = data;
+                  const icon = document.createElement("div");
+                  const figure = document.createElement("figure");
+                  const picture = document.createElement("picture");
+                  const img = document.createElement("img");
+                  
+                  icon.classList.add("icon");
+                  icon.classList.add("is-animatable");
+                  icon.style.opacity = 0;
+                  figure.classList.add("is-generated");
+                  img.srcset = `${dataURL} ${window.devicePixelRatio > 1 ? `${Math.trunc(window.devicePixelRatio)}` : "1"}x`;
+
+                  picture.appendChild(img);
+                  figure.appendChild(picture);
+                  icon.appendChild(figure);
+                  div.appendChild(icon);
+
+                  for (const content of text.split("\n")) {
                     const wrap = document.createElement("div");
                     const p = document.createElement("p");
                     const span = document.createElement("span");
@@ -1671,6 +1773,20 @@
                     wrap.appendChild(p);
                     div.appendChild(wrap);
                   }
+
+                  icon.animate([
+                    {
+                      opacity: 1,
+                    },
+                  ], {
+                      delay: 1000,
+                      fill: "forwards",
+                      duration: 1000,
+                      iterations: 1,
+                      easing: "ease-out"
+                  }).onfinish = () => {
+                      icon.style.opacity = 1;
+                  };
 
                   element.dataset["generated"] = true;
                   reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
