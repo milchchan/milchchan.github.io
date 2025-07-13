@@ -85,7 +85,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
                         text = match.group(1) if match else choice['message']['content']
                         items = json.loads(text)
-                        set_cache(f'fetch/{url}', text, expire=1800)
+                        set_cache(f'fetch/{url}', text, expire=86400)
 
                         return func.HttpResponse(json.dumps(items, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
         
