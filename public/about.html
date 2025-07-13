@@ -993,10 +993,7 @@
           <div class="icon is-animatable">
             <a class="button" href="https://clock.milchchan.com/" title="Clock">
               <figure>
-                <picture>
-                  <!--<source srcset="images/PixelatedLuna-Transformed.png 1x, images/PixelatedLuna-Transformed@2x.png 2x, images/PixelatedLuna-Transformed@3x.png 3x" media="(prefers-color-scheme: dark)">-->
-                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMilch-Transformed.png 1x, images/PixelatedMilch-Transformed@2x.png 2x, images/PixelatedMilch-Transformed@3x.png 3x" alt="Milch">
-                </picture>
+                <picture data-lightname="images/PixelatedMilch-Transformed" data-darkname="images/PixelatedMilch-Transformed"></picture>
               </figure>
             </a>
           </div>
@@ -1040,9 +1037,7 @@
           <div class="icon is-animatable">
             <a class="button" href="https://clock.milchchan.com/" title="Clock">
               <figure>
-                <picture>
-                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMerku-Transformed.png 1x, images/PixelatedMerku-Transformed@2x.png 2x, images/PixelatedMerku-Transformed@3x.png 3x" alt="Merku">
-                </picture>
+                <picture data-lightname="images/PixelatedMerku-Transformed" data-darkname="images/PixelatedMerku-Transformed"></picture>
               </figure>
             </a>
           </div>
@@ -1086,10 +1081,7 @@
           <div class="icon is-animatable">
             <a class="button" href="https://clock.milchchan.com/" title="Clock">
               <figure>
-                <picture>
-                  <source srcset="images/PixelatedMerku-Transformed.png 1x, images/PixelatedMerku-Transformed@2x.png 2x, images/PixelatedMerku-Transformed@3x.png 3x" media="(prefers-color-scheme: dark)">
-                  <img src="images/PixelatedMilch-Transformed.png" srcset="images/PixelatedMilch-Transformed.png 1x, images/PixelatedMilch-Transformed@2x.png 2x, images/PixelatedMilch-Transformed@3x.png 3x" alt="Milch">
-                </picture>
+                <picture data-lightname="images/PixelatedMilch-Transformed" data-darkname="images/PixelatedMerku-Transformed"></picture>
               </figure>
             </a>
           </div>
@@ -1968,7 +1960,7 @@
           speechRecognition.start();
         }
       };
-      window.select = (event) => {
+      window.select = async (event) => {
         const target = (event.currentTarget || event.target);
 
         for (const element1 of document.body.querySelectorAll("div.sidebar>.level>.level-item button.button")) {
@@ -1980,7 +1972,8 @@
                     const recordButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(8) .button");
                     const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(9) .button");
                     const moreButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:last-child .button");
-    
+                    const picture = element2.querySelector(":scope>div.icon.is-animatable>a>figure>picture");
+
                     if (element2.dataset.type === "milch") {
                       agent.dom.classList.add("is-active");
                       agent.dom.style.pointerEvents = "auto";
@@ -2013,6 +2006,63 @@
                         element2.style.opacity = 1;
                       }
                     };
+
+                    if (picture !== null && picture.children.length === 0) {
+                      const response1 = await fetch(window.devicePixelRatio > 1 ? `${picture.dataset.lightname}@${Math.trunc(window.devicePixelRatio)}x.png` : `${picture.dataset.lightname}.png`);
+
+                      if (response1.ok) {
+                        const dataURL1 = await new Promise(async (resolve, reject) => {
+                          const reader = new FileReader();
+
+                          reader.onload = () => {
+                            resolve(reader.result);
+                          };
+                          reader.onerror = () => {
+                            reject(reader.error);
+                          };
+                          reader.readAsDataURL(await response1.blob());
+                        });
+                        const response2 = await fetch(window.devicePixelRatio > 1 ? `${picture.dataset.darkname}@${Math.trunc(window.devicePixelRatio)}x.png` : `${picture.dataset.darkname}.png`);
+
+                        if (response2.ok) {
+                          const dataURL2 = await new Promise(async (resolve, reject) => {
+                            const reader = new FileReader();
+
+                            reader.onload = () => {
+                              resolve(reader.result);
+                            };
+                            reader.onerror = () => {
+                              reject(reader.error);
+                            };
+                            reader.readAsDataURL(await response2.blob());
+                          });
+                          const source = document.createElement("source");
+                          const img = document.createElement("img");
+                          
+                          source.srcset = `${dataURL2} ${window.devicePixelRatio > 1 ? `${Math.trunc(window.devicePixelRatio)}` : "1"}x`;
+                          source.media = "(prefers-color-scheme: dark)";
+                          img.srcset = `${dataURL1} ${window.devicePixelRatio > 1 ? `${Math.trunc(window.devicePixelRatio)}` : "1"}x`;
+                          img.style.opacity = 0;
+                          
+                          picture.appendChild(source);
+                          picture.appendChild(img);
+
+                          img.animate([
+                            {
+                              opacity: 1,
+                            },
+                          ], {
+                              delay: 0,
+                              fill: "forwards",
+                              duration: 1000,
+                              iterations: 1,
+                              easing: "ease-out"
+                          }).onfinish = () => {
+                              img.style.opacity = 1;
+                          };
+                        }
+                      }
+                    }
 
                     if ("generated" in element2.dataset === false && recordButton !== null && reloadButton !== null && moreButton !== null) {
                       recordButton.disabled = true;
@@ -2497,6 +2547,7 @@
           if (element.classList.contains("is-selected")) {
             const background = document.createElement("div");
             const image = document.createElement("div");
+            const picture = element.querySelector(":scope>div.icon.is-animatable>a>figure>picture");
 
             background.className = "background";
             background.style.opacity = 0;
@@ -2504,6 +2555,63 @@
             
             document.body.querySelector(".wrap>.frame").prepend(background);
             background.appendChild(image);
+
+            if (picture !== null && picture.children.length === 0) {
+              const response1 = await fetch(window.devicePixelRatio > 1 ? `${picture.dataset.lightname}@${Math.trunc(window.devicePixelRatio)}x.png` : `${picture.dataset.lightname}.png`);
+
+              if (response1.ok) {
+                const dataURL1 = await new Promise(async (resolve, reject) => {
+                  const reader = new FileReader();
+
+                  reader.onload = () => {
+                    resolve(reader.result);
+                  };
+                  reader.onerror = () => {
+                    reject(reader.error);
+                  };
+                  reader.readAsDataURL(await response1.blob());
+                });
+                const response2 = await fetch(window.devicePixelRatio > 1 ? `${picture.dataset.darkname}@${Math.trunc(window.devicePixelRatio)}x.png` : `${picture.dataset.darkname}.png`);
+
+                if (response2.ok) {
+                  const dataURL2 = await new Promise(async (resolve, reject) => {
+                    const reader = new FileReader();
+
+                    reader.onload = () => {
+                      resolve(reader.result);
+                    };
+                    reader.onerror = () => {
+                      reject(reader.error);
+                    };
+                    reader.readAsDataURL(await response2.blob());
+                  });
+                  const source = document.createElement("source");
+                  const img = document.createElement("img");
+                  
+                  source.srcset = `${dataURL2} ${window.devicePixelRatio > 1 ? `${Math.trunc(window.devicePixelRatio)}` : "1"}x`;
+                  source.media = "(prefers-color-scheme: dark)";
+                  img.srcset = `${dataURL1} ${window.devicePixelRatio > 1 ? `${Math.trunc(window.devicePixelRatio)}` : "1"}x`;
+                  img.style.opacity = 0;
+                  
+                  picture.appendChild(source);
+                  picture.appendChild(img);
+
+                  img.animate([
+                    {
+                      opacity: 1,
+                    },
+                  ], {
+                      delay: 0,
+                      fill: "forwards",
+                      duration: 1000,
+                      iterations: 1,
+                      easing: "ease-out"
+                  }).onfinish = () => {
+                      img.style.opacity = 1;
+                  };
+                }
+              }
+            }
 
             if (element.dataset.type === "milch") {
               agent.dom.classList.add("is-active");
