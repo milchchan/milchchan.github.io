@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, time, timedelta, timezone
 from shared.cache import get_cache, scan_cache
 
 import azure.functions as func
@@ -84,7 +84,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if isinstance(cached_data, list):
                     for item in cached_data:
                         if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item:
-                            timestamp = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
+                            timestamp = datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
                             merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp})
 
                             if timestamp > cutoff:
