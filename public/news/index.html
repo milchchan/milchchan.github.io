@@ -972,7 +972,7 @@
         </div>
       </div>
       <div class="wrap">
-        <div class="content" data-type="milch" data-prompt="ニュースをまとめてレビューしてください">
+        <div class="content" data-type="milch" data-prompt="ニュースをまとめてレビューしてください" data-language="ja">
           <div>
             <h1>
               <span class="reveal">News</span>
@@ -989,6 +989,9 @@
     <script type="module">
       const threshold = new URL(window.location.href).searchParams.get("threshold") ?? 0.5;
       const temperature = new URL(window.location.href).searchParams.get("temperature") ?? 1.0;
+      let isPlaying = false;
+      let audioContext = null;
+      let sampleRate = 32000;
 
       function random(min, max) {
         min = Math.ceil(min);
@@ -1162,6 +1165,59 @@
           background.style.transform = "scale3d(1.0, 1.0, 1.0)";
         };
       }
+
+      async function synthesize(source, prompt, input, language, temperature = 1.0) {
+        const response1 = await fetch(encodeURI(prompt));
+
+        if (response1.ok) {
+          const formData = new FormData();
+
+          formData.append("file", await response1.blob(), "prompt.wav");
+          formData.append("data", JSON.stringify({ input: input, language: language, temperature: temperature }));
+
+          const response2 = await fetch("https://milchchan.com/api/generate", {
+            mode: "cors",
+            method: "POST",
+            body: formData
+          });
+
+          if (response2.ok) {
+            const blob = await response2.blob();
+            const [arrayBuffer, sr] = await new Promise(async (resolve, reject) => {
+              const reader = new FileReader();
+
+              reader.onload = () => {
+                const arrayBuffer = reader.result;
+                const view = new DataView(arrayBuffer);
+                const sampleRate = view.getUint32(24, true);
+                
+                resolve([arrayBuffer, sampleRate]);
+              };
+              reader.onerror = () => {
+                reject(reader.error);
+              };
+              reader.readAsArrayBuffer(blob);
+            });
+
+            const buffer = await audioContext.decodeAudioData(arrayBuffer);
+
+            sampleRate = sr;
+            
+            source.buffer = buffer;
+            source.onended = () => {
+              source.disconnect();
+              audioContext.close();
+              audioContext = null;
+              isPlaying = false;
+            };
+            source.start(0);
+            isPlaying = true;
+          } else {
+            throw new Error(response2.statusText);
+          }
+
+        }
+      }
       
       window.reload = (event) => {
         const reloadButton = document.body.querySelector("div.sidebar>.level>.level-item:first-child>.level>.level-item:nth-child(2) .button");
@@ -1316,21 +1372,48 @@
                       } catch (error) {
                         reject(error);
                       }
-
-
                     }).then((data) => {
-                      const wrap = document.createElement("div");
-                      const p = document.createElement("p");
-                      const span = document.createElement("span");
-                      
-                      p.classList.add("is-generated");
-                      span.classList.add("reveal");
-                      span.classList.add("is-italic");
-                      span.textContent = data;
+                      for (const content of data.split("\n")) {
+                        const wrap = document.createElement("div");
+                        const p = document.createElement("p");
+                        const span = document.createElement("span");
+                        
+                        p.classList.add("is-generated");
 
-                      p.appendChild(span);
-                      wrap.appendChild(p);
-                      last.appendChild(wrap);
+                        if ("language" in element1.dataset) {
+                          wrap.classList.add("is-playable");
+
+                          p.onclick = async () => {
+                            if (!p.classList.contains("is-loading") && !isPlaying) {
+                              p.classList.add("is-loading");
+                              
+                              audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
+                                    
+                              const source = audioContext.createBufferSource();
+                                    
+                              source.connect(audioContext.destination);
+
+                              try {
+                                await synthesize(source, `/sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, content, element1.dataset.language, temperature);
+                              } catch (error) {
+                                shake(p);
+
+                                console.error(error);
+                              }
+
+                              p.classList.remove("is-loading");
+                            }
+                          };
+                        }
+
+                        span.classList.add("reveal");
+                        span.classList.add("is-italic");
+                        span.textContent = content;
+
+                        p.appendChild(span);
+                        wrap.appendChild(p);
+                        last.appendChild(wrap);
+                      }
 
                       element1.dataset["generated"] = true;
                       reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
@@ -1547,18 +1630,47 @@
                     reject(error);
                   }
                 }).then((data) => {
-                  const wrap = document.createElement("div");
-                  const p = document.createElement("p");
-                  const span = document.createElement("span");
-                  
-                  p.classList.add("is-generated");
-                  span.classList.add("reveal");
-                  span.classList.add("is-italic");
-                  span.textContent = data;
+                  for (const content of data.split("\n")) {
+                    const wrap = document.createElement("div");
+                    const p = document.createElement("p");
+                    const span = document.createElement("span");
+                    
+                    p.classList.add("is-generated");
 
-                  p.appendChild(span);
-                  wrap.appendChild(p);
-                  div.appendChild(wrap);
+                    if ("language" in element.dataset) {
+                      wrap.classList.add("is-playable");
+
+                      p.onclick = async () => {
+                        if (!p.classList.contains("is-loading") && !isPlaying) {
+                          p.classList.add("is-loading");
+                          
+                          audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
+                                
+                          const source = audioContext.createBufferSource();
+                                
+                          source.connect(audioContext.destination);
+
+                          try {
+                            await synthesize(source, `/sounds/${element.dataset.type}.${element.dataset.language}.wav`, content, element.dataset.language, temperature);
+                          } catch (error) {
+                            shake(p);
+
+                            console.error(error);
+                          }
+
+                          p.classList.remove("is-loading");
+                        }
+                      };
+                    }
+
+                    span.classList.add("reveal");
+                    span.classList.add("is-italic");
+                    span.textContent = content;
+
+                    p.appendChild(span);
+                    wrap.appendChild(p);
+                    div.appendChild(wrap);
+                  }
 
                   element.dataset["generated"] = true;
                   reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
