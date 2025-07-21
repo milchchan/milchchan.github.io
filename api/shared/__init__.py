@@ -3,7 +3,6 @@ from shared.geohash import encode_geohash, decode_geohash, get_neighbors
 
 FETCH_URLS = [
     'https://hnrss.org/best',
-    'https://news.yahoo.co.jp/rss/topics/top-picks.xml',
     'https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf',
     'https://game.watch.impress.co.jp/data/rss/1.0/gmw/feed.rdf',
     'https://taisy0.com/feed'
