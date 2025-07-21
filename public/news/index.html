@@ -1303,64 +1303,6 @@
                   if (last !== null) {
                     const [items, raw] = data;
 
-                    for (const item of items) {
-                      const wrap = document.createElement("div");
-                      const section1 = document.createElement("div");
-                      const section2 = document.createElement("div");
-                      const graph = document.createElement("div");
-                      const bar = document.createElement("div");
-                      const p = document.createElement("p");
-                      const a = document.createElement("a");
-                      const span1 = document.createElement("span");
-                      const span2 = document.createElement("span");
-                      const span3 = document.createElement("span");
-
-                      p.classList.add("is-generated");
-                      a.href = item["url"];
-                      a.target = "_blank";
-                      a.rel = "noopener noreferrer";
-                      span1.classList.add("reveal");
-                      span1.textContent = item["content"];
-                      section1.classList.add("is-generated");
-                      span2.classList.add("reveal");
-                      span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
-                      section1.classList.add("is-generated");
-                      span3.classList.add("reveal");
-                      span3.textContent = new URL(item["url"]).host;
-                      section2.classList.add("is-generated");
-                      graph.classList.add("is-generated");
-                      graph.classList.add("graph");
-                      graph.style.opacity = 0;
-                      bar.classList.add("bar");
-                      bar.style.width = `${Math.floor(item["score"] * 100)}%`;
-
-                      a.appendChild(span1);
-                      p.appendChild(a);
-                      wrap.appendChild(p);
-                      section1.appendChild(span2);
-                      section2.appendChild(span3);
-                      bar.appendChild(document.createElement("div"));
-                      graph.appendChild(bar);
-                      wrap.appendChild(section1);
-                      wrap.appendChild(section2);
-                      wrap.appendChild(graph);
-                      last.appendChild(wrap);
-
-                      graph.animate([
-                        {
-                          opacity: 1,
-                        },
-                      ], {
-                          delay: 1000,
-                          fill: "forwards",
-                          duration: 1000,
-                          iterations: 1,
-                          easing: "ease-out"
-                      }).onfinish = () => {
-                          graph.style.opacity = 1;
-                      };
-                    }
-
                     new Promise(async (resolve, reject) => {
                       try {
                         const response1 = await fetch(encodeURI(`/${element1.dataset.type}.txt`));
@@ -1481,6 +1423,64 @@
                       }).onfinish = () => {
                           icon.style.opacity = 1;
                       };
+
+                      for (const item of items) {
+                        const wrap = document.createElement("div");
+                        const section1 = document.createElement("div");
+                        const section2 = document.createElement("div");
+                        const graph = document.createElement("div");
+                        const bar = document.createElement("div");
+                        const p = document.createElement("p");
+                        const a = document.createElement("a");
+                        const span1 = document.createElement("span");
+                        const span2 = document.createElement("span");
+                        const span3 = document.createElement("span");
+
+                        p.classList.add("is-generated");
+                        a.href = item["url"];
+                        a.target = "_blank";
+                        a.rel = "noopener noreferrer";
+                        span1.classList.add("reveal");
+                        span1.textContent = item["content"];
+                        section1.classList.add("is-generated");
+                        span2.classList.add("reveal");
+                        span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
+                        section1.classList.add("is-generated");
+                        span3.classList.add("reveal");
+                        span3.textContent = new URL(item["url"]).host;
+                        section2.classList.add("is-generated");
+                        graph.classList.add("is-generated");
+                        graph.classList.add("graph");
+                        graph.style.opacity = 0;
+                        bar.classList.add("bar");
+                        bar.style.width = `${Math.floor(item["score"] * 100)}%`;
+
+                        a.appendChild(span1);
+                        p.appendChild(a);
+                        wrap.appendChild(p);
+                        section1.appendChild(span2);
+                        section2.appendChild(span3);
+                        bar.appendChild(document.createElement("div"));
+                        graph.appendChild(bar);
+                        wrap.appendChild(section1);
+                        wrap.appendChild(section2);
+                        wrap.appendChild(graph);
+                        last.appendChild(wrap);
+
+                        graph.animate([
+                          {
+                            opacity: 1,
+                          },
+                        ], {
+                            delay: 1000,
+                            fill: "forwards",
+                            duration: 1000,
+                            iterations: 1,
+                            easing: "ease-out"
+                        }).onfinish = () => {
+                            graph.style.opacity = 1;
+                        };
+                      }
 
                       element1.dataset["generated"] = true;
                       reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
@@ -1613,64 +1613,6 @@
               if (div !== null) {
                 const [items, raw] = data;
 
-                for (const item of items) {
-                  const wrap = document.createElement("div");
-                  const section1 = document.createElement("div");
-                  const section2 = document.createElement("div");
-                  const graph = document.createElement("div");
-                  const bar = document.createElement("div");
-                  const p = document.createElement("p");
-                  const a = document.createElement("a");
-                  const span1 = document.createElement("span");
-                  const span2 = document.createElement("span");
-                  const span3 = document.createElement("span");
-
-                  p.classList.add("is-generated");
-                  a.href = item["url"];
-                  a.target = "_blank";
-                  a.rel = "noopener noreferrer";
-                  span1.classList.add("reveal");
-                  span1.textContent = item["content"];
-                  section1.classList.add("is-generated");
-                  span2.classList.add("reveal");
-                  span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
-                  section1.classList.add("is-generated");
-                  span3.classList.add("reveal");
-                  span3.textContent = new URL(item["url"]).host;
-                  section2.classList.add("is-generated");
-                  graph.classList.add("is-generated");
-                  graph.classList.add("graph");
-                  graph.style.opacity = 0;
-                  bar.classList.add("bar");
-                  bar.style.width = `${Math.floor(item["score"] * 100)}%`;
-
-                  a.appendChild(span1);
-                  p.appendChild(a);
-                  wrap.appendChild(p);
-                  section1.appendChild(span2);
-                  section2.appendChild(span3);
-                  bar.appendChild(document.createElement("div"));
-                  graph.appendChild(bar);
-                  wrap.appendChild(section1);
-                  wrap.appendChild(section2);
-                  wrap.appendChild(graph);
-                  div.appendChild(wrap);
-
-                  graph.animate([
-                    {
-                      opacity: 1,
-                    },
-                  ], {
-                      delay: 1000,
-                      fill: "forwards",
-                      duration: 1000,
-                      iterations: 1,
-                      easing: "ease-out"
-                  }).onfinish = () => {
-                      graph.style.opacity = 1;
-                  };
-                }
-
                 new Promise(async (resolve, reject) => {
                   try {
                     const response1 = await fetch(encodeURI(`/${element.dataset.type}.txt`));
@@ -1787,6 +1729,64 @@
                   }).onfinish = () => {
                       icon.style.opacity = 1;
                   };
+
+                  for (const item of items) {
+                    const wrap = document.createElement("div");
+                    const section1 = document.createElement("div");
+                    const section2 = document.createElement("div");
+                    const graph = document.createElement("div");
+                    const bar = document.createElement("div");
+                    const p = document.createElement("p");
+                    const a = document.createElement("a");
+                    const span1 = document.createElement("span");
+                    const span2 = document.createElement("span");
+                    const span3 = document.createElement("span");
+
+                    p.classList.add("is-generated");
+                    a.href = item["url"];
+                    a.target = "_blank";
+                    a.rel = "noopener noreferrer";
+                    span1.classList.add("reveal");
+                    span1.textContent = item["content"];
+                    section1.classList.add("is-generated");
+                    span2.classList.add("reveal");
+                    span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
+                    section1.classList.add("is-generated");
+                    span3.classList.add("reveal");
+                    span3.textContent = new URL(item["url"]).host;
+                    section2.classList.add("is-generated");
+                    graph.classList.add("is-generated");
+                    graph.classList.add("graph");
+                    graph.style.opacity = 0;
+                    bar.classList.add("bar");
+                    bar.style.width = `${Math.floor(item["score"] * 100)}%`;
+
+                    a.appendChild(span1);
+                    p.appendChild(a);
+                    wrap.appendChild(p);
+                    section1.appendChild(span2);
+                    section2.appendChild(span3);
+                    bar.appendChild(document.createElement("div"));
+                    graph.appendChild(bar);
+                    wrap.appendChild(section1);
+                    wrap.appendChild(section2);
+                    wrap.appendChild(graph);
+                    div.appendChild(wrap);
+
+                    graph.animate([
+                      {
+                        opacity: 1,
+                      },
+                    ], {
+                        delay: 1000,
+                        fill: "forwards",
+                        duration: 1000,
+                        iterations: 1,
+                        easing: "ease-out"
+                    }).onfinish = () => {
+                        graph.style.opacity = 1;
+                    };
+                  }
 
                   element.dataset["generated"] = true;
                   reloadButton.dataset["counter"] = parseInt(reloadButton.dataset["counter"]) - 1;
