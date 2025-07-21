@@ -5,7 +5,17 @@ FETCH_URLS = [
     'https://hnrss.org/best',
     'https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf',
     'https://game.watch.impress.co.jp/data/rss/1.0/gmw/feed.rdf',
-    'https://taisy0.com/feed'
+    'https://taisy0.com/feed',
+    'https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml',
+    'https://www.publickey1.jp/atom.xml',
+    'https://gigazine.net/news/rss_2.0/',
+    'https://qiita.com/popular-items/feed',
+    'https://zenn.dev/feed',
+    'https://automaton-media.com/feed/',
+    'https://kai-you.net/contents/feed.rss',
+    'https://oshitimes.net/feed',
+    'https://b.hatena.ne.jp/hotentry/all.rss',
+    'https://www.4gamer.net/rss/index.xml'
 ]
 FETCH_PROMPT = '''内容を下記の出力形式に変換してください。
 
