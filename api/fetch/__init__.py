@@ -23,8 +23,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             for cache_name in scan_cache(f'fetch/*'):
                 cached_data = json.loads(get_cache(cache_name))
                 
-                if isinstance(cached_data, dict) and 'cache' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['cache'], list):
-                    for item in cached_data['cache']:
+                if isinstance(cached_data, dict) and 'data' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['data'], list):
+                    for item in cached_data['data']:
                         if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item and 'score' in item and 'reason' in item:
                             timestamp = datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
                             merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']})
@@ -66,6 +66,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             cached_data = get_cache(cache_name)
 
             if cached_data is None or 'timestamp' in cached_data and cached_data['timestamp'] < int((datetime.now(timezone.utc) - timedelta(hours=1)).timestamp()):
+                return func.HttpResponse(json.dumps({'status': 'ok'}, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+            
                 with urlopen(Request(unquote(url), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
                     response_body = response.read().decode('utf-8')
 
@@ -88,12 +90,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if choice['message']['role'] == 'assistant':
                             match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
                             items = json.loads(match.group(1) if match else choice['message']['content'])
-                            set_cache(cache_name, json.dumps({'cache': items, 'timestamp': int(datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
+                            set_cache(cache_name, json.dumps({'data': items, 'timestamp': int(datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
 
                             return func.HttpResponse(json.dumps(items, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
             
             else:
-                return func.HttpResponse(json.dumps(cached_data['cache'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
 
             return func.HttpResponse(status_code=500, mimetype='', charset='')
         
