@@ -62,6 +62,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 model = req.params.get('model')
                 temperature = req.params['temperature'] if 'temperature' in req.params else 1.0
             
+            return func.HttpResponse(json.dumps({'status': url}, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+            
             cache_name = f'fetch/{url}'
             cached_data = get_cache(cache_name)
 
