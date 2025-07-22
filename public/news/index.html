@@ -115,8 +115,8 @@
         margin: 0px 0px 0px 0px;
         padding: 0;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
-        font-size: 0.75rem;
-        line-height: 1rem;
+        font-size: 1.25rem;
+        line-height: 2rem;
       }
 
       div+div>span {
@@ -1321,7 +1321,6 @@
                       a.rel = "noopener noreferrer";
                       span1.classList.add("reveal");
                       span1.textContent = item["content"];
-                      section1.classList.add("is-generated");
                       span2.classList.add("reveal");
                       span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
                       section1.classList.add("is-generated");
@@ -1337,6 +1336,20 @@
                       a.appendChild(span1);
                       p.appendChild(a);
                       wrap.appendChild(p);
+                      
+                      if ("comment" in item && item["comment"] !== null) {
+                        const section = document.createElement("div");
+                        const span = document.createElement("span");
+                        
+                        section.classList.add("is-generated");
+                        span.classList.add("reveal");
+                        span.classList.add("is-italic");
+                        span.textContent = "Hello1Hello1 Hello1Hello1Hello1Hello1Hello1Hello1Hello1Hello1Hello1";
+                        
+                        section.appendChild(span);
+                        wrap.appendChild(section);
+                      }
+
                       section1.appendChild(span2);
                       section2.appendChild(span3);
                       bar.appendChild(document.createElement("div"));
@@ -1631,7 +1644,6 @@
                   a.rel = "noopener noreferrer";
                   span1.classList.add("reveal");
                   span1.textContent = item["content"];
-                  section1.classList.add("is-generated");
                   span2.classList.add("reveal");
                   span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
                   section1.classList.add("is-generated");
@@ -1647,6 +1659,20 @@
                   a.appendChild(span1);
                   p.appendChild(a);
                   wrap.appendChild(p);
+                  
+                  if ("comment" in item && item["comment"] !== null) {
+                    const section = document.createElement("div");
+                    const span = document.createElement("span");
+                    
+                    section.classList.add("is-generated");
+                    span.classList.add("reveal");
+                    span.classList.add("is-italic");
+                    span.textContent = "Hello1Hello1 Hello1Hello1Hello1Hello1Hello1Hello1Hello1Hello1Hello1";
+                    
+                    section.appendChild(span);
+                    wrap.appendChild(section);
+                  }
+
                   section1.appendChild(span2);
                   section2.appendChild(span3);
                   bar.appendChild(document.createElement("div"));
