@@ -17,9 +17,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'GET':
             limit = req.params['limit'] if 'limit' in req.params else 100
-            cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+            sort = req.params['sort'].lower() if 'sort' in req.params else 'timestamp'
             merged_data = []
-            filtered_data = []
+
+            if 'order' in req.params:
+                order = req.params['order'].lower()
+
+                if order != 'asc' or order != 'desc':
+                    order = 'desc'
+
+            else:
+                order = 'desc'
             
             for cache_name in scan_cache(f'fetch/*'):
                 cached_data = json.loads(get_cache(cache_name))
@@ -27,7 +35,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if isinstance(cached_data, dict) and 'data' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['data'], list):
                     for item in cached_data['data']:
                         if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item and 'score' in item and 'reason' in item:
-                            timestamp = datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
+                            timestamp = int((datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))).timestamp())
                             data_item = {'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']}
                             
                             if 'comment' in item:
@@ -38,20 +46,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             merged_data.append(data_item)
 
-                            if timestamp > cutoff:
-                                filtered_data.append(data_item)
+            result_data = sorted(merged_data, key=lambda x: x[sort], reverse=order == 'desc')
+            result_data = result_data[:limit]
 
-            if len(filtered_data) > 0:
-                recent_data = sorted(filtered_data, key=lambda x: x['timestamp'], reverse=True)
-            else:       
-                recent_data = sorted(merged_data, key=lambda x: x['timestamp'], reverse=True)
-            
-            recent_data = recent_data[:limit]
-
-            for item in recent_data:
-                item['timestamp'] = int(item['timestamp'].timestamp())
-
-            return func.HttpResponse(json.dumps(recent_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps(result_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
             if req.headers.get('Content-Type') == 'application/json':
