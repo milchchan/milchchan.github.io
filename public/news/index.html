@@ -1033,6 +1033,8 @@
     <script type="module">
       const threshold = new URL(window.location.href).searchParams.get("threshold") ?? 0.75;
       const temperature = new URL(window.location.href).searchParams.get("temperature") ?? 1.0;
+      const sort = new URL(window.location.href).searchParams.get("sort") ?? "timestamp";
+      const order = new URL(window.location.href).searchParams.get("order") ?? "desc";
       let isPlaying = false;
       let audioContext = null;
       let sampleRate = 32000;
@@ -1308,7 +1310,7 @@
 
                 new Promise(async (resolve, reject) => {
                   try {
-                    const response = await fetch(encodeURI("https://milchchan.com/api/fetch"));
+                    const response = await fetch(encodeURI(`https://milchchan.com/api/fetch?sort=${sort}&order=${order}`));
 
                     if (response.ok) {
                       const json = await response.json();
@@ -1658,7 +1660,7 @@
               element.dataset["generated"] = false;
 
               try {
-                const response = await fetch(encodeURI("https://milchchan.com/api/fetch"));
+                const response = await fetch(encodeURI(`https://milchchan.com/api/fetch?sort=${sort}&order=${order}`));
 
                 if (response.ok) {
                   const json = await response.json();
