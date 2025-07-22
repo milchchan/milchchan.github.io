@@ -62,43 +62,41 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 model = req.params.get('model')
                 temperature = req.params['temperature'] if 'temperature' in req.params else 1.0
             
-            return func.HttpResponse(json.dumps({'status': url}, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
-            
             cache_name = f'fetch/{url}'
             cached_data = get_cache(cache_name)
 
-            if cached_data is None or 'timestamp' in cached_data and cached_data['timestamp'] < int((datetime.now(timezone.utc) - timedelta(hours=1)).timestamp()):
-                return func.HttpResponse(json.dumps({'status': 'ok'}, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
-            
-                with urlopen(Request(unquote(url), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
-                    response_body = response.read().decode('utf-8')
+            if cached_data is not None:
+                cached_data = json.loads(cached_data)
 
-                api_key = None
+                if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=1)).timestamp()):
+                    return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
 
-                if 'X-Authorization' in req.headers:
-                    match = re.match('Bearer\\s(.+)', req.headers['X-Authorization'])
+            with urlopen(Request(unquote(url), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
+                response_body = response.read().decode('utf-8')
 
-                    if match:
-                        api_key = match.group(1)
+            api_key = None
 
-                else:
-                    api_key = os.environ['OPENAI_API_KEY']
+            if 'X-Authorization' in req.headers:
+                match = re.match('Bearer\\s(.+)', req.headers['X-Authorization'])
 
-                messages = [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}]
-                request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': messages, 'temperature': temperature}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
-                
-                with urlopen(request) as response:
-                    for choice in json.loads(response.read().decode('utf-8'))['choices']:
-                        if choice['message']['role'] == 'assistant':
-                            match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
-                            items = json.loads(match.group(1) if match else choice['message']['content'])
-                            set_cache(cache_name, json.dumps({'data': items, 'timestamp': int(datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
+                if match:
+                    api_key = match.group(1)
 
-                            return func.HttpResponse(json.dumps(items, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
-            
             else:
-                return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                api_key = os.environ['OPENAI_API_KEY']
 
+            messages = [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}]
+            request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': messages, 'temperature': temperature}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
+            
+            with urlopen(request) as response:
+                for choice in json.loads(response.read().decode('utf-8'))['choices']:
+                    if choice['message']['role'] == 'assistant':
+                        match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
+                        items = json.loads(match.group(1) if match else choice['message']['content'])
+                        set_cache(cache_name, json.dumps({'data': items, 'timestamp': int(datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
+
+                        return func.HttpResponse(json.dumps(items, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                    
             return func.HttpResponse(status_code=500, mimetype='', charset='')
         
     except Exception as e:
