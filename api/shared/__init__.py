@@ -82,4 +82,4 @@ TRANSFORM_SYSTEM_PROMPT = '''あなたは女の子ミルヒちゃんのロール
  }
 }]
 ```'''
-TRANSFORM_USER_PROMPT = 'ブラックジョークを明示することなくブラックジョークを交えながらレビューしてください。'
+TRANSFORM_USER_PROMPT = 'ユーモアを交えながらレビューしてください。'
