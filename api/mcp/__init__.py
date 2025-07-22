@@ -81,8 +81,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             for cache_name in scan_cache(f'fetch/*'):
                 cached_data = json.loads(get_cache(cache_name))
                 
-                if isinstance(cached_data, dict) and 'cache' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['cache'], list):
-                    for item in cached_data['cache']:
+                if isinstance(cached_data, dict) and 'data' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['data'], list):
+                    for item in cached_data['data']:
                         if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item:
                             timestamp = datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
                             merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp})
