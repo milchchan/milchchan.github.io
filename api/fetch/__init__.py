@@ -23,7 +23,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if 'order' in req.params:
                 order = req.params['order'].lower()
 
-                if order != 'asc' or order != 'desc':
+                if order != 'asc' and order != 'desc':
                     order = 'desc'
 
             else:
