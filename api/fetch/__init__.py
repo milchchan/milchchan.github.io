@@ -93,9 +93,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     if choice['message']['role'] == 'assistant':
                         match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
                         items = json.loads(match.group(1) if match else choice['message']['content'])
-                        set_cache(cache_name, json.dumps({'data': items, 'timestamp': datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp()}), expire=86400)
+                        #set_cache(cache_name, , expire=86400)
+                        output = json.dumps({'data': items, 'timestamp': int(datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp())}, ensure_ascii=False)
 
-                        return func.HttpResponse(json.dumps(items, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                        return func.HttpResponse(output, status_code=201, mimetype='application/json', charset='utf-8')
                     
             return func.HttpResponse(status_code=500, mimetype='', charset='')
         
