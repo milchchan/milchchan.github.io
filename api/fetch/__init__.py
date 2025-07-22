@@ -68,8 +68,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if cached_data is not None:
                 cached_data = json.loads(cached_data)
 
-                #if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=1)).timestamp()):
-                #    return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
+                if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=1)).timestamp()):
+                    return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
 
             with urlopen(Request(unquote(url), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
                 response_body = response.read().decode('utf-8')
@@ -84,6 +84,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             else:
                 api_key = os.environ['OPENAI_API_KEY']
+
+            return func.HttpResponse(json.dumps({'status': 'ok'}, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
 
             messages = [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}]
             request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': messages, 'temperature': temperature}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
