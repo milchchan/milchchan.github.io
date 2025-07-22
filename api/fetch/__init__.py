@@ -28,10 +28,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     for item in cached_data['data']:
                         if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item and 'score' in item and 'reason' in item:
                             timestamp = datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
-                            merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']})
+                            data_item = {'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']}
+                            
+                            if 'comment' in item:
+                                data_item['comment'] = item['comment']
+
+                                if 'states' in item:
+                                    data_item['states'] = item['states']
+
+                            merged_data.append(data_item)
 
                             if timestamp > cutoff:
-                                filtered_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']})
+                                filtered_data.append(data_item)
 
             if len(filtered_data) > 0:
                 recent_data = sorted(filtered_data, key=lambda x: x['timestamp'], reverse=True)
