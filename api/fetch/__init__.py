@@ -85,8 +85,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             else:
                 api_key = os.environ['OPENAI_API_KEY']
 
-            return func.HttpResponse(json.dumps({'status': 'ok'}, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
-
             messages = [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}]
             request = Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': messages, 'temperature': temperature}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})
             
@@ -95,7 +93,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     if choice['message']['role'] == 'assistant':
                         match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
                         items = json.loads(match.group(1) if match else choice['message']['content'])
-                        set_cache(cache_name, json.dumps({'data': items, 'timestamp': int(datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
+                        #set_cache(cache_name, json.dumps({'data': items, 'timestamp': int(datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
 
                         return func.HttpResponse(json.dumps(items, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
                     
