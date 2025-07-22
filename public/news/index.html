@@ -111,7 +111,7 @@
         line-height: 2rem;
       }
 
-      p+div>span {
+      p+div>div>span {
         margin: 0px 0px 0px 0px;
         padding: 0;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
@@ -738,6 +738,28 @@
         animation-play-state: running;
       }
 
+      .content>div>div>div>.is-playable {
+        opacity: 1.0;
+        backface-visibility: hidden;
+        transition: opacity .5s;
+      }
+
+      .content>div>div>div>.is-playable:hover {
+        cursor: pointer;
+        opacity: 0.5;
+        transition: .5s;
+      }
+
+      .content>div>div>div>.is-playable.is-generated>div {
+        opacity: 1.0;
+        transition: .5s;
+      }
+
+      .content>div>div>div>.is-playable.is-generated>div.is-loading {
+        animation: processing 1s linear forwards infinite;
+        animation-play-state: running;
+      }
+
       #apricot:not(.is-active) {
         opacity: 0;
         transition: .5s;
@@ -1339,6 +1361,7 @@
                       
                       if ("comment" in item && item["comment"] !== null) {
                         const section = document.createElement("div");
+                        const temp = document.createElement("div");
                         const span = document.createElement("span");
                         
                         section.classList.add("is-generated");
@@ -1346,8 +1369,34 @@
                         span.classList.add("is-italic");
                         span.textContent = item["comment"];
                         
-                        section.appendChild(span);
+                        temp.appendChild(span);
+                        section.appendChild(temp);
                         wrap.appendChild(section);
+
+                        if ("language" in element1.dataset) {
+                          section.classList.add("is-playable");
+                          temp.onclick = async () => {
+                            if (!temp.classList.contains("is-loading") && !isPlaying) {
+                              temp.classList.add("is-loading");
+                              
+                              audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
+                                    
+                              const source = audioContext.createBufferSource();
+                                    
+                              source.connect(audioContext.destination);
+
+                              try {
+                                await synthesize(source, `/sounds/${element1.dataset.type}.${element1.dataset.language}.wav`, item["comment"], element1.dataset.language, temperature);
+                              } catch (error) {
+                                shake(section);
+
+                                console.error(error);
+                              }
+
+                              temp.classList.remove("is-loading");
+                            }
+                          };
+                        }
                       }
 
                       section1.appendChild(span2);
@@ -1662,6 +1711,7 @@
                   
                   if ("comment" in item && item["comment"] !== null) {
                     const section = document.createElement("div");
+                    const temp = document.createElement("div");
                     const span = document.createElement("span");
                     
                     section.classList.add("is-generated");
@@ -1669,8 +1719,34 @@
                     span.classList.add("is-italic");
                     span.textContent = item["comment"];
                     
-                    section.appendChild(span);
+                    temp.appendChild(span);
+                    section.appendChild(temp);
                     wrap.appendChild(section);
+
+                    if ("language" in element.dataset) {
+                      section.classList.add("is-playable");
+                      temp.onclick = async () => {
+                        if (!temp.classList.contains("is-loading") && !isPlaying) {
+                          temp.classList.add("is-loading");
+                          
+                          audioContext = audioContext ?? new window.AudioContext({ sampleRate: sampleRate });
+                                
+                          const source = audioContext.createBufferSource();
+                                
+                          source.connect(audioContext.destination);
+
+                          try {
+                            await synthesize(source, `/sounds/${element.dataset.type}.${element.dataset.language}.wav`, item["comment"], element.dataset.language, temperature);
+                          } catch (error) {
+                            shake(section);
+
+                            console.error(error);
+                          }
+
+                          temp.classList.remove("is-loading");
+                        }
+                      };
+                    }
                   }
 
                   section1.appendChild(span2);
