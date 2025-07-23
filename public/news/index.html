@@ -1314,11 +1314,17 @@
 
                     if (response.ok) {
                       const json = await response.json();
+                      const past = new Date.now() - 24 * 60 * 60 * 1000;
                       const items = [];
 
                       for (const item of json) {
                         if (item["score"] >= threshold) {
-                          items.push(item);
+                          const timestamp = Math.floor(item["timestamp"] * 1000);
+
+                          if (timestamp > past) {
+                            item["timestamp"] = new Date(timestamp);
+                            items.push(item);
+                          }
                         }
                       }
 
@@ -1354,7 +1360,7 @@
                       span1.classList.add("reveal");
                       span1.textContent = item["content"];
                       span2.classList.add("reveal");
-                      span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
+                      span2.textContent = item["timestamp"].toLocaleString();
                       section1.classList.add("is-generated");
                       span3.classList.add("reveal");
                       span3.textContent = new URL(item["url"]).host;
@@ -1664,11 +1670,17 @@
 
                 if (response.ok) {
                   const json = await response.json();
+                  const past = new Date.now() - 24 * 60 * 60 * 1000;
                   const items = [];
 
                   for (const item of json) {
                     if (item["score"] >= threshold) {
-                      items.push(item);
+                      const timestamp = Math.floor(item["timestamp"] * 1000);
+
+                      if (timestamp > past) {
+                        item["timestamp"] = new Date(timestamp);
+                        items.push(item);
+                      }
                     }
                   }
 
@@ -1704,7 +1716,7 @@
                   span1.classList.add("reveal");
                   span1.textContent = item["content"];
                   span2.classList.add("reveal");
-                  span2.textContent = new Date(Math.floor(item["timestamp"] * 1000)).toLocaleString();
+                  span2.textContent = item["timestamp"].toLocaleString();
                   section1.classList.add("is-generated");
                   span3.classList.add("reveal");
                   span3.textContent = new URL(item["url"]).host;
