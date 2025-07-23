@@ -82,8 +82,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if isinstance(cached_data, dict) and 'data' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['data'], list):
                     for item in cached_data['data']:
                         if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item:
-                            timestamp = datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
-                            merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp})
+                            merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))})
 
             recent_data = sorted(merged_data, key=lambda x: x['timestamp'], reverse=True)
             recent_data = recent_data[:limit]
