@@ -387,6 +387,18 @@
         position: absolute;
         left: 100%;
       }
+
+      .content span.dot {
+        display: inline-block;
+        margin: 0px 0px 0px 4px;
+        padding: 0;
+        border-radius: 2px;
+        width: 4px;
+        height: 4px;
+        background-color: rgb(0 231 255);
+        background-color: color(display-p3 0.0 0.906 1.0);
+        vertical-align: middle;
+      }
       
       .overlay>.wrap>.content .icon.is-animatable {
         position: fixed;
@@ -1340,6 +1352,7 @@
 
                   if (last !== null) {
                     const [items, raw] = data;
+                    const past = Date.now() - 60 * 60 * 1000;
 
                     for (const item of items) {
                       const wrap = document.createElement("div");
@@ -1416,6 +1429,30 @@
                       }
 
                       section1.appendChild(span2);
+
+                      if (item["timestamp"].getTime() > past) {
+                        const dot = document.createElement("span");
+
+                        dot.classList.add("dot");
+                        dot.style.opacity = 0;
+
+                        section1.appendChild(dot);
+
+                        dot.animate([
+                          {
+                            opacity: 1,
+                          },
+                        ], {
+                            delay: 1000,
+                            fill: "forwards",
+                            duration: 1000,
+                            iterations: 1,
+                            easing: "ease-out"
+                        }).onfinish = () => {
+                            dot.style.opacity = 1;
+                        };
+                      }
+
                       section2.appendChild(span3);
                       bar.appendChild(document.createElement("div"));
                       graph.appendChild(bar);
@@ -1696,6 +1733,7 @@
 
               if (div !== null) {
                 const [items, raw] = data;
+                const past = Date.now() - 60 * 60 * 1000;
 
                 for (const item of items) {
                   const wrap = document.createElement("div");
@@ -1772,6 +1810,30 @@
                   }
 
                   section1.appendChild(span2);
+
+                  if (item["timestamp"].getTime() > past) {
+                    const dot = document.createElement("span");
+
+                    dot.classList.add("dot");
+                    dot.style.opacity = 0;
+
+                    section1.appendChild(dot);
+
+                    dot.animate([
+                      {
+                        opacity: 1,
+                      },
+                    ], {
+                        delay: 1000,
+                        fill: "forwards",
+                        duration: 1000,
+                        iterations: 1,
+                        easing: "ease-out"
+                    }).onfinish = () => {
+                        dot.style.opacity = 1;
+                    };
+                  }
+
                   section2.appendChild(span3);
                   bar.appendChild(document.createElement("div"));
                   graph.appendChild(bar);
