@@ -1314,7 +1314,7 @@
 
                     if (response.ok) {
                       const json = await response.json();
-                      const past = new Date.now() - 24 * 60 * 60 * 1000;
+                      const past = Date.now() - 24 * 60 * 60 * 1000;
                       const items = [];
 
                       for (const item of json) {
@@ -1670,7 +1670,7 @@
 
                 if (response.ok) {
                   const json = await response.json();
-                  const past = new Date.now() - 24 * 60 * 60 * 1000;
+                  const past = Date.now() - 24 * 60 * 60 * 1000;
                   const items = [];
 
                   for (const item of json) {
