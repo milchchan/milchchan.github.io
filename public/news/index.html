@@ -1331,6 +1331,12 @@
 
                       for (const item of json) {
                         if (item["score"] >= threshold) {
+                          try {
+                            new URL(item["url"]);
+                          } catch {
+                            continue;
+                          }
+                          
                           const timestamp = Math.floor(item["timestamp"] * 1000);
 
                           if (timestamp > past) {
@@ -1712,6 +1718,12 @@
 
                   for (const item of json) {
                     if (item["score"] >= threshold) {
+                      try {
+                        new URL(item["url"]);
+                      } catch {
+                        continue;
+                      }
+
                       const timestamp = Math.floor(item["timestamp"] * 1000);
 
                       if (timestamp > past) {
