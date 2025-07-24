@@ -1446,14 +1446,29 @@
 
                         dot.animate([
                           {
+                            opacity: 0,
+                          },
+                          {
                             opacity: 1,
                           },
+                          {
+                            opacity: 0,
+                          },
+                          {
+                            opacity: 1,
+                          },
+                          {
+                            opacity: 0,
+                          },
+                          {
+                            opacity: 1,
+                          }
                         ], {
                             delay: 1000,
                             fill: "forwards",
-                            duration: 1000,
+                            duration: 5000,
                             iterations: 1,
-                            easing: "ease-out"
+                            easing: "linear"
                         }).onfinish = () => {
                             dot.style.opacity = 1;
                         };
@@ -1833,14 +1848,29 @@
 
                     dot.animate([
                       {
+                        opacity: 0,
+                      },
+                      {
                         opacity: 1,
                       },
+                      {
+                        opacity: 0,
+                      },
+                      {
+                        opacity: 1,
+                      },
+                      {
+                        opacity: 0,
+                      },
+                      {
+                        opacity: 1,
+                      }
                     ], {
                         delay: 1000,
                         fill: "forwards",
-                        duration: 1000,
+                        duration: 5000,
                         iterations: 1,
-                        easing: "ease-out"
+                        easing: "linear"
                     }).onfinish = () => {
                         dot.style.opacity = 1;
                     };
