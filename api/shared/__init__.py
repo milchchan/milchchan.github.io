@@ -4,10 +4,12 @@ from shared.geohash import encode_geohash, decode_geohash, get_neighbors
 FETCH_URLS = [
     'https://hnrss.org/best',
     'https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf',
+    'https://akiba-pc.watch.impress.co.jp/data/rss/1.0/ah/feed.rdf',
     'https://game.watch.impress.co.jp/data/rss/1.0/gmw/feed.rdf',
     'https://travel.watch.impress.co.jp/data/rss/1.0/trw/feed.rdf',
     'https://gourmet.watch.impress.co.jp/data/rss/1.0/grw/feed.rdf',
     'https://manga.watch.impress.co.jp/data/rss/1.0/mgw/feed.rdf',
+    'https://gazlog.jp/feed/',
     'https://ascii.jp/rss.xml',
     'https://taisy0.com/feed',
     'https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml',
