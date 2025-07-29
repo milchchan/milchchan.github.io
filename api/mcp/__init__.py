@@ -65,28 +65,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 },
                                 'required': []
                             }
-                        },
-                        {
-                            'name': 'weather',
-                            'description': 'Retrieves current weather',
-                            'inputSchema': {
-                                'type': 'object',
-                                'properties': {
-                                    'latitude': {
-                                        'type': 'number',
-                                        'minimum': -90,
-                                        'maximum': 90,
-                                        'description': 'Latitude'
-                                    },
-                                    'longitude': {
-                                        'type': 'number',
-                                        'minimum': -180,
-                                        'maximum': 180,
-                                        'description': 'Longitude'
-                                    }
-                                },
-                                'required': ['latitude', 'longitude']
-                            }
                         }]
                 }}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         elif identifier is None:
