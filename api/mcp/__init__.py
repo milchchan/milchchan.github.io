@@ -143,10 +143,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     'kid': key_id,
                     'id': f'{team_id}.{services_id}'
                 })
-                request = Request(f'https://weatherkit.apple.com/api/v1/weather/en/{str(arguments["latitude"])}/{str(arguments["longitude"])}?dataSets=currentWeather', method='GET', headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'})
                 
-                with urlopen(request) as response:
-                    return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': f'```json\n{json.dumps(json.loads(response.read()), ensure_ascii=False)}\n```'}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+                with urlopen(Request(f'https://weatherkit.apple.com/api/v1/weather/en/{str(arguments["latitude"])}/{str(arguments["longitude"])}?dataSets=currentWeather', method='GET', headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'})) as response:
+                    return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': f'```json\n{response.read().decode('utf-8')}\n```'}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
                     
             except Exception as e:
                 logging.error(f'{e}')
