@@ -4,6 +4,7 @@ import uuid
 import os
 import json
 import logging
+import xml.etree.ElementTree as ET
 from datetime import datetime, time, timedelta, timezone
 from urllib.parse import unquote
 from urllib.request import urlopen, Request
@@ -79,7 +80,67 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
 
             with urlopen(Request(unquote(url), method='GET', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
-                response_body = response.read().decode('utf-8')
+                content_type = response.headers.get_content_type()
+                items = []
+
+                if content_type in ['application/xml', 'application/rss+xml', 'application/atom+xml', 'text/xml']:
+                    root = ET.fromstring(response.read().decode('utf-8'))
+
+                    if root.tag == 'rss' or root.tag == '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}RDF':
+                        for child1 in root:
+                            if child1.tag == 'channel':
+                                for child2 in child1:
+                                    if child2.tag == 'item':
+                                        item = {}
+
+                                        for child3 in child2:
+                                            if child3.tag == 'title':
+                                                item['title'] = child3.text
+                                            elif child3.tag == 'description':
+                                                item['description'] = child3.text
+                                            elif child3.tag == 'link':
+                                                item['link'] = child3.text
+                                            elif child3.tag == 'pubDate':
+                                                item['pubDate'] = child3.text
+
+                                        if len(item) > 0:
+                                            items.append(item)
+
+                            elif child1.tag == '{http://purl.org/rss/1.0/}item':
+                                item = {}
+
+                                for child2 in child1:
+                                    if child2.tag == '{http://purl.org/rss/1.0/}title':
+                                        item['title'] = child2.text
+                                    elif child2.tag == '{http://purl.org/rss/1.0/}description':
+                                        item['description'] = child2.text
+                                    elif child2.tag == '{http://purl.org/rss/1.0/}link':
+                                        item['link'] = child2.text
+                                    elif child2.tag == '{http://purl.org/dc/elements/1.1/}date':
+                                        item['date'] = child2.text
+
+                                if len(item) > 0:
+                                    items.append(item)
+                    
+                    elif root.tag ==  '{http://www.w3.org/2005/Atom}feed':
+                        for child1 in root:
+                            if child1.tag == '{http://www.w3.org/2005/Atom}entry':
+                                item = {}
+
+                                for child2 in child1:
+                                    if child2.tag == '{http://www.w3.org/2005/Atom}title':
+                                        item['title'] = child2.text
+                                    elif child2.tag == '{http://www.w3.org/2005/Atom}description':
+                                        item['description'] = child2.text
+                                    elif child2.tag == '{http://www.w3.org/2005/Atom}link':
+                                        item['link'] = child2.get('href')
+                                    elif child2.tag == '{http://www.w3.org/2005/Atom}published':
+                                        item['published'] = child2.text
+
+                                if len(item) > 0:
+                                    items.append(item)
+
+                response_body = f'```json\n{json.dumps(items, ensure_ascii=False)}\n```'
 
             api_key = None
 
