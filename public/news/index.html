@@ -1028,7 +1028,7 @@
         </div>
       </div>
       <div class="wrap">
-        <div class="content" data-type="milch" data-prompt="ちょっと毒舌で自虐的ですが読者を傷つけないユーモアを交えながら、解説とレビューを日記であることは明示せず日記調で書いてください。" data-language="ja">
+        <div class="content" data-type="milch" data-prompt="ちょっと毒舌で自虐的ですが読者を傷つけないユーモアを交えながら、わかりやすい解説とレビューを東京の日時と天気も書かれた日記調で書いてください。" data-language="ja">
           <div>
             <h1>
               <span class="reveal">News</span>
@@ -1508,7 +1508,7 @@
                             headers: {
                               "Content-Type": "application/json"
                             },
-                            body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element1.dataset.prompt}\n\n\`\`\`\njson${raw}\n\`\`\``}], tools: []})
+                            body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element1.dataset.prompt}\n\n\`\`\`\njson${raw}\n\`\`\``}], tools: [{"type": "web_search_preview"}, {"type": "mcp", "server_label": "milchan-mcp", "server_url": "https://milchchan.com/api/mcp", "require_approval": "never"}]})
                           });
 
                           if (response2.ok) {
@@ -1910,7 +1910,7 @@
                         headers: {
                           "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element.dataset.prompt}\n\n\`\`\`json\n${raw}\n\`\`\``}], tools: []})
+                        body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element.dataset.prompt}\n\n\`\`\`json\n${raw}\n\`\`\``}], tools: [{"type": "web_search_preview"}, {"type": "mcp", "server_label": "milchan-mcp", "server_url": "https://milchchan.com/api/mcp", "require_approval": "never"}]})
                       });
 
                       if (response2.ok) {
