@@ -96,8 +96,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         for child3 in child2:
                                             if child3.tag == 'title':
                                                 item['title'] = child3.text
-                                            elif child3.tag == 'description':
-                                                item['description'] = child3.text
+                                            #elif child3.tag == 'description':
+                                            #    item['description'] = child3.text
                                             elif child3.tag == 'link':
                                                 item['link'] = child3.text
                                             elif child3.tag == 'pubDate':
@@ -112,8 +112,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 for child2 in child1:
                                     if child2.tag == '{http://purl.org/rss/1.0/}title':
                                         item['title'] = child2.text
-                                    elif child2.tag == '{http://purl.org/rss/1.0/}description':
-                                        item['description'] = child2.text
+                                    #elif child2.tag == '{http://purl.org/rss/1.0/}description':
+                                    #    item['description'] = child2.text
                                     elif child2.tag == '{http://purl.org/rss/1.0/}link':
                                         item['link'] = child2.text
                                     elif child2.tag == '{http://purl.org/dc/elements/1.1/}date':
@@ -129,8 +129,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 for child2 in child1:
                                     if child2.tag == '{http://www.w3.org/2005/Atom}title':
                                         item['title'] = child2.text
-                                    elif child2.tag == '{http://www.w3.org/2005/Atom}description':
-                                        item['description'] = child2.text
+                                    #elif child2.tag == '{http://www.w3.org/2005/Atom}content':
+                                    #    item['content'] = child2.text
                                     elif child2.tag == '{http://www.w3.org/2005/Atom}link':
                                         item['link'] = child2.get('href')
                                     elif child2.tag == '{http://www.w3.org/2005/Atom}published':
