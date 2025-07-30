@@ -1119,8 +1119,6 @@
       let modifiers = [];
       let words = [];
 
-      agent.tools = [{"type": "web_search_preview"}, {"type": "mcp", "server_label": "milchan-mcp", "server_url": "https://milchchan.com/api/mcp", "require_approval": "never"}];
-
       window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
       function random(min, max) {
@@ -1556,10 +1554,11 @@
           }
         }
       }
-
+      
       agent["_choices"] = [];
       agent.isDebug = true;
       agent.fontFamily = "Barlow";
+      agent.tools = [{"type": "web_search_preview"}, {"type": "mcp", "server_label": "milchan-mcp", "server_url": "https://milchchan.com/api/mcp", "require_approval": "never"}];
       agent.onclick = (e) => {
         agent.choices.splice(0);
         agent.choices.push(...agent._choices);
