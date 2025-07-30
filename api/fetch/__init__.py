@@ -119,8 +119,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     elif child2.tag == '{http://purl.org/dc/elements/1.1/}date':
                                         item['date'] = child2.text
 
-                                if len(item) > 0:
-                                    items.append(item)
+                                items.append(item)
                     
                     elif root.tag ==  '{http://www.w3.org/2005/Atom}feed':
                         for child1 in root:
@@ -137,8 +136,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     elif child2.tag == '{http://www.w3.org/2005/Atom}published':
                                         item['published'] = child2.text
 
-                                if len(item) > 0:
-                                    items.append(item)
+                                items.append(item)
 
                 response_body = f'```json\n{json.dumps(items, ensure_ascii=False)}\n```'
 
