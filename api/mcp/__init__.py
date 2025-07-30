@@ -52,6 +52,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
                     'tools': [
                         {
+                            'name': 'now',
+                            'description': 'Returns the current UTC time',
+                            'inputSchema': {
+                                'type': 'object',
+                                'properties': {},
+                                'required': []
+                            }
+                        },
+                        {
                             'name': 'news',
                             'description': 'Retrieves the latest news',
                             'inputSchema': {
@@ -100,7 +109,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         
         arguments = params['arguments']
 
-        if params['name'] == 'news':
+        if params['name'] == 'now':
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+
+        elif params['name'] == 'news':
             limit = int(arguments['limit']) if 'limit' in arguments else 10
             merged_data = []
             
