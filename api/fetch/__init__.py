@@ -177,7 +177,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                                 break
                         
-                                    set_cache(cache_name, json.dumps({'data': items1, 'timestamp': int(datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
+                                    set_cache(cache_name, json.dumps({'data': items1, 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
                         
                                     return func.HttpResponse(json.dumps(items1, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
                     
