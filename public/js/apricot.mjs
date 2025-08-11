@@ -114,6 +114,7 @@ export class Agent {
     this.maxLogs = 10;
     this.apiUrl = "https://milchchan.com/api/generate";
     this.apiKey = null;
+    this.reasoning = null;
     this.tools = null;
     this.onresized = null;
     this.onclick = null;
@@ -475,16 +476,28 @@ export class Agent {
 
         options["headers"] = { "Content-Type": "application/json" };
 
-        if (this.tools === null) {
-          if (this.model === null) {
-            options["body"] = JSON.stringify({ temperature: this.temperature, messages: messages });
+        if (this.reasoning === null) {
+          if (this.tools === null) {
+            if (this.model === null) {
+              options["body"] = JSON.stringify({ temperature: this.temperature, messages: messages });
+            } else {
+              options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, messages: messages });
+            }
+          } else if (this.model === null) {
+            options["body"] = JSON.stringify({ temperature: this.temperature, messages: messages, tools: this.tools });
           } else {
-            options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, messages: messages });
+            options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, messages: messages, tools: this.tools });
+          }
+        } else if (this.tools === null) {
+          if (this.model === null) {
+            options["body"] = JSON.stringify({ temperature: this.temperature, messages: messages, reasoning: this.reasoning });
+          } else {
+            options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, messages: messages, reasoning: this.reasoning });
           }
         } else if (this.model === null) {
-          options["body"] = JSON.stringify({ temperature: this.temperature, messages: messages, tools: this.tools });
+          options["body"] = JSON.stringify({ temperature: this.temperature, messages: messages, reasoning: this.reasoning, tools: this.tools });
         } else {
-          options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, messages: messages, tools: this.tools });
+          options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, messages: messages, reasoning: this.reasoning, tools: this.tools });
         }
       } else {
         for (const log of this.logs) {
@@ -510,16 +523,28 @@ export class Agent {
 
         options["headers"] = { "Authorization": `Bearer ${this.apiKey}`, "Content-Type": "application/json" };
 
-        if (this.tools === null) {
-          if (this.model === null) {
-            options["body"] = JSON.stringify({ temperature: this.temperature, input: messages });
+        if (this.reasoning === null) {
+          if (this.tools === null) {
+            if (this.model === null) {
+              options["body"] = JSON.stringify({ temperature: this.temperature, input: messages });
+            } else {
+              options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, input: messages });
+            }
+          } else if (this.model === null) {
+            options["body"] = JSON.stringify({ temperature: this.temperature, input: messages, tools: this.tools });
           } else {
-            options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, input: messages });
+            options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, input: messages, tools: this.tools });
+          }
+        } else if (this.tools === null) {
+          if (this.model === null) {
+            options["body"] = JSON.stringify({ temperature: this.temperature, input: messages, reasoning: this.reasoning });
+          } else {
+            options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, input: messages, reasoning: this.reasoning });
           }
         } else if (this.model === null) {
-          options["body"] = JSON.stringify({ temperature: this.temperature, input: messages, tools: this.tools });
+          options["body"] = JSON.stringify({ temperature: this.temperature, input: messages, reasoning: this.reasoning, tools: this.tools });
         } else {
-          options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, input: messages, tools: this.tools });
+          options["body"] = JSON.stringify({ model: this.model, temperature: this.temperature, input: messages, reasoning: this.reasoning, tools: this.tools });
         }
       }
       
