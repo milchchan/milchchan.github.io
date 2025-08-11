@@ -61,7 +61,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                     messages.append({'role': message['role'], 'content': content})
 
-                            with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0, 'tools': data['tools'] if 'tools' in data else [{'type': 'mcp', 'server_label': 'milchchan-mcp', 'server_url': 'https://milchchan.com/api/mcp', 'require_approval': 'never'}]}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
+                            with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': data['model'] if 'model' in data else os.environ['OPENAI_MODEL'], 'input': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0, 'reasoning': data['reasoning'] if 'reasoning' in data else {'effort': 'minimal'} , 'tools': data['tools'] if 'tools' in data else [{'type': 'mcp', 'server_label': 'milchchan-mcp', 'server_url': 'https://milchchan.com/api/mcp', 'require_approval': 'never'}]}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
                                 for output in json.loads(response.read().decode('utf-8'))['output']:
                                     if output['type'] == 'message':
                                         for content in output['content']:
