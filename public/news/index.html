@@ -1508,7 +1508,7 @@
                             headers: {
                               "Content-Type": "application/json"
                             },
-                            body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element1.dataset.prompt}\n\n\`\`\`\njson${raw}\n\`\`\``}], tools: [{"type": "web_search_preview"}, {"type": "mcp", "server_label": "milchan-mcp", "server_url": "https://milchchan.com/api/mcp", "require_approval": "never"}]})
+                            body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element1.dataset.prompt}\n\n\`\`\`\njson${raw}\n\`\`\``}], reasoning: {effort: 'minimal'}, tools: [{type: "mcp", server_label: "milchan-mcp", server_url: "https://milchchan.com/api/mcp", require_approval: "never"}]})
                           });
 
                           if (response2.ok) {
@@ -1910,7 +1910,7 @@
                         headers: {
                           "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element.dataset.prompt}\n\n\`\`\`json\n${raw}\n\`\`\``}], tools: [{"type": "web_search_preview"}, {"type": "mcp", "server_label": "milchan-mcp", "server_url": "https://milchchan.com/api/mcp", "require_approval": "never"}]})
+                        body: JSON.stringify({temperature: temperature, messages: [{role: "system", content: await response1.text()}, {role: "user", content: `${element.dataset.prompt}\n\n\`\`\`json\n${raw}\n\`\`\``}], reasoning: {effort: 'minimal'}, tools: [{type: "mcp", server_label: "milchan-mcp", server_url: "https://milchchan.com/api/mcp", require_approval: "never"}]})
                       });
 
                       if (response2.ok) {
