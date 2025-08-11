@@ -151,7 +151,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             else:
                 api_key = os.environ['OPENAI_API_KEY']
             
-            with urlopen(Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}], 'temperature': temperature}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response1:
+            with urlopen(Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}], 'temperature': temperature, 'reasoning_effort': 'minimal'}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response1:
                 for choice in json.loads(response1.read().decode('utf-8'))['choices']:
                     if choice['message']['role'] == 'assistant':
                         match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
@@ -163,7 +163,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             item['id'] = identifier
                             items2.append({'id': identifier, 'content': item['content']})
 
-                        with urlopen(Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}], 'temperature': temperature}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response2:
+                        with urlopen(Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}], 'temperature': temperature, 'reasoning_effort': 'minimal'}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response2:
                             for choice in json.loads(response2.read().decode('utf-8'))['choices']:
                                 if choice['message']['role'] == 'assistant':
                                     match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
