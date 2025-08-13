@@ -314,7 +314,6 @@
 
     window.addEventListener("load", async event => {
       const background = document.createElement("div");
-      const rect = canvas.getBoundingClientRect();
       let previousTime = performance.now();
 
       background.className = "background";
@@ -323,8 +322,8 @@
 
       document.body.querySelector(".wrap>.frame").prepend(background);
 
-      canvas.width = Math.floor(rect.width * window.devicePixelRatio);
-      canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+      canvas.width = Math.floor(document.body.querySelector(".wrap>.frame").getBoundingClientRect().width * window.devicePixelRatio);
+      canvas.height = Math.floor(canvas.getBoundingClientRect().height * window.devicePixelRatio);
 
       try {
         const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "--dark-background-image" : "--light-background-image"));
@@ -437,10 +436,8 @@
       render();
     });
     window.addEventListener("resize", event => {
-      const rect = canvas.getBoundingClientRect();
-
-      canvas.width = Math.floor(rect.width * window.devicePixelRatio);
-      canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+      canvas.width = Math.floor(document.body.querySelector(".wrap>.frame").getBoundingClientRect().width * window.devicePixelRatio);
+      canvas.height = Math.floor(canvas.getBoundingClientRect().height * window.devicePixelRatio);
 
       redrawRequired = true;
     });
