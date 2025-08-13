@@ -258,6 +258,8 @@
     </div>
   </div>
   <script type="text/javascript">
+    const size = new URL(window.location.href).searchParams.get("size") ?? 1;
+    const colored = JSON.parse(new URL(window.location.href).searchParams.get("colored")) ?? true;
     let redrawRequired = true;
     const canvas = document.body.querySelector("#message>canvas");
 
@@ -347,7 +349,7 @@
 
       background.animate([
         {
-          opacity: 1,
+          opacity: 0,
           transform: "scale3d(1.0, 1.0, 1.0)"
         }
       ], {
@@ -370,8 +372,7 @@
 
           if (redrawRequired) {
             const text = "404";
-            const noisePixelSize = window.devicePixelRatio;
-            const colored = true;
+            const noisePixelSize = size + window.devicePixelRatio;
             const frontContext = canvas.getContext("2d");
             const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
             const backContext = offscreenCanvas.getContext("2d");
