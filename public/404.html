@@ -29,6 +29,7 @@
       --background-color: #ffffff;
       --foreground-color: #000000;
       --foreground-font-family: 'Barlow', 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
+      --foreground-font-weight: bold;
       --light-background-image: /images/404.png;
       --dark-background-image: /images/Omr.png;
     }
@@ -349,7 +350,7 @@
 
       background.animate([
         {
-          opacity: 0,
+          opacity: 1,
           transform: "scale3d(1.0, 1.0, 1.0)"
         }
       ], {
@@ -379,6 +380,7 @@
             const noiseCanvas = new OffscreenCanvas(Math.floor(canvas.width / noisePixelSize), Math.floor(canvas.height / noisePixelSize));
             const noiseContext = noiseCanvas.getContext("2d");
             const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--foreground-font-family");
+            const fontWeight = window.getComputedStyle(document.documentElement).getPropertyValue("--foreground-font-weight");
             const foregroundColor = window.getComputedStyle(document.documentElement).getPropertyValue("--foreground-color");
             const w = noiseCanvas.width
             const h = noiseCanvas.height;
@@ -391,7 +393,7 @@
             backContext.textBaseline = "middle";
             backContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
             backContext.save();
-            backContext.font = `normal bold ${offscreenCanvas.height}px ${fontFamily}`;
+            backContext.font = `normal ${fontWeight} ${offscreenCanvas.height}px ${fontFamily}`;
             
             const textMetrics = backContext.measureText(text);
 
