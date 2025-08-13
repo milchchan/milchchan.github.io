@@ -28,6 +28,7 @@
     :root {
       --background-color: #ffffff;
       --foreground-color: #000000;
+      --foreground-font-family: 'Barlow', 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
       --light-background-image: /images/404.png;
       --dark-background-image: /images/Omr.png;
     }
@@ -64,6 +65,13 @@
       font-size: 50vmin;
       font-weight: bold;
       line-height: 50vmin;
+    }
+
+    canvas {
+      margin: 0;
+      padding: 0;
+      width: 200%;
+      height: 50vmin;
     }
 
     .wrap {
@@ -143,7 +151,6 @@
       justify-content: flex-start;
       align-items: center;
       animation: fade .5s ease-out forwards;
-      overflow: hidden;
       perspective: 1000;
       backface-visibility: hidden;
     }
@@ -236,7 +243,7 @@
   <div class="wrap">
     <div class="frame">
       <div id="message">
-        <h1>404</h1>
+        <canvas></canvas>
         <div>
           <a href="https://milchchan.com/" title="milchchan.com">
             <div class="clip">
@@ -251,6 +258,9 @@
     </div>
   </div>
   <script type="text/javascript">
+    let redrawRequired = true;
+    const canvas = document.body.querySelector("#message>canvas");
+
     async function resize(blob, length) {
       return await new Promise(async (resolve, reject) => {
         const reader = new FileReader();
@@ -304,12 +314,17 @@
 
     window.addEventListener("load", async event => {
       const background = document.createElement("div");
+      const rect = canvas.getBoundingClientRect();
+      let previousTime = performance.now();
 
       background.className = "background";
       background.style.opacity = 0;
       background.style.transform = "scale3d(1.1, 1.1, 1.1)";
 
       document.body.querySelector(".wrap>.frame").prepend(background);
+
+      canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+      canvas.height = Math.floor(rect.height * window.devicePixelRatio);
 
       try {
         const response = await fetch(window.getComputedStyle(document.documentElement).getPropertyValue(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "--dark-background-image" : "--light-background-image"));
@@ -346,6 +361,88 @@
         background.style.opacity = 1;
         background.style.transform = "scale3d(1.0, 1.0, 1.0)";
       };
+
+      function render(timestamp) {
+        if (timestamp > previousTime) {
+          if (timestamp - previousTime >= 1000 / 29.97) {
+            redrawRequired = true;
+            previousTime = timestamp;
+          }
+
+          if (redrawRequired) {
+            const text = "404";
+            const noisePixelSize = window.devicePixelRatio;
+            const colored = true;
+            const frontContext = canvas.getContext("2d");
+            const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+            const backContext = offscreenCanvas.getContext("2d");
+            const noiseCanvas = new OffscreenCanvas(Math.floor(canvas.width / noisePixelSize), Math.floor(canvas.height / noisePixelSize));
+            const noiseContext = noiseCanvas.getContext("2d");
+            const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--foreground-font-family");
+            const foregroundColor = window.getComputedStyle(document.documentElement).getPropertyValue("--foreground-color");
+            const w = noiseCanvas.width
+            const h = noiseCanvas.height;
+            const image = noiseContext.createImageData(w, h);
+            const d32 = new Uint32Array(image.data.buffer);
+
+            backContext.imageSmoothingEnabled = true;
+            backContext.imageSmoothingQuality = "high";
+            backContext.textAlign = "left";
+            backContext.textBaseline = "middle";
+            backContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+            backContext.save();
+            backContext.font = `normal bold ${offscreenCanvas.height}px ${fontFamily}`;
+            
+            const textMetrics = backContext.measureText(text);
+
+            backContext.fillText(text, Math.round(textMetrics.actualBoundingBoxLeft + (offscreenCanvas.width - Math.abs(textMetrics.actualBoundingBoxRight) + Math.abs(textMetrics.actualBoundingBoxLeft)) / 2), Math.round(offscreenCanvas.height / 2));
+            backContext.globalCompositeOperation = "source-atop";
+            backContext.fillStyle = foregroundColor;
+            backContext.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+            noiseContext.imageSmoothingEnabled = false;
+
+            for (let i = 0; i < d32.length; i++) {
+              if (colored) {
+                const base = (Math.random()*255)|0;
+                const r = (base + ((Math.random()*28) | 0)) & 255;
+                const g = (base + ((Math.random()*28) | 0)) & 255;
+                const b = (base + ((Math.random()*28) | 0)) & 255;
+
+                d32[i] = (255 << 24) | (r << 16) | (g << 8) | b;
+              } else {
+                const g = (Math.random() * 256) | 0;
+
+                d32[i] = (255 << 24) | (g << 16) | (g << 8) | g;
+              }
+            }
+
+            noiseContext.putImageData(image, 0, 0);
+            backContext.imageSmoothingEnabled = false;
+            backContext.drawImage(noiseCanvas, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+            backContext.restore();
+
+            frontContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+            frontContext.drawImage(offscreenCanvas, 0, 0);
+            
+            offscreenCanvas.width = offscreenCanvas.height = 0;
+
+            redrawRequired = false;
+          }
+        }
+
+        requestAnimationFrame(render);
+      }
+
+      render();
+    });
+    window.addEventListener("resize", event => {
+      const rect = canvas.getBoundingClientRect();
+
+      canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+      canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+
+      redrawRequired = true;
     });
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", async e => {
       const background = document.createElement("div");
