@@ -119,7 +119,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         for path in paths:
                             url = f'{api_url}/file={path}'
 
-                            with urlopen(Request()) as response:
+                            with urlopen(Request(url)) as response:
                                 content_type = response.headers.get_content_type()
 
                                 if content_type.startswith('image/'):
