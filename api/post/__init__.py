@@ -62,20 +62,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         return image.resize((round(width * scale), round(height * scale)), resample=resample)
 
 
-                    with io.BytesIO(image_data[1]) as input_buffer, Image.open(input_buffer) as image:
+                    with io.BytesIO(image_data[1]) as input_buffer, Image.open(input_buffer) as image, io.BytesIO() as output_buffer:
                         image = resize_iamge(image, maximum=2048)
-                        output_buffer = io.BytesIO()
                         image.save(output_buffer, format='WEBP', lossless=True, method=6)
                         output_buffer.seek(0)
-
-                        image_data[0] = output_buffer.read()
+                        image_data = (image_data[0], output_buffer.read())
 
                     api_url = 'https://milchchan-prism.hf.space/gradio_api'
                     session = uuid4().hex[:10]
                     boundary = '----gradioBoundary'
                     data = f'--{boundary}\r\n'.encode()
                     data += f'Content-Disposition: form-data; name="files"; filename="{os.path.basename(image_data[0])}"\r\n'.encode()
-                    data += f'Content-Type: audio/wav\r\n\r\n'.encode()
+                    data += f'Content-Type: image/webp\r\n\r\n'.encode()
                     data += image_data[1]
                     data += f'\r\n--{boundary}--\r\n'.encode()
 
@@ -83,9 +81,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         path = json.loads(response.read().decode('utf-8'))[0]
                     
                     with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                        'data': [{'path': path, 'meta': {'_type': 'gradio.FileData'}}, json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0],
+                        'data': [{'path': path, 'meta': {'_type': 'gradio.FileData'}}, 5],
                         'event_data': None,
-                        'fn_index': 1,
+                        'fn_index': 0,
                         'session_hash': session
                     }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
                         event_id = json.loads(response.read().decode('utf-8'))['event_id']
