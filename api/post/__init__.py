@@ -117,9 +117,20 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         items = []
 
                         for path in paths:
-                            items.append({'url': f'{api_url}/file={path}', type: 'image/webp'})
+                            url = f'{api_url}/file={path}'
+
+                            with urlopen(Request()) as response:
+                                content_type = response.headers.get_content_type()
+
+                                if content_type.startswith('image/'):
+                                    with io.BytesIO(response.read()) as buffer, Image.open(buffer) as image:
+                                        if image.convert('RGBA').getchannel('A').getextrema()[1] > 0:
+                                            items.append({'url': url, 'type': content_type})
+                                        else:
+                                            items.append(None)
                         
                         return func.HttpResponse(json.dumps(items), status_code=200, mimetype='application/json', charset='utf-8')
+                   
                     else:
                         return func.HttpResponse(status_code=503, mimetype='', charset='')
                     
