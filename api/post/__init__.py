@@ -16,7 +16,9 @@ from azure.cosmos.cosmos_client import CosmosClient
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'POST':
-            if req.headers.get('Content-Type').startswith('multipart/form-data;') and 'boundary=' in content_type:
+            content_type = req.headers.get('Content-Type')
+
+            if content_type.startswith('multipart/form-data;') and 'boundary=' in content_type:
                 boundary = f'--{content_type.split("boundary=")[-1]}'.encode()
                 image_data = None
 
