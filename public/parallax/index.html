@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />    
+<title>PARALLAX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
+<script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
+<style>
+  html {
+    touch-action: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    background: #ffffff;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: transparent;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  }
+
+  #app {
+    position: absolute;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .container {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100% !important;
+    height: 100%;
+    animation: fade .5s ease-out forwards;
+  }
+
+  .top {
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+    transform: translate(-50%, 0%);
+    width: fit-content;
+    height: fit-content;
+  }
+
+  .bottom {
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+    transform: translate(-50%, 0%);
+    width: fit-content;
+    height: fit-content;
+  }
+
+  .button {
+    margin: 0px;
+    border: 0px none transparent !important;
+    padding: 16px 32px 16px 32px;
+    background-color: #ffffff;
+    background-clip: padding-box !important;
+    height: initial;
+    backface-visibility: hidden;
+    opacity: 1;
+    cursor: pointer;
+    transition: .5s;
+  }
+
+  .button>.icon {
+    display: flex;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    opacity: 1;
+    transition: .5s;
+    backface-visibility: hidden;
+    font-size: 1.0rem;
+    width: 16px;
+    height: 16px;
+  }
+
+  .button:hover>.icon {
+    opacity: 0.5;
+    transition: .5s;
+  }
+
+  .button.is-circle {
+    display: flex;
+    margin: 0px;
+    border-radius: 290486px !important;
+    padding: 16px !important;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+  }
+
+  .button.is-hidden {
+    pointer-events: none;
+    opacity: 0;
+    transition: .5s;
+  }
+
+  label.button>input {
+    pointer-events: none;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    outline: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  label.button>input+.icon {
+    display: flex;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    opacity: 1;
+    transition: .5s;
+    backface-visibility: hidden;
+    font-size: 1.0rem;
+    width: 16px;
+    height: 16px;
+  }
+
+  label.button>input:disabled+.icon {
+    opacity: 0.5 !important;
+    transition: .5s;
+  }
+
+  .progress {
+    pointer-events: none;
+    z-index: 1;
+    position: absolute;
+    margin: 0 !important;
+    border: 0px solid transparent;
+    border-radius: 0px;
+    padding: 0;
+    width: 100%;
+    height: fit-content;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    backface-visibility: hidden;
+    background: transparent;
+    touch-action: none;
+  }
+
+  .progress>.bar {
+    pointer-events: none;
+    z-index: 1;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    border: 0px solid transparent;
+    border-radius: 0px;
+    width: 100%;
+    height: 4px;
+    transform: translate3d(0, 0%, 0);
+    overflow: hidden;
+    background: url('/images/Stripes.png') 0 0 repeat;
+    background-color: #ffee00;
+    background-size: 24px 24px;
+    animation: progress 1s linear forwards infinite;
+    animation-play-state: paused;
+    transition: .5s;
+    backface-visibility: hidden;
+    perspective: 1000;
+  }
+
+  .progress>.bar.animating {
+    animation-play-state: running;
+  }
+
+  .blind {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    transform: translate3d(0, 0%, 0);
+    overflow: hidden;
+    background: url('/images/Background.png') 0 0 repeat;
+    background-color: #f4f4f2;
+    background-size: 100px 100px;
+    animation: loop 10s linear forwards infinite;
+    transition: .5s;
+    backface-visibility: hidden;
+    perspective: 1000;
+  }
+
+  @keyframes fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+  }
+
+  @keyframes progress {
+    0% {
+        background-position: 0px 0px;
+    }
+
+    100% {
+        background-position: -24px 0px;
+    }
+  }
+
+  @keyframes loop {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: -100px 0px;
+    }
+  }
+
+  @media screen and (-webkit-min-device-pixel-ratio: 2),
+  (min-resolution: 2dppx) {
+    .progress>.bar {
+        background: url('/images/Stripes@2x.png') 0 0 repeat;
+        background-color: #ffee00;
+        background-size: 24px 24px;
+    }
+
+    .blind {
+        background: url('/images/Background@2x.png') 0 0 repeat;
+        background-color: #f4f4f2;
+        background-size: 100px 100px;
+    }
+  }
+
+  @media screen and (-webkit-min-device-pixel-ratio: 3),
+  (min-resolution: 3dppx) {
+    .progress>.bar {
+        background: url('/images/Stripes@3x.png') 0 0 repeat;
+        background-color: #ffee00;
+        background-size: 24px 24px;
+    }
+
+    .blind {
+        background: url('/images/Background@3x.png') 0 0 repeat;
+        background-color: #f4f4f2;
+        background-size: 100px 100px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <div class="top">
+        <button class="button is-circle is-hidden" onclick="request(event)">
+          <span class="icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </span>
+        </button>
+      </div>
+      <div class="bottom">
+        <label class="button is-circle">
+          <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="post(event);">
+          <span class="icon is-rotate" onselectstart="return false;" onmousedown="return false;">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+<script>
+const MAX_SHIFT_FACTOR = 0.05;
+const canvas = document.createElement("canvas");
+let offscreenCanvas = null;
+let pointer = {x: 0.0, y: 0.0, previous: {x: 0, y: 0}, identifier: null};
+const div = document.body.querySelector("#app>.container");
+const rect = div.getBoundingClientRect();
+const layers = [];
+let previousTime = performance.now();
+let redrawRequired = false;
+let isGranted = false;
+
+canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+canvas.style.width = `${Math.floor(rect.width)}px`;
+canvas.style.height = `${Math.floor(rect.height)}px`;
+canvas.style.backgroundColor = "transparent";
+
+div.prepend(canvas);
+
+function shake(element) {
+  element.animate([
+    { transform: "translate3d(5px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
+    { transform: "translate3d(-5px, 0, 0)" },
+    { transform: "translate3d(4px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
+    { transform: "translate3d(-4px, 0, 0)" },
+    { transform: "translate3d(3px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
+    { transform: "translate3d(-3px, 0, 0)" },
+    { transform: "translate3d(2px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
+    { transform: "translate3d(-2px, 0, 0)" },
+    { transform: "translate3d(1px, 0, 0)" },
+    { transform: "translate3d(0, 0, 0)" },
+    { transform: "translate3d(-1px, 0, 0)" }],
+    { fill: "forwards", duration: 500, iterations: 1 }).onfinish = () => {
+      element.style.transform = "translate3d(0, 0, 0)";
+    };
+}
+
+window.request = async (event) => {
+  const target = (event.currentTarget || event.target);
+  const permissionState = await DeviceOrientationEvent.requestPermission();
+      
+  if (permissionState === "granted") {
+    if (!target.classList.contains("is-hidden")) {
+      target.classList.add("is-hidden");
+    }
+  } else {
+    shake(target);
+  }
+};
+window.post = async (files) => {
+  const target = (event.currentTarget || event.target);
+  const blind = document.createElement("div");
+  const progress = document.createElement("div");
+  const bar = document.createElement("div");
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
+    element.disabled = true;
+  }
+          
+  blind.className = "blind";
+  blind.style.transform = "translate3d(0, 100%, 0)";
+
+  try {
+    const response = await fetch(window.devicePixelRatio > 1 ? `/images/Background@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/Background.png");
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const dataURL = await new Promise(async (resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = () => {
+          reject(reader.error);
+        };
+        reader.readAsDataURL(blob);
+      });
+      blind.style.backgroundImage = `url('${dataURL}')`;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  progress.className = "progress";
+  bar.classList.add("bar");
+  bar.classList.add("animating");
+  bar.style.width = "0%";
+
+  try {
+    const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
+
+    if (response.ok) {
+      const dataURL = await new Promise(async (resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = () => {
+          reject(reader.error);
+        };
+        reader.readAsDataURL(await response.blob());
+      });
+
+      if (dataURL !== null) {
+        bar.style.backgroundImage = `url('${dataURL}')`;
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  progress.appendChild(bar);
+
+  document.body.querySelector("#app>.container>canvas").after(blind);
+  //document.body.querySelector("#app").appendChild(progress);
+
+  await new Promise(async (resolve) => {
+    blind.animate([
+      {
+        transform: "translate3d(0, 0%, 0)"
+      }
+    ], {
+      delay: 0,
+      fill: "forwards",
+      duration: 500,
+      iterations: 1,
+      easing: "ease-out"
+    }).onfinish = () => {
+      blind.style.transform = "translate3d(0, 0%, 0)";
+
+      resolve();
+    };
+  });
+
+  for (const file of target.files) {
+    try {
+      const formData = new FormData();
+
+      formData.append("file", new Blob([file], { type: file.type }), file.name);
+
+      const response = await fetch("https://milchchan.com/api/parallax/post", {
+          mode: "cors",
+          method: "POST",
+          body: formData
+        }
+      );
+
+      if (response.ok) {
+        const json = await response.json();
+        let width = 0;
+        let height = 0;
+        let index = 1;
+        
+        layers.splice(0);
+
+        for (const item of json) {
+          if (item === null) {
+            layers.push(null);
+          } else {
+            const image = await new Promise((resolve, reject)=>{
+              const image = new Image();
+
+              image.onload=()=>resolve(image);
+              image.onerror = reject;
+              image.src = item.url;
+            });
+
+            layers.push({image: image, weight: index / json.length});
+            width = Math.max(width, image.width);
+            height = Math.max(height, image.height);
+          }
+
+          index++;
+        }
+
+        offscreenCanvas = new OffscreenCanvas(width, height);
+        redrawRequired = true
+      } else {
+        throw new Error(response.statusText);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    break;
+  }
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
+    element.disabled = false;
+  }
+
+  blind.animate([
+    {
+      transform: "translate3d(0, -100%, 0)"
+    }
+  ], {
+    delay: 0,
+    fill: "forwards",
+    duration: 500,
+    iterations: 1,
+    easing: "ease-out",
+    composite: "replace"
+  }).onfinish = () => {
+    blind.remove();
+  };
+};
+window.addEventListener("load", event => {
+  if (typeof DeviceOrientationEvent?.requestPermission === "function") {
+    setTimeout(() => {
+      if (!isGranted) {
+        document.body.querySelector("#app>.container .notice>button").classList.remove("is-hidden");
+      }
+    }, 3000);
+  }
+
+  function render(timestamp) {
+    if (timestamp > previousTime) {
+      if (offscreenCanvas !== null && redrawRequired) {
+        const context = canvas.getContext("2d");
+        const offscreenContext = offscreenCanvas.getContext("2d");
+        const maxShift = Math.round(Math.min(offscreenCanvas.width, offscreenCanvas.height) * MAX_SHIFT_FACTOR);
+        const top = 0.25;
+        const left = 0.5;
+        const sourceWidth = (offscreenCanvas.width - maxShift * 2);
+        const sourceHeight = (offscreenCanvas.height - maxShift * 2);
+        const canvasAspect = canvas.width / canvas.height;
+        const imageAspect = sourceWidth / sourceHeight;
+        let sx, sy, sw, sh;
+        const base = 10;
+
+        if (canvasAspect > imageAspect) {
+          const ratio = canvas.width / sourceWidth;
+
+          sx = maxShift;
+          sh = canvas.height / ratio;
+          sy = Math.max(0, Math.min(sourceHeight - sh, (sourceHeight * ratio - canvas.height) / ratio * top)) + maxShift;
+          sw = sourceWidth;
+        } else {
+          const ratio = canvas.height / sourceHeight;
+
+          sw = canvas.width / ratio;
+          sx = Math.max(0, Math.min(sourceWidth - sw, (sourceWidth * ratio - canvas.width) / ratio * left)) + maxShift;
+          sy = maxShift;
+          sh = sourceHeight;
+        }
+
+        offscreenContext.imageSmoothingEnabled = true;
+        offscreenContext.imageSmoothingQuality = "high";
+        offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+        for (const layer of layers) {
+          if (layer !== null) {
+            const weight = Math.log1p((base - 1) * layer.weight) / Math.log(base);
+          
+            offscreenContext.drawImage(layer.image, pointer.x * maxShift * weight, pointer.y * maxShift * weight);
+          }
+        }
+
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "high";
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.save();
+        context.drawImage(offscreenCanvas, Math.round(sx), Math.round(sy), Math.floor(sw), Math.floor(sh), 0, 0, canvas.width, canvas.height);
+        context.restore();
+
+        redrawRequired = false;
+      }
+
+      previousTime = timestamp;
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+
+});
+window.addEventListener("resize", event => {
+  const rect = document.body.querySelector("#app>.container").getBoundingClientRect();
+
+  canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+  canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+  canvas.style.width = `${Math.floor(rect.width)}px`;
+  canvas.style.height = `${Math.floor(rect.height)}px`;
+
+  redrawRequired = true;
+});
+window.addEventListener("mousemove", event => {
+  const rect = document.body.querySelector("#app>.container").getBoundingClientRect();
+  const width = rect.width / 2;
+  const height = rect.height / 2;
+  
+  pointer.x = Math.max(Math.min((event.clientX - rect.left - width) / width, 1.0), -1.0);
+  pointer.y = Math.max(Math.min((event.clientY - rect.top - height) / height, 1.0), -1.0);
+  redrawRequired = true;
+});
+window.addEventListener("touchstart", async event => {
+  event.stopPropagation();
+
+  if (pointer.identifier === null) {
+    for (const touch of event.changedTouches) {
+      pointer.previous.x = touch.clientX;
+      pointer.previous.y = touch.clientY;
+      pointer.identifier = touch.identifier;
+      
+      break;
+    }
+  }
+});
+window.addEventListener("touchmove", async event => {
+  event.stopPropagation();
+
+  for (const touch of event.changedTouches) {
+    if (touch.identifier === pointer.identifier) {
+      const rect = document.body.querySelector("#app>.container").getBoundingClientRect();
+      const width = rect.width / 2;
+      const height = rect.height / 2;
+      
+      pointer.x = Math.max(Math.min(pointer.x + (touch.clientX - pointer.previous.x) / width, 1.0), -1.0);
+      pointer.y = Math.max(Math.min(pointer.y + (touch.clientY - pointer.previous.y) / height, 1.0), -1.0);
+      pointer.previous.x = touch.clientX;
+      pointer.previous.y = touch.clientY;
+      
+      redrawRequired = true;
+
+      break;
+    }
+  }
+});
+window.addEventListener("touchend", event => {
+  event.stopPropagation();
+
+  for (const touch of event.changedTouches) {
+    if (touch.identifier === pointer.identifier) {
+      pointer.identifier = null;
+    }
+  }
+});
+window.addEventListener("touchcancel", event => {
+  event.stopPropagation();
+
+  for (const touch of event.changedTouches) {
+    if (touch.identifier === pointer.identifier) {
+      pointer.identifier = null;
+    }
+  }
+});
+window.addEventListener("deviceorientation", event => {
+  if (event.beta !== null && event.gamma !== null) {
+    if (pointer.identifier === null) {
+      const pitch = Math.max(Math.min(event.beta, 30), -30) / 30;
+      const roll = Math.max(Math.min(event.gamma, 30), -30) / 30;
+    
+      pointer.x = roll;
+      pointer.y = pitch;
+
+      redrawRequired = true;
+    }
+
+    isGranted = true;
+  }
+}, true);
+</script>
+</body></html>
