@@ -94,8 +94,8 @@
     backface-visibility: hidden;
     opacity: 1;
     cursor: pointer;
-    transition: .5s;
     box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
+    transition: .5s;
   }
 
   .button>.icon {
@@ -600,8 +600,8 @@ window.addEventListener("load", event => {
         const maxShift = Math.round(Math.min(offscreenCanvas.width, offscreenCanvas.height) * MAX_SHIFT_FACTOR);
         const top = 0.25;
         const left = 0.5;
-        const sourceWidth = (offscreenCanvas.width - maxShift * 2);
-        const sourceHeight = (offscreenCanvas.height - maxShift * 2);
+        const sourceWidth = offscreenCanvas.width - maxShift * 2;
+        const sourceHeight = offscreenCanvas.height - maxShift * 2;
         const canvasAspect = canvas.width / canvas.height;
         const imageAspect = sourceWidth / sourceHeight;
         let sx, sy, sw, sh;
