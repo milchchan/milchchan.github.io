@@ -124,10 +124,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                 if content_type.startswith('image/'):
                                     with io.BytesIO(response.read()) as buffer, Image.open(buffer) as image:
-                                        if image.size[0] == 1 and image.size[1] == 1: #image.convert('RGBA').getchannel('A').getextrema()[1] > 0:
-                                            items.append(None)
-                                        else:
+                                        if image.convert('RGBA').getchannel('A').getextrema()[1] > 0:
                                             items.append({'url': url, 'type': content_type})
+                                        else:
+                                            items.append(None)
                         
                         return func.HttpResponse(json.dumps(items), status_code=200, mimetype='application/json', charset='utf-8')
                    
