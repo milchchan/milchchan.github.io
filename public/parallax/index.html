@@ -429,7 +429,7 @@ window.post = async (files) => {
   progress.appendChild(bar);
 
   document.body.querySelector("#app>.container>canvas").after(blind);
-  //document.body.querySelector("#app").appendChild(progress);
+  document.body.querySelector("#app").appendChild(progress);
 
   await new Promise(async (resolve) => {
     blind.animate([
@@ -466,7 +466,7 @@ window.post = async (files) => {
         const json = await response.json();
         let width = 0;
         let height = 0;
-        let index = 1;
+        let index = 0;
         
         layers.splice(0);
 
@@ -482,9 +482,54 @@ window.post = async (files) => {
               image.src = item.url;
             });
 
-            layers.push({image: image, weight: index / json.length});
+            layers.push({image: image, weight: (index + 1) / json.length});
             width = Math.max(width, image.width);
             height = Math.max(height, image.height);
+          }
+
+          if (layers.length < json.length) {
+            bar.animate([
+              {
+                width: `${Math.floor(layers.length / json.length * 100)}%`
+              }
+            ], {
+              delay: 0,
+              fill: "forwards",
+              duration: 500,
+              iterations: 1,
+              easing: "linear",
+              composite: "replace"
+            }).onfinish = () => {
+              bar.style.width = `${Math.floor(layers.length / json.length * 100)}%`;
+            };
+          } else {
+            bar.animate([
+              {
+                width: `${Math.floor(layers.length / json.length * 100)}%`
+              }
+            ], {
+              delay: 0,
+              fill: "forwards",
+              duration: 500,
+              iterations: 1,
+              easing: "ease-in",
+              composite: "replace"
+            }).onfinish = () => {
+              bar.style.width = `${Math.floor(layers.length / json.length * 100)}%`;
+              bar.animate([
+                {
+                  opacity: 0
+                }
+              ], {
+                delay: 0,
+                fill: "forwards",
+                duration: 500,
+                iterations: 1,
+                easing: "ease-in"
+              }).onfinish = () => {
+                progress.remove();
+              };
+            };
           }
 
           index++;
@@ -497,6 +542,22 @@ window.post = async (files) => {
       }
     } catch (error) {
       console.error(error);
+
+      shake(target.parentElement);
+
+      bar.animate([
+        {
+          opacity: 0
+        }
+      ], {
+        delay: 0,
+        fill: "forwards",
+        duration: 500,
+        iterations: 1,
+        easing: "ease-in"
+      }).onfinish = () => {
+        progress.remove();
+      };
     }
 
     break;
