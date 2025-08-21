@@ -46,7 +46,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             image_data = (filename, content)
 
                 if image_data is not None:
-                    def resize_iamge(image, maximum=2048, resample=Image.Resampling.LANCZOS):
+                    def resize_iamge(image, maximum, resample=Image.Resampling.LANCZOS):
                         width, height = image.size
 
                         if width < height:
@@ -63,7 +63,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
 
                     with io.BytesIO(image_data[1]) as input_buffer, Image.open(input_buffer) as image, io.BytesIO() as output_buffer:
-                        image = resize_iamge(image, maximum=2048)
+                        image = resize_iamge(image, maximum=1280)
                         image.save(output_buffer, format='WEBP', lossless=True, method=6)
                         output_buffer.seek(0)
                         image_data = (image_data[0], output_buffer.read())
