@@ -313,7 +313,9 @@
 const MAX_SHIFT_FACTOR = 0.05;
 const canvas = document.createElement("canvas");
 let offscreenCanvas = null;
-let pointer = {x: 0.0, y: 0.0, previous: {x: 0, y: 0}, identifier: null};
+let pointer = {x: 0.0, y: 0.0, previous: {x: 0, y: 0}, identifier: null, time: 0};
+let point = { x: 0.0, y: 0.0 };
+let idleTime = 0;
 const div = document.body.querySelector("#app>.container");
 const rect = div.getBoundingClientRect();
 const layers = [];
@@ -328,6 +330,10 @@ canvas.style.height = `${Math.floor(rect.height)}px`;
 canvas.style.backgroundColor = "transparent";
 
 div.prepend(canvas);
+
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
 
 function shake(element) {
   element.animate([
@@ -594,6 +600,33 @@ window.addEventListener("load", event => {
 
   function render(timestamp) {
     if (timestamp > previousTime) {
+      const deltaTime = (timestamp - previousTime) / 1000;
+
+      if (timestamp - pointer.time >= 3000) {
+        idleTime += deltaTime;
+        pointer.y = Math.sin(idleTime * 2 * Math.PI * 0.1) * 0.5;
+        redrawRequired = true;
+      } else {
+        idleTime = 0;
+      }
+
+      if (point.x !== pointer.x || point.y !== pointer.y) {
+        const epsilon = 0.01;
+
+        point.x = lerp(point.x, pointer.x, deltaTime * 2);
+        point.y = lerp(point.y, pointer.y, deltaTime * 2);
+
+        if (Math.abs(point.x - pointer.x) < epsilon) {
+          point.x = pointer.x;
+        }
+
+        if (Math.abs(point.y - pointer.y) < epsilon) {
+          point.y = pointer.y;
+        }
+
+        redrawRequired = true;
+      }
+
       if (offscreenCanvas !== null && redrawRequired) {
         const context = canvas.getContext("2d");
         const offscreenContext = offscreenCanvas.getContext("2d");
@@ -631,7 +664,7 @@ window.addEventListener("load", event => {
           if (layer !== null) {
             const weight = Math.log1p((base - 1) * layer.weight) / Math.log(base);
           
-            offscreenContext.drawImage(layer.image, pointer.x * maxShift * weight, pointer.y * maxShift * weight);
+            offscreenContext.drawImage(layer.image, point.x * maxShift * weight, point.y * maxShift * weight);
           }
         }
 
@@ -671,6 +704,8 @@ window.addEventListener("mousemove", event => {
   
   pointer.x = Math.max(Math.min((event.clientX - rect.left - width) / width, 1.0), -1.0);
   pointer.y = Math.max(Math.min((event.clientY - rect.top - height) / height, 1.0), -1.0);
+  pointer.time = performance.now();
+
   redrawRequired = true;
 });
 window.addEventListener("touchstart", async event => {
@@ -681,6 +716,7 @@ window.addEventListener("touchstart", async event => {
       pointer.previous.x = touch.clientX;
       pointer.previous.y = touch.clientY;
       pointer.identifier = touch.identifier;
+      pointer.time = performance.now();
       
       break;
     }
@@ -699,6 +735,7 @@ window.addEventListener("touchmove", async event => {
       pointer.y = Math.max(Math.min(pointer.y + (touch.clientY - pointer.previous.y) / height, 1.0), -1.0);
       pointer.previous.x = touch.clientX;
       pointer.previous.y = touch.clientY;
+      pointer.time = performance.now();
       
       redrawRequired = true;
 
@@ -732,6 +769,7 @@ window.addEventListener("deviceorientation", event => {
     
       pointer.x = roll;
       pointer.y = pitch;
+      pointer.time = performance.now();
 
       redrawRequired = true;
     }
