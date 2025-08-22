@@ -1,9 +1,12 @@
+import random
 import io
 import time
 import re
 import os
 import json
 import logging
+import boto3
+import botocore
 from uuid import uuid4
 from datetime import datetime, timezone
 from urllib.request import urlopen, Request
@@ -43,7 +46,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 content_type = header.decode('utf-8').split(':')[1].strip()
 
                         if name == 'file' and filename is not None and content_type is not None and content_type.startswith('image/'):
-                            image_data = (filename, content)
+                            image_data = (filename, content, content_type)
 
                 if image_data is not None:
                     def resize_iamge(image, maximum, resample=Image.Resampling.LANCZOS):
@@ -60,21 +63,39 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             return image
 
                         return image.resize((round(width * scale), round(height * scale)), resample=resample)
+                    
+                    identifier = str(uuid4())
+                    
+                    with io.BytesIO(image_data[2]) as input_buffer, Image.open(input_buffer) as image, io.BytesIO() as output_buffer:
+                        input_buffer.seek(0)
+                        file_is_exists = True
+                        s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
 
+                        try:
+                            s3.head_object(Bucket='uploads', Key=identifier)
+                        except botocore.exceptions.ClientError as e:
+                            if e.response['Error']['Code'] == '404':
+                                file_is_exists = False
+                            else:
+                                raise
 
-                    with io.BytesIO(image_data[1]) as input_buffer, Image.open(input_buffer) as image, io.BytesIO() as output_buffer:
+                        if file_is_exists:
+                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+                        
+                        s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
+                            
                         image = resize_iamge(image, maximum=1280)
                         image.save(output_buffer, format='WEBP', lossless=True, method=6)
                         output_buffer.seek(0)
-                        image_data = (image_data[0], output_buffer.read())
+                        image_data = (image_data[0], image_data[1], output_buffer.read())
 
                     api_url = 'https://milchchan-prism.hf.space/gradio_api'
                     session = uuid4().hex[:10]
                     boundary = '----gradioBoundary'
                     data = f'--{boundary}\r\n'.encode()
                     data += f'Content-Disposition: form-data; name="files"; filename="{os.path.basename(image_data[0])}"\r\n'.encode()
-                    data += f'Content-Type: image/webp\r\n\r\n'.encode()
-                    data += image_data[1]
+                    data += 'Content-Type: image/webp\r\n\r\n'.encode()
+                    data += image_data[2]
                     data += f'\r\n--{boundary}--\r\n'.encode()
 
                     with urlopen(Request(api_url + '/upload', data=data, headers={'Content-Type': f'multipart/form-data; boundary={boundary}'}, method='POST')) as response:
@@ -114,7 +135,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     break
 
                     if len(paths) > 0:
-                        items = []
+                        layers = []
 
                         for path in paths:
                             url = f'{api_url}/file={path}'
@@ -125,11 +146,37 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 if content_type.startswith('image/'):
                                     with io.BytesIO(response.read()) as buffer, Image.open(buffer) as image:
                                         if image.convert('RGBA').getchannel('A').getextrema()[1] > 0:
-                                            items.append({'url': url, 'type': content_type})
+                                            layer_identifier = str(uuid4())
+                                            buffer.seek(0)
+                                            file_is_exists = True
+                                            s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+
+                                            try:
+                                                s3.head_object(Bucket='uploads', Key=layer_identifier)
+                                            except botocore.exceptions.ClientError as e:
+                                                if e.response['Error']['Code'] == '404':
+                                                    file_is_exists = False
+                                                else:
+                                                    raise
+
+                                            if file_is_exists:
+                                                return func.HttpResponse(status_code=409, mimetype='', charset='')
+                                            
+                                            s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
+
+                                            layers.append({'id': layer_identifier, 'type': content_type})
                                         else:
-                                            items.append(None)
-                        
-                        return func.HttpResponse(json.dumps(items), status_code=200, mimetype='application/json', charset='utf-8')
+                                            layers.append(None)
+
+                        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                        database = client.get_database_client('Milch')
+                        container = database.get_container_client('Posts')
+                        container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'layers': layers, 'random': random.random(), 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+
+                        for layer in layers:
+                            layer['url'] = f"https://static.milchchan.com/{layer['id']}"
+
+                        return func.HttpResponse(json.dumps(layers), status_code=200, mimetype='application/json', charset='utf-8')
                    
                     else:
                         return func.HttpResponse(status_code=503, mimetype='', charset='')
