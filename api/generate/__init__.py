@@ -67,11 +67,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         for content in output['content']:
                                             if content['type'] == 'output_text':
                                                 match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', content['text'], flags=(re.MULTILINE|re.DOTALL))
+                                                identifier = str(uuid4())
                                                 client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                                 database = client.get_database_client('Milch')
                                                 container = database.get_container_client('Logs')
                                                 data['messages'].append({'role': 'assistant', 'content': content['text']})
-                                                container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                                container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                                 return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else content['text'])), status_code=200, mimetype='application/json', charset='utf-8')
 
@@ -99,11 +100,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 for part in candidate['content']['parts']:
                                     if 'text' in part:
                                         match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', part['text'], flags=(re.MULTILINE|re.DOTALL))
+                                        identifier = str(uuid4())
                                         client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                         database = client.get_database_client('Milch')
                                         container = database.get_container_client('Logs')
                                         data['messages'].append({'role': 'assistant', 'content': part['text']})
-                                        container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                        container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                         return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=200, mimetype='application/json', charset='utf-8')
                 
@@ -164,11 +166,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             if len(matches) > 0:
                                 result = matches[len(matches) - 1]
                                 match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
+                                identifier = str(uuid4())
                                 client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                 database = client.get_database_client('Milch')
                                 container = database.get_container_client('Logs')
                                 data['messages'].append({'role': 'assistant', 'content': result})
-                                container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                 return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=200, mimetype='application/json', charset='utf-8')
                             
@@ -183,11 +186,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     with urlopen(Request(llm_source, headers={'Content-Type': content_type}, data=data, method='POST'), timeout=60.0) as response:
                         for choice in json.loads(response.read().decode('utf-8'))['choices']:
                             match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
+                            identifier = str(uuid4())
                             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                             database = client.get_database_client('Milch')
                             container = database.get_container_client('Logs')
                             data['messages'].append({'role': 'assistant', 'content': choice['content']})
-                            container.upsert_item({'id': str(uuid4()), 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                             return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=200, mimetype='application/json', charset='utf-8')
 
