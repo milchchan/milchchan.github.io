@@ -410,7 +410,7 @@ window.post = async (files) => {
   bar.style.width = "0%";
 
   try {
-    const response = await fetch(window.devicePixelRatio > 1 ? `images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "images/Stripes.png");
+    const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/Stripes.png");
 
     if (response.ok) {
       const dataURL = await new Promise(async (resolve, reject) => {
