@@ -477,7 +477,7 @@ window.post = async (files) => {
         
         layers.splice(0);
 
-        for (const item of json) {
+        for (const item of json.layers) {
           if (item === null) {
             layers.push(null);
           } else {
