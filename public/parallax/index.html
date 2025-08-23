@@ -825,8 +825,8 @@ window.addEventListener("load", async event => {
       if (point.x !== pointer.x || point.y !== pointer.y) {
         const epsilon = 0.01;
 
-        point.x = lerp(point.x, pointer.x, deltaTime * 2);
-        point.y = lerp(point.y, pointer.y, deltaTime * 2);
+        point.x = lerp(point.x, pointer.x, deltaTime * 5);
+        point.y = lerp(point.y, pointer.y, deltaTime * 5);
 
         if (Math.abs(point.x - pointer.x) < epsilon) {
           point.x = pointer.x;
