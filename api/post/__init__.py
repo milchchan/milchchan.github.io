@@ -131,7 +131,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                         for item in msg['output']['data'][0]:
                                             if 'image' in item:
-                                                urls.append(f'{api_url}/file={item['image']['path']}')
+                                                urls.append(f"{api_url}/file={item['image']['path']}")
 
                                         indexes = msg['output']['data'][1]
                                         nsfw = msg['output']['data'][2]
