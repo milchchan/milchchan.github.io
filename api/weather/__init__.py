@@ -40,7 +40,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
             database = client.get_database_client('Milch')
             container = database.get_container_client('Logs')
-            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/weather', 'data': data, 'geohash': encode_geohash(latitude, longitude), 'location': {'type': 'Point', 'coordinates': [longitude, latitude]}, 'timestamp': datetime.fromtimestamp(now, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/api/weather', 'data': data, 'geohash': encode_geohash(latitude, longitude), 'location': {'type': 'Point', 'coordinates': [longitude, latitude]}, 'timestamp': datetime.fromtimestamp(now, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
             return func.HttpResponse(data, status_code=200, mimetype='application/json', charset='utf-8')
 
