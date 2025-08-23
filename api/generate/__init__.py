@@ -72,7 +72,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                 database = client.get_database_client('Milch')
                                                 container = database.get_container_client('Logs')
                                                 data['messages'].append({'role': 'assistant', 'content': content['text']})
-                                                container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                                container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/api/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                                 return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else content['text'])), status_code=200, mimetype='application/json', charset='utf-8')
 
@@ -105,7 +105,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         database = client.get_database_client('Milch')
                                         container = database.get_container_client('Logs')
                                         data['messages'].append({'role': 'assistant', 'content': part['text']})
-                                        container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                        container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/api/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                         return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else part['text'])), status_code=200, mimetype='application/json', charset='utf-8')
                 
@@ -171,7 +171,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 database = client.get_database_client('Milch')
                                 container = database.get_container_client('Logs')
                                 data['messages'].append({'role': 'assistant', 'content': result})
-                                container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/api/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                 return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else result)), status_code=200, mimetype='application/json', charset='utf-8')
                             
@@ -191,7 +191,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             database = client.get_database_client('Milch')
                             container = database.get_container_client('Logs')
                             data['messages'].append({'role': 'assistant', 'content': choice['content']})
-                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/api/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                             return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else choice['content'])), status_code=200, mimetype='application/json', charset='utf-8')
 
