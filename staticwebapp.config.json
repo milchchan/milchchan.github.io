@@ -16,6 +16,10 @@
         {
             "route": "/preview",
             "rewrite": "/preview/index.html"
+        },
+        {
+            "route": "/parallax",
+            "rewrite": "/parallax/index.html"
         }
     ],
     "navigationFallback": {
