@@ -15,13 +15,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         limit = int(req.params['limit']) if 'limit' in req.params else None
         from_date = int(req.params['from']) if 'from' in req.params else None
         to_date = int(req.params['to']) if 'to' in req.params else None
+        nsfw = json.loads(req.params['nsfw'].lower()) if 'nsfw' in req.params else False
         client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
         database = client.get_database_client('Milch')
         container = database.get_container_client('Posts')
 
         if from_date is None:
             items = list(container.query_items(
-                query=f'SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                query=f'SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.nsfw = false AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                 parameters=[
                     {'name': '@offset', 'value': 0 if offset is None else offset},
                     {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -32,7 +33,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
             items = list(container.query_items(
-                query=f'SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                query=f'SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.nsfw = false AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                 parameters=[
                     {'name': '@offset', 'value': 0 if offset is None else offset},
                     {'name': '@limit', 'value': 100 if limit is None else limit},
