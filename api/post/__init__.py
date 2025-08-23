@@ -185,11 +185,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
            
         else:
+            nsfw = json.loads(req.params['nsfw'].lower()) if 'nsfw' in req.params else False
             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = random.choice(list(container.query_items(
-                query='SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@random', 'value': random.random()}
                 ],
