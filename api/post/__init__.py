@@ -142,8 +142,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                             for i in range(n_layers):
                                                 if i in indexes:
-                                                    with urlopen(Request(urls[index])) as response:
-                                                        content_type = response.headers.get_content_type()
+                                                    with urlopen(Request(urls[index])) as r:
+                                                        content_type = r.headers.get_content_type()
 
                                                         if content_type.startswith('image/'):
                                                             layer_identifier = str(uuid4())
@@ -160,7 +160,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                             if file_is_exists:
                                                                 return func.HttpResponse(status_code=409, mimetype='', charset='')
                                                             
-                                                            #with io.BytesIO(response.read()) as buffer:
+                                                            with io.BytesIO(r.read()) as buffer:
+                                                                pass
                                                             #    s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
 
                                                             layers.append({'id': layer_identifier, 'url':urls[index], 'type': content_type})
