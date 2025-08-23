@@ -27,8 +27,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if key.startswith('_'):
                     del item[key]
 
-            for layer in item['layer']:
-                layer['url'] = f"https://static.milchchan.com/{layer['id']}"
+            for layer in item['layers']:
+                if layer is not None:
+                    layer['url'] = f"https://static.milchchan.com/{layer['id']}"
 
             item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 
