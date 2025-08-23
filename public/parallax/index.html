@@ -84,6 +84,17 @@
     height: fit-content;
   }
 
+  .bottom>.level {
+    display: flex;
+    margin: -8px;
+    padding: 0;
+  }
+
+  .bottom>.level>.level-item {
+    margin: 0;
+    padding: 8px;
+  }
+
   .button {
     margin: 0px;
     border: 0px none transparent !important;
@@ -114,6 +125,11 @@
 
   .button:hover>.icon {
     opacity: 0.5;
+    transition: .5s;
+  }
+
+  .button:disabled>.icon {
+    opacity: 0.5 !important;
     transition: .5s;
   }
 
@@ -300,12 +316,30 @@
         </button>
       </div>
       <div class="bottom">
-        <label class="button is-circle">
-          <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="post(event);">
-          <span class="icon is-rotate" onselectstart="return false;" onmousedown="return false;">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-          </span>
-        </label>
+        <div class="level">
+          <div class="level-item">
+            <button class="button is-circle" onclick="shuffle(event)">
+              <span class="icon">
+                <i class="fa-solid fa-shuffle"></i>
+              </span>
+            </button>
+          </div>
+          <div class="level-item">
+            <label class="button is-circle">
+              <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="post(event);">
+              <span class="icon is-rotate" onselectstart="return false;" onmousedown="return false;">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </span>
+            </label>
+          </div>
+          <div class="level-item">
+            <button class="button is-circle" disabled onclick="share(event)">
+              <span class="icon">
+                <i class="fa-solid fa-link"></i>
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -321,6 +355,7 @@ const div = document.body.querySelector("#app>.container");
 const rect = div.getBoundingClientRect();
 const layers = [];
 const posts = [];
+let selected = null;
 let offset = 0;
 let previousTime = performance.now();
 let redrawRequired = false;
@@ -366,6 +401,10 @@ async function download(url) {
   const bar = document.createElement("div");
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
+    element.disabled = true;
+  }
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
     element.disabled = true;
   }
           
@@ -528,6 +567,11 @@ async function download(url) {
 
       offscreenCanvas = new OffscreenCanvas(width, height);
       redrawRequired = true
+      selected = json.id;
+
+      for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
+        element.disabled = false;
+      }
     } else {
       throw new Error(response.statusText);
     }
@@ -547,6 +591,10 @@ async function download(url) {
     }).onfinish = () => {
       progress.remove();
     };
+
+    for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:first-child button.button")) {
+      element.disabled = false;
+    }
   }
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
@@ -646,6 +694,9 @@ window.request = async (event) => {
     shake(target);
   }
 };
+window.shuffle = (event) => {
+  download("https://milchchan.com/api/parallax/post");
+};
 window.post = async (files) => {
   const target = (event.currentTarget || event.target);
   const blind = document.createElement("div");
@@ -653,6 +704,10 @@ window.post = async (files) => {
   const bar = document.createElement("div");
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
+    element.disabled = true;
+  }
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
     element.disabled = true;
   }
           
@@ -821,6 +876,12 @@ window.post = async (files) => {
 
         offscreenCanvas = new OffscreenCanvas(width, height);
         redrawRequired = true
+
+        selected = json.id;
+
+        for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
+          element.disabled = false;
+        }
       } else {
         throw new Error(response.statusText);
       }
@@ -842,6 +903,10 @@ window.post = async (files) => {
       }).onfinish = () => {
         progress.remove();
       };
+
+      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:first-child button.button")) {
+        element.disabled = false;
+      }
     }
 
     break;
@@ -865,6 +930,13 @@ window.post = async (files) => {
   }).onfinish = () => {
     blind.remove();
   };
+};
+window.share = async (event) => {
+  try {
+    await navigator.clipboard.writeText(`https://milchchan.com/parallax#${selected.slice(0, 7)}`);
+  } catch (error) {
+    console.error(error);
+  }
 };
 window.addEventListener("load", event => {
   const hash = decodeURIComponent(window.location.hash.substring(1));
