@@ -84,8 +84,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         
                         s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
                             
-                        image = resize_image(image, maximum=1280)
-                        image.save(output_buffer, format='WEBP', lossless=True, method=6)
+                        resized_image = resize_image(image, maximum=1280)
+                        resized_image.save(output_buffer, format='WEBP', lossless=True, method=6)
                         output_buffer.seek(0)
                         image_data = (image_data[0], image_data[1], output_buffer.read())
 
