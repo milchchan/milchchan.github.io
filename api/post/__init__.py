@@ -49,7 +49,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             image_data = (filename, content_type, content)
 
                 if image_data is not None:
-                    def resize_iamge(image, maximum, resample=Image.Resampling.LANCZOS):
+                    def resize_image(image, maximum, resample=Image.Resampling.LANCZOS):
                         width, height = image.size
 
                         if width < height:
@@ -84,7 +84,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         
                         s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
                             
-                        image = resize_iamge(image, maximum=1280)
+                        image = resize_image(image, maximum=1280)
                         image.save(output_buffer, format='WEBP', lossless=True, method=6)
                         output_buffer.seek(0)
                         image_data = (image_data[0], image_data[1], output_buffer.read())
@@ -160,7 +160,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                             if file_is_exists:
                                                                 return func.HttpResponse(status_code=409, mimetype='', charset='')
                                                             
-                                                            s3.upload_fileobj(response, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
+                                                            with io.BytesIO(response.read()) as buffer:
+                                                                s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
 
                                                             layers.append({'id': layer_identifier, 'type': content_type})
                                                                 
@@ -175,7 +176,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                             container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'layers': layers, 'nsfw': nsfw, 'random': random.random(), 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                             for layer in layers:
-                                                layer['url'] = f"https://static.milchchan.com/{layer['id']}"
+                                                if layer is not None:
+                                                    layer['url'] = f"https://static.milchchan.com/{layer['id']}"
 
                                             return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'layers': layers, 'nsfw': nsfw, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
                                     
