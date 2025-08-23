@@ -592,7 +592,7 @@ async function download(url) {
       progress.remove();
     };
 
-    for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:first-child button.button")) {
+    for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(1) button.button")) {
       element.disabled = false;
     }
   }
@@ -904,7 +904,7 @@ window.post = async (files) => {
         progress.remove();
       };
 
-      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:first-child button.button")) {
+      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(1) button.button")) {
         element.disabled = false;
       }
     }
