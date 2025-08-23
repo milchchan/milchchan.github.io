@@ -260,7 +260,7 @@
   </div>
   <script type="text/javascript">
     const size = new URL(window.location.href).searchParams.get("size") ?? 1;
-    const colored = JSON.parse(new URL(window.location.href).searchParams.get("colored")) ?? true;
+    const colored = JSON.parse(new URL(window.location.href).searchParams.get("colored").toLowerCase()) ?? true;
     let redrawRequired = true;
     const canvas = document.body.querySelector("#message>canvas");
 
