@@ -477,6 +477,8 @@ window.post = async (files) => {
         
         layers.splice(0);
 
+        console.log(json);
+
         for (const item of json.layers) {
           if (item === null) {
             layers.push(null);
@@ -489,15 +491,15 @@ window.post = async (files) => {
               image.src = item.url;
             });
 
-            layers.push({image: image, weight: (index + 1) / json.length});
+            layers.push({image: image, weight: (index + 1) / json.layers.length});
             width = Math.max(width, image.width);
             height = Math.max(height, image.height);
           }
 
-          if (layers.length < json.length) {
+          if (layers.length < json.layers.length) {
             bar.animate([
               {
-                width: `${Math.floor(layers.length / json.length * 100)}%`
+                width: `${Math.floor(layers.length / json.layers.length * 100)}%`
               }
             ], {
               delay: 0,
@@ -507,12 +509,12 @@ window.post = async (files) => {
               easing: "linear",
               composite: "replace"
             }).onfinish = () => {
-              bar.style.width = `${Math.floor(layers.length / json.length * 100)}%`;
+              bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
             };
           } else {
             bar.animate([
               {
-                width: `${Math.floor(layers.length / json.length * 100)}%`
+                width: `${Math.floor(layers.length / json.layers.length * 100)}%`
               }
             ], {
               delay: 0,
@@ -522,7 +524,7 @@ window.post = async (files) => {
               easing: "ease-in",
               composite: "replace"
             }).onfinish = () => {
-              bar.style.width = `${Math.floor(layers.length / json.length * 100)}%`;
+              bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
               bar.animate([
                 {
                   opacity: 0
