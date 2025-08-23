@@ -68,6 +68,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
 
                     with io.BytesIO(image_data[2]) as input_buffer, Image.open(input_buffer) as image, io.BytesIO() as output_buffer:
+                        resized_image = resize_image(image, maximum=1280)
+                        resized_image.save(output_buffer, format='WEBP', lossless=True, method=6)
+                        output_buffer.seek(0)
+                        image_data = (image_data[0], image_data[1], output_buffer.read())
                         input_buffer.seek(0)
                         file_is_exists = True
                         
@@ -83,11 +87,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             return func.HttpResponse(status_code=409, mimetype='', charset='')
                         
                         s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
-                            
-                        resized_image = resize_image(image, maximum=1280)
-                        resized_image.save(output_buffer, format='WEBP', lossless=True, method=6)
-                        output_buffer.seek(0)
-                        image_data = (image_data[0], image_data[1], output_buffer.read())
 
                     n_layers = 5
                     api_url = 'https://milchchan-prism.hf.space/gradio_api'
