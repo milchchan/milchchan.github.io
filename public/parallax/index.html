@@ -640,7 +640,7 @@ window.addEventListener("load", event => {
         const canvasAspect = canvas.width / canvas.height;
         const imageAspect = sourceWidth / sourceHeight;
         let sx, sy, sw, sh;
-        const base = 10;
+        const base = 5;
 
         if (canvasAspect > imageAspect) {
           const ratio = canvas.width / sourceWidth;
@@ -664,7 +664,7 @@ window.addEventListener("load", event => {
 
         for (const layer of layers) {
           if (layer !== null) {
-            const weight = Math.log1p((base - 1) * layer.weight) / Math.log(base);
+            const weight = Math.log1p((base - 1) * (1.0 - layer.weight)) / Math.log(base);
           
             offscreenContext.drawImage(layer.image, point.x * maxShift * weight, point.y * maxShift * weight);
           }
