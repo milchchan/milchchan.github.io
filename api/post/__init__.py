@@ -46,7 +46,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 content_type = header.decode('utf-8').split(':')[1].strip()
 
                         if name == 'file' and filename is not None and content_type is not None and content_type.startswith('image/'):
-                            image_data = (filename, content, content_type)
+                            image_data = (filename, content_type, content)
 
                 if image_data is not None:
                     def resize_iamge(image, maximum, resample=Image.Resampling.LANCZOS):
@@ -65,12 +65,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         return image.resize((round(width * scale), round(height * scale)), resample=resample)
                     
                     identifier = str(uuid4())
-                    
+                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+
                     with io.BytesIO(image_data[2]) as input_buffer, Image.open(input_buffer) as image, io.BytesIO() as output_buffer:
                         input_buffer.seek(0)
                         file_is_exists = True
-                        s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
-
+                        
                         try:
                             s3.head_object(Bucket='uploads', Key=identifier)
                         except botocore.exceptions.ClientError as e:
@@ -82,7 +82,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if file_is_exists:
                             return func.HttpResponse(status_code=409, mimetype='', charset='')
                         
-                        s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
+                        s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[2]})
                             
                         image = resize_iamge(image, maximum=1280)
                         image.save(output_buffer, format='WEBP', lossless=True, method=6)
@@ -149,8 +149,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                             layer_identifier = str(uuid4())
                                             buffer.seek(0)
                                             file_is_exists = True
-                                            s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
-
+                                            
                                             try:
                                                 s3.head_object(Bucket='uploads', Key=layer_identifier)
                                             except botocore.exceptions.ClientError as e:
