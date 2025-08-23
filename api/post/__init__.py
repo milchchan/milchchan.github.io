@@ -82,7 +82,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if file_is_exists:
                             return func.HttpResponse(status_code=409, mimetype='', charset='')
                         
-                        s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[2]})
+                        s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
                             
                         image = resize_iamge(image, maximum=1280)
                         image.save(output_buffer, format='WEBP', lossless=True, method=6)
