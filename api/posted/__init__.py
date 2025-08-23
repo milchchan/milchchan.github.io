@@ -17,7 +17,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = list(container.query_items(
-                query=f"SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.id LIKE CONCAT(@identifier, '%') ORDER BY l.timestamp ASC LIMIT 1",
+                query=f"SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.id LIKE CONCAT(@identifier, '%') ORDER BY p.timestamp ASC LIMIT 1",
                 parameters=[
                     {'name': '@identifier', 'value': identifier}
                 ],

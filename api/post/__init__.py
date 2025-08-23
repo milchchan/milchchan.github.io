@@ -183,7 +183,30 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     break
                     
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
-                    
+           
+        else:
+            client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+            database = client.get_database_client('Milch')
+            container = database.get_container_client('Posts')
+            item = random.choice(list(container.query_items(
+                query=f"SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC LIMIT 10",
+                parameters=[
+                    {'name': '@random', 'value': random.random()}
+                ],
+                enable_cross_partition_query=True)))
+            
+            for key in item:
+                if key.startswith('_'):
+                    del item[key]
+
+            for layer in item['layers']:
+                if layer is not None:
+                    layer['url'] = f"https://static.milchchan.com/{layer['id']}"
+
+            item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
+
+            return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
+        
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
     except Exception as e:
