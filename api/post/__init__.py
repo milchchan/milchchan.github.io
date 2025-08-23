@@ -82,6 +82,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if file_is_exists:
                             return func.HttpResponse(status_code=409, mimetype='', charset='')
                         
+                        input_buffer.read()
                         #s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
                             
                         image = resize_image(image, maximum=1280)
@@ -161,7 +162,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                                 return func.HttpResponse(status_code=409, mimetype='', charset='')
                                                             
                                                             with io.BytesIO(r.read()) as buffer:
-                                                                pass
+                                                                buffer.read()
                                                             #    s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
 
                                                             layers.append({'id': layer_identifier, 'url':urls[index], 'type': content_type})
