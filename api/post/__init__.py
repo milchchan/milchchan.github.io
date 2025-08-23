@@ -189,7 +189,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = random.choice(list(container.query_items(
-                query=f"SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC LIMIT 10",
+                query='SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@random', 'value': random.random()}
                 ],
