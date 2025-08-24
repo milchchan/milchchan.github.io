@@ -28,11 +28,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             else:    
                 item['views'] += 1
             
-            container.upsert_item(item)
-            
             for key in item:
                 if key.startswith('_'):
                     del item[key]
+
+            container.upsert_item(item)
 
             for layer in item['layers']:
                 if layer is not None:
