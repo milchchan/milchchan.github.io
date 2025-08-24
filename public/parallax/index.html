@@ -282,10 +282,6 @@
     perspective: 1000;
   }
 
-  canvas {
-    opacity: 0;
-  }
-
   @keyframes fade {
     from {
         opacity: 0;
@@ -457,6 +453,7 @@ function shake(element) {
 }
 
 async function download(url = null, limit = 10, reverse = false) {
+  let success = true;
   const blind = document.createElement("div");
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
@@ -593,7 +590,7 @@ async function download(url = null, limit = 10, reverse = false) {
   }
 
   if (url === null) {
-    shake(target);
+    success = false;
   } else {
     const progress = document.createElement("div");
     const bar = document.createElement("div");
@@ -747,6 +744,8 @@ async function download(url = null, limit = 10, reverse = false) {
       for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:last-child button.button")) {
         element.disabled = false;
       }
+
+      success = false;
     }
   }
 
@@ -768,6 +767,8 @@ async function download(url = null, limit = 10, reverse = false) {
   }).onfinish = () => {
     blind.remove();
   };
+
+  return success;
 }
 
 window.request = async (event) => {
@@ -782,8 +783,21 @@ window.request = async (event) => {
     shake(target);
   }
 };
-window.shuffle = (event) => {
-  download("https://milchchan.com/api/parallax/post");
+
+window.previous = async (event) => {
+  if (!download(null, 10, true)) {
+    shake(event.currentTarget || event.target);
+  }
+};
+window.next = async (event) => {
+  if (!download(null, 10, false)) {
+    shake(event.currentTarget || event.target);
+  }
+};
+window.shuffle = async (event) => {
+  if (!download("https://milchchan.com/api/parallax/post")) {
+    shake(event.currentTarget || event.target);
+  }
 };
 window.post = async (files) => {
   const target = (event.currentTarget || event.target);
@@ -1051,12 +1065,6 @@ window.share = async (event) => {
       }
     }
   }, 3000);
-};
-window.previous = (event) => {
-  download(null, 10, true);
-};
-window.next = (event) => {
-  download(null, 10, false);
 };
 window.addEventListener("load", event => {
   const hash = decodeURIComponent(window.location.hash.substring(1));
