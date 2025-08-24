@@ -10,13 +10,13 @@
 <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
 <style>
   :root {
-    --background-color: rgb(255 255 255 / 1);
+    --background-color: rgb(255 255 255);
     --foreground-color: #000000;
   }
 
   @media (prefers-color-scheme: dark) {
       :root {
-          --background-color: rgb(0 0 0 / 1);
+          --background-color: rgb(0 0 0);
           --foreground-color: #ffffff;
       }
   }
@@ -73,6 +73,7 @@
   }
 
   .top {
+    z-index: 1;
     -webkit-user-select: none;
     user-select: none;
     position: absolute;
@@ -84,7 +85,121 @@
     height: fit-content;
   }
 
+  .top-left {
+    z-index: 0;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    display: flex;
+    top: 16px;
+    left: 16px;
+    padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+    width: fit-content;
+    height: fit-content;
+    align-items: center;
+  }
+
+  .top-left .button {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    width: fit-content;
+    height: fit-content;
+    align-items: center;
+    justify-content: flex-start;
+    height: fit-content !important;
+  }
+
+  .top-left .stack {
+    margin: 0;
+    padding: 4px 4px 4px 8px !important;
+  }
+
+  .top-left .stack>.icon {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--foreground-color);
+    backface-visibility: hidden;
+    font-size: 0.75rem;
+    width: 16px;
+    height: 16px;
+    transition: .5s
+  }
+
+  .top-left span:not(.icon) {
+    margin: 0;
+    padding: 0;
+    color: var(--foreground-color);
+    font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+    font-size: 1.0rem;
+    line-height: 1.0rem;
+    transition: .5s;
+  }
+
+  .top-left span:not(.icon):last-child:not(:first-child) {
+    padding: 4px 8px 4px 0px;
+  }
+
+  .top-left span.is-primary {
+    color: #3cffd0
+  }
+
+  .top-left .button {
+    box-shadow: none !important;
+  }
+
+  .top-left .button:hover span:not(.icon) {
+    opacity: 0.5;
+    transition: .5s
+  }
+
+  .top-right {
+    z-index: 0;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    display: flex;
+    top: 16px;
+    right: 16px;
+    padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+    width: fit-content;
+    height: fit-content !important;
+    background-color: var(--foreground-color);
+    align-items: center;
+  }
+
+  .top-right .icon:first-child:not(:last-child) {
+    display: flex;
+    margin: 0;
+    padding: 4px 4px 4px 8px;
+    align-items: center;
+    justify-content: center;
+    color: var(--background-color);
+    transition: .5s;
+    backface-visibility: hidden;
+    font-size: 0.75rem;
+    width: 16px;
+    height: 16px;
+  }
+
+  .top-right span:not(.icon) {
+    margin: 0;
+    padding: 4px 8px 4px 0px;
+    color: var(--background-color);
+    font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+    font-size: 1.0rem;
+    line-height: 1.0rem;
+  }
+
+  .top-right span.is-primary {
+    color: #5200ff !important;
+  }
+
   .bottom {
+    z-index: 1;
     -webkit-user-select: none;
     user-select: none;
     position: absolute;
@@ -126,6 +241,7 @@
   }
 
   .button .icon {
+    pointer-events: none;
     display: flex;
     margin: 0;
     align-items: center;
@@ -203,7 +319,7 @@
     margin: 0;
     align-items: center;
     justify-content: center;
-    color: #000000;
+    color: var(--foreground-color);
     opacity: 1;
     transition: .5s;
     backface-visibility: hidden;
@@ -264,6 +380,7 @@
   }
 
   .blind {
+    z-index: 1;
     pointer-events: none;
     position: absolute;
     top: 0;
@@ -280,6 +397,10 @@
     transition: .5s;
     backface-visibility: hidden;
     perspective: 1000;
+  }
+
+  .is-bold {
+    font-weight: bold;
   }
 
   @keyframes fade {
@@ -353,12 +474,38 @@
           </span>
         </button>
       </div>
+      <div class="top-left">
+        <button class="button" onclick="share(event)">
+          <div class="stack">
+            <span class="icon">
+              <i class="fa-solid fa-link"></i>
+            </span>
+            <span class="icon is-hidden">
+              <i class="fa-solid fa-check"></i>
+            </span>
+          </div>
+          <span class="is-bold is-primary">milchchan.com/parallax</span>
+        </button>
+      </div>
+      <div class="top-right">
+        <span class="icon is-primary">
+          <i class="fa-solid fa-eye"></i>
+        </span>
+        <span class="is-bold">0</span>
+      </div>
       <div class="bottom">
         <div class="level">
           <div class="level-item">
             <button class="button is-circle" onclick="previous(event)">
               <span class="icon">
                 <i class="fa-solid fa-arrow-left"></i>
+              </span>
+            </button>
+          </div>
+          <div class="level-item">
+            <button class="button is-circle" onclick="next(event)">
+              <span class="icon">
+                <i class="fa-solid fa-arrow-right"></i>
               </span>
             </button>
           </div>
@@ -370,31 +517,12 @@
             </button>
           </div>
           <div class="level-item">
-            <label class="button is-circle is-primary">
+            <label class="button is-circle">
               <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="post(event);">
               <span class="icon is-rotate" onselectstart="return false;" onmousedown="return false;">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
               </span>
             </label>
-          </div>
-          <div class="level-item">
-            <button class="button is-circle" disabled onclick="share(event)">
-              <div class="stack">
-                <span class="icon">
-                  <i class="fa-solid fa-link"></i>
-                </span>
-                <span class="icon is-hidden">
-                  <i class="fa-solid fa-check"></i>
-                </span>
-              </div>
-            </button>
-          </div>
-          <div class="level-item">
-            <button class="button is-circle" onclick="next(event)">
-              <span class="icon">
-                <i class="fa-solid fa-arrow-right"></i>
-              </span>
-            </button>
           </div>
         </div>
       </div>
@@ -456,11 +584,11 @@ async function download(url = null, limit = 10, reverse = false) {
   let success = true;
   const blind = document.createElement("div");
 
-  for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
     element.disabled = true;
   }
 
-  for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
     element.disabled = true;
   }
           
@@ -514,7 +642,7 @@ async function download(url = null, limit = 10, reverse = false) {
       if (reverse) {
         if (selected - 1 >= 0) {
           selected--;
-          url = `https://milchchan.com/parallax#${posts[selected].id}`;
+          url = `https://milchchan.com/api/parallax/post/${posts[selected].id}`;
         } else if (offset > 0) {
           const nextOffset = Math.max(0, offset - limit);
 
@@ -539,7 +667,7 @@ async function download(url = null, limit = 10, reverse = false) {
 
               offset = nextOffset;
               selected = posts.length - 1;
-              url = `https://milchchan.com/parallax#${posts[selected].id}`;
+              url = `https://milchchan.com/api/parallax/post/${posts[selected].id}`;
             } else {
               throw new Error(response.statusText);
             }
@@ -550,7 +678,7 @@ async function download(url = null, limit = 10, reverse = false) {
       } else {
         if (selected + 1 < posts.length) {
           selected++;
-          url = `https://milchchan.com/parallax#${posts[selected].id}`;
+          url = `https://milchchan.com/api/parallax/post/${posts[selected].id}`;
         } else {
           const response = await fetch(`https://milchchan.com/api/parallax/posts?nsfw=${NSFW ? 'true' : 'false'}&offset=${offset}&limit=${limit + 1}`, {
               mode: "cors",
@@ -574,10 +702,12 @@ async function download(url = null, limit = 10, reverse = false) {
               if (json.length === limit + 1) {
                 offset += limit;
                 posts.pop();
+              } else {
+                success = false;
               }
 
               selected = 0;
-              url = `https://milchchan.com/parallax#${posts[selected].id}`;
+              url = `https://milchchan.com/api/parallax/post/${posts[selected].id}`;
             }
           } else {
             throw new Error(response.statusText);
@@ -710,12 +840,30 @@ async function download(url = null, limit = 10, reverse = false) {
         offscreenCanvas = new OffscreenCanvas(width, height);
         redrawRequired = true;
 
-        for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(3) button.button")) {
+        for (const element of document.body.querySelectorAll("#app>div.container>.top-left button.button")) {
+          const span1 = document.createElement("span");
+          const span2 = document.createElement("span");
+
           element.dataset.id = json.id;
+
+          for (let i = element.children.length - 1; i >= 0; i--) {
+            if (element.children[i].tagName.toLowerCase() === "span") {
+              element.children[i].remove();
+            }
+          }
+
+          span1.classList.add("is-bold");
+          span1.classList.add("is-primary");
+          span1.textContent = "milchchan.com/parallax";
+          span2.classList.add("is-bold");
+          span2.textContent = `#${json.id.slice(0, 7)}`;
+
+          element.appendChild(span1);
+          element.appendChild(span2);
         }
 
-        for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
-          element.disabled = false;
+        for (const element of document.body.querySelectorAll("#app>div.container>.top-right span:not(.icon):last-child")) {
+          element.textContent = String(json.views);
         }
       } else {
         throw new Error(response.statusText);
@@ -737,16 +885,12 @@ async function download(url = null, limit = 10, reverse = false) {
         progress.remove();
       };
 
-      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(-n + 2) button.button")) {
-        element.disabled = false;
-      }
-
-      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:last-child button.button")) {
-        element.disabled = false;
-      }
-
       success = false;
     }
+  }
+  
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
+    element.disabled = false;
   }
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
@@ -785,17 +929,17 @@ window.request = async (event) => {
 };
 
 window.previous = async (event) => {
-  if (!download(null, 10, true)) {
+  if (!(await download(null, 10, true))) {
     shake(event.currentTarget || event.target);
   }
 };
 window.next = async (event) => {
-  if (!download(null, 10, false)) {
+  if (!(await download(null, 10, false))) {
     shake(event.currentTarget || event.target);
   }
 };
 window.shuffle = async (event) => {
-  if (!download("https://milchchan.com/api/parallax/post")) {
+  if (!(await download("https://milchchan.com/api/parallax/post"))) {
     shake(event.currentTarget || event.target);
   }
 };
@@ -805,11 +949,11 @@ window.post = async (files) => {
   const progress = document.createElement("div");
   const bar = document.createElement("div");
 
-  for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
     element.disabled = true;
   }
 
-  for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
     element.disabled = true;
   }
           
@@ -979,12 +1123,30 @@ window.post = async (files) => {
         offscreenCanvas = new OffscreenCanvas(width, height);
         redrawRequired = true;
 
-        for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(3) button.button")) {
+        for (const element of document.body.querySelectorAll("#app>div.container>.top-left button.button")) {
+          const span1 = document.createElement("span");
+          const span2 = document.createElement("span");
+
           element.dataset.id = json.id;
+
+          for (let i = element.children.length - 1; i >= 0; i--) {
+            if (element.children[i].tagName.toLowerCase() === "span") {
+              element.children[i].remove();
+            }
+          }
+
+          span1.classList.add("is-bold");
+          span1.classList.add("is-primary");
+          span1.textContent = "milchchan.com/parallax";
+          span2.classList.add("is-bold");
+          span2.textContent = `#${json.id.slice(0, 7)}`;
+
+          element.appendChild(span1);
+          element.appendChild(span2);
         }
 
-        for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
-          element.disabled = false;
+        for (const element of document.body.querySelectorAll("#app>div.container>.top-right span:not(.icon):last-child")) {
+          element.textContent = String(json.views);
         }
       } else {
         throw new Error(response.statusText);
@@ -1007,17 +1169,13 @@ window.post = async (files) => {
       }).onfinish = () => {
         progress.remove();
       };
-
-      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(-n + 2) button.button")) {
-        element.disabled = false;
-      }
-
-      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:last-child button.button")) {
-        element.disabled = false;
-      }
     }
 
     break;
+  }
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
+    element.disabled = false;
   }
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
