@@ -9,6 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
 <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
 <style>
+  :root {
+    --background-color: rgb(255 255 255 / 1);
+    --foreground-color: #000000;
+  }
+
+  @media (prefers-color-scheme: dark) {
+      :root {
+          --background-color: rgb(0 0 0 / 1);
+          --foreground-color: #ffffff;
+      }
+  }
+  
   html {
     touch-action: none;
     margin: 0;
@@ -99,7 +111,7 @@
     margin: 0px;
     border: 0px none transparent !important;
     padding: 16px 32px 16px 32px;
-    background-color: #3cffd0;
+    background-color: var(--background-color);
     background-clip: padding-box !important;
     height: initial;
     backface-visibility: hidden;
@@ -109,27 +121,41 @@
     transition: .5s;
   }
 
-  .button>.icon {
+  .button.is-primary {
+    background-color: #3cffd0;
+  }
+
+  .button .icon {
     display: flex;
     margin: 0;
     align-items: center;
     justify-content: center;
-    color: #000000;
+    color: var(--foreground-color);
     opacity: 1;
     transition: .5s;
     backface-visibility: hidden;
     font-size: 1.0rem;
     width: 16px;
     height: 16px;
+    transition: .5s;
   }
 
-  .button:hover>.icon {
+  .button.is-primary .icon {
+    color: #000000 !important;
+  }
+
+  .button:hover .icon {
     opacity: 0.5;
     transition: .5s;
   }
 
-  .button:disabled>.icon {
+  .button:disabled .icon {
     opacity: 0.5 !important;
+    transition: .5s;
+  }
+
+  .button .icon.is-hidden {
+    opacity: 0 !important;
     transition: .5s;
   }
 
@@ -147,6 +173,18 @@
     pointer-events: none;
     opacity: 0;
     transition: .5s;
+  }
+
+  .button .stack {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .button .stack>.icon:not(:first-child) {
+    position: absolute;
   }
 
   label.button>input {
@@ -244,6 +282,10 @@
     perspective: 1000;
   }
 
+  canvas {
+    opacity: 0;
+  }
+
   @keyframes fade {
     from {
         opacity: 0;
@@ -318,6 +360,13 @@
       <div class="bottom">
         <div class="level">
           <div class="level-item">
+            <button class="button is-circle" onclick="previous(event)">
+              <span class="icon">
+                <i class="fa-solid fa-arrow-left"></i>
+              </span>
+            </button>
+          </div>
+          <div class="level-item">
             <button class="button is-circle" onclick="shuffle(event)">
               <span class="icon">
                 <i class="fa-solid fa-shuffle"></i>
@@ -325,7 +374,7 @@
             </button>
           </div>
           <div class="level-item">
-            <label class="button is-circle">
+            <label class="button is-circle is-primary">
               <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="post(event);">
               <span class="icon is-rotate" onselectstart="return false;" onmousedown="return false;">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -334,8 +383,20 @@
           </div>
           <div class="level-item">
             <button class="button is-circle" disabled onclick="share(event)">
+              <div class="stack">
+                <span class="icon">
+                  <i class="fa-solid fa-link"></i>
+                </span>
+                <span class="icon is-hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+              </div>
+            </button>
+          </div>
+          <div class="level-item">
+            <button class="button is-circle" onclick="next(event)">
               <span class="icon">
-                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-arrow-right"></i>
               </span>
             </button>
           </div>
@@ -355,8 +416,8 @@ const div = document.body.querySelector("#app>.container");
 const rect = div.getBoundingClientRect();
 const layers = [];
 const posts = [];
-let selected = null;
 let offset = 0;
+let selected = 0;
 let previousTime = performance.now();
 let redrawRequired = false;
 let isGranted = false;
@@ -395,10 +456,8 @@ function shake(element) {
     };
 }
 
-async function download(url) {
+async function download(url = null, limit = 10, reverse = false) {
   const blind = document.createElement("div");
-  const progress = document.createElement("div");
-  const bar = document.createElement("div");
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom .button input")) {
     element.disabled = true;
@@ -433,40 +492,8 @@ async function download(url) {
     console.error(error);
   }
 
-  progress.className = "progress";
-  bar.classList.add("bar");
-  bar.classList.add("animating");
-  bar.style.width = "0%";
-
-  try {
-    const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/Stripes.png");
-
-    if (response.ok) {
-      const dataURL = await new Promise(async (resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = () => {
-          resolve(reader.result);
-        };
-        reader.onerror = () => {
-          reject(reader.error);
-        };
-        reader.readAsDataURL(await response.blob());
-      });
-
-      if (dataURL !== null) {
-        bar.style.backgroundImage = `url('${dataURL}')`;
-      }
-    }
-  } catch (error) {
-    console.error(error);
-  }
-
-  progress.appendChild(bar);
-
   document.body.querySelector("#app>.container>canvas").after(blind);
-  document.body.querySelector("#app").appendChild(progress);
-
+  
   await new Promise(async (resolve) => {
     blind.animate([
       {
@@ -485,115 +512,241 @@ async function download(url) {
     };
   });
 
-  try {
-    const response = await fetch(url, {
-        mode: "cors",
-        method: "GET"
-      }
-    );
+  if (url === null) {
+    try {
+      if (reverse) {
+        if (selected - 1 >= 0) {
+          selected--;
+          url = `https://milchchan.com/parallax#${posts[selected].id}`;
+        } else if (offset > 0) {
+          const nextOffset = Math.max(0, offset - limit);
 
-    if (response.ok) {
-      const json = await response.json();
-      let width = 0;
-      let height = 0;
-      let index = 0;
-      
-      layers.splice(0);
+          try {
+            const response = await fetch(`https://milchchan.com/api/parallax/posts?nsfw=${NSFW ? 'true' : 'false'}&offset=${nextOffset}&limit=${limit}`, {
+                mode: "cors",
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+              }
+            );
 
-      for (const item of json.layers) {
-        if (item === null) {
-          layers.push(null);
-        } else {
-          const image = await new Promise((resolve, reject)=>{
-            const image = new Image();
+            if (response.ok) {
+              const json = await response.json();
 
-            image.onload=()=>resolve(image);
-            image.onerror = reject;
-            image.src = item.url;
-          });
+              posts.splice(0);
 
-          layers.push({image: image, weight: (index + 1) / json.layers.length});
-          width = Math.max(width, image.width);
-          height = Math.max(height, image.height);
+              for (const item of json) {
+                posts.push(item);
+              }
+
+              offset = nextOffset;
+              selected = posts.length - 1;
+              url = `https://milchchan.com/parallax#${posts[selected].id}`;
+            } else {
+              throw new Error(response.statusText);
+            }
+          } catch (error) {
+            console.error(error);
+          }
         }
-
-        if (layers.length < json.layers.length) {
-          bar.animate([
-            {
-              width: `${Math.floor(layers.length / json.layers.length * 100)}%`
-            }
-          ], {
-            delay: 0,
-            fill: "forwards",
-            duration: 500,
-            iterations: 1,
-            easing: "linear",
-            composite: "replace"
-          }).onfinish = () => {
-            bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
-          };
+      } else {
+        if (selected + 1 < posts.length) {
+          selected++;
+          url = `https://milchchan.com/parallax#${posts[selected].id}`;
         } else {
-          bar.animate([
-            {
-              width: `${Math.floor(layers.length / json.layers.length * 100)}%`
+          const response = await fetch(`https://milchchan.com/api/parallax/posts?nsfw=${NSFW ? 'true' : 'false'}&offset=${offset}&limit=${limit + 1}`, {
+              mode: "cors",
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+              }
             }
-          ], {
-            delay: 0,
-            fill: "forwards",
-            duration: 500,
-            iterations: 1,
-            easing: "ease-in",
-            composite: "replace"
-          }).onfinish = () => {
-            bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
+          );
+
+          if (response.ok) {
+            const json = await response.json();
+
+            if (json.length > 0) {
+              posts.splice(0);
+
+              for (const item of json) {
+                posts.push(item);
+              }
+
+              if (json.length === limit + 1) {
+                offset += limit;
+                posts.pop();
+              }
+
+              selected = 0;
+              url = `https://milchchan.com/parallax#${posts[selected].id}`;
+            }
+          } else {
+            throw new Error(response.statusText);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (url === null) {
+    shake(target);
+  } else {
+    const progress = document.createElement("div");
+    const bar = document.createElement("div");
+  
+    progress.className = "progress";
+    bar.classList.add("bar");
+    bar.classList.add("animating");
+    bar.style.width = "0%";
+    
+    try {
+      const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/Stripes.png");
+
+      if (response.ok) {
+        const dataURL = await new Promise(async (resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => {
+            resolve(reader.result);
+          };
+          reader.onerror = () => {
+            reject(reader.error);
+          };
+          reader.readAsDataURL(await response.blob());
+        });
+
+        if (dataURL !== null) {
+          bar.style.backgroundImage = `url('${dataURL}')`;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    progress.appendChild(bar);
+    document.body.querySelector("#app").appendChild(progress);
+
+    try {
+      const response = await fetch(url, {
+          mode: "cors",
+          method: "GET"
+        }
+      );
+
+      if (response.ok) {
+        const json = await response.json();
+        let width = 0;
+        let height = 0;
+        let index = 0;
+        
+        layers.splice(0);
+
+        for (const item of json.layers) {
+          if (item === null) {
+            layers.push(null);
+          } else {
+            const image = await new Promise((resolve, reject)=>{
+              const image = new Image();
+
+              image.onload=()=>resolve(image);
+              image.onerror = reject;
+              image.src = item.url;
+            });
+
+            layers.push({image: image, weight: (index + 1) / json.layers.length});
+            width = Math.max(width, image.width);
+            height = Math.max(height, image.height);
+          }
+
+          if (layers.length < json.layers.length) {
             bar.animate([
               {
-                opacity: 0
+                width: `${Math.floor(layers.length / json.layers.length * 100)}%`
               }
             ], {
               delay: 0,
               fill: "forwards",
               duration: 500,
               iterations: 1,
-              easing: "ease-in"
+              easing: "linear",
+              composite: "replace"
             }).onfinish = () => {
-              progress.remove();
+              bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
             };
-          };
+          } else {
+            bar.animate([
+              {
+                width: `${Math.floor(layers.length / json.layers.length * 100)}%`
+              }
+            ], {
+              delay: 0,
+              fill: "forwards",
+              duration: 500,
+              iterations: 1,
+              easing: "ease-in",
+              composite: "replace"
+            }).onfinish = () => {
+              bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
+              bar.animate([
+                {
+                  opacity: 0
+                }
+              ], {
+                delay: 0,
+                fill: "forwards",
+                duration: 500,
+                iterations: 1,
+                easing: "ease-in"
+              }).onfinish = () => {
+                progress.remove();
+              };
+            };
+          }
+
+          index++;
         }
 
-        index++;
+        offscreenCanvas = new OffscreenCanvas(width, height);
+        redrawRequired = true;
+
+        for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(3) button.button")) {
+          element.dataset.id = json.id;
+        }
+
+        for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
+          element.disabled = false;
+        }
+      } else {
+        throw new Error(response.statusText);
       }
+    } catch (error) {
+      console.error(error);
 
-      offscreenCanvas = new OffscreenCanvas(width, height);
-      redrawRequired = true
-      selected = json.id;
+      bar.animate([
+        {
+          opacity: 0
+        }
+      ], {
+        delay: 0,
+        fill: "forwards",
+        duration: 500,
+        iterations: 1,
+        easing: "ease-in"
+      }).onfinish = () => {
+        progress.remove();
+      };
 
-      for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
+      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(-n + 2) button.button")) {
         element.disabled = false;
       }
-    } else {
-      throw new Error(response.statusText);
-    }
-  } catch (error) {
-    console.error(error);
 
-    bar.animate([
-      {
-        opacity: 0
+      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:last-child button.button")) {
+        element.disabled = false;
       }
-    ], {
-      delay: 0,
-      fill: "forwards",
-      duration: 500,
-      iterations: 1,
-      easing: "ease-in"
-    }).onfinish = () => {
-      progress.remove();
-    };
-
-    for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(1) button.button")) {
-      element.disabled = false;
     }
   }
 
@@ -615,71 +768,6 @@ async function download(url) {
   }).onfinish = () => {
     blind.remove();
   };
-}
-
-async function next(limit = 10) {
-  try {
-    const response = await fetch(`https://milchchan.com/api/parallax/posts?nsfw=${NSFW ? 'true' : 'false'}&offset=${offset}&limit=${limit + 1}`, {
-        mode: "cors",
-        method: "GET",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-      }
-    );
-
-    if (response.ok) {
-      const json = await response.json();
-
-      posts.splice(0);
-
-      for (const item of json) {
-        posts.push(item);
-      }
-
-      if (json.length === limit + 1) {
-        offset += limit;
-        posts.pop();
-      } else {
-        offset = 0;
-      }
-    } else {
-      throw new Error(response.statusText);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function previous(limit = 10) {
-  const tempOffset = Math.max(0, offset - limit);
-
-  try {
-    const response = await fetch(`https://milchchan.com/api/parallax/posts?nsfw=${NSFW ? 'true' : 'false'}&offset=${tempOffset}&limit=${limit}`, {
-        mode: "cors",
-        method: "GET",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-      }
-    );
-
-    if (response.ok) {
-      const json = await response.json();
-
-      posts.splice(0);
-
-      for (const item of json) {
-        posts.push(item);
-      }
-
-      offset = tempOffset;
-    } else {
-      throw new Error(response.statusText);
-    }
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 window.request = async (event) => {
@@ -875,9 +963,11 @@ window.post = async (files) => {
         }
 
         offscreenCanvas = new OffscreenCanvas(width, height);
-        redrawRequired = true
+        redrawRequired = true;
 
-        selected = json.id;
+        for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(3) button.button")) {
+          element.dataset.id = json.id;
+        }
 
         for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
           element.disabled = false;
@@ -904,7 +994,11 @@ window.post = async (files) => {
         progress.remove();
       };
 
-      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(1) button.button")) {
+      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-child(-n + 2) button.button")) {
+        element.disabled = false;
+      }
+
+      for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:last-child button.button")) {
         element.disabled = false;
       }
     }
@@ -932,11 +1026,37 @@ window.post = async (files) => {
   };
 };
 window.share = async (event) => {
+  const target = (event.currentTarget || event.target);
+
   try {
-    await navigator.clipboard.writeText(`https://milchchan.com/parallax#${selected.slice(0, 7)}`);
+    await navigator.clipboard.writeText(`https://milchchan.com/parallax#${target.dataset.id.slice(0, 7)}`);
   } catch (error) {
     console.error(error);
   }
+
+  for (const element of target.querySelectorAll(":scope .stack .icon")) {
+    if (element.classList.contains("is-hidden")) {
+      element.classList.remove("is-hidden");
+    } else {
+      element.classList.add("is-hidden");
+    }
+  }
+
+  setTimeout(() => {
+    for (const element of target.querySelectorAll(":scope .stack .icon")) {
+      if (element.classList.contains("is-hidden")) {
+        element.classList.remove("is-hidden");
+      } else {
+        element.classList.add("is-hidden");
+      }
+    }
+  }, 3000);
+};
+window.previous = (event) => {
+  download(null, 10, true);
+};
+window.next = (event) => {
+  download(null, 10, false);
 };
 window.addEventListener("load", event => {
   const hash = decodeURIComponent(window.location.hash.substring(1));
@@ -1042,8 +1162,6 @@ window.addEventListener("load", event => {
   } else {
     download("https://milchchan.com/api/parallax/post");
   }
-
-  preload();
 });
 window.addEventListener("resize", event => {
   const rect = document.body.querySelector("#app>.container").getBoundingClientRect();
