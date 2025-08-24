@@ -190,25 +190,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = random.choice(list(container.query_items(
-                query='SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.type, p.layers, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.slug, p.type, p.layers, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.layers, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@random', 'value': random.random()}
                 ],
                 enable_cross_partition_query=True)))
-            item['views'] += 1
+            item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'layers': item['layers'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'] + 1, 'timestamp': item['timestamp']}
             container.upsert_item(item)
-            
-            for key in item:
-                if key.startswith('_'):
-                    del item[key]
 
             for layer in item['layers']:
                 if layer is not None:
                     layer['url'] = f"https://static.milchchan.com/{layer['id']}"
-
-            item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
-
-            return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
+                    
+            return func.HttpResponse(json.dumps({'id': item['id'], 'type': item['type'], 'layers': item['layers'], 'nsfw': item['nsfw'], 'views': item['views'], 'timestamp': int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
         
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
