@@ -172,7 +172,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                             database = client.get_database_client('Milch')
                                             container = database.get_container_client('Posts')
-                                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'layers': layers, 'nsfw': nsfw, 'random': random.random(), 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'layers': layers, 'nsfw': nsfw, 'random': random.random(), 'views': 1, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                             for layer in layers:
                                                 if layer is not None:
@@ -195,6 +195,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     {'name': '@random', 'value': random.random()}
                 ],
                 enable_cross_partition_query=True)))
+            item['views'] += 1
+            container.upsert_item(item)
             
             for key in item:
                 if key.startswith('_'):
