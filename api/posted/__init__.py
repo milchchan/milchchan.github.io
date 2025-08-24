@@ -22,7 +22,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     {'name': '@identifier', 'value': identifier}
                 ],
                 enable_cross_partition_query=True))[0]
-            item['views'] += 1
+            
+            if 'views' not in item:
+                item['views'] = 1
+            else:    
+                item['views'] += 1
+            
             container.upsert_item(item)
             
             for key in item:
