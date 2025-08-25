@@ -178,7 +178,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                 if layer is not None:
                                                     layer['url'] = f"https://static.milchchan.com/{layer['id']}"
 
-                                            return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'layers': layers, 'nsfw': nsfw, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                                            return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'layers': layers, 'nsfw': nsfw, 'views': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
                                     
                                     break
                     
