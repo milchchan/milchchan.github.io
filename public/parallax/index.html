@@ -70,6 +70,16 @@
         font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
       }
 
+      canvas {
+        opacity: 1;
+        transition: .5s ease-out;
+      }
+
+      canvas.dragging {
+        opacity: 0.5;
+        transition: .5s ease-in;
+      }
+
       #app {
         position: absolute;
         display: flex;
@@ -644,14 +654,6 @@ let selected = 0;
 let previousTime = performance.now();
 let redrawRequired = false;
 let isGranted = false;
-
-canvas.width = Math.floor(rect.width * window.devicePixelRatio);
-canvas.height = Math.floor(rect.height * window.devicePixelRatio);
-canvas.style.width = `${Math.floor(rect.width)}px`;
-canvas.style.height = `${Math.floor(rect.height)}px`;
-canvas.style.backgroundColor = "transparent";
-
-div.prepend(canvas);
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
@@ -1309,6 +1311,45 @@ window.request = async (event) => {
     shake(target);
   }
 };
+
+canvas.width = Math.floor(rect.width * window.devicePixelRatio);
+canvas.height = Math.floor(rect.height * window.devicePixelRatio);
+canvas.style.width = `${Math.floor(rect.width)}px`;
+canvas.style.height = `${Math.floor(rect.height)}px`;
+canvas.style.backgroundColor = "transparent";
+canvas.addEventListener("dragenter", e => {
+  (e.currentTarget || e.target).classList.add("dragging");
+});
+canvas.addEventListener("dragover", e => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "copy";
+}, false);
+canvas.addEventListener("drop", async e => {
+  e.stopPropagation();
+  e.preventDefault();
+
+  const target = (e.currentTarget || e.target);
+  const button = document.body.querySelector("#app>.container .bottom>.level>.level-item:nth-child(4) label.button");
+  const input = button.querySelector(":scope>input");
+
+  target.classList.remove("dragging");
+  input.disabled = true;
+
+  for (const file of e.dataTransfer.files) {
+    if (!await post(file)) {
+      shake(button);
+    }
+
+    break;
+  }
+
+  input.disabled = false;
+}, false);
+canvas.addEventListener("dragleave", e => {
+  (e.currentTarget || e.target).classList.remove("dragging");
+});
+
+div.prepend(canvas);
 
 window.previous = async (event) => {
   if (!await download(null, 10, true)) {
