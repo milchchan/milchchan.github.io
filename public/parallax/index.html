@@ -198,6 +198,11 @@
     color: #5200ff !important;
   }
 
+  .top-left.is-hidden, .top-right.is-hidden {
+    opacity: 0;
+    transition: .5s;
+  }
+
   .bottom {
     z-index: 1;
     -webkit-user-select: none;
@@ -474,7 +479,7 @@
           </span>
         </button>
       </div>
-      <div class="top-left">
+      <div class="top-left is-hidden">
         <button class="button" onclick="share(event)">
           <div class="stack">
             <span class="icon">
@@ -487,7 +492,7 @@
           <span class="is-bold is-primary">milchchan.com/parallax</span>
         </button>
       </div>
-      <div class="top-right">
+      <div class="top-right is-hidden">
         <span class="icon is-primary">
           <i class="fa-solid fa-eye"></i>
         </span>
@@ -583,6 +588,10 @@ function shake(element) {
 async function download(url = null, limit = 10, reverse = false) {
   let success = true;
   const blind = document.createElement("div");
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right")) {
+    element.classList.add("is-hidden");
+  }
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
     element.disabled = true;
@@ -888,6 +897,10 @@ async function download(url = null, limit = 10, reverse = false) {
       success = false;
     }
   }
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right")) {
+    element.classList.remove("is-hidden");
+  }
   
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
     element.disabled = false;
@@ -948,6 +961,10 @@ window.post = async (files) => {
   const blind = document.createElement("div");
   const progress = document.createElement("div");
   const bar = document.createElement("div");
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right")) {
+    element.classList.add("is-hidden");
+  }
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
     element.disabled = true;
@@ -1172,6 +1189,10 @@ window.post = async (files) => {
     }
 
     break;
+  }
+
+  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right")) {
+    element.classList.remove("is-hidden");
   }
 
   for (const element of document.body.querySelectorAll("#app>div.container>.bottom button.button")) {
