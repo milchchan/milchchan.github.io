@@ -1299,19 +1299,6 @@ async function post(file) {
   return success;
 }
 
-window.request = async (event) => {
-  const target = (event.currentTarget || event.target);
-  const permissionState = await DeviceOrientationEvent.requestPermission();
-      
-  if (permissionState === "granted") {
-    if (!target.classList.contains("is-hidden")) {
-      target.classList.add("is-hidden");
-    }
-  } else {
-    shake(target);
-  }
-};
-
 canvas.width = Math.floor(rect.width * window.devicePixelRatio);
 canvas.height = Math.floor(rect.height * window.devicePixelRatio);
 canvas.style.width = `${Math.floor(rect.width)}px`;
@@ -1351,6 +1338,18 @@ canvas.addEventListener("dragleave", e => {
 
 div.prepend(canvas);
 
+window.request = async (event) => {
+  const target = (event.currentTarget || event.target);
+  const permissionState = await DeviceOrientationEvent.requestPermission();
+      
+  if (permissionState === "granted") {
+    if (!target.classList.contains("is-hidden")) {
+      target.classList.add("is-hidden");
+    }
+  } else {
+    shake(target);
+  }
+};
 window.previous = async (event) => {
   if (!await download(null, 10, true)) {
     shake(event.currentTarget || event.target);
