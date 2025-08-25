@@ -26,15 +26,19 @@
     <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
     <style>
       :root {
-        --background-color: rgb(255 255 255);
+        --background-color: rgb(255 255 255 / 0.75);
+        --background-color-alt: rgb(0 0 0 / 0.75);
         --foreground-color: #000000;
+        --foreground-color-alt: #ffffff;
         --accent-color: #3cffd0;
       }
 
       @media (prefers-color-scheme: dark) {
           :root {
-              --background-color: rgb(0 0 0);
+              --background-color: rgb(0 0 0 / 0.75);
+              --background-color-alt: rgb(255 255 255 / 0.75);
               --foreground-color: #ffffff;
+              --foreground-color-alt: #000000;
           }
       }
       
@@ -100,6 +104,10 @@
         transform: translate(-50%, 0%);
         width: fit-content;
         height: fit-content;
+      }
+
+      .top .button {
+        backdrop-filter: blur(16px);
       }
 
       .top-left {
@@ -184,7 +192,7 @@
         padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
         width: fit-content;
         height: fit-content !important;
-        background-color: var(--foreground-color);
+        background-color: var(--background-color-alt);
         align-items: center;
       }
 
@@ -194,7 +202,7 @@
         padding: 4px 4px 4px 8px;
         align-items: center;
         justify-content: center;
-        color: var(--background-color);
+        color: var(--foreground-color-alt);
         transition: .5s;
         backface-visibility: hidden;
         font-size: 0.75rem;
@@ -205,7 +213,7 @@
       .top-right span:not(.icon) {
         margin: 0;
         padding: 4px 8px 4px 0px;
-        color: var(--background-color);
+        color: var(--foreground-color-alt);
         font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
         font-size: 1.0rem;
         line-height: 1.0rem;
@@ -288,6 +296,10 @@
         padding: 8px;
       }
 
+      .bottom>.level>.level-item .button {
+        backdrop-filter: blur(16px);
+      }
+
       .button {
         margin: 0px;
         border: 0px none transparent !important;
@@ -300,10 +312,6 @@
         cursor: pointer;
         box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
         transition: .5s;
-      }
-
-      .button.is-primary {
-        background-color: var(--accent-color);
       }
 
       .button .icon {
@@ -323,7 +331,7 @@
       }
 
       .button.is-primary .icon {
-        color: #000000 !important;
+        color: var(--accent-color) !important;
       }
 
       .button:hover .icon {
@@ -546,7 +554,7 @@
       <div id="app">
         <div class="container">
           <div class="top">
-            <button class="button is-circle is-hidden" onclick="request(event)">
+            <button class="button is-circle is-primary is-hidden" onclick="request(event)">
               <span class="icon">
                 <i class="fa-solid fa-triangle-exclamation"></i>
               </span>
