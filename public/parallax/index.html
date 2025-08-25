@@ -895,7 +895,7 @@ async function download(url = null, limit = 10, reverse = false) {
               image.src = item.url;
             });
 
-            layers.push({image: image, weight: (index + 1) / json.layers.length});
+            layers.push({image: image, weight: index / json.layers.length});
             width = Math.max(width, image.width);
             height = Math.max(height, image.height);
           }
