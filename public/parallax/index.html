@@ -874,12 +874,7 @@ async function download(url = null, limit = 10, reverse = false) {
         let index = 0;
         const timestamp = new Date(Math.floor(json.timestamp * 1000));
         const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
-        const month = months[timestamp.getMonth()];
-        const day = timestamp.getDate();
-        const year = timestamp.getFullYear();
-        const hour = String(timestamp.getHours()).padStart(2, "0");
-        const minute = String(timestamp.getMinutes()).padStart(2, "0");
-        const formatted = `${month} ${day}, ${year} ${hour}:${minute}`;
+        const formatted = `${months[timestamp.getMonth()]} ${timestamp.getDate()}, ${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`;
         
         layers.splice(0);
 
@@ -1177,12 +1172,7 @@ window.post = async (files) => {
         let index = 0;
         const timestamp = new Date(Math.floor(json.timestamp * 1000));
         const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
-        const month = months[timestamp.getMonth()];
-        const day = timestamp.getDate();
-        const year = timestamp.getFullYear();
-        const hour = String(timestamp.getHours()).padStart(2, "0");
-        const minute = String(timestamp.getMinutes()).padStart(2, "0");
-        const formatted = `${month} ${day}, ${year} ${hour}:${minute}`;
+        const formatted = `${months[timestamp.getMonth()]} ${timestamp.getDate()}, ${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`;
         
         layers.splice(0);
 
