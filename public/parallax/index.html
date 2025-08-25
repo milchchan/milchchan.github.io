@@ -1323,10 +1323,10 @@ canvas.addEventListener("drop", async e => {
   input.disabled = true;
 
   for (const file of e.dataTransfer.files) {
-    if (!await post(file)) {
+    if (["image/gif", "image/png", "image/jpeg", "image/webp"].includes(file.type) && !await post(file)) {
       shake(button);
     }
-
+    
     break;
   }
 
