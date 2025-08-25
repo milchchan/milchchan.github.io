@@ -20,6 +20,10 @@
         {
             "route": "/parallax",
             "rewrite": "/parallax/index.html"
+        },
+        {
+            "route": "/lax",
+            "rewrite": "/parallax/index.html"
         }
     ],
     "navigationFallback": {
