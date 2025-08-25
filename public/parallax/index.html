@@ -617,7 +617,7 @@
               </div>
               <div class="level-item">
                 <label class="button is-circle">
-                  <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="post(event);">
+                  <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="upload(event);">
                   <span class="icon" onselectstart="return false;" onmousedown="return false;">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                   </span>
@@ -1029,36 +1029,8 @@ async function download(url = null, limit = 10, reverse = false) {
   return success;
 }
 
-window.request = async (event) => {
-  const target = (event.currentTarget || event.target);
-  const permissionState = await DeviceOrientationEvent.requestPermission();
-      
-  if (permissionState === "granted") {
-    if (!target.classList.contains("is-hidden")) {
-      target.classList.add("is-hidden");
-    }
-  } else {
-    shake(target);
-  }
-};
-
-window.previous = async (event) => {
-  if (!await download(null, 10, true)) {
-    shake(event.currentTarget || event.target);
-  }
-};
-window.next = async (event) => {
-  if (!await download(null, 10, false)) {
-    shake(event.currentTarget || event.target);
-  }
-};
-window.shuffle = async (event) => {
-  if (!await download("https://milchchan.com/api/parallax/post")) {
-    shake(event.currentTarget || event.target);
-  }
-};
-window.post = async (files) => {
-  const target = (event.currentTarget || event.target);
+async function post(file) {
+  let success = true;
   const blind = document.createElement("div");
   const progress = document.createElement("div");
   const bar = document.createElement("div");
@@ -1152,151 +1124,147 @@ window.post = async (files) => {
     };
   });
 
-  for (const file of target.files) {
-    try {
-      const formData = new FormData();
+  try {
+    const formData = new FormData();
 
-      formData.append("file", new Blob([file], { type: file.type }), file.name);
+    formData.append("file", new Blob([file], { type: file.type }), file.name);
 
-      const response = await fetch("https://milchchan.com/api/parallax/post", {
-          mode: "cors",
-          method: "POST",
-          body: formData
-        }
-      );
-
-      if (response.ok) {
-        const json = await response.json();
-        let width = 0;
-        let height = 0;
-        let index = 0;
-        const timestamp = new Date(Math.floor(json.timestamp * 1000));
-        const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
-        const formatted = `${months[timestamp.getMonth()]} ${timestamp.getDate()}, ${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`;
-        
-        layers.splice(0);
-
-        for (const item of json.layers) {
-          if (item === null) {
-            layers.push(null);
-          } else {
-            const image = await new Promise((resolve, reject)=>{
-              const image = new Image();
-
-              image.onload = () => resolve(image);
-              image.onerror = reject;
-              image.src = item.url;
-            });
-
-            layers.push({image: image, weight: (index + 1) / json.layers.length});
-            width = Math.max(width, image.width);
-            height = Math.max(height, image.height);
-          }
-
-          if (layers.length < json.layers.length) {
-            bar.animate([
-              {
-                width: `${Math.floor(layers.length / json.layers.length * 100)}%`
-              }
-            ], {
-              delay: 0,
-              fill: "forwards",
-              duration: 500,
-              iterations: 1,
-              easing: "linear",
-              composite: "replace"
-            }).onfinish = () => {
-              bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
-            };
-          } else {
-            bar.animate([
-              {
-                width: `${Math.floor(layers.length / json.layers.length * 100)}%`
-              }
-            ], {
-              delay: 0,
-              fill: "forwards",
-              duration: 500,
-              iterations: 1,
-              easing: "ease-in",
-              composite: "replace"
-            }).onfinish = () => {
-              bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
-              bar.animate([
-                {
-                  opacity: 0
-                }
-              ], {
-                delay: 0,
-                fill: "forwards",
-                duration: 500,
-                iterations: 1,
-                easing: "ease-in"
-              }).onfinish = () => {
-                progress.remove();
-              };
-            };
-          }
-
-          index++;
-        }
-
-        offscreenCanvas = new OffscreenCanvas(width, height);
-        redrawRequired = true;
-
-        for (const element of document.body.querySelectorAll("#app>div.container>.top-left button.button")) {
-          const span1 = document.createElement("span");
-          const span2 = document.createElement("span");
-
-          element.dataset.id = json.id;
-
-          for (let i = element.children.length - 1; i >= 0; i--) {
-            if (element.children[i].tagName.toLowerCase() === "span") {
-              element.children[i].remove();
-            }
-          }
-
-          span1.classList.add("has-text-weight-bold");
-          span1.classList.add("is-primary");
-          span1.textContent = "milchchan.com/lax";
-          span2.classList.add("has-text-weight-bold");
-          span2.textContent = `#${json.id.slice(0, 7)}`;
-
-          element.appendChild(span1);
-          element.appendChild(span2);
-        }
-
-        for (const element of document.body.querySelectorAll("#app>div.container>.top-right span:not(.icon):last-child")) {
-          element.textContent = String(json.views);
-        }
-
-        for (const element of document.body.querySelectorAll("#app>div.container>.middle-right span")) {
-          element.textContent = formatted;
-        }
-      } else {
-        throw new Error(response.statusText);
+    const response = await fetch("https://milchchan.com/api/parallax/post", {
+        mode: "cors",
+        method: "POST",
+        body: formData
       }
-    } catch (error) {
-      console.error(error);
+    );
 
-      shake(target.parentElement);
+    if (response.ok) {
+      const json = await response.json();
+      let width = 0;
+      let height = 0;
+      let index = 0;
+      const timestamp = new Date(Math.floor(json.timestamp * 1000));
+      const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
+      const formatted = `${months[timestamp.getMonth()]} ${timestamp.getDate()}, ${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`;
+      
+      layers.splice(0);
 
-      bar.animate([
-        {
-          opacity: 0
+      for (const item of json.layers) {
+        if (item === null) {
+          layers.push(null);
+        } else {
+          const image = await new Promise((resolve, reject)=>{
+            const image = new Image();
+
+            image.onload = () => resolve(image);
+            image.onerror = reject;
+            image.src = item.url;
+          });
+
+          layers.push({image: image, weight: (index + 1) / json.layers.length});
+          width = Math.max(width, image.width);
+          height = Math.max(height, image.height);
         }
-      ], {
-        delay: 0,
-        fill: "forwards",
-        duration: 500,
-        iterations: 1,
-        easing: "ease-in"
-      }).onfinish = () => {
-        progress.remove();
-      };
-    }
 
-    break;
+        if (layers.length < json.layers.length) {
+          bar.animate([
+            {
+              width: `${Math.floor(layers.length / json.layers.length * 100)}%`
+            }
+          ], {
+            delay: 0,
+            fill: "forwards",
+            duration: 500,
+            iterations: 1,
+            easing: "linear",
+            composite: "replace"
+          }).onfinish = () => {
+            bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
+          };
+        } else {
+          bar.animate([
+            {
+              width: `${Math.floor(layers.length / json.layers.length * 100)}%`
+            }
+          ], {
+            delay: 0,
+            fill: "forwards",
+            duration: 500,
+            iterations: 1,
+            easing: "ease-in",
+            composite: "replace"
+          }).onfinish = () => {
+            bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
+            bar.animate([
+              {
+                opacity: 0
+              }
+            ], {
+              delay: 0,
+              fill: "forwards",
+              duration: 500,
+              iterations: 1,
+              easing: "ease-in"
+            }).onfinish = () => {
+              progress.remove();
+            };
+          };
+        }
+
+        index++;
+      }
+
+      offscreenCanvas = new OffscreenCanvas(width, height);
+      redrawRequired = true;
+
+      for (const element of document.body.querySelectorAll("#app>div.container>.top-left button.button")) {
+        const span1 = document.createElement("span");
+        const span2 = document.createElement("span");
+
+        element.dataset.id = json.id;
+
+        for (let i = element.children.length - 1; i >= 0; i--) {
+          if (element.children[i].tagName.toLowerCase() === "span") {
+            element.children[i].remove();
+          }
+        }
+
+        span1.classList.add("has-text-weight-bold");
+        span1.classList.add("is-primary");
+        span1.textContent = "milchchan.com/lax";
+        span2.classList.add("has-text-weight-bold");
+        span2.textContent = `#${json.id.slice(0, 7)}`;
+
+        element.appendChild(span1);
+        element.appendChild(span2);
+      }
+
+      for (const element of document.body.querySelectorAll("#app>div.container>.top-right span:not(.icon):last-child")) {
+        element.textContent = String(json.views);
+      }
+
+      for (const element of document.body.querySelectorAll("#app>div.container>.middle-right span")) {
+        element.textContent = formatted;
+      }
+    } else {
+      throw new Error(response.statusText);
+    }
+  } catch (error) {
+    console.error(error);
+
+    bar.animate([
+      {
+        opacity: 0
+      }
+    ], {
+      delay: 0,
+      fill: "forwards",
+      duration: 500,
+      iterations: 1,
+      easing: "ease-in"
+    }).onfinish = () => {
+      progress.remove();
+    };
+
+    success = false;
   }
 
   for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right, #app>div.container>.middle-right")) {
@@ -1325,6 +1293,48 @@ window.post = async (files) => {
   }).onfinish = () => {
     blind.remove();
   };
+
+  return success;
+}
+
+window.request = async (event) => {
+  const target = (event.currentTarget || event.target);
+  const permissionState = await DeviceOrientationEvent.requestPermission();
+      
+  if (permissionState === "granted") {
+    if (!target.classList.contains("is-hidden")) {
+      target.classList.add("is-hidden");
+    }
+  } else {
+    shake(target);
+  }
+};
+
+window.previous = async (event) => {
+  if (!await download(null, 10, true)) {
+    shake(event.currentTarget || event.target);
+  }
+};
+window.next = async (event) => {
+  if (!await download(null, 10, false)) {
+    shake(event.currentTarget || event.target);
+  }
+};
+window.shuffle = async (event) => {
+  if (!await download("https://milchchan.com/api/parallax/post")) {
+    shake(event.currentTarget || event.target);
+  }
+};
+window.upload = async (event) => {
+  const target = (event.currentTarget || event.target);
+
+  for (const file of target.files) {
+    if (!await post(file)) {
+      shake(target.parentElement);
+    }
+
+    break;
+  }
 };
 window.share = async (event) => {
   const target = (event.currentTarget || event.target);
