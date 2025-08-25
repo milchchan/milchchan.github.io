@@ -1,539 +1,621 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />    
-<title>PARALLAX</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
-<script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
-<style>
-  :root {
-    --background-color: rgb(255 255 255);
-    --foreground-color: #000000;
-  }
-
-  @media (prefers-color-scheme: dark) {
-      :root {
-          --background-color: rgb(0 0 0);
-          --foreground-color: #ffffff;
+<html lang="en">
+  <head>
+  <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
       }
-  }
-  
-  html {
-    touch-action: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    background: #ffffff;
-    overscroll-behavior-x: none;
-    overscroll-behavior-y: none;
-  }
+      gtag("js", new Date());
 
-  body {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    min-height: 100dvh;
-    overflow: hidden;
-    background: transparent;
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  }
+      gtag("config", "G-617KR1WTYP");
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />    
+    <title>PARALLAX</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
+    <style>
+      :root {
+        --background-color: rgb(255 255 255);
+        --foreground-color: #000000;
+        --accent-color: #3cffd0;
+      }
 
-  #app {
-    position: absolute;
-    display: flex;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
+      @media (prefers-color-scheme: dark) {
+          :root {
+              --background-color: rgb(0 0 0);
+              --foreground-color: #ffffff;
+          }
+      }
+      
+      html {
+        touch-action: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        background: #ffffff;
+        overscroll-behavior-x: none;
+        overscroll-behavior-y: none;
+      }
 
-  .container {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    max-width: 100% !important;
-    height: 100%;
-    animation: fade .5s ease-out forwards;
-  }
+      body {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        min-height: 100dvh;
+        overflow: hidden;
+        background: transparent;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+      }
 
-  .top {
-    z-index: 1;
-    -webkit-user-select: none;
-    user-select: none;
-    position: absolute;
-    top: 16px;
-    left: 50%;
-    padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-    transform: translate(-50%, 0%);
-    width: fit-content;
-    height: fit-content;
-  }
+      #app {
+        position: absolute;
+        display: flex;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
 
-  .top-left {
-    z-index: 0;
-    -webkit-user-select: none;
-    user-select: none;
-    position: absolute;
-    display: flex;
-    top: 16px;
-    left: 16px;
-    padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-    width: fit-content;
-    height: fit-content;
-    align-items: center;
-  }
+      .container {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100% !important;
+        height: 100%;
+        animation: fade .5s ease-out forwards;
+      }
 
-  .top-left .button {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    width: fit-content;
-    height: fit-content;
-    align-items: center;
-    justify-content: flex-start;
-    height: fit-content !important;
-  }
+      .top {
+        z-index: 1;
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        transform: translate(-50%, 0%);
+        width: fit-content;
+        height: fit-content;
+      }
 
-  .top-left .stack {
-    margin: 0;
-    padding: 4px 4px 4px 8px !important;
-  }
+      .top-left {
+        z-index: 0;
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        display: flex;
+        top: 16px;
+        left: 16px;
+        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        width: fit-content;
+        height: fit-content;
+        align-items: center;
+      }
 
-  .top-left .stack>.icon {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    align-items: center;
-    justify-content: center;
-    color: var(--foreground-color);
-    backface-visibility: hidden;
-    font-size: 0.75rem;
-    width: 16px;
-    height: 16px;
-    transition: .5s
-  }
+      .top-left .button {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        width: fit-content;
+        height: fit-content;
+        align-items: center;
+        justify-content: flex-start;
+        height: fit-content !important;
+      }
 
-  .top-left span:not(.icon) {
-    margin: 0;
-    padding: 0;
-    color: var(--foreground-color);
-    font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
-    font-size: 1.0rem;
-    line-height: 1.0rem;
-    transition: .5s;
-  }
+      .top-left .stack {
+        margin: 0;
+        padding: 4px 4px 4px 8px !important;
+      }
 
-  .top-left span:not(.icon):last-child:not(:first-child) {
-    padding: 4px 8px 4px 0px;
-  }
+      .top-left .stack>.icon {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+        justify-content: center;
+        color: var(--foreground-color);
+        backface-visibility: hidden;
+        font-size: 0.75rem;
+        width: 16px;
+        height: 16px;
+        transition: .5s
+      }
 
-  .top-left span.is-primary {
-    color: #3cffd0
-  }
+      .top-left span:not(.icon) {
+        margin: 0;
+        padding: 0;
+        color: var(--foreground-color);
+        font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+        font-size: 1.0rem;
+        line-height: 1.0rem;
+        transition: .5s;
+      }
 
-  .top-left .button {
-    box-shadow: none !important;
-  }
+      .top-left span:not(.icon):last-child:not(:first-child) {
+        padding: 4px 8px 4px 0px;
+      }
 
-  .top-left .button:hover span:not(.icon) {
-    opacity: 0.5;
-    transition: .5s
-  }
+      .top-left span.is-primary {
+        color: var(--accent-color);
+      }
 
-  .top-right {
-    z-index: 0;
-    -webkit-user-select: none;
-    user-select: none;
-    position: absolute;
-    display: flex;
-    top: 16px;
-    right: 16px;
-    padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-    width: fit-content;
-    height: fit-content !important;
-    background-color: var(--foreground-color);
-    align-items: center;
-  }
+      .top-left .button {
+        box-shadow: none !important;
+      }
 
-  .top-right .icon:first-child:not(:last-child) {
-    display: flex;
-    margin: 0;
-    padding: 4px 4px 4px 8px;
-    align-items: center;
-    justify-content: center;
-    color: var(--background-color);
-    transition: .5s;
-    backface-visibility: hidden;
-    font-size: 0.75rem;
-    width: 16px;
-    height: 16px;
-  }
+      .top-left .button:hover span:not(.icon) {
+        opacity: 0.5;
+        transition: .5s
+      }
 
-  .top-right span:not(.icon) {
-    margin: 0;
-    padding: 4px 8px 4px 0px;
-    color: var(--background-color);
-    font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
-    font-size: 1.0rem;
-    line-height: 1.0rem;
-  }
+      .top-right {
+        z-index: 0;
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        display: flex;
+        top: 16px;
+        right: 16px;
+        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        width: fit-content;
+        height: fit-content !important;
+        background-color: var(--foreground-color);
+        align-items: center;
+      }
 
-  .top-right span.is-primary {
-    color: #5200ff !important;
-  }
+      .top-right .icon:first-child:not(:last-child) {
+        display: flex;
+        margin: 0;
+        padding: 4px 4px 4px 8px;
+        align-items: center;
+        justify-content: center;
+        color: var(--background-color);
+        transition: .5s;
+        backface-visibility: hidden;
+        font-size: 0.75rem;
+        width: 16px;
+        height: 16px;
+      }
 
-  .top-left.is-hidden, .top-right.is-hidden {
-    opacity: 0;
-    transition: .5s;
-  }
+      .top-right span:not(.icon) {
+        margin: 0;
+        padding: 4px 8px 4px 0px;
+        color: var(--background-color);
+        font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+        font-size: 1.0rem;
+        line-height: 1.0rem;
+      }
 
-  .bottom {
-    z-index: 1;
-    -webkit-user-select: none;
-    user-select: none;
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-    transform: translate(-50%, 0%);
-    width: fit-content;
-    height: fit-content;
-  }
+      .top-right span.is-primary {
+        color: #5200ff !important;
+      }
 
-  .bottom>.level {
-    display: flex;
-    margin: -8px;
-    padding: 0;
-  }
+      .middle-right {
+        z-index: 0;
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        display: flex;
+        top: 50%;
+        right: 16px;
+        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        transform: translate(0%, -50%);
+        width: fit-content;
+        height: fit-content !important;
+        align-items: center;
+      }
 
-  .bottom>.level>.level-item {
-    margin: 0;
-    padding: 8px;
-  }
+      .middle-right .rotation-outer {
+        display: inline-flex;
+      }
 
-  .button {
-    margin: 0px;
-    border: 0px none transparent !important;
-    padding: 16px 32px 16px 32px;
-    background-color: var(--background-color);
-    background-clip: padding-box !important;
-    height: initial;
-    backface-visibility: hidden;
-    opacity: 1;
-    cursor: pointer;
-    box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
-    transition: .5s;
-  }
+      .middle-right .rotation-outer>div.rotation-inner {
+        padding: 50% 0;
+        height: 0;
+      }
 
-  .button.is-primary {
-    background-color: #3cffd0;
-  }
+      .middle-right .rotation-outer>div.rotation-inner>div.rotate {
+        display: block;
+        transform-origin: top right;
+        transform: rotate(-90deg) translate(-50%, 0%) rotate(180deg);
+        margin-top: 0%;
+        white-space: nowrap;
+      }
 
-  .button .icon {
-    pointer-events: none;
-    display: flex;
-    margin: 0;
-    align-items: center;
-    justify-content: center;
-    color: var(--foreground-color);
-    opacity: 1;
-    transition: .5s;
-    backface-visibility: hidden;
-    font-size: 1.0rem;
-    width: 16px;
-    height: 16px;
-    transition: .5s;
-  }
+      .middle-right span {
+        margin: 0;
+        padding: 0;
+        color: var(--foreground-color);
+        font-family: "Barlow", "Segoe UI", "Helvetica", "Arial", sans-serif;
+        font-size: 0.75rem;
+        line-height: 0.75rem;
+        opacity: 0.75;
+        transition: .5s;
+      }
 
-  .button.is-primary .icon {
-    color: #000000 !important;
-  }
-
-  .button:hover .icon {
-    opacity: 0.5;
-    transition: .5s;
-  }
-
-  .button:disabled .icon {
-    opacity: 0.5 !important;
-    transition: .5s;
-  }
-
-  .button .icon.is-hidden {
-    opacity: 0 !important;
-    transition: .5s;
-  }
-
-  .button.is-circle {
-    display: flex;
-    margin: 0px;
-    border-radius: 290486px !important;
-    padding: 16px !important;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
-  }
-
-  .button.is-hidden {
-    pointer-events: none;
-    opacity: 0;
-    transition: .5s;
-  }
-
-  .button .stack {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-  .button .stack>.icon:not(:first-child) {
-    position: absolute;
-  }
-
-  label.button>input {
-    pointer-events: none;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    outline: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-
-  label.button>input+.icon {
-    display: flex;
-    margin: 0;
-    align-items: center;
-    justify-content: center;
-    color: var(--foreground-color);
-    opacity: 1;
-    transition: .5s;
-    backface-visibility: hidden;
-    font-size: 1.0rem;
-    width: 16px;
-    height: 16px;
-  }
-
-  label.button>input:disabled+.icon {
-    opacity: 0.5 !important;
-    transition: .5s;
-  }
-
-  .progress {
-    pointer-events: none;
-    z-index: 1;
-    position: absolute;
-    margin: 0 !important;
-    border: 0px solid transparent;
-    border-radius: 0px;
-    padding: 0;
-    width: 100%;
-    height: fit-content;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-    backface-visibility: hidden;
-    background: transparent;
-    touch-action: none;
-  }
-
-  .progress>.bar {
-    pointer-events: none;
-    z-index: 1;
-    position: relative;
-    top: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    border: 0px solid transparent;
-    border-radius: 0px;
-    width: 100%;
-    height: 4px;
-    transform: translate3d(0, 0%, 0);
-    overflow: hidden;
-    background: url('/images/Stripes.png') 0 0 repeat;
-    background-color: #5200ff;
-    background-size: 24px 24px;
-    animation: progress 1s linear forwards infinite;
-    animation-play-state: paused;
-    transition: .5s;
-    backface-visibility: hidden;
-    perspective: 1000;
-  }
-
-  .progress>.bar.animating {
-    animation-play-state: running;
-  }
-
-  .blind {
-    z-index: 1;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
-    transform: translate3d(0, 0%, 0);
-    overflow: hidden;
-    background: url('/images/Background.png') 0 0 repeat;
-    background-color: #f4f4f2;
-    background-size: 100px 100px;
-    animation: loop 10s linear forwards infinite;
-    transition: .5s;
-    backface-visibility: hidden;
-    perspective: 1000;
-  }
-
-  .is-bold {
-    font-weight: bold;
-  }
-
-  @keyframes fade {
-    from {
+      .top-left.is-hidden, .top-right.is-hidden, .middle-right.is-hidden {
         opacity: 0;
-    }
+        transition: .5s;
+      }
 
-    to {
+      .bottom {
+        z-index: 1;
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        bottom: 16px;
+        left: 50%;
+        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        transform: translate(-50%, 0%);
+        width: fit-content;
+        height: fit-content;
+        transition: .5s;
+      }
+
+      .bottom>.level {
+        display: flex;
+        margin: -8px;
+        padding: 0;
+      }
+
+      .bottom>.level>.level-item {
+        margin: 0;
+        padding: 8px;
+      }
+
+      .button {
+        margin: 0px;
+        border: 0px none transparent !important;
+        padding: 16px 32px 16px 32px;
+        background-color: var(--background-color);
+        background-clip: padding-box !important;
+        height: initial;
+        backface-visibility: hidden;
         opacity: 1;
-    }
-  }
+        cursor: pointer;
+        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
+        transition: .5s;
+      }
 
-  @keyframes progress {
-    0% {
-        background-position: 0px 0px;
-    }
+      .button.is-primary {
+        background-color: var(--accent-color);
+      }
 
-    100% {
-        background-position: -24px 0px;
-    }
-  }
+      .button .icon {
+        pointer-events: none;
+        display: flex;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+        color: var(--foreground-color);
+        opacity: 1;
+        transition: .5s;
+        backface-visibility: hidden;
+        font-size: 1.0rem;
+        width: 16px;
+        height: 16px;
+        transition: .5s;
+      }
 
-  @keyframes loop {
-    0% {
-        background-position: 0 0;
-    }
+      .button.is-primary .icon {
+        color: #000000 !important;
+      }
 
-    100% {
-        background-position: -100px 0px;
-    }
-  }
+      .button:hover .icon {
+        opacity: 0.5;
+        transition: .5s;
+      }
 
-  @media screen and (-webkit-min-device-pixel-ratio: 2),
-  (min-resolution: 2dppx) {
-    .progress>.bar {
-        background: url('/images/Stripes@2x.png') 0 0 repeat;
+      .button:disabled .icon {
+        opacity: 0.5 !important;
+        transition: .5s;
+      }
+
+      .button .icon.is-hidden {
+        opacity: 0 !important;
+        transition: .5s;
+      }
+
+      .button.is-circle {
+        display: flex;
+        margin: 0px;
+        border-radius: 290486px !important;
+        padding: 16px !important;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1;
+      }
+
+      .button.is-hidden {
+        pointer-events: none;
+        opacity: 0;
+        transition: .5s;
+      }
+
+      .button .stack {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .button .stack>.icon:not(:first-child) {
+        position: absolute;
+      }
+
+      label.button>input {
+        pointer-events: none;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        outline: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      label.button>input+.icon {
+        display: flex;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+        color: var(--foreground-color);
+        opacity: 1;
+        transition: .5s;
+        backface-visibility: hidden;
+        font-size: 1.0rem;
+        width: 16px;
+        height: 16px;
+      }
+
+      label.button>input:disabled+.icon {
+        opacity: 0.5 !important;
+        transition: .5s;
+      }
+
+      .progress {
+        pointer-events: none;
+        z-index: 1;
+        position: absolute;
+        margin: 0 !important;
+        border: 0px solid transparent;
+        border-radius: 0px;
+        padding: 0;
+        width: 100%;
+        height: fit-content;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        backface-visibility: hidden;
+        background: transparent;
+        touch-action: none;
+      }
+
+      .progress>.bar {
+        pointer-events: none;
+        z-index: 1;
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        border-radius: 0px;
+        width: 100%;
+        height: 4px;
+        transform: translate3d(0, 0%, 0);
+        overflow: hidden;
+        background: url('/images/Stripes.png') 0 0 repeat;
         background-color: #5200ff;
         background-size: 24px 24px;
-    }
+        animation: progress 1s linear forwards infinite;
+        animation-play-state: paused;
+        transition: .5s;
+        backface-visibility: hidden;
+        perspective: 1000;
+      }
 
-    .blind {
-        background: url('/images/Background@2x.png') 0 0 repeat;
+      .progress>.bar.animating {
+        animation-play-state: running;
+      }
+
+      .blind {
+        z-index: 1;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        transform: translate3d(0, 0%, 0);
+        overflow: hidden;
+        background: url('/images/Background.png') 0 0 repeat;
         background-color: #f4f4f2;
         background-size: 100px 100px;
-    }
-  }
+        animation: loop 10s linear forwards infinite;
+        transition: .5s;
+        backface-visibility: hidden;
+        perspective: 1000;
+      }
 
-  @media screen and (-webkit-min-device-pixel-ratio: 3),
-  (min-resolution: 3dppx) {
-    .progress>.bar {
-        background: url('/images/Stripes@3x.png') 0 0 repeat;
-        background-color: #5200ff;
-        background-size: 24px 24px;
-    }
+      .is-uppercase {
+        text-transform: uppercase;
+      }
 
-    .blind {
-        background: url('/images/Background@3x.png') 0 0 repeat;
-        background-color: #f4f4f2;
-        background-size: 100px 100px;
-    }
-  }
-</style>
-</head>
-<body>
-  <div id="app">
-    <div class="container">
-      <div class="top">
-        <button class="button is-circle is-hidden" onclick="request(event)">
-          <span class="icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </span>
-        </button>
-      </div>
-      <div class="top-left is-hidden">
-        <button class="button" onclick="share(event)">
-          <div class="stack">
-            <span class="icon">
-              <i class="fa-solid fa-link"></i>
+      .has-text-weight-bold {
+        font-weight: bold;
+      }
+
+      @keyframes fade {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+      }
+
+      @keyframes progress {
+        0% {
+            background-position: 0px 0px;
+        }
+
+        100% {
+            background-position: -24px 0px;
+        }
+      }
+
+      @keyframes loop {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: -100px 0px;
+        }
+      }
+
+      @media screen and (-webkit-min-device-pixel-ratio: 2),
+      (min-resolution: 2dppx) {
+        .progress>.bar {
+            background: url('/images/Stripes@2x.png') 0 0 repeat;
+            background-color: #5200ff;
+            background-size: 24px 24px;
+        }
+
+        .blind {
+            background: url('/images/Background@2x.png') 0 0 repeat;
+            background-color: #f4f4f2;
+            background-size: 100px 100px;
+        }
+      }
+
+      @media screen and (-webkit-min-device-pixel-ratio: 3),
+      (min-resolution: 3dppx) {
+        .progress>.bar {
+            background: url('/images/Stripes@3x.png') 0 0 repeat;
+            background-color: #5200ff;
+            background-size: 24px 24px;
+        }
+
+        .blind {
+            background: url('/images/Background@3x.png') 0 0 repeat;
+            background-color: #f4f4f2;
+            background-size: 100px 100px;
+        }
+      }
+
+      @media screen and (min-width: 769px) and (min-height: 769px) {
+        .bottom {
+          left: 16px;
+          transform: translate(0%, 0%);
+          transition: .5s;
+        }
+      }
+    </style>
+    </head>
+    <body>
+      <div id="app">
+        <div class="container">
+          <div class="top">
+            <button class="button is-circle is-hidden" onclick="request(event)">
+              <span class="icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </span>
+            </button>
+          </div>
+          <div class="top-left is-hidden">
+            <button class="button" onclick="share(event)">
+              <div class="stack">
+                <span class="icon">
+                  <i class="fa-solid fa-link"></i>
+                </span>
+                <span class="icon is-hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+              </div>
+              <span class="has-text-weight-bold is-primary">milchchan.com/parallax</span>
+            </button>
+          </div>
+          <div class="top-right is-hidden">
+            <span class="icon is-primary">
+              <i class="fa-solid fa-eye"></i>
             </span>
-            <span class="icon is-hidden">
-              <i class="fa-solid fa-check"></i>
-            </span>
+            <span class="has-text-weight-bold">0</span>
           </div>
-          <span class="is-bold is-primary">milchchan.com/parallax</span>
-        </button>
-      </div>
-      <div class="top-right is-hidden">
-        <span class="icon is-primary">
-          <i class="fa-solid fa-eye"></i>
-        </span>
-        <span class="is-bold">0</span>
-      </div>
-      <div class="bottom">
-        <div class="level">
-          <div class="level-item">
-            <button class="button is-circle" onclick="previous(event)">
-              <span class="icon">
-                <i class="fa-solid fa-arrow-left"></i>
-              </span>
-            </button>
+          <div class="middle-right is-hidden">
+            <div class="rotation-outer">
+              <div class="rotation-inner">
+                <div class="rotate">
+                  <span class="has-text-weight-bold is-uppercase">Hello world</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="level-item">
-            <button class="button is-circle" onclick="next(event)">
-              <span class="icon">
-                <i class="fa-solid fa-arrow-right"></i>
-              </span>
-            </button>
-          </div>
-          <div class="level-item">
-            <button class="button is-circle" onclick="shuffle(event)">
-              <span class="icon">
-                <i class="fa-solid fa-shuffle"></i>
-              </span>
-            </button>
-          </div>
-          <div class="level-item">
-            <label class="button is-circle">
-              <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="post(event);">
-              <span class="icon is-rotate" onselectstart="return false;" onmousedown="return false;">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-              </span>
-            </label>
+          <div class="bottom">
+            <div class="level">
+              <div class="level-item">
+                <button class="button is-circle" onclick="previous(event)">
+                  <span class="icon">
+                    <i class="fa-solid fa-arrow-left"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="level-item">
+                <button class="button is-circle" onclick="next(event)">
+                  <span class="icon">
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="level-item">
+                <button class="button is-circle" onclick="shuffle(event)">
+                  <span class="icon">
+                    <i class="fa-solid fa-shuffle"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="level-item">
+                <label class="button is-circle">
+                  <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="post(event);">
+                  <span class="icon" onselectstart="return false;" onmousedown="return false;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                  </span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-<script>
+    <script>
 const NSFW = JSON.parse(new URL(window.location.href).searchParams.get("nsfw")) ?? true;
 const MAX_SHIFT_FACTOR = 0.05;
 const canvas = document.createElement("canvas");
@@ -589,7 +671,7 @@ async function download(url = null, limit = 10, reverse = false) {
   let success = true;
   const blind = document.createElement("div");
 
-  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right")) {
+  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right, #app>div.container>.middle-right")) {
     element.classList.add("is-hidden");
   }
 
@@ -778,6 +860,14 @@ async function download(url = null, limit = 10, reverse = false) {
         let width = 0;
         let height = 0;
         let index = 0;
+        const timestamp = new Date(Math.floor(json.timestamp * 1000));
+        const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
+        const month = months[timestamp.getMonth()];
+        const day = timestamp.getDate();
+        const year = timestamp.getFullYear();
+        const hour = String(timestamp.getHours()).padStart(2, "0");
+        const minute = String(timestamp.getMinutes()).padStart(2, "0");
+        const formatted = `${month} ${day}, ${year} ${hour}:${minute}`;
         
         layers.splice(0);
 
@@ -861,10 +951,10 @@ async function download(url = null, limit = 10, reverse = false) {
             }
           }
 
-          span1.classList.add("is-bold");
+          span1.classList.add("has-text-weight-bold");
           span1.classList.add("is-primary");
           span1.textContent = "milchchan.com/parallax";
-          span2.classList.add("is-bold");
+          span2.classList.add("has-text-weight-bold");
           span2.textContent = `#${json.id.slice(0, 7)}`;
 
           element.appendChild(span1);
@@ -873,6 +963,10 @@ async function download(url = null, limit = 10, reverse = false) {
 
         for (const element of document.body.querySelectorAll("#app>div.container>.top-right span:not(.icon):last-child")) {
           element.textContent = String(json.views);
+        }
+
+        for (const element of document.body.querySelectorAll("#app>div.container>.middle-right span")) {
+          element.textContent = formatted;
         }
       } else {
         throw new Error(response.statusText);
@@ -898,7 +992,7 @@ async function download(url = null, limit = 10, reverse = false) {
     }
   }
 
-  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right")) {
+  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right, #app>div.container>.middle-right")) {
     element.classList.remove("is-hidden");
   }
   
@@ -942,17 +1036,17 @@ window.request = async (event) => {
 };
 
 window.previous = async (event) => {
-  if (!(await download(null, 10, true))) {
+  if (!await download(null, 10, true)) {
     shake(event.currentTarget || event.target);
   }
 };
 window.next = async (event) => {
-  if (!(await download(null, 10, false))) {
+  if (!await download(null, 10, false)) {
     shake(event.currentTarget || event.target);
   }
 };
 window.shuffle = async (event) => {
-  if (!(await download("https://milchchan.com/api/parallax/post"))) {
+  if (!await download("https://milchchan.com/api/parallax/post")) {
     shake(event.currentTarget || event.target);
   }
 };
@@ -962,7 +1056,7 @@ window.post = async (files) => {
   const progress = document.createElement("div");
   const bar = document.createElement("div");
 
-  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right")) {
+  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right, #app>div.container>.middle-right")) {
     element.classList.add("is-hidden");
   }
 
@@ -1069,6 +1163,14 @@ window.post = async (files) => {
         let width = 0;
         let height = 0;
         let index = 0;
+        const timestamp = new Date(Math.floor(json.timestamp * 1000));
+        const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
+        const month = months[timestamp.getMonth()];
+        const day = timestamp.getDate();
+        const year = timestamp.getFullYear();
+        const hour = String(timestamp.getHours()).padStart(2, "0");
+        const minute = String(timestamp.getMinutes()).padStart(2, "0");
+        const formatted = `${month} ${day}, ${year} ${hour}:${minute}`;
         
         layers.splice(0);
 
@@ -1152,10 +1254,10 @@ window.post = async (files) => {
             }
           }
 
-          span1.classList.add("is-bold");
+          span1.classList.add("has-text-weight-bold");
           span1.classList.add("is-primary");
           span1.textContent = "milchchan.com/parallax";
-          span2.classList.add("is-bold");
+          span2.classList.add("has-text-weight-bold");
           span2.textContent = `#${json.id.slice(0, 7)}`;
 
           element.appendChild(span1);
@@ -1164,6 +1266,10 @@ window.post = async (files) => {
 
         for (const element of document.body.querySelectorAll("#app>div.container>.top-right span:not(.icon):last-child")) {
           element.textContent = String(json.views);
+        }
+
+        for (const element of document.body.querySelectorAll("#app>div.container>.middle-right span")) {
+          element.textContent = formatted;
         }
       } else {
         throw new Error(response.statusText);
@@ -1191,7 +1297,7 @@ window.post = async (files) => {
     break;
   }
 
-  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right")) {
+  for (const element of document.body.querySelectorAll("#app>div.container>.top-left, #app>div.container>.top-right, #app>div.container>.middle-right")) {
     element.classList.remove("is-hidden");
   }
 
@@ -1440,5 +1546,21 @@ window.addEventListener("deviceorientation", event => {
     isGranted = true;
   }
 }, true);
-</script>
-</body></html>
+window.addEventListener("keyup", async (event) => {
+  if (event.code === "Space") {
+    if (!await download("https://milchchan.com/api/parallax/post")) {
+      shake(document.body.querySelector("#app>.container .bottom>.level>.level-item:nth-child(3) button.button"));
+    }
+  } else if (event.code === "ArrowLeft") {
+    if (!await download(null, 10, true)) {
+      shake(document.body.querySelector("#app>.container .bottom>.level>.level-item:nth-child(1) button.button"));
+    }
+  } else if (event.code === "ArrowRight") {
+    if (!await download(null, 10, false)) {
+      shake(document.body.querySelector("#app>.container .bottom>.level>.level-item:nth-child(2) button.button"));
+    }
+  }
+});
+    </script>
+  </body>
+</html>
