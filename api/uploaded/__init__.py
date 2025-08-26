@@ -171,6 +171,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             identifier = req.route_params.get('id')
 
             if bool(re.match(r'^[0-9a-f]{7}$', identifier)):
+                Session = sessionmaker(bind=engine)
+                session = Session()
+                
                 try:
                     identifier = os.path.basename(urlparse(session.query(Upload).filter(Upload.url.like(f'%{os.path.join("/", identifier)}%')).order_by(Upload.timestamp).one().url).path)
 
