@@ -767,7 +767,7 @@ window.addEventListener("load", async event => {
 
   stats.id = "stats";
 
-  if (decodeURIComponent(window.location.hash.substring(1)) === "debug") {
+  if (decodeURIComponent(window.location.hash.substring(1).toLowerCase()) === "debug") {
     for (const element of document.body.querySelectorAll("div.sidebar>.level>.level-item:last-child>.level>.level-item")) {
       if (element.classList.contains("is-hidden")) {
         element.classList.remove("is-hidden");
@@ -880,7 +880,7 @@ window.addEventListener("load", async event => {
 
       previousTime = timestamp;
 
-      if (timestamp - background.updated >= background.timeout && (background.force || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1))))) {
+      if (timestamp - background.updated >= background.timeout && (background.force || !/^(?:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|[0-9a-f]{7})$/.test(decodeURIComponent(window.location.hash.substring(1).toLowerCase())))) {
         for (const block of background.blocks) {
           for (let i = block.inlines.length - 1; i >= 0; i--) {
             if (block.inlines[i].running) {
@@ -1155,8 +1155,8 @@ window.addEventListener("load", async event => {
           console.error(error);
         }
         
-        if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(decodeURIComponent(window.location.hash.substring(1)))) {
-          background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1))}` }] });
+        if (/^(?:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|[0-9a-f]{7})$/.test(decodeURIComponent(window.location.hash.substring(1).toLowerCase()))) {
+          background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1).toLowerCase())}` }] });
         } else if (background.offset === null) {
           try {
             const response = await fetch(encodeURI(`https://milchchan.com/api/upload?type=image/%&nonce=${~~random(0, 100)}`), {
