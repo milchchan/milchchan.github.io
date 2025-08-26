@@ -352,11 +352,6 @@ div.sidebar {
                         transition: .5s;
                     }
 
-                    .button:hover>.wrap+.icon:not(.is-animatable) {
-                        opacity: 0.5;
-                        transition: .5s;
-                    }
-
                     .button:active>.wrap+.icon:not(.is-animatable) {
                         color: var(--accent-color);
                         color: var(--accent-color-display-p3);
@@ -372,14 +367,6 @@ div.sidebar {
                     >.icon:not(.is-animatable):first-of-type:last-of-type,
                     >.wrap+.icon:not(.is-animatable) {
                         opacity: 1;
-                        transition: .5s;
-                    }
-                }
-
-                .button:hover {
-                    >.icon:not(.is-animatable):first-of-type:last-of-type,
-                    >.wrap+.icon:not(.is-animatable) {
-                        opacity: 0.5;
                         transition: .5s;
                     }
                 }
@@ -752,11 +739,6 @@ div.remarks {
         }
     }
 
-    .button:hover>.icon {
-        opacity: 0.5;
-        transition: .5s;
-    }
-
     .button:active>.icon {
         color: var(--accent-color);
         color: var(--accent-color-display-p3);
@@ -812,11 +794,6 @@ div.center {
         .icon:not(:first-of-type) {
             margin: 0px 0px 0px 8px;
         }
-    }
-
-    a.button:hover .icon {
-        opacity: 0.5;
-        transition: .5s;
     }
 
     a.button:active .icon {
@@ -987,7 +964,31 @@ div.center {
 }
 
 @media (hover: hover) {
-  .button:hover {
-    opacity: 1;
-  }
+    div.sidebar>.level {
+        >.level-item:first-child>.level>.level-item:not(:first-child) .button:hover>.wrap+.icon:not(.is-animatable) {
+            opacity: 0.5;
+            transition: .5s;
+        }
+
+        >.level-item:not(:first-child)>.level>.level-item .button:hover {
+            >.icon:not(.is-animatable):first-of-type:last-of-type,
+            >.wrap+.icon:not(.is-animatable) {
+                opacity: 0.5;
+                transition: .5s;
+            }
+        }
+    }
+
+    div.center,
+    div.remarks {
+        .button:hover>.icon {
+            opacity: 0.5;
+            transition: .5s;
+        }
+    }
+
+    div.center a.button:hover .icon {
+        opacity: 0.5;
+        transition: .5s;
+    }
 }
