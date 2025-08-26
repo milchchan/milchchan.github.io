@@ -453,7 +453,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             return func.HttpResponse(f.read(), status_code=200, mimetype=cached_data['type'])
                     '''
-                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', cached_data['id'])})
+                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', json.loads(cached_data)['id'])})
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
