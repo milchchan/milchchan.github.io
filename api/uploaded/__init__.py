@@ -8,7 +8,7 @@ import botocore
 from datetime import timezone
 from io import BytesIO
 from base64 import b64decode
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from shared.models import Upload
@@ -169,6 +169,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             
         else:
             identifier = req.route_params.get('id')
+
+            if bool(re.match(r'^[0-9a-f]{7}$', identifier)):
+                try:
+                    identifier = os.path.basename(urlparse(session.query(Upload).filter(Upload.url.like(f'%{os.path.join("/", identifier)}%')).order_by(Upload.timestamp).one().url).path)
+
+                finally:
+                    session.close()
+
             s3 = boto3.client(
                 service_name='s3',
                 endpoint_url=os.environ['S3_ENDPOINT_URL'],
