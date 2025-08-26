@@ -954,3 +954,9 @@ div.center {
         }
     }
 }
+
+@media (hover: hover) {
+  .button:hover {
+    opacity: 1;
+  }
+}
