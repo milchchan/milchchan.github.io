@@ -150,37 +150,41 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             else:
                 api_key = os.environ['OPENAI_API_KEY']
+
+            with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'input': [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': response_body}]}], 'temperature': temperature, 'reasoning': {'effort': 'minimal'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
+                for output in json.loads(response.read().decode('utf-8'))['output']:
+                    if output['type'] == 'message':
+                        for content in output['content']:
+                            if content['type'] == 'output_text':
+                                match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', content['text'], flags=(re.MULTILINE|re.DOTALL))
+                                items1 = json.loads(match.group(1) if match else content['text'])
+                                items2 = []
+
+                                for item in items1:
+                                    identifier = str(uuid.uuid4())
+                                    item['id'] = identifier
+                                    items2.append({'id': identifier, 'content': item['content']})
+
+                                with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}]}], 'temperature': temperature, 'reasoning': {'effort': 'minimal'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
+                                    for output in json.loads(response.read().decode('utf-8'))['output']:
+                                        if output['type'] == 'message':
+                                            for content in output['content']:
+                                                if content['type'] == 'output_text':
+                                                    match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', content['text'], flags=(re.MULTILINE|re.DOTALL))
+                                                    items3 = json.loads(match.group(1) if match else content['text'])
+                                            
+                                                    for item1 in items1:
+                                                        for item2 in items3:
+                                                            if item1['id'] == item2['id']:
+                                                                item1['comment'] = item2['content']
+                                                                item1['states'] = item2['states']
+
+                                                                break
+                                        
+                                                    set_cache(cache_name, json.dumps({'data': items1, 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
+                                        
+                                                    return func.HttpResponse(json.dumps(items1, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
             
-            with urlopen(Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': response_body}], 'temperature': temperature, 'reasoning_effort': 'minimal'}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response1:
-                for choice in json.loads(response1.read().decode('utf-8'))['choices']:
-                    if choice['message']['role'] == 'assistant':
-                        match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
-                        items1 = json.loads(match.group(1) if match else choice['message']['content'])
-                        items2 = []
-
-                        for item in items1:
-                            identifier = str(uuid.uuid4())
-                            item['id'] = identifier
-                            items2.append({'id': identifier, 'content': item['content']})
-
-                        with urlopen(Request('https://api.openai.com/v1/chat/completions', data=json.dumps({'model': os.environ['OPENAI_MODEL'] if model is None else model, 'messages': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}], 'temperature': temperature, 'reasoning_effort': 'minimal'}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response2:
-                            for choice in json.loads(response2.read().decode('utf-8'))['choices']:
-                                if choice['message']['role'] == 'assistant':
-                                    match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', choice['message']['content'], flags=(re.MULTILINE|re.DOTALL))
-                                    items3 = json.loads(match.group(1) if match else choice['message']['content'])
-                            
-                                    for item1 in items1:
-                                        for item2 in items3:
-                                            if item1['id'] == item2['id']:
-                                                item1['comment'] = item2['content']
-                                                item1['states'] = item2['states']
-
-                                                break
-                        
-                                    set_cache(cache_name, json.dumps({'data': items1, 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
-                        
-                                    return func.HttpResponse(json.dumps(items1, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
-                    
             return func.HttpResponse(status_code=500, mimetype='', charset='')
         
     except Exception as e:
