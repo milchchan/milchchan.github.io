@@ -113,7 +113,7 @@
         display: flex;
         top: 16px;
         left: 16px;
-        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        padding: env(safe-area-inset-top, 0px) 0 0 env(safe-area-inset-left, 0px);
         width: fit-content;
         height: fit-content;
         align-items: center;
@@ -192,7 +192,16 @@
         display: flex;
         top: 16px;
         right: 16px;
-        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 0;
+        width: fit-content;
+        height: fit-content !important;
+        align-items: center;
+      }
+
+      .top-right>div {
+        display: flex;
+        margin: 0;
+        padding: 0;
         width: fit-content;
         height: fit-content !important;
         background-color: var(--background-color-alt);
@@ -234,7 +243,7 @@
         display: flex;
         top: 50%;
         right: 16px;
-        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) 0;
         transform: translate(0%, -50%);
         width: fit-content;
         height: fit-content !important;
@@ -281,7 +290,7 @@
         position: absolute;
         bottom: 16px;
         left: 50%;
-        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
         transform: translate(-50%, 0%);
         width: fit-content;
         height: fit-content;
@@ -582,16 +591,18 @@
             </button>
           </div>
           <div class="top-right is-hidden">
-            <span class="icon is-primary">
-              <i class="fa-solid fa-eye"></i>
-            </span>
-            <span class="has-text-weight-bold">0</span>
+            <div>
+              <span class="icon is-primary">
+                <i class="fa-solid fa-eye"></i>
+              </span>
+              <span class="has-text-weight-bold">0</span>
+            </div>
           </div>
           <div class="middle-right is-hidden">
             <div class="rotation-outer">
               <div class="rotation-inner">
                 <div class="rotate">
-                  <span class="has-text-weight-bold is-uppercase">Hello world</span>
+                  <span class="has-text-weight-bold is-uppercase"></span>
                 </div>
               </div>
             </div>
