@@ -173,11 +173,6 @@
         box-shadow: none !important;
       }
 
-      .top-left .button:hover span:not(.icon) {
-        opacity: 0.5;
-        transition: .5s
-      }
-
       .top-left .button span.icon {
         transition: .5s
       }
@@ -338,11 +333,6 @@
 
       .button.is-primary .icon {
         color: var(--accent-color) !important;
-      }
-
-      .button:hover .icon {
-        opacity: 0.5;
-        transition: .5s;
       }
 
       .button:active .icon {
@@ -561,8 +551,14 @@
       }
 
       @media (hover: hover) {
-        .button:hover {
-          opacity: 1;
+        .top-left .button:hover span:not(.icon) {
+          opacity: 0.5;
+          transition: .5s
+        }
+
+        .button:hover .icon {
+          opacity: 0.5;
+          transition: .5s;
         }
       }
     </style>
