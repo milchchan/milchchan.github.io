@@ -2758,3 +2758,8 @@ window.addEventListener("touchcancel", event => {
     }
   }
 });
+window.addEventListener("keyup", event => {
+  if (event.code === "Space") {
+    refresh(event);
+  }
+});
