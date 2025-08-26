@@ -103,23 +103,6 @@
         animation: fade .5s ease-out forwards;
       }
 
-      .top {
-        z-index: 1;
-        -webkit-user-select: none;
-        user-select: none;
-        position: absolute;
-        top: 16px;
-        left: 50%;
-        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-        transform: translate(-50%, 0%);
-        width: fit-content;
-        height: fit-content;
-      }
-
-      .top .button {
-        backdrop-filter: blur(16px);
-      }
-
       .top-left {
         z-index: 0;
         -webkit-user-select: none;
@@ -567,13 +550,6 @@
     <body>
       <div id="app">
         <div class="container">
-          <div class="top">
-            <button class="button is-circle is-primary is-hidden" onclick="request(event)">
-              <span class="icon">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-              </span>
-            </button>
-          </div>
           <div class="top-left is-hidden">
             <button class="button" onclick="share(event)">
               <div class="stack">
