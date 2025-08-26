@@ -1341,31 +1341,55 @@ canvas.addEventListener("dragleave", e => {
 
 div.prepend(canvas);
 
-window.request = async (event) => {
-  const target = (event.currentTarget || event.target);
-  const permissionState = await DeviceOrientationEvent.requestPermission();
+window.previous = async (event) => {
+  const target = event.currentTarget || event.target;
+
+  if (!isGranted && typeof DeviceOrientationEvent?.requestPermission === "function") {
+    const permissionState = await DeviceOrientationEvent.requestPermission();
       
-  if (permissionState === "granted") {
-    if (!target.classList.contains("is-hidden")) {
-      target.classList.add("is-hidden");
+    if (permissionState === "granted") {
+      isGranted = true;
+    } else {
+      shake(target);
     }
-  } else {
+  }
+
+  if (!await download(null, 10, true)) {
     shake(target);
   }
 };
-window.previous = async (event) => {
-  if (!await download(null, 10, true)) {
-    shake(event.currentTarget || event.target);
-  }
-};
 window.next = async (event) => {
+  const target = event.currentTarget || event.target;
+
+  if (!isGranted && typeof DeviceOrientationEvent?.requestPermission === "function") {
+    const permissionState = await DeviceOrientationEvent.requestPermission();
+      
+    if (permissionState === "granted") {
+      isGranted = true;
+    } else {
+      shake(target)
+    }
+  }
+
   if (!await download(null, 10, false)) {
-    shake(event.currentTarget || event.target);
+    shake(target);
   }
 };
 window.shuffle = async (event) => {
+  const target = event.currentTarget || event.target;
+
+  if (!isGranted && typeof DeviceOrientationEvent?.requestPermission === "function") {
+    const permissionState = await DeviceOrientationEvent.requestPermission();
+      
+    if (permissionState === "granted") {
+      isGranted = true;
+    } else {
+      shake(target);
+    }
+  }
+
   if (!await download("https://milchchan.com/api/parallax/post")) {
-    shake(event.currentTarget || event.target);
+    shake(target);
   }
 };
 window.upload = async (event) => {
@@ -1408,14 +1432,6 @@ window.share = async (event) => {
 };
 window.addEventListener("load", event => {
   const hash = decodeURIComponent(window.location.hash.substring(1));
-
-  if (typeof DeviceOrientationEvent?.requestPermission === "function") {
-    setTimeout(() => {
-      if (!isGranted) {
-        document.body.querySelector("#app>.container .notice>button").classList.remove("is-hidden");
-      }
-    }, 3000);
-  }
 
   function render(timestamp) {
     if (timestamp > previousTime) {
