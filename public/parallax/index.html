@@ -1427,7 +1427,7 @@ window.share = async (event) => {
   }, 3000);
 };
 window.addEventListener("load", event => {
-  const hash = decodeURIComponent(window.location.hash.substring(1));
+  const hash = decodeURIComponent(window.location.hash.substring(1).toLowerCase());
 
   function render(timestamp) {
     if (timestamp > previousTime) {
