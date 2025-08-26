@@ -4,6 +4,8 @@
 :root {
     --background-color: rgb(255 255 255 / 0.75);
     --foreground-color: #000000;
+    --accent-color: #00e7ff;
+    --accent-color-display-p3: color(display-p3 0.0 0.906 1.0);
     --background-font-family: "Fredoka One", "Dela Gothic One", cursive;
 }
 
@@ -11,6 +13,8 @@
     :root {
         --background-color: rgb(0 0 0 / 0.75);
         --foreground-color: #ffffff;
+        --accent-color: #ffc7e5;
+        --accent-color-display-p3: color(display-p3 1.0 0.780 0.898);
     }
 }
 
@@ -352,6 +356,12 @@ div.sidebar {
                         opacity: 0.5;
                         transition: .5s;
                     }
+
+                    .button:active>.wrap+.icon:not(.is-animatable) {
+                        color: var(--accent-color);
+                        color: var(--accent-color-display-p3);
+                        transition: .5s;
+                    }
                 }
             }
         }
@@ -370,6 +380,15 @@ div.sidebar {
                     >.icon:not(.is-animatable):first-of-type:last-of-type,
                     >.wrap+.icon:not(.is-animatable) {
                         opacity: 0.5;
+                        transition: .5s;
+                    }
+                }
+
+                .button:active {
+                    >.icon:not(.is-animatable):first-of-type:last-of-type,
+                    >.wrap+.icon:not(.is-animatable) {
+                        color: var(--accent-color);
+                        color: var(--accent-color-display-p3);
                         transition: .5s;
                     }
                 }
@@ -738,6 +757,12 @@ div.remarks {
         transition: .5s;
     }
 
+    .button:active>.icon {
+        color: var(--accent-color);
+        color: var(--accent-color-display-p3);
+        transition: .5s;
+    }
+
     .button.is-circle {
         display: flex;
         margin: 0px;
@@ -791,6 +816,12 @@ div.center {
 
     a.button:hover .icon {
         opacity: 0.5;
+        transition: .5s;
+    }
+
+    a.button:active .icon {
+        color: var(--accent-color);
+        color: var(--accent-color-display-p3);
         transition: .5s;
     }
 
