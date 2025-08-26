@@ -12,7 +12,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         identifier = req.route_params.get('id')
         
-        if bool(re.match(r'^(?:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|[0-9a-f]{7})$', identifier, re.IGNORECASE)):
+        if bool(re.match(r'^(?:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|[0-9a-f]{7})$', identifier)):
             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
