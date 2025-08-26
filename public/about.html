@@ -481,11 +481,6 @@
         transition: .5s;
       }
 
-      div.sidebar .button.is-animatable:hover {
-        opacity: 0.5;
-        transition: .5s;
-      }
-
       div.sidebar .button:disabled {
           opacity: 0.5 !important;
           transition: .5s;
@@ -581,11 +576,6 @@
         transition: .5s;
       }
 
-      .button:hover>figure {
-        opacity: 0.5;
-        transition: .5s;
-      }
-
       .icon figure>picture {
         display: block;
       }
@@ -630,12 +620,6 @@
         opacity: 1.0;
         backface-visibility: hidden;
         transition: opacity .5s;
-      }
-
-      .content>div>div>div.is-playable:hover {
-        cursor: pointer;
-        opacity: 0.5;
-        transition: .5s;
       }
 
       .content>div>div>div.is-playable>p.is-generated {
@@ -817,8 +801,20 @@
       }
 
       @media (hover: hover) {
-        .button:hover {
-          opacity: 1;
+        div.sidebar .button.is-animatable:hover {
+          opacity: 0.5;
+          transition: .5s;
+        }
+
+        .button:hover>figure {
+          opacity: 0.5;
+          transition: .5s;
+        }
+
+        .content>div>div>div.is-playable:hover {
+          cursor: pointer;
+          opacity: 0.5;
+          transition: .5s;
         }
       }
     </style>
