@@ -971,7 +971,7 @@ div.center {
         }
 
         >.level-item:not(:first-child)>.level>.level-item .button:hover {
-            >.icon:not(.is-animatable):first-of-type:last-of-type,
+            >.icon:not(.is-animatable):first-of-type,
             >.wrap+.icon:not(.is-animatable) {
                 opacity: 0.5;
                 transition: .5s;
