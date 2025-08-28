@@ -59,15 +59,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if len(body) > 0:
                     data = json.loads(body)
                     url = data['url'] if 'url' in data else None
-                    model = data.get('model')
+                    model = data['model'] if 'model' in data else os.environ['OPENAI_MODEL']
                     temperature = data['temperature'] if 'temperature' in data else 1.0
                 else:
                     url = url = FETCH_URLS[random.randrange(len(FETCH_URLS))]
-                    model = None
+                    model = os.environ['OPENAI_MODEL']
                     temperature = 1.0
             else:
                 url = req.params['url'] if 'url' in req.params else FETCH_URLS[random.randrange(len(FETCH_URLS))]
-                model = req.params.get('model')
+                model = req.params['model'] if 'model' in req.params else os.environ['OPENAI_MODEL']
                 temperature = req.params['temperature'] if 'temperature' in req.params else 1.0
             
             cache_name = f'fetch/{url}'
@@ -151,7 +151,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             else:
                 api_key = os.environ['OPENAI_API_KEY']
 
-            with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'input': [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': response_body}]}], 'temperature': temperature, 'reasoning': {'effort': 'minimal'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
+            if model == 'gpt-5':
+                temperature = 1.0
+            
+            with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': model, 'input': [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': response_body}]}], 'temperature': temperature, 'reasoning': {'effort': 'minimal'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
                 for output in json.loads(response.read().decode('utf-8'))['output']:
                     if output['type'] == 'message':
                         for content in output['content']:
@@ -165,7 +168,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     item['id'] = identifier
                                     items2.append({'id': identifier, 'content': item['content']})
 
-                                with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': os.environ['OPENAI_MODEL'], 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}]}], 'temperature': temperature, 'reasoning': {'effort': 'minimal'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
+                                with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': model, 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}]}], 'temperature': temperature, 'reasoning': {'effort': 'minimal'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
                                     for output in json.loads(response.read().decode('utf-8'))['output']:
                                         if output['type'] == 'message':
                                             for content in output['content']:
