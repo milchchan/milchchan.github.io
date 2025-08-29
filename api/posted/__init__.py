@@ -30,12 +30,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'], 'timestamp': item['timestamp']}
             
             for index, animation in enumerate(item['animations']):
-                length = len(animation)
-
-                if index > 0 and length > 0:
+                if index > 0:
                     length = len(animation)
 
-                    if length == 1:
+                    if length == 0:
+                        continue
+                    elif length == 1:
                         frame = 0
                     elif length == 2:
                         frame = 1
