@@ -145,27 +145,25 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                 if i in indexes:
                                                     with urlopen(Request(urls[index])) as r:
                                                         content_type = r.headers.get_content_type()
+                                                        layer_identifier = str(uuid4())
+                                                        file_is_exists = True
+                                                        
+                                                        try:
+                                                            s3.head_object(Bucket='uploads', Key=layer_identifier)
+                                                        except botocore.exceptions.ClientError as e:
+                                                            if e.response['Error']['Code'] == '404':
+                                                                file_is_exists = False
+                                                            else:
+                                                                raise
 
-                                                        if content_type.startswith('image/'):
-                                                            layer_identifier = str(uuid4())
-                                                            file_is_exists = True
-                                                            
-                                                            try:
-                                                                s3.head_object(Bucket='uploads', Key=layer_identifier)
-                                                            except botocore.exceptions.ClientError as e:
-                                                                if e.response['Error']['Code'] == '404':
-                                                                    file_is_exists = False
-                                                                else:
-                                                                    raise
+                                                        if file_is_exists:
+                                                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+                                                        
+                                                        with io.BytesIO(r.read()) as buffer:
+                                                            s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
 
-                                                            if file_is_exists:
-                                                                return func.HttpResponse(status_code=409, mimetype='', charset='')
-                                                            
-                                                            with io.BytesIO(r.read()) as buffer:
-                                                                s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
-
-                                                            animation.append({'id': layer_identifier, 'type': content_type})
-                                                            animations.append(animation)
+                                                        animation.append({'id': layer_identifier, 'type': content_type})
+                                                        animations.append(animation)
                                                                 
                                                     index += 1
                                                 else:
