@@ -30,13 +30,24 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'], 'timestamp': item['timestamp']}
             
             for index, animation in enumerate(item['animations']):
-                if index > 0 and len(animation) > 0:
-                    animation[:] = animation[:1]
+                length = len(animation)
+
+                if index > 0 and length > 0:
+                    length = len(animation)
+
+                    if length == 1:
+                        frame = 0
+                    elif length == 2:
+                        frame = 1
+                    else:
+                        frame = 0
+                        animation[:] = animation[:1]
+
                     api_url = 'https://milchchan-prism.hf.space/gradio_api'
                     session = uuid4().hex[:10]
                     
                     with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                        'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}],
+                        'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}, frame],
                         'event_data': None,
                         'fn_index': 1,
                         'session_hash': session
