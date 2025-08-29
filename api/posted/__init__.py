@@ -62,9 +62,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     if msg['event_id'] == event_id and 'data' in msg['output']:
                                         s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
 
-                                        for item in msg['output']['data'][0]:
-                                            if 'image' in item:
-                                                with urlopen(Request(f"{api_url}/file={item['image']['path']}")) as r:
+                                        for i in msg['output']['data'][0]:
+                                            if 'image' in i:
+                                                with urlopen(Request(f"{api_url}/file={i['image']['path']}")) as r:
                                                     content_type = r.headers.get_content_type()
                                                     layer_identifier = str(uuid4())
                                                     file_is_exists = True
