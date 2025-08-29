@@ -32,6 +32,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             for index, animation in enumerate(item['animations']):
                 if index > 0:
                     length = len(animation)
+                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
 
                     if length == 0:
                         continue
@@ -40,8 +41,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     elif length == 2:
                         frame = 1
                     else:
-                        frame = 0
+                        for frame in animation[1:]:
+                            file_is_exists = True
+                                                    
+                            try:
+                                s3.head_object(Bucket='uploads', Key=frame['id'])
+                            except botocore.exceptions.ClientError as e:
+                                if e.response['Error']['Code'] == '404':
+                                    file_is_exists = False
+                                else:
+                                    raise
+
+                            if file_is_exists:
+                                s3.delete_object(Bucket='uploads', Key=frame['id'])
+
                         animation[:] = animation[:1]
+                        frame = 0
 
                     api_url = 'https://milchchan-prism.hf.space/gradio_api'
                     session = uuid4().hex[:10]
@@ -71,8 +86,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     break
                                 elif msg_type == 'process_completed':
                                     if msg['event_id'] == event_id and 'data' in msg['output']:
-                                        s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
-
                                         for i in msg['output']['data'][0]:
                                             if 'image' in i:
                                                 with urlopen(Request(f"{api_url}/file={i['image']['path']}")) as r:
