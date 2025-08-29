@@ -22,7 +22,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         if from_date is None:
             items = list(container.query_items(
-                query=f'SELECT p.id, p.type, p.layers, p.nsfw, p.views, p.timestamp FROM Posts AS p WHERE p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.layers, p.nsfw, p.views, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                query=f'SELECT p.id, p.type, p.animations, p.nsfw, p.views, p.timestamp FROM Posts AS p WHERE p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.animations, p.nsfw, p.views, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                 parameters=[
                     {'name': '@offset', 'value': 0 if offset is None else offset},
                     {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -33,7 +33,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
             items = list(container.query_items(
-                query=f'SELECT p.id, p.type, p.layers, p.nsfw, p.views, p.timestamp FROM Posts AS p WHERE p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.layers, p.nsfw, p.views, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                query=f'SELECT p.id, p.type, p.animations, p.nsfw, p.views, p.timestamp FROM Posts AS p WHERE p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.animations, p.nsfw, p.views, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                 parameters=[
                     {'name': '@offset', 'value': 0 if offset is None else offset},
                     {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -47,9 +47,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if key.startswith('_'):
                     del item[key]
 
-            for layer in item['layers']:
-                if layer is not None:
-                    layer['url'] = f"https://static.milchchan.com/{layer['id']}"
+            for animation in item['animations']:
+                for frame in animation:
+                    frame['url'] = f"https://static.milchchan.com/{frame['id']}"
 
             item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 
