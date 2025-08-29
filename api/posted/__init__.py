@@ -38,7 +38,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     with urlopen(Request(api_url + '/queue/join', data=json.dumps({
                         'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}],
                         'event_data': None,
-                        'fn_index': 0,
+                        'fn_index': 1,
                         'session_hash': session
                     }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
                         event_id = json.loads(response.read().decode('utf-8'))['event_id']
