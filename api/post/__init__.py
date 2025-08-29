@@ -136,10 +136,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         nsfw = msg['output']['data'][2]
 
                                         if len(urls) > 0:
-                                            layers = []
+                                            animations = []
                                             index = 0
 
                                             for i in range(n_layers):
+                                                animation = []
+
                                                 if i in indexes:
                                                     with urlopen(Request(urls[index])) as r:
                                                         content_type = r.headers.get_content_type()
@@ -162,23 +164,24 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                             with io.BytesIO(r.read()) as buffer:
                                                                 s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
 
-                                                            layers.append({'id': layer_identifier, 'type': content_type})
+                                                            animation.append({'id': layer_identifier, 'type': content_type})
+                                                            animations.append(animation)
                                                                 
                                                     index += 1
                                                 else:
-                                                    layers.append(None)
+                                                    animations.append(animation)
 
                                             timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
                                             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                             database = client.get_database_client('Milch')
                                             container = database.get_container_client('Posts')
-                                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'layers': layers, 'nsfw': nsfw, 'random': random.random(), 'views': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'random': random.random(), 'views': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
 
-                                            for layer in layers:
-                                                if layer is not None:
-                                                    layer['url'] = f"https://static.milchchan.com/{layer['id']}"
+                                            for animation in animations:
+                                                for frame in animation:
+                                                    frame['url'] = f"https://static.milchchan.com/{frame['id']}"
 
-                                            return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'layers': layers, 'nsfw': nsfw, 'views': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                                            return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'views': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
                                     
                                     break
                     
@@ -190,19 +193,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = random.choice(list(container.query_items(
-                query='SELECT p.id, p.slug, p.type, p.layers, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.layers, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.slug, p.type, p.animations, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.animations, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@random', 'value': random.random()}
                 ],
                 enable_cross_partition_query=True)))
-            item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'layers': item['layers'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'] + 1, 'timestamp': item['timestamp']}
+            item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'] + 1, 'timestamp': item['timestamp']}
             container.upsert_item(item)
 
-            for layer in item['layers']:
-                if layer is not None:
-                    layer['url'] = f"https://static.milchchan.com/{layer['id']}"
+            for animation in item['animations']:
+                for frame in animation:
+                    frame['url'] = f"https://static.milchchan.com/{frame['id']}"
                     
-            return func.HttpResponse(json.dumps({'id': item['id'], 'type': item['type'], 'layers': item['layers'], 'nsfw': item['nsfw'], 'views': item['views'], 'timestamp': int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps({'id': item['id'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'views': item['views'], 'timestamp': int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
         
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     
