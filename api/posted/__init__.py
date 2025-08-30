@@ -59,7 +59,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     session = uuid4().hex[:10]
                     
                     with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                        'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}, -1],
+                        'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}],
                         'event_data': None,
                         'fn_index': 1,
                         'session_hash': session
