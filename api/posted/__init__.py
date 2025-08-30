@@ -32,15 +32,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             for index, animation in enumerate(item['animations']):
                 if index > 0:
                     length = len(animation)
-                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
-
+                    
                     if length == 0:
                         continue
-                    elif length == 1:
-                        frame = 0
-                    elif length == 2:
-                        frame = 1
-                    else:
+                    
+                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+
+                    if length > 1:
                         for frame in animation[1:]:
                             file_is_exists = True
                                                     
@@ -56,13 +54,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 s3.delete_object(Bucket='uploads', Key=frame['id'])
 
                         animation[:] = animation[:1]
-                        frame = 0
 
                     api_url = 'https://milchchan-prism.hf.space/gradio_api'
                     session = uuid4().hex[:10]
                     
                     with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                        'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}, frame],
+                        'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}, -1],
                         'event_data': None,
                         'fn_index': 1,
                         'session_hash': session
