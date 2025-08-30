@@ -573,10 +573,6 @@
           transition: .5s;
         }
       }
-
-      canvas {
-        opacity: 0;
-      }
     </style>
     </head>
     <body>
@@ -945,7 +941,7 @@ async function download(url = null, limit = 10, reverse = false) {
         let width = 0;
         let height = 0;
         let index = 0;
-        const cachedImage = {};
+        const cachedImages = {};
         const timestamp = new Date(Math.floor(json.timestamp * 1000));
         const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
         const formatted = `${months[timestamp.getMonth()]} ${timestamp.getDate()}, ${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`;
@@ -957,8 +953,8 @@ async function download(url = null, limit = 10, reverse = false) {
             let frames = [];
 
             for (const frame of item) {
-              if (frame.id in cachedImage) {
-                frames.push({delay: 0.1, image: cachedImage[frame.id]});
+              if (frame.url in cachedImages) {
+                frames.push({delay: 0.1, image: cachedImages[frame.url], url: frame.url});
               } else {
                 const image = await new Promise((resolve, reject)=>{
                   const img = new Image();
@@ -968,11 +964,29 @@ async function download(url = null, limit = 10, reverse = false) {
                   img.src = frame.url;
                 });
 
-                frames.push({delay: 0.1, image: image});
+                frames.push({delay: 0.1, image: image, url: frame.url});
                 width = Math.max(width, image.width);
                 height = Math.max(height, image.height);
-                cachedImage[frame.id] = image;
+                cachedImages[frame.url] = image;
               }
+            }
+
+            if (frames.length > 1) {
+              for (let i = frames.length - 2; i >= 0; i--) {
+                frames.push({delay: frames[i].delay, image: frames[i].image, url: frames[i].url});
+              }
+
+              const length = frames.length;
+
+              for (let i = 0; i < 2; i++) {
+                for (let j = 1; j < length; j++) {
+                  frames.push({delay: frames[j].delay, image: frames[j].image, url: frames[j].url});
+                }
+              }
+
+              frames[0].delay = 0.5;
+              frames[length - 1].delay = 1.0;
+              frames[frames.length - 1].delay = 1.0;
             }
 
             animations.push(new FrameAnimation(repeats = 1, frames = frames));
@@ -1227,7 +1241,7 @@ async function post(file) {
       let width = 0;
       let height = 0;
       let index = 0;
-      const cachedImage = {};
+      const cachedImages = {};
       const timestamp = new Date(Math.floor(json.timestamp * 1000));
       const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
       const formatted = `${months[timestamp.getMonth()]} ${timestamp.getDate()}, ${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`;
@@ -1236,11 +1250,11 @@ async function post(file) {
 
       for (const item of json.animations) {
         if (item.length > 0) {
-          const frames = [];
+          let frames = [];
 
           for (const frame of item) {
-            if (frame.id in cachedImage) {
-              frames.push({delay: 0.1, image: cachedImage[frame.id]});
+            if (frame.url in cachedImages) {
+              frames.push({delay: 0.1, image: cachedImages[frame.url]});
             } else {
               const image = await new Promise((resolve, reject)=>{
                 const img = new Image();
@@ -1253,8 +1267,26 @@ async function post(file) {
               frames.push({delay: 0.1, image: image});
               width = Math.max(width, image.width);
               height = Math.max(height, image.height);
-              cachedImage[frame.id] = image;
+              cachedImages[frame.url] = image;
             }
+          }
+
+          if (frames.length > 1) {
+            for (let i = frames.length - 2; i >= 0; i--) {
+              frames.push({delay: frames[i].delay, image: frames[i].image, url: frames[i].url});
+            }
+
+            const length = frames.length;
+
+            for (let i = 0; i < 2; i++) {
+              for (let j = 1; j < length; j++) {
+                frames.push({delay: frames[j].delay, image: frames[j].image, url: frames[j].url});
+              }
+            }
+
+            frames[0].delay = 0.5;
+            frames[length - 1].delay = 1.0;
+            frames[frames.length - 1].delay = 1.0;
           }
 
           animations.push(new FrameAnimation(repeats = 1, frames = frames));
