@@ -573,6 +573,10 @@
           transition: .5s;
         }
       }
+
+      canvas {
+        opacity: 0;
+      }
     </style>
     </head>
     <body>
@@ -653,13 +657,71 @@ let point = { x: 0.0, y: 0.0 };
 let idleTime = 0;
 const div = document.body.querySelector("#app>.container");
 const rect = div.getBoundingClientRect();
-const layers = [];
+const animations = [];
+let elapsedTime = 0.0;
+let maxDuration = 0.0;
 const posts = [];
 let offset = 0;
 let selected = 0;
 let previousTime = performance.now();
 let redrawRequired = false;
 let isGranted = false;
+
+class FrameAnimation {
+  constructor(repeats = 1, frames = []) {
+    this.repeats = repeats;
+    this.time = 0.0;
+    this.frames = frames;
+  }
+
+  get duration() {
+    let duration = 0.0;
+        
+    for (const frame of this.frames) {
+      duration += frame.delay;
+    }
+    
+    if (this.repeats > 1) {
+      duration *= this.repeats;
+    }
+
+    return duration;
+  }
+
+  get current() {
+    let time = this.time;
+    let frame = this.frames[0];
+    
+    if (this.repeats !== 1) {
+      let duration = 0.0
+      
+      for (const frame of this.frames) {
+        duration += frame.delay;
+      }
+      
+      if (this.repeats > 1 && time > duration * this.repeats) {
+        time = duration;
+      } else {
+        time = time % duration;
+      }
+    }
+    
+    if (time >= frame.delay) {
+      let delay = frame.delay;
+      
+      for (let i = 1; i < this.frames.length; i++) {
+        frame = this.frames[i];
+        delay += frame.delay;
+          
+        if (time < delay) {
+            break;
+        }
+      }
+    }
+    
+    return frame;
+  }
+}
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
@@ -883,33 +945,45 @@ async function download(url = null, limit = 10, reverse = false) {
         let width = 0;
         let height = 0;
         let index = 0;
+        const cachedImage = {};
         const timestamp = new Date(Math.floor(json.timestamp * 1000));
         const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
         const formatted = `${months[timestamp.getMonth()]} ${timestamp.getDate()}, ${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`;
         
-        layers.splice(0);
+        animations.splice(0);
 
-        for (const item of json.layers) {
-          if (item === null) {
-            layers.push(null);
+        for (const item of json.animations) {
+          if (item.length > 0) {
+            let frames = [];
+
+            for (const frame of item) {
+              if (frame.id in cachedImage) {
+                frames.push({delay: 0.1, image: cachedImage[frame.id]});
+              } else {
+                const image = await new Promise((resolve, reject)=>{
+                  const img = new Image();
+
+                  img.onload = () => resolve(img);
+                  img.onerror = reject;
+                  img.src = frame.url;
+                });
+
+                frames.push({delay: 0.1, image: image});
+                width = Math.max(width, image.width);
+                height = Math.max(height, image.height);
+                cachedImage[frame.id] = image;
+              }
+            }
+
+            animations.push(new FrameAnimation(repeats = 1, frames = frames));
           } else {
-            const image = await new Promise((resolve, reject)=>{
-              const image = new Image();
-
-              image.onload = () => resolve(image);
-              image.onerror = reject;
-              image.src = item.url;
-            });
-
-            layers.push({image: image, weight: index / json.layers.length});
-            width = Math.max(width, image.width);
-            height = Math.max(height, image.height);
+            animations.push(null);
           }
 
-          if (layers.length < json.layers.length) {
+          if (animations.length < json.animations.length) {
             bar.animate([
               {
-                width: `${Math.floor(layers.length / json.layers.length * 100)}%`
+                width: `${Math.floor(animations.length / json.animations.length * 100)}%`
               }
             ], {
               delay: 0,
@@ -919,12 +993,12 @@ async function download(url = null, limit = 10, reverse = false) {
               easing: "linear",
               composite: "replace"
             }).onfinish = () => {
-              bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
+              bar.style.width = `${Math.floor(animations.length / json.animations.length * 100)}%`;
             };
           } else {
             bar.animate([
               {
-                width: `${Math.floor(layers.length / json.layers.length * 100)}%`
+                width: `${Math.floor(animations.length / json.animations.length * 100)}%`
               }
             ], {
               delay: 0,
@@ -934,7 +1008,7 @@ async function download(url = null, limit = 10, reverse = false) {
               easing: "ease-in",
               composite: "replace"
             }).onfinish = () => {
-              bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
+              bar.style.width = `${Math.floor(animations.length / json.animations.length * 100)}%`;
               bar.animate([
                 {
                   opacity: 0
@@ -955,6 +1029,7 @@ async function download(url = null, limit = 10, reverse = false) {
         }
 
         offscreenCanvas = new OffscreenCanvas(width, height);
+        elapsedTime = maxDuration = 0.0;
         redrawRequired = true;
 
         for (const element of document.body.querySelectorAll("#app>div.container>.top-left button.button")) {
@@ -1152,33 +1227,45 @@ async function post(file) {
       let width = 0;
       let height = 0;
       let index = 0;
+      const cachedImage = {};
       const timestamp = new Date(Math.floor(json.timestamp * 1000));
       const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
       const formatted = `${months[timestamp.getMonth()]} ${timestamp.getDate()}, ${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`;
       
-      layers.splice(0);
+      animations.splice(0);
 
-      for (const item of json.layers) {
-        if (item === null) {
-          layers.push(null);
+      for (const item of json.animations) {
+        if (item.length > 0) {
+          const frames = [];
+
+          for (const frame of item) {
+            if (frame.id in cachedImage) {
+              frames.push({delay: 0.1, image: cachedImage[frame.id]});
+            } else {
+              const image = await new Promise((resolve, reject)=>{
+                const img = new Image();
+
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = frame.url;
+              });
+
+              frames.push({delay: 0.1, image: image});
+              width = Math.max(width, image.width);
+              height = Math.max(height, image.height);
+              cachedImage[frame.id] = image;
+            }
+          }
+
+          animations.push(new FrameAnimation(repeats = 1, frames = frames));
         } else {
-          const image = await new Promise((resolve, reject)=>{
-            const image = new Image();
-
-            image.onload = () => resolve(image);
-            image.onerror = reject;
-            image.src = item.url;
-          });
-
-          layers.push({image: image, weight: (index + 1) / json.layers.length});
-          width = Math.max(width, image.width);
-          height = Math.max(height, image.height);
+          animations.push(null);
         }
 
-        if (layers.length < json.layers.length) {
+        if (animations.length < json.animations.length) {
           bar.animate([
             {
-              width: `${Math.floor(layers.length / json.layers.length * 100)}%`
+              width: `${Math.floor(animations.length / json.animations.length * 100)}%`
             }
           ], {
             delay: 0,
@@ -1188,12 +1275,12 @@ async function post(file) {
             easing: "linear",
             composite: "replace"
           }).onfinish = () => {
-            bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
+            bar.style.width = `${Math.floor(animations.length / json.animations.length * 100)}%`;
           };
         } else {
           bar.animate([
             {
-              width: `${Math.floor(layers.length / json.layers.length * 100)}%`
+              width: `${Math.floor(animations.length / json.animations.length * 100)}%`
             }
           ], {
             delay: 0,
@@ -1203,7 +1290,7 @@ async function post(file) {
             easing: "ease-in",
             composite: "replace"
           }).onfinish = () => {
-            bar.style.width = `${Math.floor(layers.length / json.layers.length * 100)}%`;
+            bar.style.width = `${Math.floor(animations.length / json.animations.length * 100)}%`;
             bar.animate([
               {
                 opacity: 0
@@ -1224,6 +1311,7 @@ async function post(file) {
       }
 
       offscreenCanvas = new OffscreenCanvas(width, height);
+      elapsedTime = maxDuration = 0.0;
       redrawRequired = true;
 
       for (const element of document.body.querySelectorAll("#app>div.container>.top-left button.button")) {
@@ -1468,6 +1556,40 @@ window.addEventListener("load", event => {
         redrawRequired = true;
       }
 
+      if (elapsedTime < maxDuration) {
+        for (const animation of animations) {
+          if (animation !== null) {
+            const image = animation.current.image;
+
+            animation.time += deltaTime;
+
+            if (image !== animation.current.image) {
+              redrawRequired = true;
+            }
+          }
+        }
+
+        elapsedTime += deltaTime;
+      } else {
+        elapsedTime = 0.0;
+
+        for (const animation of animations) {
+          if (animation !== null) {
+            const image = animation.current.image;
+
+            animation.time = 0.0;
+
+            if (animation.duration > maxDuration) {
+              maxDuration = animation.duration;
+            }
+
+            if (image !== animation.current.image) {
+              redrawRequired = true;
+            }
+          }
+        }
+      }
+
       if (offscreenCanvas !== null && redrawRequired) {
         const context = canvas.getContext("2d");
         const offscreenContext = offscreenCanvas.getContext("2d");
@@ -1480,6 +1602,7 @@ window.addEventListener("load", event => {
         const imageAspect = sourceWidth / sourceHeight;
         let sx, sy, sw, sh;
         const base = 5;
+        let index = 0;
 
         if (canvasAspect > imageAspect) {
           const ratio = canvas.width / sourceWidth;
@@ -1501,12 +1624,14 @@ window.addEventListener("load", event => {
         offscreenContext.imageSmoothingQuality = "high";
         offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-        for (const layer of layers) {
-          if (layer !== null) {
-            const weight = Math.log1p((base - 1) * (1.0 - layer.weight)) / Math.log(base);
+        for (const animation of animations) {
+          if (animation !== null) {
+            const weight = Math.log1p((base - 1) * (1.0 - index / animations.length)) / Math.log(base);
           
-            offscreenContext.drawImage(layer.image, point.x * maxShift * weight, point.y * maxShift * weight);
+            offscreenContext.drawImage(animation.current.image, point.x * maxShift * weight, point.y * maxShift * weight);
           }
+
+          index++;
         }
 
         context.imageSmoothingEnabled = true;
