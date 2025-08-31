@@ -930,7 +930,7 @@ async function download(url = null, limit = 10, reverse = false) {
     document.body.querySelector("#app").appendChild(progress);
 
     try {
-      const response = await fetch("post.json", {
+      const response = await fetch(url, {
           mode: "cors",
           method: "GET"
         }
