@@ -990,9 +990,6 @@ async function download(url = null, limit = 10, reverse = false) {
             }
 
             animations.push(new Motion(repeats = 1, frames = frames));
-
-            console.log(animations[animations.length - 1].duration);
-            console.log(animations[animations.length - 1].frames);
           } else {
             animations.push(null);
           }
@@ -1410,7 +1407,7 @@ async function post(file) {
               animations[z].frames[0].delay = 0.5;
               animations[z].frames[length - 1].delay = 3.0;
               animations[z].frames[(length - 1) * 2].delay = 3.0;
-              animations[z].frames[frames.length - 1].delay = 2.5;
+              animations[z].frames[animations[z].frames.length - 1].delay = 2.5;
             }
 
             z += 1;
