@@ -2132,7 +2132,7 @@ window.addEventListener("load", async event => {
       backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
       if (!tracker.active && (tracker.velocity.x !== 0 || tracker.velocity.y !== 0)) {
-        const epsilon = 0.0001;
+        const epsilon = 0.01;
         const decelerationRate = 10 * 96 / 1000;
 
         if (tracker.velocity.x > 1000) {
