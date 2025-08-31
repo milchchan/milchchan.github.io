@@ -994,7 +994,6 @@ async function download(url = null, limit = 10, reverse = false) {
 
                   img.onload = () => resolve(img);
                   img.onerror = reject;
-                  img.crossOrigin = "anonymous";
                   img.src = frame.url;
                 });
 
@@ -1293,7 +1292,6 @@ async function post(file) {
 
                 img.onload = () => resolve(img);
                 img.onerror = reject;
-                img.crossOrigin = "anonymous";
                 img.src = frame.url;
               });
 
@@ -1420,7 +1418,6 @@ async function post(file) {
 
                     img.onload = () => resolve2(img);
                     img.onerror = reject2;
-                    img.crossOrigin = "anonymous";
                     img.src = frame.url;
                   });
 
