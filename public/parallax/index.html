@@ -723,6 +723,40 @@ function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
+async function resize(image, scale) {
+  return await new Promise(async (resolve, reject) => {
+    const canvas = new OffscreenCanvas(Math.floor(image.width * scale), Math.floor(image.height * scale));
+    const ctx = canvas.getContext("2d");
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    
+    const blob = await canvas.convertToBlob({type: "image/png"});
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const i = new Image();
+
+      i.onload = () => {
+        resolve(i);
+      };
+      i.onerror = (error) => {
+        reject(error);
+      };
+      i.crossOrigin = "anonymous";
+      i.src = reader.result;
+    };
+    reader.onerror = () => {
+      reject(reader.error);
+    };
+    reader.readAsDataURL(blob);
+
+    ctx.canvas.width = ctx.canvas.height = 0;
+  });
+}
+
 function shake(element) {
   element.animate([
     { transform: "translate3d(5px, 0, 0)" },
@@ -955,13 +989,14 @@ async function download(url = null, limit = 10, reverse = false) {
               if (frame.url in cachedImages) {
                 frames.push({id: frame.id, delay: 0.1, image: cachedImages[frame.url]});
               } else {
-                const image = await new Promise((resolve, reject)=>{
+                const image = await resize(await new Promise((resolve, reject)=>{
                   const img = new Image();
 
                   img.onload = () => resolve(img);
                   img.onerror = reject;
+                  img.crossOrigin = "anonymous";
                   img.src = frame.url;
-                });
+                }), 0.9);
 
                 frames.push({id: frame.id, delay: 0.1, image: image});
                 width = Math.max(width, image.width);
@@ -1253,13 +1288,14 @@ async function post(file) {
             if (frame.url in cachedImages) {
               frames.push({id: frame.id, delay: 0.1, image: cachedImages[frame.url]});
             } else {
-              const image = await new Promise((resolve, reject)=>{
+              const image = await resize(await new Promise((resolve, reject)=>{
                 const img = new Image();
 
                 img.onload = () => resolve(img);
                 img.onerror = reject;
+                img.crossOrigin = "anonymous";
                 img.src = frame.url;
-              });
+              }), 0.9);
 
               frames.push({id: frame.id, delay: 0.1, image: image});
               width = Math.max(width, image.width);
@@ -1379,13 +1415,14 @@ async function post(file) {
                 if (frame.url in cachedImages) {
                   animations[z].frames.push({delay: 0.1, image: cachedImages[frame.url]});
                 } else {
-                  const image = await new Promise((resolve2, reject2)=>{
+                  const image = await resize(await new Promise((resolve2, reject2)=>{
                     const img = new Image();
 
                     img.onload = () => resolve2(img);
                     img.onerror = reject2;
+                    img.crossOrigin = "anonymous";
                     img.src = frame.url;
-                  });
+                  }), 0.9);
 
                   animations[z].frames.push({delay: 0.1, image: image});
                   cachedImages[frame.url] = image;
