@@ -17,7 +17,7 @@
       "routePrefix": "api",
       "customHeaders": {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+        "Access-Control-Allow-Methods": "POST, PUT, GET, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Authorization, X-Authorization, Content-Type"
       }
     }
