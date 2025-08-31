@@ -1646,9 +1646,11 @@ window.addEventListener("load", event => {
         let height = 0;
 
         for (const animation of animations) {
-          for (const frame of animation.frames) {
-            width = Math.max(frame.image.width, width);
-            height = Math.max(frame.image.height, height);
+          if (animation !== null) {
+            for (const frame of animation.frames) {
+              width = Math.max(frame.image.width, width);
+              height = Math.max(frame.image.height, height);
+            }
           }
         }
 
