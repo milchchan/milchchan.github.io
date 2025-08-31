@@ -32,7 +32,6 @@ FETCH_PROMPT = '''内容を下記の出力形式に変換してください。
 [{
     "language":  "ja",
     "content":  "<内容>",
-    "image":  "<URLまたはnull>",
     "url": "<URLまたはnull>",
     "timestamp": "<ISO 8601形式またはnull>",
     "score": 0.0-1.0,
