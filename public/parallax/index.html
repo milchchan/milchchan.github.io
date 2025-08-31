@@ -1668,7 +1668,7 @@ window.addEventListener("load", event => {
       }
       
       if (point.x !== pointer.x || point.y !== pointer.y) {
-        const epsilon = 0.0001;
+        const epsilon = 0.001;
 
         point.x = lerp(point.x, pointer.x, Math.min(deltaTime * 5, 1));
         point.y = lerp(point.y, pointer.y, Math.min(deltaTime * 5, 1));
@@ -1756,7 +1756,7 @@ window.addEventListener("load", event => {
           if (animation !== null) {
             const weight = Math.log1p((base - 1) * (1.0 - index / animations.length)) / Math.log(base);
           
-            offscreenContext.drawImage(animation.current.image, Math.round(point.x * maxShift * weight), Math.round(point.y * maxShift * weight));
+            offscreenContext.drawImage(animation.current.image, point.x * maxShift * weight, point.y * maxShift * weight);
           }
 
           index++;
