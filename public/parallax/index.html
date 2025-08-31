@@ -663,7 +663,7 @@ let previousTime = performance.now();
 let redrawRequired = false;
 let isGranted = false;
 
-class FrameAnimation {
+class Motion {
   constructor(repeats = 1, frames = []) {
     this.repeats = repeats;
     this.time = 0.0;
@@ -940,7 +940,6 @@ async function download(url = null, limit = 10, reverse = false) {
         const json = await response.json();
         let width = 0;
         let height = 0;
-        let index = 0;
         const cachedImages = {};
         const timestamp = new Date(Math.floor(json.timestamp * 1000));
         const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -948,13 +947,13 @@ async function download(url = null, limit = 10, reverse = false) {
         
         animations.splice(0);
 
-        for (const item of json.animations) {
-          if (item.length > 0) {
+        for (const animation of json.animations) {
+          if (animation.length > 0) {
             let frames = [];
 
-            for (const frame of item) {
+            for (const frame of animation) {
               if (frame.url in cachedImages) {
-                frames.push({delay: 0.1, image: cachedImages[frame.url], url: frame.url});
+                frames.push({id: frame.id, delay: 0.1, image: cachedImages[frame.url]});
               } else {
                 const image = await new Promise((resolve, reject)=>{
                   const img = new Image();
@@ -964,7 +963,7 @@ async function download(url = null, limit = 10, reverse = false) {
                   img.src = frame.url;
                 });
 
-                frames.push({delay: 0.1, image: image, url: frame.url});
+                frames.push({id: frame.id, delay: 0.1, image: image});
                 width = Math.max(width, image.width);
                 height = Math.max(height, image.height);
                 cachedImages[frame.url] = image;
@@ -973,14 +972,14 @@ async function download(url = null, limit = 10, reverse = false) {
 
             if (frames.length > 1) {
               for (let i = frames.length - 2; i >= 0; i--) {
-                frames.push({delay: frames[i].delay, image: frames[i].image, url: frames[i].url});
+                frames.push({id: frames[i].id, delay: frames[i].delay, image: frames[i].image});
               }
 
               const length = frames.length;
 
               for (let i = 0; i < 2; i++) {
                 for (let j = 1; j < length; j++) {
-                  frames.push({delay: frames[j].delay, image: frames[j].image, url: frames[j].url});
+                  frames.push({id: frames[j].id, delay: frames[j].delay, image: frames[j].image});
                 }
               }
 
@@ -989,7 +988,7 @@ async function download(url = null, limit = 10, reverse = false) {
               frames[frames.length - 1].delay = 1.0;
             }
 
-            animations.push(new FrameAnimation(repeats = 1, frames = frames));
+            animations.push(new Motion(repeats = 1, frames = frames));
           } else {
             animations.push(null);
           }
@@ -1038,8 +1037,6 @@ async function download(url = null, limit = 10, reverse = false) {
               };
             };
           }
-
-          index++;
         }
 
         offscreenCanvas = new OffscreenCanvas(width, height);
@@ -1240,7 +1237,6 @@ async function post(file) {
       const json = await response.json();
       let width = 0;
       let height = 0;
-      let index = 0;
       const cachedImages = {};
       const timestamp = new Date(Math.floor(json.timestamp * 1000));
       const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -1248,13 +1244,13 @@ async function post(file) {
       
       animations.splice(0);
 
-      for (const item of json.animations) {
-        if (item.length > 0) {
+      for (const animation of json.animations) {
+        if (animation.length > 0) {
           let frames = [];
 
-          for (const frame of item) {
+          for (const frame of animation) {
             if (frame.url in cachedImages) {
-              frames.push({delay: 0.1, image: cachedImages[frame.url]});
+              frames.push({id: frame.id, delay: 0.1, image: cachedImages[frame.url]});
             } else {
               const image = await new Promise((resolve, reject)=>{
                 const img = new Image();
@@ -1264,32 +1260,14 @@ async function post(file) {
                 img.src = frame.url;
               });
 
-              frames.push({delay: 0.1, image: image});
+              frames.push({id: frame.id, delay: 0.1, image: image});
               width = Math.max(width, image.width);
               height = Math.max(height, image.height);
               cachedImages[frame.url] = image;
             }
           }
 
-          if (frames.length > 1) {
-            for (let i = frames.length - 2; i >= 0; i--) {
-              frames.push({delay: frames[i].delay, image: frames[i].image, url: frames[i].url});
-            }
-
-            const length = frames.length;
-
-            for (let i = 0; i < 2; i++) {
-              for (let j = 1; j < length; j++) {
-                frames.push({delay: frames[j].delay, image: frames[j].image, url: frames[j].url});
-              }
-            }
-
-            frames[0].delay = 0.5;
-            frames[length - 1].delay = 1.0;
-            frames[frames.length - 1].delay = 1.0;
-          }
-
-          animations.push(new FrameAnimation(repeats = 1, frames = frames));
+          animations.push(new Motion(repeats = 1, frames = frames));
         } else {
           animations.push(null);
         }
@@ -1338,8 +1316,6 @@ async function post(file) {
             };
           };
         }
-
-        index++;
       }
 
       offscreenCanvas = new OffscreenCanvas(width, height);
@@ -1375,6 +1351,69 @@ async function post(file) {
       for (const element of document.body.querySelectorAll("#app>div.container>.middle-right span")) {
         element.textContent = formatted;
       }
+
+      new Promise(async (resolve1, reject1) => {
+        try {
+          const response = await fetch(`https://milchchan.com/api/parallax/post/${json.id}`, {
+              mode: "cors",
+              method: "PUT"
+            }
+          );
+
+          if (response.ok) {
+            resolve1(await response.json());
+          } else {
+            throw new Error(response.statusText);
+          }
+        } catch (error) {
+          reject1(error);
+        }
+      }).then(async value => {
+        if (animations.length === value.animations.length) {
+          let z = 0;
+
+          for (const animation of value.animations) {
+            if (animation.length > 1 && animations[z] !== null && animations[z].frames[0].id === animation[0].id) {
+              for (const frame of animation) {
+                if (frame.url in cachedImages) {
+                  animations[z].frames.push({delay: 0.1, image: cachedImages[frame.url]});
+                } else {
+                  const image = await new Promise((resolve2, reject2)=>{
+                    const img = new Image();
+
+                    img.onload = () => resolve2(img);
+                    img.onerror = reject2;
+                    img.src = frame.url;
+                  });
+
+                  animations[z].frames.push({delay: 0.1, image: image});
+                  cachedImages[frame.url] = image;
+                }
+              }
+
+              for (let i = animations[z].frames.length - 2; i >= 0; i--) {
+                animations[z].frames.push({id: animations[z].frames[i].id, delay: animations[z].frames[i].delay, image: animations[z].frames[i].image});
+              }
+
+              const length = animations[z].frames.length;
+
+              for (let i = 0; i < 2; i++) {
+                for (let j = 1; j < length; j++) {
+                  animations[z].frames.push({id: animations[z].frames[j].id, delay: animations[z].frames[j].delay, image: animations[z].frames[j].image});
+                }
+              }
+
+              animations[z].frames[0].delay = 0.5;
+              animations[z].frames[length - 1].delay = 1.0;
+              animations[z].frames[frames.length - 1].delay = 1.0;
+            }
+
+            z += 1;
+          }
+        }
+      }).catch(error => {
+        console.error(error);
+      });
     } else {
       throw new Error(response.statusText);
     }
