@@ -1657,9 +1657,9 @@ window.addEventListener("load", event => {
         idleTime += deltaTime;
 
         if (width > height) {
-          pointer.x = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.5;
+          pointer.x = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.75;
         } else {
-          pointer.y = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.5;
+          pointer.y = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.75;
         }
         
         redrawRequired = true;
@@ -1668,7 +1668,7 @@ window.addEventListener("load", event => {
       }
       
       if (point.x !== pointer.x || point.y !== pointer.y) {
-        const epsilon = 0.01;
+        const epsilon = 0.001;
 
         point.x = lerp(point.x, pointer.x, Math.min(deltaTime * 5, 1));
         point.y = lerp(point.y, pointer.y, Math.min(deltaTime * 5, 1));
