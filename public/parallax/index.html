@@ -1657,9 +1657,9 @@ window.addEventListener("load", event => {
         idleTime += deltaTime;
 
         if (width > height) {
-          pointer.x = Math.sin(idleTime * 2.0 * Math.PI) * 0.75;
+          pointer.x = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.5;
         } else {
-          pointer.y = Math.sin(idleTime * 2.0 * Math.PI) * 0.75;
+          pointer.y = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.5;
         }
         
         redrawRequired = true;
@@ -1756,7 +1756,7 @@ window.addEventListener("load", event => {
           if (animation !== null) {
             const weight = Math.log1p((base - 1) * (1.0 - index / animations.length)) / Math.log(base);
           
-            offscreenContext.drawImage(animation.current.image, point.x * maxShift * weight, point.y * maxShift * weight);
+            offscreenContext.drawImage(animation.current.image, Math.round(point.x * maxShift * weight), Math.round(point.y * maxShift * weight));
           }
 
           index++;
