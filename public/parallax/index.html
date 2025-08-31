@@ -1856,7 +1856,7 @@ window.addEventListener("touchcancel", event => {
       pointer.identifier = null;
     }
   }
-});/*
+});
 window.addEventListener("deviceorientation", event => {
   if (event.beta !== null && event.gamma !== null) {
     if (pointer.identifier === null) {
@@ -1872,7 +1872,7 @@ window.addEventListener("deviceorientation", event => {
 
     isGranted = true;
   }
-}, true);*/
+}, true);
 window.addEventListener("keyup", async (event) => {
   if (event.code === "Space") {
     if (!await download("https://milchchan.com/api/parallax/post")) {
