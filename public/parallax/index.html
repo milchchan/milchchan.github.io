@@ -1654,9 +1654,9 @@ window.addEventListener("load", event => {
         idleTime += deltaTime;
 
         if (width > height) {
-          pointer.x = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.5;
+          pointer.x = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.75;
         } else {
-          pointer.y = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.5;
+          pointer.y = Math.sin(idleTime * 2.0 * Math.PI * 0.1) * 0.75;
         }
         
         redrawRequired = true;
@@ -1671,11 +1671,11 @@ window.addEventListener("load", event => {
         point.y = lerp(point.y, pointer.y, Math.min(deltaTime * 5, 1));
 
         if (Math.abs(point.x - pointer.x) < epsilon) {
-          //point.x = pointer.x;
+          point.x = pointer.x;
         }
 
         if (Math.abs(point.y - pointer.y) < epsilon) {
-          //point.y = pointer.y;
+          point.y = pointer.y;
         }
 
         redrawRequired = true;
