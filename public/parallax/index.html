@@ -930,7 +930,7 @@ async function download(url = null, limit = 10, reverse = false) {
     document.body.querySelector("#app").appendChild(progress);
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch("post.json", {
           mode: "cors",
           method: "GET"
         }
@@ -977,18 +977,22 @@ async function download(url = null, limit = 10, reverse = false) {
 
               const length = frames.length;
 
-              for (let i = 0; i < 2; i++) {
+              for (let i = 0; i < 3; i++) {
                 for (let j = 1; j < length; j++) {
                   frames.push({id: frames[j].id, delay: frames[j].delay, image: frames[j].image});
                 }
               }
 
               frames[0].delay = 0.5;
-              frames[length - 1].delay = 1.0;
-              frames[frames.length - 1].delay = 1.0;
+              frames[length - 1].delay = 3.0;
+              frames[(length - 1) * 2].delay = 3.0;
+              frames[frames.length - 1].delay = 2.5;
             }
 
             animations.push(new Motion(repeats = 1, frames = frames));
+
+            console.log(animations[animations.length - 1].duration);
+            console.log(animations[animations.length - 1].frames);
           } else {
             animations.push(null);
           }
@@ -1397,15 +1401,16 @@ async function post(file) {
 
               const length = animations[z].frames.length;
 
-              for (let i = 0; i < 2; i++) {
+              for (let i = 0; i < 3; i++) {
                 for (let j = 1; j < length; j++) {
                   animations[z].frames.push({id: animations[z].frames[j].id, delay: animations[z].frames[j].delay, image: animations[z].frames[j].image});
                 }
               }
 
               animations[z].frames[0].delay = 0.5;
-              animations[z].frames[length - 1].delay = 1.0;
-              animations[z].frames[frames.length - 1].delay = 1.0;
+              animations[z].frames[length - 1].delay = 3.0;
+              animations[z].frames[(length - 1) * 2].delay = 3.0;
+              animations[z].frames[frames.length - 1].delay = 2.5;
             }
 
             z += 1;
