@@ -1657,9 +1657,9 @@ window.addEventListener("load", event => {
         idleTime += deltaTime;
 
         if (width > height) {
-          pointer.x = Math.sin(idleTime * 2 * Math.PI * 0.1) * 0.5;
+          pointer.x = Math.sin(idleTime * 2 * Math.PI * 0.1) * 0.75;
         } else {
-          pointer.y = Math.sin(idleTime * 2 * Math.PI * 0.1) * 0.5;
+          pointer.y = Math.sin(idleTime * 2 * Math.PI * 0.1) * 0.75;
         }
         
         redrawRequired = true;
