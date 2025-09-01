@@ -1074,6 +1074,8 @@ async function download(url = null, limit = 10, reverse = false) {
           }
         }
 
+        posts.unshift(json);
+        posts.pop();
         offscreenCanvas = new OffscreenCanvas(width, height);
         elapsedTime = maxDuration = 0.0;
         redrawRequired = true;
