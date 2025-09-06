@@ -24,6 +24,10 @@
         {
             "route": "/lax",
             "rewrite": "/parallax/index.html"
+        },
+        {
+            "route": "/chewnew",
+            "rewrite": "/parallax/index.html"
         }
     ],
     "navigationFallback": {
