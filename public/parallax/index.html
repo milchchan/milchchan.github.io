@@ -662,6 +662,8 @@ const canvas = document.createElement("canvas");
 let offscreenCanvas = null;
 let pointer = {x: 0.0, y: 0.0, previous: {x: 0, y: 0}, identifier: null, time: 0};
 let point = { x: 0.0, y: 0.0 };
+let source = { x: 0.0, y: 0.0, width: 0.0, height: 0.0 };
+let destination = { x: 0.0, y: 0.0, width: 0.0, height: 0.0 };
 let idleTime = 0;
 const div = document.body.querySelector("#app>.container");
 const rect = div.getBoundingClientRect();
@@ -768,6 +770,62 @@ async function resize(image, scale) {
 
     ctx.canvas.width = ctx.canvas.height = 0;
   });
+}
+
+function adjust(sourceWidth, sourceHeight, destinationWidth, destinationHeight, maxShift) {
+  const destinationAspect = destinationWidth / destinationHeight;
+  
+  sourceWidth = sourceWidth - maxShift * 2;
+  sourceHeight = sourceHeight - maxShift * 2;
+  
+  const sourceAspect = sourceWidth / sourceHeight;
+  let sx, sy, sw, sh;
+  let dx, dy, dw, dh;
+
+  if (fit === "cover") {
+    const top = 0.25;
+    const left = 0.5;
+
+    if (destinationAspect > sourceAspect) {
+      const ratio = destinationWidth / sourceWidth;
+
+      sx = maxShift;
+      sh = destinationHeight / ratio;
+      sy = Math.max(0, Math.min(sourceHeight - sh, (sourceHeight * ratio - destinationHeight) / ratio * top)) + maxShift;
+      sw = sourceWidth;
+    } else {
+      const ratio = destinationHeight / sourceHeight;
+
+      sw = destinationWidth / ratio;
+      sx = Math.max(0, Math.min(sourceWidth - sw, (sourceWidth * ratio - destinationWidth) / ratio * left)) + maxShift;
+      sy = maxShift;
+      sh = sourceHeight;
+    }
+
+    dx = 0;
+    dy = 0;
+    dw = destinationWidth;
+    dh = destinationHeight;
+  } else {
+    sx = maxShift;
+    sy = maxShift;
+    sw = sourceWidth;
+    sh = sourceHeight;
+
+    if (destinationAspect > sourceAspect) {
+      dh = destinationHeight;
+      dw = dh * sourceAspect;
+      dx = (destinationWidth - dw) / 2;
+      dy = 0;
+    } else {
+      dw = destinationWidth;
+      dh = dw / sourceAspect;
+      dx = 0;
+      dy = (destinationHeight - dh) / 2;
+    }
+  }
+
+  return [sx, sy, sw, sh, dx, dy, dw, dh];
 }
 
 function shake(element) {
@@ -1087,6 +1145,16 @@ async function download(url = null, limit = 10, reverse = false) {
           }
         }
 
+        const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(width, height, canvas.width, canvas.height, Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR));
+
+        source.x = sx;
+        source.y = sy;
+        source.width = sw;
+        source.height = sh;
+        destination.x = dx;
+        destination.y = dy;
+        destination.width = dw;
+        destination.height = dh;
         offscreenCanvas = new OffscreenCanvas(width, height);
         elapsedTime = maxDuration = 0.0;
         redrawRequired = true;
@@ -1366,6 +1434,16 @@ async function post(file) {
         }
       }
 
+      const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(width, height, canvas.width, canvas.height, Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR));
+
+      source.x = sx;
+      source.y = sy;
+      source.width = sw;
+      source.height = sh;
+      destination.x = dx;
+      destination.y = dy;
+      destination.width = dw;
+      destination.height = dh;
       posts.unshift(json);
       posts.pop();
       offscreenCanvas = new OffscreenCanvas(width, height);
@@ -1666,6 +1744,7 @@ window.addEventListener("load", event => {
   function render(timestamp) {
     if (timestamp > previousTime) {
       const deltaTime = (timestamp - previousTime) / 1000;
+      const epsilon = 0.000001;
 
       if (timestamp - pointer.time >= 3000) {
         let width = 0;
@@ -1694,8 +1773,6 @@ window.addEventListener("load", event => {
       }
       
       if (point.x !== pointer.x || point.y !== pointer.y) {
-        const epsilon = 0.000001;
-
         point.x = lerp(point.x, pointer.x, Math.min(deltaTime * 5, 1));
         point.y = lerp(point.y, pointer.y, Math.min(deltaTime * 5, 1));
 
@@ -1744,84 +1821,119 @@ window.addEventListener("load", event => {
         }
       }
 
-      if (offscreenCanvas !== null && redrawRequired) {
-        const context = canvas.getContext("2d");
-        const offscreenContext = offscreenCanvas.getContext("2d");
+      if (offscreenCanvas !== null) {
         const maxShift = Math.round(Math.min(offscreenCanvas.width, offscreenCanvas.height) * MAX_SHIFT_FACTOR);
-        const sourceWidth = offscreenCanvas.width - maxShift * 2;
-        const sourceHeight = offscreenCanvas.height - maxShift * 2;
-        const canvasAspect = canvas.width / canvas.height;
-        const imageAspect = sourceWidth / sourceHeight;
-        let sx, sy, sw, sh;
-        let dx, dy, dw, dh;
-        const base = 5;
-        let index = 0;
+        const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(offscreenCanvas.width, offscreenCanvas.height, canvas.width, canvas.height, maxShift);
+        
+        if (source.x !== sx) {
+          source.x = lerp(source.x, sx, Math.min(deltaTime * 5, 1));
 
-        if (fit === "cover") {
-          const top = 0.25;
-          const left = 0.5;
-
-          if (canvasAspect > imageAspect) {
-            const ratio = canvas.width / sourceWidth;
-
-            sx = maxShift;
-            sh = canvas.height / ratio;
-            sy = Math.max(0, Math.min(sourceHeight - sh, (sourceHeight * ratio - canvas.height) / ratio * top)) + maxShift;
-            sw = sourceWidth;
-          } else {
-            const ratio = canvas.height / sourceHeight;
-
-            sw = canvas.width / ratio;
-            sx = Math.max(0, Math.min(sourceWidth - sw, (sourceWidth * ratio - canvas.width) / ratio * left)) + maxShift;
-            sy = maxShift;
-            sh = sourceHeight;
+          if (Math.abs(source.x - sx) < epsilon) {
+            source.x = sx;
           }
-
-          dx = 0;
-          dy = 0;
-          dw = canvas.width;
-          dh = canvas.height;
-        } else {
-          sx = maxShift;
-          sy = maxShift;
-          sw = sourceWidth;
-          sh = sourceHeight;
-
-          if (canvasAspect > imageAspect) {
-            dh = canvas.height;
-            dw = dh * imageAspect;
-            dx = (canvas.width - dw) / 2;
-            dy = 0;
-          } else {
-            dw = canvas.width;
-            dh = dw / imageAspect;
-            dx = 0;
-            dy = (canvas.height - dh) / 2;
-          }
-        }
-
-        offscreenContext.imageSmoothingEnabled = true;
-        offscreenContext.imageSmoothingQuality = "high";
-        offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
-
-        for (const animation of animations) {
-          if (animation !== null) {
-            const weight = Math.log1p((base - 1) * (1.0 - index / animations.length)) / Math.log(base);
           
-            offscreenContext.drawImage(animation.current.image, point.x * maxShift * weight, point.y * maxShift * weight);
-          }
-
-          index++;
+          redrawRequired = true;
         }
 
-        context.imageSmoothingEnabled = true;
-        context.imageSmoothingQuality = "high";
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.save();
-        context.drawImage(offscreenCanvas, Math.round(sx), Math.round(sy), Math.floor(sw), Math.floor(sh), Math.round(dx), Math.round(dy), Math.floor(dw), Math.floor(dh));
-        context.restore();
+        if (source.y !== sy) {
+          source.y = lerp(source.y, sy, Math.min(deltaTime * 5, 1));
 
-        redrawRequired = false;
+          if (Math.abs(source.y - sy) < epsilon) {
+            source.y = sy;
+          }
+          
+          redrawRequired = true;
+        }
+
+        if (source.width !== sw) {
+          source.width = lerp(source.width, sw, Math.min(deltaTime * 5, 1));
+
+          if (Math.abs(source.width - sw) < epsilon) {
+            source.width = sw;
+          }
+          
+          redrawRequired = true;
+        }
+
+        if (source.height !== sh) {
+          source.height = lerp(source.height, sh, Math.min(deltaTime * 5, 1));
+
+          if (Math.abs(destination.height - sh) < epsilon) {
+            source.height = sh;
+          }
+          
+          redrawRequired = true;
+        }
+
+        if (destination.x !== dx) {
+          destination.x = lerp(destination.x, dx, Math.min(deltaTime * 5, 1));
+
+          if (Math.abs(destination.x - dx) < epsilon) {
+            destination.x = dx;
+          }
+          
+          redrawRequired = true;
+        }
+
+        if (destination.y !== dy) {
+          destination.y = lerp(destination.y, dy, Math.min(deltaTime * 5, 1));
+
+          if (Math.abs(destination.y - dy) < epsilon) {
+            destination.y = dy;
+          }
+          
+          redrawRequired = true;
+        }
+
+        if (destination.width !== dw) {
+          destination.width = lerp(destination.width, dw, Math.min(deltaTime * 5, 1));
+
+          if (Math.abs(destination.width - dw) < epsilon) {
+            destination.width = dw;
+          }
+          
+          redrawRequired = true;
+        }
+
+        if (destination.height !== dh) {
+          destination.height = lerp(destination.height, dh, Math.min(deltaTime * 5, 1));
+
+          if (Math.abs(destination.height - dh) < epsilon) {
+            destination.height = dh;
+          }
+          
+          redrawRequired = true;
+        }
+
+        if (redrawRequired) {
+          const context = canvas.getContext("2d");
+          const offscreenContext = offscreenCanvas.getContext("2d");
+          const base = 5;
+          let index = 0;
+
+          offscreenContext.imageSmoothingEnabled = true;
+          offscreenContext.imageSmoothingQuality = "high";
+          offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+          for (const animation of animations) {
+            if (animation !== null) {
+              const weight = Math.log1p((base - 1) * (1.0 - index / animations.length)) / Math.log(base);
+            
+              offscreenContext.drawImage(animation.current.image, point.x * maxShift * weight, point.y * maxShift * weight);
+            }
+
+            index++;
+          }
+
+          context.imageSmoothingEnabled = true;
+          context.imageSmoothingQuality = "high";
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.save();
+          context.drawImage(offscreenCanvas, Math.round(source.x), Math.round(source.y), Math.floor(source.width), Math.floor(source.height), Math.round(destination.x), Math.round(destination.y), Math.floor(destination.width), Math.floor(destination.height));
+          context.restore();
+
+          redrawRequired = false;
+        }
       }
 
       previousTime = timestamp;
