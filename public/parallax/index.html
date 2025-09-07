@@ -1467,7 +1467,40 @@ async function post(file) {
         }
       }
 
-      const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(width, height, canvas.width, canvas.height, fit, Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR));
+      const maxShift = Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR);
+      let rects = adjust(width, height, canvas.width, canvas.height, fit, maxShift);
+
+      if (fit === "cover") {
+        if (rects[2] * rects[3] / (width * height) < 0.75) {
+          fit = "contain";
+          rects = adjust(width, height, canvas.width, canvas.height, fit, maxShift);
+
+          for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-of-type(4) button.button>.stack>.icon")) {
+            if (element.dataset.fit === fit) {
+              element.classList.remove("is-hidden");
+            } else {
+              element.classList.add("is-hidden");
+            }
+          }
+        }
+      } else {
+        const tempRects = adjust(width, height, canvas.width, canvas.height, "cover", maxShift);
+
+        if (tempRects[2] * tempRects[3] / (width * height) >= 0.75) {
+          fit = "cover";
+          rects = tempRects;
+
+          for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-of-type(4) button.button>.stack>.icon")) {
+            if (element.dataset.fit === fit) {
+              element.classList.remove("is-hidden");
+            } else {
+              element.classList.add("is-hidden");
+            }
+          }
+        }
+      }
+
+      const [sx, sy, sw, sh, dx, dy, dw, dh] = rects;
 
       source.x = sx;
       source.y = sy;
