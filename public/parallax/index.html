@@ -772,7 +772,7 @@ async function resize(image, scale) {
   });
 }
 
-function adjust(sourceWidth, sourceHeight, destinationWidth, destinationHeight, maxShift) {
+function adjust(sourceWidth, sourceHeight, destinationWidth, destinationHeight, fit, maxShift) {
   const destinationAspect = destinationWidth / destinationHeight;
   
   sourceWidth = sourceWidth - maxShift * 2;
@@ -1145,7 +1145,40 @@ async function download(url = null, limit = 10, reverse = false) {
           }
         }
 
-        const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(width, height, canvas.width, canvas.height, Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR));
+        const maxShift = Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR);
+        let rects = adjust(width, height, canvas.width, canvas.height, fit, maxShift);
+
+        if (fit === "cover") {
+          if (rects[2] * rects[3] / (width * height) < 0.75) {
+            fit = "contain";
+            rects = adjust(width, height, canvas.width, canvas.height, fit, maxShift);
+
+            for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-of-type(4) button.button>.stack>.icon")) {
+              if (element.dataset.fit === fit) {
+                element.classList.remove("is-hidden");
+              } else {
+                element.classList.add("is-hidden");
+              }
+            }
+          }
+        } else {
+          const tempRects = adjust(width, height, canvas.width, canvas.height, "cover", maxShift);
+
+          if (tempRects[2] * tempRects[3] / (width * height) >= 0.75) {
+            fit = "cover";
+            rects = tempRects;
+
+            for (const element of document.body.querySelectorAll("#app>div.container>.bottom .level>.level-item:nth-of-type(4) button.button>.stack>.icon")) {
+              if (element.dataset.fit === fit) {
+                element.classList.remove("is-hidden");
+              } else {
+                element.classList.add("is-hidden");
+              }
+            }
+          }
+        }
+
+        const [sx, sy, sw, sh, dx, dy, dw, dh] = rects;
 
         source.x = sx;
         source.y = sy;
@@ -1434,7 +1467,7 @@ async function post(file) {
         }
       }
 
-      const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(width, height, canvas.width, canvas.height, Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR));
+      const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(width, height, canvas.width, canvas.height, fit, Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR));
 
       source.x = sx;
       source.y = sy;
@@ -1823,7 +1856,7 @@ window.addEventListener("load", event => {
 
       if (offscreenCanvas !== null) {
         const maxShift = Math.round(Math.min(offscreenCanvas.width, offscreenCanvas.height) * MAX_SHIFT_FACTOR);
-        const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(offscreenCanvas.width, offscreenCanvas.height, canvas.width, canvas.height, maxShift);
+        const [sx, sy, sw, sh, dx, dy, dw, dh] = adjust(offscreenCanvas.width, offscreenCanvas.height, canvas.width, canvas.height, fit, maxShift);
         
         if (source.x !== sx) {
           source.x = lerp(source.x, sx, Math.min(deltaTime * 5, 1));
