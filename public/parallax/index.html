@@ -632,6 +632,18 @@
                 </button>
               </div>
               <div class="level-item">
+                <button class="button is-circle" onclick="change(event)">
+                  <div class="stack">
+                    <span class="icon" data-fit="contain">
+                      <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                    </span>
+                    <span class="icon is-hidden" data-fit="cover">
+                      <i class="fa-solid fa-down-left-and-up-right-to-center"></i>
+                    </span>
+                  </div>
+                </button>
+              </div>
+              <div class="level-item">
                 <label class="button is-circle">
                   <input type="file" name="post" accept="image/gif, image/png, image/jpeg, image/webp" title="Post" onchange="upload(event);">
                   <span class="icon" onselectstart="return false;" onmousedown="return false;">
@@ -660,6 +672,7 @@ const posts = [];
 let offset = 0;
 let selected = 0;
 let previousTime = performance.now();
+let fit = document.body.querySelector("#app>div.container>.bottom .level>.level-item:nth-of-type(4) button.button>.stack>.icon:not(.is-hidden)").dataset.fit;
 let redrawRequired = false;
 let isGranted = false;
 
@@ -1606,6 +1619,20 @@ window.upload = async (event) => {
     break;
   }
 };
+window.change = (event) => {
+  const target = (event.currentTarget || event.target);
+  
+  for (const element of target.querySelectorAll(":scope>.stack>.icon")) {
+    if (element.classList.contains("is-hidden")) {
+      fit = element.dataset.fit;
+      element.classList.remove("is-hidden");
+    } else {
+      element.classList.add("is-hidden");
+    }
+  }
+
+  redrawRequired = true;
+};
 window.share = async (event) => {
   const target = (event.currentTarget || event.target);
 
@@ -1721,30 +1748,56 @@ window.addEventListener("load", event => {
         const context = canvas.getContext("2d");
         const offscreenContext = offscreenCanvas.getContext("2d");
         const maxShift = Math.round(Math.min(offscreenCanvas.width, offscreenCanvas.height) * MAX_SHIFT_FACTOR);
-        const top = 0.25;
-        const left = 0.5;
         const sourceWidth = offscreenCanvas.width - maxShift * 2;
         const sourceHeight = offscreenCanvas.height - maxShift * 2;
         const canvasAspect = canvas.width / canvas.height;
         const imageAspect = sourceWidth / sourceHeight;
         let sx, sy, sw, sh;
+        let dx, dy, dw, dh;
         const base = 5;
         let index = 0;
 
-        if (canvasAspect > imageAspect) {
-          const ratio = canvas.width / sourceWidth;
+        if (fit === "cover") {
+          const top = 0.25;
+          const left = 0.5;
 
-          sx = maxShift;
-          sh = canvas.height / ratio;
-          sy = Math.max(0, Math.min(sourceHeight - sh, (sourceHeight * ratio - canvas.height) / ratio * top)) + maxShift;
-          sw = sourceWidth;
+          if (canvasAspect > imageAspect) {
+            const ratio = canvas.width / sourceWidth;
+
+            sx = maxShift;
+            sh = canvas.height / ratio;
+            sy = Math.max(0, Math.min(sourceHeight - sh, (sourceHeight * ratio - canvas.height) / ratio * top)) + maxShift;
+            sw = sourceWidth;
+          } else {
+            const ratio = canvas.height / sourceHeight;
+
+            sw = canvas.width / ratio;
+            sx = Math.max(0, Math.min(sourceWidth - sw, (sourceWidth * ratio - canvas.width) / ratio * left)) + maxShift;
+            sy = maxShift;
+            sh = sourceHeight;
+          }
+
+          dx = 0;
+          dy = 0;
+          dw = canvas.width;
+          dh = canvas.height;
         } else {
-          const ratio = canvas.height / sourceHeight;
-
-          sw = canvas.width / ratio;
-          sx = Math.max(0, Math.min(sourceWidth - sw, (sourceWidth * ratio - canvas.width) / ratio * left)) + maxShift;
+          sx = maxShift;
           sy = maxShift;
+          sw = sourceWidth;
           sh = sourceHeight;
+
+          if (canvasAspect > imageAspect) {
+            dh = canvas.height;
+            dw = dh * imageAspect;
+            dx = (canvas.width - dw) / 2;
+            dy = 0;
+          } else {
+            dw = canvas.width;
+            dh = dw / imageAspect;
+            dx = 0;
+            dy = (canvas.height - dh) / 2;
+          }
         }
 
         offscreenContext.imageSmoothingEnabled = true;
@@ -1765,7 +1818,7 @@ window.addEventListener("load", event => {
         context.imageSmoothingQuality = "high";
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.save();
-        context.drawImage(offscreenCanvas, Math.round(sx), Math.round(sy), Math.floor(sw), Math.floor(sh), 0, 0, canvas.width, canvas.height);
+        context.drawImage(offscreenCanvas, Math.round(sx), Math.round(sy), Math.floor(sw), Math.floor(sh), Math.round(dx), Math.round(dy), Math.floor(dw), Math.floor(dh));
         context.restore();
 
         redrawRequired = false;
