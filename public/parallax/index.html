@@ -1763,8 +1763,18 @@ window.upload = async (event) => {
     break;
   }
 };
-window.change = (event) => {
+window.change = async (event) => {
   const target = (event.currentTarget || event.target);
+
+  if (!isGranted && typeof DeviceOrientationEvent?.requestPermission === "function") {
+    const permissionState = await DeviceOrientationEvent.requestPermission();
+      
+    if (permissionState === "granted") {
+      isGranted = true;
+    } else {
+      shake(target);
+    }
+  }
   
   for (const element of target.querySelectorAll(":scope>.stack>.icon")) {
     if (element.classList.contains("is-hidden")) {
