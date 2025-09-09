@@ -656,7 +656,7 @@
         </div>
       </div>
     <script>
-const NSFW = JSON.parse(new URL(window.location.href).searchParams.get("nsfw")) ?? true;
+const NSFW = JSON.parse(new URL(window.location.href).searchParams.get("nsfw")) ?? false;
 const MAX_SHIFT_FACTOR = 0.05;
 const canvas = document.createElement("canvas");
 let offscreenCanvas = null;
