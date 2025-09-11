@@ -636,10 +636,10 @@
               <div class="level-item">
                 <button class="button is-circle" onclick="change(event)">
                   <div class="stack">
-                    <span class="icon" data-fit="contain">
+                    <span class="icon is-hidden" data-fit="contain">
                       <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
                     </span>
-                    <span class="icon is-hidden" data-fit="cover">
+                    <span class="icon" data-fit="cover">
                       <i class="fa-solid fa-down-left-and-up-right-to-center"></i>
                     </span>
                   </div>
@@ -1150,7 +1150,7 @@ async function download(url = null, limit = 10, reverse = false) {
         const maxShift = Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR);
         let rects = adjust(width, height, canvas.width, canvas.height, fit, maxShift);
 
-        if (fit === "cover") {
+        /*if (fit === "cover") {
           if (rects[2] * rects[3] / (width * height) < 0.75) {
             fit = "contain";
             rects = adjust(width, height, canvas.width, canvas.height, fit, maxShift);
@@ -1178,7 +1178,7 @@ async function download(url = null, limit = 10, reverse = false) {
               }
             }
           }
-        }
+        }*/
 
         const [sx, sy, sw, sh, dx, dy, dw, dh] = rects;
 
@@ -1472,7 +1472,7 @@ async function post(file) {
       const maxShift = Math.round(Math.min(width, height) * MAX_SHIFT_FACTOR);
       let rects = adjust(width, height, canvas.width, canvas.height, fit, maxShift);
 
-      if (fit === "cover") {
+      /*if (fit === "cover") {
         if (rects[2] * rects[3] / (width * height) < 0.75) {
           fit = "contain";
           rects = adjust(width, height, canvas.width, canvas.height, fit, maxShift);
@@ -1500,7 +1500,7 @@ async function post(file) {
             }
           }
         }
-      }
+      }*/
 
       const [sx, sy, sw, sh, dx, dy, dw, dh] = rects;
 
