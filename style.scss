@@ -28,7 +28,7 @@ html {
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
-    background: #ffffff;
+    background: #f4f4f2;
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
 }
@@ -952,6 +952,10 @@ div.center {
 }
 
 @media screen and (min-width: 769px) and (min-height: 769px) {
+    html {
+        background: #ffffff;
+    }
+    
     #app>.container>.wrap {
         padding: 16px;
         transition: .5s;
