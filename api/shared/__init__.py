@@ -8,7 +8,6 @@ FETCH_URLS = [
     'https://akiba-pc.watch.impress.co.jp/data/rss/1.0/ah/feed.rdf',
     'https://game.watch.impress.co.jp/data/rss/1.0/gmw/feed.rdf',
     'https://travel.watch.impress.co.jp/data/rss/1.0/trw/feed.rdf',
-    'https://gourmet.watch.impress.co.jp/data/rss/1.0/grw/feed.rdf',
     'https://manga.watch.impress.co.jp/data/rss/1.0/mgw/feed.rdf',
     'https://gazlog.jp/feed/',
     'https://ascii.jp/rss.xml',
