@@ -271,10 +271,9 @@
         bloomPass.strength = 0.1;
         bloomPass.radius = 0.5;
         bloomPass.threshold = 0.5;
-        hueSaturation.uniforms.hue.value = -0.01;
         hueSaturation.uniforms.saturation.value = 0.1;
         brightnessContrastShader.uniforms.brightness.value = 0.05;
-        brightnessContrastShader.uniforms.contrast.value = 0.1;
+        brightnessContrastShader.uniforms.contrast.value = 0.05;
         effectCopy.renderToScreen = true;
 
         composer.setSize(renderer.domElement.width, renderer.domElement.height);
