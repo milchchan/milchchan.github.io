@@ -2266,8 +2266,8 @@ window.addEventListener("load", async event => {
           const offscreenCanvas = new OffscreenCanvas(backCanvas.width, backCanvas.height);
           const context = offscreenCanvas.getContext("2d");
 
-          context.scale(backCanvas.width / offscreenCanvas.width, backCanvas.height / offscreenCanvas.height);
-          context.drawImage(frame.image, Math.round(sx), Math.round(sy), Math.floor(sw), Math.floor(sh), 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+          context.scale(backCanvas.width / Math.floor(sw), backCanvas.height / Math.floor(sh));
+          context.drawImage(frame.image, -Math.round(sx), -Math.round(sy));
           
           backContext.drawImage(offscreenCanvas, 0, 0);
         }
