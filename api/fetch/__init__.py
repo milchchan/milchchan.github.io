@@ -151,10 +151,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             else:
                 api_key = os.environ['OPENAI_API_KEY']
 
-            if model == 'gpt-5':
+            if model.startswith('gpt-5'):
                 temperature = 1.0
             
-            with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': model, 'input': [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': response_body}]}], 'temperature': temperature, 'reasoning': {'effort': 'minimal'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
+            with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': model, 'input': [{'role': 'developer', 'content': FETCH_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': response_body}]}], 'temperature': temperature, 'reasoning': {'effort': 'low'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
                 for output in json.loads(response.read().decode('utf-8'))['output']:
                     if output['type'] == 'message':
                         for content in output['content']:
@@ -168,7 +168,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     item['id'] = identifier
                                     items2.append({'id': identifier, 'content': item['content']})
 
-                                with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': model, 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}]}], 'temperature': temperature, 'reasoning': {'effort': 'minimal'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
+                                with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': model, 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}]}], 'temperature': temperature, 'reasoning': {'effort': 'low'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
                                     for output in json.loads(response.read().decode('utf-8'))['output']:
                                         if output['type'] == 'message':
                                             for content in output['content']:
