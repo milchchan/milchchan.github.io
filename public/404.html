@@ -26,7 +26,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
   <style media="screen">
     :root {
-      --background-color: #f4f4f2;
+      --background-color: #ffffff
       --foreground-color: #000000;
       --foreground-font-family: 'Barlow', 'Roboto', 'Helvetica', 'Segoe UI', 'Arial', sans-serif;
       --foreground-font-weight: bold;
@@ -44,7 +44,7 @@
       overflow-x: hidden;
       overflow-y: auto;
       scroll-behavior: smooth;
-      background: var(--background-color);
+      background: #f4f4f2;
     }
 
     body {
@@ -227,6 +227,10 @@
     }
 
     @media screen and (min-width: 769px) and (min-height: 769px) {
+      html {
+        background: var(--background-color);
+      }
+
       .wrap {
         padding: 16px;
         transition: .5s;

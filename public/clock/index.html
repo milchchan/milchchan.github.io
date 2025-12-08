@@ -39,7 +39,7 @@
     <script src="https://kit.fontawesome.com/75ab01b762.js" crossorigin="anonymous"></script>
     <style type="text/css">
         :root {
-            --background-color: #f4f4f2;
+            --background-color: #ffffff;
             --foreground-color: #000000;
         }
 
@@ -52,7 +52,7 @@
             height: 100dvh;
             height: -webkit-fill-available;
             overflow: hidden;
-            background: var(--background-color);
+            background: #f4f4f2;
         }
 
         body {
@@ -435,6 +435,10 @@
         }
 
         @media screen and (min-width: 769px) and (min-height: 769px) {
+            html {
+                background: var(--background-color);
+            }
+
             #container>.wrap {
                 padding: 16px;
                 transition: .5s;
