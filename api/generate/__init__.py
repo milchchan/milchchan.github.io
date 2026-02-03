@@ -249,9 +249,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 path = json.loads(response.read().decode('utf-8'))[0]
                             
                             with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                                'data': [{'path': path, 'meta': {'_type': 'gradio.FileData'}}, json_data['input'], json_data['language'], json_data['temperature'] if 'temperature' in json_data else 1.0],
+                                'data': [json_data['input'], json_data['language'], {'path': path, 'meta': {'_type': 'gradio.FileData'}}, None, json_data['temperature'] if 'temperature' in json_data else 1.0],
                                 'event_data': None,
-                                'fn_index': 1,
+                                'fn_index': 0,
                                 'session_hash': session
                             }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
                                 event_id = json.loads(response.read().decode('utf-8'))['event_id']
