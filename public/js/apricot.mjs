@@ -83,6 +83,7 @@ export class Agent {
     this.likabilityCanvas = null;
     this.loadingCanvas = null;
     this.balloonCanvas = null;
+    this.isPaused = false;
     this.previousTime = performance.now();
     this.stats = { time: this.previousTime, frames: 0, target: document.createElement("span") };
     this.balloonBackgroundColor = "rgb(0 0 0 / 0.75)";
@@ -289,6 +290,12 @@ export class Agent {
           this.messageQueue[0].speed = 2.0;
           this.messageQueue[0].reverse = true;
         }
+      });
+      balloonCanvas.addEventListener("pointerenter", () => {
+        this.isPaused = true;
+      });
+      balloonCanvas.addEventListener("pointerleave", () => {
+        this.isPaused = false;
       });
 
       likabilityCanvas.classList.add("likability");
@@ -1186,7 +1193,7 @@ export class Agent {
             }
           } else if (index < this.messageQueue[0].lines.length - 1) {
             this.messageQueue[0].index += 1;
-          } else if (!this.isPopup) {
+          } else if (!this.isPopup && !this.isPaused) {
             this.messageQueue[0].time += deltaTime;
             
             if (this.messageQueue[0].duration >= 0.0 && this.messageQueue[0].time >= this.messageQueue[0].duration) {
@@ -1326,6 +1333,7 @@ export class Agent {
           this.balloonCanvas.style.opacity = 0.0;
           this.balloonCanvas.style.transform = "scale(0.0, 0.0)";
           this.balloonCanvas.style.visibility = "collapse";
+          this.isPaused = false;
           this.messageQueue.shift();
         }
       } else {
