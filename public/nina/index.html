@@ -1,0 +1,1260 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-617KR1WTYP");
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>MILCHCHAN.COM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
+    <style media="screen">
+      :root {
+        --background-color: #ffffff;
+        --foreground-color: #000000;
+        --milch-light-background-image: /images/Milchchan.png;
+        --milch-dark-background-image: /images/Background-Milch-Zankuro-1.png;
+        --merku-light-background-image: /images/Merkuchan.png;
+        --merku-dark-background-image: /images/Background-Merku-Zankuro-1.png;
+        --story-light-background-image: /images/Milch-Manga-01.png;
+        --story-dark-background-image: /images/Milch-Manga-02.png;
+      }
+
+      html {
+        touch-action: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        background: #f4f4f2;
+      }
+
+      body {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        min-height: 100dvh;
+        overflow: hidden;
+      }
+
+      h1 {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0px -4px 0px -4px !important;
+        padding: 0;
+        color: var(--foreground-color) !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 2rem;
+        font-weight: bold;
+        line-height: 2rem;
+        text-transform: uppercase;
+      }
+
+      h1>span {
+        margin: 0px 4px 0px 4px !important;
+      }
+
+      h2 {
+        position: sticky;
+        top: 0px;
+        margin: 0;
+        padding: 0;
+        color: var(--foreground-color) !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 0.75rem;
+        font-weight: bold;
+        line-height: 0.75rem;
+        text-transform: uppercase;
+      }
+
+      h1+h2 {
+        margin: 8px 0px 0px 0px;
+      }
+
+      p+h2 {
+        margin: 16px 0px 0px 0px;
+      }
+
+      p {
+        margin: 16px 0px 0px 0px;
+        padding: 0;
+        color: var(--foreground-color) !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.25rem;
+        line-height: 2rem;
+      }
+
+      p+div>div>span {
+        margin: 0px 0px 0px 0px;
+        padding: 0;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.0rem;
+        line-height: 1.5rem;
+      }
+
+      p+div>span {
+        margin: 0px 0px 0px 0px;
+        padding: 0;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 0.75rem;
+        line-height: 1rem;
+      }
+
+      div+div>span {
+        margin: 0px 0px 0px 0px;
+        padding: 0;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 0.75rem;
+        line-height: 1rem;
+      }
+
+      ul,
+      ol {
+        margin-left: 0;
+        padding-left: 0;
+      }
+
+      ul {
+        margin: 16px 0px 0px 0px;
+      }
+
+      ul>li {
+        margin: 0px 0px 0px 16px;
+        padding: 0;
+        list-style-type: none;
+        color: var(--foreground-color) !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.25rem;
+        line-height: 2rem;
+      }
+
+      a,
+      a:focus,
+      a:link,
+      a:visited,
+      a:hover,
+      a:active {
+        outline: none;
+        text-decoration: none;
+        color: var(--foreground-color);
+      }
+
+      a .scrollable {
+        display: inline-block;
+        box-sizing: content-box;
+        backface-visibility: hidden;
+        transform: translate3d(0%, 0%, 0);
+        transition: 0.5s ease-in;
+      }
+
+      a .scrollable>div {
+        -webkit-user-select: none;
+        user-select: none;
+        box-sizing: content-box;
+        vertical-align: middle;
+      }
+
+      a .scrollable:hover {
+        display: inline-block;
+        box-sizing: content-box;
+        backface-visibility: hidden;
+        transform: translate3d(-100%, 0%, 0);
+        transition: 0.5s ease-out;
+      }
+
+      .is-hidden {
+        display: none !important;
+      }
+
+      .is-uppercase {
+        text-transform: uppercase;
+      }
+
+      .is-italic {
+        font-style: italic;
+      }
+
+      .has-text-weight-bold {
+        font-weight: bold;
+      }
+
+      body>.wrap {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        backface-visibility: hidden;
+        transition: 0.5s;
+      }
+
+      body>.wrap>.frame {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        border-radius: 0px;
+        width: 100%;
+        max-width: 100% !important;
+        height: 100%;
+        overflow: hidden;
+        background-color: #f4f4f2;
+        transition: 0.5s;
+      }
+
+      .background {
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        top: 16px;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: calc(100% - 32px);
+        max-height: 100%;
+        background-color: transparent;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-size: contain;
+        transform-origin: 50% 50%;
+        backface-visibility: hidden;
+        perspective: 1000;
+      }
+
+      .background::before {
+        -webkit-user-select: none;
+        user-select: none;
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        background: transparent;
+        content: "";
+      }
+
+      .background>div {
+        -webkit-user-select: none;
+        user-select: none;
+        position: relative;
+        opacity: 0;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        background-color: transparent;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-size: contain;
+        transform-origin: 50% 50%;
+        backface-visibility: hidden;
+        content: "";
+        transition: .5s;
+      }
+
+      .background>div.is-touching {
+        opacity: 0.5;
+        transition: .5s;
+      }
+
+      .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        padding: 16px;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent), linear-gradient(black, black);
+        mask-size: calc(100% - 16px) 100%, 16px 100%;
+        mask-position: 0 0, 100% 0;
+        mask-repeat: no-repeat, no-repeat;
+        animation: fade .5s ease-out forwards;
+        box-sizing: border-box;
+        backface-visibility: hidden;
+        perspective: 1000;
+        transition: 0.5s;
+      }
+
+      .overlay>.wrap {
+        position: relative;
+        box-sizing: border-box;
+        margin: 0px 0px 0px calc(48px - 16px);
+        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+      }
+
+      .overlay>.wrap>.content {
+        position: absolute;
+        margin: 0;
+        padding: 0px 0px 16px 0px;
+        width: 100%;
+        transition: padding 0.5s;
+        cursor: default;
+      }
+
+      .content p+div {
+        margin: 16px 0px 0px 0px;
+      }
+
+      .content p+div.is-generated {
+        margin: 0px 0px 0px 0px;
+      }
+
+      .content div+div {
+        margin: 16px 0px 0px 0px;
+      }
+
+      .content div+div.is-generated {
+        margin: 0px 0px 0px 0px;
+      }
+
+      .content>div:last-of-type {
+        margin: 0 !important;
+      }
+
+      .content p a {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        background: transparent;
+        background-clip: padding-box;
+        backface-visibility: hidden;
+        cursor: pointer;
+      }
+
+      .content p a .clip {
+        position: relative;
+        display: inline-flex;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .content p a .scrollable {
+        display: inline-flex;
+        margin: 0px -4px 0px -4px !important;
+      }
+
+      .content p a .scrollable span {
+        display: inline;
+        margin: 0px 4px 0px 4px !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        line-height: normal;
+      }
+
+      .content p a .scrollable span:last-child:not(:first-child) {
+        position: absolute;
+        left: 100%;
+      }
+
+      .content span.dot {
+        display: inline-block;
+        margin: 0px 0px 0px 4px;
+        padding: 0;
+        border-radius: 2px;
+        width: 4px;
+        height: 4px;
+        background-color: rgb(0 231 255);
+        background-color: color(display-p3 0.0 0.906 1.0);
+        vertical-align: middle;
+      }
+      
+      .overlay>.wrap>.content .icon.is-animatable {
+        position: fixed;
+        right: 16px;
+      }
+
+      .overlay>.wrap>.content>div>div>.icon.is-animatable {
+        position: relative;
+        right: auto;
+        margin: 16px 0px 0px 0px;
+      }
+
+      div.sidebar {
+        -webkit-user-select: none;
+        user-select: none;
+        z-index: 0;
+        position: fixed;
+        left: 0px;
+        padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+        height: calc(100% - 32px);
+        background: transparent;
+        transition: 0.5s;
+      }
+
+      div.sidebar .separator {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: center;
+        width: 48px;
+        height: fit-content;
+      }
+
+      div.sidebar .separator>hr {
+        border-width: 0;
+        margin: 0;
+        padding: 0;
+        width: 16px;
+        height: 1px;
+        background-color: #000000;
+        text-align: center !important;
+      }
+
+      div.sidebar .button.is-selected .wrap {
+        border-bottom: 2px solid #000000;
+        transition: .5s ease-in;
+      }
+
+      div.sidebar .rotation-outer {
+        display: inline-flex;
+      }
+
+      div.sidebar .rotation-outer>div.rotation-inner {
+        padding: 50% 0;
+        height: 0;
+      }
+
+      div.sidebar .rotation-outer>div.rotation-inner>div.rotate {
+        display: block;
+        transform-origin: top left;
+        transform: rotate(-90deg) translate(0%, 100%) rotate(180deg);
+        margin-top: -50%;
+        white-space: nowrap;
+      }
+
+      div.sidebar>.level {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        width: 48px;
+        height: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      div.sidebar>.level>.level-item>.level {
+        display: flex;
+        margin: -16px;
+        padding: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      div.sidebar>.level>.level-item>.level>.level-item {
+        display: flex;
+        margin: 0;
+        padding: 16px;
+      }
+
+      div.sidebar>.level>.level-item>.level>.level-item .icon {
+        transform: rotate(-90deg);
+      }
+
+      div.sidebar .level>.level-item {
+        margin: 0;
+        padding: 0;
+      }
+
+      div.sidebar .button {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        background: transparent;
+        background-clip: padding-box;
+        line-height: calc(0.75rem * 1.5);
+        backface-visibility: hidden;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        height: 48px;
+        cursor: pointer;
+      }
+
+      div.sidebar .button {
+          opacity: 1.0;
+          transition: .5s;
+      }
+
+      div.sidebar .button .icon {
+        margin: 0;
+        padding: 0;
+        width: 0.5rem;
+        height: 0.5rem;
+        font-size: 0.5rem;
+        line-height: 0;
+        transition: .5s;
+      }
+
+      div.sidebar .button:disabled {
+          opacity: 0.5 !important;
+          transition: .5s;
+      }
+
+      div.sidebar .button:disabled .icon.is-rotatable {
+        animation: loading 1s linear forwards infinite;
+        animation-play-state: running;
+      }
+
+      div.sidebar .button.is-recording .icon {
+        animation: processing 1s linear forwards infinite;
+        animation-play-state: running;
+      }
+
+      div.sidebar .button .clip {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        height: calc(0.75rem * 1.5);
+        box-sizing: border-box;
+      }
+
+      div.sidebar .button .scrollable {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0px -4px 0px -4px !important;
+        transform: translate3d(0%, 0%, 0);
+        transition: 0.5s ease-in;
+      }
+
+      div.sidebar .button .scrollable:hover {
+        transform: translate3d(-100%, 0%, 0);
+        transition: 0.5s ease-out;
+      }
+
+      div.sidebar .button .scrollable div {
+        display: flex;
+        align-items: center;
+        margin: 0px 4px 0px 4px !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 0.75rem !important;
+        line-height: 0.75rem !important;
+        height: calc(0.75rem * 1.5);
+        vertical-align: middle;
+      }
+
+      div.sidebar .button .scrollable div:last-child:not(:first-child) {
+        position: absolute;
+        left: 100%;
+      }
+
+      div.sidebar .button .wrap {
+        position: relative;
+        display: flex;
+        margin: 0;
+        border-top: 2px solid transparent;
+        border-bottom: 2px solid transparent;
+        color: #000000;
+        width: fit-content;
+        height: fit-content;
+        min-height: fit-content;
+        box-sizing: border-box;
+        overflow: hidden;
+        justify-content: flex-start;
+        align-items: center;
+        transform: translate3d(0, 0, 0);
+        transition: 0.5s;
+      }
+
+      .icon {
+        display: inline-block;
+        justify-items: center;
+        margin: 0;
+        padding: 0;
+        color: #000000;
+        width: fit-content;
+        height: fit-content;
+        transition: .5s;
+        line-height: 0;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon figure {
+        margin: 0;
+      }
+
+      .button>figure {
+        opacity: 1;
+        transition: .5s;
+      }
+
+      .icon figure>picture {
+        display: block;
+      }
+
+      .icon:first-child+div,
+      .icon:not(:first-of-type) {
+        margin: 0px 0px 0px 16px;
+      }
+
+      .icon.is-animatable figure {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        overflow: hidden;
+        width: 32px;
+        height: 32px;
+      }
+
+      .icon.is-animatable figure>picture {
+        margin-left: 0%;
+        width: auto;
+        height: 100%;
+        animation: frame 1.33s steps(4) infinite forwards;
+      }
+
+      .icon.is-animatable figure>picture>img {
+        object-fit: none;
+        object-position: 0% 0%;
+        width: 100%;
+        height: 100%;
+      }
+
+      .icon.is-animatable+div {
+        margin: 0;
+      }
+
+      .icon.is-animatable+div>p {
+        margin: 8px 0px 0px 0px;
+      }
+
+      .content .reveal {
+        color: #0000;
+        background: linear-gradient(var(--foreground-color) 0 0) no-repeat, linear-gradient(var(--foreground-color) 0 0) no-repeat;
+        background-clip: padding-box, text;
+        background-size: 0% 100%;
+        animation: mask 1.0s ease 0.5s both, reveal 1.0s ease 1.5s both;
+      }
+
+      .content>div>div>div a {
+        opacity: 1.0;
+        backface-visibility: hidden;
+        transition: opacity .5s;
+      }
+
+      .content>div>div>div .graph {
+        position: relative;
+        margin: 8px 0px 0px 0px;
+        width: 48px;
+        height: 4px;
+        background-color: rgb(0 231 255 / 0.25);
+        background-color: color(display-p3 0.0 0.906 1.0 / 0.25);
+        overflow: hidden;
+      }
+
+      .content>div>div>div .graph>.bar {
+        position: absolute;
+        height: 100%;
+        background: url('/images/Stripes.png') 0 0 repeat;
+        background-color: #00e7ff;
+        background-color: color(display-p3 0.0 0.906 1.0);
+        background-size: 24px 24px;
+        overflow: hidden;
+        animation: progress 10s linear forwards infinite;
+      }
+
+      .content>div>div>div .graph>.bar>div {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+      }
+
+      .content>div>div>div .graph>.bar>div::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, rgb(255 255 255 / 0.5) 50%, transparent 100%);
+        transform: translateX(-200%) skewX(-45deg);
+        animation: shine 5s infinite;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .content>div>div>div.is-playable {
+        opacity: 1.0;
+        backface-visibility: hidden;
+        transition: opacity .5s;
+      }
+
+      .content>div>div>div.is-playable>p.is-generated {
+        opacity: 1.0;
+        transition: .5s;
+      }
+
+      .content>div>div>div.is-playable>p.is-generated.is-loading {
+        animation: processing 1s linear forwards infinite;
+        animation-play-state: running;
+      }
+
+      .content>div>div>div>.is-playable {
+        opacity: 1.0;
+        backface-visibility: hidden;
+        transition: opacity .5s;
+      }
+
+      .content>div>div>div>.is-playable.is-generated>div {
+        opacity: 1.0;
+        transition: .5s;
+      }
+
+      .content>div>div>div>.is-playable.is-generated>div.is-loading {
+        animation: processing 1s linear forwards infinite;
+        animation-play-state: running;
+      }
+
+      .row {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      #apricot:not(.is-active) {
+        opacity: 0;
+        transition: .5s;
+      }
+
+      #apricot.is-active {
+        opacity: 1;
+        transition: .5s;
+      }
+
+      #apricot canvas.likability {
+        background: rgb(255 255 255 / 1.0) !important;
+      }
+
+      #apricot div.popup {
+        background: rgb(255 255 255 / 1.0) !important;
+        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
+      }
+
+      #apricot div.popup::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, rgb(255 255 255 / 0.5) 50%, transparent 100%);
+        transform: translateX(-200%) skewX(-45deg);
+        animation: shine 5s infinite;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      #apricot div.popup>button {
+        color: #000000 !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.0rem !important;
+        font-weight: bold !important;
+        line-height: 2.0rem !important;
+      }
+
+      #apricot div.popup>button:not(:last-child) {
+        border-bottom: 1px solid hsl(0, 0%, 93%) !important;
+      }
+
+      #apricot span.stats {
+        margin: 0;
+        padding: 1px;
+        background-color: #000000;
+        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+        font-size: 0.75rem;
+        font-weight: bold;
+        line-height: 0.75rem;
+        height: 0.75rem;
+        vertical-align: middle;
+        color: #ffffff;
+        opacity: 0;
+        transition: .5s;
+      }
+
+      #apricot span.stats:hover {
+        opacity: 1;
+        transition: .5s;
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes mask{
+        to {
+          background-size: 150% 100%;
+        }
+      }
+
+      @keyframes reveal {
+        to {
+          background-position: calc(-200% + 1px) 0, 0 0;
+        }
+      }
+
+      @keyframes frame {
+        0% {
+          margin-left: 0%;
+        }
+
+        100% {
+          margin-left: -400%;
+        }
+      }
+
+      @keyframes loading {
+          0% {
+              transform: rotate(0deg);
+          }
+
+          100% {
+              transform: rotate(360deg);
+          }
+      }
+
+      @keyframes processing {
+          0% {
+              opacity: 1;
+          }
+
+          50% {
+            opacity: 0.5;
+          }
+
+          100% {
+            opacity: 1;
+          }
+      }
+
+      @keyframes progress {
+          0% {
+              background-position: 0px 0px;
+          }
+
+          100% {
+              background-position: -24px 0px;
+          }
+      }
+
+      @keyframes shine {
+        0% {
+          transform: translateX(-200%) skewX(-45deg);
+        }
+        100% {
+          transform: translateX(200%) skewX(-45deg);
+        }
+      }
+
+      @media screen and (-webkit-min-device-pixel-ratio: 2),
+      (min-resolution: 2dppx) {
+          .content>div>div>div .graph>.bar {
+              background: url('/images/Stripes@2x.png') 0 0 repeat;
+              background-color: #00e7ff;
+              background-color: color(display-p3 0.0 0.906 1.0);
+              background-size: 24px 24px;
+          }
+      }
+
+      @media screen and (-webkit-min-device-pixel-ratio: 3),
+      (min-resolution: 3dppx) {
+          .content>div>div>div .graph>.bar {
+              background: url('/images/Stripes@3x.png') 0 0 repeat;
+              background-color: #00e7ff;
+              background-color: color(display-p3 0.0 0.906 1.0);
+              background-size: 24px 24px;
+          }
+      }
+
+      @media screen and (min-width: 769px) and (min-height: 769px) {
+        html {
+          background: var(--background-color);
+        }
+
+        body>.wrap {
+          padding: 16px;
+          transition: 0.5s;
+        }
+
+        body>.warp>.frame {
+          border-radius: 4px;
+          transition: 0.5s;
+        }
+
+        body>.overlay {
+          padding: 32px;
+          mask-image: linear-gradient(to bottom, transparent, transparent 16px, black 32px, black calc(100% - 32px), transparent calc(100% - 16px), transparent), linear-gradient(black, black);
+          mask-size: calc(100% - 32px) 100%, 32px 100%;
+          transition: 0.5s;
+        }
+
+        .overlay>.wrap>.content {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0px 0px 32px 0px;
+          transition: padding 0.5s;
+        }
+
+        .overlay>.wrap>.content .icon.is-animatable {
+          right: 32px;
+        }
+
+        div.sidebar {
+          left: 16px;
+          height: calc(100% - 64px);
+          transition: 0.5s;
+        }
+      }
+
+      @media (hover: hover) {
+        div.sidebar .button.is-animatable:hover {
+          opacity: 0.5;
+          transition: .5s;
+        }
+
+        .button:hover>figure {
+          opacity: 0.5;
+          transition: .5s;
+        }
+
+        .content>div>div>div a:hover {
+          opacity: 0.5;
+          transition: .5s;
+        }
+
+        .content>div>div>div.is-playable:hover {
+          cursor: pointer;
+          opacity: 0.5;
+          transition: .5s;
+        }
+
+        .content>div>div>div>.is-playable:hover {
+          cursor: pointer;
+          opacity: 0.5;
+          transition: .5s;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="frame">
+      </div>
+    </div>
+    <div class="overlay">
+      <div class="sidebar">
+        <div class="level">
+          <div class="level-item">
+            <div class="level">
+              <div class="level-item">
+                <div class="rotation-outer">
+                  <div class="rotation-inner">
+                    <div class="rotate">
+                      <a class="button" href="https://milchchan.com/" title="milchchan.com">
+                        <div class="stack">
+                          <div class="wrap has-text-weight-bold is-uppercase">
+                            <div class="clip">
+                              <div class="scrollable">
+                                <div>milchchan.com</div>
+                                <div>milchchan.com</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--
+              <div class="level-item">
+                <div class="rotation-outer">
+                <div class="rotation-inner">
+                    <div class="rotate">
+                    <button class="button is-animatable" type="button" title="Reload" onclick="reload(event);">
+                        <span class="icon is-rotatable">
+                          <i class="fa-solid fa-arrows-rotate"></i>
+                        </span>
+                    </button>
+                    </div>
+                </div>
+                </div>
+              </div>
+              -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="content" data-type="milch" data-prompt="" data-language="ja">
+          <div>
+            <!--
+            <h1>
+              <span class="reveal">Nina</span>
+            </h1>
+            <h2>
+              <span class="reveal has-text-weight-bold">ミルヒちゃんニュース</span>
+            </h2>
+            -->
+            <div>
+              <div>
+                <form id="synthesisForm">
+                  <div class="row">
+                    <label for="inputText">テキスト</label>
+                    <textarea id="inputText" placeholder="ここにテキストを入力してください" required></textarea>
+                  </div>
+
+                  <div class="row">
+                    <label for="promptFile">ものまねする3秒以上音声</label>
+                    <input id="promptFile" type="file" accept="audio/*,.wav" required />
+                  </div>
+
+                  <button id="submitButton" type="submit">生成</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+const form = document.getElementById("synthesisForm");
+const inputText = document.getElementById("inputText");
+const languageInput = document.getElementById("language");
+const temperatureInput = document.getElementById("temperature");
+const promptFileInput = document.getElementById("promptFile");
+const submitButton = document.getElementById("submitButton");
+const player = document.getElementById("player");
+
+const ENDPOINT = "https://milchchan.com/api/generate";
+const DEFAULT_PROMPT_FILE = "sample.wav";
+
+let currentAudioContext = null;
+let currentSource = null;
+const MIN_PROMPT_DURATION_SECONDS = 3;
+const MAX_PROMPT_DURATION_SECONDS = 10;
+
+
+async function resolvePromptBlob() {
+  const file = promptFileInput.files?.[0];
+  if (file) {
+    return { blob: file, name: file.name || "prompt.wav" };
+  }
+
+  const response = await fetch(DEFAULT_PROMPT_FILE);
+  if (!response.ok) {
+    throw new Error(
+      `デフォルト音声 ${DEFAULT_PROMPT_FILE} の取得に失敗しました (${response.status})`
+    );
+  }
+
+  const blob = await response.blob();
+  return { blob, name: DEFAULT_PROMPT_FILE };
+}
+
+function readAscii(bytes, start, end) {
+  return String.fromCharCode(...bytes.slice(start, end));
+}
+
+function parseWavDurationSeconds(arrayBuffer) {
+  const bytes = new Uint8Array(arrayBuffer);
+  const view = new DataView(arrayBuffer);
+
+  if (bytes.length <= 44) {
+    throw new Error("参照音声が短すぎるか、WAVヘッダが不正です。");
+  }
+
+  const riff = readAscii(bytes, 0, 4);
+  const wave = readAscii(bytes, 8, 12);
+  const fmt = readAscii(bytes, 12, 16);
+  if (riff !== "RIFF" || wave !== "WAVE" || fmt !== "fmt ") {
+    throw new Error("参照音声は RIFF/WAVE/fmt を持つ WAV ファイルを指定してください。");
+  }
+
+  const sampleRate = view.getUint32(24, true);
+  const channels = view.getUint16(22, true);
+  const bitsPerSample = view.getUint16(34, true);
+  if (!sampleRate || !channels || !bitsPerSample) {
+    throw new Error("WAV ヘッダ内の sampleRate/channels/bitsPerSample が不正です。");
+  }
+
+  let dataChunkOffset = 36;
+  while (dataChunkOffset + 8 < bytes.length) {
+    const chunkID = readAscii(bytes, dataChunkOffset, dataChunkOffset + 4);
+    const chunkSize = view.getUint32(dataChunkOffset + 4, true);
+
+    if (chunkID === "data") {
+      const bytesPerSampleFrame = (bitsPerSample / 8) * channels;
+      if (!bytesPerSampleFrame) {
+        throw new Error("WAV のフレームサイズが不正です。");
+      }
+      return (chunkSize / bytesPerSampleFrame) / sampleRate;
+    }
+
+    dataChunkOffset += 8 + chunkSize;
+  }
+
+  throw new Error("WAV 内に data チャンクが見つかりませんでした。");
+}
+
+async function blobToArrayBufferAndSampleRate(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const arrayBuffer = reader.result;
+      const view = new DataView(arrayBuffer);
+      const sampleRate = view.getUint32(24, true);
+      resolve({ arrayBuffer, sampleRate });
+    };
+    reader.onerror = () => reject(reader.error || new Error("FileReader error"));
+    reader.readAsArrayBuffer(blob);
+  });
+}
+
+function stopCurrentAudio() {
+  if (currentSource) {
+    try {
+      currentSource.stop();
+    } catch (_) {
+      // 再生終了済みの場合は無視
+    }
+    currentSource.disconnect();
+    currentSource = null;
+  }
+
+  if (currentAudioContext) {
+    currentAudioContext.close();
+    currentAudioContext = null;
+  }
+}
+
+async function synthesizeAndPlay(input, language="ja", temperature=0.9) {
+  stopCurrentAudio();
+
+  const { blob: promptBlob, name: promptName } = await resolvePromptBlob();
+  const duration = parseWavDurationSeconds(await promptBlob.arrayBuffer());
+  if (!Number.isFinite(duration)) {
+    throw new Error("参照音声の長さを判定できませんでした。");
+  }
+  if (duration <= MIN_PROMPT_DURATION_SECONDS || duration > MAX_PROMPT_DURATION_SECONDS) {
+    throw new Error(
+      `参照音声は ${MIN_PROMPT_DURATION_SECONDS} 秒超 ${MAX_PROMPT_DURATION_SECONDS} 秒以下にしてください（現在 ${duration.toFixed(2)} 秒）`
+    );
+  }
+
+  const formData = new FormData();
+  formData.append("file", promptBlob, promptName);
+  formData.append(
+    "data",
+    JSON.stringify({
+      input,
+      language,
+      temperature,
+    })
+  );
+
+  const response = await fetch(ENDPOINT, {
+    mode: "cors",
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`);
+  }
+
+  const resultBlob = await response.blob();
+  const { arrayBuffer, sampleRate } = await blobToArrayBufferAndSampleRate(resultBlob);
+
+  currentAudioContext = new AudioContext();
+  const decoded = await currentAudioContext.decodeAudioData(arrayBuffer.slice(0));
+
+  currentSource = currentAudioContext.createBufferSource();
+  currentSource.buffer = decoded;
+  currentSource.connect(currentAudioContext.destination);
+  currentSource.onended = () => {
+    stopCurrentAudio();
+  };
+  currentSource.start(0);
+
+  // 生成音声を <audio> にも載せる（再再生・ダウンロード用）
+  //player.src = URL.createObjectURL(resultBlob);
+  //player.dataset.sampleRate = String(sampleRate);
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const input = inputText.value.trim();
+  const file = promptFileInput.files?.[0];
+  
+  if (!input) {
+    return;
+  }
+
+  if (!file) {
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.innerText = "生成中";
+
+  try {
+    await synthesizeAndPlay(input);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    submitButton.disabled = false;
+    submitButton.innerText = "生成";
+  }
+});
+    </script>
+  </body>
+</html>
