@@ -1176,62 +1176,16 @@ function stopCurrentAudio() {
 }
 
 async function synthesizeAndPlay(input, language="ja", temperature=0.9) {
-  stopCurrentAudio();
-
-  const { blob: promptBlob, name: promptName } = await resolvePromptBlob();
-  const duration = parseWavDurationSeconds(await promptBlob.arrayBuffer());
-  if (!Number.isFinite(duration)) {
-    throw new Error("参照音声の長さを判定できませんでした。");
-  }
-  if (duration <= MIN_PROMPT_DURATION_SECONDS || duration > MAX_PROMPT_DURATION_SECONDS) {
-    throw new Error(
-      `参照音声は ${MIN_PROMPT_DURATION_SECONDS} 秒超 ${MAX_PROMPT_DURATION_SECONDS} 秒以下にしてください（現在 ${duration.toFixed(2)} 秒）`
-    );
-  }
-
-  const formData = new FormData();
-  formData.append("file", promptBlob, promptName);
-  formData.append(
-    "data",
-    JSON.stringify({
-      input,
-      language,
-      temperature,
-    })
-  );
-
-  const response = await fetch(ENDPOINT, {
-    mode: "cors",
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`);
-  }
-
-  const resultBlob = await response.blob();
-  const { arrayBuffer, sampleRate } = await blobToArrayBufferAndSampleRate(resultBlob);
-
-  currentAudioContext = new AudioContext();
-  const decoded = await currentAudioContext.decodeAudioData(arrayBuffer.slice(0));
-
-  currentSource = currentAudioContext.createBufferSource();
-  currentSource.buffer = decoded;
-  currentSource.connect(currentAudioContext.destination);
-  currentSource.onended = () => {
-    stopCurrentAudio();
-  };
-  currentSource.start(0);
-
+  
   // 生成音声を <audio> にも載せる（再再生・ダウンロード用）
   //player.src = URL.createObjectURL(resultBlob);
   //player.dataset.sampleRate = String(sampleRate);
 }
 
-form.addEventListener("submit", async (event) => {
+submitButton.addEventListener("click", async (event) => {
   event.preventDefault();
 
+  currentAudioContext = new AudioContext({ sampleRate: 24000 });
   const input = inputText.value.trim();
   const file = promptFileInput.files?.[0];
   
@@ -1247,7 +1201,54 @@ form.addEventListener("submit", async (event) => {
   submitButton.innerText = "生成中";
 
   try {
-    await synthesizeAndPlay(input);
+    //stopCurrentAudio();
+
+    const { blob: promptBlob, name: promptName } = await resolvePromptBlob();
+    const duration = parseWavDurationSeconds(await promptBlob.arrayBuffer());
+    if (!Number.isFinite(duration)) {
+      throw new Error("参照音声の長さを判定できませんでした。");
+    }
+    if (duration <= MIN_PROMPT_DURATION_SECONDS || duration > MAX_PROMPT_DURATION_SECONDS) {
+      throw new Error(
+        `参照音声は ${MIN_PROMPT_DURATION_SECONDS} 秒超 ${MAX_PROMPT_DURATION_SECONDS} 秒以下にしてください（現在 ${duration.toFixed(2)} 秒）`
+      );
+    }
+
+    const formData = new FormData();
+    formData.append("file", promptBlob, promptName);
+    formData.append(
+      "data",
+      JSON.stringify({
+        input: input,
+        language: "ja",
+        temperature: 0.9,
+      })
+    );
+
+    const response = await fetch(ENDPOINT, {
+      mode: "cors",
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    const resultBlob = await response.blob();
+    const { arrayBuffer, sampleRate } = await blobToArrayBufferAndSampleRate(resultBlob);
+
+    
+    const decoded = await currentAudioContext.decodeAudioData(arrayBuffer.slice(0));
+
+    currentSource = currentAudioContext.createBufferSource();
+    currentSource.buffer = decoded;
+    currentSource.connect(currentAudioContext.destination);
+    currentSource.onended = () => {
+      stopCurrentAudio();
+    };
+    currentSource.start(0);
+
   } catch (error) {
     console.error(error);
   } finally {
