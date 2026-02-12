@@ -230,7 +230,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     elif header.startswith(b'Content-Type'):
                                         content_type = header.decode('utf-8').split(':')[1].strip()
 
-                                if name == 'file' and filename is not None and content_type == 'audio/wav':
+                                if name == 'file' and filename is not None and content_type in ['audio/wav', 'audio/x-wav']:
                                     audio_data = (filename, content)
                                 elif name == 'data':
                                     json_data = json.loads(content)
