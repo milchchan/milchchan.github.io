@@ -200,9 +200,9 @@
     <script type="importmap">
         {
             "imports": {
-            "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/",
-            "@pixiv/three-vrm": "https://unpkg.com/@pixiv/three-vrm@3.3.2/lib/three-vrm.module.js"
+            "three": "https://unpkg.com/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/",
+            "@pixiv/three-vrm": "https://unpkg.com/@pixiv/three-vrm@3.4.5/lib/three-vrm.module.js"
             }
         }
     </script>
@@ -212,7 +212,6 @@
         import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
         import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
         import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
-        import { UnrealBloomPass } from "/preview/postprocessing/UnrealBloomPass.js";
         import { HueSaturationShader } from "three/addons/shaders/HueSaturationShader.js";
         import { BrightnessContrastShader } from 'three/addons/shaders/BrightnessContrastShader.js';
         import { CopyShader } from "three/addons/shaders/CopyShader.js";
@@ -235,7 +234,6 @@
         const controls = new OrbitControls(camera, renderer.domElement);
         const lookAtTarget = new THREE.Object3D();
         const composer = new EffectComposer(renderer);
-        const bloomPass = new UnrealBloomPass(new THREE.Vector2(renderer.domElement.width, renderer.domElement.height), 0.5, 0.0, 0.5);
         const hueSaturation = new ShaderPass(HueSaturationShader);
         const brightnessContrastShader = new ShaderPass(BrightnessContrastShader);
         const effectCopy = new ShaderPass(CopyShader);
@@ -271,19 +269,14 @@
         scene.add(new THREE.GridHelper(10, 10, "#000000", "#000000"));
         scene.add(new THREE.AxesHelper(5));
 
-        bloomPass.renderToScreen = true;
-        bloomPass.strength = 0.1;
-        bloomPass.radius = 0.1;
-        bloomPass.threshold = 0.5;
         hueSaturation.uniforms.saturation.value = 0.01;
-        brightnessContrastShader.uniforms.brightness.value = 0.1;
+        brightnessContrastShader.uniforms.brightness.value = 0.05;
         brightnessContrastShader.uniforms.contrast.value = 0.05;
         effectCopy.renderToScreen = true;
 
         composer.setSize(renderer.domElement.width, renderer.domElement.height);
         composer.setPixelRatio(window.devicePixelRatio);
         composer.addPass(new RenderPass(scene, camera));
-        composer.addPass(bloomPass);
         composer.addPass(hueSaturation);
         composer.addPass(brightnessContrastShader);
         composer.addPass(effectCopy);
@@ -814,8 +807,6 @@
                 if (renderer.domElement.width !== renderer.domElement.clientWidth || renderer.domElement.height !== renderer.domElement.clientHeight) {
                     const width = renderer.domElement.clientWidth;
                     const height = renderer.domElement.clientHeight;
-
-                    bloomPass.setSize(width, height);
 
                     renderer.setPixelRatio(window.devicePixelRatio);
                     renderer.setSize(width, height, false);
