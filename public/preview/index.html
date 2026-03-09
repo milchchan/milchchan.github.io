@@ -226,7 +226,6 @@
         });
         const scene = new THREE.Scene();
         const directionallight = new THREE.DirectionalLight(0xffffff, 0.5 * Math.PI);
-        const clock = new THREE.Clock();
         const loader = new GLTFLoader();
         const CAMERA_FOV = 60.0;
         const CAMERA_Z = 1.5;
@@ -238,6 +237,7 @@
         const brightnessContrastShader = new ShaderPass(BrightnessContrastShader);
         const effectCopy = new ShaderPass(CopyShader);
         const stats = new Stats();
+        let previousTime = performance.now();
         let vrm = null;
         const animations = [];
         let animationIndex = 0;
@@ -535,12 +535,14 @@
                 };
             }, error => console.error(error));
 
-            function animate() {
+            function animate(timestamp) {
+                const deltaTime = (timestamp - previousTime) / 1000;
+
+                previousTime = timestamp;
+
                 requestAnimationFrame(animate);
 
                 stats.begin();
-
-                const deltaTime = clock.getDelta();
 
                 if (vrm !== null) {
                     if (animations.length > 0) {
