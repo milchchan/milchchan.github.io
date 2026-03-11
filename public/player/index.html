@@ -145,6 +145,7 @@
       }
 
       .wrap > .frame > canvas {
+        position: absolute;
         display: block;
         overflow: hidden;
         outline: none;
@@ -341,15 +342,15 @@
       const VISUALIZER_BOTTOM_PADDING = 0
       const MIN_LOG_FREQUENCY = 20
       const BAR_GRADIENT_STOPS = [
-        { offset: 0, color: '#f58bc5' },
-        { offset: 0.38, color: '#ffc6e0' },
-        { offset: 0.68, color: '#86eefe' },
+        { offset: 0, color: 'rgb(245 139 197 / 0.75)' },
+        { offset: 0.38, color: 'rgb(255 198 224 / 0.75)' },
+        { offset: 0.68, color: 'rgb(134 238 254 / 0.75)' },
       ]
       const PEAK_HOLD_COLOR = '#ffffff'
       const PEAK_HOLD_ALPHA = 0.95
       const PEAK_HOLD_HEIGHT = 3
       const BAR_ALPHA = 0.95
-      const AUDIO_SOURCE_PATH = 'Starlight.mp3'
+      const AUDIO_SOURCE_PATH = 'https://milchchan.com/player/Starlight.mp3'
 
       window.addEventListener("load", async event => {
 
