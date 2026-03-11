@@ -18,6 +18,10 @@
             "rewrite": "/preview/index.html"
         },
         {
+            "route": "/player",
+            "rewrite": "/player/index.html"
+        },
+        {
             "route": "/parallax",
             "rewrite": "/parallax/index.html"
         },
