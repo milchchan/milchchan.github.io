@@ -16,9 +16,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
     <style media="screen">
       :root {
-        background: #101329;
         font-synthesis: none;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
@@ -247,6 +247,54 @@
         visibility: visible;
       }
 
+      .playback-indicator {
+        pointer-events: none;
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        margin: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 0.75rem;
+        height: 0.75rem;
+        background: transparent;
+        color: #000000;
+        line-height: 0;
+        transition:
+          background-color 500ms ease,
+          color 500ms ease,
+          transform 500ms ease,
+          opacity 500ms ease;
+      }
+
+      .playback-indicator i {
+        position: absolute;
+        font-size: 0.75rem;
+        transition: opacity 500ms ease;
+      }
+
+      .playback-indicator .icon-play {
+        opacity: 1;
+      }
+
+      .playback-indicator .icon-pause {
+        opacity: 0;
+      }
+
+      .playback-indicator.is-playing .icon-play {
+        opacity: 0;
+      }
+
+      .playback-indicator.is-playing .icon-pause {
+        opacity: 1;
+      }
+
+      .shell:active .playback-indicator {
+        transform: scale(0.75);
+      }
+
       @keyframes progress-stripes {
         from {
           background-position: 0 0, 0 0;
@@ -309,6 +357,10 @@
           <div class="frame shell">
             <div class="background"><div></div></div>
             <canvas class="visualizer" aria-hidden="true"></canvas>
+            <div class="playback-indicator" aria-hidden="true">
+              <i class="fa-solid fa-play icon-play"></i>
+              <i class="fa-solid fa-pause icon-pause"></i>
+            </div>
             <div class="tooltip"></div>
             <audio class="player" preload="auto" crossorigin="anonymous"></audio>
           </div>
@@ -320,6 +372,7 @@
       const progress = document.body.querySelector('.progress')
       const progressBar = document.body.querySelector('.bar')
       const frame = document.body.querySelector('.frame')
+      const playbackIndicator = document.body.querySelector('.playback-indicator')
       const tooltip = document.body.querySelector('.tooltip')
       const audio = document.body.querySelector('.player')
       const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -654,6 +707,12 @@
         progress.classList.remove('visible')
       }
 
+      function updatePlaybackIcon() {
+        const isPlaying = !audio.paused && !audio.ended
+
+        playbackIndicator.classList.toggle('is-playing', isPlaying)
+      }
+
       async function loadAudioWithProgress() {
         if (audioLoadPromise !== null) {
           return audioLoadPromise
@@ -821,6 +880,10 @@
         console.error('Audio failed to load')
       })
 
+      audio.addEventListener('play', updatePlaybackIcon)
+      audio.addEventListener('pause', updatePlaybackIcon)
+      audio.addEventListener('ended', updatePlaybackIcon)
+
       window.addEventListener('resize', () => {
         resizeCanvas()
         barDescriptors = buildBarDescriptors(canvas.clientWidth)
@@ -829,6 +892,7 @@
 
       resizeCanvas()
       barDescriptors = buildBarDescriptors(canvas.clientWidth)
+      updatePlaybackIcon()
       drawVisualizer()
       updateBackground().catch((error) => {
         console.error('Initial background failed to load:', error)
