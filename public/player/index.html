@@ -23,8 +23,8 @@
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        --milch-light-background-image: Background-Milch-Zankuro-1.png;
-        --milch-dark-background-image: Background-Merku-Zankuro-1.png;
+        --milch-light-background-image: images/Background-Milch-Zankuro-1.png;
+        --milch-dark-background-image: images/Background-Merku-Zankuro-1.png;
       }
 
       * {
@@ -351,570 +351,597 @@
       const BAR_ALPHA = 0.95
       const AUDIO_SOURCE_PATH = 'Starlight.mp3'
 
-      document.body.innerHTML = `
-        <div class="progress"><div class="bar animating"></div></div>
-        <div class="wrap">
-          <div class="frame shell">
-            <div class="background"><div></div></div>
-            <canvas class="visualizer" aria-hidden="true"></canvas>
-            <div class="playback-indicator" aria-hidden="true">
-              <i class="fa-solid fa-play icon-play"></i>
-              <i class="fa-solid fa-pause icon-pause"></i>
+      window.addEventListener("load", async event => {
+
+        document.body.innerHTML = `
+          <div class="progress"><div class="bar animating"></div></div>
+          <div class="wrap">
+            <div class="frame shell">
+              <div class="background"><div></div></div>
+              <canvas class="visualizer" aria-hidden="true"></canvas>
+              <div class="playback-indicator" aria-hidden="true">
+                <i class="fa-solid fa-play icon-play"></i>
+                <i class="fa-solid fa-pause icon-pause"></i>
+              </div>
+              <div class="tooltip"></div>
+              <audio class="player" preload="auto" crossorigin="anonymous"></audio>
             </div>
-            <div class="tooltip"></div>
-            <audio class="player" preload="auto" crossorigin="anonymous"></audio>
           </div>
-        </div>
-      `
+        `
 
-      const shell = document.body.querySelector('.shell')
-      const canvas = document.body.querySelector('.visualizer')
-      const progress = document.body.querySelector('.progress')
-      const progressBar = document.body.querySelector('.bar')
-      const frame = document.body.querySelector('.frame')
-      const playbackIndicator = document.body.querySelector('.playback-indicator')
-      const tooltip = document.body.querySelector('.tooltip')
-      const audio = document.body.querySelector('.player')
-      const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+        const shell = document.body.querySelector('.shell')
+        const canvas = document.body.querySelector('.visualizer')
+        const progress = document.body.querySelector('.progress')
+        const progressBar = document.body.querySelector('.bar')
+        const frame = document.body.querySelector('.frame')
+        const playbackIndicator = document.body.querySelector('.playback-indicator')
+        const tooltip = document.body.querySelector('.tooltip')
+        const audio = document.body.querySelector('.player')
+        const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
-      tooltip.style.setProperty('--tooltip-font-family', TOOLTIP_FONT_FAMILY)
-      tooltip.style.setProperty('--tooltip-font-size', TOOLTIP_FONT_SIZE)
-      tooltip.style.setProperty('--tooltip-background', 'rgba(255, 245, 252, 0.9)')
-      tooltip.style.setProperty('--tooltip-border', 'rgba(240, 107, 181, 0.42)')
-      tooltip.style.setProperty('--tooltip-color', '#5a3058')
+        try {
+            const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/Stripes.png");
 
-      const ctx = canvas.getContext('2d')
-      const audioContext = new AudioContext()
-      const analyser = audioContext.createAnalyser()
-      const gainNode = audioContext.createGain()
-      const source = audioContext.createMediaElementSource(audio)
+            if (response.ok) {
+                const dataURL = await new Promise(async (resolve, reject) => {
+                    const reader = new FileReader();
 
-      source.connect(gainNode)
-      gainNode.connect(analyser)
-      analyser.connect(audioContext.destination)
+                    reader.onload = () => {
+                        resolve(reader.result);
+                    };
+                    reader.onerror = () => {
+                        reject(reader.error);
+                    };
+                    reader.readAsDataURL(await response.blob());
+                });
 
-      analyser.fftSize = 2048
-      analyser.smoothingTimeConstant = 0.82
-      analyser.minDecibels = MIN_DECIBELS
-      analyser.maxDecibels = MAX_DECIBELS
-      gainNode.gain.value = DEFAULT_GAIN
-      audio.loop = ENABLE_LOOP
+                if (dataURL !== null) {
+                    progressBar.style.backgroundImage = `url('${dataURL}')`;
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
 
-      const frequencyData = new Float32Array(analyser.frequencyBinCount)
-      let peakHeights = []
-      let barDescriptors = []
-      let hoverIndex = -1
-      let audioObjectUrl = null
-      let audioLoadPromise = null
+        tooltip.style.setProperty('--tooltip-font-family', TOOLTIP_FONT_FAMILY)
+        tooltip.style.setProperty('--tooltip-font-size', TOOLTIP_FONT_SIZE)
+        tooltip.style.setProperty('--tooltip-background', 'rgba(255, 245, 252, 0.9)')
+        tooltip.style.setProperty('--tooltip-border', 'rgba(240, 107, 181, 0.42)')
+        tooltip.style.setProperty('--tooltip-color', '#5a3058')
 
-      let animationFrame = 0
+        const ctx = canvas.getContext('2d')
+        const audioContext = new AudioContext()
+        const analyser = audioContext.createAnalyser()
+        const gainNode = audioContext.createGain()
+        const source = audioContext.createMediaElementSource(audio)
 
-      function getBackgroundImagePath(isDarkMode = themeMediaQuery.matches) {
-        const variableName = isDarkMode ? '--milch-dark-background-image' : '--milch-light-background-image'
-        const value = window.getComputedStyle(document.documentElement).getPropertyValue(variableName).trim()
+        source.connect(gainNode)
+        gainNode.connect(analyser)
+        analyser.connect(audioContext.destination)
 
-        return value.replace(/^['"]|['"]$/g, '')
-      }
+        analyser.fftSize = 2048
+        analyser.smoothingTimeConstant = 0.82
+        analyser.minDecibels = MIN_DECIBELS
+        analyser.maxDecibels = MAX_DECIBELS
+        gainNode.gain.value = DEFAULT_GAIN
+        audio.loop = ENABLE_LOOP
 
-      async function resizeImage(blob, length) {
-        return await new Promise((resolve, reject) => {
-          const reader = new FileReader()
+        const frequencyData = new Float32Array(analyser.frequencyBinCount)
+        let peakHeights = []
+        let barDescriptors = []
+        let hoverIndex = -1
+        let audioObjectUrl = null
+        let audioLoadPromise = null
 
-          reader.onload = () => {
-            const image = new Image()
+        let animationFrame = 0
 
-            image.onload = () => {
-              const offscreenCanvas = document.createElement('canvas')
+        function getBackgroundImagePath(isDarkMode = themeMediaQuery.matches) {
+          const variableName = isDarkMode ? '--milch-dark-background-image' : '--milch-light-background-image'
+          const value = window.getComputedStyle(document.documentElement).getPropertyValue(variableName).trim()
 
-              if (image.width > image.height) {
-                if (image.width > length) {
-                  offscreenCanvas.width = length
-                  offscreenCanvas.height = Math.floor((length / image.width) * image.height)
+          return value.replace(/^['"]|['"]$/g, '')
+        }
+
+        async function resizeImage(blob, length) {
+          return await new Promise((resolve, reject) => {
+            const reader = new FileReader()
+
+            reader.onload = () => {
+              const image = new Image()
+
+              image.onload = () => {
+                const offscreenCanvas = document.createElement('canvas')
+
+                if (image.width > image.height) {
+                  if (image.width > length) {
+                    offscreenCanvas.width = length
+                    offscreenCanvas.height = Math.floor((length / image.width) * image.height)
+                  } else {
+                    offscreenCanvas.width = image.width
+                    offscreenCanvas.height = image.height
+                  }
+                } else if (image.height > length) {
+                  offscreenCanvas.width = Math.floor((length / image.height) * image.width)
+                  offscreenCanvas.height = length
                 } else {
                   offscreenCanvas.width = image.width
                   offscreenCanvas.height = image.height
                 }
-              } else if (image.height > length) {
-                offscreenCanvas.width = Math.floor((length / image.height) * image.width)
-                offscreenCanvas.height = length
-              } else {
-                offscreenCanvas.width = image.width
-                offscreenCanvas.height = image.height
+
+                const offscreenContext = offscreenCanvas.getContext('2d')
+
+                offscreenContext.imageSmoothingEnabled = true
+                offscreenContext.imageSmoothingQuality = 'high'
+                offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+                offscreenContext.drawImage(image, 0, 0, offscreenCanvas.width, offscreenCanvas.height)
+                offscreenCanvas.toBlob((resizedBlob) => {
+                  if (resizedBlob === null) {
+                    reject(new Error('Failed to resize image'))
+                    return
+                  }
+
+                  resolve(resizedBlob)
+                  offscreenCanvas.width = 0
+                  offscreenCanvas.height = 0
+                }, 'image/png')
               }
 
-              const offscreenContext = offscreenCanvas.getContext('2d')
+              image.onerror = (error) => {
+                reject(error)
+              }
 
-              offscreenContext.imageSmoothingEnabled = true
-              offscreenContext.imageSmoothingQuality = 'high'
-              offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
-              offscreenContext.drawImage(image, 0, 0, offscreenCanvas.width, offscreenCanvas.height)
-              offscreenCanvas.toBlob((resizedBlob) => {
-                if (resizedBlob === null) {
-                  reject(new Error('Failed to resize image'))
-                  return
-                }
-
-                resolve(resizedBlob)
-                offscreenCanvas.width = 0
-                offscreenCanvas.height = 0
-              }, 'image/png')
+              image.src = reader.result
             }
 
-            image.onerror = (error) => {
-              reject(error)
+            reader.onerror = () => {
+              reject(reader.error)
             }
 
-            image.src = reader.result
-          }
-
-          reader.onerror = () => {
-            reject(reader.error)
-          }
-
-          reader.readAsDataURL(blob)
-        })
-      }
-
-      async function blobToDataUrl(blob) {
-        return await new Promise((resolve, reject) => {
-          const reader = new FileReader()
-
-          reader.onload = () => {
-            resolve(reader.result)
-          }
-
-          reader.onerror = () => {
-            reject(reader.error)
-          }
-
-          reader.readAsDataURL(blob)
-        })
-      }
-
-      async function updateBackground() {
-        const background = document.createElement('div')
-        const image = document.createElement('div')
-
-        background.className = 'background'
-        background.style.opacity = '0'
-        background.style.transform = 'scale3d(1.1, 1.1, 1.1)'
-        background.appendChild(image)
-        frame.prepend(background)
-
-        try {
-          const response = await fetch(getBackgroundImagePath())
-
-          if (response.ok) {
-            const maxLength = Math.max(window.screen.width, window.screen.height) * (window.devicePixelRatio || 1)
-            const resizedBlob = await resizeImage(await response.blob(), maxLength)
-            const dataUrl = await blobToDataUrl(resizedBlob)
-
-            image.style.backgroundImage = `url('${dataUrl}')`
-          }
-        } catch (error) {
-          console.error('Background failed to load:', error)
+            reader.readAsDataURL(blob)
+          })
         }
 
-        for (const element of frame.querySelectorAll(':scope > .background')) {
-          if (element === background) {
-            continue
+        async function blobToDataUrl(blob) {
+          return await new Promise((resolve, reject) => {
+            const reader = new FileReader()
+
+            reader.onload = () => {
+              resolve(reader.result)
+            }
+
+            reader.onerror = () => {
+              reject(reader.error)
+            }
+
+            reader.readAsDataURL(blob)
+          })
+        }
+
+        async function updateBackground() {
+          const background = document.createElement('div')
+          const image = document.createElement('div')
+
+          background.className = 'background'
+          background.style.opacity = '0'
+          background.style.transform = 'scale3d(1.1, 1.1, 1.1)'
+          background.appendChild(image)
+          frame.prepend(background)
+
+          try {
+            const response = await fetch(getBackgroundImagePath())
+
+            if (response.ok) {
+              const maxLength = Math.max(window.screen.width, window.screen.height) * (window.devicePixelRatio || 1)
+              const resizedBlob = await resizeImage(await response.blob(), maxLength)
+              const dataUrl = await blobToDataUrl(resizedBlob)
+
+              image.style.backgroundImage = `url('${dataUrl}')`
+            }
+          } catch (error) {
+            console.error('Background failed to load:', error)
           }
 
-          element.animate([
+          for (const element of frame.querySelectorAll(':scope > .background')) {
+            if (element === background) {
+              continue
+            }
+
+            element.animate([
+              {
+                opacity: 0,
+                transform: 'scale3d(1.1, 1.1, 1.1)',
+              },
+            ], {
+              delay: 0,
+              fill: 'forwards',
+              duration: 500,
+              iterations: 1,
+              easing: 'ease-in',
+            }).onfinish = () => {
+              element.remove()
+            }
+          }
+
+          background.animate([
             {
-              opacity: 0,
-              transform: 'scale3d(1.1, 1.1, 1.1)',
+              opacity: 1,
+              transform: 'scale3d(1, 1, 1)',
             },
           ], {
             delay: 0,
             fill: 'forwards',
             duration: 500,
             iterations: 1,
-            easing: 'ease-in',
+            easing: 'ease-out',
           }).onfinish = () => {
-            element.remove()
+            background.style.opacity = '1'
+            background.style.transform = 'scale3d(1, 1, 1)'
           }
         }
 
-        background.animate([
-          {
-            opacity: 1,
-            transform: 'scale3d(1, 1, 1)',
-          },
-        ], {
-          delay: 0,
-          fill: 'forwards',
-          duration: 500,
-          iterations: 1,
-          easing: 'ease-out',
-        }).onfinish = () => {
-          background.style.opacity = '1'
-          background.style.transform = 'scale3d(1, 1, 1)'
-        }
-      }
+        function resizeCanvas() {
+          const dpr = window.devicePixelRatio || 1
+          const width = window.innerWidth
+          const height = window.innerHeight
 
-      function resizeCanvas() {
-        const dpr = window.devicePixelRatio || 1
-        const width = window.innerWidth
-        const height = window.innerHeight
+          canvas.width = Math.floor(width * dpr)
+          canvas.height = Math.floor(height * dpr)
+          canvas.style.width = `${width}px`
+          canvas.style.height = `${height}px`
 
-        canvas.width = Math.floor(width * dpr)
-        canvas.height = Math.floor(height * dpr)
-        canvas.style.width = `${width}px`
-        canvas.style.height = `${height}px`
-
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      }
-
-      function createBarGradient(height) {
-        const gradient = ctx.createLinearGradient(0, height, 0, 0)
-
-        for (const stop of BAR_GRADIENT_STOPS) {
-          gradient.addColorStop(stop.offset, stop.color)
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
         }
 
-        return gradient
-      }
+        function createBarGradient(height) {
+          const gradient = ctx.createLinearGradient(0, height, 0, 0)
 
-      function formatFrequency(frequency) {
-        if (frequency >= 1000) {
-          return `${(frequency / 1000).toFixed(2)} kHz`
+          for (const stop of BAR_GRADIENT_STOPS) {
+            gradient.addColorStop(stop.offset, stop.color)
+          }
+
+          return gradient
         }
 
-        return `${Math.round(frequency)} Hz`
-      }
+        function formatFrequency(frequency) {
+          if (frequency >= 1000) {
+            return `${(frequency / 1000).toFixed(2)} kHz`
+          }
 
-      function getRequestedBarCount(width, minDisplayFrequency, maxDisplayFrequency) {
-        const displayFrequencyRange = Math.max(1, maxDisplayFrequency - minDisplayFrequency)
-        const frequencyDrivenBarCount = Math.max(1, Math.ceil(displayFrequencyRange / BAR_FREQUENCY_RANGE))
-        const widthLimitedBarCount = Math.max(1, Math.min(MAX_BAR_COUNT, Math.floor(width / 10)))
+          return `${Math.round(frequency)} Hz`
+        }
 
-        return Math.min(widthLimitedBarCount, frequencyDrivenBarCount)
-      }
+        function getRequestedBarCount(width, minDisplayFrequency, maxDisplayFrequency) {
+          const displayFrequencyRange = Math.max(1, maxDisplayFrequency - minDisplayFrequency)
+          const frequencyDrivenBarCount = Math.max(1, Math.ceil(displayFrequencyRange / BAR_FREQUENCY_RANGE))
+          const widthLimitedBarCount = Math.max(1, Math.min(MAX_BAR_COUNT, Math.floor(width / 10)))
 
-      function buildBarDescriptors(width) {
-        const binCount = frequencyData.length
-        const nyquist = audioContext.sampleRate / 2
-        const maxBin = binCount - 1
-        const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
-        const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
-        const safeMaxDisplayFrequency = Math.max(minDisplayFrequency, maxDisplayFrequency)
-        const requestedBarCount = getRequestedBarCount(width, minDisplayFrequency, safeMaxDisplayFrequency)
+          return Math.min(widthLimitedBarCount, frequencyDrivenBarCount)
+        }
 
-        if (FREQUENCY_SCALE === 'linear') {
-          const minDisplayBin = Math.max(0, Math.min(maxBin, Math.floor((minDisplayFrequency / nyquist) * binCount)))
-          const maxDisplayBin = Math.max(minDisplayBin, Math.min(maxBin, Math.ceil((safeMaxDisplayFrequency / nyquist) * binCount) - 1))
-          const activeBinCount = maxDisplayBin - minDisplayBin + 1
-          const barCount = Math.max(1, Math.min(requestedBarCount, activeBinCount))
-          const barWidth = width / barCount
+        function buildBarDescriptors(width) {
+          const binCount = frequencyData.length
+          const nyquist = audioContext.sampleRate / 2
+          const maxBin = binCount - 1
+          const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
+          const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
+          const safeMaxDisplayFrequency = Math.max(minDisplayFrequency, maxDisplayFrequency)
+          const requestedBarCount = getRequestedBarCount(width, minDisplayFrequency, safeMaxDisplayFrequency)
 
-          return Array.from({ length: barCount }, (_, index) => {
-            const startBin = minDisplayBin + Math.floor((index / barCount) * activeBinCount)
-            const endBin = Math.min(maxDisplayBin, minDisplayBin + Math.floor(((index + 1) / barCount) * activeBinCount) - 1)
+          if (FREQUENCY_SCALE === 'linear') {
+            const minDisplayBin = Math.max(0, Math.min(maxBin, Math.floor((minDisplayFrequency / nyquist) * binCount)))
+            const maxDisplayBin = Math.max(minDisplayBin, Math.min(maxBin, Math.ceil((safeMaxDisplayFrequency / nyquist) * binCount) - 1))
+            const activeBinCount = maxDisplayBin - minDisplayBin + 1
+            const barCount = Math.max(1, Math.min(requestedBarCount, activeBinCount))
+            const barWidth = width / barCount
+
+            return Array.from({ length: barCount }, (_, index) => {
+              const startBin = minDisplayBin + Math.floor((index / barCount) * activeBinCount)
+              const endBin = Math.min(maxDisplayBin, minDisplayBin + Math.floor(((index + 1) / barCount) * activeBinCount) - 1)
+              const safeEndBin = Math.max(startBin, endBin)
+              const startFrequency = (startBin / maxBin) * nyquist
+              const endFrequency = ((safeEndBin + 1) / binCount) * nyquist
+
+              return {
+                x: index * barWidth,
+                width: barWidth,
+                startBin,
+                endBin: safeEndBin,
+                startFrequency,
+                endFrequency,
+                centerFrequency: (startFrequency + endFrequency) * 0.5,
+                top: 0,
+                bottom: 0,
+              }
+            })
+          }
+
+          const minFrequency = Math.max(audioContext.sampleRate / analyser.fftSize, MIN_LOG_FREQUENCY, minDisplayFrequency)
+          const minLog = Math.log10(minFrequency)
+          const maxLog = Math.log10(Math.max(minFrequency, safeMaxDisplayFrequency))
+          const barWidth = width / requestedBarCount
+
+          return Array.from({ length: requestedBarCount }, (_, index) => {
+            const startRatio = index / requestedBarCount
+            const endRatio = (index + 1) / requestedBarCount
+            const startFrequency = index === 0 ? 0 : 10 ** (minLog + (maxLog - minLog) * startRatio)
+            const endFrequency = 10 ** (minLog + (maxLog - minLog) * endRatio)
+            const startBin = Math.max(0, Math.floor((startFrequency / nyquist) * maxBin))
+            const endBin = Math.min(maxBin, Math.ceil((endFrequency / nyquist) * maxBin))
             const safeEndBin = Math.max(startBin, endBin)
-            const startFrequency = (startBin / maxBin) * nyquist
-            const endFrequency = ((safeEndBin + 1) / binCount) * nyquist
+            const safeStartFrequency = (startBin / maxBin) * nyquist
+            const safeEndFrequency = ((safeEndBin + 1) / binCount) * nyquist
 
             return {
               x: index * barWidth,
               width: barWidth,
               startBin,
               endBin: safeEndBin,
-              startFrequency,
-              endFrequency,
-              centerFrequency: (startFrequency + endFrequency) * 0.5,
+              startFrequency: safeStartFrequency,
+              endFrequency: safeEndFrequency,
+              centerFrequency: Math.sqrt(Math.max(safeStartFrequency, 1) * safeEndFrequency),
               top: 0,
               bottom: 0,
             }
           })
         }
 
-        const minFrequency = Math.max(audioContext.sampleRate / analyser.fftSize, MIN_LOG_FREQUENCY, minDisplayFrequency)
-        const minLog = Math.log10(minFrequency)
-        const maxLog = Math.log10(Math.max(minFrequency, safeMaxDisplayFrequency))
-        const barWidth = width / requestedBarCount
+        function getBarLevel(startBin, endBin) {
+          let value = analyser.minDecibels
 
-        return Array.from({ length: requestedBarCount }, (_, index) => {
-          const startRatio = index / requestedBarCount
-          const endRatio = (index + 1) / requestedBarCount
-          const startFrequency = index === 0 ? 0 : 10 ** (minLog + (maxLog - minLog) * startRatio)
-          const endFrequency = 10 ** (minLog + (maxLog - minLog) * endRatio)
-          const startBin = Math.max(0, Math.floor((startFrequency / nyquist) * maxBin))
-          const endBin = Math.min(maxBin, Math.ceil((endFrequency / nyquist) * maxBin))
-          const safeEndBin = Math.max(startBin, endBin)
-          const safeStartFrequency = (startBin / maxBin) * nyquist
-          const safeEndFrequency = ((safeEndBin + 1) / binCount) * nyquist
-
-          return {
-            x: index * barWidth,
-            width: barWidth,
-            startBin,
-            endBin: safeEndBin,
-            startFrequency: safeStartFrequency,
-            endFrequency: safeEndFrequency,
-            centerFrequency: Math.sqrt(Math.max(safeStartFrequency, 1) * safeEndFrequency),
-            top: 0,
-            bottom: 0,
+          for (let bin = startBin; bin <= endBin; bin += 1) {
+            value = Math.max(value, Number.isFinite(frequencyData[bin]) ? frequencyData[bin] : analyser.minDecibels)
           }
-        })
-      }
 
-      function getBarLevel(startBin, endBin) {
-        let value = analyser.minDecibels
-
-        for (let bin = startBin; bin <= endBin; bin += 1) {
-          value = Math.max(value, Number.isFinite(frequencyData[bin]) ? frequencyData[bin] : analyser.minDecibels)
+          return value
         }
 
-        return value
-      }
-
-      function dbToHeight(decibels, maxBarHeight) {
-        const normalized = (decibels - analyser.minDecibels) / (analyser.maxDecibels - analyser.minDecibels)
-        return Math.max(0, Math.min(1, normalized)) * maxBarHeight
-      }
-
-      function updateTooltip(pointerX, pointerY) {
-        if (hoverIndex < 0 || !barDescriptors[hoverIndex]) {
-          tooltip.classList.remove('visible')
-          return
+        function dbToHeight(decibels, maxBarHeight) {
+          const normalized = (decibels - analyser.minDecibels) / (analyser.maxDecibels - analyser.minDecibels)
+          return Math.max(0, Math.min(1, normalized)) * maxBarHeight
         }
 
-        const { startFrequency, endFrequency, centerFrequency } = barDescriptors[hoverIndex]
-        tooltip.textContent = `${formatFrequency(startFrequency)} - ${formatFrequency(endFrequency)} / ${formatFrequency(centerFrequency)}`
-        tooltip.style.left = `${Math.min(pointerX + 16, window.innerWidth - tooltip.offsetWidth - 12)}px`
-        tooltip.style.top = `${Math.max(12, pointerY - 36)}px`
-        tooltip.classList.add('visible')
-      }
+        function updateTooltip(pointerX, pointerY) {
+          if (hoverIndex < 0 || !barDescriptors[hoverIndex]) {
+            tooltip.classList.remove('visible')
+            return
+          }
 
-      function showProgress() {
-        progress.classList.add('visible')
-      }
+          const { startFrequency, endFrequency, centerFrequency } = barDescriptors[hoverIndex]
+          tooltip.textContent = `${formatFrequency(startFrequency)} - ${formatFrequency(endFrequency)} / ${formatFrequency(centerFrequency)}`
+          tooltip.style.left = `${Math.min(pointerX + 16, window.innerWidth - tooltip.offsetWidth - 12)}px`
+          tooltip.style.top = `${Math.max(12, pointerY - 36)}px`
+          tooltip.classList.add('visible')
+        }
 
-      function updateProgress(rate) {
-        const clampedRate = Math.max(0, Math.min(1, rate))
+        function showProgress() {
+          progress.classList.add('visible')
+        }
 
-        progress.classList.remove('indeterminate')
-        progressBar.style.width = `${clampedRate * 100}%`
-      }
+        function updateProgress(rate) {
+          const clampedRate = Math.max(0, Math.min(1, rate))
 
-      function setIndeterminateProgress() {
-        progress.classList.add('indeterminate')
-        progressBar.style.width = '100%'
-      }
+          progress.classList.remove('indeterminate')
+          progressBar.style.width = `${clampedRate * 100}%`
+        }
 
-      function hideProgress() {
-        progress.classList.remove('visible')
-      }
+        function setIndeterminateProgress() {
+          progress.classList.add('indeterminate')
+          progressBar.style.width = '100%'
+        }
 
-      function updatePlaybackIcon() {
-        const isPlaying = !audio.paused && !audio.ended
+        function hideProgress() {
+          progress.classList.remove('visible')
+        }
 
-        playbackIndicator.classList.toggle('is-playing', isPlaying)
-      }
+        function updatePlaybackIcon() {
+          const isPlaying = !audio.paused && !audio.ended
 
-      async function loadAudioWithProgress() {
-        if (audioLoadPromise !== null) {
+          playbackIndicator.classList.toggle('is-playing', isPlaying)
+        }
+
+        async function loadAudioWithProgress() {
+          if (audioLoadPromise !== null) {
+            return audioLoadPromise
+          }
+
+          showProgress()
+          updateProgress(0)
+
+          audioLoadPromise = (async () => {
+            try {
+              const response = await fetch(AUDIO_SOURCE_PATH)
+
+              if (!response.ok || response.body === null) {
+                throw new Error(`Failed to load audio: ${response.status} ${response.statusText}`)
+              }
+
+              const reader = response.body.getReader()
+              const contentLength = Number(response.headers.get('Content-Length'))
+              const chunks = []
+              let receivedLength = 0
+
+              if (!Number.isFinite(contentLength) || contentLength <= 0) {
+                setIndeterminateProgress()
+              }
+
+              while (true) {
+                const { done, value } = await reader.read()
+
+                if (done) {
+                  break
+                }
+
+                chunks.push(value)
+                receivedLength += value.length
+
+                if (Number.isFinite(contentLength) && contentLength > 0) {
+                  updateProgress(receivedLength / contentLength)
+                }
+              }
+
+              const blob = new Blob(chunks, { type: response.headers.get('Content-Type') || 'audio/mpeg' })
+
+              if (audioObjectUrl !== null) {
+                URL.revokeObjectURL(audioObjectUrl)
+              }
+
+              audioObjectUrl = URL.createObjectURL(blob)
+              audio.src = audioObjectUrl
+              audio.load()
+
+              updateProgress(1)
+              window.setTimeout(hideProgress, 180)
+            } catch (error) {
+              audioLoadPromise = null
+              hideProgress()
+              throw error
+            }
+          })()
+
           return audioLoadPromise
         }
 
-        showProgress()
-        updateProgress(0)
+        function drawVisualizer() {
+          const width = canvas.clientWidth
+          const height = canvas.clientHeight
 
-        audioLoadPromise = (async () => {
-          try {
-            const response = await fetch(AUDIO_SOURCE_PATH)
+          analyser.getFloatFrequencyData(frequencyData)
 
-            if (!response.ok || response.body === null) {
-              throw new Error(`Failed to load audio: ${response.status} ${response.statusText}`)
-            }
+          ctx.clearRect(0, 0, width, height)
 
-            const reader = response.body.getReader()
-            const contentLength = Number(response.headers.get('Content-Length'))
-            const chunks = []
-            let receivedLength = 0
+          const maxBarHeight = height
+          const baseLine = height - VISUALIZER_BOTTOM_PADDING
+          const gradient = createBarGradient(height)
+          const nyquist = audioContext.sampleRate / 2
+          const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
+          const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
+          const expectedBarCount = getRequestedBarCount(width, minDisplayFrequency, Math.max(minDisplayFrequency, maxDisplayFrequency))
 
-            if (!Number.isFinite(contentLength) || contentLength <= 0) {
-              setIndeterminateProgress()
-            }
-
-            while (true) {
-              const { done, value } = await reader.read()
-
-              if (done) {
-                break
-              }
-
-              chunks.push(value)
-              receivedLength += value.length
-
-              if (Number.isFinite(contentLength) && contentLength > 0) {
-                updateProgress(receivedLength / contentLength)
-              }
-            }
-
-            const blob = new Blob(chunks, { type: response.headers.get('Content-Type') || 'audio/mpeg' })
-
-            if (audioObjectUrl !== null) {
-              URL.revokeObjectURL(audioObjectUrl)
-            }
-
-            audioObjectUrl = URL.createObjectURL(blob)
-            audio.src = audioObjectUrl
-            audio.load()
-
-            updateProgress(1)
-            window.setTimeout(hideProgress, 180)
-          } catch (error) {
-            audioLoadPromise = null
-            hideProgress()
-            throw error
+          if (barDescriptors.length === 0 || barDescriptors.length !== expectedBarCount) {
+            barDescriptors = buildBarDescriptors(width)
           }
-        })()
 
-        return audioLoadPromise
-      }
+          if (peakHeights.length !== barDescriptors.length) {
+            peakHeights = new Array(barDescriptors.length).fill(0)
+          }
 
-      function drawVisualizer() {
-        const width = canvas.clientWidth
-        const height = canvas.clientHeight
+          for (let i = 0; i < barDescriptors.length; i += 1) {
+            const descriptor = barDescriptors[i]
+            const decibels = getBarLevel(descriptor.startBin, descriptor.endBin)
+            const barHeight = dbToHeight(decibels, maxBarHeight)
+            const x = descriptor.x
+            const y = baseLine - barHeight
+            const innerWidth = Math.max(2, descriptor.width - 2)
 
-        analyser.getFloatFrequencyData(frequencyData)
+            descriptor.top = y
+            descriptor.bottom = baseLine
 
-        ctx.clearRect(0, 0, width, height)
+            ctx.fillStyle = gradient
+            ctx.globalAlpha = i === hoverIndex ? 1 : BAR_ALPHA
+            ctx.fillRect(x + 1, y, innerWidth, barHeight)
 
-        const maxBarHeight = height
-        const baseLine = height - VISUALIZER_BOTTOM_PADDING
-        const gradient = createBarGradient(height)
-        const nyquist = audioContext.sampleRate / 2
-        const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
-        const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
-        const expectedBarCount = getRequestedBarCount(width, minDisplayFrequency, Math.max(minDisplayFrequency, maxDisplayFrequency))
+            if (ENABLE_PEAK_HOLD) {
+              peakHeights[i] = Math.max(barHeight, peakHeights[i] - PEAK_DROP_PER_FRAME)
 
-        if (barDescriptors.length === 0 || barDescriptors.length !== expectedBarCount) {
-          barDescriptors = buildBarDescriptors(width)
+              const peakY = Math.max(PEAK_HOLD_HEIGHT, baseLine - peakHeights[i])
+              ctx.globalAlpha = PEAK_HOLD_ALPHA
+              ctx.fillStyle = PEAK_HOLD_COLOR
+              ctx.fillRect(x + 1, peakY - PEAK_HEADROOM * 0.5, innerWidth, PEAK_HOLD_HEIGHT)
+            }
+          }
+
+          ctx.globalAlpha = 1
+
+          animationFrame = window.requestAnimationFrame(drawVisualizer)
         }
 
-        if (peakHeights.length !== barDescriptors.length) {
-          peakHeights = new Array(barDescriptors.length).fill(0)
-        }
-
-        for (let i = 0; i < barDescriptors.length; i += 1) {
-          const descriptor = barDescriptors[i]
-          const decibels = getBarLevel(descriptor.startBin, descriptor.endBin)
-          const barHeight = dbToHeight(decibels, maxBarHeight)
-          const x = descriptor.x
-          const y = baseLine - barHeight
-          const innerWidth = Math.max(2, descriptor.width - 2)
-
-          descriptor.top = y
-          descriptor.bottom = baseLine
-
-          ctx.fillStyle = gradient
-          ctx.globalAlpha = i === hoverIndex ? 1 : BAR_ALPHA
-          ctx.fillRect(x + 1, y, innerWidth, barHeight)
-
-          if (ENABLE_PEAK_HOLD) {
-            peakHeights[i] = Math.max(barHeight, peakHeights[i] - PEAK_DROP_PER_FRAME)
-
-            const peakY = Math.max(PEAK_HOLD_HEIGHT, baseLine - peakHeights[i])
-            ctx.globalAlpha = PEAK_HOLD_ALPHA
-            ctx.fillStyle = PEAK_HOLD_COLOR
-            ctx.fillRect(x + 1, peakY - PEAK_HEADROOM * 0.5, innerWidth, PEAK_HOLD_HEIGHT)
+        async function ensurePlaybackReady() {
+          if (audioContext.state === 'suspended') {
+            await audioContext.resume()
           }
         }
 
-        ctx.globalAlpha = 1
+        async function togglePlayback() {
+          await loadAudioWithProgress()
+          await ensurePlaybackReady()
 
-        animationFrame = window.requestAnimationFrame(drawVisualizer)
-      }
+          if (!ENABLE_LOOP && audio.ended) {
+            audio.currentTime = 0
+          }
 
-      async function ensurePlaybackReady() {
-        if (audioContext.state === 'suspended') {
-          await audioContext.resume()
-        }
-      }
-
-      async function togglePlayback() {
-        await loadAudioWithProgress()
-        await ensurePlaybackReady()
-
-        if (!ENABLE_LOOP && audio.ended) {
-          audio.currentTime = 0
+          if (audio.paused) {
+            await audio.play()
+          } else {
+            audio.pause()
+          }
         }
 
-        if (audio.paused) {
-          await audio.play()
-        } else {
-          audio.pause()
-        }
-      }
-
-      shell.addEventListener('click', () => {
-        togglePlayback().catch((error) => {
-          console.error('Playback failed:', error)
+        shell.addEventListener('click', () => {
+          togglePlayback().catch((error) => {
+            console.error('Playback failed:', error)
+          })
         })
-      })
 
-      shell.addEventListener('pointermove', (event) => {
-        const rect = canvas.getBoundingClientRect()
-        const pointerX = event.clientX - rect.left
-        const pointerY = event.clientY - rect.top
+        shell.addEventListener('pointermove', (event) => {
+          const rect = canvas.getBoundingClientRect()
+          const pointerX = event.clientX - rect.left
+          const pointerY = event.clientY - rect.top
 
-        hoverIndex = barDescriptors.findIndex((descriptor) => (
-          pointerX >= descriptor.x + 1
-          && pointerX < descriptor.x + Math.max(2, descriptor.width - 1)
-          && pointerY >= descriptor.top
-          && pointerY <= descriptor.bottom
-        ))
+          hoverIndex = barDescriptors.findIndex((descriptor) => (
+            pointerX >= descriptor.x + 1
+            && pointerX < descriptor.x + Math.max(2, descriptor.width - 1)
+            && pointerY >= descriptor.top
+            && pointerY <= descriptor.bottom
+          ))
 
-        updateTooltip(event.clientX, event.clientY)
-      })
+          updateTooltip(event.clientX, event.clientY)
+        })
 
-      shell.addEventListener('pointerleave', () => {
-        hoverIndex = -1
-        tooltip.classList.remove('visible')
-      })
+        shell.addEventListener('pointerleave', () => {
+          hoverIndex = -1
+          tooltip.classList.remove('visible')
+        })
 
-      audio.addEventListener('error', () => {
-        console.error('Audio failed to load')
-      })
+        audio.addEventListener('error', () => {
+          console.error('Audio failed to load')
+        })
 
-      audio.addEventListener('play', updatePlaybackIcon)
-      audio.addEventListener('pause', updatePlaybackIcon)
-      audio.addEventListener('ended', updatePlaybackIcon)
+        audio.addEventListener('play', updatePlaybackIcon)
+        audio.addEventListener('pause', updatePlaybackIcon)
+        audio.addEventListener('ended', updatePlaybackIcon)
 
-      window.addEventListener('resize', () => {
+        window.addEventListener('resize', () => {
+          resizeCanvas()
+          barDescriptors = buildBarDescriptors(canvas.clientWidth)
+          peakHeights = new Array(barDescriptors.length).fill(0)
+        })
+
         resizeCanvas()
         barDescriptors = buildBarDescriptors(canvas.clientWidth)
-        peakHeights = new Array(barDescriptors.length).fill(0)
-      })
-
-      resizeCanvas()
-      barDescriptors = buildBarDescriptors(canvas.clientWidth)
-      updatePlaybackIcon()
-      drawVisualizer()
-      updateBackground().catch((error) => {
-        console.error('Initial background failed to load:', error)
-      })
-      loadAudioWithProgress().catch((error) => {
-        hideProgress()
-        console.error('Audio preload failed:', error)
-      })
-
-      themeMediaQuery.addEventListener('change', () => {
+        updatePlaybackIcon()
+        drawVisualizer()
         updateBackground().catch((error) => {
-          console.error('Theme background update failed:', error)
+          console.error('Initial background failed to load:', error)
         })
-      })
+        loadAudioWithProgress().catch((error) => {
+          hideProgress()
+          console.error('Audio preload failed:', error)
+        })
 
-      window.addEventListener('beforeunload', () => {
-        window.cancelAnimationFrame(animationFrame)
+        themeMediaQuery.addEventListener('change', () => {
+          updateBackground().catch((error) => {
+            console.error('Theme background update failed:', error)
+          })
+        })
 
-        if (audioObjectUrl !== null) {
-          URL.revokeObjectURL(audioObjectUrl)
-        }
-      })
+        window.addEventListener('beforeunload', () => {
+          window.cancelAnimationFrame(animationFrame)
+
+          if (audioObjectUrl !== null) {
+            URL.revokeObjectURL(audioObjectUrl)
+          }
+        })
+      });
     </script>
   </body>
 </html>
