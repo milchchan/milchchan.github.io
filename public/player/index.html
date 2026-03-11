@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-617KR1WTYP');
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MILCHCHAN.COM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <style media="screen">
+      :root {
+        background: #101329;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        --milch-light-background-image: Background-Milch-Zankuro-1.png;
+        --milch-dark-background-image: Background-Merku-Zankuro-1.png;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+          touch-action: none;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100vh;
+          height: 100dvh;
+          overflow-x: hidden;
+          overflow-y: auto;
+          scroll-behavior: smooth;
+          background: #f4f4f2;
+      }
+
+      body {
+          position: relative;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          min-height: 100vh;
+          min-height: -webkit-fill-available;
+          min-height: 100dvh;
+          overflow: hidden;
+      }
+
+      .wrap {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        min-height: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        backface-visibility: hidden;
+        transition: 0.5s;
+      }
+
+      .shell,
+      .wrap > .frame {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+        width: 100%;
+        max-width: 100% !important;
+        height: 100%;
+        overflow: hidden;
+        background-color: #f4f4f2;
+        transition: 0.5s;
+      }
+
+      .background {
+        user-select: none;
+        pointer-events: none;
+        position: absolute;
+        top: 16px;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: calc(100% - 32px);
+        max-height: 100%;
+        background-color: transparent;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-size: contain;
+        transform-origin: 50% 50%;
+        backface-visibility: hidden;
+        perspective: 1000px;
+      }
+
+      .background::before {
+        user-select: none;
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        background: transparent;
+        content: "";
+      }
+
+      .background > div {
+        user-select: none;
+        position: relative;
+        opacity: 0.5;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        background-color: transparent;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-size: contain;
+        transform-origin: 50% 50%;
+        backface-visibility: hidden;
+        content: "";
+        transition: 0.5s;
+      }
+
+      .shell {
+        cursor: pointer;
+      }
+
+      .wrap > .frame > canvas {
+        display: block;
+        overflow: hidden;
+        outline: none;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        background-color: transparent;
+        opacity: 1;
+        transition: 0.5s ease-out;
+      }
+
+      .wrap > .frame > canvas.dragging {
+        opacity: 0.5;
+        transition: 0.5s ease-in;
+      }
+
+      .progress {
+        pointer-events: none;
+        z-index: 1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0 !important;
+        border: 0 solid transparent;
+        border-radius: 0;
+        padding: 0;
+        width: 100%;
+        height: fit-content;
+        overflow: hidden;
+        backface-visibility: hidden;
+        background: transparent;
+        touch-action: none;
+        opacity: 0;
+        transition: opacity 180ms ease;
+      }
+
+      .progress.visible {
+        opacity: 1;
+      }
+
+      .bar {
+        pointer-events: none;
+        z-index: 1;
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        border: 0 solid transparent;
+        border-radius: 0;
+        width: 0;
+        height: 4px;
+        transform: translate3d(0, 0%, 0);
+        overflow: hidden;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+        background-color: #ffee00;
+        background-size: 24px 24px;
+        animation: progress-stripes 1s linear forwards infinite;
+        animation-play-state: paused;
+        backface-visibility: hidden;
+        perspective: 1000px;
+        transition:
+          width 120ms linear,
+          opacity 180ms ease,
+          transform 0.5s;
+      }
+
+      .bar.animating,
+      .progress.indeterminate .bar {
+        animation-play-state: running;
+      }
+
+      .tooltip {
+        position: fixed;
+        z-index: 1;
+        padding: 0.35rem 0.55rem;
+        border: 1px solid var(--tooltip-border, rgba(255, 255, 255, 0.12));
+        border-radius: 999px;
+        background: var(--tooltip-background, rgba(8, 6, 16, 0.82));
+        color: var(--tooltip-color, #fff8ef);
+        font-family: var(--tooltip-font-family, "Trebuchet MS", "Verdana", sans-serif);
+        font-size: var(--tooltip-font-size, 0.78rem);
+        line-height: 1.2;
+        white-space: nowrap;
+        pointer-events: none;
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        transform: translateY(6px);
+        visibility: hidden;
+        transition:
+          opacity 180ms ease,
+          transform 180ms ease,
+          visibility 180ms ease;
+      }
+
+      .tooltip.visible {
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+      }
+
+      @keyframes progress-stripes {
+        from {
+          background-position: 0 0, 0 0;
+        }
+
+        to {
+          background-position: -24px 0;
+        }
+      }
+
+      @media screen and (min-width: 769px) and (min-height: 769px) {
+        html {
+            background: #ffffff !important;
+        }
+
+        .wrap {
+            padding: 16px !important;
+            transition: .5s !important;
+        }
+
+        .frame {
+            border-radius: 4px !important;
+            transition: .5s !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      const ENABLE_PEAK_HOLD = true
+      const ENABLE_LOOP = true
+      const FREQUENCY_SCALE = 'linear'
+      const DEFAULT_GAIN = 1
+      const MIN_DISPLAY_FREQUENCY = 20
+      const MAX_DISPLAY_FREQUENCY = 20000
+      const BAR_FREQUENCY_RANGE = 250
+      const MAX_BAR_COUNT = 160
+      const TOOLTIP_FONT_FAMILY = '"Barlow", sans-serif'
+      const TOOLTIP_FONT_SIZE = '0.78rem'
+      const MIN_DECIBELS = -100
+      const MAX_DECIBELS = -20
+      const PEAK_DROP_PER_FRAME = 3.6
+      const PEAK_HEADROOM = 10
+      const VISUALIZER_BOTTOM_PADDING = 0
+      const MIN_LOG_FREQUENCY = 20
+      const BAR_GRADIENT_STOPS = [
+        { offset: 0, color: '#f58bc5' },
+        { offset: 0.38, color: '#ffc6e0' },
+        { offset: 0.68, color: '#86eefe' },
+      ]
+      const PEAK_HOLD_COLOR = '#ffffff'
+      const PEAK_HOLD_ALPHA = 0.95
+      const PEAK_HOLD_HEIGHT = 3
+      const BAR_ALPHA = 0.95
+      const AUDIO_SOURCE_PATH = 'Starlight.mp3'
+
+      document.body.innerHTML = `
+        <div class="progress"><div class="bar animating"></div></div>
+        <div class="wrap">
+          <div class="frame shell">
+            <div class="background"><div></div></div>
+            <canvas class="visualizer" aria-hidden="true"></canvas>
+            <div class="tooltip"></div>
+            <audio class="player" preload="auto" crossorigin="anonymous"></audio>
+          </div>
+        </div>
+      `
+
+      const shell = document.body.querySelector('.shell')
+      const canvas = document.body.querySelector('.visualizer')
+      const progress = document.body.querySelector('.progress')
+      const progressBar = document.body.querySelector('.bar')
+      const frame = document.body.querySelector('.frame')
+      const tooltip = document.body.querySelector('.tooltip')
+      const audio = document.body.querySelector('.player')
+      const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+      tooltip.style.setProperty('--tooltip-font-family', TOOLTIP_FONT_FAMILY)
+      tooltip.style.setProperty('--tooltip-font-size', TOOLTIP_FONT_SIZE)
+      tooltip.style.setProperty('--tooltip-background', 'rgba(255, 245, 252, 0.9)')
+      tooltip.style.setProperty('--tooltip-border', 'rgba(240, 107, 181, 0.42)')
+      tooltip.style.setProperty('--tooltip-color', '#5a3058')
+
+      const ctx = canvas.getContext('2d')
+      const audioContext = new AudioContext()
+      const analyser = audioContext.createAnalyser()
+      const gainNode = audioContext.createGain()
+      const source = audioContext.createMediaElementSource(audio)
+
+      source.connect(gainNode)
+      gainNode.connect(analyser)
+      analyser.connect(audioContext.destination)
+
+      analyser.fftSize = 2048
+      analyser.smoothingTimeConstant = 0.82
+      analyser.minDecibels = MIN_DECIBELS
+      analyser.maxDecibels = MAX_DECIBELS
+      gainNode.gain.value = DEFAULT_GAIN
+      audio.loop = ENABLE_LOOP
+
+      const frequencyData = new Float32Array(analyser.frequencyBinCount)
+      let peakHeights = []
+      let barDescriptors = []
+      let hoverIndex = -1
+      let audioObjectUrl = null
+      let audioLoadPromise = null
+
+      let animationFrame = 0
+
+      function getBackgroundImagePath(isDarkMode = themeMediaQuery.matches) {
+        const variableName = isDarkMode ? '--milch-dark-background-image' : '--milch-light-background-image'
+        const value = window.getComputedStyle(document.documentElement).getPropertyValue(variableName).trim()
+
+        return value.replace(/^['"]|['"]$/g, '')
+      }
+
+      async function resizeImage(blob, length) {
+        return await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+
+          reader.onload = () => {
+            const image = new Image()
+
+            image.onload = () => {
+              const offscreenCanvas = document.createElement('canvas')
+
+              if (image.width > image.height) {
+                if (image.width > length) {
+                  offscreenCanvas.width = length
+                  offscreenCanvas.height = Math.floor((length / image.width) * image.height)
+                } else {
+                  offscreenCanvas.width = image.width
+                  offscreenCanvas.height = image.height
+                }
+              } else if (image.height > length) {
+                offscreenCanvas.width = Math.floor((length / image.height) * image.width)
+                offscreenCanvas.height = length
+              } else {
+                offscreenCanvas.width = image.width
+                offscreenCanvas.height = image.height
+              }
+
+              const offscreenContext = offscreenCanvas.getContext('2d')
+
+              offscreenContext.imageSmoothingEnabled = true
+              offscreenContext.imageSmoothingQuality = 'high'
+              offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+              offscreenContext.drawImage(image, 0, 0, offscreenCanvas.width, offscreenCanvas.height)
+              offscreenCanvas.toBlob((resizedBlob) => {
+                if (resizedBlob === null) {
+                  reject(new Error('Failed to resize image'))
+                  return
+                }
+
+                resolve(resizedBlob)
+                offscreenCanvas.width = 0
+                offscreenCanvas.height = 0
+              }, 'image/png')
+            }
+
+            image.onerror = (error) => {
+              reject(error)
+            }
+
+            image.src = reader.result
+          }
+
+          reader.onerror = () => {
+            reject(reader.error)
+          }
+
+          reader.readAsDataURL(blob)
+        })
+      }
+
+      async function blobToDataUrl(blob) {
+        return await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+
+          reader.onload = () => {
+            resolve(reader.result)
+          }
+
+          reader.onerror = () => {
+            reject(reader.error)
+          }
+
+          reader.readAsDataURL(blob)
+        })
+      }
+
+      async function updateBackground() {
+        const background = document.createElement('div')
+        const image = document.createElement('div')
+
+        background.className = 'background'
+        background.style.opacity = '0'
+        background.style.transform = 'scale3d(1.1, 1.1, 1.1)'
+        background.appendChild(image)
+        frame.prepend(background)
+
+        try {
+          const response = await fetch(getBackgroundImagePath())
+
+          if (response.ok) {
+            const maxLength = Math.max(window.screen.width, window.screen.height) * (window.devicePixelRatio || 1)
+            const resizedBlob = await resizeImage(await response.blob(), maxLength)
+            const dataUrl = await blobToDataUrl(resizedBlob)
+
+            image.style.backgroundImage = `url('${dataUrl}')`
+          }
+        } catch (error) {
+          console.error('Background failed to load:', error)
+        }
+
+        for (const element of frame.querySelectorAll(':scope > .background')) {
+          if (element === background) {
+            continue
+          }
+
+          element.animate([
+            {
+              opacity: 0,
+              transform: 'scale3d(1.1, 1.1, 1.1)',
+            },
+          ], {
+            delay: 0,
+            fill: 'forwards',
+            duration: 500,
+            iterations: 1,
+            easing: 'ease-in',
+          }).onfinish = () => {
+            element.remove()
+          }
+        }
+
+        background.animate([
+          {
+            opacity: 1,
+            transform: 'scale3d(1, 1, 1)',
+          },
+        ], {
+          delay: 0,
+          fill: 'forwards',
+          duration: 500,
+          iterations: 1,
+          easing: 'ease-out',
+        }).onfinish = () => {
+          background.style.opacity = '1'
+          background.style.transform = 'scale3d(1, 1, 1)'
+        }
+      }
+
+      function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1
+        const width = window.innerWidth
+        const height = window.innerHeight
+
+        canvas.width = Math.floor(width * dpr)
+        canvas.height = Math.floor(height * dpr)
+        canvas.style.width = `${width}px`
+        canvas.style.height = `${height}px`
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      }
+
+      function createBarGradient(height) {
+        const gradient = ctx.createLinearGradient(0, height, 0, 0)
+
+        for (const stop of BAR_GRADIENT_STOPS) {
+          gradient.addColorStop(stop.offset, stop.color)
+        }
+
+        return gradient
+      }
+
+      function formatFrequency(frequency) {
+        if (frequency >= 1000) {
+          return `${(frequency / 1000).toFixed(2)} kHz`
+        }
+
+        return `${Math.round(frequency)} Hz`
+      }
+
+      function getRequestedBarCount(width, minDisplayFrequency, maxDisplayFrequency) {
+        const displayFrequencyRange = Math.max(1, maxDisplayFrequency - minDisplayFrequency)
+        const frequencyDrivenBarCount = Math.max(1, Math.ceil(displayFrequencyRange / BAR_FREQUENCY_RANGE))
+        const widthLimitedBarCount = Math.max(1, Math.min(MAX_BAR_COUNT, Math.floor(width / 10)))
+
+        return Math.min(widthLimitedBarCount, frequencyDrivenBarCount)
+      }
+
+      function buildBarDescriptors(width) {
+        const binCount = frequencyData.length
+        const nyquist = audioContext.sampleRate / 2
+        const maxBin = binCount - 1
+        const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
+        const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
+        const safeMaxDisplayFrequency = Math.max(minDisplayFrequency, maxDisplayFrequency)
+        const requestedBarCount = getRequestedBarCount(width, minDisplayFrequency, safeMaxDisplayFrequency)
+
+        if (FREQUENCY_SCALE === 'linear') {
+          const minDisplayBin = Math.max(0, Math.min(maxBin, Math.floor((minDisplayFrequency / nyquist) * binCount)))
+          const maxDisplayBin = Math.max(minDisplayBin, Math.min(maxBin, Math.ceil((safeMaxDisplayFrequency / nyquist) * binCount) - 1))
+          const activeBinCount = maxDisplayBin - minDisplayBin + 1
+          const barCount = Math.max(1, Math.min(requestedBarCount, activeBinCount))
+          const barWidth = width / barCount
+
+          return Array.from({ length: barCount }, (_, index) => {
+            const startBin = minDisplayBin + Math.floor((index / barCount) * activeBinCount)
+            const endBin = Math.min(maxDisplayBin, minDisplayBin + Math.floor(((index + 1) / barCount) * activeBinCount) - 1)
+            const safeEndBin = Math.max(startBin, endBin)
+            const startFrequency = (startBin / maxBin) * nyquist
+            const endFrequency = ((safeEndBin + 1) / binCount) * nyquist
+
+            return {
+              x: index * barWidth,
+              width: barWidth,
+              startBin,
+              endBin: safeEndBin,
+              startFrequency,
+              endFrequency,
+              centerFrequency: (startFrequency + endFrequency) * 0.5,
+              top: 0,
+              bottom: 0,
+            }
+          })
+        }
+
+        const minFrequency = Math.max(audioContext.sampleRate / analyser.fftSize, MIN_LOG_FREQUENCY, minDisplayFrequency)
+        const minLog = Math.log10(minFrequency)
+        const maxLog = Math.log10(Math.max(minFrequency, safeMaxDisplayFrequency))
+        const barWidth = width / requestedBarCount
+
+        return Array.from({ length: requestedBarCount }, (_, index) => {
+          const startRatio = index / requestedBarCount
+          const endRatio = (index + 1) / requestedBarCount
+          const startFrequency = index === 0 ? 0 : 10 ** (minLog + (maxLog - minLog) * startRatio)
+          const endFrequency = 10 ** (minLog + (maxLog - minLog) * endRatio)
+          const startBin = Math.max(0, Math.floor((startFrequency / nyquist) * maxBin))
+          const endBin = Math.min(maxBin, Math.ceil((endFrequency / nyquist) * maxBin))
+          const safeEndBin = Math.max(startBin, endBin)
+          const safeStartFrequency = (startBin / maxBin) * nyquist
+          const safeEndFrequency = ((safeEndBin + 1) / binCount) * nyquist
+
+          return {
+            x: index * barWidth,
+            width: barWidth,
+            startBin,
+            endBin: safeEndBin,
+            startFrequency: safeStartFrequency,
+            endFrequency: safeEndFrequency,
+            centerFrequency: Math.sqrt(Math.max(safeStartFrequency, 1) * safeEndFrequency),
+            top: 0,
+            bottom: 0,
+          }
+        })
+      }
+
+      function getBarLevel(startBin, endBin) {
+        let value = analyser.minDecibels
+
+        for (let bin = startBin; bin <= endBin; bin += 1) {
+          value = Math.max(value, Number.isFinite(frequencyData[bin]) ? frequencyData[bin] : analyser.minDecibels)
+        }
+
+        return value
+      }
+
+      function dbToHeight(decibels, maxBarHeight) {
+        const normalized = (decibels - analyser.minDecibels) / (analyser.maxDecibels - analyser.minDecibels)
+        return Math.max(0, Math.min(1, normalized)) * maxBarHeight
+      }
+
+      function updateTooltip(pointerX, pointerY) {
+        if (hoverIndex < 0 || !barDescriptors[hoverIndex]) {
+          tooltip.classList.remove('visible')
+          return
+        }
+
+        const { startFrequency, endFrequency, centerFrequency } = barDescriptors[hoverIndex]
+        tooltip.textContent = `${formatFrequency(startFrequency)} - ${formatFrequency(endFrequency)} / ${formatFrequency(centerFrequency)}`
+        tooltip.style.left = `${Math.min(pointerX + 16, window.innerWidth - tooltip.offsetWidth - 12)}px`
+        tooltip.style.top = `${Math.max(12, pointerY - 36)}px`
+        tooltip.classList.add('visible')
+      }
+
+      function showProgress() {
+        progress.classList.add('visible')
+      }
+
+      function updateProgress(rate) {
+        const clampedRate = Math.max(0, Math.min(1, rate))
+
+        progress.classList.remove('indeterminate')
+        progressBar.style.width = `${clampedRate * 100}%`
+      }
+
+      function setIndeterminateProgress() {
+        progress.classList.add('indeterminate')
+        progressBar.style.width = '100%'
+      }
+
+      function hideProgress() {
+        progress.classList.remove('visible')
+      }
+
+      async function loadAudioWithProgress() {
+        if (audioLoadPromise !== null) {
+          return audioLoadPromise
+        }
+
+        showProgress()
+        updateProgress(0)
+
+        audioLoadPromise = (async () => {
+          try {
+            const response = await fetch(AUDIO_SOURCE_PATH)
+
+            if (!response.ok || response.body === null) {
+              throw new Error(`Failed to load audio: ${response.status} ${response.statusText}`)
+            }
+
+            const reader = response.body.getReader()
+            const contentLength = Number(response.headers.get('Content-Length'))
+            const chunks = []
+            let receivedLength = 0
+
+            if (!Number.isFinite(contentLength) || contentLength <= 0) {
+              setIndeterminateProgress()
+            }
+
+            while (true) {
+              const { done, value } = await reader.read()
+
+              if (done) {
+                break
+              }
+
+              chunks.push(value)
+              receivedLength += value.length
+
+              if (Number.isFinite(contentLength) && contentLength > 0) {
+                updateProgress(receivedLength / contentLength)
+              }
+            }
+
+            const blob = new Blob(chunks, { type: response.headers.get('Content-Type') || 'audio/mpeg' })
+
+            if (audioObjectUrl !== null) {
+              URL.revokeObjectURL(audioObjectUrl)
+            }
+
+            audioObjectUrl = URL.createObjectURL(blob)
+            audio.src = audioObjectUrl
+            audio.load()
+
+            updateProgress(1)
+            window.setTimeout(hideProgress, 180)
+          } catch (error) {
+            audioLoadPromise = null
+            hideProgress()
+            throw error
+          }
+        })()
+
+        return audioLoadPromise
+      }
+
+      function drawVisualizer() {
+        const width = canvas.clientWidth
+        const height = canvas.clientHeight
+
+        analyser.getFloatFrequencyData(frequencyData)
+
+        ctx.clearRect(0, 0, width, height)
+
+        const maxBarHeight = height
+        const baseLine = height - VISUALIZER_BOTTOM_PADDING
+        const gradient = createBarGradient(height)
+        const nyquist = audioContext.sampleRate / 2
+        const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
+        const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
+        const expectedBarCount = getRequestedBarCount(width, minDisplayFrequency, Math.max(minDisplayFrequency, maxDisplayFrequency))
+
+        if (barDescriptors.length === 0 || barDescriptors.length !== expectedBarCount) {
+          barDescriptors = buildBarDescriptors(width)
+        }
+
+        if (peakHeights.length !== barDescriptors.length) {
+          peakHeights = new Array(barDescriptors.length).fill(0)
+        }
+
+        for (let i = 0; i < barDescriptors.length; i += 1) {
+          const descriptor = barDescriptors[i]
+          const decibels = getBarLevel(descriptor.startBin, descriptor.endBin)
+          const barHeight = dbToHeight(decibels, maxBarHeight)
+          const x = descriptor.x
+          const y = baseLine - barHeight
+          const innerWidth = Math.max(2, descriptor.width - 2)
+
+          descriptor.top = y
+          descriptor.bottom = baseLine
+
+          ctx.fillStyle = gradient
+          ctx.globalAlpha = i === hoverIndex ? 1 : BAR_ALPHA
+          ctx.fillRect(x + 1, y, innerWidth, barHeight)
+
+          if (ENABLE_PEAK_HOLD) {
+            peakHeights[i] = Math.max(barHeight, peakHeights[i] - PEAK_DROP_PER_FRAME)
+
+            const peakY = Math.max(PEAK_HOLD_HEIGHT, baseLine - peakHeights[i])
+            ctx.globalAlpha = PEAK_HOLD_ALPHA
+            ctx.fillStyle = PEAK_HOLD_COLOR
+            ctx.fillRect(x + 1, peakY - PEAK_HEADROOM * 0.5, innerWidth, PEAK_HOLD_HEIGHT)
+          }
+        }
+
+        ctx.globalAlpha = 1
+
+        animationFrame = window.requestAnimationFrame(drawVisualizer)
+      }
+
+      async function ensurePlaybackReady() {
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume()
+        }
+      }
+
+      async function togglePlayback() {
+        await loadAudioWithProgress()
+        await ensurePlaybackReady()
+
+        if (!ENABLE_LOOP && audio.ended) {
+          audio.currentTime = 0
+        }
+
+        if (audio.paused) {
+          await audio.play()
+        } else {
+          audio.pause()
+        }
+      }
+
+      shell.addEventListener('click', () => {
+        togglePlayback().catch((error) => {
+          console.error('Playback failed:', error)
+        })
+      })
+
+      shell.addEventListener('pointermove', (event) => {
+        const rect = canvas.getBoundingClientRect()
+        const pointerX = event.clientX - rect.left
+        const pointerY = event.clientY - rect.top
+
+        hoverIndex = barDescriptors.findIndex((descriptor) => (
+          pointerX >= descriptor.x + 1
+          && pointerX < descriptor.x + Math.max(2, descriptor.width - 1)
+          && pointerY >= descriptor.top
+          && pointerY <= descriptor.bottom
+        ))
+
+        updateTooltip(event.clientX, event.clientY)
+      })
+
+      shell.addEventListener('pointerleave', () => {
+        hoverIndex = -1
+        tooltip.classList.remove('visible')
+      })
+
+      audio.addEventListener('error', () => {
+        console.error('Audio failed to load')
+      })
+
+      window.addEventListener('resize', () => {
+        resizeCanvas()
+        barDescriptors = buildBarDescriptors(canvas.clientWidth)
+        peakHeights = new Array(barDescriptors.length).fill(0)
+      })
+
+      resizeCanvas()
+      barDescriptors = buildBarDescriptors(canvas.clientWidth)
+      drawVisualizer()
+      updateBackground().catch((error) => {
+        console.error('Initial background failed to load:', error)
+      })
+      loadAudioWithProgress().catch((error) => {
+        hideProgress()
+        console.error('Audio preload failed:', error)
+      })
+
+      themeMediaQuery.addEventListener('change', () => {
+        updateBackground().catch((error) => {
+          console.error('Theme background update failed:', error)
+        })
+      })
+
+      window.addEventListener('beforeunload', () => {
+        window.cancelAnimationFrame(animationFrame)
+
+        if (audioObjectUrl !== null) {
+          URL.revokeObjectURL(audioObjectUrl)
+        }
+      })
+    </script>
+  </body>
+</html>
