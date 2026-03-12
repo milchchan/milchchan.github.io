@@ -222,19 +222,20 @@
       .tooltip {
         position: fixed;
         z-index: 1;
-        padding: 0.35rem 0.55rem;
-        border: 1px solid var(--tooltip-border, rgba(255, 255, 255, 0.12));
+        padding: 0.25rem 0.5rem;
+        border: 0px solid transparent;
         border-radius: 999px;
-        background: var(--tooltip-background, rgba(8, 6, 16, 0.82));
-        color: var(--tooltip-color, #fff8ef);
-        font-family: var(--tooltip-font-family, "Trebuchet MS", "Verdana", sans-serif);
-        font-size: var(--tooltip-font-size, 0.78rem);
-        line-height: 1.2;
+        border: 0px solid var(--tooltip-border, transparent);
+        background: var(--tooltip-background, rgba(0 0 0 / 0.75));
+        color: var(--tooltip-color, #ffffff);
+        font-family: var(--tooltip-font-family, "Barlow", sans-serif);
+        font-size: var(--tooltip-font-size, 0.75rem);
+        line-height: 1.25;
         white-space: nowrap;
         pointer-events: none;
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(8px);
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(8px);
         visibility: hidden;
         transition:
           opacity 180ms ease,
@@ -268,6 +269,11 @@
           color 500ms ease,
           transform 500ms ease,
           opacity 500ms ease;
+        opacity: 1;
+      }
+
+      .playback-indicator.is-loading {
+        opacity: 0.5;
       }
 
       .playback-indicator i {
@@ -333,8 +339,6 @@
       const MAX_DISPLAY_FREQUENCY = 20000
       const BAR_FREQUENCY_RANGE = 250
       const MAX_BAR_COUNT = 160
-      const TOOLTIP_FONT_FAMILY = '"Barlow", sans-serif'
-      const TOOLTIP_FONT_SIZE = '0.78rem'
       const MIN_DECIBELS = -100
       const MAX_DECIBELS = -20
       const PEAK_DROP_PER_FRAME = 3.6
@@ -342,15 +346,14 @@
       const VISUALIZER_BOTTOM_PADDING = 0
       const MIN_LOG_FREQUENCY = 20
       const BAR_GRADIENT_STOPS = [
-        { offset: 0, color: 'rgb(245 139 197 / 0.75)' },
-        { offset: 0.38, color: 'rgb(255 198 224 / 0.75)' },
-        { offset: 0.68, color: 'rgb(134 238 254 / 0.75)' },
+        { offset: 0.5, color: 'rgb(255 198 224 / 0.75)' },
+        { offset: 0.75, color: 'rgb(134 238 254 / 0.75)' },
       ]
-      const PEAK_HOLD_COLOR = '#ffffff'
+      const PEAK_HOLD_COLOR = 'rgb(255 255 255 / 0.75)'
       const PEAK_HOLD_ALPHA = 0.95
-      const PEAK_HOLD_HEIGHT = 3
+      const PEAK_HOLD_HEIGHT = 2
       const BAR_ALPHA = 0.95
-      const AUDIO_SOURCE_PATH = 'https://milchchan.com/player/Starlight.mp3'
+      const AUDIO_URL = '/audio/Starlight.mp3'
 
       window.addEventListener("load", async event => {
 
@@ -360,7 +363,7 @@
             <div class="frame shell">
               <div class="background"><div></div></div>
               <canvas class="visualizer" aria-hidden="true"></canvas>
-              <div class="playback-indicator" aria-hidden="true">
+              <div class="playback-indicator is-loading" aria-hidden="true">
                 <i class="fa-solid fa-play icon-play"></i>
                 <i class="fa-solid fa-pause icon-pause"></i>
               </div>
@@ -403,12 +406,6 @@
         } catch (error) {
             console.error(error);
         }
-
-        tooltip.style.setProperty('--tooltip-font-family', TOOLTIP_FONT_FAMILY)
-        tooltip.style.setProperty('--tooltip-font-size', TOOLTIP_FONT_SIZE)
-        tooltip.style.setProperty('--tooltip-background', 'rgba(255, 245, 252, 0.9)')
-        tooltip.style.setProperty('--tooltip-border', 'rgba(240, 107, 181, 0.42)')
-        tooltip.style.setProperty('--tooltip-color', '#5a3058')
 
         const ctx = canvas.getContext('2d')
         const audioContext = new AudioContext()
@@ -740,17 +737,22 @@
           playbackIndicator.classList.toggle('is-playing', isPlaying)
         }
 
+        function setPlaybackIndicatorLoading(isLoading) {
+          playbackIndicator.classList.toggle('is-loading', isLoading)
+        }
+
         async function loadAudioWithProgress() {
           if (audioLoadPromise !== null) {
             return audioLoadPromise
           }
 
+          setPlaybackIndicatorLoading(true)
           showProgress()
           updateProgress(0)
 
           audioLoadPromise = (async () => {
             try {
-              const response = await fetch(AUDIO_SOURCE_PATH)
+              const response = await fetch(AUDIO_URL)
 
               if (!response.ok || response.body === null) {
                 throw new Error(`Failed to load audio: ${response.status} ${response.statusText}`)
@@ -792,9 +794,13 @@
 
               updateProgress(1)
               window.setTimeout(hideProgress, 180)
+              window.setTimeout(() => {
+                setPlaybackIndicatorLoading(false)
+              }, 180)
             } catch (error) {
               audioLoadPromise = null
               hideProgress()
+              setPlaybackIndicatorLoading(false)
               throw error
             }
           })()
