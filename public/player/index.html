@@ -843,6 +843,11 @@
           return `${Math.round(frequency)} Hz`
         }
 
+        function formatFrequencyBand(centerFrequency, startFrequency, endFrequency) {
+          const halfBandwidth = Math.max(0, endFrequency - startFrequency) * 0.5
+          return `${formatFrequency(centerFrequency)} ± ${formatFrequency(halfBandwidth)}`
+        }
+
         function getRequestedBarCount(width, minDisplayFrequency, maxDisplayFrequency) {
           const displayFrequencyRange = Math.max(1, maxDisplayFrequency - minDisplayFrequency)
           const frequencyDrivenBarCount = Math.max(1, Math.ceil(displayFrequencyRange / BAR_FREQUENCY_RANGE))
@@ -954,7 +959,7 @@
           }
 
           const { startFrequency, endFrequency, centerFrequency } = barDescriptors[hoverIndex]
-          tooltip.textContent = `${formatFrequency(startFrequency)} - ${formatFrequency(endFrequency)} / ${formatFrequency(centerFrequency)}`
+          tooltip.textContent = formatFrequencyBand(centerFrequency, startFrequency, endFrequency)
           tooltip.style.left = `${Math.min(pointerX + 16, window.innerWidth - tooltip.offsetWidth - 12)}px`
           tooltip.style.top = `${Math.max(12, pointerY - 36)}px`
           tooltip.classList.add('visible')
