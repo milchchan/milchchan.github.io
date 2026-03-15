@@ -23,8 +23,6 @@
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        --milch-light-background-image: images/Background-Milch-Zankuro-1.png;
-        --milch-dark-background-image: images/Background-Merku-Zankuro-1.png;
       }
 
       * {
@@ -82,64 +80,6 @@
         transition: 0.5s;
       }
 
-      .background {
-        user-select: none;
-        pointer-events: none;
-        position: absolute;
-        top: 0px;
-        left: 0;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        max-width: 100%;
-        height: 100%;
-        max-height: 100%;
-        background-color: transparent;
-        background-position: 50% 50%;
-        background-repeat: no-repeat;
-        background-attachment: scroll;
-        background-size: contain;
-        transform-origin: 50% 50%;
-        backface-visibility: hidden;
-        perspective: 1000px;
-      }
-
-      .background::before {
-        user-select: none;
-        position: absolute;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        max-width: 100%;
-        height: 100%;
-        max-height: 100%;
-        overflow: hidden;
-        background: transparent;
-        content: "";
-      }
-
-      .background > div {
-        user-select: none;
-        position: relative;
-        opacity: 1;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        max-width: 100%;
-        height: 100%;
-        max-height: 100%;
-        overflow: hidden;
-        background-color: transparent;
-        background-position: 50% 0%;
-        background-repeat: no-repeat;
-        background-attachment: scroll;
-        background-size: cover;
-        transform-origin: 50% 50%;
-        backface-visibility: hidden;
-        content: "";
-        transition: 0.5s;
-      }
-
       .shell {
         cursor: pointer;
       }
@@ -154,12 +94,10 @@
         min-height: 100%;
         background-color: transparent;
         opacity: 1;
-        transition: 0.5s ease-out;
       }
 
       .wrap > .frame > canvas.dragging {
         opacity: 0.5;
-        transition: 0.5s ease-in;
       }
 
       .progress {
@@ -179,7 +117,7 @@
         background: transparent;
         touch-action: none;
         opacity: 0;
-        transition: opacity 180ms ease;
+        transition: opacity 500ms ease;
       }
 
       .progress.visible {
@@ -209,8 +147,8 @@
         backface-visibility: hidden;
         perspective: 1000px;
         transition:
-          width 120ms linear,
-          opacity 180ms ease,
+          width 500ms linear,
+          opacity 500ms ease,
           transform 0.5s;
       }
 
@@ -238,9 +176,9 @@
         transform: translateY(8px);
         visibility: hidden;
         transition:
-          opacity 180ms ease,
-          transform 180ms ease,
-          visibility 180ms ease;
+          opacity 500ms ease,
+          transform 500ms ease,
+          visibility 500ms ease;
       }
 
       .tooltip.visible {
@@ -333,12 +271,11 @@
     <script type="module">
       const ENABLE_PEAK_HOLD = true
       const ENABLE_LOOP = true
-      const FREQUENCY_SCALE = 'linear'
+      const FREQUENCY_SCALE = 'log'
       const DEFAULT_GAIN = 1
       const MIN_DISPLAY_FREQUENCY = 20
       const MAX_DISPLAY_FREQUENCY = 20000
-      const BAR_FREQUENCY_RANGE = 250
-      const MAX_BAR_COUNT = 160
+      const BAR_FREQUENCY_RANGE = 500
       const MIN_DECIBELS = -100
       const MAX_DECIBELS = -20
       const PEAK_DROP_PER_FRAME = 3.6
@@ -352,8 +289,106 @@
       const PEAK_HOLD_COLOR = 'rgb(255 255 255 / 0.75)'
       const PEAK_HOLD_ALPHA = 0.95
       const PEAK_HOLD_HEIGHT = 2
-      const BAR_ALPHA = 0.95
+      const BAR_ALPHA = 1.0
+      const BAR_GAP = 0
+      const BACKGROUND_REVEAL_DURATION = 1
+      const BACKGROUND_REVEAL_START_SCALE = 1.1
+      const BACKGROUND_REVEAL_END_SCALE = 1
+      const SPECTRAL_FLUX_MIN_FREQUENCY = 40
+      const SPECTRAL_FLUX_MAX_FREQUENCY = 4000
+      const SPECTRAL_FLUX_THRESHOLD = 0.07
+      const SPECTRAL_FLUX_COOLDOWN_MS = 250
       const AUDIO_URL = '/audio/Starlight.mp3'
+      const FOREGROUND_ANIMATION = [
+        {delay: 0.1, url: "/images/Background-Milch-Zankuro-1.png"},
+        {delay: 0.1, url: "/images/Background-Milch-Zankuro-2.png"},
+        {delay: 0.1, url: "/images/Background-Milch-Zankuro-3.png"},
+        {delay: 0.1, url: "/images/Background-Milch-Zankuro-2.png"},
+        {delay: 0.1, url: "/images/Background-Milch-Zankuro-1.png"}
+      ]
+      const BACKGROUND_ANIMATION = [
+        {delay: 0.1, url: "/images/Background-Merku-Zankuro-1.png"},
+        {delay: 0.1, url: "/images/Background-Merku-Zankuro-2.png"},
+        {delay: 0.1, url: "/images/Background-Merku-Zankuro-3.png"},
+        {delay: 0.1, url: "/images/Background-Merku-Zankuro-2.png"},
+        {delay: 0.1, url: "/images/Background-Merku-Zankuro-1.png"}
+      ]
+      class Animation {
+        constructor(repeats = 1, frames = []) {
+          this.repeats = repeats
+          this.time = 0
+          this.frames = frames
+        }
+
+        get cycleDuration() {
+          let duration = 0
+
+          for (const frame of this.frames) {
+            duration += frame.delay
+          }
+
+          return duration
+        }
+
+        get duration() {
+          const duration = this.cycleDuration
+
+          if (this.repeats > 1) {
+            return duration * this.repeats
+          }
+
+          return duration
+        }
+
+        get isPlaying() {
+          return this.frames.length > 0 && this.time < this.duration
+        }
+
+        reset() {
+          this.time = 0
+        }
+
+        advance(deltaSeconds) {
+          this.time = Math.max(0, this.time + deltaSeconds)
+        }
+
+        get current() {
+          if (this.frames.length === 0) {
+            return null
+          }
+
+          let time = this.time
+          let frame = this.frames[0]
+          const duration = this.cycleDuration
+
+          if (duration <= 0) {
+            return frame
+          }
+
+          if (this.repeats !== 1) {
+            if (this.repeats > 1 && time > duration * this.repeats) {
+              time = duration
+            } else {
+              time %= duration
+            }
+          }
+
+          if (time >= frame.delay) {
+            let delay = frame.delay
+
+            for (let i = 1; i < this.frames.length; i++) {
+              frame = this.frames[i]
+              delay += frame.delay
+
+              if (time < delay) {
+                break
+              }
+            }
+          }
+
+          return frame
+        }
+      }
 
       window.addEventListener("load", async event => {
 
@@ -361,7 +396,6 @@
           <div class="progress"><div class="bar animating"></div></div>
           <div class="wrap">
             <div class="frame shell">
-              <div class="background"><div></div></div>
               <canvas class="visualizer" aria-hidden="true"></canvas>
               <div class="playback-indicator is-loading" aria-hidden="true">
                 <i class="fa-solid fa-play icon-play"></i>
@@ -377,11 +411,9 @@
         const canvas = document.body.querySelector('.visualizer')
         const progress = document.body.querySelector('.progress')
         const progressBar = document.body.querySelector('.bar')
-        const frame = document.body.querySelector('.frame')
         const playbackIndicator = document.body.querySelector('.playback-indicator')
         const tooltip = document.body.querySelector('.tooltip')
         const audio = document.body.querySelector('.player')
-        const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
         try {
             const response = await fetch(window.devicePixelRatio > 1 ? `/images/Stripes@${Math.trunc(window.devicePixelRatio)}x.png` : "/images/Stripes.png");
@@ -425,78 +457,36 @@
         audio.loop = ENABLE_LOOP
 
         const frequencyData = new Float32Array(analyser.frequencyBinCount)
+        const previousFrequencyData = new Float32Array(analyser.frequencyBinCount)
+        const renderBuffers = {
+          background: createRenderBuffer(),
+          foreground: createRenderBuffer(),
+          backBuffer: createRenderBuffer(),
+        }
         let peakHeights = []
         let barDescriptors = []
         let hoverIndex = -1
         let audioObjectUrl = null
         let audioLoadPromise = null
+        let initialAssetLoadPromise = null
+        let lastSpectralFluxAboveThreshold = false
+        let lastTriggerTimestamp = -Infinity
+        let lastDrawTimestamp = 0
+        let activeForegroundAnimation = null
+        let activeBackgroundAnimation = null
+        let idleForegroundImage = null
+        let idleBackgroundImage = null
+        let foregroundRevealElapsed = BACKGROUND_REVEAL_DURATION
+        let backgroundRevealElapsed = BACKGROUND_REVEAL_DURATION
+        let foregroundAnimation = null
+        let backgroundAnimation = null
 
         let animationFrame = 0
 
-        function getBackgroundImagePath(isDarkMode = themeMediaQuery.matches) {
-          const variableName = isDarkMode ? '--milch-dark-background-image' : '--milch-light-background-image'
-          const value = window.getComputedStyle(document.documentElement).getPropertyValue(variableName).trim()
-
-          return value.replace(/^['"]|['"]$/g, '')
-        }
-
-        async function resizeImage(blob, length) {
-          return await new Promise((resolve, reject) => {
-            const reader = new FileReader()
-
-            reader.onload = () => {
-              const image = new Image()
-
-              image.onload = () => {
-                const offscreenCanvas = document.createElement('canvas')
-
-                if (image.width > image.height) {
-                  if (image.width > length) {
-                    offscreenCanvas.width = length
-                    offscreenCanvas.height = Math.floor((length / image.width) * image.height)
-                  } else {
-                    offscreenCanvas.width = image.width
-                    offscreenCanvas.height = image.height
-                  }
-                } else if (image.height > length) {
-                  offscreenCanvas.width = Math.floor((length / image.height) * image.width)
-                  offscreenCanvas.height = length
-                } else {
-                  offscreenCanvas.width = image.width
-                  offscreenCanvas.height = image.height
-                }
-
-                const offscreenContext = offscreenCanvas.getContext('2d')
-
-                offscreenContext.imageSmoothingEnabled = true
-                offscreenContext.imageSmoothingQuality = 'high'
-                offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
-                offscreenContext.drawImage(image, 0, 0, offscreenCanvas.width, offscreenCanvas.height)
-                offscreenCanvas.toBlob((resizedBlob) => {
-                  if (resizedBlob === null) {
-                    reject(new Error('Failed to resize image'))
-                    return
-                  }
-
-                  resolve(resizedBlob)
-                  offscreenCanvas.width = 0
-                  offscreenCanvas.height = 0
-                }, 'image/png')
-              }
-
-              image.onerror = (error) => {
-                reject(error)
-              }
-
-              image.src = reader.result
-            }
-
-            reader.onerror = () => {
-              reject(reader.error)
-            }
-
-            reader.readAsDataURL(blob)
-          })
+        function resolveAssetUrl(url) {
+          return /^(?:data:|blob:|https?:)/.test(url) || url.startsWith('/')
+            ? url
+            : `/${url}`
         }
 
         async function blobToDataUrl(blob) {
@@ -515,66 +505,306 @@
           })
         }
 
-        async function updateBackground() {
-          const background = document.createElement('div')
-          const image = document.createElement('div')
+        async function loadAnimationImage(url) {
+          return await new Promise((resolve, reject) => {
+            const image = new Image()
 
-          background.className = 'background'
-          background.style.opacity = '0'
-          background.style.transform = 'scale3d(1.1, 1.1, 1.1)'
-          background.appendChild(image)
-          frame.prepend(background)
-
-          try {
-            const response = await fetch(getBackgroundImagePath())
-
-            if (response.ok) {
-              const maxLength = Math.max(window.screen.width, window.screen.height) * (window.devicePixelRatio || 1)
-              const resizedBlob = await resizeImage(await response.blob(), maxLength)
-              const dataUrl = await blobToDataUrl(resizedBlob)
-
-              image.style.backgroundImage = `url('${dataUrl}')`
-            }
-          } catch (error) {
-            console.error('Background failed to load:', error)
-          }
-
-          for (const element of frame.querySelectorAll(':scope > .background')) {
-            if (element === background) {
-              continue
+            image.onload = () => {
+              resolve(image)
             }
 
-            element.animate([
-              {
-                opacity: 0,
-                transform: 'scale3d(1.1, 1.1, 1.1)',
-              },
-            ], {
-              delay: 0,
-              fill: 'forwards',
-              duration: 500,
-              iterations: 1,
-              easing: 'ease-in',
-            }).onfinish = () => {
-              element.remove()
+            image.onerror = () => {
+              reject(new Error(`Failed to load animation image: ${url}`))
+            }
+
+            image.src = resolveAssetUrl(url)
+          })
+        }
+
+        async function loadAnimationFrame(frame) {
+          const response = await fetch(resolveAssetUrl(frame.url))
+
+          if (!response.ok) {
+            throw new Error(`Failed to fetch animation frame: ${frame.url}`)
+          }
+
+          const dataUrl = await blobToDataUrl(await response.blob())
+
+          return {
+            delay: frame.delay,
+            url: dataUrl,
+            image: await loadAnimationImage(dataUrl),
+          }
+        }
+
+        async function createAnimation(frames, repeats = 1) {
+          const loadedFrames = await Promise.all(frames.map((frame) => loadAnimationFrame(frame)))
+
+          return new Animation(repeats, loadedFrames)
+        }
+
+        function syncIdleImages(shouldReveal = false) {
+          idleForegroundImage = foregroundAnimation?.frames?.[0]?.image ?? null
+          idleBackgroundImage = backgroundAnimation?.frames?.[0]?.image ?? null
+          foregroundRevealElapsed = shouldReveal ? 0 : BACKGROUND_REVEAL_DURATION
+          backgroundRevealElapsed = shouldReveal ? 0 : BACKGROUND_REVEAL_DURATION
+        }
+
+        function startBackgroundAnimation() {
+          const foregroundSourceAnimation = foregroundAnimation
+          const backgroundSourceAnimation = backgroundAnimation
+
+          if (!foregroundSourceAnimation || !backgroundSourceAnimation) {
+            return
+          }
+
+          if (activeForegroundAnimation?.isPlaying || activeBackgroundAnimation?.isPlaying) {
+            return
+          }
+
+          activeForegroundAnimation = new Animation(foregroundSourceAnimation.repeats, foregroundSourceAnimation.frames)
+          activeBackgroundAnimation = new Animation(backgroundSourceAnimation.repeats, backgroundSourceAnimation.frames)
+          activeForegroundAnimation.reset()
+          activeBackgroundAnimation.reset()
+        }
+
+        function getSpectralFlux() {
+          const nyquist = audioContext.sampleRate / 2
+          const maxBinIndex = frequencyData.length - 1
+          const minFrequency = Math.max(0, SPECTRAL_FLUX_MIN_FREQUENCY)
+          const maxFrequency = Math.min(nyquist, SPECTRAL_FLUX_MAX_FREQUENCY)
+
+          if (maxFrequency <= minFrequency || maxBinIndex <= 0) {
+            return 0
+          }
+
+          const startBin = Math.max(0, Math.floor((minFrequency / nyquist) * frequencyData.length))
+          const endBin = Math.min(maxBinIndex, Math.ceil((maxFrequency / nyquist) * frequencyData.length))
+          let flux = 0
+          let count = 0
+
+          for (let bin = startBin; bin <= endBin; bin += 1) {
+            const current = Number.isFinite(frequencyData[bin]) ? frequencyData[bin] : analyser.minDecibels
+            const previous = Number.isFinite(previousFrequencyData[bin]) ? previousFrequencyData[bin] : analyser.minDecibels
+            const currentMagnitude = Math.max(0, (current - analyser.minDecibels) / (analyser.maxDecibels - analyser.minDecibels))
+            const previousMagnitude = Math.max(0, (previous - analyser.minDecibels) / (analyser.maxDecibels - analyser.minDecibels))
+
+            flux += Math.max(0, currentMagnitude - previousMagnitude)
+            count += 1
+          }
+
+          return count > 0 ? flux / count : 0
+        }
+
+        function syncBackgroundAnimationTrigger(spectralFlux, timestamp) {
+          if (audio.paused || audio.ended) {
+            lastSpectralFluxAboveThreshold = false
+            return
+          }
+
+          const isAboveThreshold = spectralFlux >= SPECTRAL_FLUX_THRESHOLD
+          const isCooldownComplete = (timestamp - lastTriggerTimestamp) >= SPECTRAL_FLUX_COOLDOWN_MS
+
+          if (isAboveThreshold && !lastSpectralFluxAboveThreshold && isCooldownComplete) {
+            startBackgroundAnimation()
+            lastTriggerTimestamp = timestamp
+          }
+
+          lastSpectralFluxAboveThreshold = isAboveThreshold
+        }
+
+        function createRenderBuffer() {
+          const canvasElement = typeof OffscreenCanvas === 'function'
+            ? new OffscreenCanvas(1, 1)
+            : document.createElement('canvas')
+          const context = canvasElement.getContext('2d')
+
+          context.imageSmoothingEnabled = true
+          context.imageSmoothingQuality = 'high'
+
+          return {
+            canvas: canvasElement,
+            ctx: context,
+          }
+        }
+
+        function resizeRenderBuffer(buffer, width, height) {
+          buffer.canvas.width = Math.max(1, Math.floor(width))
+          buffer.canvas.height = Math.max(1, Math.floor(height))
+          buffer.ctx.imageSmoothingEnabled = true
+          buffer.ctx.imageSmoothingQuality = 'high'
+        }
+
+        function clearRenderBuffer(buffer, width, height) {
+          buffer.ctx.setTransform(1, 0, 0, 1, 0, 0)
+          buffer.ctx.clearRect(0, 0, width, height)
+          buffer.ctx.globalCompositeOperation = 'source-over'
+          buffer.ctx.globalAlpha = 1
+        }
+
+        function getBarScreenBounds(descriptor) {
+          const horizontalInset = BAR_GAP * 0.5
+          const left = Math.floor(descriptor.x + horizontalInset)
+          const right = Math.ceil(descriptor.x + descriptor.width - horizontalInset)
+
+          return {
+            left,
+            right,
+            width: Math.max(1, right - left),
+          }
+        }
+
+        function drawCoverImage(targetCtx, image, width, height, opacity = 1, scale = 1) {
+          if (!image || image.width === 0 || image.height === 0) {
+            return
+          }
+
+          const canvasAspect = width / height
+          const imageAspect = image.width / image.height
+          let drawWidth = width
+          let drawHeight = height
+          let offsetX = 0
+          let offsetY = 0
+
+          if (imageAspect > canvasAspect) {
+            drawHeight = height
+            drawWidth = drawHeight * imageAspect
+            offsetX = (width - drawWidth) * 0.5
+          } else {
+            drawWidth = width
+            drawHeight = drawWidth / imageAspect
+            offsetY = 0
+          }
+
+          targetCtx.save()
+          targetCtx.translate(width * 0.5, height * 0.5)
+          targetCtx.scale(scale, scale)
+          targetCtx.globalAlpha = opacity
+          targetCtx.drawImage(
+            image,
+            offsetX - width * 0.5,
+            offsetY - height * 0.5,
+            drawWidth,
+            drawHeight,
+          )
+          targetCtx.restore()
+        }
+
+        function drawForeground(width, height, deltaSeconds) {
+          const currentFrame = activeForegroundAnimation?.current ?? (idleForegroundImage ? { image: idleForegroundImage } : null)
+          const foregroundBuffer = renderBuffers.foreground
+
+          if (!activeForegroundAnimation && foregroundRevealElapsed < BACKGROUND_REVEAL_DURATION) {
+            foregroundRevealElapsed = Math.min(
+              BACKGROUND_REVEAL_DURATION,
+              foregroundRevealElapsed + deltaSeconds,
+            )
+          }
+
+          if (currentFrame?.image) {
+            const revealProgress = BACKGROUND_REVEAL_DURATION === 0
+              ? 1
+              : Math.min(1, foregroundRevealElapsed / BACKGROUND_REVEAL_DURATION)
+            const easedRevealProgress = 1 - ((1 - revealProgress) ** 3)
+            const opacity = easedRevealProgress
+            const scale = BACKGROUND_REVEAL_START_SCALE
+              + (BACKGROUND_REVEAL_END_SCALE - BACKGROUND_REVEAL_START_SCALE) * easedRevealProgress
+
+            drawCoverImage(
+              foregroundBuffer.ctx,
+              currentFrame.image,
+              width,
+              height,
+              activeForegroundAnimation ? 1 : opacity,
+              activeForegroundAnimation ? 1 : scale,
+            )
+          }
+
+          if (activeForegroundAnimation) {
+            activeForegroundAnimation.advance(deltaSeconds)
+
+            if (!activeForegroundAnimation.isPlaying) {
+              activeForegroundAnimation = null
+            }
+          }
+        }
+
+        function updateBackgroundAnimation(deltaSeconds) {
+          if (activeBackgroundAnimation) {
+            activeBackgroundAnimation.advance(deltaSeconds)
+
+            if (!activeBackgroundAnimation.isPlaying) {
+              activeBackgroundAnimation = null
+            }
+          }
+        }
+
+        function drawAnalyzerMask(targetCtx, baseLine, maxBarHeight) {
+          const originalSmoothingEnabled = targetCtx.imageSmoothingEnabled
+          const originalSmoothingQuality = targetCtx.imageSmoothingQuality
+
+          targetCtx.imageSmoothingEnabled = false
+          targetCtx.fillStyle = '#ffffff'
+          targetCtx.globalAlpha = 1
+
+          for (let i = 0; i < barDescriptors.length; i += 1) {
+            const descriptor = barDescriptors[i]
+            const decibels = getBarLevel(descriptor.startBin, descriptor.endBin)
+            const barHeight = dbToHeight(decibels, maxBarHeight)
+            const bounds = getBarScreenBounds(descriptor)
+            const y = Math.floor(baseLine - barHeight)
+            const snappedBarHeight = Math.max(1, Math.floor(barHeight))
+
+            descriptor.top = y
+            descriptor.bottom = baseLine
+            targetCtx.fillRect(bounds.left, y, bounds.width, snappedBarHeight)
+
+            if (ENABLE_PEAK_HOLD) {
+              peakHeights[i] = Math.max(barHeight, peakHeights[i] - PEAK_DROP_PER_FRAME)
+
+              const peakY = Math.floor(Math.max(PEAK_HOLD_HEIGHT, baseLine - peakHeights[i]) - PEAK_HEADROOM * 0.5)
+              targetCtx.fillRect(bounds.left, peakY, bounds.width, PEAK_HOLD_HEIGHT)
             }
           }
 
-          background.animate([
-            {
-              opacity: 1,
-              transform: 'scale3d(1, 1, 1)',
-            },
-          ], {
-            delay: 0,
-            fill: 'forwards',
-            duration: 500,
-            iterations: 1,
-            easing: 'ease-out',
-          }).onfinish = () => {
-            background.style.opacity = '1'
-            background.style.transform = 'scale3d(1, 1, 1)'
+          targetCtx.imageSmoothingEnabled = originalSmoothingEnabled
+          targetCtx.imageSmoothingQuality = originalSmoothingQuality
+        }
+
+        function drawBackground(width, height, baseLine, maxBarHeight, deltaSeconds) {
+          const currentFrame = activeBackgroundAnimation?.current ?? (idleBackgroundImage ? { image: idleBackgroundImage } : null)
+
+          if (!activeBackgroundAnimation && backgroundRevealElapsed < BACKGROUND_REVEAL_DURATION) {
+            backgroundRevealElapsed = Math.min(
+              BACKGROUND_REVEAL_DURATION,
+              backgroundRevealElapsed + deltaSeconds,
+            )
           }
+
+          if (!currentFrame?.image) {
+            return
+          }
+
+          const revealProgress = BACKGROUND_REVEAL_DURATION === 0
+            ? 1
+            : Math.min(1, backgroundRevealElapsed / BACKGROUND_REVEAL_DURATION)
+          const easedRevealProgress = 1 - ((1 - revealProgress) ** 3)
+          const opacity = activeBackgroundAnimation ? 1 : easedRevealProgress
+          const scale = activeBackgroundAnimation
+            ? 1
+            : BACKGROUND_REVEAL_START_SCALE + (BACKGROUND_REVEAL_END_SCALE - BACKGROUND_REVEAL_START_SCALE) * easedRevealProgress
+
+          drawAnalyzerMask(renderBuffers.background.ctx, baseLine, maxBarHeight)
+          renderBuffers.background.ctx.globalCompositeOperation = 'source-atop'
+          drawCoverImage(renderBuffers.background.ctx, currentFrame.image, width, height, opacity, scale)
+          renderBuffers.background.ctx.globalCompositeOperation = 'source-over'
+        }
+
+        function composeFrame(width, height) {
+          renderBuffers.backBuffer.ctx.drawImage(renderBuffers.foreground.canvas, 0, 0, width, height)
+          renderBuffers.backBuffer.ctx.drawImage(renderBuffers.background.canvas, 0, 0, width, height)
+          ctx.clearRect(0, 0, width, height)
+          ctx.drawImage(renderBuffers.backBuffer.canvas, 0, 0, width, height)
         }
 
         function resizeCanvas() {
@@ -586,8 +816,13 @@
           canvas.height = Math.floor(height * dpr)
           canvas.style.width = `${width}px`
           canvas.style.height = `${height}px`
+          for (const buffer of Object.values(renderBuffers)) {
+            resizeRenderBuffer(buffer, width, height)
+          }
 
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+          ctx.imageSmoothingEnabled = true
+          ctx.imageSmoothingQuality = 'high'
         }
 
         function createBarGradient(height) {
@@ -611,7 +846,7 @@
         function getRequestedBarCount(width, minDisplayFrequency, maxDisplayFrequency) {
           const displayFrequencyRange = Math.max(1, maxDisplayFrequency - minDisplayFrequency)
           const frequencyDrivenBarCount = Math.max(1, Math.ceil(displayFrequencyRange / BAR_FREQUENCY_RANGE))
-          const widthLimitedBarCount = Math.max(1, Math.min(MAX_BAR_COUNT, Math.floor(width / 10)))
+          const widthLimitedBarCount = Math.max(1, Math.floor(width / 10))
 
           return Math.min(widthLimitedBarCount, frequencyDrivenBarCount)
         }
@@ -624,11 +859,14 @@
           const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
           const safeMaxDisplayFrequency = Math.max(minDisplayFrequency, maxDisplayFrequency)
           const requestedBarCount = getRequestedBarCount(width, minDisplayFrequency, safeMaxDisplayFrequency)
+          const minDisplayBin = Math.max(0, Math.min(maxBin, Math.floor((minDisplayFrequency / nyquist) * binCount)))
+          const maxDisplayBin = Math.max(
+            minDisplayBin,
+            Math.min(maxBin, Math.ceil((safeMaxDisplayFrequency / nyquist) * binCount) - 1),
+          )
+          const activeBinCount = maxDisplayBin - minDisplayBin + 1
 
           if (FREQUENCY_SCALE === 'linear') {
-            const minDisplayBin = Math.max(0, Math.min(maxBin, Math.floor((minDisplayFrequency / nyquist) * binCount)))
-            const maxDisplayBin = Math.max(minDisplayBin, Math.min(maxBin, Math.ceil((safeMaxDisplayFrequency / nyquist) * binCount) - 1))
-            const activeBinCount = maxDisplayBin - minDisplayBin + 1
             const barCount = Math.max(1, Math.min(requestedBarCount, activeBinCount))
             const barWidth = width / barCount
 
@@ -656,16 +894,27 @@
           const minFrequency = Math.max(audioContext.sampleRate / analyser.fftSize, MIN_LOG_FREQUENCY, minDisplayFrequency)
           const minLog = Math.log10(minFrequency)
           const maxLog = Math.log10(Math.max(minFrequency, safeMaxDisplayFrequency))
-          const barWidth = width / requestedBarCount
+          const barCount = Math.max(1, Math.min(requestedBarCount, activeBinCount))
+          const barWidth = width / barCount
+          const binEdges = new Array(barCount + 1)
 
-          return Array.from({ length: requestedBarCount }, (_, index) => {
-            const startRatio = index / requestedBarCount
-            const endRatio = (index + 1) / requestedBarCount
-            const startFrequency = index === 0 ? 0 : 10 ** (minLog + (maxLog - minLog) * startRatio)
-            const endFrequency = 10 ** (minLog + (maxLog - minLog) * endRatio)
-            const startBin = Math.max(0, Math.floor((startFrequency / nyquist) * maxBin))
-            const endBin = Math.min(maxBin, Math.ceil((endFrequency / nyquist) * maxBin))
-            const safeEndBin = Math.max(startBin, endBin)
+          binEdges[0] = minDisplayBin
+          binEdges[barCount] = maxDisplayBin + 1
+
+          for (let index = 1; index < barCount; index += 1) {
+            const ratio = index / barCount
+            const frequency = 10 ** (minLog + (maxLog - minLog) * ratio)
+            const proposedEdge = Math.floor((frequency / nyquist) * binCount)
+            const minAllowedEdge = binEdges[index - 1] + 1
+            const remainingEdges = barCount - index
+            const maxAllowedEdge = (maxDisplayBin + 1) - remainingEdges
+
+            binEdges[index] = Math.max(minAllowedEdge, Math.min(maxAllowedEdge, proposedEdge))
+          }
+
+          return Array.from({ length: barCount }, (_, index) => {
+            const startBin = binEdges[index]
+            const safeEndBin = Math.max(startBin, binEdges[index + 1] - 1)
             const safeStartFrequency = (startBin / maxBin) * nyquist
             const safeEndFrequency = ((safeEndBin + 1) / binCount) * nyquist
 
@@ -793,10 +1042,6 @@
               audio.load()
 
               updateProgress(1)
-              window.setTimeout(hideProgress, 180)
-              window.setTimeout(() => {
-                setPlaybackIndicatorLoading(false)
-              }, 180)
             } catch (error) {
               audioLoadPromise = null
               hideProgress()
@@ -808,17 +1053,46 @@
           return audioLoadPromise
         }
 
-        function drawVisualizer() {
+        async function loadInitialAssets() {
+          if (initialAssetLoadPromise !== null) {
+            return initialAssetLoadPromise
+          }
+
+          initialAssetLoadPromise = (async () => {
+            try {
+              await loadAudioWithProgress()
+
+              foregroundAnimation = await createAnimation(FOREGROUND_ANIMATION, 1)
+              backgroundAnimation = await createAnimation(BACKGROUND_ANIMATION, 1)
+              syncIdleImages(true)
+
+              window.setTimeout(hideProgress, 250)
+              window.setTimeout(() => {
+                setPlaybackIndicatorLoading(false)
+              }, 250)
+            } catch (error) {
+              initialAssetLoadPromise = null
+              hideProgress()
+              setPlaybackIndicatorLoading(false)
+              throw error
+            }
+          })()
+
+          return initialAssetLoadPromise
+        }
+
+        function drawVisualizer(timestamp = 0) {
           const width = canvas.clientWidth
           const height = canvas.clientHeight
+          const deltaSeconds = lastDrawTimestamp === 0 ? 0 : (timestamp - lastDrawTimestamp) / 1000
+
+          lastDrawTimestamp = timestamp
 
           analyser.getFloatFrequencyData(frequencyData)
-
-          ctx.clearRect(0, 0, width, height)
+          syncBackgroundAnimationTrigger(getSpectralFlux(), timestamp)
 
           const maxBarHeight = height
           const baseLine = height - VISUALIZER_BOTTOM_PADDING
-          const gradient = createBarGradient(height)
           const nyquist = audioContext.sampleRate / 2
           const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
           const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
@@ -832,32 +1106,16 @@
             peakHeights = new Array(barDescriptors.length).fill(0)
           }
 
-          for (let i = 0; i < barDescriptors.length; i += 1) {
-            const descriptor = barDescriptors[i]
-            const decibels = getBarLevel(descriptor.startBin, descriptor.endBin)
-            const barHeight = dbToHeight(decibels, maxBarHeight)
-            const x = descriptor.x
-            const y = baseLine - barHeight
-            const innerWidth = Math.max(2, descriptor.width - 2)
-
-            descriptor.top = y
-            descriptor.bottom = baseLine
-
-            ctx.fillStyle = gradient
-            ctx.globalAlpha = i === hoverIndex ? 1 : BAR_ALPHA
-            ctx.fillRect(x + 1, y, innerWidth, barHeight)
-
-            if (ENABLE_PEAK_HOLD) {
-              peakHeights[i] = Math.max(barHeight, peakHeights[i] - PEAK_DROP_PER_FRAME)
-
-              const peakY = Math.max(PEAK_HOLD_HEIGHT, baseLine - peakHeights[i])
-              ctx.globalAlpha = PEAK_HOLD_ALPHA
-              ctx.fillStyle = PEAK_HOLD_COLOR
-              ctx.fillRect(x + 1, peakY - PEAK_HEADROOM * 0.5, innerWidth, PEAK_HOLD_HEIGHT)
-            }
+          for (const buffer of Object.values(renderBuffers)) {
+            clearRenderBuffer(buffer, width, height)
           }
 
+          drawForeground(width, height, deltaSeconds)
+          drawBackground(width, height, baseLine, maxBarHeight, deltaSeconds)
+          composeFrame(width, height)
+          updateBackgroundAnimation(deltaSeconds)
           ctx.globalAlpha = 1
+          previousFrequencyData.set(frequencyData)
 
           animationFrame = window.requestAnimationFrame(drawVisualizer)
         }
@@ -895,8 +1153,8 @@
           const pointerY = event.clientY - rect.top
 
           hoverIndex = barDescriptors.findIndex((descriptor) => (
-            pointerX >= descriptor.x + 1
-            && pointerX < descriptor.x + Math.max(2, descriptor.width - 1)
+            pointerX >= getBarScreenBounds(descriptor).left
+            && pointerX < getBarScreenBounds(descriptor).right
             && pointerY >= descriptor.top
             && pointerY <= descriptor.bottom
           ))
@@ -927,18 +1185,9 @@
         barDescriptors = buildBarDescriptors(canvas.clientWidth)
         updatePlaybackIcon()
         drawVisualizer()
-        updateBackground().catch((error) => {
-          console.error('Initial background failed to load:', error)
-        })
-        loadAudioWithProgress().catch((error) => {
+        loadInitialAssets().catch((error) => {
           hideProgress()
-          console.error('Audio preload failed:', error)
-        })
-
-        themeMediaQuery.addEventListener('change', () => {
-          updateBackground().catch((error) => {
-            console.error('Theme background update failed:', error)
-          })
+          console.error('Initial asset preload failed:', error)
         })
 
         window.addEventListener('beforeunload', () => {
