@@ -22,7 +22,7 @@
             "rewrite": "/player/index.html"
         },
         {
-            "route": "/music",
+            "route": "/loop",
             "rewrite": "/player/index.html"
         },
         {
