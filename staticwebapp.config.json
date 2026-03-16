@@ -22,6 +22,10 @@
             "rewrite": "/player/index.html"
         },
         {
+            "route": "/music",
+            "rewrite": "/player/index.html"
+        },
+        {
             "route": "/parallax",
             "rewrite": "/parallax/index.html"
         },
