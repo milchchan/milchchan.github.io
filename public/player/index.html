@@ -39,7 +39,7 @@
           overflow-x: hidden;
           overflow-y: hidden;
           scroll-behavior: smooth;
-          background: #f4f4f2;
+          background: transparent;
       }
 
       body {
@@ -74,7 +74,7 @@
         max-width: 100% !important;
         height: 100%;
         overflow: hidden;
-        background-color: #f4f4f2;
+        background-color: transparent;
       }
 
       .shell {
@@ -249,7 +249,7 @@
 
       @media screen and (min-width: 769px) and (min-height: 769px) {
         html {
-            background: #ffffff !important;
+            background: transparent !important;
         }
 
         .wrap {
@@ -746,6 +746,7 @@
             const descriptor = barDescriptors[i]
             const decibels = getBarLevel(descriptor.startBin, descriptor.endBin)
             const barHeight = dbToHeight(decibels, maxBarHeight)
+            const hasSignal = barHeight > 0
             const bounds = getBarScreenBounds(descriptor)
             const y = Math.floor(baseLine - barHeight)
             const snappedBarHeight = Math.max(1, Math.floor(barHeight))
@@ -755,7 +756,13 @@
             targetCtx.fillRect(bounds.left, y, bounds.width, snappedBarHeight)
 
             if (ENABLE_PEAK_HOLD) {
-              peakHeights[i] = Math.max(barHeight, peakHeights[i] - PEAK_DROP_PER_FRAME)
+              peakHeights[i] = hasSignal
+                ? Math.max(barHeight, peakHeights[i] - PEAK_DROP_PER_FRAME)
+                : Math.max(0, peakHeights[i] - PEAK_DROP_PER_FRAME)
+
+              if (peakHeights[i] <= 0) {
+                continue
+              }
 
               const peakY = Math.floor(Math.max(PEAK_HOLD_HEIGHT, baseLine - peakHeights[i]) - PEAK_HEADROOM * 0.5)
               targetCtx.fillRect(bounds.left, peakY, bounds.width, PEAK_HOLD_HEIGHT)
