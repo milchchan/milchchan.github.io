@@ -62,6 +62,7 @@
         overflow: hidden;
         box-sizing: border-box;
         backface-visibility: hidden;
+        transition: 0.5s;
       }
 
       .shell,
@@ -75,6 +76,7 @@
         height: 100%;
         overflow: hidden;
         background-color: transparent;
+        transition: 0.5s;
       }
 
       .shell {
@@ -748,8 +750,8 @@
             const barHeight = dbToHeight(decibels, maxBarHeight)
             const hasSignal = barHeight > 0
             const bounds = getBarScreenBounds(descriptor)
-            const y = Math.floor(baseLine - barHeight)
-            const snappedBarHeight = Math.max(1, Math.floor(barHeight))
+            const y = Math.max(0, Math.floor(baseLine - barHeight))
+            const snappedBarHeight = Math.max(1, Math.ceil(baseLine - y))
 
             descriptor.top = y
             descriptor.bottom = baseLine
