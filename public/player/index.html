@@ -272,7 +272,7 @@
       const DEFAULT_GAIN = 1
       const MIN_DISPLAY_FREQUENCY = 20
       const MAX_DISPLAY_FREQUENCY = 20000
-      const BAR_FREQUENCY_RANGE = 500
+      const BAR_COUNT = 25
       const MIN_DECIBELS = -100
       const MAX_DECIBELS = -20
       const PEAK_DROP_PER_FRAME = 3.6
@@ -850,12 +850,10 @@
           return `${formatFrequency(startFrequency)} - ${formatFrequency(endFrequency)}`
         }
 
-        function getRequestedBarCount(width, minDisplayFrequency, maxDisplayFrequency) {
-          const displayFrequencyRange = Math.max(1, maxDisplayFrequency - minDisplayFrequency)
-          const frequencyDrivenBarCount = Math.max(1, Math.ceil(displayFrequencyRange / BAR_FREQUENCY_RANGE))
-          const widthLimitedBarCount = Math.max(1, Math.floor(width / 10))
+        function getRequestedBarCount(width) {
+          const maxBarsFromWidth = Math.max(1, Math.floor(width))
 
-          return Math.min(widthLimitedBarCount, frequencyDrivenBarCount)
+          return Math.min(Math.max(1, BAR_COUNT), maxBarsFromWidth)
         }
 
         function buildBarDescriptors(width) {
@@ -865,7 +863,7 @@
           const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
           const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
           const safeMaxDisplayFrequency = Math.max(minDisplayFrequency, maxDisplayFrequency)
-          const requestedBarCount = getRequestedBarCount(width, minDisplayFrequency, safeMaxDisplayFrequency)
+          const requestedBarCount = getRequestedBarCount(width)
           const minDisplayBin = Math.max(0, Math.min(maxBin, Math.floor((minDisplayFrequency / nyquist) * binCount)))
           const maxDisplayBin = Math.max(
             minDisplayBin,
@@ -1103,7 +1101,7 @@
           const nyquist = audioContext.sampleRate / 2
           const minDisplayFrequency = Math.max(0, Math.min(MIN_DISPLAY_FREQUENCY, nyquist))
           const maxDisplayFrequency = Math.min(MAX_DISPLAY_FREQUENCY, nyquist)
-          const expectedBarCount = getRequestedBarCount(width, minDisplayFrequency, Math.max(minDisplayFrequency, maxDisplayFrequency))
+          const expectedBarCount = getRequestedBarCount(width)
 
           if (barDescriptors.length === 0 || barDescriptors.length !== expectedBarCount) {
             barDescriptors = buildBarDescriptors(width)
