@@ -41,7 +41,7 @@
 {
  "likability": 0.0-1.0,
  "content": "<会話の文章>",
- "keywords": [
+ "terms": [
   "<contentを表す語>",
   ["<contentを修飾する語>", "<contentを表す語>"]
  ],
