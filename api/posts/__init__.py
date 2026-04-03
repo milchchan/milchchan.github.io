@@ -15,7 +15,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         limit = int(req.params['limit']) if 'limit' in req.params else None
         from_date = int(req.params['from']) if 'from' in req.params else None
         to_date = int(req.params['to']) if 'to' in req.params else None
-        mime_type = json.loads(req.params['type'].lower()) if 'type' in req.params else None
+        mime_type = req.params['type'].lower() if 'type' in req.params else None
         nsfw = json.loads(req.params['nsfw'].lower()) if 'nsfw' in req.params else False
         client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
         database = client.get_database_client('Milch')
