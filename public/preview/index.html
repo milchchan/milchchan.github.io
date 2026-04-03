@@ -58,7 +58,49 @@
             overflow: hidden;
         }
 
-        .wrap {
+        a,
+        a:focus,
+        a:link,
+        a:visited,
+        a:hover,
+        a:active {
+            outline: none;
+            text-decoration: none;
+            color: #000000;
+        }
+
+        a .scrollable {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(0%, 0%, 0);
+            transition: 0.5s ease-in;
+        }
+
+        a .scrollable>div {
+            -webkit-user-select: none;
+            user-select: none;
+            box-sizing: content-box;
+            vertical-align: middle;
+        }
+
+        a .scrollable:hover {
+            display: inline-block;
+            box-sizing: content-box;
+            backface-visibility: hidden;
+            transform: translate3d(-100%, 0%, 0);
+            transition: 0.5s ease-out;
+        }
+
+        .is-uppercase {
+            text-transform: uppercase;
+        }
+
+        .has-text-weight-bold {
+            font-weight: bold;
+        }
+
+        body>.wrap {
             position: absolute;
             margin: 0;
             padding: 0;
@@ -71,7 +113,7 @@
             transition: .5s;
         }
 
-        .frame {
+        body>.wrap>.frame {
             position: relative;
             margin: 0;
             padding: 0;
@@ -84,7 +126,7 @@
             transition: .5s;
         }
 
-        .frame>canvas {
+        body>.wrap>.frame>canvas {
             display: block;
             overflow: hidden;
             outline: none;
@@ -147,6 +189,118 @@
             }
         }
 
+        .overlay {
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin: 0;
+            padding: 16px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            animation: fade .5s ease-out forwards;
+            box-sizing: border-box;
+            backface-visibility: hidden;
+            perspective: 1000;
+            transition: 0.5s;
+        }
+
+        div.sidebar {
+            -webkit-user-select: none;
+            user-select: none;
+            z-index: 0;
+            position: fixed;
+            left: 0px;
+            padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+            width: fit-content;
+            height: fit-content;
+            background: transparent;
+            transition: 0.5s;
+        }
+
+        div.sidebar>.rotation-outer {
+            display: inline-flex;
+        }
+
+        div.sidebar>.rotation-outer>div.rotation-inner {
+            padding: 50% 0;
+            height: 0;
+        }
+
+        div.sidebar>.rotation-outer>div.rotation-inner>div.rotate {
+            display: block;
+            transform-origin: top left;
+            transform: rotate(-90deg) translate(0%, 100%) rotate(180deg);
+            margin-top: -50%;
+            white-space: nowrap;
+        }
+
+        div.sidebar .button {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            border: 0px solid transparent;
+            background: transparent;
+            background-clip: padding-box;
+            line-height: calc(0.75rem * 1.5);
+            backface-visibility: hidden;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+            height: 48px;
+            cursor: pointer;
+        }
+
+        div.sidebar .button .clip {
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            height: calc(0.75rem * 1.5);
+            box-sizing: border-box;
+        }
+
+        div.sidebar .button .scrollable {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 0px -4px 0px -4px !important;
+        }
+
+        div.sidebar .button .scrollable div {
+            display: flex;
+            align-items: center;
+            margin: 0px 4px 0px 4px !important;
+            font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+            font-size: 0.75rem !important;
+            line-height: 0.75rem !important;
+            height: calc(0.75rem * 1.5);
+            vertical-align: middle;
+        }
+
+        div.sidebar .button .scrollable div:last-child:not(:first-child) {
+            position: absolute;
+            left: 100%;
+        }
+
+        div.sidebar .button .wrap {
+            position: relative;
+            display: flex;
+            margin: 0;
+            border-top: 2px solid transparent;
+            border-bottom: 2px solid transparent;
+            color: #000000;
+            width: fit-content;
+            height: fit-content;
+            min-height: fit-content;
+            box-sizing: border-box;
+            overflow: hidden;
+            justify-content: flex-start;
+            align-items: center;
+            transform: translate3d(0, 0, 0);
+            transition: 0.5s;
+        }
+
         @keyframes progress {
             0% {
                 background-position: 0px 0px;
@@ -180,14 +334,24 @@
                 background: #ffffff;
             }
 
-            .wrap {
+            body>.wrap {
                 padding: 16px;
                 transition: .5s;
             }
 
-            .frame {
+            body>.wrap>.frame {
                 border-radius: 4px;
                 transition: .5s;
+            }
+
+            body>.overlay {
+                padding: 32px;
+                transition: 0.5s;
+            }
+
+            div.sidebar {
+                left: 16px;
+                transition: 0.5s;
             }
         }
     </style>
@@ -196,6 +360,28 @@
 <body>
     <div class="wrap">
         <div class="frame"></div>
+    </div>
+    <div class="overlay">
+      <div class="sidebar">
+        <div class="rotation-outer">
+          <div class="rotation-inner">
+            <div class="rotate">
+              <a class="button" href="https://milchchan.com/" title="milchchan.com">
+                <div class="stack">
+                  <div class="wrap has-text-weight-bold is-uppercase">
+                    <div class="clip">
+                      <div class="scrollable">
+                        <div>milchchan.com</div>
+                        <div>milchchan.com</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <script type="importmap">
         {
