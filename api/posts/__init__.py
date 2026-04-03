@@ -69,9 +69,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if key.startswith('_'):
                     del item[key]
 
-            for animation in item['animations']:
-                for frame in animation:
-                    frame['url'] = f"https://static.milchchan.com/{frame['id']}"
+            if 'animations' in item:
+                for animation in item['animations']:
+                    for frame in animation:
+                        frame['url'] = f"https://static.milchchan.com/{frame['id']}"
 
             item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 

@@ -205,10 +205,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'] + 1, 'timestamp': item['timestamp']}
             container.upsert_item(item)
 
-            for animation in item['animations']:
-                for frame in animation:
-                    frame['url'] = f"https://static.milchchan.com/{frame['id']}"
-                    
+            if 'animations' in item:
+                for animation in item['animations']:
+                    for frame in animation:
+                        frame['url'] = f"https://static.milchchan.com/{frame['id']}"
+                        
             return func.HttpResponse(json.dumps({'id': item['id'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'views': item['views'], 'timestamp': int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
         
         return func.HttpResponse(status_code=400, mimetype='', charset='')
