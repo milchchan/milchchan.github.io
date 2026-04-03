@@ -159,8 +159,9 @@
             backface-visibility: hidden;
             background: transparent;
             touch-action: none;
+        }
 
-            >.bar {
+        .progress>.bar {
                 pointer-events: none;
                 z-index: 1;
                 position: relative;
@@ -182,11 +183,10 @@
                 transition: .5s;
                 backface-visibility: hidden;
                 perspective: 1000;
-            }
+        }
 
-            >.bar.animating {
-                animation-play-state: running;
-            }
+        .progress>.bar>.bar.animating {
+            animation-play-state: running;
         }
 
         .overlay {
