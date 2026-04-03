@@ -27,84 +27,88 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     {'name': '@identifier', 'value': identifier}
                 ],
                 enable_cross_partition_query=True))[0]
-            item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'], 'timestamp': item['timestamp']}
             
-            for index, animation in enumerate(item['animations']):
-                if index > 0:
-                    length = len(animation)
-                    
-                    if length == 0:
-                        continue
-                    
-                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+            for key in item:
+                if key.startswith('_'):
+                    del item[key]
+            
+            if 'animations' in item:
+                for index, animation in enumerate(item['animations']):
+                    if index > 0:
+                        length = len(animation)
+                        
+                        if length == 0:
+                            continue
+                        
+                        s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
 
-                    if length > 1:
-                        for frame in animation[1:]:
-                            file_is_exists = True
-                                                    
-                            try:
-                                s3.head_object(Bucket='uploads', Key=frame['id'])
-                            except botocore.exceptions.ClientError as e:
-                                if e.response['Error']['Code'] == '404':
-                                    file_is_exists = False
-                                else:
-                                    raise
+                        if length > 1:
+                            for frame in animation[1:]:
+                                file_is_exists = True
+                                                        
+                                try:
+                                    s3.head_object(Bucket='uploads', Key=frame['id'])
+                                except botocore.exceptions.ClientError as e:
+                                    if e.response['Error']['Code'] == '404':
+                                        file_is_exists = False
+                                    else:
+                                        raise
 
-                            if file_is_exists:
-                                s3.delete_object(Bucket='uploads', Key=frame['id'])
+                                if file_is_exists:
+                                    s3.delete_object(Bucket='uploads', Key=frame['id'])
 
-                        animation[:] = animation[:1]
+                            animation[:] = animation[:1]
 
-                    api_url = 'https://milchchan-prism.hf.space/gradio_api'
-                    session = uuid4().hex[:10]
-                    
-                    with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                        'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}],
-                        'event_data': None,
-                        'fn_index': 1,
-                        'session_hash': session
-                    }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
-                        event_id = json.loads(response.read().decode('utf-8'))['event_id']
-                    
-                    with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'})) as response:
-                        for raw in iter(lambda: response.readline() or None, None):
-                            if not raw: # EOF
-                                break
-
-                            line = raw.decode('utf-8').strip()
-
-                            if line.startswith('data:'):
-                                msg = json.loads(line[5:].lstrip())
-                                msg_type = msg.get('msg')
-
-                                if msg_type == 'heartbeat':
-                                    continue
-                                elif msg_type == 'queue_full' or msg_type == 'unexpected_error':
+                        api_url = 'https://milchchan-prism.hf.space/gradio_api'
+                        session = uuid4().hex[:10]
+                        
+                        with urlopen(Request(api_url + '/queue/join', data=json.dumps({
+                            'data': [{'path': f"https://static.milchchan.com/{animation[0]['id']}", 'meta': {'_type': 'gradio.FileData'}}],
+                            'event_data': None,
+                            'fn_index': 1,
+                            'session_hash': session
+                        }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
+                            event_id = json.loads(response.read().decode('utf-8'))['event_id']
+                        
+                        with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'})) as response:
+                            for raw in iter(lambda: response.readline() or None, None):
+                                if not raw: # EOF
                                     break
-                                elif msg_type == 'process_completed':
-                                    if msg['event_id'] == event_id and 'data' in msg['output']:
-                                        for i in msg['output']['data'][0]:
-                                            if 'image' in i:
-                                                with urlopen(Request(f"{api_url}/file={i['image']['path']}")) as r:
-                                                    content_type = r.headers.get_content_type()
-                                                    layer_identifier = str(uuid4())
-                                                    file_is_exists = True
-                                                    
-                                                    try:
-                                                        s3.head_object(Bucket='uploads', Key=layer_identifier)
-                                                    except botocore.exceptions.ClientError as e:
-                                                        if e.response['Error']['Code'] == '404':
-                                                            file_is_exists = False
-                                                        else:
-                                                            raise
 
-                                                    if file_is_exists:
-                                                        return func.HttpResponse(status_code=409, mimetype='', charset='')
-                                                    
-                                                    with io.BytesIO(r.read()) as buffer:
-                                                        s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
+                                line = raw.decode('utf-8').strip()
 
-                                                    animation.append({'id': layer_identifier, 'type': content_type})
+                                if line.startswith('data:'):
+                                    msg = json.loads(line[5:].lstrip())
+                                    msg_type = msg.get('msg')
+
+                                    if msg_type == 'heartbeat':
+                                        continue
+                                    elif msg_type == 'queue_full' or msg_type == 'unexpected_error':
+                                        break
+                                    elif msg_type == 'process_completed':
+                                        if msg['event_id'] == event_id and 'data' in msg['output']:
+                                            for i in msg['output']['data'][0]:
+                                                if 'image' in i:
+                                                    with urlopen(Request(f"{api_url}/file={i['image']['path']}")) as r:
+                                                        content_type = r.headers.get_content_type()
+                                                        layer_identifier = str(uuid4())
+                                                        file_is_exists = True
+                                                        
+                                                        try:
+                                                            s3.head_object(Bucket='uploads', Key=layer_identifier)
+                                                        except botocore.exceptions.ClientError as e:
+                                                            if e.response['Error']['Code'] == '404':
+                                                                file_is_exists = False
+                                                            else:
+                                                                raise
+
+                                                        if file_is_exists:
+                                                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+                                                        
+                                                        with io.BytesIO(r.read()) as buffer:
+                                                            s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
+
+                                                        animation.append({'id': layer_identifier, 'type': content_type})
 
             container.upsert_item(item)
 
@@ -125,7 +129,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     {'name': '@identifier', 'value': identifier}
                 ],
                 enable_cross_partition_query=True))[0]
-            item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'] + 1, 'timestamp': item['timestamp']}
+            item['views'] += 1
+            
+            for key in item:
+                if key.startswith('_'):
+                    del item[key]
+
             container.upsert_item(item)
 
             if 'animations' in item:

@@ -202,7 +202,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     {'name': '@random', 'value': random.random()}
                 ],
                 enable_cross_partition_query=True)))
-            item = {'id': item['id'], 'slug': item['slug'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'random': item['random'], 'views': item['views'] + 1, 'timestamp': item['timestamp']}
+            item['views'] += 1
+            
+            for key in item:
+                if key.startswith('_'):
+                    del item[key]
+
             container.upsert_item(item)
 
             if 'animations' in item:
