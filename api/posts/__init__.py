@@ -75,6 +75,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         frame['url'] = f"https://static.milchchan.com/{frame['id']}"
 
             item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
+            
+            del item['random']
 
         return func.HttpResponse(json.dumps(items), status_code=200, mimetype='application/json', charset='utf-8')
 

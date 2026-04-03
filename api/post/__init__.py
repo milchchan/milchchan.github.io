@@ -214,8 +214,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 for animation in item['animations']:
                     for frame in animation:
                         frame['url'] = f"https://static.milchchan.com/{frame['id']}"
+
+            item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
+
+            del item['random']
                         
-            return func.HttpResponse(json.dumps({'id': item['id'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'views': item['views'], 'timestamp': int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
         
         return func.HttpResponse(status_code=400, mimetype='', charset='')
     

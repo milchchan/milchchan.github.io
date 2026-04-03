@@ -117,7 +117,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     for frame in animation:
                         frame['url'] = f"https://static.milchchan.com/{frame['id']}"
 
-            return func.HttpResponse(json.dumps({'id': item['id'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'views': item['views'], 'timestamp': int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
+            item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
+
+            del item['random']
+
+            return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
 
         elif bool(re.match(r'^(?:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|[0-9a-f]{7})$', identifier)):
             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
@@ -142,7 +146,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     for frame in animation:
                         frame['url'] = f"https://static.milchchan.com/{frame['id']}"
 
-            return func.HttpResponse(json.dumps({'id': item['id'], 'type': item['type'], 'animations': item['animations'], 'nsfw': item['nsfw'], 'views': item['views'], 'timestamp': int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())}), status_code=200, mimetype='application/json', charset='utf-8')
+            item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
+
+            del item['random']
+
+            return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
         
         else:
             return func.HttpResponse(status_code=400, mimetype='', charset='')
