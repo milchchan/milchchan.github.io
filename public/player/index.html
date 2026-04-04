@@ -125,11 +125,6 @@
         cursor: pointer;
       }
 
-      .shell.is-loading {
-        pointer-events: none;
-        cursor: progress;
-      }
-
       body>.wrap>.frame>canvas {
         position: absolute;
         display: block;
@@ -366,10 +361,6 @@
           transform 500ms ease,
           opacity 500ms ease;
         opacity: 1;
-      }
-
-      .playback-indicator.is-loading {
-        opacity: 0.5;
       }
 
       .playback-indicator i {
@@ -1179,7 +1170,6 @@
         }
 
         function setPlaybackIndicatorLoading(isLoading) {
-          shell.classList.toggle('is-loading', isLoading)
           playbackIndicator.classList.toggle('is-loading', isLoading)
         }
 
