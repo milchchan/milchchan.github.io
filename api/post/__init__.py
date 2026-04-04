@@ -173,13 +173,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                             database = client.get_database_client('Milch')
                                             container = database.get_container_client('Posts')
-                                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'random': random.random(), 'views': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                             for animation in animations:
                                                 for frame in animation:
                                                     frame['url'] = f"https://static.milchchan.com/{frame['id']}"
 
-                                            return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'views': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                                            return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
                                     
                                     break
                     
@@ -191,18 +191,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = random.choice(list(container.query_items(
-                query='SELECT p.id, p.slug, p.type, p.message, p.animations, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.animations, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.slug, p.type, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@mime_type', 'value': req.params['type'].lower()},
                     {'name': '@random', 'value': random.random()}
                 ],
                 enable_cross_partition_query=True) if 'type' in req.params else container.query_items(
-                query='SELECT p.id, p.slug, p.type, p.message, p.animations, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.animations, p.nsfw, p.random, p.views, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.slug, p.type, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@random', 'value': random.random()}
                 ],
                 enable_cross_partition_query=True)))
-            item['views'] += 1
+            item['accesses'] += 1
             
             for key in item:
                 if key.startswith('_'):
