@@ -125,6 +125,11 @@
         cursor: pointer;
       }
 
+      .shell.is-loading {
+        pointer-events: none;
+        cursor: progress;
+      }
+
       body>.wrap>.frame>canvas {
         position: absolute;
         display: block;
@@ -1174,6 +1179,7 @@
         }
 
         function setPlaybackIndicatorLoading(isLoading) {
+          shell.classList.toggle('is-loading', isLoading)
           playbackIndicator.classList.toggle('is-loading', isLoading)
         }
 
