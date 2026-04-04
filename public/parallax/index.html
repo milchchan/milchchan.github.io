@@ -918,13 +918,13 @@ async function download(url = null, limit = 10, reverse = false) {
       if (reverse) {
         if (selected - 1 >= 0) {
           selected--;
-          url = `https://milchchan.com/api/parallax/post/${posts[selected].id}`;
+          url = `https://milchchan.com/api/post/${posts[selected].id}`;
         }
       } else if (selected + 1 < posts.length) {
         selected++;
-        url = `https://milchchan.com/api/parallax/post/${posts[selected].id}`;
+        url = `https://milchchan.com/api/post/${posts[selected].id}`;
       } else if (offset !== null) {
-        const response = await fetch(`https://milchchan.com/api/parallax/posts?nsfw=${NSFW ? 'true' : 'false'}&offset=${offset}&limit=${limit + 1}`, {
+        const response = await fetch(`https://milchchan.com/api/posts?nsfw=${NSFW ? 'true' : 'false'}&offset=${offset}&limit=${limit + 1}`, {
             mode: "cors",
             method: "GET",
             headers: {
@@ -950,7 +950,7 @@ async function download(url = null, limit = 10, reverse = false) {
               offset = null;
             }
 
-            url = `https://milchchan.com/api/parallax/post/${posts[selected].id}`;
+            url = `https://milchchan.com/api/post/${posts[selected].id}`;
           }
         } else {
           throw new Error(response.statusText);
@@ -1180,7 +1180,7 @@ async function download(url = null, limit = 10, reverse = false) {
         }
 
         for (const element of document.body.querySelectorAll("#app>div.container>.top-right span:not(.icon):last-child")) {
-          element.textContent = String(json.views);
+          element.textContent = String(json.accesses);
         }
 
         for (const element of document.body.querySelectorAll("#app>div.container>.middle-right span")) {
@@ -1340,7 +1340,7 @@ async function post(file) {
 
     formData.append("file", new Blob([file], { type: file.type }), file.name);
 
-    const response = await fetch("https://milchchan.com/api/parallax/post", {
+    const response = await fetch("https://milchchan.com/api/post", {
         mode: "cors",
         method: "POST",
         body: formData
@@ -1504,7 +1504,7 @@ async function post(file) {
       }
 
       for (const element of document.body.querySelectorAll("#app>div.container>.top-right span:not(.icon):last-child")) {
-        element.textContent = String(json.views);
+        element.textContent = String(json.accesses);
       }
 
       for (const element of document.body.querySelectorAll("#app>div.container>.middle-right span")) {
@@ -1513,7 +1513,7 @@ async function post(file) {
 
       new Promise(async (resolve1, reject1) => {
         try {
-          const response = await fetch(`https://milchchan.com/api/parallax/post/${json.id}`, {
+          const response = await fetch(`https://milchchan.com/api/post/${json.id}`, {
               mode: "cors",
               method: "PUT"
             }
@@ -1707,7 +1707,7 @@ window.shuffle = async (event) => {
     }
   }
 
-  if (!await download("https://milchchan.com/api/parallax/post")) {
+  if (!await download("https://milchchan.com/api/post")) {
     shake(target);
   }
 };
@@ -1978,7 +1978,7 @@ window.addEventListener("load", event => {
   requestAnimationFrame(render);
 
   if (/^(?:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|[0-9a-f]{7})$/.test(hash)) {
-    download(`https://milchchan.com/api/parallax/post/${hash}`);
+    download(`https://milchchan.com/api/post/${hash}`);
   } else {
     download(null, 10, false);
   }
@@ -2075,7 +2075,7 @@ window.addEventListener("deviceorientation", event => {
 }, true);
 window.addEventListener("keyup", async (event) => {
   if (event.code === "Space") {
-    if (!await download("https://milchchan.com/api/parallax/post")) {
+    if (!await download("https://milchchan.com/api/post")) {
       shake(document.body.querySelector("#app>.container .bottom>.level>.level-item:nth-child(3) button.button"));
     }
   } else if (event.code === "ArrowLeft") {

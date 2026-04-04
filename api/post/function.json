@@ -6,7 +6,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "parallax/post",
+      "route": "post",
       "methods": [
         "get",
         "post"
