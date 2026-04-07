@@ -103,12 +103,16 @@
       }
 
       p {
-        margin: 16px 0px 0px 0px;
+        margin: 0;
         padding: 0;
         color: var(--foreground-color) !important;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1.25rem;
         line-height: 2rem;
+      }
+
+      p:not(:first-of-type) {
+        margin: 16px 0px 0px 0px;
       }
 
       ul,
@@ -310,6 +314,10 @@
       }
 
       .content p+div {
+        margin: 16px 0px 0px 0px;
+      }
+
+      .content div>div:first-of-type {
         margin: 16px 0px 0px 0px;
       }
 
@@ -617,6 +625,7 @@
       }
 
       .content>div>div>div.is-playable {
+        display: inline-block;
         opacity: 1.0;
         backface-visibility: hidden;
         transition: opacity .5s;
