@@ -31,6 +31,10 @@ FETCH_PROMPT = '''内容を下記の出力形式に変換してください。
 [{
     "language":  "ja",
     "content":  "<内容>",
+    "terms": [
+     "<contentを表す語>",
+     ["<contentを修飾する語>", "<contentを表す語>"]
+    ],
     "url": "<URLまたはnull>",
     "timestamp": "<ISO 8601形式またはnull>",
     "score": 0.0-1.0,
