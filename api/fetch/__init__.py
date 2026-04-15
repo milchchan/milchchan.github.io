@@ -39,6 +39,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             timestamp = int((datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))).timestamp())
                             data_item = {'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']}
                             
+                            if 'terms' in item:
+                                data_item['terms'] = item['terms']
+
                             if 'comment' in item:
                                 data_item['comment'] = item['comment']
 
