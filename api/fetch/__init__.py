@@ -78,6 +78,41 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             if cached_data is not None:
                 cached_data = json.loads(cached_data)
+                items1 = []
+
+                for cached_item in cached_data['data']:
+                    if 'comment' not in cached_item:
+                        items1.append({'id': cached_item['id'], 'content': cached_item['content']})
+
+                if len(items) > 0:
+                    api_key = None
+
+                    if 'X-Authorization' in req.headers:
+                        match = re.match('Bearer\\s(.+)', req.headers['X-Authorization'])
+
+                        if match:
+                            api_key = match.group(1)
+
+                    else:
+                        api_key = os.environ['OPENAI_API_KEY']
+
+                    with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': model, 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items1, ensure_ascii=False)}\n```'}]}], 'temperature': 1.0, 'text': {'verbosity': ['low', 'medium', 'high'][max(min(int(temperature / (2.0 / 3.0)), 2), 0)]}, 'reasoning': {'effort': 'low'}} if model.startswith('gpt-5') else {'model': model, 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items1, ensure_ascii=False)}\n```'}]}], 'temperature': temperature, 'reasoning': {'effort': 'low'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
+                        for output in json.loads(response.read().decode('utf-8'))['output']:
+                            if output['type'] == 'message':
+                                for content in output['content']:
+                                    if content['type'] == 'output_text':
+                                        match = re.match('(?:```json)?(?:[^\\[]+)?(\\[.+\\]).*(?:```)?', content['text'], flags=(re.MULTILINE|re.DOTALL))
+                                        items2 = json.loads(match.group(1) if match else content['text'])
+                                
+                                        for item1 in cached_data['data']:
+                                            for item2 in items2:
+                                                if item1['id'] == item2['id']:
+                                                    item1['comment'] = item2['content']
+                                                    item1['states'] = item2['states']
+
+                                                    break
+
+                    set_cache(cache_name, json.dumps({'data': cached_data['data'], 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
 
                 if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=12)).timestamp()):
                     return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
