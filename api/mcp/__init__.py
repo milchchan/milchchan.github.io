@@ -18,13 +18,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(status_code=405, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
     
     else:
-        if req.headers.get('Content-Type') != 'application/json':
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+        if req.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         
         try:
             body = json.loads(req.get_body())
         except json.JSONDecodeError as e:
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32700, 'message': 'Parse error', 'data': str(e)}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+        
+        if not isinstance(body, dict):
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         
         jsonrpc = body.get('jsonrpc')
         identifier = body.get('id')
@@ -35,7 +38,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
 
         if method == 'initialize':
-            if identifier is None or params is None or not isinstance(params, dict) or 'protocolVersion' not in params or datetime.strptime(params['protocolVersion'], '%Y-%m-%d') < datetime.strptime(SUPPORTED_VERSION, '%Y-%m-%d') or 'capabilities' not in params or not isinstance(params['capabilities'], dict):
+            protocol_version = None
+
+            if params is not None and isinstance(params, dict) and 'protocolVersion' in params and isinstance(params['protocolVersion'], str):
+                try:
+                    protocol_version = datetime.strptime(params['protocolVersion'], '%Y-%m-%d')
+                except ValueError:
+                    protocol_version = None
+
+            if identifier is None or params is None or not isinstance(params, dict) or protocol_version is None or protocol_version < datetime.strptime(SUPPORTED_VERSION, '%Y-%m-%d') or 'capabilities' not in params or not isinstance(params['capabilities'], dict):
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
             else:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
@@ -113,17 +124,34 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'content': [{'type': 'text', 'text': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}], 'isError': False}}, ensure_ascii=False), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
 
         elif params['name'] == 'news':
-            limit = int(arguments['limit']) if 'limit' in arguments else 10
+            limit = arguments['limit'] if 'limit' in arguments else 10
+
+            if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1 or limit > 50:
+                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+
             merged_data = []
             
             try:
                 for cache_name in scan_cache(f'fetch/*'):
-                    cached_data = json.loads(get_cache(cache_name))
+                    cached_raw = get_cache(cache_name)
+
+                    if cached_raw is None:
+                        continue
+
+                    try:
+                        cached_data = json.loads(cached_raw)
+                    except (TypeError, json.JSONDecodeError):
+                        continue
                     
                     if isinstance(cached_data, dict) and 'data' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['data'], list):
                         for item in cached_data['data']:
                             if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item:
-                                merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': datetime.combine(datetime.now(timezone.utc).date(), dtime(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))})
+                                try:
+                                    timestamp = datetime.combine(datetime.now(timezone.utc).date(), dtime(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
+                                except (AttributeError, TypeError, ValueError):
+                                    continue
+
+                                merged_data.append({'content': item['content'], 'url': item['url'], 'timestamp': timestamp})
 
                 recent_data = sorted(merged_data, key=lambda x: x['timestamp'], reverse=True)
                 recent_data = recent_data[:limit]
@@ -139,6 +167,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32603, 'message': 'Internal error', 'data': str(e)}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
 
         elif params['name'] == 'weather':
+            if 'latitude' not in arguments or 'longitude' not in arguments or isinstance(arguments['latitude'], bool) or isinstance(arguments['longitude'], bool) or not isinstance(arguments['latitude'], (int, float)) or not isinstance(arguments['longitude'], (int, float)) or arguments['latitude'] < -90 or arguments['latitude'] > 90 or arguments['longitude'] < -180 or arguments['longitude'] > 180:
+                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+
             try:
                 team_id = os.environ['WEATHERKIT_TEAM_ID']
                 services_id = os.environ['WEATHERKIT_SERVICES_ID']
