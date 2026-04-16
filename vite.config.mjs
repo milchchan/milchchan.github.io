@@ -13,7 +13,7 @@ export default defineConfig({
       },
     },
     cssCodeSplit: false,
-    chunkSizeWarningLimit: 1500,
+    chunkSizeWarningLimit: 1500
   },
   css: {
     preprocessorOptions: {
