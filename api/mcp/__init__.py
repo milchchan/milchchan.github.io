@@ -12,12 +12,29 @@ import azure.functions as func
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    SUPPORTED_VERSION = '2025-06-18'
+    SUPPORTED_VERSION = '2025-11-25'
+    allowed_origins = [origin.strip() for origin in os.environ.get('MCP_ALLOWED_ORIGINS', 'https://milchchan.com,https://merkuchan.com').split(',') if origin.strip()]
+    request_protocol_version = req.headers.get('MCP-Protocol-Version')
+
+    if 'Origin' in req.headers and req.headers['Origin'] not in allowed_origins:
+        return func.HttpResponse(status_code=403, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
+
+    if req.method == 'GET' and request_protocol_version is not None and request_protocol_version != SUPPORTED_VERSION:
+        return func.HttpResponse(status_code=400, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
 
     if req.method == 'GET':
         return func.HttpResponse(status_code=405, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
     
     else:
+        if request_protocol_version is not None and request_protocol_version != SUPPORTED_VERSION:
+            try:
+                body = json.loads(req.get_body())
+            except (TypeError, json.JSONDecodeError):
+                return func.HttpResponse(status_code=400, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
+
+            if not isinstance(body, dict) or body.get('method') != 'initialize':
+                return func.HttpResponse(status_code=400, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
+
         if req.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         
@@ -34,19 +51,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         method = body.get('method')
         params = body.get('params')
 
+        if jsonrpc == '2.0' and method is None and ('result' in body or 'error' in body):
+            return func.HttpResponse(status_code=400, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
+
         if jsonrpc != '2.0' or method is None:
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
 
         if method == 'initialize':
-            protocol_version = None
-
-            if params is not None and isinstance(params, dict) and 'protocolVersion' in params and isinstance(params['protocolVersion'], str):
+            if params is None or not isinstance(params, dict) or 'protocolVersion' not in params or not isinstance(params['protocolVersion'], str):
+                protocol_version = None
+            else:
                 try:
                     protocol_version = datetime.strptime(params['protocolVersion'], '%Y-%m-%d')
                 except ValueError:
                     protocol_version = None
 
-            if identifier is None or params is None or not isinstance(params, dict) or protocol_version is None or protocol_version < datetime.strptime(SUPPORTED_VERSION, '%Y-%m-%d') or 'capabilities' not in params or not isinstance(params['capabilities'], dict):
+            if identifier is None or params is None or not isinstance(params, dict) or protocol_version is None or 'capabilities' not in params or not isinstance(params['capabilities'], dict) or 'clientInfo' not in params or not isinstance(params['clientInfo'], dict) or 'name' not in params['clientInfo'] or 'version' not in params['clientInfo'] or not isinstance(params['clientInfo']['name'], str) or not isinstance(params['clientInfo']['version'], str):
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
             else:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
@@ -58,7 +78,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(status_code=202, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
         elif method == 'tools/list':
             if identifier is None:
-                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+                return func.HttpResponse(status_code=400, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
             else:
                 return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
                     'tools': [
@@ -111,7 +131,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         }]
                 }}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
         elif identifier is None:
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
+            return func.HttpResponse(status_code=400, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='', charset='')
         elif method != 'tools/call':
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=200, headers={'MCP-Protocol-Version': SUPPORTED_VERSION}, mimetype='application/json', charset='utf-8')
 
