@@ -30,9 +30,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                     else:
                         data = req.get_json()
-                        nsfw = data['nsfw'] if 'nsfw' in data else False
                         
-                        if nsfw:
+                        if 'nsfw' in data and data['nsfw']:
                             messages = []
 
                             for message in data['messages']:
