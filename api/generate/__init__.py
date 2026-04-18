@@ -58,12 +58,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     else:
                                         messages.append({'role': message['role'], 'content': message['content']})
 
-                            payload = {'model': data['model'], 'input': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0}
+                            payload = {'model': data['model'], 'messages': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0}
 
                             if 'reasoning' in data and 'effort' in data['reasoning']:
                                 payload['reasoning_effort'] = data['reasoning']['effort']
                             '''
 
+                            '''
                             with urlopen(Request('https://router.huggingface.co/v1/chat/completions', data=json.dumps(payload).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {os.environ['HF_TOKEN']}', 'Content-Type': 'application/json'})) as response:
                                 for choice in json.loads(response.read().decode('utf-8'))['choices']:
                                     content = choice['message']['content']
@@ -76,7 +77,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/api/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
                                     return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else content)), status_code=200, mimetype='application/json', charset='utf-8')
-
+                            '''
                             return func.HttpResponse(status_code=500, mimetype='', charset='')
 
                         else:
