@@ -33,8 +33,51 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         nsfw = data['nsfw'] if 'nsfw' in data else False
                         
                         if nsfw:
-                            
-                            return func.HttpResponse(status_code=503, mimetype='', charset='')
+                            messages = []
+
+                            for message in data['messages']:
+                                if message['role'] == 'system' or message['role'] == 'developer':
+                                    messages.append({'role': 'system', 'content': message['content']})
+
+                                else:
+                                    content = []
+                                    
+                                    if message['role'] == 'user':
+                                        content = []
+
+                                        if isinstance(message['content'], list):
+                                            for part in message['content']:
+                                                if part['type'] =='image':
+                                                    content.append({'type': 'image_url', 'image_url': part['image']})
+                                                else:
+                                                    content.append({'type': 'text', 'text': part['text']})
+                                        else:
+                                            content.append({'type': 'text', 'text': message['content']})
+
+                                        messages.append({'role': message['role'], 'content': content})
+
+                                    else:
+                                        messages.append({'role': message['role'], 'content': message['content']})
+
+                            payload = {'model': data['model'], 'input': messages, 'temperature': data['temperature'] if 'temperature' in data else 1.0}
+
+                            if 'reasoning' in data and 'effort' in data['reasoning']:
+                                payload['reasoning_effort'] = data['reasoning']['effort']
+
+                            with urlopen(Request('https://router.huggingface.co/v1/chat/completions', data=json.dumps(payload).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {os.environ['HF_TOKEN']}', 'Content-Type': 'application/json'})) as response:
+                                for choice in json.loads(response.read().decode('utf-8'))['choices']:
+                                    content = choice['message']['content']
+                                    match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', content, flags=(re.MULTILINE|re.DOTALL))
+                                    identifier = str(uuid4())
+                                    client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                                    database = client.get_database_client('Milch')
+                                    container = database.get_container_client('Logs')
+                                    data['messages'].append({'role': 'assistant', 'content': content})
+                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/api/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+
+                                    return func.HttpResponse(json.dumps(json.loads(match.group(1) if match else content)), status_code=200, mimetype='application/json', charset='utf-8')
+
+                            return func.HttpResponse(status_code=500, mimetype='', charset='')
 
                         else:
                             api_key = os.environ.get('OPENAI_API_KEY')
