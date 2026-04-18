@@ -33,7 +33,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         nsfw = data['nsfw'] if 'nsfw' in data else False
 
                         if nsfw:
-                            model = data['model'] if 'model' in data else os.environ['OPENAI_MODEL']
                             messages = []
 
                             for message in data['messages']:
@@ -242,6 +241,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                             database = client.get_database_client('Milch')
                             container = database.get_container_client('Logs')
+                            data = json.loads(data)
                             data['messages'].append({'role': 'assistant', 'content': choice['content']})
                             container.upsert_item({'id': identifier, 'slug': identifier[:7], 'path': '/api/generate', 'data': data, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
