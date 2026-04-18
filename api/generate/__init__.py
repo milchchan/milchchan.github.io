@@ -33,7 +33,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         
                         if 'nsfw' in data and data['nsfw']:
                             messages = []
-
+                            '''
                             for message in data['messages']:
                                 if message['role'] == 'system' or message['role'] == 'developer':
                                     messages.append({'role': 'system', 'content': message['content']})
@@ -62,6 +62,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             if 'reasoning' in data and 'effort' in data['reasoning']:
                                 payload['reasoning_effort'] = data['reasoning']['effort']
+                            '''
 
                             with urlopen(Request('https://router.huggingface.co/v1/chat/completions', data=json.dumps(payload).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {os.environ['HF_TOKEN']}', 'Content-Type': 'application/json'})) as response:
                                 for choice in json.loads(response.read().decode('utf-8'))['choices']:
