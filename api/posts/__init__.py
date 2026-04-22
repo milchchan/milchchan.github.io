@@ -24,7 +24,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if from_date is None:
             if mime_type is None:
                 items = list(container.query_items(
-                    query=f'SELECT p.id, p.type, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                     parameters=[
                         {'name': '@offset', 'value': 0 if offset is None else offset},
                         {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -33,7 +33,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     enable_cross_partition_query=True))
             else:
                 items = list(container.query_items(
-                    query=f'SELECT p.id, p.type, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                     parameters=[
                         {'name': '@offset', 'value': 0 if offset is None else offset},
                         {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -44,7 +44,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             if mime_type is None:
                 items = list(container.query_items(
-                    query=f'SELECT p.id, p.type, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                     parameters=[
                         {'name': '@offset', 'value': 0 if offset is None else offset},
                         {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -54,7 +54,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     enable_cross_partition_query=True))
             else:
                 items = list(container.query_items(
-                    query=f'SELECT p.id, p.type, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                     parameters=[
                         {'name': '@offset', 'value': 0 if offset is None else offset},
                         {'name': '@limit', 'value': 100 if limit is None else limit},
