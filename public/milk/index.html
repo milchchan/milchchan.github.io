@@ -1,0 +1,1881 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-617KR1WTYP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-617KR1WTYP');
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f4f2">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f4f4f2">
+    <meta property="og:title" content="MILCHCHAN.COM">
+    <meta property="og:description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://milchchan.com/">
+    <meta property="og:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:site" content="@milchchan">
+    <meta property="twitter:title" content="MILCHCHAN.COM">
+    <meta property="twitter:description" content="ミルヒちゃんもいっしょに魔法少女しようね">
+    <meta property="twitter:image" content="https://milchchan.com/images/Milch.png">
+    <meta property="twitter:url" content="https://milchchan.com/">
+    <title>MILCHCHAN.COM MERKU</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/touch-icon-ipad-retina.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
+    <style media="screen">
+      html {
+        touch-action: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        background: #f4f4f2;
+      }
+
+      body {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        min-height: 100dvh;
+        overflow: hidden;
+      }
+
+      a,
+      a:focus,
+      a:link,
+      a:visited,
+      a:hover,
+      a:active {
+        outline: none;
+        text-decoration: none;
+        color: #000000;
+      }
+
+      a .scrollable {
+        display: inline-block;
+        box-sizing: content-box;
+        backface-visibility: hidden;
+        transform: translate3d(0%, 0%, 0);
+        transition: 0.5s ease-in;
+      }
+
+      a .scrollable>div {
+        -webkit-user-select: none;
+        user-select: none;
+        box-sizing: content-box;
+        vertical-align: middle;
+      }
+
+      a .scrollable:hover {
+        display: inline-block;
+        box-sizing: content-box;
+        backface-visibility: hidden;
+        transform: translate3d(-100%, 0%, 0);
+        transition: 0.5s ease-out;
+      }
+
+      .is-preloading * {
+        transition: none !important;
+      }
+
+      .is-uppercase {
+        text-transform: uppercase;
+      }
+
+      .has-text-weight-bold {
+        font-weight: bold;
+      }
+
+      body>.wrap {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        backface-visibility: hidden;
+        transition: .5s;
+      }
+
+      body>.wrap>.frame {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        border-radius: 0px;
+        width: 100%;
+        max-width: 100% !important;
+        height: 100%;
+        overflow: hidden;
+        background-color: #f4f4f2;
+        transition: .5s;
+      }
+
+      body>.wrap>.frame>canvas {
+        display: block;
+        overflow: hidden;
+        outline: none;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        background-color: transparent;
+        opacity: 1;
+        transition: .5s ease-out;
+      }
+
+      .frame>canvas.dragging {
+        opacity: 0.5;
+        transition: .5s ease-in;
+      }
+
+      .control-buttons {
+        position: absolute;
+        left: 16px;
+        bottom: 16px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .control-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(255 255 255 / 0.75);
+        color: #000000;
+        cursor: pointer;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
+        transition:
+          opacity 500ms ease,
+          color 500ms ease,
+          background-color 500ms ease;
+      }
+
+      .control-button:active {
+        transform: scale(0.95);
+      }
+
+      .control-button.is-active:first-of-type:not(:disabled) {
+        animation: randomizing 1s linear forwards infinite;
+        animation-play-state: running;
+      }
+
+      .control-button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      .control-button i {
+        position: absolute;
+        font-size: 1rem;
+        line-height: 1;
+        transition: .5s;
+      }
+
+      .playback-control-button {
+        position: relative;
+      }
+
+      .playback-control-button .icon-play {
+        opacity: 1;
+      }
+
+      .playback-control-button .icon-pause {
+        opacity: 0;
+      }
+
+      .playback-control-button.is-playing .icon-play {
+        opacity: 0;
+      }
+
+      .playback-control-button.is-playing .icon-pause {
+        opacity: 1;
+      }
+
+      .progress {
+        pointer-events: none;
+        z-index: 1;
+        position: absolute;
+        margin: 0 !important;
+        border: 0px solid transparent;
+        border-radius: 0px;
+        padding: 0;
+        width: 100%;
+        height: fit-content;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        backface-visibility: hidden;
+        background: transparent;
+        touch-action: none;
+      }
+
+      .progress>.bar {
+        pointer-events: none;
+        z-index: 1;
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        border-radius: 0px;
+        width: 100%;
+        height: 4px;
+        transform: translate3d(0, 0%, 0);
+        overflow: hidden;
+        background: url('/images/Stripes.png') 0 0 repeat;
+        background-color: #ffee00;
+        background-size: 24px 24px;
+        animation: progress 1s linear forwards infinite;
+        animation-play-state: paused;
+        transition: .5s;
+        backface-visibility: hidden;
+        perspective: 1000;
+      }
+
+      .progress>.bar.animating {
+        animation-play-state: running;
+      }
+
+      .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        padding: 16px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        animation: fade .5s ease-out forwards;
+        box-sizing: border-box;
+        backface-visibility: hidden;
+        perspective: 1000;
+        transition: 0.5s;
+      }
+
+      div.sidebar {
+        -webkit-user-select: none;
+        user-select: none;
+        z-index: 0;
+        position: fixed;
+        left: 0px;
+        padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+        width: fit-content;
+        height: fit-content;
+        background: transparent;
+        transition: 0.5s;
+      }
+
+      div.sidebar>.rotation-outer {
+        display: inline-flex;
+      }
+
+      div.sidebar>.rotation-outer>div.rotation-inner {
+        padding: 50% 0;
+        height: 0;
+      }
+
+      div.sidebar>.rotation-outer>div.rotation-inner>div.rotate {
+        display: block;
+        transform-origin: top left;
+        transform: rotate(-90deg) translate(0%, 100%) rotate(180deg);
+        margin-top: -50%;
+        white-space: nowrap;
+      }
+
+      div.sidebar .button {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        border: 0px solid transparent;
+        background: transparent;
+        background-clip: padding-box;
+        line-height: calc(0.75rem * 1.5);
+        backface-visibility: hidden;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        height: 48px;
+        cursor: pointer;
+      }
+
+      div.sidebar .button .clip {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        height: calc(0.75rem * 1.5);
+        box-sizing: border-box;
+      }
+
+      div.sidebar .button .scrollable {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0px -4px 0px -4px !important;
+      }
+
+      div.sidebar .button .scrollable div {
+        display: flex;
+        align-items: center;
+        margin: 0px 4px 0px 4px !important;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 0.75rem !important;
+        line-height: 0.75rem !important;
+        height: calc(0.75rem * 1.5);
+        vertical-align: middle;
+      }
+
+      div.sidebar .button .scrollable div:last-child:not(:first-child) {
+        position: absolute;
+        left: 100%;
+      }
+
+      div.sidebar .button .wrap {
+        position: relative;
+        display: flex;
+        margin: 0;
+        border-top: 2px solid transparent;
+        border-bottom: 2px solid transparent;
+        color: #000000;
+        width: fit-content;
+        height: fit-content;
+        min-height: fit-content;
+        box-sizing: border-box;
+        overflow: hidden;
+        justify-content: flex-start;
+        align-items: center;
+        transform: translate3d(0, 0, 0);
+        transition: 0.5s;
+      }
+
+      @keyframes progress {
+        0% {
+          background-position: 0px 0px;
+        }
+
+        100% {
+          background-position: -24px 0px;
+        }
+      }
+
+      @keyframes randomizing {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+      }
+
+      @media screen and (-webkit-min-device-pixel-ratio: 2),
+      (min-resolution: 2dppx) {
+        .progress>.bar {
+          background: url('/images/Stripes@2x.png') 0 0 repeat;
+          background-color: #ffee00;
+          background-size: 24px 24px;
+        }
+      }
+
+      @media screen and (-webkit-min-device-pixel-ratio: 3),
+      (min-resolution: 3dppx) {
+        .progress>.bar {
+          background: url('/images/Stripes@3x.png') 0 0 repeat;
+          background-color: #ffee00;
+          background-size: 24px 24px;
+        }
+      }
+
+      @media screen and (min-width: 769px) and (min-height: 769px) {
+        html {
+          background: #ffffff;
+        }
+
+        body>.wrap {
+          padding: 16px;
+          transition: .5s;
+        }
+
+        body>.wrap>.frame {
+          border-radius: 4px;
+          transition: .5s;
+        }
+
+        body>.overlay {
+          padding: 32px;
+          transition: 0.5s;
+        }
+
+        div.sidebar {
+          left: 16px;
+          transition: 0.5s;
+        }
+      }
+
+      @media (hover: hover) {
+        .control-button:hover:not(:disabled) {
+          color: #00d6ff;
+        }
+      }
+    </style>
+  </head>
+  <body class="is-preloading">
+    <div class="wrap">
+        <div id="app" class="frame">
+        </div>
+      </div>
+    <div class="overlay">
+      <div class="sidebar">
+        <div class="rotation-outer">
+          <div class="rotation-inner">
+            <div class="rotate">
+              <a class="button" href="https://milchchan.com/" title="milchchan.com">
+                <div class="stack">
+                  <div class="wrap has-text-weight-bold is-uppercase">
+                    <div class="clip">
+                      <div class="scrollable">
+                        <div>milchchan.com</div>
+                        <div>milchchan.com</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      const SETTINGS = {
+        dragPullX: 0.9,
+        dragPullY: 0.9,
+        dragPositionLerp: 0.78,
+        releaseImpulseX: 0.18,
+        releaseImpulseY: 0.18,
+        dragTwist: 0.035,
+        springX: 0.09,
+        springY: 0.14,
+        dampingX: 0.88,
+        dampingY: 0.82,
+        physicsPositionLerp: 0.2,
+        visualVelocityLerp: 0.22,
+        deltaNormalization: 16.666,
+        maxDeltaScale: 2,
+        aspectFillAnchorX: 0.5,
+        aspectFillAnchorY: 0.0,
+        topEdgeAnchor: 1,
+        meshRows: 32,
+        topFollow: 0.18,
+        bottomFollow: 1.16,
+        widthStretch: 0.0022,
+        heightSquash: 0.001,
+        swayFromVelocity: 0.32,
+        rotationFromVelocity: 0.0028,
+        sliceOverlap: 1.5,
+        motionEnabled: true,
+        motionSmoothing: 0.18,
+        motionDeadzone: 0.12,
+        motionImpulseX: 0.2,
+        motionImpulseY: 0.26,
+        motionTwist: 0.012,
+        motionMaxForceX: 2.2,
+        motionMaxForceY: 2.6,
+        motionRotationForceX: 0.01,
+        motionRotationForceY: 0.008,
+        collisionPushX: 0.7,
+        collisionPushY: 0.78,
+        dragPushY: 0.2,
+        collisionImpulseX: 0.9,
+        collisionImpulseY: 0.96,
+        collisionMinMovement: 0.35,
+        collisionPositionLerp: 0.3,
+        collisionSeparationLerp: 0.9,
+        debugShowImages: false,
+        debugShowContour: true,
+        debugShowCollisionShape: true,
+        debugShowSlices: false,
+        debugShowControlPoint: true,
+        debugShowRotationPivot: false,
+      }
+
+      const LAYERS = {
+        base: { src: '/images/Merku-Base.png', x: 0, y: 0 },
+        right: {
+          src: '/images/Merku-Right.png',
+          x: 124,
+          y: 384,
+          direction: -1,
+          controlPointX: 0.5,
+          controlPointY: 0.75,
+          rotationPivotX: 0.5,
+          rotationPivotY: 0.1,
+          maxMoveX: 100,
+          maxMoveY: 150,
+          releaseImpulseX: 0.18,
+          releaseImpulseY: 0.18,
+          bottomFollow: 1.16,
+          widthStretch: 0.0022,
+          heightSquash: 0.001,
+        },
+        left: {
+          src: '/images/Merku-Left.png',
+          x: 644,
+          y: 384,
+          direction: 1,
+          controlPointX: 0.5,
+          controlPointY: 0.75,
+          rotationPivotX: 0.5,
+          rotationPivotY: 0.1,
+          maxMoveX: 100,
+          maxMoveY: 150,
+          releaseImpulseX: 0.18,
+          releaseImpulseY: 0.18,
+          bottomFollow: 1.16,
+          widthStretch: 0.0022,
+          heightSquash: 0.001,
+        },
+      }
+
+      const app = document.querySelector('#app')
+      app.innerHTML = '<canvas class="stage"></canvas>'
+
+      const canvas = document.querySelector('.stage')
+      const ctx = canvas.getContext('2d')
+
+      const state = {
+        width: 0,
+        height: 0,
+        scale: 1,
+        drawWidth: 0,
+        drawHeight: 0,
+        offsetX: 0,
+        offsetY: 0,
+        hasDrawn: false,
+        lastTime: performance.now(),
+        pointers: new Map(),
+        collisionPairs: new Set(),
+        motion: {
+          targetX: 0,
+          targetY: 0,
+          currentX: 0,
+          currentY: 0,
+          permissionRequested: false,
+          listening: false,
+        },
+        compositeCanvas: null,
+        compositeContext: null,
+        baseImage: null,
+        animatedLayers: [],
+      }
+
+      const INTERACTIVE_LAYER_ENTRIES = Object.entries(LAYERS).filter(([id]) => id !== 'base')
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max)
+      }
+
+      function lerp(start, end, amount) {
+        return start + (end - start) * amount
+      }
+
+      function applyDeadzone(value, deadzone) {
+        if (Math.abs(value) <= deadzone) {
+          return 0
+        }
+
+        return value > 0 ? value - deadzone : value + deadzone
+      }
+
+      function createCompositeCanvas(width, height) {
+        if (typeof OffscreenCanvas !== 'undefined') {
+          return new OffscreenCanvas(width, height)
+        }
+
+        const fallback = document.createElement('canvas')
+        fallback.width = width
+        fallback.height = height
+        return fallback
+      }
+
+      function createLoadingOverlay() {
+        const overlay = document.createElement('div')
+        const bar = document.createElement('div')
+
+        overlay.className = 'progress'
+        bar.className = 'bar animating'
+        bar.style.opacity = '1'
+        bar.style.width = '0%'
+        overlay.appendChild(bar)
+        document.body.prepend(overlay)
+
+        return {
+          root: overlay,
+          bar,
+        }
+      }
+
+      function setLoadingProgress(overlay, progress) {
+        if (!overlay) {
+          return
+        }
+
+        overlay.bar.style.width = `${Math.round(clamp(progress, 0, 1) * 100)}%`
+      }
+
+      function removeLoadingOverlay(overlay) {
+        if (!overlay) {
+          return
+        }
+
+        overlay.bar.classList.remove('animating')
+        overlay.bar.animate(
+          [
+            {
+              opacity: 0,
+            },
+          ],
+          {
+            delay: 0,
+            fill: 'forwards',
+            duration: 500,
+            iterations: 1,
+            easing: 'ease-in',
+          },
+        ).onfinish = () => {
+          overlay.root.remove()
+        }
+      }
+
+      function loadImageFromUrl(url) {
+        return new Promise((resolve, reject) => {
+          const image = new Image()
+          image.onload = () => resolve(image)
+          image.onerror = () => reject(new Error(`Failed to load ${url}`))
+          image.src = url
+        })
+      }
+
+      async function loadImage(src, onProgress = null) {
+        const response = await fetch(src)
+
+        if (!response.ok) {
+          throw new Error(`Failed to load ${src}`)
+        }
+
+        const total = Number(response.headers.get('Content-Length')) || 0
+        const reader = response.body?.getReader()
+
+        if (!reader) {
+          const blob = await response.blob()
+          onProgress?.(1)
+          const objectUrl = URL.createObjectURL(blob)
+          try {
+            return await loadImageFromUrl(objectUrl)
+          } finally {
+            URL.revokeObjectURL(objectUrl)
+          }
+        }
+
+        const chunks = []
+        let loaded = 0
+
+        while (true) {
+          const { done, value } = await reader.read()
+
+          if (done) {
+            break
+          }
+
+          chunks.push(value)
+          loaded += value.length
+
+          if (total > 0) {
+            onProgress?.(loaded / total)
+          }
+        }
+
+        const blob = new Blob(chunks)
+        onProgress?.(1)
+        const objectUrl = URL.createObjectURL(blob)
+        try {
+          return await loadImageFromUrl(objectUrl)
+        } finally {
+          URL.revokeObjectURL(objectUrl)
+        }
+      }
+
+      function resizeCanvas() {
+        const bounds = canvas.getBoundingClientRect()
+        const dpr = window.devicePixelRatio || 1
+        const width = Math.round(bounds.width * dpr)
+        const height = Math.round(bounds.height * dpr)
+
+        if (canvas.width === width && canvas.height === height) {
+          return
+        }
+
+        canvas.width = width
+        canvas.height = height
+        state.width = width
+        state.height = height
+        updateAspectFill()
+      }
+
+      function updateAspectFill() {
+        if (!state.baseImage || !state.width || !state.height) {
+          return
+        }
+
+        state.scale = Math.max(state.width / state.baseImage.width, state.height / state.baseImage.height)
+        state.drawWidth = state.baseImage.width * state.scale
+        state.drawHeight = state.baseImage.height * state.scale
+        state.offsetX = (state.width - state.drawWidth) * SETTINGS.aspectFillAnchorX
+        state.offsetY = (state.height - state.drawHeight) * SETTINGS.aspectFillAnchorY
+      }
+
+      function eventPosition(event) {
+        const rect = canvas.getBoundingClientRect()
+        return {
+          x: ((event.clientX - rect.left) / rect.width) * state.width,
+          y: ((event.clientY - rect.top) / rect.height) * state.height,
+        }
+      }
+
+      function eventSourcePosition(event) {
+        const position = eventPosition(event)
+        return {
+          x: (position.x - state.offsetX) / state.scale,
+          y: (position.y - state.offsetY) / state.scale,
+        }
+      }
+
+      function getLayerById(id) {
+        return state.animatedLayers.find((layer) => layer.id === id) ?? null
+      }
+
+      function getLayerRotation(layer) {
+        return layer.rotationVelocityX * SETTINGS.rotationFromVelocity
+      }
+
+      function getRotationTargetX(layer) {
+        if (isLayerDirectlyGrabbed(layer.id) || layer.drivenByPointerId !== null) {
+          return -layer.offsetX * 0.35
+        }
+
+        return layer.velocityX * 0.55 - layer.offsetX * 0.18
+      }
+
+      function getLayerPivot(layer) {
+        return {
+          x: layer.image.width * layer.rotationPivotX,
+          y: layer.image.height * layer.rotationPivotY,
+        }
+      }
+
+      function getLayerOrigin(layer) {
+        return {
+          x: layer.x,
+          y: layer.y,
+        }
+      }
+
+      function getLayerBounds(layer) {
+        const points = getLayerOutlineData(layer).polygon
+
+        return {
+          minX: Math.min(...points.map((point) => point.x)),
+          maxX: Math.max(...points.map((point) => point.x)),
+          minY: Math.min(...points.map((point) => point.y)),
+          maxY: Math.max(...points.map((point) => point.y)),
+        }
+      }
+
+      function getLayerOutlineData(layer) {
+        const origin = getLayerOrigin(layer)
+        const rotation = getLayerRotation(layer)
+        const localPivot = {
+          x: layer.image.width * layer.rotationPivotX,
+          y: layer.image.height * layer.rotationPivotY,
+        }
+        const slices = getWarpSlices(layer)
+        const leftPoints = []
+        const rightPoints = []
+
+        for (const slice of slices) {
+          const topLeft = rotatePoint({ x: slice.destinationX, y: slice.destinationTop }, localPivot, rotation)
+          const topRight = rotatePoint(
+            { x: slice.destinationX + slice.destinationWidth, y: slice.destinationTop },
+            localPivot,
+            rotation,
+          )
+          const bottomLeft = rotatePoint(
+            { x: slice.destinationX, y: slice.destinationTop + slice.destinationHeight },
+            localPivot,
+            rotation,
+          )
+          const bottomRight = rotatePoint(
+            { x: slice.destinationX + slice.destinationWidth, y: slice.destinationTop + slice.destinationHeight },
+            localPivot,
+            rotation,
+          )
+
+          if (slice.row === 0) {
+            leftPoints.push({ x: origin.x + topLeft.x, y: origin.y + topLeft.y })
+            rightPoints.push({ x: origin.x + topRight.x, y: origin.y + topRight.y })
+          }
+
+          leftPoints.push({ x: origin.x + bottomLeft.x, y: origin.y + bottomLeft.y })
+          rightPoints.push({ x: origin.x + bottomRight.x, y: origin.y + bottomRight.y })
+        }
+
+        return {
+          leftPoints,
+          rightPoints,
+          polygon: [...leftPoints, ...rightPoints.slice().reverse()],
+        }
+      }
+
+      function getLayerCollisionPolygon(layer) {
+        return getLayerOutlineData(layer).polygon
+      }
+
+      function getLayerCenterX(layer) {
+        const polygon = getLayerOutlineData(layer).polygon
+        return polygon.reduce((sum, point) => sum + point.x, 0) / polygon.length
+      }
+
+      function getEdgeXAtY(points, y) {
+        for (let index = 0; index < points.length - 1; index += 1) {
+          const start = points[index]
+          const end = points[index + 1]
+          const minY = Math.min(start.y, end.y)
+          const maxY = Math.max(start.y, end.y)
+
+          if (y < minY || y > maxY) {
+            continue
+          }
+
+          const dy = end.y - start.y
+          if (Math.abs(dy) < 0.0001) {
+            return (start.x + end.x) * 0.5
+          }
+
+          const t = (y - start.y) / dy
+          return lerp(start.x, end.x, t)
+        }
+
+        return null
+      }
+
+      function getCollisionDirection(sourceLayer, targetLayer) {
+        return getLayerCenterX(targetLayer) >= getLayerCenterX(sourceLayer) ? 1 : -1
+      }
+
+      function getCollisionState(firstLayer, secondLayer) {
+        const firstOutline = getLayerOutlineData(firstLayer)
+        const secondOutline = getLayerOutlineData(secondLayer)
+        const firstDirection = getCollisionDirection(firstLayer, secondLayer)
+        const secondDirection = getCollisionDirection(secondLayer, firstLayer)
+        const firstEdge = firstDirection > 0 ? firstOutline.rightPoints : firstOutline.leftPoints
+        const secondEdge = secondDirection > 0 ? secondOutline.rightPoints : secondOutline.leftPoints
+        const firstMinY = Math.min(...firstEdge.map((point) => point.y))
+        const firstMaxY = Math.max(...firstEdge.map((point) => point.y))
+        const secondMinY = Math.min(...secondEdge.map((point) => point.y))
+        const secondMaxY = Math.max(...secondEdge.map((point) => point.y))
+        const overlapTop = Math.max(firstMinY, secondMinY)
+        const overlapBottom = Math.min(firstMaxY, secondMaxY)
+        const overlapY = overlapBottom - overlapTop
+        let overlapX = 0
+
+        if (overlapY > 0) {
+          const sampleCount = 12
+          for (let index = 0; index <= sampleCount; index += 1) {
+            const y = lerp(overlapTop, overlapBottom, index / sampleCount)
+            const firstX = getEdgeXAtY(firstEdge, y)
+            const secondX = getEdgeXAtY(secondEdge, y)
+
+            if (firstX === null || secondX === null) {
+              continue
+            }
+
+            const currentOverlap =
+              firstDirection > 0 ? firstX - secondX : secondX - firstX
+            overlapX = Math.max(overlapX, currentOverlap)
+          }
+        }
+
+        return {
+          firstDirection,
+          secondDirection,
+          overlapX,
+          overlapY,
+          overlaps: overlapX > 0 && overlapY > 0,
+        }
+      }
+
+      function layersOverlap(a, b) {
+        return getCollisionState(a, b).overlaps
+      }
+
+      function getDrivenMotion(activeLayer, otherLayer, dx, dy) {
+        const inwardDX =
+          getCollisionDirection(activeLayer, otherLayer) > 0 ? Math.max(dx, 0) : Math.min(dx, 0)
+
+        return {
+          dx: inwardDX,
+          dy: dy * SETTINGS.dragPushY,
+        }
+      }
+
+      function getCollisionTransferMotion(sourceLayer, targetLayer, dx, dy) {
+        const inwardDX =
+          getCollisionDirection(sourceLayer, targetLayer) > 0 ? Math.max(dx, 0) : Math.min(dx, 0)
+
+        return {
+          dx: inwardDX,
+          dy,
+        }
+      }
+
+      function getSeparationVector(subjectLayer, otherLayer, collision) {
+        if (!collision.overlaps) {
+          return { x: 0, y: 0 }
+        }
+
+        return {
+          x: -getCollisionDirection(subjectLayer, otherLayer) * collision.overlapX,
+          y: 0,
+        }
+      }
+
+      function getTopmostHitLayer(point) {
+        const orderedLayers = [...state.animatedLayers].reverse()
+
+        for (const layer of orderedLayers) {
+          const pivot = getLayerPivot(layer)
+          const origin = getLayerOrigin(layer)
+          const inversePoint = rotatePoint(
+            { x: point.x - origin.x, y: point.y - origin.y },
+            pivot,
+            -getLayerRotation(layer),
+          )
+
+          if (
+            inversePoint.x >= 0 &&
+            inversePoint.x <= layer.image.width &&
+            inversePoint.y >= 0 &&
+            inversePoint.y <= layer.image.height
+          ) {
+            return layer
+          }
+        }
+
+        return null
+      }
+
+      function isLayerDirectlyGrabbed(layerId, excludingPointerId = null) {
+        for (const pointer of state.pointers.values()) {
+          if (pointer.id === excludingPointerId) {
+            continue
+          }
+
+          if (pointer.layerId === layerId) {
+            return true
+          }
+        }
+
+        return false
+      }
+
+      function applyReleaseToLayer(layer, dx, dy) {
+        const twist = dy * SETTINGS.dragTwist
+        layer.velocityX = dx * layer.releaseImpulseX + twist
+        layer.velocityY = dy * layer.releaseImpulseY
+        layer.rotationVelocityX = lerp(layer.rotationVelocityX, getRotationTargetX(layer), 0.35)
+      }
+
+      function canReceiveCollision(layer) {
+        return !isLayerDirectlyGrabbed(layer.id) && layer.drivenByPointerId === null
+      }
+
+      function moveLayerBy(layer, dx, dy, positionLerp = SETTINGS.collisionPositionLerp) {
+        const previousOffsetX = layer.offsetX
+        const previousOffsetY = layer.offsetY
+        const targetOffsetX = clamp(layer.offsetX + dx, -layer.maxMoveX, layer.maxMoveX)
+        const targetOffsetY = clamp(layer.offsetY + dy, -layer.maxMoveY, layer.maxMoveY)
+        layer.offsetX = lerp(layer.offsetX, targetOffsetX, positionLerp)
+        layer.offsetY = lerp(layer.offsetY, targetOffsetY, positionLerp)
+
+        return {
+          dx: layer.offsetX - previousOffsetX,
+          dy: layer.offsetY - previousOffsetY,
+        }
+      }
+
+      function separateDraggingLayers(activeLayer, otherLayer, activePointerId) {
+        const otherCanMove = !isLayerDirectlyGrabbed(otherLayer.id, activePointerId)
+
+        for (let iteration = 0; iteration < 8; iteration += 1) {
+          const collision = getCollisionState(activeLayer, otherLayer)
+          if (!collision.overlaps) {
+            return
+          }
+
+          const activeSeparation = getSeparationVector(activeLayer, otherLayer, collision)
+          const otherSeparation = getSeparationVector(otherLayer, activeLayer, collision)
+
+          if (otherCanMove) {
+            moveLayerBy(activeLayer, activeSeparation.x * 0.5, 0, 1)
+            moveLayerBy(otherLayer, otherSeparation.x * 0.5, 0, 1)
+          } else {
+            moveLayerBy(activeLayer, activeSeparation.x, 0, 1)
+          }
+        }
+      }
+
+      function separateOverlappingLayers(first, second) {
+        const firstCanMove = canReceiveCollision(first)
+        const secondCanMove = canReceiveCollision(second)
+
+        if (!firstCanMove && !secondCanMove) {
+          return
+        }
+
+        for (let iteration = 0; iteration < 6; iteration += 1) {
+          const collision = getCollisionState(first, second)
+          if (!collision.overlaps) {
+            return
+          }
+
+          const firstSeparation = getSeparationVector(first, second, collision)
+          const secondSeparation = getSeparationVector(second, first, collision)
+
+          if (firstCanMove && secondCanMove) {
+            moveLayerBy(first, firstSeparation.x * 0.5, 0, 1)
+            moveLayerBy(second, secondSeparation.x * 0.5, 0, 1)
+            continue
+          }
+
+          if (firstCanMove) {
+            moveLayerBy(first, firstSeparation.x, 0, 1)
+            continue
+          }
+
+          moveLayerBy(second, secondSeparation.x, 0, 1)
+        }
+      }
+
+      function applyCollisionTransfer(sourceLayer, targetLayer) {
+        if (!canReceiveCollision(targetLayer)) {
+          return false
+        }
+
+        const movement = getCollisionTransferMotion(
+          sourceLayer,
+          targetLayer,
+          sourceLayer.frameDX ?? 0,
+          sourceLayer.frameDY ?? 0,
+        )
+        if (
+          Math.abs(movement.dx) < SETTINGS.collisionMinMovement &&
+          Math.abs(movement.dy) < SETTINGS.collisionMinMovement
+        ) {
+          return false
+        }
+
+        moveLayerBy(
+          targetLayer,
+          movement.dx * SETTINGS.collisionPushX,
+          movement.dy * SETTINGS.collisionPushY,
+        )
+
+        targetLayer.velocityX += movement.dx * SETTINGS.collisionImpulseX
+        targetLayer.velocityY += movement.dy * SETTINGS.collisionImpulseY
+        return true
+      }
+
+      function resolveLayerCollisions() {
+        if (state.animatedLayers.length < 2) {
+          return
+        }
+
+        for (let index = 0; index < state.animatedLayers.length; index += 1) {
+          for (let otherIndex = index + 1; otherIndex < state.animatedLayers.length; otherIndex += 1) {
+            const first = state.animatedLayers[index]
+            const second = state.animatedLayers[otherIndex]
+            const pairKey = `${first.id}:${second.id}`
+
+            if (!layersOverlap(first, second)) {
+              state.collisionPairs.delete(pairKey)
+              continue
+            }
+
+            separateOverlappingLayers(first, second)
+
+            if (state.collisionPairs.has(pairKey)) {
+              continue
+            }
+
+            const firstMotion = Math.hypot(first.frameDX ?? 0, first.frameDY ?? 0)
+            const secondMotion = Math.hypot(second.frameDX ?? 0, second.frameDY ?? 0)
+            let didCollide = false
+
+            if (firstMotion >= secondMotion) {
+              didCollide = applyCollisionTransfer(first, second) || didCollide
+            }
+
+            if (secondMotion >= firstMotion) {
+              didCollide = applyCollisionTransfer(second, first) || didCollide
+            }
+
+            if (didCollide) {
+              state.collisionPairs.add(pairKey)
+            }
+          }
+        }
+      }
+
+      function getScreenAngle() {
+        if (typeof screen.orientation?.angle === 'number') {
+          return screen.orientation.angle
+        }
+        return 0
+      }
+
+      function normalizeMotionAxes(x, y) {
+        const angle = getScreenAngle()
+
+        if (angle === 90) {
+          return { x: -y, y: x }
+        }
+
+        if (angle === -90 || angle === 270) {
+          return { x: y, y: -x }
+        }
+
+        if (Math.abs(angle) === 180) {
+          return { x: -x, y: -y }
+        }
+
+        return { x, y }
+      }
+
+      function updateMotionTargets(nextX, nextY) {
+        state.motion.targetX = clamp(nextX, -SETTINGS.motionMaxForceX, SETTINGS.motionMaxForceX)
+        state.motion.targetY = clamp(nextY, -SETTINGS.motionMaxForceY, SETTINGS.motionMaxForceY)
+      }
+
+      function handleDeviceMotion(event) {
+        if (!SETTINGS.motionEnabled) {
+          return
+        }
+
+        const acceleration = event.acceleration
+        const rawX = acceleration?.x ?? 0
+        const rawY = acceleration?.y ?? 0
+        const normalized = normalizeMotionAxes(rawX, rawY)
+        const rotationGamma = event.rotationRate?.gamma ?? 0
+        const rotationBeta = event.rotationRate?.beta ?? 0
+        const nextX =
+          applyDeadzone(normalized.x, SETTINGS.motionDeadzone) +
+          rotationGamma * SETTINGS.motionRotationForceX
+        const nextY =
+          applyDeadzone(normalized.y, SETTINGS.motionDeadzone) +
+          rotationBeta * SETTINGS.motionRotationForceY
+
+        updateMotionTargets(nextX, nextY)
+      }
+
+      function addMotionListeners() {
+        if (state.motion.listening || !SETTINGS.motionEnabled) {
+          return
+        }
+
+        window.addEventListener('devicemotion', handleDeviceMotion)
+        state.motion.listening = true
+      }
+
+      async function ensureMotionPermission() {
+        if (!SETTINGS.motionEnabled || state.motion.permissionRequested) {
+          return
+        }
+
+        state.motion.permissionRequested = true
+
+        if (
+          typeof DeviceMotionEvent !== 'undefined' &&
+          typeof DeviceMotionEvent.requestPermission === 'function'
+        ) {
+          try {
+            const permission = await DeviceMotionEvent.requestPermission()
+            if (permission === 'granted') {
+              addMotionListeners()
+            }
+          } catch (error) {
+            console.error(error)
+          }
+          return
+        }
+
+        addMotionListeners()
+      }
+
+      function driveLayer(layer, dx, dy, pointerId = null, positionLerp = SETTINGS.dragPositionLerp) {
+        const previousOffsetX = layer.offsetX
+        const previousOffsetY = layer.offsetY
+        const twist = dy * SETTINGS.dragTwist
+        const maxMoveX = layer.maxMoveX
+        const maxMoveY = layer.maxMoveY
+        const targetOffsetX = clamp(layer.offsetX + dx * SETTINGS.dragPullX + twist, -maxMoveX, maxMoveX)
+        const targetOffsetY = clamp(layer.offsetY + dy * SETTINGS.dragPullY, -maxMoveY, maxMoveY)
+        layer.offsetX = lerp(layer.offsetX, targetOffsetX, positionLerp)
+        layer.offsetY = lerp(layer.offsetY, targetOffsetY, positionLerp)
+        const appliedDX = layer.offsetX - previousOffsetX
+        const appliedDY = layer.offsetY - previousOffsetY
+        layer.velocityX = 0
+        layer.velocityY = 0
+        layer.visualVelocityX = lerp(layer.visualVelocityX, 0, SETTINGS.visualVelocityLerp)
+        layer.visualVelocityY = lerp(layer.visualVelocityY, 0, SETTINGS.visualVelocityLerp)
+        layer.rotationVelocityX = lerp(layer.rotationVelocityX, getRotationTargetX(layer), SETTINGS.visualVelocityLerp)
+
+        if (pointerId !== null) {
+          layer.drivenByPointerId = pointerId
+          layer.drivenDX = dx
+          layer.drivenDY = dy
+        }
+
+        return {
+          dx: appliedDX,
+          dy: appliedDY,
+        }
+      }
+
+      function stopPointer(event) {
+        const pointer = state.pointers.get(event.pointerId)
+
+        if (!pointer) {
+          return
+        }
+
+        const directLayer = getLayerById(pointer.layerId)
+        if (directLayer) {
+          applyReleaseToLayer(directLayer, pointer.dx, pointer.dy)
+        }
+
+        for (const layer of state.animatedLayers) {
+          if (layer.drivenByPointerId === event.pointerId && layer.id !== pointer.layerId) {
+            applyReleaseToLayer(layer, layer.drivenDX, layer.drivenDY)
+            layer.drivenByPointerId = null
+            layer.drivenDX = 0
+            layer.drivenDY = 0
+          }
+        }
+
+        state.pointers.delete(event.pointerId)
+        if (event && canvas.hasPointerCapture(event.pointerId)) {
+          canvas.releasePointerCapture(event.pointerId)
+        }
+      }
+
+      function updateVisualVelocity(layer) {
+        layer.visualVelocityX = lerp(layer.visualVelocityX, layer.velocityX, SETTINGS.visualVelocityLerp)
+        layer.visualVelocityY = lerp(layer.visualVelocityY, layer.velocityY, SETTINGS.visualVelocityLerp)
+        layer.rotationVelocityX = lerp(layer.rotationVelocityX, getRotationTargetX(layer), SETTINGS.visualVelocityLerp)
+      }
+
+      canvas.addEventListener('pointerdown', (event) => {
+        if (!state.scale) {
+          return
+        }
+
+        ensureMotionPermission()
+
+        const sourcePosition = eventSourcePosition(event)
+        const targetLayer = getTopmostHitLayer(sourcePosition)
+
+        if (!targetLayer || isLayerDirectlyGrabbed(targetLayer.id)) {
+          return
+        }
+
+        state.pointers.set(event.pointerId, {
+          id: event.pointerId,
+          layerId: targetLayer.id,
+          x: sourcePosition.x,
+          y: sourcePosition.y,
+          dx: 0,
+          dy: 0,
+        })
+
+        canvas.setPointerCapture(event.pointerId)
+      })
+
+      canvas.addEventListener('pointermove', (event) => {
+        const pointer = state.pointers.get(event.pointerId)
+
+        if (!pointer || !state.scale) {
+          return
+        }
+
+        const nextPosition = eventSourcePosition(event)
+        const dx = nextPosition.x - pointer.x
+        const dy = nextPosition.y - pointer.y
+        pointer.x = nextPosition.x
+        pointer.y = nextPosition.y
+
+        const layer = getLayerById(pointer.layerId)
+        if (!layer) {
+          return
+        }
+
+        const appliedDirect = driveLayer(layer, dx, dy)
+        pointer.dx = appliedDirect.dx
+        pointer.dy = appliedDirect.dy
+
+        for (const otherLayer of state.animatedLayers) {
+          if (otherLayer.id === layer.id || isLayerDirectlyGrabbed(otherLayer.id, event.pointerId)) {
+            continue
+          }
+
+          const collision = getCollisionState(layer, otherLayer)
+          if (collision.overlaps) {
+            if (otherLayer.drivenByPointerId !== event.pointerId) {
+              otherLayer.velocityX = 0
+              otherLayer.velocityY = 0
+              otherLayer.frameDX = 0
+              otherLayer.frameDY = 0
+            }
+
+            const drivenMotion = getDrivenMotion(
+              layer,
+              otherLayer,
+              appliedDirect.dx,
+              appliedDirect.dy,
+            )
+            const appliedDriven = driveLayer(
+              otherLayer,
+              drivenMotion.dx,
+              drivenMotion.dy,
+              event.pointerId,
+              SETTINGS.dragPositionLerp,
+            )
+            otherLayer.drivenDX = appliedDriven.dx
+            otherLayer.drivenDY = appliedDriven.dy
+            separateDraggingLayers(layer, otherLayer, event.pointerId)
+          } else if (otherLayer.drivenByPointerId === event.pointerId) {
+            otherLayer.drivenByPointerId = null
+            otherLayer.drivenDX = 0
+            otherLayer.drivenDY = 0
+            otherLayer.frameDX = 0
+            otherLayer.frameDY = 0
+            otherLayer.velocityX = 0
+            otherLayer.velocityY = 0
+          }
+        }
+      })
+
+      canvas.addEventListener('pointerup', stopPointer)
+      canvas.addEventListener('pointercancel', stopPointer)
+
+      function applyMotionToLayers(delta) {
+        if (!SETTINGS.motionEnabled) {
+          return
+        }
+
+        const dt = Math.min(delta / SETTINGS.deltaNormalization, SETTINGS.maxDeltaScale)
+        state.motion.currentX = lerp(state.motion.currentX, state.motion.targetX, SETTINGS.motionSmoothing)
+        state.motion.currentY = lerp(state.motion.currentY, state.motion.targetY, SETTINGS.motionSmoothing)
+
+        for (const layer of state.animatedLayers) {
+          if (isLayerDirectlyGrabbed(layer.id) || layer.drivenByPointerId !== null) {
+            continue
+          }
+
+          const twist = state.motion.currentY * SETTINGS.motionTwist
+          layer.velocityX += state.motion.currentX * SETTINGS.motionImpulseX * dt + twist
+          layer.velocityY += state.motion.currentY * SETTINGS.motionImpulseY * dt
+        }
+      }
+
+      function updateLayers(delta) {
+        const dt = Math.min(delta / SETTINGS.deltaNormalization, SETTINGS.maxDeltaScale)
+
+        for (const layer of state.animatedLayers) {
+          layer.frameDX = 0
+          layer.frameDY = 0
+
+          if (isLayerDirectlyGrabbed(layer.id) || layer.drivenByPointerId !== null) {
+            continue
+          }
+
+          layer.velocityX += -layer.offsetX * SETTINGS.springX * dt
+          layer.velocityY += -layer.offsetY * SETTINGS.springY * dt
+
+          layer.velocityX *= Math.pow(SETTINGS.dampingX, dt)
+          layer.velocityY *= Math.pow(SETTINGS.dampingY, dt)
+
+          const maxMoveX = layer.maxMoveX
+          const maxMoveY = layer.maxMoveY
+          const previousOffsetX = layer.offsetX
+          const previousOffsetY = layer.offsetY
+          const targetOffsetX = clamp(layer.offsetX + layer.velocityX * dt, -maxMoveX, maxMoveX)
+          const targetOffsetY = clamp(layer.offsetY + layer.velocityY * dt, -maxMoveY, maxMoveY)
+          layer.offsetX = lerp(layer.offsetX, targetOffsetX, SETTINGS.physicsPositionLerp)
+          layer.offsetY = lerp(layer.offsetY, targetOffsetY, SETTINGS.physicsPositionLerp)
+          layer.frameDX = layer.offsetX - previousOffsetX
+          layer.frameDY = layer.offsetY - previousOffsetY
+
+          if (Math.abs(layer.offsetX) === maxMoveX) {
+            layer.velocityX = 0
+          }
+
+          if (Math.abs(layer.offsetY) === maxMoveY) {
+            layer.velocityY = 0
+          }
+
+          updateVisualVelocity(layer)
+        }
+
+        resolveLayerCollisions()
+      }
+
+      function getLayerControlPoint(layer) {
+        const localPoint = {
+          x: layer.image.width * layer.controlPointX + layer.offsetX,
+          y: layer.image.height * layer.controlPointY + layer.offsetY,
+        }
+        const pivot = {
+          x: layer.image.width * layer.rotationPivotX,
+          y: layer.image.height * layer.rotationPivotY,
+        }
+        const rotation = getLayerRotation(layer)
+        const rotated = rotatePoint(localPoint, pivot, rotation)
+
+        return {
+          x: layer.x + rotated.x,
+          y: layer.y + rotated.y,
+        }
+      }
+
+      function rotatePoint(point, pivot, angle) {
+        const dx = point.x - pivot.x
+        const dy = point.y - pivot.y
+        const cos = Math.cos(angle)
+        const sin = Math.sin(angle)
+
+        return {
+          x: pivot.x + dx * cos - dy * sin,
+          y: pivot.y + dx * sin + dy * cos,
+        }
+      }
+
+      function sourceToScreen(point) {
+        return {
+          x: state.offsetX + point.x * state.scale,
+          y: state.offsetY + point.y * state.scale,
+        }
+      }
+
+      function hasAnyDebugOverlay() {
+        return (
+          SETTINGS.debugShowContour ||
+          SETTINGS.debugShowCollisionShape ||
+          SETTINGS.debugShowSlices ||
+          SETTINGS.debugShowControlPoint ||
+          SETTINGS.debugShowRotationPivot
+        )
+      }
+
+      function getWarpMetrics(layer, row) {
+        const { image } = layer
+        const rows = SETTINGS.meshRows
+        const sliceHeight = image.height / rows
+        const controlX = image.width * layer.controlPointX
+        const controlY = image.height * layer.controlPointY
+        const widthStretch = layer.widthStretch ?? SETTINGS.widthStretch
+        const heightSquash = layer.heightSquash ?? SETTINGS.heightSquash
+        const downwardOffsetY = Math.max(layer.offsetY, 0)
+        const speedY = Math.abs(layer.visualVelocityY)
+        const stretch = clamp(
+          downwardOffsetY * widthStretch,
+          0,
+          0.18,
+        )
+        const heightCompression = clamp(
+          -stretch * 0.35 - speedY * heightSquash * 0.18,
+          -0.06,
+          0.08,
+        )
+        const sourceY = row * sliceHeight
+        const sourceBottom = row === rows - 1 ? image.height : (row + 1) * sliceHeight
+        const sourceOverlap = row === rows - 1 ? 0 : SETTINGS.sliceOverlap
+        const drawSourceY = row === 0 ? 0 : Math.max(0, sourceY - sourceOverlap)
+        const drawSourceHeight = Math.min(image.height - drawSourceY, sourceBottom - drawSourceY + sourceOverlap)
+        const middleY = sourceY + sliceHeight / 2
+
+        let follow
+        let verticalFollow
+
+        if (middleY <= controlY) {
+          const t = controlY === 0 ? 1 : middleY / controlY
+          follow = lerp(SETTINGS.topFollow, 1, t ** 1.25)
+          verticalFollow = lerp(SETTINGS.topFollow, 1, t ** 1.4)
+        } else {
+          const remaining = Math.max(image.height - controlY, 1)
+          const t = (middleY - controlY) / remaining
+          follow = lerp(1, layer.bottomFollow, t ** 1.35)
+          verticalFollow = lerp(1, layer.bottomFollow, t ** 1.5)
+        }
+
+        const localOffsetX =
+          layer.offsetX * follow +
+          layer.visualVelocityX * SETTINGS.swayFromVelocity * follow
+        const localOffsetY = layer.offsetY * verticalFollow
+        const localScaleX = 1 + stretch * follow
+        const localScaleY = 1 + heightCompression * verticalFollow
+        const destinationWidth = image.width * localScaleX
+        const destinationX = controlX + localOffsetX - controlX * localScaleX
+
+        return {
+          image,
+          drawSourceY,
+          drawSourceHeight,
+          sourceY,
+          localOffsetX,
+          localOffsetY,
+          localScaleY,
+          destinationWidth,
+          destinationX,
+        }
+      }
+
+      function getWarpSlices(layer) {
+        const slices = []
+        let previousBottom = 0
+        const anchorMetrics = getWarpMetrics(layer, 0)
+        const anchorOffsetX = anchorMetrics.destinationX
+        const anchorOffsetY = anchorMetrics.localOffsetY
+        const anchorScaleX = anchorMetrics.destinationWidth / anchorMetrics.image.width
+        const topEdgeAnchor = clamp(SETTINGS.topEdgeAnchor ?? 0, 0, 1)
+
+        for (let row = 0; row < SETTINGS.meshRows; row += 1) {
+          const metrics = getWarpMetrics(layer, row)
+          const anchoredDestinationX = (metrics.destinationX - anchorOffsetX) / anchorScaleX
+          const anchoredDestinationWidth = metrics.destinationWidth / anchorScaleX
+          const anchoredDestinationTop =
+            metrics.sourceY + (metrics.localOffsetY - anchorOffsetY) - (row === 0 ? 0 : SETTINGS.sliceOverlap)
+          const rawDestinationTop = lerp(
+            metrics.sourceY + metrics.localOffsetY - (row === 0 ? 0 : SETTINGS.sliceOverlap),
+            anchoredDestinationTop,
+            topEdgeAnchor,
+          )
+          const destinationTop =
+            row === 0 ? rawDestinationTop : Math.min(rawDestinationTop, previousBottom - SETTINGS.sliceOverlap)
+          const destinationHeight =
+            metrics.drawSourceHeight * metrics.localScaleY +
+            (row === SETTINGS.meshRows - 1 ? SETTINGS.sliceOverlap : SETTINGS.sliceOverlap * 2)
+          previousBottom = destinationTop + destinationHeight
+
+          slices.push({
+            ...metrics,
+            row,
+            destinationX: lerp(metrics.destinationX, anchoredDestinationX, topEdgeAnchor),
+            destinationWidth: lerp(metrics.destinationWidth, anchoredDestinationWidth, topEdgeAnchor),
+            destinationTop,
+            destinationHeight,
+          })
+        }
+
+        return slices
+      }
+
+      function drawWarpedLayer(context, layer, options = {}) {
+        const { image } = layer
+        const pivotX = image.width * layer.rotationPivotX
+        const pivotY = image.height * layer.rotationPivotY
+        const baseRotation = getLayerRotation(layer)
+        const {
+          alpha = 1,
+          drawImages = true,
+        } = options
+
+        context.save()
+        context.translate(layer.x + pivotX, layer.y + pivotY)
+        context.rotate(baseRotation)
+        context.translate(-pivotX, -pivotY)
+        context.globalAlpha = alpha
+
+        for (const slice of getWarpSlices(layer)) {
+          if (drawImages) {
+            context.drawImage(
+              image,
+              0,
+              slice.drawSourceY,
+              image.width,
+              slice.drawSourceHeight,
+              slice.destinationX,
+              slice.destinationTop,
+              slice.destinationWidth,
+              slice.destinationHeight,
+            )
+          }
+        }
+
+        context.restore()
+      }
+
+      function drawDebugOverlay() {
+        if (!hasAnyDebugOverlay()) {
+          return
+        }
+
+        const markerRadius = Math.max(3, 6 * state.scale)
+
+        for (const layer of state.animatedLayers) {
+          const image = layer.image
+          const pivot = {
+            x: layer.x + image.width * layer.rotationPivotX,
+            y: layer.y + image.height * layer.rotationPivotY,
+          }
+          const controlPoint = getLayerControlPoint(layer)
+          const rotation = getLayerRotation(layer)
+          const localPivot = { x: image.width * layer.rotationPivotX, y: image.height * layer.rotationPivotY }
+          const slices = getWarpSlices(layer)
+
+          if (SETTINGS.debugShowSlices) {
+            ctx.strokeStyle = 'rgb(0 0 0 / 0.5)'
+            ctx.lineWidth = Math.max(1, state.scale)
+
+            for (const slice of slices) {
+              const localTopLeft = { x: slice.destinationX, y: slice.destinationTop }
+              const localTopRight = {
+                x: slice.destinationX + slice.destinationWidth,
+                y: slice.destinationTop,
+              }
+              const rotatedTopLeft = rotatePoint(
+                localTopLeft,
+                localPivot,
+                rotation,
+              )
+              const rotatedTopRight = rotatePoint(
+                localTopRight,
+                localPivot,
+                rotation,
+              )
+              const worldTopLeft = sourceToScreen({ x: layer.x + rotatedTopLeft.x, y: layer.y + rotatedTopLeft.y })
+              const worldTopRight = sourceToScreen({ x: layer.x + rotatedTopRight.x, y: layer.y + rotatedTopRight.y })
+
+              ctx.beginPath()
+              ctx.moveTo(worldTopLeft.x, worldTopLeft.y)
+              ctx.lineTo(worldTopRight.x, worldTopRight.y)
+              ctx.stroke()
+            }
+          }
+
+          if (SETTINGS.debugShowContour) {
+            const { leftPoints, rightPoints } = getLayerOutlineData(layer)
+            const screenLeftPoints = leftPoints.map(sourceToScreen)
+            const screenRightPoints = rightPoints.map(sourceToScreen)
+
+            if (screenLeftPoints.length > 1 && screenRightPoints.length > 1) {
+              ctx.strokeStyle = 'rgb(0 0 0 / 0.5)'
+              ctx.lineWidth = Math.max(2, state.scale * 1.3)
+              ctx.beginPath()
+              ctx.moveTo(screenLeftPoints[0].x, screenLeftPoints[0].y)
+              for (const point of screenLeftPoints.slice(1)) {
+                ctx.lineTo(point.x, point.y)
+              }
+              for (const point of [...screenRightPoints].reverse()) {
+                ctx.lineTo(point.x, point.y)
+              }
+              ctx.closePath()
+              ctx.stroke()
+            }
+          }
+
+          if (SETTINGS.debugShowCollisionShape) {
+            const collisionPolygon = getLayerCollisionPolygon(layer).map(sourceToScreen)
+
+            if (collisionPolygon.length > 2) {
+              ctx.strokeStyle = 'rgb(255 0 0 / 0.55)'
+              ctx.lineWidth = Math.max(2, state.scale * 1.2)
+              ctx.beginPath()
+              ctx.moveTo(collisionPolygon[0].x, collisionPolygon[0].y)
+              for (const point of collisionPolygon.slice(1)) {
+                ctx.lineTo(point.x, point.y)
+              }
+              ctx.closePath()
+              ctx.stroke()
+            }
+          }
+
+          if (SETTINGS.debugShowControlPoint) {
+            const world = sourceToScreen(controlPoint)
+            ctx.fillStyle = 'rgb(0 0 0 / 1)'
+            ctx.beginPath()
+            ctx.arc(world.x, world.y, markerRadius, 0, Math.PI * 2)
+            ctx.fill()
+          }
+
+          if (SETTINGS.debugShowRotationPivot) {
+            const rotatedPivot = sourceToScreen(pivot)
+            ctx.strokeStyle = 'rgb(0 0 0 / 1)'
+            ctx.lineWidth = Math.max(2, state.scale * 2)
+            ctx.beginPath()
+            ctx.arc(rotatedPivot.x, rotatedPivot.y, markerRadius * 0.9, 0, Math.PI * 2)
+            ctx.stroke()
+          }
+        }
+      }
+
+      function compositeFrame() {
+        if (!state.compositeContext || !state.baseImage) {
+          return
+        }
+
+        state.compositeContext.clearRect(0, 0, state.baseImage.width, state.baseImage.height)
+        if (SETTINGS.debugShowImages) {
+          state.compositeContext.drawImage(state.baseImage, 0, 0)
+        }
+
+        for (const layer of state.animatedLayers) {
+          drawWarpedLayer(state.compositeContext, layer, {
+            drawImages: SETTINGS.debugShowImages,
+          })
+        }
+      }
+
+      function draw() {
+        if (!state.compositeCanvas) {
+          return
+        }
+
+        ctx.clearRect(0, 0, state.width, state.height)
+        ctx.drawImage(state.compositeCanvas, state.offsetX, state.offsetY, state.drawWidth, state.drawHeight)
+        drawDebugOverlay()
+
+        if (!state.hasDrawn) {
+          state.hasDrawn = true
+          canvas.classList.add('is-ready')
+        }
+      }
+
+      function frame(time) {
+        resizeCanvas()
+        applyMotionToLayers(time - state.lastTime)
+        updateLayers(time - state.lastTime)
+        state.lastTime = time
+        compositeFrame()
+        draw()
+        requestAnimationFrame(frame)
+      }
+
+      function createAnimatedLayer(id, config, image) {
+        return {
+          id,
+          ...config,
+          image,
+          offsetX: 0,
+          offsetY: 0,
+          velocityX: 0,
+          velocityY: 0,
+          visualVelocityX: 0,
+          visualVelocityY: 0,
+          rotationVelocityX: 0,
+          frameDX: 0,
+          frameDY: 0,
+          drivenByPointerId: null,
+          drivenDX: 0,
+          drivenDY: 0,
+        }
+      }
+
+      async function setup() {
+        const loadingOverlay = createLoadingOverlay()
+        const sources = [LAYERS.base.src, ...INTERACTIVE_LAYER_ENTRIES.map(([, config]) => config.src)]
+        const perImageWeight = 1 / sources.length
+        const updateLoading = (imageIndex, progress) => {
+          const normalized = (imageIndex + clamp(progress, 0, 1)) * perImageWeight
+          setLoadingProgress(loadingOverlay, normalized)
+        }
+
+        try {
+          const baseImage = await loadImage(LAYERS.base.src, (progress) => {
+            updateLoading(0, progress)
+          })
+          const interactiveImages = []
+
+          for (const [imageIndex, [, config]] of INTERACTIVE_LAYER_ENTRIES.entries()) {
+            interactiveImages.push(
+              await loadImage(config.src, (progress) => {
+                updateLoading(imageIndex + 1, progress)
+              }),
+            )
+          }
+
+          state.baseImage = baseImage
+          state.compositeCanvas = createCompositeCanvas(baseImage.width, baseImage.height)
+          state.compositeContext = state.compositeCanvas.getContext('2d')
+          state.compositeContext.imageSmoothingEnabled = true
+          state.compositeContext.imageSmoothingQuality = 'high'
+          ctx.imageSmoothingEnabled = true
+          ctx.imageSmoothingQuality = 'high'
+          state.animatedLayers = INTERACTIVE_LAYER_ENTRIES.map(([id, config], index) =>
+            createAnimatedLayer(id, config, interactiveImages[index]),
+          )
+
+          resizeCanvas()
+          addMotionListeners()
+          compositeFrame()
+          draw()
+          requestAnimationFrame(frame)
+          removeLoadingOverlay(loadingOverlay)
+        } catch (error) {
+          console.error(error)
+          removeLoadingOverlay(loadingOverlay)
+        }
+      }
+
+      window.addEventListener("load", () => {
+        document.body.classList.remove("is-preloading");
+      });
+
+      window.addEventListener("resize", () => {
+        resizeCanvas()
+        draw()
+      })
+
+      setup()
+    </script>
+  </body>
+</html>
