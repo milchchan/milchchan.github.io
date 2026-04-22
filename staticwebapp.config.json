@@ -26,6 +26,14 @@
             "rewrite": "/player/index.html"
         },
         {
+            "route": "/radio",
+            "rewrite": "/radio/index.html"
+        },
+        {
+            "route": "/milk",
+            "rewrite": "/milk/index.html"
+        },
+        {
             "route": "/parallax",
             "rewrite": "/parallax/index.html"
         },
@@ -36,10 +44,6 @@
         {
             "route": "/chewnew",
             "rewrite": "/parallax/index.html"
-        },
-        {
-            "route": "/milk",
-            "rewrite": "/milk/index.html"
         }
     ],
     "navigationFallback": {
