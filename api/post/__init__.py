@@ -24,6 +24,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if content_type.startswith('multipart/form-data;') and 'boundary=' in content_type:
                 boundary = f'--{content_type.split("boundary=")[-1]}'.encode()
                 image_data = None
+                audio_data = None
 
                 for part in req.get_body().split(boundary)[1:-1]:
                     index = part.find(b'\r\n\r\n')
@@ -45,8 +46,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             elif header.startswith(b'Content-Type'):
                                 content_type = header.decode('utf-8').split(':')[1].strip()
 
-                        if name == 'file' and filename is not None and content_type is not None and content_type.startswith('image/'):
-                            image_data = (filename, content_type, content)
+                        if name == 'file' and filename is not None and content_type is not None:
+                            if content_type.startswith('image/'):
+                                image_data = (filename, content_type, content)
+                            elif content_type.startswith('audio/'):
+                                audio_data = (filename, content_type, content)
 
                 if image_data is not None:
                     def resize_image(image, maximum, resample=Image.Resampling.LANCZOS):
@@ -183,6 +187,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     
                                     break
                     
+                    return func.HttpResponse(status_code=503, mimetype='', charset='')
+                
+                elif audio_data is not None:
+                    
+
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
            
         else:
