@@ -25,6 +25,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 boundary = f'--{content_type.split("boundary=")[-1]}'.encode()
                 image_data = None
                 audio_data = None
+                json_data = None
 
                 for part in req.get_body().split(boundary)[1:-1]:
                     index = part.find(b'\r\n\r\n')
@@ -49,8 +50,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if name == 'file' and filename is not None and content_type is not None:
                             if content_type.startswith('image/'):
                                 image_data = (filename, content_type, content)
-                            elif content_type.startswith('audio/'):
-                                audio_data = (filename, content_type, content)
+                            elif content_type in ['audio/wav', 'audio/x-wav']:
+                                audio_data = (filename, 'audio/wav', content)
+                        elif name == 'data':
+                            json_data = json.loads(content)
 
                 if image_data is not None:
                     def resize_image(image, maximum, resample=Image.Resampling.LANCZOS):
@@ -189,8 +192,34 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
                 
-                elif audio_data is not None:
-                    
+                elif audio_data is not None and json_data is not None:
+                    identifier = str(uuid4())
+                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+
+                    with io.BytesIO(audio_data[2]) as buffer:
+                        file_is_exists = True
+                        
+                        try:
+                            s3.head_object(Bucket='uploads', Key=identifier)
+                        except botocore.exceptions.ClientError as e:
+                            if e.response['Error']['Code'] == '404':
+                                file_is_exists = False
+                            else:
+                                raise
+
+                        if file_is_exists:
+                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+                        
+                        s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': audio_data[1]})
+
+                        nsfw = json_data['nsfw'] if 'nsfw' in json_data else False
+                        timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
+                        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                        database = client.get_database_client('Milch')
+                        container = database.get_container_client('Posts')
+                        container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                        
+                        return func.HttpResponse(json.dumps({'id': identifier, 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
 
                     return func.HttpResponse(status_code=503, mimetype='', charset='')
            
