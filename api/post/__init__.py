@@ -212,17 +212,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         
                         s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': audio_data[1]})
 
-                        nsfw = json_data['nsfw'] if 'nsfw' in json_data else False
-                        timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
-                        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
-                        database = client.get_database_client('Milch')
-                        container = database.get_container_client('Posts')
-                        container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
-                        
-                        return func.HttpResponse(json.dumps({'id': identifier, 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
-
-                    return func.HttpResponse(status_code=503, mimetype='', charset='')
-           
+                    nsfw = json_data['nsfw'] if 'nsfw' in json_data else False
+                    timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
+                    client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                    database = client.get_database_client('Milch')
+                    container = database.get_container_client('Posts')
+                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                    
+                    return func.HttpResponse(json.dumps({'id': identifier, 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+        
         else:
             nsfw = json.loads(req.params['nsfw'].lower()) if 'nsfw' in req.params else False
             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
