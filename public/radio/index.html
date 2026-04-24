@@ -823,6 +823,7 @@ const AUDIO_POST_SELECTION_PROBABILITY = new URL(window.location.href).searchPar
 const PROMPT_TEXT_URL = "/radio.txt";
 const VOICE_PROMPT_AUDIO_URL = "/sounds/merku.ja.wav";
 const DEFAULT_VOICE_PROMPT_FILE_NAME = "prompt.wav";
+const SILENT_AUDIO_DATA_URL = "data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQIAAAAAAA==";
 const VISUALIZER_BAR_COUNT = 8;
 const VISUALIZER_WIDTH_RATIO = 0.5;
 const VISUALIZER_HEIGHT_RATIO = 0.5;
@@ -2088,6 +2089,8 @@ window.addEventListener("load", () => {
   let visualizerScales = new Array(VISUALIZER_BAR_COUNT).fill(1);
   let audioObjectUrl = null;
   let audioLoadPromise = null;
+  let audioPlaybackPrimePromise = null;
+  let audioPlaybackPrimePreviousState = null;
   let progressStripePromise = null;
   let generatedAudioBlobs = [];
   let currentAudioBlobIndex = -1;
@@ -2114,6 +2117,7 @@ window.addEventListener("load", () => {
   };
   let loadingStartedAt = 0;
   let releaseStartedAt = 0;
+  let isPrimingAudioPlayback = false;
   let releaseFromScales = new Array(VISUALIZER_BAR_COUNT).fill(1);
   document.body.classList.remove("is-preloading");
 
@@ -2583,6 +2587,63 @@ window.addEventListener("load", () => {
     });
   }
 
+  function restoreAudioPlaybackPrimeState() {
+    if (!isPrimingAudioPlayback) {
+      return;
+    }
+
+    const previousState = audioPlaybackPrimePreviousState ?? {};
+    isPrimingAudioPlayback = false;
+    audio.loop = previousState.loop ?? false;
+    audio.muted = previousState.muted ?? false;
+    audio.preload = previousState.preload ?? "auto";
+    audioPlaybackPrimePreviousState = null;
+  }
+
+  async function primeAudioPlaybackForAutoplay() {
+    if (audio.currentSrc) {
+      return;
+    }
+
+    if (isPrimingAudioPlayback) {
+      await audioPlaybackPrimePromise;
+      return;
+    }
+
+    if (audioContext?.state === "suspended") {
+      await audioContext.resume();
+    }
+
+    const previousIgnorePauseEvent = playbackState.ignorePauseEvent;
+    audioPlaybackPrimePreviousState = {
+      loop: audio.loop,
+      muted: audio.muted,
+      preload: audio.preload,
+    };
+    isPrimingAudioPlayback = true;
+    playbackState.ignorePauseEvent = true;
+    audio.loop = true;
+    audio.muted = true;
+    audio.preload = "auto";
+    audio.src = SILENT_AUDIO_DATA_URL;
+    audio.load();
+
+    audioPlaybackPrimePromise = audio.play()
+      .catch(error => {
+        audio.pause();
+        restoreAudioPlaybackPrimeState();
+        audio.removeAttribute("src");
+        audio.load();
+        throw error;
+      })
+      .finally(() => {
+        playbackState.ignorePauseEvent = previousIgnorePauseEvent;
+        audioPlaybackPrimePromise = null;
+      });
+
+    await audioPlaybackPrimePromise;
+  }
+
   function ensureAudioGraph() {
     if (audioContext) {
       return;
@@ -2610,10 +2671,13 @@ window.addEventListener("load", () => {
     visualizerScales = new Array(VISUALIZER_BAR_COUNT).fill(1);
   }
 
-  function clearCurrentAudio() {
+  function clearCurrentAudio({ keepPlaybackPrime = false } = {}) {
     playbackState.ignorePauseEvent = true;
-    audio.pause();
-    audio.currentTime = 0;
+    if (!keepPlaybackPrime || !isPrimingAudioPlayback) {
+      audio.pause();
+      audio.currentTime = 0;
+      restoreAudioPlaybackPrimeState();
+    }
 
     if (audioObjectUrl) {
       URL.revokeObjectURL(audioObjectUrl);
@@ -2621,8 +2685,10 @@ window.addEventListener("load", () => {
     }
     generatedAudioBlobs = [];
     currentAudioBlobIndex = -1;
-    audio.removeAttribute("src");
-    audio.load();
+    if (!keepPlaybackPrime || !isPrimingAudioPlayback) {
+      audio.removeAttribute("src");
+      audio.load();
+    }
     playbackState.shouldStartPlaybackAfterRelease = false;
   }
 
@@ -2741,7 +2807,10 @@ window.addEventListener("load", () => {
 
     currentAudioBlobIndex = index;
     playbackState.ignorePauseEvent = true;
-    audio.pause();
+    if (!isPrimingAudioPlayback) {
+      audio.pause();
+    }
+    restoreAudioPlaybackPrimeState();
     audio.currentTime = 0;
 
     if (audioObjectUrl) {
@@ -2849,7 +2918,7 @@ window.addEventListener("load", () => {
           await wait(LOADING_DEBUG_HOLD_MS);
         }
 
-        clearCurrentAudio();
+        clearCurrentAudio({ keepPlaybackPrime: autoplay });
         generatedAudioBlobs = generated.audioBlobs;
         currentAudioBlobIndex = -1;
         lastGeneratedTopic = topic;
@@ -2860,6 +2929,7 @@ window.addEventListener("load", () => {
         didLoadSucceed = true;
       } catch (error) {
         progress.fail();
+        clearCurrentAudio();
         setPlaybackState(false);
         playbackState.shouldStartPlaybackAfterRelease = false;
         shake(playbackButton);
@@ -2889,7 +2959,13 @@ window.addEventListener("load", () => {
 
     if (!audio.currentSrc || currentAudioBlobIndex < 0 || playbackState.isLoadingAudio) {
       setPlaybackState(true);
-      await loadNextAudio({ autoplay: true });
+      try {
+        await primeAudioPlaybackForAutoplay();
+        await loadNextAudio({ autoplay: true });
+      } catch (error) {
+        setPlaybackState(false);
+        throw error;
+      }
       return;
     }
 
