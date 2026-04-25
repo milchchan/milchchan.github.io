@@ -1322,6 +1322,9 @@ const CONTROL_BUTTON_SIZE = 48;
 const CONTROL_BUTTON_LEFT = 16;
 const CONTROL_BUTTON_BOTTOM = 16;
 const CONTROL_BUTTON_GROUP_GAP = 16;
+const LOADING_METEOR_POOL_SIZE = 8;
+const LOADING_METEOR_RHYTHM_DELAYS = [0.16, 0.24, 0.62, 0.18, 0.92, 0.28, 0.44, 1.15];
+const REDUCE_MOTION_MEDIA = window.matchMedia?.("(prefers-reduced-motion: reduce)") ?? { matches: false };
 const backgroundTextModifiers = [];
 const backgroundTextBaseWords = [];
 let textMeasurementRevision = 0;
@@ -1349,6 +1352,10 @@ function smoothTowards(current, target, smoothing, deltaTime) {
 
 function lerp(a, b, t) {
   return a + (b - a) * clamp(t, 0, 1);
+}
+
+function randomRange(min, max) {
+  return min + Math.random() * (max - min);
 }
 
 function centerWeightedValue(index, count) {
@@ -2029,7 +2036,255 @@ function drawBackground(ctx, width, height) {
   ctx.clearRect(0, 0, width, height);
 }
 
-function drawVisualizer(maskCtx, width, height, energy, smoothedLevels, visualizerScales, shouldAnimate, textState, deltaTime, backgroundImageCanvas, backgroundImageOpacity, controlsHeight = 0) {
+function createLoadingMeteorState() {
+  return {
+    time: 0,
+    meteors: [],
+    sparkles: [],
+    rhythmIndex: 0,
+    isSpawning: false,
+  };
+}
+
+function nextLoadingMeteorDelay(state, urgent = false) {
+  if (urgent) {
+    return randomRange(0.02, 0.12);
+  }
+
+  const delay = LOADING_METEOR_RHYTHM_DELAYS[state.rhythmIndex % LOADING_METEOR_RHYTHM_DELAYS.length];
+  state.rhythmIndex += 1;
+
+  return delay + randomRange(-0.06, 0.1);
+}
+
+function createLoadingMeteor(state, width, height, delay = randomRange(0.2, 4.5)) {
+  const ratio = window.devicePixelRatio || 1;
+  const baseSize = randomRange(3.2, 5.4);
+  const size = baseSize * ratio;
+  const sizeRatio = (baseSize - 3.2) / (5.4 - 3.2);
+  const speed = randomRange(230, 390) * ratio;
+  const angle = randomRange(Math.PI * 0.7, Math.PI * 0.76);
+
+  return {
+    x: randomRange(width * 0.74, width + 180 * ratio),
+    y: randomRange(-90 * ratio, height * 0.18),
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    size,
+    tail: randomRange(82, 150) * ratio,
+    delay,
+    age: 0,
+    life: randomRange(2.4, 4.2),
+    curve: randomRange(-24, 24) * ratio,
+    rotationSpeed: randomRange(4.9, 5.7) - sizeRatio * randomRange(2.1, 2.8),
+    wobble: randomRange(0.35, 0.75),
+    phase: randomRange(0, Math.PI * 2),
+  };
+}
+
+function startLoadingMeteorShower(state, width, height) {
+  if (REDUCE_MOTION_MEDIA.matches) {
+    return;
+  }
+
+  state.isSpawning = true;
+
+  while (state.meteors.length < LOADING_METEOR_POOL_SIZE) {
+    const delay = state.meteors.length === 0 ? 0 : nextLoadingMeteorDelay(state);
+    state.meteors.push(createLoadingMeteor(state, width, height, delay));
+  }
+}
+
+function stopLoadingMeteorShower(state) {
+  state.isSpawning = false;
+
+  for (let index = state.meteors.length - 1; index >= 0; index -= 1) {
+    if (state.meteors[index].delay > 0) {
+      state.meteors.splice(index, 1);
+    }
+  }
+}
+
+function hasActiveLoadingMeteors(state) {
+  return state.isSpawning || state.meteors.length > 0 || state.sparkles.length > 0;
+}
+
+function spawnLoadingMeteorSparkles(state, x, y, size) {
+  const amount = Math.ceil(size * 0.35);
+
+  for (let index = 0; index < amount; index += 1) {
+    state.sparkles.push({
+      x: x + randomRange(-8, 8),
+      y: y + randomRange(-8, 8),
+      vx: randomRange(-36, 18),
+      vy: randomRange(-26, 22),
+      size: randomRange(0.8, 1.8) * (window.devicePixelRatio || 1),
+      age: 0,
+      life: randomRange(0.38, 0.9),
+    });
+  }
+}
+
+function drawLoadingMeteorTailMask(ctx, meteor, headX, headY, tailX, tailY, fade, normalX, normalY) {
+  const controlX = (headX + tailX) * 0.5 + normalX * meteor.curve * 0.35;
+  const controlY = (headY + tailY) * 0.5 + normalY * meteor.curve * 0.35;
+  const core = ctx.createLinearGradient(headX, headY, tailX, tailY);
+  core.addColorStop(0, `rgba(255, 255, 255, ${0.78 * fade})`);
+  core.addColorStop(0.18, `rgba(255, 255, 255, ${0.4 * fade})`);
+  core.addColorStop(0.7, `rgba(255, 255, 255, ${0.12 * fade})`);
+  core.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+  ctx.strokeStyle = core;
+  ctx.lineWidth = meteor.size * 0.9;
+  ctx.beginPath();
+  ctx.moveTo(headX, headY);
+  ctx.quadraticCurveTo(controlX, controlY, tailX, tailY);
+  ctx.stroke();
+
+  const glow = ctx.createLinearGradient(headX, headY, tailX, tailY);
+  glow.addColorStop(0, `rgba(255, 255, 255, ${0.16 * fade})`);
+  glow.addColorStop(0.46, `rgba(255, 255, 255, ${0.07 * fade})`);
+  glow.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+  ctx.strokeStyle = glow;
+  ctx.lineWidth = meteor.size * 3.5;
+  ctx.beginPath();
+  ctx.moveTo(headX, headY);
+  ctx.quadraticCurveTo(controlX, controlY, tailX, tailY);
+  ctx.stroke();
+}
+
+function drawLoadingMeteorStarMask(ctx, size, alpha) {
+  const starAlpha = clamp(0.38 + alpha * 0.62, 0, 1);
+
+  ctx.fillStyle = `rgba(255, 255, 255, ${starAlpha})`;
+  ctx.strokeStyle = `rgba(255, 255, 255, ${0.72 * starAlpha})`;
+  ctx.lineWidth = clamp(size * 0.08, 0.8, 1.4);
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(0, -size);
+  ctx.bezierCurveTo(size * 0.13, -size * 0.36, size * 0.36, -size * 0.13, size, 0);
+  ctx.bezierCurveTo(size * 0.36, size * 0.13, size * 0.13, size * 0.36, 0, size);
+  ctx.bezierCurveTo(-size * 0.13, size * 0.36, -size * 0.36, size * 0.13, -size, 0);
+  ctx.bezierCurveTo(-size * 0.36, -size * 0.13, -size * 0.13, -size * 0.36, 0, -size);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+}
+
+function drawLoadingMeteorHeadMask(ctx, meteor, x, y, fade, time) {
+  const pulse = 1 + Math.sin(time * 9 + meteor.phase) * 0.08;
+  const radius = meteor.size * pulse;
+  const halo = ctx.createRadialGradient(x, y, 0, x, y, radius * 4.8);
+  halo.addColorStop(0, `rgba(255, 255, 255, ${0.46 * fade})`);
+  halo.addColorStop(0.32, `rgba(255, 255, 255, ${0.16 * fade})`);
+  halo.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(x, y, radius * 4.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(time * meteor.rotationSpeed + meteor.phase);
+  drawLoadingMeteorStarMask(ctx, radius * 3.15, fade);
+  ctx.restore();
+}
+
+function drawLoadingMeteorsMask(ctx, width, height, state, deltaTime) {
+  if (!state || REDUCE_MOTION_MEDIA.matches) {
+    return;
+  }
+
+  const safeDeltaTime = Math.min(Math.max(deltaTime, 0), 0.04);
+  state.time += safeDeltaTime;
+
+  ctx.save();
+  ctx.lineCap = "round";
+
+  let activeCount = 0;
+
+  for (let index = state.meteors.length - 1; index >= 0; index -= 1) {
+    const meteor = state.meteors[index];
+    meteor.delay -= safeDeltaTime;
+
+    if (meteor.delay > 0) {
+      continue;
+    }
+
+    activeCount += 1;
+    meteor.age += safeDeltaTime;
+    meteor.x += meteor.vx * safeDeltaTime;
+    meteor.y += meteor.vy * safeDeltaTime;
+
+    const progress = clamp(meteor.age / meteor.life, 0, 1);
+    const fade = Math.sin(progress * Math.PI);
+    const angle = Math.atan2(meteor.vy, meteor.vx);
+    const normalX = -Math.sin(angle);
+    const normalY = Math.cos(angle);
+    const curveOffset = Math.sin(progress * Math.PI) * meteor.curve;
+    const wobble = Math.sin(state.time * 2.2 * meteor.wobble + meteor.phase) * 1.8;
+    const headX = meteor.x + normalX * curveOffset + wobble;
+    const headY = meteor.y + normalY * curveOffset;
+    const tailX = headX - Math.cos(angle) * meteor.tail;
+    const tailY = headY - Math.sin(angle) * meteor.tail;
+
+    drawLoadingMeteorTailMask(ctx, meteor, headX, headY, tailX, tailY, fade, normalX, normalY);
+    drawLoadingMeteorHeadMask(ctx, meteor, headX, headY, fade, state.time);
+
+    if (Math.random() > 0.72) {
+      spawnLoadingMeteorSparkles(state, headX, headY, meteor.size);
+    }
+
+    if (meteor.age > meteor.life || headX < -meteor.tail - 80 || headY > height + meteor.tail + 80) {
+      activeCount -= 1;
+
+      if (state.isSpawning) {
+        Object.assign(meteor, createLoadingMeteor(state, width, height, nextLoadingMeteorDelay(state, activeCount <= 0)));
+      } else {
+        state.meteors.splice(index, 1);
+      }
+    }
+  }
+
+  if (state.isSpawning && activeCount === 0) {
+    const soonestMeteor = state.meteors.reduce((soonest, meteor) => {
+      if (!soonest || meteor.delay < soonest.delay) {
+        return meteor;
+      }
+
+      return soonest;
+    }, null);
+
+    if (soonestMeteor) {
+      soonestMeteor.delay = 0;
+    }
+  }
+
+  for (let index = state.sparkles.length - 1; index >= 0; index -= 1) {
+    const sparkle = state.sparkles[index];
+    sparkle.age += safeDeltaTime;
+    sparkle.x += sparkle.vx * safeDeltaTime;
+    sparkle.y += sparkle.vy * safeDeltaTime;
+    sparkle.vy += 12 * safeDeltaTime;
+
+    const alpha = 1 - sparkle.age / sparkle.life;
+    if (alpha <= 0) {
+      state.sparkles.splice(index, 1);
+      continue;
+    }
+
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(sparkle.x, sparkle.y, sparkle.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function drawVisualizer(maskCtx, width, height, energy, smoothedLevels, visualizerScales, shouldAnimate, textState, deltaTime, backgroundImageCanvas, backgroundImageOpacity, controlsHeight = 0, meteorState = null) {
   const barCount = smoothedLevels.length || VISUALIZER_BAR_COUNT;
   const visualizerWidth = clamp(width * VISUALIZER_WIDTH_RATIO, 24, width);
   const visualizerHeight = clamp(height * VISUALIZER_HEIGHT_RATIO, 24, height);
@@ -2076,6 +2331,7 @@ function drawVisualizer(maskCtx, width, height, energy, smoothedLevels, visualiz
   }
 
   drawBottomLeftScrollingTextMask(maskCtx, maskCtx.canvas, deltaTime, textState, controlsHeight);
+  drawLoadingMeteorsMask(maskCtx, width, height, meteorState, deltaTime);
 
   maskCtx.globalCompositeOperation = "source-atop";
   maskCtx.fillStyle = VISUALIZER_FILL_STYLE;
@@ -2200,6 +2456,7 @@ window.addEventListener("load", () => {
   const audio = new Audio();
   const renderBuffer = createRenderBuffer();
   const backgroundRenderBuffer = createRenderBuffer();
+  const loadingMeteorState = createLoadingMeteorState();
 
   let audioContext = null;
   let analyser = null;
@@ -3128,16 +3385,21 @@ window.addEventListener("load", () => {
               getActiveVoicePromptAudio(),
             ]);
 
-            return await generateAudioSequence(
-              topic,
-              promptText,
-              activeVoicePromptAudio.blob,
-              activeVoicePromptAudio.fileName,
-              rate => {
-                progress.update(rate);
-              },
-              conversationHistory,
-            );
+            startLoadingMeteorShower(loadingMeteorState, canvas.width, canvas.height);
+            try {
+              return await generateAudioSequence(
+                topic,
+                promptText,
+                activeVoicePromptAudio.blob,
+                activeVoicePromptAudio.fileName,
+                rate => {
+                  progress.update(rate);
+                },
+                conversationHistory,
+              );
+            } finally {
+              stopLoadingMeteorShower(loadingMeteorState);
+            }
           })();
 
         if (LOADING_DEBUG_HOLD_MS > 0) {
@@ -3361,7 +3623,8 @@ window.addEventListener("load", () => {
       || isAudioPlaying
       || energy > VISUALIZER_REST_THRESHOLD
       || displayedLevels.some(level => level > VISUALIZER_REST_THRESHOLD)
-      || visualizerScales.some(scale => Math.abs(scale - 1) > VISUALIZER_REST_THRESHOLD);
+      || visualizerScales.some(scale => Math.abs(scale - 1) > VISUALIZER_REST_THRESHOLD)
+      || hasActiveLoadingMeteors(loadingMeteorState);
 
     const backgroundImageCanvas = backgroundImageOpacity > 0.001 && BACKGROUND_IMAGE_OPACITY > 0
       ? backgroundRenderBuffer.canvas
@@ -3383,6 +3646,7 @@ window.addEventListener("load", () => {
       backgroundImageCanvas,
       backgroundImageOpacity,
       CONTROL_BUTTON_SIZE,
+      loadingMeteorState,
     );
     context.drawImage(renderBuffer.canvas, 0, 0, width, height);
     updateTextRandomizerButtonState();
