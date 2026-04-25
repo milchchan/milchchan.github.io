@@ -188,10 +188,6 @@
         background: rgb(255 255 255 / 0.75)
       }
 
-      .control-button:first-of-type>i {
-        color: #000000;
-      }
-
       .control-button:not(.is-loading):nth-last-of-type(3)>i:first-child {
         opacity: 1;
       }
@@ -240,7 +236,8 @@
         position: absolute;
         font-size: 1rem;
         line-height: 1;
-        transition: .5s;
+        color: currentColor;
+        transition: opacity 500ms ease;
       }
 
       .playback-control-button {
@@ -729,10 +726,6 @@
 
         .floating-panel-list-item-main:hover:not(:disabled) .floating-panel-list-item-content,
         .floating-panel-button:hover:not(:disabled) {
-          color: #00d6ff;
-        }
-
-        .control-button:hover:first-of-type:not(:disabled)>i {
           color: #00d6ff;
         }
 
