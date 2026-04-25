@@ -264,11 +264,15 @@
       }
 
       .floating-panel {
+        --panel-padding: 16px;
+        --panel-max-height: min(60vh, 520px);
         position: absolute;
         left: 16px;
         bottom: 80px;
         z-index: 3;
-        padding: 16px;
+        width: min(420px, calc(100vw - 32px));
+        max-height: var(--panel-max-height);
+        padding: 0;
         border-radius: 24px;
         background: rgb(255 255 255 / 0.9);
         backdrop-filter: blur(16px);
@@ -295,35 +299,30 @@
           visibility 0s linear 0s;
       }
 
-      .settings-panel {
-        width: min(360px, calc(100vw - 32px));
-      }
-
-      .news-panel {
-        padding: 0 !important;
-        width: min(420px, calc(100vw - 32px));
-        max-height: min(60vh, 520px);
-      }
-
-      .news-scroll-area {
-        max-height: calc(min(60vh, 520px) - 32px);
+      .floating-panel-scroll-area {
+        max-height: var(--panel-max-height);
         overflow-y: auto;
         overflow-x: hidden;
       }
 
-      .news-scroll-inner {
-        padding: 16px;
+      .floating-panel-scroll-inner {
+        padding: var(--panel-padding);
       }
 
-      .news-panel-footer {
+      .floating-panel-footer,
+      .floating-panel-field.has-separator {
         position: relative;
-        display: flex;
-        justify-content: flex-start;
         margin-top: 16px;
         padding-top: 16px;
       }
 
-      .news-panel-footer::before {
+      .floating-panel-footer {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      .floating-panel-footer::before,
+      .floating-panel-field.has-separator::before {
         content: "";
         position: absolute;
         left: -16px;
@@ -334,17 +333,25 @@
         background: hsl(0, 0%, 93%);
       }
 
-      .news-reload-button {
+      .floating-panel-footer-button {
         align-self: flex-start;
       }
 
-      .news-list {
+      .floating-panel-list {
         display: flex;
         flex-direction: column;
         gap: 10px;
       }
 
-      .news-item {
+      .floating-panel-empty {
+        margin: 0;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.0rem;
+        line-height: 1.5rem;
+        color: rgb(0 0 0 / 0.5);
+      }
+
+      .floating-panel-list-item {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 8px;
@@ -353,7 +360,7 @@
         background: rgb(244 244 242 / 0.75);
       }
 
-      .news-item-main {
+      .floating-panel-list-item-main {
         min-width: 0;
         border: 0;
         padding: 0;
@@ -363,11 +370,11 @@
         cursor: pointer;
       }
 
-      .news-item-main:disabled {
+      .floating-panel-list-item-main:disabled {
         cursor: default;
       }
 
-      .news-item-content {
+      .floating-panel-list-item-content {
         display: block;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1.0rem;
@@ -377,7 +384,7 @@
         transition: color 500ms ease;
       }
 
-      .news-item-time {
+      .floating-panel-list-item-time {
         display: block;
         margin-top: 6px;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
@@ -386,7 +393,88 @@
         color: rgb(0 0 0 / 0.5);
       }
 
-      .news-item-link {
+      .floating-panel-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .floating-panel-field:first-of-type {
+        border-radius: 16px;
+        background: rgb(244 244 242 / 0.75);
+      }
+
+      .floating-panel-field:nth-of-type(2) {
+        margin-top: 12px;
+      }
+
+      .floating-panel-field:last-of-type {
+        margin-bottom: 0px;
+      }
+
+      .floating-panel-file-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: rgb(0 0 0 / 1);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .floating-panel-textarea {
+        width: 100%;
+        min-height: 240px;
+        padding: 12px;
+        border: 0;
+        resize: vertical;
+        box-sizing: border-box;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1.0rem;
+        line-height: 1.5;
+        color: #000000;
+        background: transparent;
+        caret-color: #00d6ff;
+      }
+
+      .floating-panel-textarea:focus {
+        outline: none;
+      }
+
+      .floating-panel-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .floating-panel-text-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 48px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 999px;
+        box-sizing: border-box;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 1rem;
+        line-height: 1;
+        color: #000000;
+        background: rgb(244 244 242 / 0.75);
+        caret-color: #00d6ff;
+      }
+
+      .floating-panel-text-input::placeholder {
+        color: rgb(0 0 0 / 0.25);
+      }
+
+      .floating-panel-text-input:focus {
+        outline: none;
+      }
+
+      .floating-panel-button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -403,135 +491,12 @@
         transition: color 500ms ease, background-color 500ms ease, opacity 500ms ease;
       }
 
-      .settings-field {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-
-      .settings-field:first-of-type {
-        border-radius: 16px;
-        background: rgb(244 244 242 / 0.75);
-      }
-
-      .settings-field:nth-of-type(2) {
-        margin-top: 12px;
-      }
-
-      .settings-field:last-of-type {
-        margin-bottom: 0px;
-      }
-
-      .settings-field.has-separator {
-        position: relative;
-        margin-top: 16px;
-        padding-top: 16px;
-      }
-
-      .settings-field.has-separator::before {
-        content: "";
-        position: absolute;
-        left: -16px;
-        top: 0;
-        width: calc(100% + 32px);
-        height: 1px;
-        background: hsl(0, 0%, 93%);
-      }
-
-      .settings-file-name {
-        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
-        font-size: 0.75rem;
-        line-height: 1.5;
-        color: rgb(0 0 0 / 1);
-      }
-
-      .settings-textarea {
-        width: 100%;
-        min-height: 240px;
-        padding: 12px;
-        border: 0;
-        resize: vertical;
-        box-sizing: border-box;
-        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
-        font-size: 1.0rem;
-        line-height: 1.5;
-        color: #000000;
-        background: transparent;
-        caret-color: #00d6ff;
-      }
-
-      .settings-textarea:focus {
-        outline: none;
-      }
-
-      .settings-inline-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .settings-text-input {
-        flex: 1 1 auto;
-        min-width: 0;
-        height: 48px;
-        padding: 0 12px;
-        border: 0;
-        border-radius: 999px;
-        box-sizing: border-box;
-        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
-        font-size: 1rem;
-        line-height: 1;
-        color: #000000;
-        background: rgb(244 244 242 / 0.75);
-        caret-color: #00d6ff;
-      }
-
-      .settings-text-input::placeholder {
-        color: rgb(0 0 0 / 0.25);
-      }
-
-      .settings-text-input:focus {
-        outline: none;
-      }
-
-      .settings-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .settings-secondary-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 48px;
-        height: 48px;
-        border: 0;
-        border-radius: 999px;
-        background: rgb(244 244 242 / 0.75);
-        color: #000000;
-        cursor: pointer;
-        padding: 0;
-        font-size: 1.0rem;
-        line-height: 1;
-        transition: color 500ms ease, background-color 500ms ease, opacity 500ms ease;
-      }
-
-      .settings-file-name {
-        flex: 1 1 auto;
-        min-width: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .settings-field:last-of-type>.settings-inline-row>.settings-secondary-button:last-of-type {
+      .floating-panel button.is-primary {
         color: #ffffff;
         background: rgb(0 0 0 / 1) !important;
       }
 
-      .settings-file-input {
+      .floating-panel-file-input {
         display: none;
       }
 
@@ -762,8 +727,8 @@
           color: #00d6ff;
         }
 
-        .news-item-main:hover:not(:disabled) .news-item-content,
-        .news-item-link:hover:not(:disabled) {
+        .floating-panel-list-item-main:hover:not(:disabled) .floating-panel-list-item-content,
+        .floating-panel-button:hover:not(:disabled) {
           color: #00d6ff;
         }
 
@@ -771,11 +736,7 @@
           color: #00d6ff;
         }
 
-        .settings-secondary-button:hover:not(:disabled) {
-          color: #00d6ff;
-        }
-
-        .settings-field:last-of-type>.settings-inline-row>.settings-secondary-button:hover:last-of-type {
+        .floating-panel button.is-primary:hover:not(:disabled) {
           color: #00d6ff;
         }
       }
@@ -2436,6 +2397,8 @@ window.addEventListener("load", () => {
   const playbackButtonPauseIcon = document.createElement("i");
   const settingsPanel = document.createElement("div");
   const newsPanel = document.createElement("div");
+  const settingsScrollArea = document.createElement("div");
+  const settingsScrollInner = document.createElement("div");
   const newsScrollArea = document.createElement("div");
   const newsScrollInner = document.createElement("div");
   const newsList = document.createElement("div");
@@ -2558,20 +2521,22 @@ window.addEventListener("load", () => {
   controls.appendChild(playbackButton);
   frame.appendChild(controls);
 
-  settingsPanel.className = "floating-panel settings-panel";
+  settingsPanel.className = "floating-panel";
   settingsPanel.addEventListener("click", event => {
     event.stopPropagation();
   });
-  newsPanel.className = "floating-panel news-panel";
+  newsPanel.className = "floating-panel";
   newsPanel.addEventListener("click", event => {
     event.stopPropagation();
   });
-  newsScrollArea.className = "news-scroll-area";
-  newsScrollInner.className = "news-scroll-inner";
-  newsList.className = "news-list";
-  newsFooter.className = "news-panel-footer";
+  settingsScrollArea.className = "floating-panel-scroll-area";
+  settingsScrollInner.className = "floating-panel-scroll-inner";
+  newsScrollArea.className = "floating-panel-scroll-area";
+  newsScrollInner.className = "floating-panel-scroll-inner";
+  newsList.className = "floating-panel-list";
+  newsFooter.className = "floating-panel-footer";
   newsReloadButton.type = "button";
-  newsReloadButton.className = "settings-secondary-button news-reload-button";
+  newsReloadButton.className = "floating-panel-button floating-panel-footer-button";
   newsReloadButton.setAttribute("aria-label", "Reload news and words");
   newsReloadButton.innerHTML = '<i class="fa-solid fa-rotate" aria-hidden="true"></i>';
   newsScrollInner.appendChild(newsList);
@@ -2605,7 +2570,7 @@ window.addEventListener("load", () => {
 
     if (!newsItems.length) {
       const empty = document.createElement("p");
-      empty.className = "news-empty";
+      empty.className = "floating-panel-empty";
       empty.textContent = isLoadingNews ? "Loading..." : "No news";
       newsList.appendChild(empty);
       return;
@@ -2618,13 +2583,13 @@ window.addEventListener("load", () => {
       const time = document.createElement("span");
       const linkButton = document.createElement("button");
 
-      row.className = "news-item";
+      row.className = "floating-panel-list-item";
       selectButton.type = "button";
-      selectButton.className = "news-item-main";
+      selectButton.className = "floating-panel-list-item-main";
       selectButton.disabled = playbackState.isLoadingAudio;
-      content.className = "news-item-content";
+      content.className = "floating-panel-list-item-content";
       content.textContent = item.content;
-      time.className = "news-item-time";
+      time.className = "floating-panel-list-item-time";
       time.textContent = formatUnixTimestamp(item.timestamp);
       selectButton.appendChild(content);
       if (time.textContent) {
@@ -2639,7 +2604,7 @@ window.addEventListener("load", () => {
       });
 
       linkButton.type = "button";
-      linkButton.className = "news-item-link";
+      linkButton.className = "floating-panel-button floating-panel-list-item-link";
       linkButton.setAttribute("aria-label", "Open news link");
       linkButton.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>';
       linkButton.disabled = !item.url;
@@ -2696,38 +2661,38 @@ window.addEventListener("load", () => {
     }
   }
 
-  promptField.className = "settings-field";
-  promptTextarea.className = "settings-textarea";
+  promptField.className = "floating-panel-field";
+  promptTextarea.className = "floating-panel-textarea";
   promptTextarea.id = "settings-prompt-textarea";
   promptTextarea.spellcheck = false;
   promptTextarea.setAttribute("aria-label", "Prompt");
 
-  manualTextField.className = "settings-field has-separator";
-  manualTextRow.className = "settings-inline-row";
-  manualTextInput.className = "settings-text-input";
+  manualTextField.className = "floating-panel-field has-separator";
+  manualTextRow.className = "floating-panel-row";
+  manualTextInput.className = "floating-panel-text-input";
   manualTextInput.type = "text";
   manualTextInput.spellcheck = false;
   manualTextInput.setAttribute("aria-label", "Screen text");
   manualTextInput.placeholder = createDefaultBackgroundText();
   manualTextButton.type = "button";
-  manualTextButton.className = "settings-secondary-button";
+  manualTextButton.className = "floating-panel-button is-primary";
   manualTextButton.setAttribute("aria-label", "Send text to screen");
   manualTextButton.innerHTML = '<i class="fa-solid fa-arrow-up" aria-hidden="true"></i>';
 
-  voiceField.className = "settings-field";
-  voiceActions.className = "settings-actions";
+  voiceField.className = "floating-panel-field";
+  voiceActions.className = "floating-panel-row";
   voiceFileButton.type = "button";
-  voiceFileButton.className = "settings-secondary-button";
+  voiceFileButton.className = "floating-panel-button";
   voiceFileButton.setAttribute("aria-label", "Choose WAV");
   voiceFileButton.innerHTML = '<i class="fa-solid fa-folder-open" aria-hidden="true"></i>';
-  voiceFileInput.className = "settings-file-input";
+  voiceFileInput.className = "floating-panel-file-input";
   voiceFileInput.type = "file";
   voiceFileInput.accept = ".wav,audio/wav";
-  voiceFileName.className = "settings-file-name";
+  voiceFileName.className = "floating-panel-file-name";
   voiceFileName.textContent = DEFAULT_VOICE_PROMPT_FILE_NAME;
 
   resetSettingsButton.type = "button";
-  resetSettingsButton.className = "settings-secondary-button";
+  resetSettingsButton.className = "floating-panel-button";
   resetSettingsButton.setAttribute("aria-label", "Restore Default");
   resetSettingsButton.innerHTML = '<i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>';
 
@@ -2740,9 +2705,11 @@ window.addEventListener("load", () => {
   voiceActions.appendChild(resetSettingsButton);
   voiceField.appendChild(voiceActions);
   voiceField.appendChild(voiceFileInput);
-  settingsPanel.appendChild(promptField);
-  settingsPanel.appendChild(voiceField);
-  settingsPanel.appendChild(manualTextField);
+  settingsScrollInner.appendChild(promptField);
+  settingsScrollInner.appendChild(voiceField);
+  settingsScrollInner.appendChild(manualTextField);
+  settingsScrollArea.appendChild(settingsScrollInner);
+  settingsPanel.appendChild(settingsScrollArea);
   frame.appendChild(settingsPanel);
 
   textRandomizerButton.addEventListener("click", async event => {
