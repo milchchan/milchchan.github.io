@@ -1324,6 +1324,18 @@ const CONTROL_BUTTON_BOTTOM = 16;
 const CONTROL_BUTTON_GROUP_GAP = 16;
 const backgroundTextModifiers = [];
 const backgroundTextBaseWords = [];
+let textMeasurementRevision = 0;
+
+function invalidateTextMeasurements() {
+  textMeasurementRevision += 1;
+}
+
+if (document.fonts) {
+  document.fonts.ready.then(invalidateTextMeasurements).catch(error => {
+    console.error(error);
+  });
+  document.fonts.addEventListener?.("loadingdone", invalidateTextMeasurements);
+}
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -1406,6 +1418,27 @@ function createRenderBuffer() {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   return { canvas, ctx };
+}
+
+function measureCanvasText(ctx, text) {
+  const metrics = ctx.measureText(text);
+  const fallbackWidth = Number.isFinite(metrics.width) ? Math.max(0, metrics.width) : 0;
+  const hasBoundingBox = Number.isFinite(metrics.actualBoundingBoxLeft)
+    && Number.isFinite(metrics.actualBoundingBoxRight);
+
+  if (!hasBoundingBox) {
+    return {
+      width: fallbackWidth,
+      actualBoundingBoxLeft: 0,
+    };
+  }
+
+  const boundingWidth = Math.max(0, metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight);
+
+  return {
+    width: boundingWidth > 0 || text.length === 0 ? boundingWidth : fallbackWidth,
+    actualBoundingBoxLeft: metrics.actualBoundingBoxLeft,
+  };
 }
 
 function resizeRenderBuffer(buffer, width, height) {
@@ -1715,22 +1748,30 @@ function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, cont
     ctx.clip();
   }
 
-  if (textState.measuredTextFont !== ctx.font || textState.measuredText !== textState.text) {
+  if (
+    textState.measuredTextFont !== ctx.font
+    || textState.measuredText !== textState.text
+    || textState.measuredTextRevision !== textMeasurementRevision
+  ) {
     textState.measuredTextFont = ctx.font;
     textState.measuredText = textState.text;
-    
-    const textMetrics = ctx.measureText(textState.text);
+    textState.measuredTextRevision = textMeasurementRevision;
 
-    textState.measuredTextWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+    textState.measuredTextWidth = measureCanvasText(ctx, textState.text).width;
   }
 
-  if (textState.measuredCurrentFont !== ctx.font || textState.measuredCurrent !== textState.current) {
+  if (
+    textState.measuredCurrentFont !== ctx.font
+    || textState.measuredCurrent !== textState.current
+    || textState.measuredCurrentRevision !== textMeasurementRevision
+  ) {
     textState.measuredCurrentFont = ctx.font;
     textState.measuredCurrent = textState.current;
+    textState.measuredCurrentRevision = textMeasurementRevision;
 
-    const textMetrics = ctx.measureText(textState.current);
+    const textMetrics = measureCanvasText(ctx, textState.current);
 
-    textState.measuredCurrentWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+    textState.measuredCurrentWidth = textMetrics.width;
     textState.actualBoundingBoxLeft = textMetrics.actualBoundingBoxLeft;
   }
 
@@ -1749,11 +1790,11 @@ function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, cont
 
   if (shouldScroll) {
     textState.scrollX = (textState.scrollX + BACKGROUND_TEXT_SCROLL_SPEED * ratio * deltaTime) % (fullTextWidth + gap);
-    ctx.fillText(textState.current, padding - textState.actualBoundingBoxLeft - textState.scrollX, y);
-    ctx.fillText(textState.current, padding - textState.actualBoundingBoxLeft - textState.scrollX + fullTextWidth + gap, y);
+    ctx.fillText(textState.current, padding + textState.actualBoundingBoxLeft - textState.scrollX, y);
+    ctx.fillText(textState.current, padding + textState.actualBoundingBoxLeft - textState.scrollX + fullTextWidth + gap, y);
   } else {
     textState.scrollX = 0;
-    ctx.fillText(textState.current, padding - textState.actualBoundingBoxLeft, y);
+    ctx.fillText(textState.current, padding + textState.actualBoundingBoxLeft, y);
   }
 
   ctx.restore();
