@@ -1309,9 +1309,9 @@ const LOADING_CYCLE_DURATION_MS = LOADING_PULSE_DURATION_MS
   + LOADING_ALPHA_STEP_MS * Math.max(0, LOADING_ACTIVE_ORDER.length - 1);
 const DEFAULT_BACKGROUND_TEXT_MODIFIERS = ["かわいい", "えっちな", "マジカル"];
 const DEFAULT_BACKGROUND_TEXT_BASE_WORDS = ["魔法少女"];
-const BACKGROUND_TEXT_FONT_FAMILY = "'Dela Gothic One', Barlow, sans-serif";
-const BACKGROUND_TEXT_FONT_SIZE = 64;
-const BACKGROUND_TEXT_FONT_WEIGHT = 400;
+const BACKGROUND_TEXT_FONT_FAMILY = "'Dela Gothic One', Barlow, cursive";
+const BACKGROUND_TEXT_FONT_SIZE = 32;
+const BACKGROUND_TEXT_FONT_WEIGHT = "normal";
 const BACKGROUND_TEXT_PADDING = 16;
 const BACKGROUND_TEXT_BOTTOM = 80;
 const BACKGROUND_TEXT_BUTTON_GAP = 12;
@@ -1718,13 +1718,20 @@ function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, cont
   if (textState.measuredTextFont !== ctx.font || textState.measuredText !== textState.text) {
     textState.measuredTextFont = ctx.font;
     textState.measuredText = textState.text;
-    textState.measuredTextWidth = ctx.measureText(textState.text).width;
+    
+    const textMetrics = ctx.measureText(textState.text);
+
+    textState.measuredTextWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
   }
 
   if (textState.measuredCurrentFont !== ctx.font || textState.measuredCurrent !== textState.current) {
     textState.measuredCurrentFont = ctx.font;
     textState.measuredCurrent = textState.current;
-    textState.measuredCurrentWidth = ctx.measureText(textState.current).width;
+
+    const textMetrics = ctx.measureText(textState.current);
+
+    textState.measuredCurrentWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+    textState.actualBoundingBoxLeft = textMetrics.actualBoundingBoxLeft;
   }
 
   const fullTextWidth = textState.measuredTextWidth || 0;
@@ -1742,11 +1749,11 @@ function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, cont
 
   if (shouldScroll) {
     textState.scrollX = (textState.scrollX + BACKGROUND_TEXT_SCROLL_SPEED * ratio * deltaTime) % (fullTextWidth + gap);
-    ctx.fillText(textState.current, padding - textState.scrollX, y);
-    ctx.fillText(textState.current, padding - textState.scrollX + fullTextWidth + gap, y);
+    ctx.fillText(textState.current, padding - textState.actualBoundingBoxLeft - textState.scrollX, y);
+    ctx.fillText(textState.current, padding - textState.actualBoundingBoxLeft - textState.scrollX + fullTextWidth + gap, y);
   } else {
     textState.scrollX = 0;
-    ctx.fillText(textState.current, padding, y);
+    ctx.fillText(textState.current, padding - textState.actualBoundingBoxLeft, y);
   }
 
   ctx.restore();
