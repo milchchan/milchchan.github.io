@@ -809,21 +809,466 @@
       </div>
     </div>
     <script type="module">
-const THRESHOLD = new URL(window.location.href).searchParams.get("threshold") ?? 0.75;
-const TEMPERATURE = new URL(window.location.href).searchParams.get("temperature") ?? 1.0;
-const SORT = new URL(window.location.href).searchParams.get("sort") ?? "timestamp";
-const ORDER = new URL(window.location.href).searchParams.get("order") ?? "desc";
-const NSFW = JSON.parse(new URL(window.location.href).searchParams.get("nsfw")) ?? false;
+const QUERY_PARAMS = new URLSearchParams(window.location.search);
+
+function getStringQueryParam(name, fallback) {
+  const rawValue = QUERY_PARAMS.get(name);
+  const value = typeof rawValue === "string" ? rawValue.trim() : "";
+  return value.length > 0 ? value : fallback;
+}
+
+function getNumberQueryParam(name, fallback, { min = -Infinity, max = Infinity } = {}) {
+  const rawValue = QUERY_PARAMS.get(name);
+  if (rawValue === null || rawValue.trim().length === 0) {
+    return fallback;
+  }
+
+  const value = Number(rawValue);
+  if (!Number.isFinite(value)) {
+    return fallback;
+  }
+
+  return Math.min(max, Math.max(min, value));
+}
+
+function getBooleanQueryParam(name, fallback) {
+  const rawValue = QUERY_PARAMS.get(name);
+  if (rawValue === null || rawValue.trim().length === 0) {
+    return fallback;
+  }
+
+  const value = rawValue.trim().toLowerCase();
+  if (["1", "true", "yes", "on"].includes(value)) {
+    return true;
+  }
+
+  if (["0", "false", "no", "off"].includes(value)) {
+    return false;
+  }
+
+  return fallback;
+}
+
+const THRESHOLD = getNumberQueryParam("threshold", 0.75);
+const TEMPERATURE = getNumberQueryParam("temperature", 1.0);
+const SORT = getStringQueryParam("sort", "timestamp");
+const ORDER = getStringQueryParam("order", "desc");
+const NSFW = getBooleanQueryParam("nsfw", false);
+const AUDIO_POST_SELECTION_PROBABILITY = getNumberQueryParam("probability", 0.5, { min: 0, max: 1 });
+
 const AUDIO_FETCH_API_URL = "https://milchchan.com/api/fetch";
 const AUDIO_POST_API_URL = "https://milchchan.com/api/post";
 const AUDIO_POSTS_API_URL = "https://milchchan.com/api/posts";
 const STATIC_AUDIO_BASE_URL = "https://static.milchchan.com";
 const GENERATE_API_URL = "https://milchchan.com/api/generate";
-const AUDIO_POST_SELECTION_PROBABILITY = new URL(window.location.href).searchParams.get("probability") ?? 0.5;
+
 const PROMPT_TEXT_URL = "/radio.txt";
 const VOICE_PROMPT_AUDIO_URL = "/sounds/merku.ja.wav";
-const DEFAULT_VOICE_PROMPT_FILE_NAME = "prompt.wav";
-const SILENT_AUDIO_DATA_URL = "data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQIAAAAAAA==";
+const DEFAULT_VOICE_PROMPT_FILE_NAME = "merku.ja.wav";
+const SILENT_AUDIO_DATA_URL = "data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+let sharedApiFetchPayloadPromise = null;
+
+function resetSharedApiFetchPayloadCache() {
+  sharedApiFetchPayloadPromise = null;
+}
+
+function extractAudioPostData(payload) {
+  if (Array.isArray(payload)) {
+    for (const item of payload) {
+      const extracted = extractAudioPostData(item);
+      if (extracted) {
+        return extracted;
+      }
+    }
+
+    return null;
+  }
+
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const input = typeof payload.input === "string" ? payload.input.trim() : "";
+  const audioId = typeof payload.id === "string" ? payload.id.trim() : "";
+  const message = typeof payload.message === "string" ? payload.message.trim() : "";
+  if (audioId) {
+    return {
+      input,
+      id: audioId,
+      message,
+      conversationMessages: [
+        ...(input ? [{ role: "user", content: input }] : []),
+        ...(message ? [{ role: "assistant", content: message }] : []),
+      ],
+    };
+  }
+
+  for (const key of ["data", "result", "post", "item", "output"]) {
+    if (key in payload) {
+      const extracted = extractAudioPostData(payload[key]);
+      if (extracted) {
+        return extracted;
+      }
+    }
+  }
+
+  return null;
+}
+
+function extractNewsItems(payload) {
+  if (!Array.isArray(payload)) {
+    return [];
+  }
+
+  const items = [];
+
+  for (const item of payload) {
+    if (!item || typeof item !== "object") {
+      continue;
+    }
+
+    const score = Number(item.score);
+    if (!Number.isFinite(score) || score < THRESHOLD) {
+      continue;
+    }
+
+    const content = typeof item.content === "string" ? item.content.trim() : "";
+    if (!content) {
+      continue;
+    }
+
+    const url = typeof item.url === "string" ? item.url.trim() : "";
+    const timestamp = Number(item.timestamp);
+    items.push({
+      content,
+      url,
+      timestamp: Number.isFinite(timestamp) ? timestamp : null,
+    });
+  }
+
+  return items;
+}
+
+async function fetchSharedApiFetchPayload() {
+  sharedApiFetchPayloadPromise ??= (async () => {
+    const requestUrl = new URL(AUDIO_FETCH_API_URL);
+    requestUrl.searchParams.set("sort", `${SORT}`);
+    requestUrl.searchParams.set("order", `${ORDER}`);
+    requestUrl.searchParams.set("nonce", `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    const response = await fetch(requestUrl, { cache: "no-cache" });
+    if (!response.ok) {
+      throw new Error(`Failed to load fetch payload: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  })();
+
+  return await sharedApiFetchPayloadPromise;
+}
+
+async function fetchRandomAudioPost() {
+  const requestUrl = new URL(AUDIO_POST_API_URL);
+  requestUrl.searchParams.set("type", "audio/%");
+  requestUrl.searchParams.set("nsfw", `${NSFW}`);
+  requestUrl.searchParams.set("nonce", `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+
+  const response = await fetch(requestUrl, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Failed to load audio post: ${response.status} ${response.statusText}`);
+  }
+
+  const payload = await response.json();
+  const post = extractAudioPostData(payload);
+  if (!post) {
+    throw new Error("The audio post API response did not include an id.");
+  }
+
+  return post;
+}
+
+async function fetchLatestAudioPostByQuery(query) {
+  const normalizedQuery = typeof query === "string" ? query.trim() : "";
+  if (!normalizedQuery) {
+    return null;
+  }
+
+  const requestUrl = new URL(AUDIO_POSTS_API_URL);
+  requestUrl.searchParams.set("query", normalizedQuery);
+  requestUrl.searchParams.set("type", "audio/%");
+  requestUrl.searchParams.set("order", "desc");
+
+  const response = await fetch(requestUrl, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Failed to search audio posts: ${response.status} ${response.statusText}`);
+  }
+
+  const payload = await response.json();
+  if (Array.isArray(payload) && payload.length === 0) {
+    return null;
+  }
+
+  return extractAudioPostData(Array.isArray(payload) ? payload[0] : payload);
+}
+
+function formatUnixTimestamp(timestamp) {
+  if (!Number.isFinite(timestamp)) {
+    return "";
+  }
+
+  const date = new Date(timestamp * 1000);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(date);
+}
+
+function createStaticAudioUrl(id) {
+  return `${STATIC_AUDIO_BASE_URL}/${encodeURIComponent(id)}`;
+}
+
+function maybeParseJsonString(value) {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function extractContentValue(payload) {
+  if (typeof payload === "string") {
+    const parsed = maybeParseJsonString(payload);
+    if (parsed !== payload) {
+      return extractContentValue(parsed);
+    }
+
+    return payload.trim();
+  }
+
+  if (Array.isArray(payload)) {
+    for (const item of payload) {
+      const content = extractContentValue(item);
+      if (typeof content === "string" && content.trim().length > 0) {
+        return content.trim();
+      }
+    }
+
+    return null;
+  }
+
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  if (typeof payload.content === "string") {
+    const parsed = maybeParseJsonString(payload.content);
+    if (parsed !== payload.content) {
+      const nestedContent = extractContentValue(parsed);
+      if (typeof nestedContent === "string" && nestedContent.trim().length > 0) {
+        return nestedContent.trim();
+      }
+    }
+
+    return payload.content.trim();
+  }
+
+  for (const key of ["response", "data", "output", "message", "result"]) {
+    if (key in payload) {
+      const content = extractContentValue(payload[key]);
+      if (typeof content === "string" && content.trim().length > 0) {
+        return content.trim();
+      }
+    }
+  }
+
+  return null;
+}
+
+async function loadPromptText() {
+  const response = await fetch(PROMPT_TEXT_URL, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Failed to load prompt text: ${response.status} ${response.statusText}`);
+  }
+
+  return await response.text();
+}
+
+async function generateScriptContent(topic, promptText, conversationHistory = []) {
+  const messages = [
+    { role: "system", content: promptText },
+    ...conversationHistory,
+    { role: "user", content: topic },
+  ];
+  const response = await fetch(GENERATE_API_URL, {
+    mode: "cors",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(NSFW ? {
+      messages,
+      reasoning: { effort: "low" },
+      temperature: TEMPERATURE,
+    } : {
+      model: "google/gemma-4-31B-it",
+      messages,
+      temperature: TEMPERATURE,
+      nsfw: true,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to generate script: ${response.status} ${response.statusText}`);
+  }
+
+  const payload = await response.json();
+  const content = extractContentValue(payload);
+
+  if (!content) {
+    throw new Error("The generate API response did not include a content value.");
+  }
+
+  return {
+    content,
+    messages: [
+      ...conversationHistory,
+      { role: "user", content: topic },
+      { role: "assistant", content },
+    ],
+  };
+}
+
+async function readBlobWithProgress(response, onProgress) {
+  if (!response.body) {
+    if (onProgress) {
+      onProgress(1);
+    }
+
+    return await response.blob();
+  }
+
+  const reader = response.body.getReader();
+  const contentType = response.headers.get("Content-Type") || "audio/wav";
+  const contentLength = Number(response.headers.get("Content-Length"));
+  const chunks = [];
+  let receivedLength = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+
+    chunks.push(value);
+    receivedLength += value.length;
+
+    if (onProgress && Number.isFinite(contentLength) && contentLength > 0) {
+      onProgress(receivedLength / contentLength);
+    }
+  }
+
+  if (onProgress) {
+    onProgress(1);
+  }
+
+  return new Blob(chunks, { type: contentType });
+}
+
+async function synthesizeLine(text, promptAudioBlob, promptAudioFileName, language = "ja", onProgress = null) {
+  const formData = new FormData();
+  formData.append("file", promptAudioBlob, promptAudioFileName);
+  formData.append("data", JSON.stringify({
+    input: text,
+    language,
+    temperature: TEMPERATURE,
+  }));
+
+  const response = await fetch(GENERATE_API_URL, {
+    mode: "cors",
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to synthesize audio: ${response.status} ${response.statusText}`);
+  }
+
+  return await readBlobWithProgress(response, onProgress);
+}
+
+async function postGeneratedAudio(audioBlob, input, message) {
+  const formData = new FormData();
+  formData.append("file", audioBlob, "generated.wav");
+  formData.append("data", JSON.stringify({
+    input,
+    message,
+    nsfw: NSFW,
+  }));
+
+  const response = await fetch(AUDIO_POST_API_URL, {
+    mode: "cors",
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to post generated audio: ${response.status} ${response.statusText}`);
+  }
+
+  await response.text();
+}
+
+async function downloadExternalAudioBlob(id, onProgress = null) {
+  const response = await fetch(createStaticAudioUrl(id), { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Failed to download external audio: ${response.status} ${response.statusText}`);
+  }
+
+  return await readBlobWithProgress(response, onProgress);
+}
+
+async function generateAudioSequence(topic, promptText, promptAudioBlob, promptAudioFileName, onProgress, conversationHistory = []) {
+  const generatedScript = await generateScriptContent(topic, promptText, conversationHistory);
+  const script = generatedScript.content;
+  const normalizedScript = typeof script === "string" ? script.trim() : "";
+
+  if (!normalizedScript) {
+    throw new Error("The generated content did not include playable text.");
+  }
+
+  const audioBlob = await synthesizeLine(
+    normalizedScript,
+    promptAudioBlob,
+    promptAudioFileName,
+    "ja",
+    onProgress,
+  );
+
+  void postGeneratedAudio(audioBlob, topic, script).catch(error => {
+    console.error(error);
+  });
+
+  return {
+    topic,
+    script,
+    lines: [normalizedScript],
+    audioBlobs: [audioBlob],
+    messages: generatedScript.messages,
+  };
+}
+
 const VISUALIZER_BAR_COUNT = 8;
 const VISUALIZER_WIDTH_RATIO = 0.5;
 const VISUALIZER_HEIGHT_RATIO = 0.5;
@@ -853,6 +1298,15 @@ const LOADING_ALPHA_FADE_IN_DURATION_MS = 500;
 const LOADING_ALPHA_STEP_MS = LOADING_ALPHA_FADE_OUT_DURATION_MS + LOADING_ALPHA_FADE_IN_DURATION_MS;
 const LOADING_EXPAND_DURATION_MS = 500;
 const LOADING_DEBUG_HOLD_MS = 0;
+const LOADING_PULSE_DURATION_MS = LOADING_ALPHA_FADE_OUT_DURATION_MS + LOADING_ALPHA_FADE_IN_DURATION_MS;
+const LOADING_ACTIVE_ORDER = VISUALIZER_BAR_COUNT <= 1
+  ? [0]
+  : [
+      ...Array.from({ length: VISUALIZER_BAR_COUNT }, (_, index) => index),
+      ...Array.from({ length: Math.max(0, VISUALIZER_BAR_COUNT - 2) }, (_, index) => VISUALIZER_BAR_COUNT - 2 - index),
+    ];
+const LOADING_CYCLE_DURATION_MS = LOADING_PULSE_DURATION_MS
+  + LOADING_ALPHA_STEP_MS * Math.max(0, LOADING_ACTIVE_ORDER.length - 1);
 const DEFAULT_BACKGROUND_TEXT_MODIFIERS = ["かわいい", "えっちな", "マジカル"];
 const DEFAULT_BACKGROUND_TEXT_BASE_WORDS = ["魔法少女"];
 const BACKGROUND_TEXT_FONT_FAMILY = "'Dela Gothic One', Barlow, sans-serif";
@@ -870,7 +1324,6 @@ const CONTROL_BUTTON_BOTTOM = 16;
 const CONTROL_BUTTON_GROUP_GAP = 16;
 const backgroundTextModifiers = [];
 const backgroundTextBaseWords = [];
-let sharedApiFetchPayloadPromise = null;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -1228,174 +1681,6 @@ function queueFlapTextTransition(state, nextText) {
   }
 }
 
-function extractAudioPostData(payload) {
-  if (Array.isArray(payload)) {
-    for (const item of payload) {
-      const extracted = extractAudioPostData(item);
-      if (extracted) {
-        return extracted;
-      }
-    }
-
-    return null;
-  }
-
-  if (!payload || typeof payload !== "object") {
-    return null;
-  }
-
-  const input = typeof payload.input === "string" ? payload.input.trim() : "";
-  const audioId = typeof payload.id === "string" ? payload.id.trim() : "";
-  const message = typeof payload.message === "string" ? payload.message.trim() : "";
-  if (audioId) {
-    return {
-      input,
-      id: audioId,
-      message,
-      conversationMessages: [
-        ...(input ? [{ role: "user", content: input }] : []),
-        ...(message ? [{ role: "assistant", content: message }] : []),
-      ],
-    };
-  }
-
-  for (const key of ["data", "result", "post", "item", "output"]) {
-    if (key in payload) {
-      const extracted = extractAudioPostData(payload[key]);
-      if (extracted) {
-        return extracted;
-      }
-    }
-  }
-
-  return null;
-}
-
-function extractNewsItems(payload) {
-  if (!Array.isArray(payload)) {
-    return [];
-  }
-
-  const threshold = Number(THRESHOLD);
-  const items = [];
-
-  for (const item of payload) {
-    if (!item || typeof item !== "object") {
-      continue;
-    }
-
-    const score = Number(item.score);
-    if (!Number.isFinite(score) || score < threshold) {
-      continue;
-    }
-
-    const content = typeof item.content === "string" ? item.content.trim() : "";
-    if (!content) {
-      continue;
-    }
-
-    const url = typeof item.url === "string" ? item.url.trim() : "";
-    const timestamp = Number(item.timestamp);
-    items.push({
-      content,
-      url,
-      timestamp: Number.isFinite(timestamp) ? timestamp : null,
-    });
-  }
-
-  return items;
-}
-
-async function fetchSharedApiFetchPayload() {
-  sharedApiFetchPayloadPromise ??= (async () => {
-    const requestUrl = new URL(AUDIO_FETCH_API_URL);
-    requestUrl.searchParams.set("sort", `${SORT}`);
-    requestUrl.searchParams.set("order", `${ORDER}`);
-    requestUrl.searchParams.set("nonce", `${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const response = await fetch(requestUrl, { cache: "no-cache" });
-    if (!response.ok) {
-      throw new Error(`Failed to load fetch payload: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
-  })();
-
-  return await sharedApiFetchPayloadPromise;
-}
-
-async function fetchRandomAudioPost() {
-  const requestUrl = new URL(AUDIO_POST_API_URL);
-  requestUrl.searchParams.set("type", "audio/%");
-  requestUrl.searchParams.set("nsfw", `${NSFW}`);
-  requestUrl.searchParams.set("nonce", `${Date.now()}-${Math.random().toString(36).slice(2)}`);
-
-  const response = await fetch(requestUrl, { cache: "no-cache" });
-  if (!response.ok) {
-    throw new Error(`Failed to load audio post: ${response.status} ${response.statusText}`);
-  }
-
-  const payload = await response.json();
-  const post = extractAudioPostData(payload);
-  if (!post) {
-    throw new Error("The audio post API response did not include an id.");
-  }
-
-  return post;
-}
-
-async function fetchLatestAudioPostByQuery(query) {
-  const normalizedQuery = typeof query === "string" ? query.trim() : "";
-  if (!normalizedQuery) {
-    return null;
-  }
-
-  const requestUrl = new URL(AUDIO_POSTS_API_URL);
-  requestUrl.searchParams.set("query", normalizedQuery);
-  requestUrl.searchParams.set("type", "audio/%");
-  requestUrl.searchParams.set("order", "desc");
-
-  const response = await fetch(requestUrl, { cache: "no-cache" });
-  if (!response.ok) {
-    throw new Error(`Failed to search audio posts: ${response.status} ${response.statusText}`);
-  }
-
-  const payload = await response.json();
-  if (Array.isArray(payload) && payload.length === 0) {
-    return null;
-  }
-
-  const post = extractAudioPostData(Array.isArray(payload) ? payload[0] : payload);
-  if (!post) {
-    throw new Error("The audio posts API response did not include an id.");
-  }
-
-  return post;
-}
-
-function formatUnixTimestamp(timestamp) {
-  if (!Number.isFinite(timestamp)) {
-    return "";
-  }
-
-  const date = new Date(timestamp * 1000);
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(date);
-}
-
-function createStaticAudioUrl(id) {
-  return `${STATIC_AUDIO_BASE_URL}/${encodeURIComponent(id)}`;
-}
-
 function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, controlsHeight = CONTROL_BUTTON_SIZE) {
   if (!textState) {
     return;
@@ -1430,8 +1715,20 @@ function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, cont
     ctx.clip();
   }
 
-  const fullTextWidth = ctx.measureText(textState.text).width;
-  const textWidth = ctx.measureText(textState.current).width;
+  if (textState.measuredTextFont !== ctx.font || textState.measuredText !== textState.text) {
+    textState.measuredTextFont = ctx.font;
+    textState.measuredText = textState.text;
+    textState.measuredTextWidth = ctx.measureText(textState.text).width;
+  }
+
+  if (textState.measuredCurrentFont !== ctx.font || textState.measuredCurrent !== textState.current) {
+    textState.measuredCurrentFont = ctx.font;
+    textState.measuredCurrent = textState.current;
+    textState.measuredCurrentWidth = ctx.measureText(textState.current).width;
+  }
+
+  const fullTextWidth = textState.measuredTextWidth || 0;
+  const textWidth = textState.measuredCurrentWidth || 0;
   const y = canvas.height - bottom;
   const displayWidth = Math.min(Math.max(textWidth, fullTextWidth), availableWidth > 0 ? availableWidth : fullTextWidth);
   const shouldScroll = fullTextWidth > availableWidth
@@ -1470,7 +1767,7 @@ async function blobToDataUrl(blob) {
 }
 
 async function loadProgressStripe() {
-  const scale = Math.trunc(window.devicePixelRatio || 1);
+  const scale = clamp(Math.trunc(window.devicePixelRatio || 1), 1, 3);
   const stripePath = scale > 1 ? `/images/Stripes@${scale}x.png` : "/images/Stripes.png";
 
   try {
@@ -1489,6 +1786,8 @@ async function loadProgressStripe() {
 function createProgressBar(stripeDataUrl) {
   const progress = document.createElement("div");
   const bar = document.createElement("div");
+  let pendingRate = 0;
+  let updateFrameId = null;
 
   progress.className = "progress visible";
   bar.className = "bar animating";
@@ -1501,13 +1800,31 @@ function createProgressBar(stripeDataUrl) {
   progress.appendChild(bar);
   document.body.prepend(progress);
 
+  function flushUpdate() {
+    updateFrameId = null;
+    bar.style.width = `${Math.floor(pendingRate * 100)}%`;
+  }
+
+  function cancelPendingUpdate() {
+    if (updateFrameId === null) {
+      return;
+    }
+
+    window.cancelAnimationFrame(updateFrameId);
+    updateFrameId = null;
+  }
+
   return {
     progress,
     bar,
     update(rate) {
-      bar.style.width = `${Math.floor(clamp(rate, 0, 1) * 100)}%`;
+      pendingRate = clamp(rate, 0, 1);
+      if (updateFrameId === null) {
+        updateFrameId = window.requestAnimationFrame(flushUpdate);
+      }
     },
     finish() {
+      cancelPendingUpdate();
       bar.style.width = "100%";
       bar.animate([{ opacity: 0 }], {
         delay: 0,
@@ -1520,6 +1837,7 @@ function createProgressBar(stripeDataUrl) {
       };
     },
     fail() {
+      cancelPendingUpdate();
       bar.animate([{ opacity: 0 }], {
         delay: 0,
         fill: "forwards",
@@ -1659,244 +1977,6 @@ async function hydrateBackgroundTextPools() {
   }
 }
 
-function maybeParseJsonString(value) {
-  if (typeof value !== "string") {
-    return value;
-  }
-
-  try {
-    return JSON.parse(value);
-  } catch {
-    return value;
-  }
-}
-
-function extractContentValue(payload) {
-  if (typeof payload === "string") {
-    const parsed = maybeParseJsonString(payload);
-    if (parsed !== payload) {
-      return extractContentValue(parsed);
-    }
-
-    return payload.trim();
-  }
-
-  if (Array.isArray(payload)) {
-    for (const item of payload) {
-      const content = extractContentValue(item);
-      if (typeof content === "string" && content.trim().length > 0) {
-        return content.trim();
-      }
-    }
-
-    return null;
-  }
-
-  if (!payload || typeof payload !== "object") {
-    return null;
-  }
-
-  if (typeof payload.content === "string") {
-    const parsed = maybeParseJsonString(payload.content);
-    if (parsed !== payload.content) {
-      const nestedContent = extractContentValue(parsed);
-      if (typeof nestedContent === "string" && nestedContent.trim().length > 0) {
-        return nestedContent.trim();
-      }
-    }
-
-    return payload.content.trim();
-  }
-
-  for (const key of ["response", "data", "output", "message", "result"]) {
-    if (key in payload) {
-      const content = extractContentValue(payload[key]);
-      if (typeof content === "string" && content.trim().length > 0) {
-        return content.trim();
-      }
-    }
-  }
-
-  return null;
-}
-
-async function loadPromptText() {
-  const response = await fetch(PROMPT_TEXT_URL, { cache: "no-cache" });
-  if (!response.ok) {
-    throw new Error(`Failed to load prompt text: ${response.status} ${response.statusText}`);
-  }
-
-  return await response.text();
-}
-
-async function generateScriptContent(topic, promptText, conversationHistory = []) {
-  const messages = [
-    { role: "system", content: promptText },
-    ...conversationHistory,
-    { role: "user", content: topic },
-  ];
-  const response = await fetch(GENERATE_API_URL, {
-    mode: "cors",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(NSFW ? {
-      messages,
-      reasoning: { effort: "low" },
-      temperature: TEMPERATURE
-    } : {
-      model: "google/gemma-4-31B-it",
-      messages,
-      temperature: TEMPERATURE,
-      nsfw: true,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to generate script: ${response.status} ${response.statusText}`);
-  }
-
-  const payload = await response.json();
-  const content = extractContentValue(payload);
-
-  if (!content) {
-    throw new Error("The generate API response did not include a content value.");
-  }
-
-  console.log(content);
-
-  return {
-    content,
-    messages: [
-      ...conversationHistory,
-      { role: "user", content: topic },
-      { role: "assistant", content },
-    ],
-  };
-}
-
-async function readBlobWithProgress(response, onProgress) {
-  if (!response.body) {
-    if (onProgress) {
-      onProgress(1);
-    }
-
-    return await response.blob();
-  }
-
-  const reader = response.body.getReader();
-  const contentType = response.headers.get("Content-Type") || "audio/wav";
-  const contentLength = Number(response.headers.get("Content-Length"));
-  const chunks = [];
-  let receivedLength = 0;
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      break;
-    }
-
-    chunks.push(value);
-    receivedLength += value.length;
-
-    if (onProgress && Number.isFinite(contentLength) && contentLength > 0) {
-      onProgress(receivedLength / contentLength);
-    }
-  }
-
-  if (onProgress) {
-    onProgress(1);
-  }
-
-  return new Blob(chunks, { type: contentType });
-}
-
-async function synthesizeLine(text, promptAudioBlob, promptAudioFileName = DEFAULT_VOICE_PROMPT_FILE_NAME, language = "ja", onProgress = null) {
-  const formData = new FormData();
-  formData.append("file", promptAudioBlob, promptAudioFileName);
-  formData.append("data", JSON.stringify({
-    input: text,
-    language,
-    temperature: TEMPERATURE,
-  }));
-
-  const response = await fetch(GENERATE_API_URL, {
-    mode: "cors",
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to synthesize audio: ${response.status} ${response.statusText}`);
-  }
-
-  return await readBlobWithProgress(response, onProgress);
-}
-
-async function postGeneratedAudio(audioBlob, input, message) {
-  const formData = new FormData();
-  formData.append("file", audioBlob, "generated.wav");
-  formData.append("data", JSON.stringify({
-    input,
-    message,
-    nsfw: NSFW,
-  }));
-
-  const response = await fetch(AUDIO_POST_API_URL, {
-    mode: "cors",
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to post generated audio: ${response.status} ${response.statusText}`);
-  }
-
-  await response.text();
-}
-
-async function downloadExternalAudioBlob(id, onProgress = null) {
-  const response = await fetch(createStaticAudioUrl(id), { cache: "no-cache" });
-  if (!response.ok) {
-    throw new Error(`Failed to download external audio: ${response.status} ${response.statusText}`);
-  }
-
-  return await readBlobWithProgress(response, onProgress);
-}
-
-async function generateAudioSequence(topic, promptText, promptAudioBlob, promptAudioFileName, onProgress, conversationHistory = []) {
-  const generatedScript = await generateScriptContent(topic, promptText, conversationHistory);
-  const script = generatedScript.content;
-  const normalizedScript = typeof script === "string" ? script.trim() : "";
-
-  if (!normalizedScript) {
-    throw new Error("The generated content did not include playable text.");
-  }
-
-  const audioBlob = await synthesizeLine(
-    normalizedScript,
-    promptAudioBlob,
-    promptAudioFileName,
-    "ja",
-    onProgress,
-  );
-
-  try {
-    await postGeneratedAudio(audioBlob, topic, script);
-  } catch (error) {
-    console.error(error);
-  }
-
-  return {
-    topic,
-    script,
-    lines: [normalizedScript],
-    audioBlobs: [audioBlob],
-    messages: generatedScript.messages,
-  };
-}
-
 function drawBackground(ctx, width, height) {
   ctx.clearRect(0, 0, width, height);
 }
@@ -1967,55 +2047,49 @@ function sineEaseInOut(value) {
   return 0.5 - 0.5 * Math.cos(Math.PI * clamped);
 }
 
-function buildLoadingScales(timestamp, startedAt, barCount) {
-  const pulseDuration = LOADING_ALPHA_FADE_OUT_DURATION_MS + LOADING_ALPHA_FADE_IN_DURATION_MS;
-  const activeOrder = barCount <= 1
-    ? [0]
-    : [
-        ...Array.from({ length: barCount }, (_, index) => index),
-        ...Array.from({ length: Math.max(0, barCount - 2) }, (_, index) => barCount - 2 - index),
-      ];
-  const cycleDuration = pulseDuration + LOADING_ALPHA_STEP_MS * Math.max(0, activeOrder.length - 1);
-  const elapsed = Math.max(0, timestamp - startedAt);
-  const cycleTime = elapsed % cycleDuration;
-
-  function alphaForPhase(phaseTime) {
-    if (phaseTime <= 0) {
-      return LOADING_MAX_SCALE;
-    }
-
-    if (phaseTime < LOADING_ALPHA_FADE_OUT_DURATION_MS) {
-      const progress = sineEaseInOut(phaseTime / LOADING_ALPHA_FADE_OUT_DURATION_MS);
-      return LOADING_MAX_SCALE + (LOADING_MIN_SCALE - LOADING_MAX_SCALE) * progress;
-    }
-
-    if (phaseTime < pulseDuration) {
-      const progress = sineEaseInOut((phaseTime - LOADING_ALPHA_FADE_OUT_DURATION_MS) / LOADING_ALPHA_FADE_IN_DURATION_MS);
-      return LOADING_MIN_SCALE + (LOADING_MAX_SCALE - LOADING_MIN_SCALE) * progress;
-    }
-
+function loadingScaleForPhase(phaseTime) {
+  if (phaseTime <= 0) {
     return LOADING_MAX_SCALE;
   }
 
-  return Array.from({ length: barCount }, (_, index) => {
-    let scale = LOADING_MAX_SCALE;
+  if (phaseTime < LOADING_ALPHA_FADE_OUT_DURATION_MS) {
+    const progress = sineEaseInOut(phaseTime / LOADING_ALPHA_FADE_OUT_DURATION_MS);
+    return LOADING_MAX_SCALE + (LOADING_MIN_SCALE - LOADING_MAX_SCALE) * progress;
+  }
 
-    for (let step = 0; step < activeOrder.length; step += 1) {
-      if (activeOrder[step] !== index) {
-        continue;
-      }
+  if (phaseTime < LOADING_PULSE_DURATION_MS) {
+    const progress = sineEaseInOut((phaseTime - LOADING_ALPHA_FADE_OUT_DURATION_MS) / LOADING_ALPHA_FADE_IN_DURATION_MS);
+    return LOADING_MIN_SCALE + (LOADING_MAX_SCALE - LOADING_MIN_SCALE) * progress;
+  }
 
-      const phaseTime = cycleTime - step * LOADING_ALPHA_STEP_MS;
-      scale = Math.min(scale, alphaForPhase(phaseTime));
-    }
-
-    return scale;
-  });
+  return LOADING_MAX_SCALE;
 }
 
-function buildReleaseScales(timestamp, startedAt, fromScales) {
+function writeLoadingScales(target, timestamp, startedAt) {
+  const elapsed = Math.max(0, timestamp - startedAt);
+  const cycleTime = elapsed % LOADING_CYCLE_DURATION_MS;
+
+  target.fill(LOADING_MAX_SCALE);
+
+  for (let step = 0; step < LOADING_ACTIVE_ORDER.length; step += 1) {
+    const index = LOADING_ACTIVE_ORDER[step];
+    const phaseTime = cycleTime - step * LOADING_ALPHA_STEP_MS;
+    target[index] = Math.min(target[index], loadingScaleForPhase(phaseTime));
+  }
+}
+
+function writeReleaseScales(target, timestamp, startedAt, fromScales) {
   const progress = sineEaseInOut((timestamp - startedAt) / LOADING_EXPAND_DURATION_MS);
-  return fromScales.map(scale => scale + (1 - scale) * progress);
+  for (let index = 0; index < target.length; index += 1) {
+    const scale = fromScales[index] ?? 1;
+    target[index] = scale + (1 - scale) * progress;
+  }
+}
+
+function copyArrayValues(source, target) {
+  for (let index = 0; index < target.length; index += 1) {
+    target[index] = source[index] ?? target[index];
+  }
 }
 
 function shake(element) {
@@ -2089,12 +2163,12 @@ window.addEventListener("load", () => {
   let visualizerScales = new Array(VISUALIZER_BAR_COUNT).fill(1);
   let audioObjectUrl = null;
   let audioLoadPromise = null;
-  let audioPlaybackPrimePromise = null;
   let audioPlaybackPrimePreviousState = null;
   let progressStripePromise = null;
   let generatedAudioBlobs = [];
   let currentAudioBlobIndex = -1;
   let currentTextSelection = null;
+  let textRandomizerButtonActive = null;
   let isChoosingNextText = false;
   let isLoadingNews = false;
   let hasLoadedNews = false;
@@ -2103,6 +2177,7 @@ window.addEventListener("load", () => {
   let lastGeneratedAudioId = null;
   let lastGeneratedConversationMessages = [];
   let defaultPromptTextPromise = null;
+  let defaultVoicePromptAudioPromise = null;
   let customVoicePromptFile = null;
   let backgroundImageToken = 0;
   let backgroundImageOpacity = 0;
@@ -2300,7 +2375,7 @@ window.addEventListener("load", () => {
     updateTextRandomizerButton();
 
     try {
-      sharedApiFetchPayloadPromise = null;
+      resetSharedApiFetchPayloadCache();
       const payload = await fetchSharedApiFetchPayload();
       hydrateBackgroundTextPoolsFromPayload(payload);
       newsItems = extractNewsItems(payload);
@@ -2434,6 +2509,8 @@ window.addEventListener("load", () => {
     voiceFileInput.click();
   });
 
+  let isManualTextInputComposing = false;
+
   async function submitManualScreenText() {
     const nextText = manualTextInput.value.trim();
     if (!nextText) {
@@ -2453,8 +2530,22 @@ window.addEventListener("load", () => {
     await submitManualScreenText();
   });
 
+  manualTextInput.addEventListener("compositionstart", () => {
+    isManualTextInputComposing = true;
+  });
+
+  manualTextInput.addEventListener("compositionend", () => {
+    window.setTimeout(() => {
+      isManualTextInputComposing = false;
+    }, 0);
+  });
+
   manualTextInput.addEventListener("keydown", async event => {
     if (event.key !== "Enter") {
+      return;
+    }
+
+    if (event.isComposing || isManualTextInputComposing || event.keyCode === 229) {
       return;
     }
 
@@ -2488,6 +2579,22 @@ window.addEventListener("load", () => {
     return defaultPromptText;
   }
 
+  async function loadDefaultVoicePromptAudio() {
+    defaultVoicePromptAudioPromise ??= (async () => {
+      const voicePromptResponse = await fetch(VOICE_PROMPT_AUDIO_URL);
+      if (!voicePromptResponse.ok) {
+        throw new Error(`Failed to load voice prompt audio: ${voicePromptResponse.status} ${voicePromptResponse.statusText}`);
+      }
+
+      return {
+        blob: await voicePromptResponse.blob(),
+        fileName: DEFAULT_VOICE_PROMPT_FILE_NAME,
+      };
+    })();
+
+    return await defaultVoicePromptAudioPromise;
+  }
+
   async function getActiveVoicePromptAudio() {
     if (customVoicePromptFile) {
       return {
@@ -2496,15 +2603,7 @@ window.addEventListener("load", () => {
       };
     }
 
-    const voicePromptResponse = await fetch(VOICE_PROMPT_AUDIO_URL);
-    if (!voicePromptResponse.ok) {
-      throw new Error(`Failed to load voice prompt audio: ${voicePromptResponse.status} ${voicePromptResponse.statusText}`);
-    }
-
-    return {
-      blob: await voicePromptResponse.blob(),
-      fileName: DEFAULT_VOICE_PROMPT_FILE_NAME,
-    };
+    return await loadDefaultVoicePromptAudio();
   }
 
   async function resetGenerationSettingsToDefault() {
@@ -2537,9 +2636,18 @@ window.addEventListener("load", () => {
   }
 
   function updateTextRandomizerButtonState() {
+    const hasPendingBackgroundTextReveal = backgroundTextState.phase === "hidden"
+      && backgroundTextState.shouldRevealAfterHide
+      && typeof backgroundTextState.pendingRevealText === "string";
     const isActive = isChoosingNextText
       || backgroundTextState.phase === "revealing"
-      || backgroundTextState.phase === "hiding";
+      || backgroundTextState.phase === "hiding"
+      || hasPendingBackgroundTextReveal;
+    if (isActive === textRandomizerButtonActive) {
+      return;
+    }
+
+    textRandomizerButtonActive = isActive;
     textRandomizerButton.classList.toggle("is-active", isActive);
   }
 
@@ -2568,25 +2676,6 @@ window.addEventListener("load", () => {
       && visualizerScales.every(scale => Math.abs(scale - 1) <= VISUALIZER_REST_THRESHOLD);
   }
 
-  async function waitForVisualizerBaseline() {
-    if (isVisualizerAtBaseline()) {
-      return;
-    }
-
-    await new Promise(resolve => {
-      function check() {
-        if (isVisualizerAtBaseline()) {
-          resolve();
-          return;
-        }
-
-        window.requestAnimationFrame(check);
-      }
-
-      window.requestAnimationFrame(check);
-    });
-  }
-
   function restoreAudioPlaybackPrimeState() {
     if (!isPrimingAudioPlayback) {
       return;
@@ -2600,18 +2689,100 @@ window.addEventListener("load", () => {
     audioPlaybackPrimePreviousState = null;
   }
 
-  async function primeAudioPlaybackForAutoplay() {
+  function isAbortError(error) {
+    return error?.name === "AbortError";
+  }
+
+  function getCurrentAudioSource() {
+    return audio.currentSrc || audio.src || "";
+  }
+
+  async function waitForCurrentAudioReady(expectedSrc) {
+    if (audio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      return;
+    }
+
+    await new Promise(resolve => {
+      let isSettled = false;
+      let timeoutId = null;
+
+      function cleanup() {
+        audio.removeEventListener("loadeddata", finish);
+        audio.removeEventListener("canplay", finish);
+        audio.removeEventListener("error", finish);
+        if (timeoutId !== null) {
+          window.clearTimeout(timeoutId);
+        }
+      }
+
+      function finish() {
+        if (isSettled) {
+          return;
+        }
+
+        isSettled = true;
+        cleanup();
+        resolve();
+      }
+
+      if (getCurrentAudioSource() !== expectedSrc) {
+        finish();
+        return;
+      }
+
+      timeoutId = window.setTimeout(finish, 200);
+      audio.addEventListener("loadeddata", finish);
+      audio.addEventListener("canplay", finish);
+      audio.addEventListener("error", finish);
+    });
+  }
+
+  async function playCurrentAudioWithAbortRetry() {
+    const expectedSrc = getCurrentAudioSource();
+
+    try {
+      await audio.play();
+      return true;
+    } catch (error) {
+      if (!isAbortError(error)) {
+        throw error;
+      }
+
+      if (!expectedSrc || getCurrentAudioSource() !== expectedSrc) {
+        return false;
+      }
+
+      await waitForCurrentAudioReady(expectedSrc);
+      if (getCurrentAudioSource() !== expectedSrc) {
+        return false;
+      }
+
+      try {
+        await audio.play();
+        return true;
+      } catch (retryError) {
+        if (isAbortError(retryError)) {
+          return false;
+        }
+
+        throw retryError;
+      }
+    }
+  }
+
+  function primeAudioPlaybackForAutoplay() {
+    if (isPrimingAudioPlayback) {
+      return;
+    }
+
     if (audio.currentSrc) {
       return;
     }
 
-    if (isPrimingAudioPlayback) {
-      await audioPlaybackPrimePromise;
-      return;
-    }
-
     if (audioContext?.state === "suspended") {
-      await audioContext.resume();
+      void audioContext.resume().catch(error => {
+        console.warn(error);
+      });
     }
 
     const previousIgnorePauseEvent = playbackState.ignorePauseEvent;
@@ -2623,25 +2794,13 @@ window.addEventListener("load", () => {
     isPrimingAudioPlayback = true;
     playbackState.ignorePauseEvent = true;
     audio.loop = true;
-    audio.muted = true;
+    audio.muted = audioPlaybackPrimePreviousState.muted;
     audio.preload = "auto";
     audio.src = SILENT_AUDIO_DATA_URL;
     audio.load();
 
-    audioPlaybackPrimePromise = audio.play()
-      .catch(error => {
-        audio.pause();
-        restoreAudioPlaybackPrimeState();
-        audio.removeAttribute("src");
-        audio.load();
-        throw error;
-      })
-      .finally(() => {
-        playbackState.ignorePauseEvent = previousIgnorePauseEvent;
-        audioPlaybackPrimePromise = null;
-      });
-
-    await audioPlaybackPrimePromise;
+    void audio.play().catch(() => {});
+    playbackState.ignorePauseEvent = previousIgnorePauseEvent;
   }
 
   function ensureAudioGraph() {
@@ -2780,6 +2939,11 @@ window.addEventListener("load", () => {
   }
 
   async function loadAndFadeInBackgroundImage() {
+    if (BACKGROUND_IMAGE_URLS.length === 0) {
+      backgroundImageOpacity = 0;
+      return;
+    }
+
     const token = ++backgroundImageToken;
     const nextBackgroundImageUrl = pickRandom(BACKGROUND_IMAGE_URLS);
 
@@ -2821,15 +2985,23 @@ window.addEventListener("load", () => {
     audioObjectUrl = URL.createObjectURL(generatedAudioBlobs[index]);
     audio.src = audioObjectUrl;
     audio.load();
-    playbackState.ignorePauseEvent = false;
 
-    if (audioContext?.state === "suspended") {
-      await audioContext.resume();
+    try {
+      if (audioContext?.state === "suspended") {
+        await audioContext.resume();
+      }
+
+      const didPlay = await playCurrentAudioWithAbortRetry();
+      if (!didPlay) {
+        setPlaybackState(false);
+        return false;
+      }
+
+      setPlaybackState(true);
+      return true;
+    } finally {
+      playbackState.ignorePauseEvent = false;
     }
-
-    await audio.play();
-    setPlaybackState(true);
-    return true;
   }
 
   async function loadNextAudio({ autoplay = false } = {}) {
@@ -2844,7 +3016,6 @@ window.addEventListener("load", () => {
 
     audioLoadPromise = (async () => {
       let didLoadSucceed = false;
-      await waitForVisualizerBaseline();
       await fadeOutBackgroundImage();
 
       const stripeDataUrl = await (progressStripePromise ??= loadProgressStripe());
@@ -2877,9 +3048,14 @@ window.addEventListener("load", () => {
         const selectionAudioId = selection.source === "api" ? selection.audioId : null;
         const shouldUseSelectionAudio = Boolean(selectionAudioId)
           && (!hasTextSelection || !shouldContinueConversation);
-        const queriedAudioPost = shouldUseSelectionAudio || shouldContinueConversation
-          ? null
-          : await fetchLatestAudioPostByQuery(topic);
+        let queriedAudioPost = null;
+        if (!shouldUseSelectionAudio && !shouldContinueConversation) {
+          try {
+            queriedAudioPost = await fetchLatestAudioPostByQuery(topic);
+          } catch (error) {
+            console.warn(error);
+          }
+        }
         const externalAudioId = shouldUseSelectionAudio
           ? selectionAudioId
           : (queriedAudioPost?.id ?? null);
@@ -2899,8 +3075,10 @@ window.addEventListener("load", () => {
               messages: externalConversationMessages,
             }
           : await (async () => {
-            const promptText = await getActivePromptText();
-            const activeVoicePromptAudio = await getActiveVoicePromptAudio();
+            const [promptText, activeVoicePromptAudio] = await Promise.all([
+              getActivePromptText(),
+              getActiveVoicePromptAudio(),
+            ]);
 
             return await generateAudioSequence(
               topic,
@@ -2937,7 +3115,7 @@ window.addEventListener("load", () => {
       } finally {
         playbackState.ignorePauseEvent = false;
         releaseStartedAt = performance.now();
-        releaseFromScales = [...visualizerScales];
+        copyArrayValues(visualizerScales, releaseFromScales);
         playbackState.isLoadingAudio = false;
         playbackState.shouldStartPlaybackAfterRelease = didLoadSucceed && autoplay && generatedAudioBlobs.length > 0;
         updateTextRandomizerButton();
@@ -2960,7 +3138,7 @@ window.addEventListener("load", () => {
     if (!audio.currentSrc || currentAudioBlobIndex < 0 || playbackState.isLoadingAudio) {
       setPlaybackState(true);
       try {
-        await primeAudioPlaybackForAutoplay();
+        primeAudioPlaybackForAutoplay();
         await loadNextAudio({ autoplay: true });
       } catch (error) {
         setPlaybackState(false);
@@ -2977,11 +3155,20 @@ window.addEventListener("load", () => {
       await audioContext.resume();
     }
 
-    await audio.play();
+    const didPlay = await playCurrentAudioWithAbortRetry();
+    if (!didPlay) {
+      setPlaybackState(false);
+      return;
+    }
+
     setPlaybackState(true);
   }
 
   audio.addEventListener("error", () => {
+    if (isPrimingAudioPlayback) {
+      return;
+    }
+
     setPlaybackState(false);
     shake(playbackButton);
   });
@@ -3033,11 +3220,14 @@ window.addEventListener("load", () => {
     const isReleasingScale = !playbackState.isLoadingAudio
       && releaseFromScales.some(scale => Math.abs(scale - 1) > VISUALIZER_REST_THRESHOLD)
       && (timestamp - releaseStartedAt) < LOADING_EXPAND_DURATION_MS;
-    const targetScales = playbackState.isLoadingAudio
-      ? buildLoadingScales(timestamp, loadingStartedAt, VISUALIZER_BAR_COUNT)
-      : isReleasingScale
-        ? buildReleaseScales(timestamp, releaseStartedAt, releaseFromScales)
-      : new Array(VISUALIZER_BAR_COUNT).fill(1);
+
+    if (playbackState.isLoadingAudio) {
+      writeLoadingScales(visualizerScales, timestamp, loadingStartedAt);
+    } else if (isReleasingScale) {
+      writeReleaseScales(visualizerScales, timestamp, releaseStartedAt, releaseFromScales);
+    } else {
+      visualizerScales.fill(1);
+    }
 
     drawBackground(context, width, height);
 
@@ -3093,7 +3283,9 @@ window.addEventListener("load", () => {
       }
     } else {
       energy = smoothTowards(energy, 0, VISUALIZER_DECAY_SMOOTHING, deltaTime);
-      smoothedLevels = smoothedLevels.map(level => smoothTowards(level, 0, VISUALIZER_DECAY_SMOOTHING, deltaTime));
+      for (let index = 0; index < smoothedLevels.length; index += 1) {
+        smoothedLevels[index] = smoothTowards(smoothedLevels[index], 0, VISUALIZER_DECAY_SMOOTHING, deltaTime);
+      }
       for (let index = 0; index < displayedLevels.length; index += 1) {
         displayedLevels[index] = clamp(
           lerp(displayedLevels[index], 0, deltaTime * VISUALIZER_DISPLAY_FALL_SPEED),
@@ -3103,10 +3295,8 @@ window.addEventListener("load", () => {
       }
     }
 
-    visualizerScales = targetScales;
-
     if (!playbackState.isLoadingAudio && !isReleasingScale && releaseFromScales.some(scale => scale !== 1)) {
-      releaseFromScales = new Array(VISUALIZER_BAR_COUNT).fill(1);
+      releaseFromScales.fill(1);
     }
 
     if (playbackState.shouldStartPlaybackAfterRelease && !playbackState.isLoadingAudio && !isReleasingScale && isVisualizerAtBaseline()) {
@@ -3125,7 +3315,12 @@ window.addEventListener("load", () => {
       || displayedLevels.some(level => level > VISUALIZER_REST_THRESHOLD)
       || visualizerScales.some(scale => Math.abs(scale - 1) > VISUALIZER_REST_THRESHOLD);
 
-    drawBackgroundImageBuffer(backgroundRenderBuffer, backgroundImage, width, height);
+    const backgroundImageCanvas = backgroundImageOpacity > 0.001 && BACKGROUND_IMAGE_OPACITY > 0
+      ? backgroundRenderBuffer.canvas
+      : null;
+    if (backgroundImageCanvas) {
+      drawBackgroundImageBuffer(backgroundRenderBuffer, backgroundImage, width, height);
+    }
 
     drawVisualizer(
       renderBuffer.ctx,
@@ -3137,7 +3332,7 @@ window.addEventListener("load", () => {
       shouldAnimate,
       backgroundTextState,
       deltaTime,
-      backgroundRenderBuffer.canvas,
+      backgroundImageCanvas,
       backgroundImageOpacity,
       CONTROL_BUTTON_SIZE,
     );
