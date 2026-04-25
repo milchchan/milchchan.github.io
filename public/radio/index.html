@@ -1118,14 +1118,14 @@ async function generateScriptContent(topic, promptText, conversationHistory = []
       "Content-Type": "application/json",
     },
     body: JSON.stringify(NSFW ? {
-      messages,
-      reasoning: { effort: "low" },
-      temperature: TEMPERATURE,
-    } : {
       model: "google/gemma-4-31B-it",
       messages,
       temperature: TEMPERATURE,
       nsfw: true,
+    } : {
+      messages,
+      reasoning: { effort: "low" },
+      temperature: TEMPERATURE,
     }),
   });
 
