@@ -1256,7 +1256,7 @@ async function generateAudioSequence(topic, promptText, promptAudioBlob, promptA
     onProgress,
   );
 
-  void postGeneratedAudio(audioBlob, topic, script).catch(error => {
+  const postAudioPromise = postGeneratedAudio(audioBlob, topic, script).catch(error => {
     console.error(error);
   });
 
@@ -1266,6 +1266,7 @@ async function generateAudioSequence(topic, promptText, promptAudioBlob, promptA
     lines: [normalizedScript],
     audioBlobs: [audioBlob],
     messages: generatedScript.messages,
+    postAudioPromise,
   };
 }
 
@@ -3378,6 +3379,7 @@ window.addEventListener("load", () => {
                 progress.update(rate);
               })],
               messages: externalConversationMessages,
+              postAudioPromise: Promise.resolve(),
             }
           : await (async () => {
             const [promptText, activeVoicePromptAudio] = await Promise.all([
@@ -3412,7 +3414,10 @@ window.addEventListener("load", () => {
         lastGeneratedTopic = topic;
         lastGeneratedAudioId = selection.source === "api" ? (selection.audioId ?? null) : null;
         lastGeneratedConversationMessages = generated.messages ?? [];
-        await backgroundImagePromise;
+        await Promise.all([
+          backgroundImagePromise,
+          generated.postAudioPromise ?? Promise.resolve(),
+        ]);
         progress.finish();
         didLoadSucceed = true;
       } catch (error) {
