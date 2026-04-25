@@ -1118,7 +1118,7 @@ async function generateScriptContent(topic, promptText, conversationHistory = []
       "Content-Type": "application/json",
     },
     body: JSON.stringify(NSFW ? {
-      model: "Qwen/Qwen3.5-122B-A10B",
+      model: "google/gemma-4-26B-A4B-it",
       messages,
       temperature: TEMPERATURE,
       nsfw: true,
