@@ -1273,12 +1273,18 @@ const BACKGROUND_TEXT_BUTTON_GAP = 12;
 const BACKGROUND_TEXT_GAP = 16;
 const BACKGROUND_TEXT_SCROLL_SPEED = 100;
 const BACKGROUND_TEXT_TYPE_SPEED = 25;
+const BACKGROUND_TEXT_BASE_WORD_ONLY_PROBABILITY = 0.5;
 const CONTROL_BUTTON_SIZE = 48;
 const CONTROL_BUTTON_LEFT = 16;
 const CONTROL_BUTTON_BOTTOM = 16;
 const CONTROL_BUTTON_GROUP_GAP = 16;
 const LOADING_METEOR_POOL_SIZE = 8;
 const LOADING_METEOR_RHYTHM_DELAYS = [0.16, 0.24, 0.62, 0.18, 0.92, 0.28, 0.44, 1.15];
+const LOADING_METEOR_INITIAL_RHYTHM_DELAYS = [0.48, 0.68, 0.88, 0.32, 0.18, 0.26, 0.96, 1.18];
+const LOADING_METEOR_START_X_RATIO = 1;
+const LOADING_METEOR_START_Y_RATIO = 0;
+const LOADING_METEOR_END_X_RATIO = 0;
+const LOADING_METEOR_END_Y_RATIO = 1;
 const REDUCE_MOTION_MEDIA = window.matchMedia?.("(prefers-reduced-motion: reduce)") ?? { matches: false };
 const backgroundTextModifiers = [];
 const backgroundTextBaseWords = [];
@@ -1447,9 +1453,13 @@ function addUniqueTextValue(target, value) {
   target.push(normalized);
 }
 
-function createBackgroundText() {
-  const modifier = backgroundTextModifiers.length > 0 ? pickRandom(backgroundTextModifiers) : "";
+function createBackgroundText({ baseWordOnlyProbability = 0 } = {}) {
   const noun = backgroundTextBaseWords.length > 0 ? pickRandom(backgroundTextBaseWords) : "";
+  if (noun && Math.random() < baseWordOnlyProbability) {
+    return noun;
+  }
+
+  const modifier = backgroundTextModifiers.length > 0 ? pickRandom(backgroundTextModifiers) : "";
 
   if (modifier && noun) {
     return isLatinText(modifier) && isLatinText(noun) ? `${modifier} ${noun}` : `${modifier}${noun}`;
@@ -1485,9 +1495,11 @@ function createDefaultBackgroundText() {
   return "メルクラジオ";
 }
 
-function createRandomTextSelection() {
+function createRandomTextSelection({ allowBaseWordOnly = false } = {}) {
   return {
-    text: createBackgroundText(),
+    text: createBackgroundText({
+      baseWordOnlyProbability: allowBaseWordOnly ? BACKGROUND_TEXT_BASE_WORD_ONLY_PROBABILITY : 0,
+    }),
     source: "random",
     audioId: null,
     conversationMessages: [],
@@ -2012,27 +2024,122 @@ function nextLoadingMeteorDelay(state, urgent = false) {
   return delay + randomRange(-0.06, 0.1);
 }
 
-function createLoadingMeteor(state, width, height, delay = randomRange(0.2, 4.5)) {
+function nextInitialLoadingMeteorDelay(index) {
+  const delay = LOADING_METEOR_INITIAL_RHYTHM_DELAYS[(index - 1) % LOADING_METEOR_INITIAL_RHYTHM_DELAYS.length];
+  return delay + randomRange(-0.08, 0.12);
+}
+
+function createLoadingMeteorPath(width, height, ratio) {
+  const start = {
+    x: width * LOADING_METEOR_START_X_RATIO,
+    y: height * LOADING_METEOR_START_Y_RATIO,
+  };
+  const end = {
+    x: width * LOADING_METEOR_END_X_RATIO,
+    y: height * LOADING_METEOR_END_Y_RATIO,
+  };
+  const deltaX = end.x - start.x;
+  const deltaY = end.y - start.y;
+  const length = Math.hypot(deltaX, deltaY) || 1;
+  const directionX = deltaX / length;
+  const directionY = deltaY / length;
+  const margin = 220 * ratio;
+
+  return {
+    directionX,
+    directionY,
+    margin,
+  };
+}
+
+function distanceToViewportEdge(x, y, directionX, directionY, width, height) {
+  const candidates = [];
+
+  if (directionX > 0.0001) {
+    candidates.push((width - x) / directionX);
+  } else if (directionX < -0.0001) {
+    candidates.push((0 - x) / directionX);
+  }
+
+  if (directionY > 0.0001) {
+    candidates.push((height - y) / directionY);
+  } else if (directionY < -0.0001) {
+    candidates.push((0 - y) / directionY);
+  }
+
+  const distances = candidates.filter(distance => Number.isFinite(distance) && distance >= 0);
+  return distances.length ? Math.min(...distances) : Math.max(width, height);
+}
+
+function createLoadingMeteorEntry(width, height, directionX, directionY) {
+  const entryEdges = [];
+
+  if (directionY > 0.0001) {
+    entryEdges.push({ edge: "top", weight: width });
+  } else if (directionY < -0.0001) {
+    entryEdges.push({ edge: "bottom", weight: width });
+  }
+
+  if (directionX > 0.0001) {
+    entryEdges.push({ edge: "left", weight: height });
+  } else if (directionX < -0.0001) {
+    entryEdges.push({ edge: "right", weight: height });
+  }
+
+  const totalWeight = entryEdges.reduce((total, entry) => total + entry.weight, 0);
+  let selection = randomRange(0, totalWeight || 1);
+  let selectedEdge = entryEdges[0]?.edge ?? "top";
+
+  for (const entry of entryEdges) {
+    selection -= entry.weight;
+    if (selection <= 0) {
+      selectedEdge = entry.edge;
+      break;
+    }
+  }
+
+  if (selectedEdge === "bottom") {
+    return { x: randomRange(0, width), y: height };
+  }
+
+  if (selectedEdge === "left") {
+    return { x: 0, y: randomRange(0, height) };
+  }
+
+  if (selectedEdge === "right") {
+    return { x: width, y: randomRange(0, height) };
+  }
+
+  return { x: randomRange(0, width), y: 0 };
+}
+
+function createLoadingMeteor(width, height, delay = randomRange(0.2, 4.5)) {
   const ratio = window.devicePixelRatio || 1;
   const baseSize = randomRange(3.2, 5.4);
   const size = baseSize * ratio;
-  const sizeRatio = (baseSize - 3.2) / (5.4 - 3.2);
   const speed = randomRange(230, 390) * ratio;
-  const angle = randomRange(Math.PI * 0.7, Math.PI * 0.76);
+  const path = createLoadingMeteorPath(width, height, ratio);
+  const entry = createLoadingMeteorEntry(width, height, path.directionX, path.directionY);
+  const exitDistance = distanceToViewportEdge(entry.x, entry.y, path.directionX, path.directionY, width, height);
+  const leadDistance = Math.max(size * 12, 72 * ratio);
+  const startX = entry.x - path.directionX * leadDistance;
+  const startY = entry.y - path.directionY * leadDistance;
+  const angle = Math.atan2(path.directionY, path.directionX);
+  const remainingDistance = leadDistance + exitDistance + path.margin + randomRange(0, path.margin * 0.25);
 
   return {
-    x: randomRange(width * 0.74, width + 180 * ratio),
-    y: randomRange(-90 * ratio, height * 0.18),
-    vx: Math.cos(angle) * speed,
-    vy: Math.sin(angle) * speed,
+    x: startX,
+    y: startY,
+    vx: path.directionX * speed,
+    vy: path.directionY * speed,
+    speed,
     size,
     tail: randomRange(82, 150) * ratio,
     delay,
     age: 0,
-    life: randomRange(2.4, 4.2),
-    curve: randomRange(-24, 24) * ratio,
-    rotationSpeed: randomRange(4.9, 5.7) - sizeRatio * randomRange(2.1, 2.8),
-    wobble: randomRange(0.35, 0.75),
+    life: remainingDistance / speed + randomRange(0.25, 0.65),
+    angle,
+    rotationSpeed: randomRange(4.6, 5.2),
     phase: randomRange(0, Math.PI * 2),
   };
 }
@@ -2044,9 +2151,13 @@ function startLoadingMeteorShower(state, width, height) {
 
   state.isSpawning = true;
 
+  let delay = 0;
   while (state.meteors.length < LOADING_METEOR_POOL_SIZE) {
-    const delay = state.meteors.length === 0 ? 0 : nextLoadingMeteorDelay(state);
-    state.meteors.push(createLoadingMeteor(state, width, height, delay));
+    if (state.meteors.length > 0) {
+      delay += nextInitialLoadingMeteorDelay(state.meteors.length);
+    }
+
+    state.meteors.push(createLoadingMeteor(width, height, delay));
   }
 }
 
@@ -2076,13 +2187,26 @@ function spawnLoadingMeteorSparkles(state, x, y, size) {
       size: randomRange(0.8, 1.8) * (window.devicePixelRatio || 1),
       age: 0,
       life: randomRange(0.38, 0.9),
+      twinklePhase: randomRange(0, Math.PI * 2),
+      twinkleSpeed: randomRange(9, 15),
+      rotationSpeed: randomRange(-7.5, 7.5),
     });
   }
 }
 
-function drawLoadingMeteorTailMask(ctx, meteor, headX, headY, tailX, tailY, fade, normalX, normalY) {
-  const controlX = (headX + tailX) * 0.5 + normalX * meteor.curve * 0.35;
-  const controlY = (headY + tailY) * 0.5 + normalY * meteor.curve * 0.35;
+function drawLoadingMeteorSparkleMask(ctx, sparkle, alpha, time) {
+  const pulse = 0.5 + Math.sin(time * sparkle.twinkleSpeed + sparkle.twinklePhase) * 0.5;
+  const twinkleAlpha = alpha * clamp(0.28 + pulse * 0.82, 0, 1);
+  const starSize = sparkle.size * (0.92 + pulse * 0.18);
+
+  ctx.save();
+  ctx.translate(sparkle.x, sparkle.y);
+  ctx.rotate(time * sparkle.rotationSpeed + sparkle.twinklePhase);
+  drawLoadingMeteorStarMask(ctx, starSize, twinkleAlpha);
+  ctx.restore();
+}
+
+function drawLoadingMeteorTailMask(ctx, meteor, headX, headY, tailX, tailY, fade) {
   const core = ctx.createLinearGradient(headX, headY, tailX, tailY);
   core.addColorStop(0, `rgba(255, 255, 255, ${0.78 * fade})`);
   core.addColorStop(0.18, `rgba(255, 255, 255, ${0.4 * fade})`);
@@ -2093,7 +2217,7 @@ function drawLoadingMeteorTailMask(ctx, meteor, headX, headY, tailX, tailY, fade
   ctx.lineWidth = meteor.size * 0.9;
   ctx.beginPath();
   ctx.moveTo(headX, headY);
-  ctx.quadraticCurveTo(controlX, controlY, tailX, tailY);
+  ctx.lineTo(tailX, tailY);
   ctx.stroke();
 
   const glow = ctx.createLinearGradient(headX, headY, tailX, tailY);
@@ -2105,7 +2229,7 @@ function drawLoadingMeteorTailMask(ctx, meteor, headX, headY, tailX, tailY, fade
   ctx.lineWidth = meteor.size * 3.5;
   ctx.beginPath();
   ctx.moveTo(headX, headY);
-  ctx.quadraticCurveTo(controlX, controlY, tailX, tailY);
+  ctx.lineTo(tailX, tailY);
   ctx.stroke();
 }
 
@@ -2175,28 +2299,27 @@ function drawLoadingMeteorsMask(ctx, width, height, state, deltaTime) {
 
     const progress = clamp(meteor.age / meteor.life, 0, 1);
     const fade = Math.sin(progress * Math.PI);
-    const angle = Math.atan2(meteor.vy, meteor.vx);
-    const normalX = -Math.sin(angle);
-    const normalY = Math.cos(angle);
-    const curveOffset = Math.sin(progress * Math.PI) * meteor.curve;
-    const wobble = Math.sin(state.time * 2.2 * meteor.wobble + meteor.phase) * 1.8;
-    const headX = meteor.x + normalX * curveOffset + wobble;
-    const headY = meteor.y + normalY * curveOffset;
+    const angle = meteor.angle;
+    const headX = meteor.x;
+    const headY = meteor.y;
     const tailX = headX - Math.cos(angle) * meteor.tail;
     const tailY = headY - Math.sin(angle) * meteor.tail;
 
-    drawLoadingMeteorTailMask(ctx, meteor, headX, headY, tailX, tailY, fade, normalX, normalY);
+    drawLoadingMeteorTailMask(ctx, meteor, headX, headY, tailX, tailY, fade);
     drawLoadingMeteorHeadMask(ctx, meteor, headX, headY, fade, state.time);
 
     if (Math.random() > 0.72) {
       spawnLoadingMeteorSparkles(state, headX, headY, meteor.size);
     }
 
-    if (meteor.age > meteor.life || headX < -meteor.tail - 80 || headY > height + meteor.tail + 80) {
+    if (meteor.age > meteor.life) {
       activeCount -= 1;
 
       if (state.isSpawning) {
-        Object.assign(meteor, createLoadingMeteor(state, width, height, nextLoadingMeteorDelay(state, activeCount <= 0)));
+        Object.assign(
+          meteor,
+          createLoadingMeteor(width, height, nextLoadingMeteorDelay(state, activeCount <= 0)),
+        );
       } else {
         state.meteors.splice(index, 1);
       }
@@ -2230,10 +2353,7 @@ function drawLoadingMeteorsMask(ctx, width, height, state, deltaTime) {
       continue;
     }
 
-    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-    ctx.beginPath();
-    ctx.arc(sparkle.x, sparkle.y, sparkle.size, 0, Math.PI * 2);
-    ctx.fill();
+    drawLoadingMeteorSparkleMask(ctx, sparkle, alpha, state.time);
   }
 
   ctx.restore();
@@ -2273,12 +2393,12 @@ function drawVisualizer(maskCtx, width, height, energy, smoothedLevels, visualiz
       : 0;
     const baseHeight = Math.max(barWidth, normalized * maxHeight);
     const scale = clamp(visualizerScales[index] || 1, LOADING_MIN_SCALE, LOADING_MAX_SCALE);
-    const drawWidth = barWidth * scale;
+    const drawWidth = Math.max(1, Math.round(barWidth * scale));
     const isScaledDown = scale < LOADING_MAX_SCALE - 0.001;
-    const barHeight = isScaledDown ? drawWidth : baseHeight;
+    const barHeight = isScaledDown ? drawWidth : Math.max(drawWidth, Math.round(baseHeight));
     const radius = Math.min(drawWidth * 0.5, barHeight * 0.5);
-    const drawX = x + (barWidth - drawWidth) * 0.5;
-    const drawY = centerY - barHeight * 0.5;
+    const drawX = Math.round(x + (barWidth - drawWidth) * 0.5);
+    const drawY = Math.round(centerY - barHeight * 0.5);
 
     maskCtx.beginPath();
     maskCtx.roundRect(drawX, drawY, drawWidth, barHeight, radius);
@@ -2501,7 +2621,7 @@ window.addEventListener("load", () => {
   newsButton.disabled = true;
   newsButton.setAttribute("aria-label", "Open news");
   newsButton.setAttribute("aria-expanded", "false");
-  newsButton.innerHTML = '<i class="fa-solid fa-tower-broadcast" aria-hidden="true"></i><i class="fa-solid fa-rotate" aria-hidden="true"></i>';
+  newsButton.innerHTML = '<i class="fa-solid fa-tower-cell" aria-hidden="true"></i><i class="fa-solid fa-rotate" aria-hidden="true"></i>';
 
   for (const button of [textRandomizerButton, playbackButton, settingsButton, newsButton]) {
     button.style.width = `${CONTROL_BUTTON_SIZE}px`;
@@ -3166,7 +3286,7 @@ window.addEventListener("load", () => {
 
     try {
       if (Math.random() >= audioPostSelectionProbability) {
-        applyTextSelection(createRandomTextSelection());
+        applyTextSelection(createRandomTextSelection({ allowBaseWordOnly: true }));
         return;
       }
 
@@ -3181,7 +3301,7 @@ window.addEventListener("load", () => {
       console.error(error);
       const selection = fallbackSelection.source === "api" && fallbackSelection.audioId
         ? fallbackSelection
-        : createRandomTextSelection();
+        : createRandomTextSelection({ allowBaseWordOnly: true });
       if (selection.text) {
         applyTextSelection(selection);
       } else {
