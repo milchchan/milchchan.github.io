@@ -357,7 +357,13 @@
         background: rgb(244 244 242 / 0.75);
       }
 
+      .floating-panel-list-item-body {
+        min-width: 0;
+      }
+
       .floating-panel-list-item-main {
+        display: inline-block;
+        max-width: 100%;
         min-width: 0;
         border: 0;
         padding: 0;
@@ -372,7 +378,8 @@
       }
 
       .floating-panel-list-item-content {
-        display: block;
+        display: inline-block;
+        max-width: 100%;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1.0rem;
         line-height: 1.5rem;
@@ -2691,12 +2698,14 @@ window.addEventListener("load", () => {
 
     for (const item of newsItems) {
       const row = document.createElement("div");
+      const itemBody = document.createElement("div");
       const selectButton = document.createElement("button");
       const content = document.createElement("span");
       const time = document.createElement("span");
       const linkButton = document.createElement("button");
 
       row.className = "floating-panel-list-item";
+      itemBody.className = "floating-panel-list-item-body";
       selectButton.type = "button";
       selectButton.className = "floating-panel-list-item-main";
       selectButton.disabled = playbackState.isLoadingAudio;
@@ -2705,9 +2714,6 @@ window.addEventListener("load", () => {
       time.className = "floating-panel-list-item-time";
       time.textContent = formatUnixTimestamp(item.timestamp);
       selectButton.appendChild(content);
-      if (time.textContent) {
-        selectButton.appendChild(time);
-      }
       selectButton.addEventListener("click", async event => {
         event.stopPropagation();
         await applySelectionAndStartPlayback(
@@ -2729,7 +2735,11 @@ window.addEventListener("load", () => {
         window.open(item.url, "_blank", "noopener,noreferrer");
       });
 
-      row.appendChild(selectButton);
+      itemBody.appendChild(selectButton);
+      if (time.textContent) {
+        itemBody.appendChild(time);
+      }
+      row.appendChild(itemBody);
       row.appendChild(linkButton);
       newsList.appendChild(row);
     }
