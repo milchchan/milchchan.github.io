@@ -292,7 +292,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             api_url = tts_source
                             bearer_token = None
                         
-                        user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'
+                        user_agent = os.environ['USER_AGENT'] if 'USER_AGENT' in os.environ else 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'
                         session = uuid4().hex[:10]
                         boundary = '----gradioBoundary'
                         data = f'--{boundary}\r\n'.encode()
