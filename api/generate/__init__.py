@@ -314,7 +314,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         
                         path = None
 
-                        with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Accept': 'text/event-stream', 'User-Agent': user_agent}} if bearer_token is None else {'Authorization': f"Bearer {bearer_token}", 'Accept': 'text/event-stream', 'User-Agent': user_agent})) as response:
+                        with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Accept': 'text/event-stream', 'User-Agent': user_agent} if bearer_token is None else {'Authorization': f"Bearer {bearer_token}", 'Accept': 'text/event-stream', 'User-Agent': user_agent})) as response:
                             for raw in iter(lambda: response.readline() or None, None):
                                 if not raw: # EOF
                                     break
