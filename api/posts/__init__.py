@@ -17,6 +17,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         to_date = int(req.params['to']) if 'to' in req.params else None
         query = req.params['query'] if 'query' in req.params else None
         mime_type = req.params['type'].lower() if 'type' in req.params else None
+        language = req.params['language'].lower() if 'language' in req.params else None
         nsfw = json.loads(req.params['nsfw'].lower()) if 'nsfw' in req.params else False
         client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
         database = client.get_database_client('Milch')
@@ -25,17 +26,28 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if from_date is None:
             if mime_type is None:
                 if query is None:
+                    if language is None:
+                        items = list(container.query_items(
+                            query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                            parameters=[
+                                {'name': '@offset', 'value': 0 if offset is None else offset},
+                                {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                            ],
+                            enable_cross_partition_query=True))
+                    else:
+                        items = list(container.query_items(
+                            query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.language = @language AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.language = @language AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                            parameters=[
+                                {'name': '@offset', 'value': 0 if offset is None else offset},
+                                {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@language', 'value': language},
+                                {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                            ],
+                            enable_cross_partition_query=True))
+                elif language is None:
                     items = list(container.query_items(
-                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
-                        parameters=[
-                            {'name': '@offset', 'value': 0 if offset is None else offset},
-                            {'name': '@limit', 'value': 100 if limit is None else limit},
-                            {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
-                        ],
-                        enable_cross_partition_query=True))
-                else:
-                    items = list(container.query_items(
-                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.input LIKE @query AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.input LIKE @query AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                         parameters=[
                             {'name': '@offset', 'value': 0 if offset is None else offset},
                             {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -43,19 +55,42 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
                         ],
                         enable_cross_partition_query=True))
+                else:
+                    items = list(container.query_items(
+                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.language = @language AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.language = @language AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                        parameters=[
+                            {'name': '@offset', 'value': 0 if offset is None else offset},
+                            {'name': '@limit', 'value': 100 if limit is None else limit},
+                            {'name': '@query', 'value': query},
+                            {'name': '@language', 'value': language},
+                            {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                        ],
+                        enable_cross_partition_query=True))
             elif query is None:
+                if language is None:
+                    items = list(container.query_items(
+                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                        parameters=[
+                            {'name': '@offset', 'value': 0 if offset is None else offset},
+                            {'name': '@limit', 'value': 100 if limit is None else limit},
+                            {'name': '@mime_type', 'value': mime_type},
+                            {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                        ],
+                        enable_cross_partition_query=True))
+                else:
+                    items = list(container.query_items(
+                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.language = @language AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.language = @language AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                        parameters=[
+                            {'name': '@offset', 'value': 0 if offset is None else offset},
+                            {'name': '@limit', 'value': 100 if limit is None else limit},
+                            {'name': '@mime_type', 'value': mime_type},
+                            {'name': '@language', 'value': language},
+                            {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                        ],
+                        enable_cross_partition_query=True))
+            elif language is None:
                 items = list(container.query_items(
-                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
-                    parameters=[
-                        {'name': '@offset', 'value': 0 if offset is None else offset},
-                        {'name': '@limit', 'value': 100 if limit is None else limit},
-                        {'name': '@mime_type', 'value': mime_type},
-                        {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
-                    ],
-                    enable_cross_partition_query=True))
-            else:
-                items = list(container.query_items(
-                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.input LIKE @query AND p.type LIKE @mime_type AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.input LIKE @query AND p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.type LIKE @mime_type AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                     parameters=[
                         {'name': '@offset', 'value': 0 if offset is None else offset},
                         {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -64,21 +99,45 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
                     ],
                     enable_cross_partition_query=True))
+            else:
+                items = list(container.query_items(
+                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.type LIKE @mime_type AND p.language = @language AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.type LIKE @mime_type AND p.language = @language AND NOT p.nsfw AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                    parameters=[
+                        {'name': '@offset', 'value': 0 if offset is None else offset},
+                        {'name': '@limit', 'value': 100 if limit is None else limit},
+                        {'name': '@query', 'value': query},
+                        {'name': '@mime_type', 'value': mime_type},
+                        {'name': '@language', 'value': language},
+                        {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                    ],
+                    enable_cross_partition_query=True))
         else:
             if mime_type is None:
                 if query is None:
+                    if language is None:
+                        items = list(container.query_items(
+                            query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                            parameters=[
+                                {'name': '@offset', 'value': 0 if offset is None else offset},
+                                {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
+                                {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                            ],
+                            enable_cross_partition_query=True))
+                    else:
+                        items = list(container.query_items(
+                            query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.language = @language AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.language = @language AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                            parameters=[
+                                {'name': '@offset', 'value': 0 if offset is None else offset},
+                                {'name': '@limit', 'value': 100 if limit is None else limit},
+                                {'name': '@language', 'value': language},
+                                {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
+                                {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                            ],
+                            enable_cross_partition_query=True))
+                elif language is None:
                     items = list(container.query_items(
-                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
-                        parameters=[
-                            {'name': '@offset', 'value': 0 if offset is None else offset},
-                            {'name': '@limit', 'value': 100 if limit is None else limit},
-                            {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
-                            {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
-                        ],
-                        enable_cross_partition_query=True))
-                else:
-                    items = list(container.query_items(
-                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.input LIKE @query AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.input LIKE @query AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                         parameters=[
                             {'name': '@offset', 'value': 0 if offset is None else offset},
                             {'name': '@limit', 'value': 100 if limit is None else limit},
@@ -87,12 +146,49 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
                         ],
                         enable_cross_partition_query=True))
+                else:
+                    items = list(container.query_items(
+                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.language = @language AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.language = @language AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                        parameters=[
+                            {'name': '@offset', 'value': 0 if offset is None else offset},
+                            {'name': '@limit', 'value': 100 if limit is None else limit},
+                            {'name': '@query', 'value': query},
+                            {'name': '@language', 'value': language},
+                            {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
+                            {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                        ],
+                        enable_cross_partition_query=True))
             elif query is None:
+                if language is None:
+                    items = list(container.query_items(
+                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                        parameters=[
+                            {'name': '@offset', 'value': 0 if offset is None else offset},
+                            {'name': '@limit', 'value': 100 if limit is None else limit},
+                            {'name': '@mime_type', 'value': mime_type},
+                            {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
+                            {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                        ],
+                        enable_cross_partition_query=True))
+                else:
+                    items = list(container.query_items(
+                        query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.language = @language AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.language = @language AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                        parameters=[
+                            {'name': '@offset', 'value': 0 if offset is None else offset},
+                            {'name': '@limit', 'value': 100 if limit is None else limit},
+                            {'name': '@mime_type', 'value': mime_type},
+                            {'name': '@language', 'value': language},
+                            {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
+                            {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                        ],
+                        enable_cross_partition_query=True))
+            elif language is None:
                 items = list(container.query_items(
-                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.type LIKE @mime_type AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                     parameters=[
                         {'name': '@offset', 'value': 0 if offset is None else offset},
                         {'name': '@limit', 'value': 100 if limit is None else limit},
+                        {'name': '@query', 'value': query},
                         {'name': '@mime_type', 'value': mime_type},
                         {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
                         {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
@@ -100,12 +196,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     enable_cross_partition_query=True))
             else:
                 items = list(container.query_items(
-                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.input LIKE @query AND p.type LIKE @mime_type AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.input LIKE @query AND p.type LIKE @mime_type AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
+                    query=f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.type LIKE @mime_type AND p.language = @language AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit' if nsfw else f'SELECT p.id, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE (p.input LIKE @query OR p.name LIKE @query) AND p.type LIKE @mime_type AND p.language = @language AND NOT p.nsfw AND p.timestamp > @from_date AND p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit',
                     parameters=[
                         {'name': '@offset', 'value': 0 if offset is None else offset},
                         {'name': '@limit', 'value': 100 if limit is None else limit},
                         {'name': '@query', 'value': query},
                         {'name': '@mime_type', 'value': mime_type},
+                        {'name': '@language', 'value': language},
                         {'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
                         {'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
                     ],
