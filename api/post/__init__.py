@@ -239,10 +239,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 ],
                 enable_cross_partition_query=True)))
             item['accesses'] += 1
-            
+            keys = []
+
             for key in item:
                 if key.startswith('_'):
-                    del item[key]
+                    keys.append(key)
+            
+            for key in keys:
+                del item[key]
 
             container.upsert_item(item)
 

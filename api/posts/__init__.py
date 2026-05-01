@@ -209,9 +209,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     enable_cross_partition_query=True))
             
         for item in items:
+            keys = []
+
             for key in item:
                 if key.startswith('_'):
-                    del item[key]
+                    keys.append(key)
+            
+            for key in keys:
+                del item[key]
 
             if 'animations' in item:
                 for animation in item['animations']:
