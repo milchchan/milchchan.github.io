@@ -39,6 +39,26 @@
     <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
     <style media="screen">
       html {
+        --accent-color: #00d6ff;
+        --page-bg: #f4f4f2;
+        --desktop-bg: #ffffff;
+        --frame-bg: #f4f4f2;
+        --text-color: #000000;
+        --text-rgb: 0 0 0;
+        --inverse-text-color: #ffffff;
+        --control-bg: rgb(255 255 255 / 0.9);
+        --primary-control-bg: rgb(255 255 255 / 0.9);
+        --panel-bg: rgb(255 255 255 / 0.9);
+        --panel-footer-bg: transparent;
+        --panel-soft-bg: rgb(244 244 242 / 0.75);
+        --panel-button-bg: rgb(255 255 255 / 0.9);
+        --panel-button-text-color: #000000;
+        --panel-primary-bg: rgb(0 0 0 / 1);
+        --muted-text-color: rgb(0 0 0 / 0.5);
+        --subtle-text-color: rgb(0 0 0 / 0.25);
+        --divider-color: hsl(0, 0%, 93%);
+        --shadow-color: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
+        color-scheme: light dark;
         touch-action: none;
         margin: 0;
         padding: 0;
@@ -48,7 +68,27 @@
         overflow-x: hidden;
         overflow-y: auto;
         scroll-behavior: smooth;
-        background: #f4f4f2;
+        background: var(--page-bg);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        html {
+          --text-color: #ffffff;
+          --text-rgb: 244 244 242;
+          --inverse-text-color: #000000;
+          --control-bg: rgb(0 0 0 / 0.9);
+          --primary-control-bg: rgb(0 0 0 / 0.9);
+          --panel-bg: rgb(0 0 0 / 0.92);
+          --panel-footer-bg: transparent;
+          --panel-soft-bg: rgb(43 43 43 / 0.75);
+          --panel-button-bg: rgb(255 255 255 / 1);
+          --panel-button-text-color: #000000;
+          --panel-primary-bg: rgb(255 255 255 / 1);
+          --muted-text-color: rgb(255 255 255 / 0.5);
+          --subtle-text-color: rgb(255 255 255 / 0.25);
+          --divider-color: hsl(0, 0%, 21%);
+          --shadow-color: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
+        }
       }
 
       body {
@@ -130,7 +170,7 @@
         max-width: 100% !important;
         height: 100%;
         overflow: hidden;
-        background-color: #f4f4f2;
+        background-color: var(--frame-bg);
         transition: .5s;
       }
 
@@ -153,12 +193,14 @@
 
       .control-buttons {
         position: absolute;
-        left: 16px;
+        left: 50%;
         bottom: 16px;
         z-index: 2;
         display: flex;
         align-items: center;
         gap: 12px;
+        transform: translate3d(-50%, 0, 0);
+        transition: left 500ms ease, transform 500ms ease;
       }
 
       .control-button {
@@ -169,11 +211,11 @@
         height: 48px;
         border: 0;
         border-radius: 999px;
-        background: rgb(255 255 255 / 0.75);
-        color: #000000;
+        background: var(--control-bg);
+        color: var(--text-color);
         cursor: pointer;
         backdrop-filter: blur(16px);
-        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
+        box-shadow: var(--shadow-color) !important;
         transition:
           opacity 500ms ease,
           color 500ms ease,
@@ -184,8 +226,13 @@
         transform: scale(0.95);
       }
 
+      .control-button.is-primary {
+        color: var(--text-color);
+        background: var(--primary-control-bg);
+      }
+
       .control-button:first-of-type {
-        background: rgb(255 255 255 / 0.75)
+        background: var(--control-bg)
       }
 
       .control-button:not(.is-loading):nth-last-of-type(3)>i:first-child {
@@ -271,9 +318,9 @@
         max-height: var(--panel-max-height);
         padding: 0;
         border-radius: 24px;
-        background: rgb(255 255 255 / 0.9);
+        background: var(--panel-bg);
         backdrop-filter: blur(16px);
-        box-shadow: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05 !important;
+        box-shadow: var(--shadow-color) !important;
         box-sizing: border-box;
         opacity: 0;
         visibility: hidden;
@@ -296,14 +343,35 @@
           visibility 0s linear 0s;
       }
 
+      .floating-panel.has-fixed-footer {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
       .floating-panel-scroll-area {
         max-height: var(--panel-max-height);
         overflow-y: auto;
         overflow-x: hidden;
       }
 
+      .floating-panel.has-fixed-footer .floating-panel-scroll-area {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        overflow: hidden;
+      }
+
       .floating-panel-scroll-inner {
+        position: relative;
         padding: var(--panel-padding);
+      }
+
+      .floating-panel.has-fixed-footer .floating-panel-scroll-inner {
+        box-sizing: border-box;
+        min-height: 0;
+        padding: 0;
+        overflow: hidden;
       }
 
       .floating-panel-footer,
@@ -315,7 +383,17 @@
 
       .floating-panel-footer {
         display: flex;
+        align-items: center;
         justify-content: flex-start;
+        gap: 8px;
+      }
+
+      .floating-panel.has-fixed-footer .floating-panel-footer {
+        flex: 0 0 auto;
+        box-sizing: border-box;
+        margin-top: 0;
+        padding: 12px var(--panel-padding);
+        background: var(--panel-footer-bg);
       }
 
       .floating-panel-footer::before,
@@ -327,11 +405,67 @@
         top: 0;
         width: calc(100% + 32px);
         height: 1px;
-        background: hsl(0, 0%, 93%);
+        background: var(--divider-color);
+      }
+
+      .floating-panel.has-fixed-footer .floating-panel-footer::before {
+        left: 0;
+        right: 0;
+        width: 100%;
       }
 
       .floating-panel-footer-button {
         align-self: flex-start;
+      }
+
+      .floating-panel-mode-button {
+        color: var(--muted-text-color);
+      }
+
+      .floating-panel-mode-group {
+        display: inline-flex;
+        align-items: center;
+        margin-left: auto;
+        border-radius: 999px;
+        background: var(--panel-soft-bg);
+        overflow: hidden;
+      }
+
+      .floating-panel-view {
+        min-width: 0;
+        max-height: calc(var(--panel-max-height) - 72px);
+        padding: var(--panel-padding);
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        transition: transform 500ms ease;
+        will-change: transform;
+      }
+
+      .floating-panel-view.is-panel-inactive {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        pointer-events: none;
+      }
+
+      .floating-panel.has-fixed-footer:not(.is-showing-tags) .floating-panel-list {
+        transform: translate3d(0, 0, 0);
+      }
+
+      .floating-panel.has-fixed-footer:not(.is-showing-tags) .floating-panel-tag-cloud {
+        transform: translate3d(100%, 0, 0);
+      }
+
+      .floating-panel.has-fixed-footer.is-showing-tags .floating-panel-list {
+        transform: translate3d(-100%, 0, 0);
+      }
+
+      .floating-panel.has-fixed-footer.is-showing-tags .floating-panel-tag-cloud {
+        transform: translate3d(0, 0, 0);
       }
 
       .floating-panel-list {
@@ -340,12 +474,43 @@
         gap: 10px;
       }
 
+      .floating-panel-tag-cloud {
+        display: flex;
+        align-items: flex-start;
+        align-content: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+        column-gap: 8px;
+        row-gap: 16px;
+      }
+
+      .floating-panel-tag {
+        display: inline-block;
+        max-width: 100%;
+        padding: 12px;
+        border: 0;
+        border-radius: 999px;
+        box-sizing: border-box;
+        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
+        font-size: 0.75rem;
+        line-height: 0.75rem;
+        color: rgb(var(--text-rgb) / var(--tag-alpha, 1));
+        background: var(--panel-soft-bg);
+        overflow-wrap: anywhere;
+        cursor: pointer;
+        transition: color 500ms ease;
+      }
+
+      .floating-panel-tag:disabled {
+        cursor: default;
+      }
+
       .floating-panel-empty {
         margin: 0;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1.0rem;
         line-height: 1.5rem;
-        color: rgb(0 0 0 / 0.5);
+        color: var(--muted-text-color);
       }
 
       .floating-panel-list-item {
@@ -354,7 +519,7 @@
         gap: 8px;
         padding: 12px;
         border-radius: 16px;
-        background: rgb(244 244 242 / 0.75);
+        background: var(--panel-soft-bg);
       }
 
       .floating-panel-list-item-body {
@@ -383,7 +548,7 @@
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1.0rem;
         line-height: 1.5rem;
-        color: #000000;
+        color: var(--text-color);
         overflow-wrap: anywhere;
         transition: color 500ms ease;
       }
@@ -394,7 +559,8 @@
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 0.75rem;
         line-height: 1.0rem;
-        color: rgb(0 0 0 / 0.5);
+        color: var(--muted-text-color);
+        transition: color 500ms ease;
       }
 
       .floating-panel-field {
@@ -406,7 +572,7 @@
 
       .floating-panel-field:first-of-type {
         border-radius: 16px;
-        background: rgb(244 244 242 / 0.75);
+        background: var(--panel-soft-bg);
       }
 
       .floating-panel-field:nth-of-type(2) {
@@ -423,7 +589,7 @@
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 0.75rem;
         line-height: 1.5;
-        color: rgb(0 0 0 / 1);
+        color: var(--text-color);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -439,9 +605,9 @@
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1.0rem;
         line-height: 1.5;
-        color: #000000;
+        color: var(--text-color);
         background: transparent;
-        caret-color: #00d6ff;
+        caret-color: var(--accent-color);
       }
 
       .floating-panel-textarea:focus {
@@ -465,13 +631,14 @@
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
         font-size: 1rem;
         line-height: 1;
-        color: #000000;
-        background: rgb(244 244 242 / 0.75);
-        caret-color: #00d6ff;
+        color: var(--text-color);
+        background: var(--panel-soft-bg);
+        caret-color: var(--accent-color);
       }
 
       .floating-panel-text-input::placeholder {
-        color: rgb(0 0 0 / 0.25);
+        color: var(--subtle-text-color);
+        transition: color 500ms ease;
       }
 
       .floating-panel-text-input:focus {
@@ -486,8 +653,8 @@
         height: 48px;
         border: 0;
         border-radius: 999px;
-        background: rgb(255 255 255 / 0.9);
-        color: #000000;
+        background: var(--panel-button-bg);
+        color: var(--panel-button-text-color);
         cursor: pointer;
         padding: 0;
         font-size: 1.0rem;
@@ -495,9 +662,28 @@
         transition: color 500ms ease, background-color 500ms ease, opacity 500ms ease;
       }
 
+      .floating-panel-row .floating-panel-button:not(.is-primary),
+      .floating-panel-footer .floating-panel-button {
+        background: var(--panel-soft-bg) !important;
+        color: var(--text-color) !important;
+      }
+
+      .floating-panel-footer .floating-panel-mode-group .floating-panel-mode-button {
+        border-radius: 0;
+        background: transparent;
+      }
+
+      .floating-panel-footer .floating-panel-mode-group .floating-panel-mode-button.is-selected {
+        background: transparent;
+      }
+
+      .floating-panel-mode-button.is-selected {
+        color: var(--accent-color) !important;
+      }
+
       .floating-panel button.is-primary {
-        color: #ffffff;
-        background: rgb(0 0 0 / 1) !important;
+        color: var(--inverse-text-color);
+        background: var(--panel-primary-bg) !important;
       }
 
       .floating-panel-file-input {
@@ -702,7 +888,7 @@
 
       @media screen and (min-width: 769px) and (min-height: 769px) {
         html {
-          background: #ffffff;
+          background: var(--desktop-bg);
         }
 
         body>.wrap {
@@ -724,20 +910,26 @@
           left: 16px;
           transition: 0.5s;
         }
+
+        .control-buttons {
+          left: 16px;
+          transform: translate3d(0, 0, 0);
+        }
       }
 
       @media (hover: hover) {
         .control-button:hover:not(:disabled) {
-          color: #00d6ff;
+          color: var(--accent-color);
         }
 
         .floating-panel-list-item-main:hover:not(:disabled) .floating-panel-list-item-content,
+        .floating-panel-tag:hover:not(:disabled),
         .floating-panel-button:hover:not(:disabled) {
-          color: #00d6ff;
+          color: var(--accent-color);
         }
 
         .floating-panel button.is-primary:hover:not(:disabled) {
-          color: #00d6ff;
+          color: var(--accent-color);
         }
       }
     </style>
@@ -909,6 +1101,56 @@ function extractNewsItems(payload) {
   }
 
   return items;
+}
+
+function extractBaseWords(payload) {
+  const wordCounts = new Map();
+
+  function appendValues(values) {
+    if (typeof values === "string") {
+      const normalized = values.trim();
+      if (normalized) {
+        wordCounts.set(normalized, (wordCounts.get(normalized) ?? 0) + 1);
+      }
+      return;
+    }
+
+    if (!Array.isArray(values)) {
+      return;
+    }
+
+    for (const value of values) {
+      if (Array.isArray(value)) {
+        appendValues(value[value.length - 1]);
+      } else {
+        appendValues(value);
+      }
+    }
+  }
+
+  if (!Array.isArray(payload)) {
+    appendValues(payload?.Base_Words ?? payload?.base_words ?? payload?.baseWords);
+    return Array.from(wordCounts, ([word, count]) => ({ word, count }));
+  }
+
+  const threshold = Number(THRESHOLD);
+
+  for (const item of payload) {
+    if (!item || typeof item !== "object") {
+      continue;
+    }
+
+    const score = Number(item.score);
+    if (!Number.isFinite(score) || score < threshold) {
+      continue;
+    }
+
+    appendValues(item.Base_Words ?? item.base_words ?? item.baseWords);
+    appendValues(item.terms);
+  }
+
+  return Array.from(wordCounts, ([word, count]) => ({ word, count }))
+    .sort((a, b) => a.word.localeCompare(b.word, undefined, { numeric: true, sensitivity: "base" }));
 }
 
 async function fetchSharedApiFetchPayload() {
@@ -1304,6 +1546,10 @@ const LOADING_METEOR_START_X_RATIO = 1;
 const LOADING_METEOR_START_Y_RATIO = 0;
 const LOADING_METEOR_END_X_RATIO = 0;
 const LOADING_METEOR_END_Y_RATIO = 1;
+const LOADING_STAR_COUNT = 256;
+const LOADING_STAR_ROTATION_SECONDS = 60;
+const LOADING_STARFIELD_FADE_IN_SECONDS = 0.5;
+const LOADING_STARFIELD_FADE_OUT_SECONDS = 0.5;
 const REDUCE_MOTION_MEDIA = window.matchMedia?.("(prefers-reduced-motion: reduce)") ?? { matches: false };
 const backgroundTextModifiers = [];
 const backgroundTextBaseWords = [];
@@ -1994,6 +2240,10 @@ function createLoadingMeteorState() {
     time: 0,
     meteors: [],
     sparkles: [],
+    stars: [],
+    starfieldWidth: 0,
+    starfieldHeight: 0,
+    starfieldOpacity: 0,
     rhythmIndex: 0,
     isSpawning: false,
   };
@@ -2158,7 +2408,98 @@ function stopLoadingMeteorShower(state) {
 }
 
 function hasActiveLoadingMeteors(state) {
-  return state.isSpawning || state.meteors.length > 0 || state.sparkles.length > 0;
+  return state.isSpawning
+    || state.meteors.length > 0
+    || state.sparkles.length > 0
+    || state.starfieldOpacity > 0.001;
+}
+
+function updateLoadingStarfieldOpacity(state, deltaTime) {
+  const shouldShow = state.isSpawning || state.meteors.length > 0 || state.sparkles.length > 0;
+  const target = shouldShow ? 1 : 0;
+  const duration = shouldShow ? LOADING_STARFIELD_FADE_IN_SECONDS : LOADING_STARFIELD_FADE_OUT_SECONDS;
+  const step = duration > 0 ? deltaTime / duration : 1;
+
+  if (target > state.starfieldOpacity) {
+    state.starfieldOpacity = Math.min(target, state.starfieldOpacity + step);
+  } else if (target < state.starfieldOpacity) {
+    state.starfieldOpacity = Math.max(target, state.starfieldOpacity - step);
+  }
+}
+
+function syncLoadingStarfield(state, width, height) {
+  if (
+    state.starfieldWidth === width
+    && state.starfieldHeight === height
+    && state.stars.length === LOADING_STAR_COUNT
+  ) {
+    return;
+  }
+
+  const ratio = window.devicePixelRatio || 1;
+  const centerX = width * 0.5;
+  const centerY = height;
+  const maxRadius = Math.hypot(Math.max(centerX, width - centerX), height);
+
+  state.starfieldWidth = width;
+  state.starfieldHeight = height;
+  state.stars = Array.from({ length: LOADING_STAR_COUNT }, () => {
+    const distanceRatio = Math.sqrt(randomRange(0.02, 1));
+
+    return {
+      angle: randomRange(0, Math.PI * 2),
+      radius: distanceRatio * maxRadius,
+      size: randomRange(0.7, 1.9) * ratio,
+      phase: randomRange(0, Math.PI * 2),
+      twinkleSpeed: randomRange(1.8, 4.6),
+      alpha: randomRange(0.28, 0.78),
+    };
+  });
+}
+
+function drawLoadingStarfieldMask(ctx, width, height, state) {
+  if (state.starfieldOpacity <= 0.001) {
+    return;
+  }
+
+  syncLoadingStarfield(state, width, height);
+
+  const centerX = width * 0.5;
+  const centerY = height;
+  const rotation = -(state.time / LOADING_STAR_ROTATION_SECONDS) * Math.PI * 2;
+
+  ctx.save();
+  ctx.globalAlpha *= state.starfieldOpacity;
+  ctx.translate(centerX, centerY);
+  ctx.rotate(rotation);
+
+  for (const star of state.stars) {
+    const x = Math.cos(star.angle) * star.radius;
+    const y = Math.sin(star.angle) * star.radius;
+
+    const twinkle = 0.55 + Math.sin(state.time * star.twinkleSpeed + star.phase) * 0.45;
+    const alpha = star.alpha * clamp(0.35 + twinkle * 0.75, 0, 1);
+    const size = star.size * (0.86 + twinkle * 0.22);
+
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (size > 1.2) {
+      ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.56})`;
+      ctx.lineWidth = Math.max(0.6, size * 0.28);
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x - size * 2.2, y);
+      ctx.lineTo(x + size * 2.2, y);
+      ctx.moveTo(x, y - size * 2.2);
+      ctx.lineTo(x, y + size * 2.2);
+      ctx.stroke();
+    }
+  }
+
+  ctx.restore();
 }
 
 function spawnLoadingMeteorSparkles(state, x, y, size) {
@@ -2267,6 +2608,9 @@ function drawLoadingMeteorsMask(ctx, width, height, state, deltaTime) {
 
   ctx.save();
   ctx.lineCap = "round";
+
+  updateLoadingStarfieldOpacity(state, safeDeltaTime);
+  drawLoadingStarfieldMask(ctx, width, height, state);
 
   let activeCount = 0;
 
@@ -2501,8 +2845,12 @@ window.addEventListener("load", async () => {
   const newsScrollArea = document.createElement("div");
   const newsScrollInner = document.createElement("div");
   const newsList = document.createElement("div");
+  const tagCloud = document.createElement("div");
   const newsFooter = document.createElement("div");
   const newsReloadButton = document.createElement("button");
+  const newsModeGroup = document.createElement("div");
+  const newsListModeButton = document.createElement("button");
+  const newsTagModeButton = document.createElement("button");
   const promptField = document.createElement("div");
   const promptTextarea = document.createElement("textarea");
   const manualTextField = document.createElement("div");
@@ -2541,6 +2889,8 @@ window.addEventListener("load", async () => {
   let isLoadingNews = false;
   let hasLoadedNews = false;
   let newsItems = [];
+  let newsBaseWords = [];
+  let newsPanelMode = "news";
   let lastGeneratedTopic = "";
   let lastGeneratedAudioId = null;
   let lastGeneratedConversationMessages = [];
@@ -2574,7 +2924,6 @@ window.addEventListener("load", async () => {
   syncFrameCanvasSize(frame, canvas);
 
   controls.className = "control-buttons";
-  controls.style.left = `${CONTROL_BUTTON_LEFT}px`;
   controls.style.bottom = `${CONTROL_BUTTON_BOTTOM}px`;
   controls.style.gap = `${CONTROL_BUTTON_GROUP_GAP}px`;
 
@@ -2585,7 +2934,7 @@ window.addEventListener("load", async () => {
   textRandomizerButton.innerHTML = '<i class="fa-solid fa-dice-five" aria-hidden="true"></i><i class="fa-solid fa-dice-five" aria-hidden="true"></i>';
 
   playbackButton.type = "button";
-  playbackButton.className = "control-button playback-control-button";
+  playbackButton.className = "control-button playback-control-button is-primary";
   playbackButton.disabled = true;
   playbackButton.setAttribute("aria-label", "Toggle playback");
   playbackButtonPlayIcon.className = "fa-solid fa-play icon-play";
@@ -2624,7 +2973,7 @@ window.addEventListener("load", async () => {
   settingsPanel.addEventListener("click", event => {
     event.stopPropagation();
   });
-  newsPanel.className = "floating-panel";
+  newsPanel.className = "floating-panel has-fixed-footer";
   newsPanel.addEventListener("click", event => {
     event.stopPropagation();
   });
@@ -2632,17 +2981,33 @@ window.addEventListener("load", async () => {
   settingsScrollInner.className = "floating-panel-scroll-inner";
   newsScrollArea.className = "floating-panel-scroll-area";
   newsScrollInner.className = "floating-panel-scroll-inner";
-  newsList.className = "floating-panel-list";
+  newsList.className = "floating-panel-view floating-panel-list";
+  tagCloud.className = "floating-panel-view floating-panel-tag-cloud is-panel-inactive";
   newsFooter.className = "floating-panel-footer";
   newsReloadButton.type = "button";
   newsReloadButton.className = "floating-panel-button floating-panel-footer-button";
   newsReloadButton.setAttribute("aria-label", "Reload news and words");
   newsReloadButton.innerHTML = '<i class="fa-solid fa-rotate" aria-hidden="true"></i>';
+  newsModeGroup.className = "floating-panel-mode-group";
+  newsModeGroup.setAttribute("role", "group");
+  newsModeGroup.setAttribute("aria-label", "News panel display mode");
+  newsListModeButton.type = "button";
+  newsListModeButton.className = "floating-panel-button floating-panel-mode-button";
+  newsListModeButton.setAttribute("aria-label", "Show news list");
+  newsListModeButton.innerHTML = '<i class="fa-solid fa-list" aria-hidden="true"></i>';
+  newsTagModeButton.type = "button";
+  newsTagModeButton.className = "floating-panel-button floating-panel-mode-button";
+  newsTagModeButton.setAttribute("aria-label", "Show tag cloud");
+  newsTagModeButton.innerHTML = '<i class="fa-solid fa-tags" aria-hidden="true"></i>';
   newsScrollInner.appendChild(newsList);
+  newsScrollInner.appendChild(tagCloud);
   newsFooter.appendChild(newsReloadButton);
-  newsScrollInner.appendChild(newsFooter);
+  newsModeGroup.appendChild(newsListModeButton);
+  newsModeGroup.appendChild(newsTagModeButton);
+  newsFooter.appendChild(newsModeGroup);
   newsScrollArea.appendChild(newsScrollInner);
   newsPanel.appendChild(newsScrollArea);
+  newsPanel.appendChild(newsFooter);
   frame.appendChild(newsPanel);
 
   function setSettingsPanelOpen(nextIsOpen) {
@@ -2662,6 +3027,68 @@ window.addEventListener("load", async () => {
     newsPanel.classList.toggle("is-open", nextIsOpen);
     newsButton.classList.toggle("is-active", nextIsOpen);
     newsButton.setAttribute("aria-expanded", `${nextIsOpen}`);
+  }
+
+  function updateNewsPanelModeButton() {
+    const isTagCloudMode = newsPanelMode === "tags";
+
+    newsListModeButton.classList.toggle("is-selected", !isTagCloudMode);
+    newsTagModeButton.classList.toggle("is-selected", isTagCloudMode);
+    newsListModeButton.setAttribute("aria-pressed", `${!isTagCloudMode}`);
+    newsTagModeButton.setAttribute("aria-pressed", `${isTagCloudMode}`);
+  }
+
+  function renderTagCloud() {
+    tagCloud.textContent = "";
+
+    if (!newsBaseWords.length) {
+      const empty = document.createElement("p");
+      empty.className = "floating-panel-empty";
+      empty.textContent = isLoadingNews ? "Loading..." : "No tags";
+      tagCloud.appendChild(empty);
+      return;
+    }
+
+    const counts = newsBaseWords.map(item => item.count);
+    const minCount = Math.min(...counts);
+    const maxCount = Math.max(...counts);
+    const countRange = Math.max(1, maxCount - minCount);
+
+    for (const item of newsBaseWords) {
+      const tag = document.createElement("button");
+      const emphasis = (item.count - minCount) / countRange;
+      const alpha = 0.46 + emphasis * 0.54;
+
+      tag.type = "button";
+      tag.className = "floating-panel-tag";
+      tag.disabled = playbackState.isLoadingAudio;
+      tag.textContent = item.word;
+      tag.setAttribute("aria-label", `Play ${item.word}`);
+      tag.style.setProperty("--tag-alpha", alpha);
+      tag.addEventListener("click", async event => {
+        event.stopPropagation();
+        await applySelectionAndStartPlayback(
+          createManualTextSelection(item.word),
+          () => setNewsPanelOpen(false),
+        );
+      });
+      tagCloud.appendChild(tag);
+    }
+  }
+
+  function renderNewsPanelContent() {
+    const isTagCloudMode = newsPanelMode === "tags";
+
+    if (isTagCloudMode) {
+      renderTagCloud();
+    } else {
+      renderNewsList();
+    }
+
+    newsPanel.classList.toggle("is-showing-tags", isTagCloudMode);
+    newsList.classList.toggle("is-panel-inactive", isTagCloudMode);
+    tagCloud.classList.toggle("is-panel-inactive", !isTagCloudMode);
+    updateNewsPanelModeButton();
   }
 
   function renderNewsList() {
@@ -2726,7 +3153,7 @@ window.addEventListener("load", async () => {
 
   async function openNewsPanel() {
     setNewsPanelOpen(true);
-    renderNewsList();
+    renderNewsPanelContent();
   }
 
   async function applySelectionAndStartPlayback(selection, closePanel) {
@@ -2752,11 +3179,13 @@ window.addEventListener("load", async () => {
       const payload = await fetchSharedApiFetchPayload();
       hydrateBackgroundTextPoolsFromPayload(payload);
       newsItems = extractNewsItems(payload);
+      newsBaseWords = extractBaseWords(payload);
       hasLoadedNews = true;
     } catch (error) {
       console.error(error);
       hydrateBackgroundTextPoolsFromPayload([]);
       newsItems = [];
+      newsBaseWords = [];
     } finally {
       isLoadingNews = false;
       updateTextRandomizerButton();
@@ -2877,6 +3306,18 @@ window.addEventListener("load", async () => {
       console.error(error);
       shake(newsReloadButton);
     }
+  });
+
+  newsListModeButton.addEventListener("click", event => {
+    event.stopPropagation();
+    newsPanelMode = "news";
+    renderNewsPanelContent();
+  });
+
+  newsTagModeButton.addEventListener("click", event => {
+    event.stopPropagation();
+    newsPanelMode = "tags";
+    renderNewsPanelContent();
   });
 
   voiceFileButton.addEventListener("click", event => {
@@ -3034,11 +3475,13 @@ window.addEventListener("load", async () => {
       || isLoadingNews
       || !hasStartedBackgroundText
       || !hasLoadedNews
-      || newsItems.length === 0;
+      || (newsItems.length === 0 && newsBaseWords.length === 0);
     newsButton.classList.toggle("is-loading", isLoadingNews);
     newsReloadButton.disabled = playbackState.isLoadingAudio || isLoadingNews;
+    newsListModeButton.disabled = playbackState.isLoadingAudio || isLoadingNews;
+    newsTagModeButton.disabled = playbackState.isLoadingAudio || isLoadingNews;
     updateTextRandomizerButtonState();
-    renderNewsList();
+    renderNewsPanelContent();
   }
 
   function setPlaybackState(nextIsPlaying) {
