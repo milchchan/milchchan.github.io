@@ -1307,18 +1307,6 @@ const LOADING_METEOR_END_Y_RATIO = 1;
 const REDUCE_MOTION_MEDIA = window.matchMedia?.("(prefers-reduced-motion: reduce)") ?? { matches: false };
 const backgroundTextModifiers = [];
 const backgroundTextBaseWords = [];
-let textMeasurementRevision = 0;
-
-function invalidateTextMeasurements() {
-  textMeasurementRevision += 1;
-}
-
-if (document.fonts) {
-  document.fonts.ready.then(invalidateTextMeasurements).catch(error => {
-    console.error(error);
-  });
-  document.fonts.addEventListener?.("loadingdone", invalidateTextMeasurements);
-}
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -1420,11 +1408,14 @@ function measureCanvasText(ctx, text) {
     };
   }
 
-  const boundingWidth = Math.max(0, metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight);
+  const boundingWidth = Math.max(
+    0,
+    Math.abs(metrics.actualBoundingBoxLeft) + Math.abs(metrics.actualBoundingBoxRight),
+  );
 
   return {
     width: boundingWidth > 0 || text.length === 0 ? boundingWidth : fallbackWidth,
-    actualBoundingBoxLeft: metrics.actualBoundingBoxLeft,
+    actualBoundingBoxLeft: Number.isFinite(metrics.actualBoundingBoxLeft) ? metrics.actualBoundingBoxLeft : 0,
   };
 }
 
@@ -1741,35 +1732,11 @@ function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, cont
     ctx.clip();
   }
 
-  if (
-    textState.measuredTextFont !== ctx.font
-    || textState.measuredText !== textState.text
-    || textState.measuredTextRevision !== textMeasurementRevision
-  ) {
-    textState.measuredTextFont = ctx.font;
-    textState.measuredText = textState.text;
-    textState.measuredTextRevision = textMeasurementRevision;
-
-    textState.measuredTextWidth = measureCanvasText(ctx, textState.text).width;
-  }
-
-  if (
-    textState.measuredCurrentFont !== ctx.font
-    || textState.measuredCurrent !== textState.current
-    || textState.measuredCurrentRevision !== textMeasurementRevision
-  ) {
-    textState.measuredCurrentFont = ctx.font;
-    textState.measuredCurrent = textState.current;
-    textState.measuredCurrentRevision = textMeasurementRevision;
-
-    const textMetrics = measureCanvasText(ctx, textState.current);
-
-    textState.measuredCurrentWidth = textMetrics.width;
-    textState.actualBoundingBoxLeft = textMetrics.actualBoundingBoxLeft;
-  }
-
-  const fullTextWidth = textState.measuredTextWidth || 0;
-  const textWidth = textState.measuredCurrentWidth || 0;
+  const fullTextMetrics = measureCanvasText(ctx, textState.text);
+  const currentTextMetrics = measureCanvasText(ctx, textState.current);
+  const fullTextWidth = fullTextMetrics.width || 0;
+  const textWidth = currentTextMetrics.width || 0;
+  const actualBoundingBoxLeft = currentTextMetrics.actualBoundingBoxLeft || 0;
   const y = canvas.height - bottom;
   const displayWidth = Math.min(Math.max(textWidth, fullTextWidth), availableWidth > 0 ? availableWidth : fullTextWidth);
   const shouldScroll = fullTextWidth > availableWidth
@@ -1783,11 +1750,11 @@ function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, cont
 
   if (shouldScroll) {
     textState.scrollX = (textState.scrollX + BACKGROUND_TEXT_SCROLL_SPEED * ratio * deltaTime) % (fullTextWidth + gap);
-    ctx.fillText(textState.current, padding + textState.actualBoundingBoxLeft - textState.scrollX, y);
-    ctx.fillText(textState.current, padding + textState.actualBoundingBoxLeft - textState.scrollX + fullTextWidth + gap, y);
+    ctx.fillText(textState.current, padding - actualBoundingBoxLeft - textState.scrollX, y);
+    ctx.fillText(textState.current, padding - actualBoundingBoxLeft - textState.scrollX + fullTextWidth + gap, y);
   } else {
     textState.scrollX = 0;
-    ctx.fillText(textState.current, padding + textState.actualBoundingBoxLeft, y);
+    ctx.fillText(textState.current, padding - actualBoundingBoxLeft, y);
   }
 
   ctx.restore();
@@ -2516,7 +2483,7 @@ function shake(element) {
   };
 }
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   const frame = document.body.querySelector("body > .wrap > .frame");
   const backgroundImage = new Image();
   const canvas = document.createElement("canvas");
@@ -3623,6 +3590,7 @@ window.addEventListener("load", () => {
   void resetGenerationSettingsToDefault().catch(error => {
     console.error(error);
   });
+
   void prepareBackgroundText();
 
   function render(timestamp) {
