@@ -1096,6 +1096,8 @@ async function generateScriptContent(topic, promptText, conversationHistory = []
 
   const payload = await response.json();
   const content = extractContentValue(payload);
+  const name = typeof payload.name === "string" ? payload.name.trim() : null;
+  const language = typeof payload.language === "string" ? payload.language.trim() : null;
 
   if (!content) {
     throw new Error("The generate API response did not include a content value.");
@@ -1103,6 +1105,8 @@ async function generateScriptContent(topic, promptText, conversationHistory = []
 
   return {
     content,
+    name,
+    language,
     messages: [
       ...conversationHistory,
       { role: "user", content: topic },
@@ -1169,12 +1173,14 @@ async function synthesizeLine(text, promptAudioBlob, promptAudioFileName, langua
   return await readBlobWithProgress(response, onProgress);
 }
 
-async function postGeneratedAudio(audioBlob, input, message) {
+async function postGeneratedAudio(audioBlob, input, message, name, language) {
   const formData = new FormData();
   formData.append("file", audioBlob, "generated.wav");
   formData.append("data", JSON.stringify({
     input,
     message,
+    name,
+    language,
     nsfw: NSFW,
   }));
 
@@ -1217,7 +1223,13 @@ async function generateAudioSequence(topic, promptText, promptAudioBlob, promptA
     onProgress,
   );
 
-  const postAudioPromise = postGeneratedAudio(audioBlob, topic, script).catch(error => {
+  const postAudioPromise = postGeneratedAudio(
+    audioBlob,
+    topic,
+    script,
+    generatedScript.name,
+    generatedScript.language,
+  ).catch(error => {
     console.error(error);
   });
 
