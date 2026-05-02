@@ -2,7 +2,7 @@
 @import "@fortawesome/fontawesome-free/css/all.css";
 
 :root {
-    --background-color: rgb(255 255 255 / 0.75);
+    --background-color: rgb(255 255 255 / 0.9);
     --foreground-color: #000000;
     --accent-color: #00e7ff;
     --accent-color-display-p3: color(display-p3 0.0 0.906 1.0);
@@ -11,7 +11,7 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: rgb(0 0 0 / 0.75);
+        --background-color: rgb(0 0 0 / 0.9);
         --foreground-color: #ffffff;
         --accent-color: #ffc7e5;
         --accent-color-display-p3: color(display-p3 1.0 0.780 0.898);
