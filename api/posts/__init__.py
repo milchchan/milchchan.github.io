@@ -14,7 +14,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
         database = client.get_database_client('Milch')
         container = database.get_container_client('Posts')
-        query = 'SELECT p.id, p.type, p.input, p.message, p.digest, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE '
+        query = 'SELECT p.id, p.type, p.input, p.message, p.transcript, p.digest, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE '
         parameters = [{'name': '@offset', 'value': int(req.params['offset']) if 'offset' in req.params else 0}, {'name': '@limit', 'value': int(req.params['limit']) if 'limit' in req.params else 100}]
 
         if 'query' in req.params:
@@ -43,7 +43,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         query += f'p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit'
         parameters.append({'name': '@to_date', 'value': datetime.fromtimestamp(int(req.params['to']) if 'to' in req.params else time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
         items = list(container.query_items(query=query, parameters=parameters, enable_cross_partition_query=True))
-        
+
         for item in items:
             keys = []
 
