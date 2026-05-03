@@ -119,7 +119,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 
-            del item['random']
+            if 'random' in item:
+                del item['random']
 
             return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
 
@@ -152,7 +153,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             item['timestamp'] = int(datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00')).timestamp())
 
-            del item['random']
+            if 'random' in item:
+                del item['random']
 
             return func.HttpResponse(json.dumps(item), status_code=200, mimetype='application/json', charset='utf-8')
         
