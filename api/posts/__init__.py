@@ -11,48 +11,39 @@ from azure.cosmos.cosmos_client import CosmosClient
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         order = req.params['order'] if 'order' in req.params else 'desc'
-        offset = int(req.params['offset']) if 'offset' in req.params else None
-        limit = int(req.params['limit']) if 'limit' in req.params else None
-        from_date = int(req.params['from']) if 'from' in req.params else None
-        to_date = int(req.params['to']) if 'to' in req.params else None
-        query = req.params['query'] if 'query' in req.params else None
-        mime_type = req.params['type'].lower() if 'type' in req.params else None
-        digest = req.params['digest'] if 'digest' in req.params else None
-        language = req.params['language'].lower() if 'language' in req.params else None
-        nsfw = json.loads(req.params['nsfw'].lower()) if 'nsfw' in req.params else False
         client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
         database = client.get_database_client('Milch')
         container = database.get_container_client('Posts')
-        sql_query = 'SELECT p.id, p.type, p.input, p.message, p.digest, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE '
-        parameters = [{'name': '@offset', 'value': 0 if offset is None else offset}, {'name': '@limit', 'value': 100 if limit is None else limit}]
+        query = 'SELECT p.id, p.type, p.input, p.message, p.digest, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE '
+        parameters = [{'name': '@offset', 'value': int(req.params['offset']) if 'offset' in req.params else 0}, {'name': '@limit', 'value': int(req.params['limit']) if 'limit' in req.params else 100}]
 
-        if query is not None:
-            sql_query += '(p.input LIKE @query OR p.name LIKE @query) AND '
-            parameters.append({'name': '@query', 'value': query})
+        if 'query' in req.params:
+            query += '(p.input LIKE @query OR p.name LIKE @query) AND '
+            parameters.append({'name': '@query', 'value': req.params['query']})
 
-        if mime_type is not None:
-            sql_query += 'p.type LIKE @mime_type AND '
-            parameters.append({'name': '@mime_type', 'value': mime_type})
+        if 'type' in req.params:
+            query += 'p.type LIKE @mime_type AND '
+            parameters.append({'name': '@mime_type', 'value': req.params['type'].lower()})
 
-        if digest is not None:
-            sql_query += 'p.digest = @digest AND '
-            parameters.append({'name': '@digest', 'value': digest})
+        if 'digest' in req.params:
+            query += 'p.digest = @digest AND '
+            parameters.append({'name': '@digest', 'value': req.params['digest']})
 
-        if language is not None:
-            sql_query += 'p.language = @language AND '
-            parameters.append({'name': '@language', 'value': language})
+        if 'language' in req.params:
+            query += 'p.language = @language AND '
+            parameters.append({'name': '@language', 'value': req.params['language'].lower()})
 
-        if not nsfw:
-            sql_query += 'NOT p.nsfw AND '
+        if 'nsfw' in req.params and not json.loads(req.params['nsfw'].lower()):
+            query += 'NOT p.nsfw AND '
         
-        if from_date is not None:
-            sql_query += 'p.timestamp > @from_date AND '
-            parameters.append({'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+        if 'from' in req.params:
+            query += 'p.timestamp > @from_date AND '
+            parameters.append({'name': '@from_date', 'value': datetime.fromtimestamp(int(req.params['from']), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
         
-        sql_query += f'p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit'
-        parameters.append({'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+        query += f'p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit'
+        parameters.append({'name': '@to_date', 'value': datetime.fromtimestamp(int(req.params['to']) if 'to' in req.params else time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
-        for item in list(container.query_items(query=sql_query, parameters=parameters, nable_cross_partition_query=True)):
+        for item in list(container.query_items(query=query, parameters=parameters, nable_cross_partition_query=True)):
             keys = []
 
             for key in item:
