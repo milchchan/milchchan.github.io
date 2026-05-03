@@ -21,7 +21,8 @@ FETCH_URLS = [
     'https://kai-you.net/contents/feed.rss',
     'https://oshitimes.net/feed',
     'https://b.hatena.ne.jp/hotentry/all.rss',
-    'https://www.4gamer.net/rss/index.xml'
+    'https://www.4gamer.net/rss/index.xml',
+    'https://gameboku.com/feed/atom'
 ]
 FETCH_PROMPT = '''内容を下記の出力形式に変換してください。
 
