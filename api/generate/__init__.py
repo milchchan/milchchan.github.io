@@ -1,8 +1,13 @@
+import random
+import io
+import hashlib
 import time
 import re
 import os
 import json
 import logging
+import boto3
+import botocore
 from uuid import uuid4
 from datetime import datetime, timezone
 from urllib.request import urlopen, Request
@@ -285,6 +290,23 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 json_data = json.loads(content)
 
                     if audio_data is not None and json_data is not None:
+                        digest = hashlib.sha256()
+                        digest.update(audio_data[1])
+                        hexdigest = digest.hexdigest()
+                        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                        database = client.get_database_client('Milch')
+                        container = database.get_container_client('Posts')
+                        items = list(container.query_items(
+                            query='SELECT p.id, p.type, p.transcript FROM Posts AS p WHERE p.digest = @digest OFFSET 0 LIMIT 1',
+                            parameters=[
+                                {'name': '@digest', 'value': hexdigest}
+                            ],
+                            enable_cross_partition_query=True))
+                        reference_text = None
+                        
+                        if len(items) > 0:
+                            reference_text = items[0]['transcript']
+                        
                         if re.match(r'https?://', tts_source) is None:
                             api_url = f"https://{tts_source.replace('/', '-').lower()}.hf.space/gradio_api"
                             bearer_token = os.environ['HF_TOKEN']
@@ -305,7 +327,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             path = json.loads(response.read().decode('utf-8'))[0]
                         
                         with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                            'data': [json_data['input'], json_data['language'], {'path': path, 'meta': {'_type': 'gradio.FileData'}}, None, json_data['temperature'] if 'temperature' in json_data else 1.0],
+                            'data': [json_data['input'], json_data['language'], {'path': path, 'meta': {'_type': 'gradio.FileData'}}, reference_text, json_data['temperature'] if 'temperature' in json_data else 1.0],
                             'event_data': None,
                             'fn_index': 0,
                             'session_hash': session
@@ -313,6 +335,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             event_id = json.loads(response.read().decode('utf-8'))['event_id']
                         
                         path = None
+                        transcribed_text = None
 
                         with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Accept': 'text/event-stream', 'User-Agent': user_agent} if bearer_token is None else {'Authorization': f"Bearer {bearer_token}", 'Accept': 'text/event-stream', 'User-Agent': user_agent})) as response:
                             for raw in iter(lambda: response.readline() or None, None):
@@ -332,12 +355,40 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     elif msg_type == 'process_completed':
                                         if msg['event_id'] == event_id and 'data' in msg['output']:
                                             path = msg['output']['data'][0]['path']
+
+                                            if 'label' in msg['output']['data'][1]:
+                                                transcribed_text = msg['output']['data'][1]['label']
                                         
                                         break
 
                         if path is None:
                             return func.HttpResponse(status_code=503, mimetype='', charset='')
                         else:
+                            if reference_text is not None:
+                                identifier = str(uuid4())
+                                s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+                                
+                                with io.BytesIO(audio_data[1]) as buffer:
+                                    file_is_exists = True
+                                    
+                                    try:
+                                        s3.head_object(Bucket='uploads', Key=identifier)
+                                    except botocore.exceptions.ClientError as e:
+                                        if e.response['Error']['Code'] == '404':
+                                            file_is_exists = False
+                                        else:
+                                            raise
+
+                                    if file_is_exists:
+                                        return func.HttpResponse(status_code=409, mimetype='', charset='')
+                                    
+                                    s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': 'audio/wav'})
+
+                                if transcribed_text is None:
+                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                else:
+                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'transcript': transcribed_text, 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                
                             with urlopen(Request(f'{api_url}/file={path}', headers={'User-Agent': user_agent})) as response:
                                 return func.HttpResponse(response.read(), status_code=200, mimetype='audio/wav')
     
