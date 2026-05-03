@@ -86,7 +86,7 @@
           --panel-primary-bg: rgb(255 255 255 / 1);
           --muted-text-color: rgb(255 255 255 / 0.5);
           --subtle-text-color: rgb(255 255 255 / 0.25);
-          --divider-color: hsl(0, 0%, 14%);
+          --divider-color: hsl(0, 0%, 21%);
           --shadow-color: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
         }
       }
@@ -1530,7 +1530,6 @@ const BACKGROUND_TEXT_FONT_SIZE = 32;
 const BACKGROUND_TEXT_FONT_WEIGHT = "normal";
 const BACKGROUND_TEXT_PADDING = 16;
 const BACKGROUND_TEXT_BOTTOM = 80;
-const BACKGROUND_TEXT_BUTTON_GAP = 12;
 const BACKGROUND_TEXT_GAP = 16;
 const BACKGROUND_TEXT_SCROLL_SPEED = 100;
 const BACKGROUND_TEXT_TYPE_SPEED = 25;
@@ -1959,7 +1958,6 @@ function drawBottomLeftScrollingTextMask(ctx, canvas, deltaTime, textState, cont
   const fontSize = BACKGROUND_TEXT_FONT_SIZE * ratio;
   const padding = BACKGROUND_TEXT_PADDING * ratio;
   const bottom = BACKGROUND_TEXT_BOTTOM * ratio;
-  const buttonGap = BACKGROUND_TEXT_BUTTON_GAP * ratio;
   const gap = BACKGROUND_TEXT_GAP * ratio;
   const controlsHeightPx = controlsHeight * ratio;
   const availableWidth = Math.max(0, canvas.width - padding * 2);
