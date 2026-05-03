@@ -1056,6 +1056,7 @@ const VOICE_PROMPT_AUDIO_URL = "/sounds/merku.ja.wav";
 const DEFAULT_VOICE_PROMPT_FILE_NAME = "merku.ja.wav";
 const DEFAULT_CHARACTER_IMAGE_URL = "/images/Radio-Merku.png";
 const DEFAULT_CHARACTER_IMAGE_FILE_NAME = "Merku.png";
+const MIN_VOICE_PROMPT_DURATION_SECONDS = 1;
 const SILENT_AUDIO_DATA_URL = "data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 let sharedApiFetchPayloadPromise = null;
@@ -2114,13 +2115,403 @@ async function blobToDataUrl(blob) {
   });
 }
 
-async function downloadImageDataUrl(url) {
+async function decodeAudioData(audioContext, arrayBuffer) {
+  return await new Promise((resolve, reject) => {
+    const result = audioContext.decodeAudioData(arrayBuffer, resolve, reject);
+
+    if (result?.then) {
+      result.then(resolve, reject);
+    }
+  });
+}
+
+async function getAudioBlobDurationSeconds(blob) {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) {
+    throw new Error("AudioContext is not available.");
+  }
+
+  const durationAudioContext = new AudioContextClass();
+  try {
+    const audioBuffer = await decodeAudioData(durationAudioContext, await blob.arrayBuffer());
+    return audioBuffer.duration;
+  } finally {
+    if (durationAudioContext.close) {
+      await durationAudioContext.close().catch(() => {});
+    }
+  }
+}
+
+class APNG {
+  constructor() {
+    this.PNG_SIGNATURE_BYTES = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    this.crc32Table = new Uint32Array(256);
+
+    for (let index = 0; index < this.crc32Table.length; index += 1) {
+      let value = index;
+
+      for (let bit = 0; bit < 8; bit += 1) {
+        value = (value & 1) ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
+      }
+
+      this.crc32Table[index] = value;
+    }
+  }
+
+  get signature() {
+    return this.PNG_SIGNATURE_BYTES;
+  }
+
+  async load(blob) {
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+
+    if (!this.signature.every((element, index) => element === bytes[index])) {
+      return null;
+    }
+
+    let isAnimatable = false;
+
+    this.parseChunks(bytes, type => {
+      if (type === "acTL") {
+        isAnimatable = true;
+        return false;
+      }
+
+      return true;
+    });
+
+    if (!isAnimatable) {
+      return null;
+    }
+
+    const preDataParts = [];
+    const postDataParts = [];
+    let headerDataBytes = null;
+    let frame = null;
+    const animation = { frames: [], iterations: 0, playTime: 0 };
+
+    this.parseChunks(bytes, (type, chunkBytes, offset, length) => {
+      switch (type) {
+        case "IHDR":
+          headerDataBytes = this.subBuffer(chunkBytes, offset + 8, length);
+          animation.width = this.readDWord(chunkBytes, offset + 8);
+          animation.height = this.readDWord(chunkBytes, offset + 12);
+          break;
+        case "acTL":
+          animation.iterations = this.readDWord(chunkBytes, offset + 12);
+          break;
+        case "fcTL": {
+          if (frame) {
+            animation.frames.push(frame);
+          }
+
+          const delayNumerator = this.readWord(chunkBytes, offset + 28);
+          let delayDenominator = this.readWord(chunkBytes, offset + 30);
+          if (delayDenominator === 0) {
+            delayDenominator = 100;
+          }
+
+          frame = {
+            width: this.readDWord(chunkBytes, offset + 12),
+            height: this.readDWord(chunkBytes, offset + 16),
+            left: this.readDWord(chunkBytes, offset + 20),
+            top: this.readDWord(chunkBytes, offset + 24),
+            delay: Math.max(delayNumerator / delayDenominator, 0.01),
+            disposeOp: chunkBytes[offset + 32],
+            blendOp: chunkBytes[offset + 33],
+            dataParts: [],
+          };
+          animation.playTime += frame.delay;
+          break;
+        }
+        case "fdAT":
+          if (frame) {
+            frame.dataParts.push(chunkBytes.subarray(offset + 12, offset + 8 + length));
+          }
+          break;
+        case "IDAT":
+          if (frame) {
+            frame.dataParts.push(chunkBytes.subarray(offset + 8, offset + 8 + length));
+          }
+          break;
+        case "IEND":
+          postDataParts.push(this.subBuffer(chunkBytes, offset, 12 + length));
+          break;
+        default:
+          preDataParts.push(this.subBuffer(chunkBytes, offset, 12 + length));
+      }
+
+      return true;
+    });
+
+    if (frame) {
+      animation.frames.push(frame);
+    }
+
+    if (!headerDataBytes || animation.frames.length === 0) {
+      return null;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = animation.width;
+    canvas.height = animation.height;
+
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const frames = [];
+    const preBlob = new Blob(preDataParts);
+    const postBlob = new Blob(postDataParts);
+
+    try {
+      for (const animationFrame of animation.frames) {
+        const chunks = [
+          this.signature,
+          this.buildChunkBytes("IHDR", this.buildFrameHeaderBytes(headerDataBytes, animationFrame)),
+          preBlob,
+        ];
+        let imageData = null;
+
+        for (const dataPart of animationFrame.dataParts) {
+          chunks.push(this.buildChunkBytes("IDAT", dataPart));
+        }
+
+        chunks.push(postBlob);
+
+        if (animationFrame.disposeOp === 2) {
+          imageData = ctx.getImageData(
+            animationFrame.left,
+            animationFrame.top,
+            animationFrame.width,
+            animationFrame.height,
+          );
+        }
+
+        if (animationFrame.blendOp === 0) {
+          ctx.clearRect(animationFrame.left, animationFrame.top, animationFrame.width, animationFrame.height);
+        }
+
+        const frameBlob = await this.composeFrameBlob(ctx, chunks, animationFrame);
+        frames.push({ delay: animationFrame.delay, blob: frameBlob });
+
+        if (animationFrame.disposeOp === 1) {
+          ctx.clearRect(animationFrame.left, animationFrame.top, animationFrame.width, animationFrame.height);
+        } else if (imageData) {
+          ctx.putImageData(imageData, animationFrame.left, animationFrame.top);
+        }
+
+        delete animationFrame.dataParts;
+      }
+    } finally {
+      ctx.canvas.width = 0;
+      ctx.canvas.height = 0;
+    }
+
+    return [frames, animation.iterations];
+  }
+
+  async composeFrameBlob(ctx, chunks, frame) {
+    const image = await this.loadImageFromBlob(new Blob(chunks, { type: "image/png" }));
+
+    ctx.drawImage(image, frame.left, frame.top, frame.width, frame.height);
+
+    return await new Promise((resolve, reject) => {
+      ctx.canvas.toBlob(frameBlob => {
+        if (frameBlob) {
+          resolve(frameBlob);
+        } else {
+          reject(new Error("Failed to compose APNG frame."));
+        }
+      }, "image/png");
+    });
+  }
+
+  async loadImageFromBlob(blob) {
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const image = new Image();
+
+        image.onload = () => resolve(image);
+        image.onerror = error => reject(error);
+        image.crossOrigin = "anonymous";
+        image.src = reader.result;
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  parseChunks(bytes, callback) {
+    let offset = 8;
+    let type;
+    let done;
+
+    do {
+      const length = this.readDWord(bytes, offset);
+      type = this.readString(bytes, offset + 4, 4);
+      done = callback(type, bytes, offset, length);
+      offset += 12 + length;
+    } while (done !== false && type !== "IEND" && offset < bytes.length);
+  }
+
+  readDWord(bytes, offset) {
+    let value = (bytes[offset] << 24) >>> 0;
+
+    for (let index = 1; index < 4; index += 1) {
+      value += bytes[offset + index] << ((3 - index) * 8);
+    }
+
+    return value;
+  }
+
+  readWord(bytes, offset) {
+    let value = 0;
+
+    for (let index = 0; index < 2; index += 1) {
+      value += bytes[offset + index] << ((1 - index) * 8);
+    }
+
+    return value;
+  }
+
+  subBuffer(bytes, start, length) {
+    const buffer = new Uint8Array(length);
+    buffer.set(bytes.subarray(start, start + length));
+    return buffer;
+  }
+
+  readString(bytes, offset, length) {
+    const chars = Array.prototype.slice.call(bytes.subarray(offset, offset + length));
+    return String.fromCharCode.apply(String, chars);
+  }
+
+  buildDWordArray(value) {
+    return [(value >>> 24) & 0xff, (value >>> 16) & 0xff, (value >>> 8) & 0xff, value & 0xff];
+  }
+
+  buildStringArray(value) {
+    return Array.from(value, character => character.charCodeAt(0));
+  }
+
+  buildFrameHeaderBytes(headerDataBytes, frame) {
+    const bytes = new Uint8Array(headerDataBytes.length);
+    bytes.set(headerDataBytes);
+    bytes.set(this.buildDWordArray(frame.width), 0);
+    bytes.set(this.buildDWordArray(frame.height), 4);
+    return bytes;
+  }
+
+  buildChunkBytes(type, dataBytes) {
+    const crcLength = type.length + dataBytes.length;
+    const bytes = new Uint8Array(crcLength + 8);
+
+    bytes.set(this.buildDWordArray(dataBytes.length), 0);
+    bytes.set(this.buildStringArray(type), 4);
+    bytes.set(dataBytes, 8);
+    bytes.set(this.buildDWordArray(this.crc32(bytes, 4, crcLength)), crcLength + 4);
+
+    return bytes;
+  }
+
+  crc32(bytes, start = 0, length = bytes.length - start) {
+    let crc = -1;
+
+    for (let index = start, end = start + length; index < end; index += 1) {
+      crc = (crc >>> 8) ^ this.crc32Table[(crc ^ bytes[index]) & 0xff];
+    }
+
+    return crc ^ -1;
+  }
+}
+
+async function downloadImageBlob(url) {
   const response = await fetch(url, { cache: "no-cache" });
   if (!response.ok) {
     throw new Error(`Failed to download background image: ${response.status} ${response.statusText}`);
   }
 
-  return await blobToDataUrl(await response.blob());
+  return await response.blob();
+}
+
+async function loadImageSource(source) {
+  return await new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => resolve(image);
+    image.onerror = error => reject(error);
+    image.crossOrigin = "anonymous";
+    image.src = source;
+  });
+}
+
+async function loadImageBlob(blob) {
+  return await loadImageSource(await blobToDataUrl(blob));
+}
+
+async function createBackgroundImageAsset(blob, url) {
+  try {
+    const animation = await new APNG().load(blob);
+    if (animation?.[0]?.length > 0) {
+      const frames = [];
+
+      for (const frame of animation[0]) {
+        frames.push({
+          delay: Math.max(frame.delay, 0.01),
+          image: await loadImageBlob(frame.blob),
+        });
+      }
+
+      return {
+        frames,
+        frameIndex: 0,
+        frameTime: 0,
+        url,
+      };
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  return {
+    frames: [{ delay: 0, image: await loadImageBlob(blob) }],
+    frameIndex: 0,
+    frameTime: 0,
+    url,
+  };
+}
+
+function updateBackgroundImageAssetFrame(asset, deltaTime) {
+  if (!asset || asset.frames.length <= 1 || deltaTime <= 0) {
+    return;
+  }
+
+  let frame = asset.frames[asset.frameIndex];
+  let frameDelay = Math.max(frame.delay, 0.01);
+  let remainingTime = asset.frameTime + deltaTime;
+  let guard = asset.frames.length;
+
+  while (remainingTime >= frameDelay && guard > 0) {
+    remainingTime -= frameDelay;
+    asset.frameIndex = (asset.frameIndex + 1) % asset.frames.length;
+    frame = asset.frames[asset.frameIndex];
+    frameDelay = Math.max(frame.delay, 0.01);
+    guard -= 1;
+  }
+
+  asset.frameTime = remainingTime;
+}
+
+function getBackgroundImageLayerImage(layer) {
+  const asset = layer?.asset;
+  if (!asset || asset.frames.length === 0) {
+    return null;
+  }
+
+  return asset.frames[asset.frameIndex]?.image ?? null;
 }
 
 async function loadProgressStripe() {
@@ -2264,23 +2655,26 @@ function drawImageCover(ctx, image, width, height) {
   ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
 }
 
-function drawBackgroundImageLayersBuffer(buffer, layers, width, height) {
+function drawBackgroundImageLayersBuffer(buffer, layers, width, height, deltaTime) {
   buffer.ctx.clearRect(0, 0, width, height);
 
   for (const layer of layers) {
+    updateBackgroundImageAssetFrame(layer.asset, deltaTime);
+
+    const image = getBackgroundImageLayerImage(layer);
     if (
       layer.opacity <= 0.001
-      || !layer.image
-      || !layer.image.complete
-      || layer.image.naturalWidth <= 0
-      || layer.image.naturalHeight <= 0
+      || !image
+      || !image.complete
+      || image.naturalWidth <= 0
+      || image.naturalHeight <= 0
     ) {
       continue;
     }
 
     buffer.ctx.save();
     buffer.ctx.globalAlpha = clamp(layer.opacity, 0, 1);
-    drawImageCover(buffer.ctx, layer.image, width, height);
+    drawImageCover(buffer.ctx, image, width, height);
     buffer.ctx.restore();
   }
 }
@@ -3019,6 +3413,7 @@ window.addEventListener("load", async () => {
   let defaultVoicePromptAudioPromise = null;
   let defaultCharacterImagePromise = null;
   let customVoicePromptFile = null;
+  let voicePromptFileValidationToken = 0;
   let customCharacterImageFile = null;
   let characterImageObjectUrl = null;
   let backgroundImageToken = 0;
@@ -3510,10 +3905,41 @@ window.addEventListener("load", async () => {
     await submitManualScreenText();
   });
 
-  voiceFileInput.addEventListener("change", () => {
+  voiceFileInput.addEventListener("change", async () => {
     const nextFile = voiceFileInput.files?.[0] ?? null;
+    const validationToken = ++voicePromptFileValidationToken;
+
+    if (!nextFile) {
+      customVoicePromptFile = null;
+      voiceFileName.textContent = DEFAULT_VOICE_PROMPT_FILE_NAME;
+      return;
+    }
+
+    try {
+      const duration = await getAudioBlobDurationSeconds(nextFile);
+
+      if (validationToken !== voicePromptFileValidationToken) {
+        return;
+      }
+
+      if (!Number.isFinite(duration) || duration < MIN_VOICE_PROMPT_DURATION_SECONDS) {
+        voiceFileInput.value = "";
+        shake(voiceFileButton);
+        return;
+      }
+    } catch (error) {
+      if (validationToken !== voicePromptFileValidationToken) {
+        return;
+      }
+
+      voiceFileInput.value = "";
+      shake(voiceFileButton);
+      console.error(error);
+      return;
+    }
+
     customVoicePromptFile = nextFile;
-    voiceFileName.textContent = nextFile ? nextFile.name : DEFAULT_VOICE_PROMPT_FILE_NAME;
+    voiceFileName.textContent = nextFile.name || DEFAULT_VOICE_PROMPT_FILE_NAME;
   });
 
   characterImageInput.addEventListener("change", () => {
@@ -3994,32 +4420,25 @@ window.addEventListener("load", async () => {
     }
 
     const token = ++backgroundImageToken;
-    let imageSource = nextBackgroundImageUrl;
-    const nextBackgroundImage = new Image();
+    let nextBackgroundImageAsset = null;
 
     try {
-      imageSource = await downloadImageDataUrl(nextBackgroundImageUrl);
+      nextBackgroundImageAsset = await createBackgroundImageAsset(
+        await downloadImageBlob(nextBackgroundImageUrl),
+        nextBackgroundImageUrl,
+      );
     } catch (error) {
       console.error(error);
     }
 
-    await new Promise((resolve, reject) => {
-      nextBackgroundImage.onload = () => resolve();
-      nextBackgroundImage.onerror = error => reject(error);
-      nextBackgroundImage.crossOrigin = "anonymous";
-      nextBackgroundImage.src = imageSource;
-    }).catch(error => {
-      console.error(error);
-    });
-
-    if (token !== backgroundImageToken) {
+    if (token !== backgroundImageToken || !nextBackgroundImageAsset) {
       return;
     }
 
     const outgoingLayers = backgroundImageLayers.filter(layer => layer.opacity > 0.001);
     const outgoingStarts = outgoingLayers.map(layer => layer.opacity);
     const incomingLayer = {
-      image: nextBackgroundImage,
+      asset: nextBackgroundImageAsset,
       opacity: 0,
       url: nextBackgroundImageUrl,
     };
@@ -4415,7 +4834,7 @@ window.addEventListener("load", async () => {
       ? backgroundRenderBuffer.canvas
       : null;
     if (backgroundImageCanvas) {
-      drawBackgroundImageLayersBuffer(backgroundRenderBuffer, activeBackgroundImageLayers, width, height);
+      drawBackgroundImageLayersBuffer(backgroundRenderBuffer, activeBackgroundImageLayers, width, height, deltaTime);
     }
 
     drawVisualizer(
