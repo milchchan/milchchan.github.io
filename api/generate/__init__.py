@@ -336,6 +336,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         
                         path = None
                         transcribed_text = None
+                        detected_language = None
 
                         with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Accept': 'text/event-stream', 'User-Agent': user_agent} if bearer_token is None else {'Authorization': f"Bearer {bearer_token}", 'Accept': 'text/event-stream', 'User-Agent': user_agent})) as response:
                             for raw in iter(lambda: response.readline() or None, None):
@@ -356,8 +357,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         if msg['event_id'] == event_id and 'data' in msg['output']:
                                             path = msg['output']['data'][0]['path']
 
-                                            if 'label' in msg['output']['data'][1]:
+                                            if 'label' in msg['output']['data'][1] and 'label' in msg['output']['data'][2]:
                                                 transcribed_text = msg['output']['data'][1]['label']
+                                                detected_language = msg['output']['data'][2]['label']
                                         
                                         break
 
@@ -387,7 +389,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 if transcribed_text is None:
                                     container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
                                 else:
-                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'transcript': transcribed_text, 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'digest': hexdigest, 'transcript': transcribed_text, 'language': detected_language, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
                                 
                             with urlopen(Request(f'{api_url}/file={path}', headers={'User-Agent': user_agent})) as response:
                                 return func.HttpResponse(response.read(), status_code=200, mimetype='audio/wav')

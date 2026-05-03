@@ -128,7 +128,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = list(container.query_items(
-                query="SELECT p.id, p.slug, p.type, p.input, p.message, p.transcript, p.digest, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.id LIKE CONCAT(@identifier, '%') ORDER BY p.timestamp ASC OFFSET 0 LIMIT 1",
+                query="SELECT p.id, p.slug, p.type, p.digest, p.input, p.message, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.id LIKE CONCAT(@identifier, '%') ORDER BY p.timestamp ASC OFFSET 0 LIMIT 1",
                 parameters=[
                     {'name': '@identifier', 'value': identifier}
                 ],
