@@ -2484,25 +2484,35 @@ async function createBackgroundImageAsset(blob, url) {
   };
 }
 
-function updateBackgroundImageAssetFrame(asset, deltaTime) {
+function updateBackgroundImageAssetFrame(asset, deltaTime, shouldFinishCurrentLoop = false) {
   if (!asset || asset.frames.length <= 1 || deltaTime <= 0) {
-    return;
+    return shouldFinishCurrentLoop && asset?.frames?.length > 1 && asset.frameIndex < asset.frames.length - 1;
   }
 
   let frame = asset.frames[asset.frameIndex];
   let frameDelay = Math.max(frame.delay, 0.01);
   let remainingTime = asset.frameTime + deltaTime;
-  let guard = asset.frames.length;
+  let guard = asset.frames.length * 2;
 
   while (remainingTime >= frameDelay && guard > 0) {
     remainingTime -= frameDelay;
-    asset.frameIndex = (asset.frameIndex + 1) % asset.frames.length;
+
+    if (shouldFinishCurrentLoop && asset.frameIndex >= asset.frames.length - 1) {
+      asset.frameIndex = asset.frames.length - 1;
+      asset.frameTime = 0;
+      return false;
+    }
+
+    asset.frameIndex = shouldFinishCurrentLoop
+      ? Math.min(asset.frameIndex + 1, asset.frames.length - 1)
+      : (asset.frameIndex + 1) % asset.frames.length;
     frame = asset.frames[asset.frameIndex];
     frameDelay = Math.max(frame.delay, 0.01);
     guard -= 1;
   }
 
   asset.frameTime = remainingTime;
+  return shouldFinishCurrentLoop && asset.frameIndex < asset.frames.length - 1;
 }
 
 function getBackgroundImageLayerImage(layer) {
@@ -2655,11 +2665,17 @@ function drawImageCover(ctx, image, width, height) {
   ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
 }
 
-function drawBackgroundImageLayersBuffer(buffer, layers, width, height, deltaTime) {
+function drawBackgroundImageLayersBuffer(buffer, layers, width, height, deltaTime, shouldFinishCurrentLoop = false) {
   buffer.ctx.clearRect(0, 0, width, height);
 
+  let hasFinishingAnimation = false;
+
   for (const layer of layers) {
-    updateBackgroundImageAssetFrame(layer.asset, deltaTime);
+    hasFinishingAnimation = updateBackgroundImageAssetFrame(
+      layer.asset,
+      deltaTime,
+      shouldFinishCurrentLoop,
+    ) || hasFinishingAnimation;
 
     const image = getBackgroundImageLayerImage(layer);
     if (
@@ -2677,6 +2693,8 @@ function drawBackgroundImageLayersBuffer(buffer, layers, width, height, deltaTim
     drawImageCover(buffer.ctx, image, width, height);
     buffer.ctx.restore();
   }
+
+  return hasFinishingAnimation;
 }
 
 function appendTermsToBackgroundTextPools(terms) {
@@ -3418,6 +3436,7 @@ window.addEventListener("load", async () => {
   let characterImageObjectUrl = null;
   let backgroundImageToken = 0;
   let backgroundImageLayers = [];
+  let shouldFinishBackgroundImageAnimation = false;
   const backgroundTextState = createFlapTextState("");
   let hasStartedBackgroundText = false;
   let hasSelectedInitialTopic = false;
@@ -4111,6 +4130,9 @@ window.addEventListener("load", async () => {
 
   function setPlaybackState(nextIsPlaying) {
     playbackState.isPlaying = nextIsPlaying;
+    if (nextIsPlaying) {
+      shouldFinishBackgroundImageAnimation = false;
+    }
     updatePlaybackIndicator();
   }
 
@@ -4700,6 +4722,7 @@ window.addEventListener("load", async () => {
     }
 
     setPlaybackState(false);
+    shouldFinishBackgroundImageAnimation = true;
     currentAudioBlobIndex = shouldReplayCurrentAudio ? 0 : -1;
   });
 
@@ -4834,7 +4857,18 @@ window.addEventListener("load", async () => {
       ? backgroundRenderBuffer.canvas
       : null;
     if (backgroundImageCanvas) {
-      drawBackgroundImageLayersBuffer(backgroundRenderBuffer, activeBackgroundImageLayers, width, height, deltaTime);
+      const shouldAdvanceBackgroundImageAnimation = isAudioPlaying || shouldFinishBackgroundImageAnimation;
+      const hasFinishingBackgroundImageAnimation = drawBackgroundImageLayersBuffer(
+        backgroundRenderBuffer,
+        activeBackgroundImageLayers,
+        width,
+        height,
+        shouldAdvanceBackgroundImageAnimation ? deltaTime : 0,
+        shouldFinishBackgroundImageAnimation && !isAudioPlaying,
+      );
+      if (shouldFinishBackgroundImageAnimation && !hasFinishingBackgroundImageAnimation) {
+        shouldFinishBackgroundImageAnimation = false;
+      }
     }
 
     drawVisualizer(
