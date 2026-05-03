@@ -167,7 +167,7 @@
         padding: 0;
         border-radius: 0px;
         width: 100%;
-        max-width: 100% !important;
+        max-width: 100%;
         height: 100%;
         overflow: hidden;
         background-color: var(--frame-bg);
@@ -215,7 +215,7 @@
         color: var(--text-color);
         cursor: pointer;
         backdrop-filter: blur(16px);
-        box-shadow: var(--shadow-color) !important;
+        box-shadow: var(--shadow-color);
         transition:
           opacity 500ms ease,
           color 500ms ease,
@@ -227,11 +227,14 @@
       }
 
       .control-button.is-primary {
-        color: var(--text-color);
         background: var(--primary-control-bg);
       }
 
-      .control-button.is-active {
+      .control-button.is-primary>i {
+        color: var(--text-color);
+      }
+
+      .control-button.is-active>i {
         color: var(--accent-color);
       }
 
@@ -262,7 +265,7 @@
         opacity: 1;
       }
 
-      .control-button.is-active:nth-last-of-type(2):not(:disabled)>i:first-child {
+      .control-button.is-active:nth-last-of-type(2)>i:first-child {
         opacity: 0;
       }
 
@@ -271,7 +274,7 @@
         animation-play-state: paused;
       }
 
-      .control-button.is-active:nth-last-of-type(2):not(:disabled)>i:last-child {
+      .control-button.is-active:nth-last-of-type(2)>i:last-child {
         opacity: 1;
         animation: randomizing 1s linear forwards infinite;
         animation-play-state: running;
@@ -282,7 +285,7 @@
         cursor: default;
       }
 
-      .control-button i {
+      .control-button>i {
         pointer-events: none;
         position: absolute;
         font-size: 1rem;
@@ -295,19 +298,19 @@
         position: relative;
       }
 
-      .playback-control-button .icon-play {
+      .playback-control-button>i.icon-play {
         opacity: 1;
       }
 
-      .playback-control-button .icon-pause {
+      .playback-control-button>i.icon-pause {
         opacity: 0;
       }
 
-      .playback-control-button.is-playing .icon-play {
+      .playback-control-button.is-playing>i.icon-play {
         opacity: 0;
       }
 
-      .playback-control-button.is-playing .icon-pause {
+      .playback-control-button.is-playing>i.icon-pause {
         color: #ffc7e5;
         opacity: 1;
       }
@@ -325,7 +328,7 @@
         border-radius: 24px;
         background: var(--panel-bg);
         backdrop-filter: blur(16px);
-        box-shadow: var(--shadow-color) !important;
+        box-shadow: var(--shadow-color);
         box-sizing: border-box;
         opacity: 0;
         visibility: hidden;
@@ -512,14 +515,6 @@
         cursor: default;
       }
 
-      .floating-panel-empty {
-        margin: 0;
-        font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
-        font-size: 1.0rem;
-        line-height: 1.5rem;
-        color: var(--muted-text-color);
-      }
-
       .floating-panel-list-item {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
@@ -688,8 +683,8 @@
 
       .floating-panel-row .floating-panel-button:not(.is-primary),
       .floating-panel-footer .floating-panel-button {
-        background: var(--panel-soft-bg) !important;
-        color: var(--text-color) !important;
+        background: var(--panel-soft-bg);
+        color: var(--text-color);
       }
 
       .floating-panel-footer .floating-panel-mode-group .floating-panel-mode-button {
@@ -702,12 +697,12 @@
       }
 
       .floating-panel-mode-button.is-selected {
-        color: var(--accent-color) !important;
+        color: var(--accent-color);
       }
 
       .floating-panel button.is-primary {
         color: var(--inverse-text-color);
-        background: var(--panel-primary-bg) !important;
+        background: var(--panel-primary-bg);
       }
 
       .floating-panel-file-input {
@@ -718,7 +713,7 @@
         pointer-events: none;
         z-index: 1;
         position: absolute;
-        margin: 0 !important;
+        margin: 0;
         border: 0px solid transparent;
         border-radius: 0px;
         padding: 0;
@@ -835,16 +830,16 @@
         flex-direction: row;
         align-items: center;
         justify-content: flex-start;
-        margin: 0px -4px 0px -4px !important;
+        margin: 0px -4px 0px -4px;
       }
 
       div.sidebar .button .scrollable div {
         display: flex;
         align-items: center;
-        margin: 0px 4px 0px 4px !important;
+        margin: 0px 4px 0px 4px;
         font-family: "Barlow", "Roboto", "Helvetica", "Segoe UI", "Arial", sans-serif;
-        font-size: 0.75rem !important;
-        line-height: 0.75rem !important;
+        font-size: 0.75rem;
+        line-height: 0.75rem;
         height: calc(0.75rem * 1.5);
         vertical-align: middle;
       }
@@ -951,18 +946,18 @@
       }
 
       @media (hover: hover) {
-        .control-button:hover:not(:disabled) {
+        .control-button:hover:not(:disabled)>i {
           color: var(--accent-color) !important;
         }
 
-        .control-button:hover:not(:disabled).is-playing .icon-pause {
+        .control-button:hover:not(:disabled).is-playing>i.icon-pause {
           color: var(--accent-color) !important;
         }
 
         .floating-panel-list-item-main:hover:not(:disabled) .floating-panel-list-item-content,
         .floating-panel-tag:hover:not(:disabled),
         .floating-panel-button:hover:not(:disabled) {
-          color: var(--accent-color) !important;
+          color: var(--accent-color);
         }
 
         .floating-panel button.is-primary:hover:not(:disabled) {
@@ -3018,6 +3013,8 @@ window.addEventListener("load", async () => {
   let lastGeneratedTopic = "";
   let lastGeneratedAudioId = null;
   let lastGeneratedConversationMessages = [];
+  let selectionGeneration = 0;
+  let lastGeneratedSelectionGeneration = -1;
   let defaultPromptTextPromise = null;
   let defaultVoicePromptAudioPromise = null;
   let defaultCharacterImagePromise = null;
@@ -3169,10 +3166,6 @@ window.addEventListener("load", async () => {
     tagCloud.textContent = "";
 
     if (!newsBaseWords.length) {
-      const empty = document.createElement("p");
-      empty.className = "floating-panel-empty";
-      empty.textContent = isLoadingNews ? "Loading..." : "No tags";
-      tagCloud.appendChild(empty);
       return;
     }
 
@@ -3222,10 +3215,6 @@ window.addEventListener("load", async () => {
     newsList.textContent = "";
 
     if (!newsItems.length) {
-      const empty = document.createElement("p");
-      empty.className = "floating-panel-empty";
-      empty.textContent = isLoadingNews ? "Loading..." : "No news";
-      newsList.appendChild(empty);
       return;
     }
 
@@ -3880,6 +3869,7 @@ window.addEventListener("load", async () => {
   }
 
   function applyTextSelection(selection) {
+    selectionGeneration += 1;
     currentTextSelection = selection;
     hasSelectedInitialTopic = Boolean(selection?.text || selection?.audioId);
     clearCurrentAudio();
@@ -3891,6 +3881,7 @@ window.addEventListener("load", async () => {
   }
 
   function clearDisplayedTextSelection(selection) {
+    selectionGeneration += 1;
     currentTextSelection = selection;
     hasSelectedInitialTopic = Boolean(selection?.audioId);
     clearCurrentAudio();
@@ -4123,16 +4114,18 @@ window.addEventListener("load", async () => {
           && hasTextSelection
           && topic === lastGeneratedTopic;
         const shouldContinueConversation = isMatchingApiSelection || isMatchingRandomSelection;
-        const conversationHistory = shouldContinueConversation
+        const isSameSelectionGeneration = selectionGeneration === lastGeneratedSelectionGeneration;
+        const shouldContinueCurrentSelection = shouldContinueConversation && isSameSelectionGeneration;
+        const conversationHistory = shouldContinueCurrentSelection
           ? (lastGeneratedConversationMessages.length > 0
               ? lastGeneratedConversationMessages
               : selectionConversationMessages)
           : selectionConversationMessages;
         const selectionAudioId = selection.source === "api" ? selection.audioId : null;
         const shouldUseSelectionAudio = Boolean(selectionAudioId)
-          && (!hasTextSelection || !shouldContinueConversation);
+          && (!hasTextSelection || !shouldContinueCurrentSelection);
         let queriedAudioPost = null;
-        if (!shouldUseSelectionAudio && !shouldContinueConversation) {
+        if (!shouldUseSelectionAudio && !shouldContinueCurrentSelection) {
           try {
             queriedAudioPost = await fetchLatestAudioPostByQuery(topic);
           } catch (error) {
@@ -4181,7 +4174,7 @@ window.addEventListener("load", async () => {
                   progress.update(rate);
                 },
                 conversationHistory,
-                !shouldContinueConversation,
+                !shouldContinueCurrentSelection,
               );
             } finally {
               stopLoadingMeteorShower(loadingMeteorState);
@@ -4198,6 +4191,7 @@ window.addEventListener("load", async () => {
         lastGeneratedTopic = topic;
         lastGeneratedAudioId = selection.source === "api" ? (selection.audioId ?? null) : null;
         lastGeneratedConversationMessages = generated.messages ?? [];
+        lastGeneratedSelectionGeneration = selectionGeneration;
         const postedAudio = await (generated.postAudioPromise ?? Promise.resolve(null));
         await loadAndFadeInBackgroundImage(
           generated.backgroundImageUrl ?? postedAudio?.backgroundImageUrl ?? null,
