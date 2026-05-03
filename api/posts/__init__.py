@@ -42,8 +42,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         
         query += f'p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit'
         parameters.append({'name': '@to_date', 'value': datetime.fromtimestamp(int(req.params['to']) if 'to' in req.params else time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
-
-        for item in list(container.query_items(query=query, parameters=parameters, enable_cross_partition_query=True)):
+        items = list(container.query_items(query=query, parameters=parameters, enable_cross_partition_query=True))
+        
+        for item in items:
             keys = []
 
             for key in item:
