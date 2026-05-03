@@ -27,29 +27,29 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         parameters = [{'name': '@offset', 'value': 0 if offset is None else offset}, {'name': '@limit', 'value': 100 if limit is None else limit}]
 
         if query is not None:
-            sql += '(p.input LIKE @query OR p.name LIKE @query) AND '
+            sql_query += '(p.input LIKE @query OR p.name LIKE @query) AND '
             parameters.append({'name': '@query', 'value': query})
 
         if mime_type is not None:
-            sql += 'p.type LIKE @mime_type AND '
+            sql_query += 'p.type LIKE @mime_type AND '
             parameters.append({'name': '@mime_type', 'value': mime_type})
 
         if digest is not None:
-            sql += 'p.digest = @digest AND '
+            sql_query += 'p.digest = @digest AND '
             parameters.append({'name': '@digest', 'value': digest})
 
         if language is not None:
-            sql += 'p.language = @language AND '
+            sql_query += 'p.language = @language AND '
             parameters.append({'name': '@language', 'value': language})
 
         if not nsfw:
-            sql += 'NOT p.nsfw AND '
+            sql_query += 'NOT p.nsfw AND '
         
         if from_date is not None:
-            sql += 'p.timestamp > @from_date AND '
+            sql_query += 'p.timestamp > @from_date AND '
             parameters.append({'name': '@from_date', 'value': datetime.fromtimestamp(from_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
         
-        sql += f'p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit'
+        sql_query += f'p.timestamp <= @to_date ORDER BY p.timestamp {"DESC" if order == "desc" else "ASC"} OFFSET @offset LIMIT @limit'
         parameters.append({'name': '@to_date', 'value': datetime.fromtimestamp(time.time() if to_date is None else to_date, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
 
         for item in list(container.query_items(query=sql_query, parameters=parameters, nable_cross_partition_query=True)):
