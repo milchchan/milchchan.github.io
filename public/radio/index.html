@@ -952,7 +952,7 @@
 
       @media (hover: hover) {
         .control-button:hover:not(:disabled) {
-          color: var(--accent-color);
+          color: var(--accent-color) !important;
         }
 
         .control-button:hover:not(:disabled).is-playing .icon-pause {
@@ -1285,6 +1285,10 @@ function createStaticAudioUrl(id) {
 
 function createStaticImageUrl(id) {
   return `${STATIC_BASE_URL}/${encodeURIComponent(id)}`;
+}
+
+function normalizeBackgroundImageUrl(url) {
+  return typeof url === "string" ? url.trim() : "";
 }
 
 function extractPostImageUrl(payload) {
@@ -3978,12 +3982,23 @@ window.addEventListener("load", async () => {
   }
 
   async function loadAndFadeInBackgroundImage(imageUrl = null) {
-    const nextBackgroundImageUrl = imageUrl ?? (
+    const nextBackgroundImageUrl = normalizeBackgroundImageUrl(imageUrl ?? (
       BACKGROUND_IMAGE_URLS.length > 0 ? pickRandom(BACKGROUND_IMAGE_URLS) : null
-    );
+    ));
 
     if (!nextBackgroundImageUrl) {
       await fadeOutBackgroundImage();
+      return;
+    }
+
+    const currentBackgroundImageLayer = backgroundImageLayers.length === 1
+      ? backgroundImageLayers[0]
+      : null;
+    if (
+      currentBackgroundImageLayer
+      && currentBackgroundImageLayer.opacity >= 0.999
+      && currentBackgroundImageLayer.url === nextBackgroundImageUrl
+    ) {
       return;
     }
 
@@ -4015,6 +4030,7 @@ window.addEventListener("load", async () => {
     const incomingLayer = {
       image: nextBackgroundImage,
       opacity: 0,
+      url: nextBackgroundImageUrl,
     };
 
     backgroundImageLayers = [...outgoingLayers, incomingLayer];
