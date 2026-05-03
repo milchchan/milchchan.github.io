@@ -1,4 +1,3 @@
-import random
 import io
 import hashlib
 import time
@@ -387,9 +386,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                     s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': 'audio/wav'})
 
                                 if transcribed_text is None:
-                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'digest': hexdigest, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
                                 else:
-                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'digest': hexdigest, 'transcript': transcribed_text, 'language': detected_language, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': 'audio/wav', 'digest': hexdigest, 'transcript': transcribed_text, 'language': detected_language, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
                                 
                             with urlopen(Request(f'{api_url}/file={path}', headers={'User-Agent': user_agent})) as response:
                                 return func.HttpResponse(response.read(), status_code=200, mimetype='audio/wav')

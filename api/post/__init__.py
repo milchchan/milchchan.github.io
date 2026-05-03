@@ -102,9 +102,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': file_data[1]})
 
                             timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
-                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': file_data[1], 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': file_data[1], 'digest': hexdigest, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
                         
-                            return func.HttpResponse(json.dumps({'id': identifier, 'type': file_data[1], 'digest': hexdigest, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                            return func.HttpResponse(json.dumps({'id': identifier, 'type': file_data[1], 'digest': hexdigest, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
                     
                 elif audio_data is not None:
                     client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
@@ -146,7 +146,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 
                                 s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
                             
-                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'digest': hexdigest, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
                             image_metadata = {'id': identifier, 'type': image_data[1]}
 
                     identifier = str(uuid4())
