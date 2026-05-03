@@ -288,7 +288,7 @@
         font-size: 1rem;
         line-height: 1;
         color: currentColor;
-        transition: opacity 500ms ease;
+        transition: opacity 500ms ease, color 500ms ease;
       }
 
       .playback-control-button {
@@ -953,6 +953,10 @@
       @media (hover: hover) {
         .control-button:hover:not(:disabled) {
           color: var(--accent-color);
+        }
+
+        .control-button:hover:not(:disabled).is-playing .icon-pause {
+          color: var(--accent-color) !important;
         }
 
         .floating-panel-list-item-main:hover:not(:disabled) .floating-panel-list-item-content,
