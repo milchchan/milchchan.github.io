@@ -188,7 +188,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         database = client.get_database_client('Milch')
                         container = database.get_container_client('Posts')
                         items = list(container.query_items(
-                            query=f'SELECT p.id, p.type FROM Posts AS p WHERE p.digest = @digest LIMIT 1',
+                            query='SELECT p.id, p.type FROM Posts AS p WHERE p.digest = @digest OFFSET 0 LIMIT 1',
                             parameters=[
                                 {'name': '@digest', 'value': hexdigest}
                             ],
