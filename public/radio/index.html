@@ -231,6 +231,10 @@
         background: var(--primary-control-bg);
       }
 
+      .control-button.is-active {
+        color: var(--accent-color);
+      }
+
       .control-button:first-of-type {
         background: var(--control-bg)
       }
@@ -304,14 +308,15 @@
       }
 
       .playback-control-button.is-playing .icon-pause {
+        color: #ffc7e5;
         opacity: 1;
       }
 
       .floating-panel {
         --panel-padding: 16px;
-        --panel-max-height: min(60vh, 520px);
+        --panel-max-height: min(75vh, 640px);
         position: absolute;
-        left: 16px;
+        left: 50%;
         bottom: 80px;
         z-index: 3;
         width: min(420px, calc(100vw - 32px));
@@ -325,10 +330,11 @@
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transform: translate3d(0, 8px, 0);
+        transform: translate3d(-50%, 8px, 0);
         transition:
           opacity 250ms ease,
           transform 250ms ease,
+          left 500ms ease,
           visibility 0s linear 250ms;
       }
 
@@ -336,10 +342,11 @@
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
-        transform: translate3d(0, 0, 0);
+        transform: translate3d(-50%, 0, 0);
         transition:
           opacity 250ms ease,
           transform 250ms ease,
+          left 500ms ease,
           visibility 0s linear 0s;
       }
 
@@ -593,6 +600,23 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+
+      .floating-panel-image-button {
+        flex: 0 0 48px;
+        overflow: hidden;
+      }
+
+      .floating-panel-character-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        object-fit: cover;
+        object-position: 50% 0%;
+        pointer-events: none;
+        opacity: 1;
+        transition: opacity 500ms ease;
       }
 
       .floating-panel-textarea {
@@ -915,6 +939,15 @@
           left: 16px;
           transform: translate3d(0, 0, 0);
         }
+
+        .floating-panel {
+          left: 16px;
+          transform: translate3d(0, 8px, 0);
+        }
+
+        .floating-panel.is-open {
+          transform: translate3d(0, 0, 0);
+        }
       }
 
       @media (hover: hover) {
@@ -925,11 +958,15 @@
         .floating-panel-list-item-main:hover:not(:disabled) .floating-panel-list-item-content,
         .floating-panel-tag:hover:not(:disabled),
         .floating-panel-button:hover:not(:disabled) {
-          color: var(--accent-color);
+          color: var(--accent-color) !important;
         }
 
         .floating-panel button.is-primary:hover:not(:disabled) {
           color: var(--accent-color);
+        }
+
+        .floating-panel-image-button:hover:not(:disabled) .floating-panel-character-image {
+          opacity: 0.5;
         }
       }
     </style>
@@ -1012,12 +1049,14 @@ const AUDIO_POST_SELECTION_PROBABILITY = getNumberQueryParam("probability", 0.5,
 const AUDIO_FETCH_API_URL = "https://milchchan.com/api/fetch";
 const AUDIO_POST_API_URL = "https://milchchan.com/api/post";
 const AUDIO_POSTS_API_URL = "https://milchchan.com/api/posts";
-const STATIC_AUDIO_BASE_URL = "https://static.milchchan.com";
+const STATIC_BASE_URL = "https://static.milchchan.com";
 const GENERATE_API_URL = "https://milchchan.com/api/generate";
 
 const PROMPT_TEXT_URL = "/radio.txt";
 const VOICE_PROMPT_AUDIO_URL = "/sounds/merku.ja.wav";
 const DEFAULT_VOICE_PROMPT_FILE_NAME = "merku.ja.wav";
+const DEFAULT_CHARACTER_IMAGE_URL = "/images/Radio-Merku.png";
+const DEFAULT_CHARACTER_IMAGE_FILE_NAME = "Merku.png";
 const SILENT_AUDIO_DATA_URL = "data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 let sharedApiFetchPayloadPromise = null;
@@ -1045,11 +1084,13 @@ function extractAudioPostData(payload) {
   const input = typeof payload.input === "string" ? payload.input.trim() : "";
   const audioId = typeof payload.id === "string" ? payload.id.trim() : "";
   const message = typeof payload.message === "string" ? payload.message.trim() : "";
+  const backgroundImageUrl = extractPostImageUrl(payload);
   if (audioId) {
     return {
       input,
       id: audioId,
       message,
+      backgroundImageUrl,
       conversationMessages: [
         ...(input ? [{ role: "user", content: input }] : []),
         ...(message ? [{ role: "assistant", content: message }] : []),
@@ -1235,7 +1276,25 @@ function formatUnixTimestamp(timestamp) {
 }
 
 function createStaticAudioUrl(id) {
-  return `${STATIC_AUDIO_BASE_URL}/${encodeURIComponent(id)}`;
+  return `${STATIC_BASE_URL}/${encodeURIComponent(id)}`;
+}
+
+function createStaticImageUrl(id) {
+  return `${STATIC_BASE_URL}/${encodeURIComponent(id)}`;
+}
+
+function extractPostImageUrl(payload) {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const image = payload.image;
+  if (!image || typeof image !== "object") {
+    return null;
+  }
+
+  const imageId = typeof image.id === "string" ? image.id.trim() : "";
+  return imageId ? createStaticImageUrl(imageId) : null;
 }
 
 function maybeParseJsonString(value) {
@@ -1415,9 +1474,20 @@ async function synthesizeLine(text, promptAudioBlob, promptAudioFileName, langua
   return await readBlobWithProgress(response, onProgress);
 }
 
-async function postGeneratedAudio(audioBlob, input, message, name, language) {
+async function postGeneratedAudio(
+  audioBlob,
+  input,
+  message,
+  name,
+  language,
+  characterImageBlob = null,
+  characterImageFileName = DEFAULT_CHARACTER_IMAGE_FILE_NAME,
+) {
   const formData = new FormData();
   formData.append("file", audioBlob, "generated.wav");
+  if (characterImageBlob) {
+    formData.append("file", characterImageBlob, characterImageFileName || DEFAULT_CHARACTER_IMAGE_FILE_NAME);
+  }
   formData.append("data", JSON.stringify({
     input,
     message,
@@ -1436,7 +1506,13 @@ async function postGeneratedAudio(audioBlob, input, message, name, language) {
     throw new Error(`Failed to post generated audio: ${response.status} ${response.statusText}`);
   }
 
-  await response.text();
+  const responseText = await response.text();
+  if (!responseText.trim()) {
+    return null;
+  }
+
+  const payload = maybeParseJsonString(responseText);
+  return extractAudioPostData(payload) ?? { backgroundImageUrl: extractPostImageUrl(payload) };
 }
 
 async function downloadExternalAudioBlob(id, onProgress = null) {
@@ -1448,7 +1524,17 @@ async function downloadExternalAudioBlob(id, onProgress = null) {
   return await readBlobWithProgress(response, onProgress);
 }
 
-async function generateAudioSequence(topic, promptText, promptAudioBlob, promptAudioFileName, onProgress, conversationHistory = []) {
+async function generateAudioSequence(
+  topic,
+  promptText,
+  promptAudioBlob,
+  promptAudioFileName,
+  characterImageBlob,
+  characterImageFileName,
+  onProgress,
+  conversationHistory = [],
+  shouldPostAudio = true,
+) {
   const generatedScript = await generateScriptContent(topic, promptText, conversationHistory);
   const script = generatedScript.content;
   const normalizedScript = typeof script === "string" ? script.trim() : "";
@@ -1465,15 +1551,19 @@ async function generateAudioSequence(topic, promptText, promptAudioBlob, promptA
     onProgress,
   );
 
-  const postAudioPromise = postGeneratedAudio(
-    audioBlob,
-    topic,
-    script,
-    generatedScript.name,
-    generatedScript.language,
-  ).catch(error => {
-    console.error(error);
-  });
+  const postAudioPromise = shouldPostAudio
+    ? postGeneratedAudio(
+        audioBlob,
+        topic,
+        script,
+        generatedScript.name,
+        generatedScript.language,
+        characterImageBlob,
+        characterImageFileName,
+      ).catch(error => {
+        console.error(error);
+      })
+    : Promise.resolve(null);
 
   return {
     topic,
@@ -1503,7 +1593,7 @@ const VISUALIZER_REST_THRESHOLD = 0.002;
 const VISUALIZER_NEXT_TRACK_REST_THRESHOLD = 0.035;
 const VISUALIZER_FILL_STYLE = "#00d6ff";
 const BACKGROUND_IMAGE_URLS = [];
-const BACKGROUND_IMAGE_OPACITY = 0;
+const BACKGROUND_IMAGE_OPACITY = 1;
 const BACKGROUND_IMAGE_FADE_DURATION_MS = 500;
 const VISUALIZER_LEVEL_GAIN = 0.82;
 const VISUALIZER_LEVEL_HEADROOM = 0.9;
@@ -1757,15 +1847,17 @@ function createRandomTextSelection({ allowBaseWordOnly = false } = {}) {
     }),
     source: "random",
     audioId: null,
+    backgroundImageUrl: null,
     conversationMessages: [],
   };
 }
 
-function createApiTextSelection(text, audioId, conversationMessages = []) {
+function createApiTextSelection(text, audioId, conversationMessages = [], backgroundImageUrl = null) {
   return {
     text,
     source: "api",
     audioId,
+    backgroundImageUrl,
     conversationMessages,
   };
 }
@@ -1775,6 +1867,7 @@ function createManualTextSelection(text) {
     text,
     source: "manual",
     audioId: null,
+    backgroundImageUrl: null,
     conversationMessages: [],
   };
 }
@@ -2018,6 +2111,15 @@ async function blobToDataUrl(blob) {
   });
 }
 
+async function downloadImageDataUrl(url) {
+  const response = await fetch(url, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Failed to download background image: ${response.status} ${response.statusText}`);
+  }
+
+  return await blobToDataUrl(await response.blob());
+}
+
 async function loadProgressStripe() {
   const scale = clamp(Math.trunc(window.devicePixelRatio || 1), 1, 3);
   const stripePath = scale > 1 ? `/images/Stripes@${scale}x.png` : "/images/Stripes.png";
@@ -2159,14 +2261,25 @@ function drawImageCover(ctx, image, width, height) {
   ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
 }
 
-function drawBackgroundImageBuffer(buffer, image, width, height) {
+function drawBackgroundImageLayersBuffer(buffer, layers, width, height) {
   buffer.ctx.clearRect(0, 0, width, height);
 
-  if (!image || !image.complete || image.naturalWidth <= 0 || image.naturalHeight <= 0) {
-    return;
-  }
+  for (const layer of layers) {
+    if (
+      layer.opacity <= 0.001
+      || !layer.image
+      || !layer.image.complete
+      || layer.image.naturalWidth <= 0
+      || layer.image.naturalHeight <= 0
+    ) {
+      continue;
+    }
 
-  drawImageCover(buffer.ctx, image, width, height);
+    buffer.ctx.save();
+    buffer.ctx.globalAlpha = clamp(layer.opacity, 0, 1);
+    drawImageCover(buffer.ctx, layer.image, width, height);
+    buffer.ctx.restore();
+  }
 }
 
 function appendTermsToBackgroundTextPools(terms) {
@@ -2827,7 +2940,6 @@ function shake(element) {
 
 window.addEventListener("load", async () => {
   const frame = document.body.querySelector("body > .wrap > .frame");
-  const backgroundImage = new Image();
   const canvas = document.createElement("canvas");
   const controls = document.createElement("div");
   const textRandomizerButton = document.createElement("button");
@@ -2860,6 +2972,12 @@ window.addEventListener("load", async () => {
   const voiceFileButton = document.createElement("button");
   const voiceFileInput = document.createElement("input");
   const voiceFileName = document.createElement("span");
+  const characterField = document.createElement("div");
+  const characterActions = document.createElement("div");
+  const characterImageButton = document.createElement("button");
+  const characterImagePreview = document.createElement("img");
+  const characterImageInput = document.createElement("input");
+  const characterImageName = document.createElement("span");
   const resetSettingsButton = document.createElement("button");
   const context = canvas.getContext("2d");
   const audio = new Audio();
@@ -2894,9 +3012,12 @@ window.addEventListener("load", async () => {
   let lastGeneratedConversationMessages = [];
   let defaultPromptTextPromise = null;
   let defaultVoicePromptAudioPromise = null;
+  let defaultCharacterImagePromise = null;
   let customVoicePromptFile = null;
+  let customCharacterImageFile = null;
+  let characterImageObjectUrl = null;
   let backgroundImageToken = 0;
-  let backgroundImageOpacity = 0;
+  let backgroundImageLayers = [];
   const backgroundTextState = createFlapTextState("");
   let hasStartedBackgroundText = false;
   let hasSelectedInitialTopic = false;
@@ -3213,12 +3334,27 @@ window.addEventListener("load", async () => {
   voiceFileButton.type = "button";
   voiceFileButton.className = "floating-panel-button";
   voiceFileButton.setAttribute("aria-label", "Choose WAV");
-  voiceFileButton.innerHTML = '<i class="fa-solid fa-folder-open" aria-hidden="true"></i>';
+  voiceFileButton.innerHTML = '<i class="fa-solid fa-volume-high" aria-hidden="true"></i>';
   voiceFileInput.className = "floating-panel-file-input";
   voiceFileInput.type = "file";
   voiceFileInput.accept = ".wav,audio/wav";
   voiceFileName.className = "floating-panel-file-name";
   voiceFileName.textContent = DEFAULT_VOICE_PROMPT_FILE_NAME;
+
+  characterField.className = "floating-panel-field";
+  characterActions.className = "floating-panel-row";
+  characterImageButton.type = "button";
+  characterImageButton.className = "floating-panel-button floating-panel-image-button";
+  characterImageButton.setAttribute("aria-label", "Choose character image");
+  characterImagePreview.className = "floating-panel-character-image";
+  characterImagePreview.alt = "";
+  characterImagePreview.src = DEFAULT_CHARACTER_IMAGE_URL;
+  characterImageButton.appendChild(characterImagePreview);
+  characterImageInput.className = "floating-panel-file-input";
+  characterImageInput.type = "file";
+  characterImageInput.accept = "image/*";
+  characterImageName.className = "floating-panel-file-name";
+  characterImageName.textContent = DEFAULT_CHARACTER_IMAGE_FILE_NAME;
 
   resetSettingsButton.type = "button";
   resetSettingsButton.className = "floating-panel-button";
@@ -3234,7 +3370,12 @@ window.addEventListener("load", async () => {
   voiceActions.appendChild(resetSettingsButton);
   voiceField.appendChild(voiceActions);
   voiceField.appendChild(voiceFileInput);
+  characterActions.appendChild(characterImageButton);
+  characterActions.appendChild(characterImageName);
+  characterField.appendChild(characterActions);
+  characterField.appendChild(characterImageInput);
   settingsScrollInner.appendChild(promptField);
+  settingsScrollInner.appendChild(characterField);
   settingsScrollInner.appendChild(voiceField);
   settingsScrollInner.appendChild(manualTextField);
   settingsScrollArea.appendChild(settingsScrollInner);
@@ -3323,6 +3464,11 @@ window.addEventListener("load", async () => {
     voiceFileInput.click();
   });
 
+  characterImageButton.addEventListener("click", event => {
+    event.stopPropagation();
+    characterImageInput.click();
+  });
+
   let isManualTextInputComposing = false;
 
   async function submitManualScreenText() {
@@ -3373,6 +3519,13 @@ window.addEventListener("load", async () => {
     voiceFileName.textContent = nextFile ? nextFile.name : DEFAULT_VOICE_PROMPT_FILE_NAME;
   });
 
+  characterImageInput.addEventListener("change", () => {
+    const nextFile = characterImageInput.files?.[0] ?? null;
+    customCharacterImageFile = nextFile;
+    characterImageName.textContent = nextFile ? nextFile.name : DEFAULT_CHARACTER_IMAGE_FILE_NAME;
+    setCharacterImagePreview(nextFile);
+  });
+
   resetSettingsButton.addEventListener("click", async event => {
     event.stopPropagation();
     await resetGenerationSettingsToDefault();
@@ -3420,11 +3573,59 @@ window.addEventListener("load", async () => {
     return await loadDefaultVoicePromptAudio();
   }
 
+  function setCharacterImagePreview(blob = null) {
+    if (characterImageObjectUrl) {
+      URL.revokeObjectURL(characterImageObjectUrl);
+      characterImageObjectUrl = null;
+    }
+
+    if (blob) {
+      characterImageObjectUrl = URL.createObjectURL(blob);
+      characterImagePreview.src = characterImageObjectUrl;
+      return;
+    }
+
+    characterImagePreview.src = DEFAULT_CHARACTER_IMAGE_URL;
+  }
+
+  async function loadDefaultCharacterImage() {
+    defaultCharacterImagePromise ??= (async () => {
+      const characterImageResponse = await fetch(DEFAULT_CHARACTER_IMAGE_URL);
+
+      if (!characterImageResponse.ok) {
+        throw new Error(`Failed to load character image: ${characterImageResponse.status} ${characterImageResponse.statusText}`);
+      }
+
+      return {
+        blob: await characterImageResponse.blob(),
+        fileName: DEFAULT_CHARACTER_IMAGE_FILE_NAME,
+      };
+    })();
+
+    return await defaultCharacterImagePromise;
+  }
+
+  async function getActiveCharacterImage() {
+    if (customCharacterImageFile) {
+      return {
+        blob: customCharacterImageFile,
+        fileName: customCharacterImageFile.name || DEFAULT_CHARACTER_IMAGE_FILE_NAME,
+      };
+    }
+
+    return await loadDefaultCharacterImage();
+  }
+
   async function resetGenerationSettingsToDefault() {
     promptTextarea.value = await loadDefaultPromptText();
+    const defaultCharacterImage = await loadDefaultCharacterImage();
     customVoicePromptFile = null;
+    customCharacterImageFile = null;
     voiceFileInput.value = "";
+    characterImageInput.value = "";
     voiceFileName.textContent = DEFAULT_VOICE_PROMPT_FILE_NAME;
+    characterImageName.textContent = DEFAULT_CHARACTER_IMAGE_FILE_NAME;
+    setCharacterImagePreview(defaultCharacterImage.blob);
   }
 
   async function prepareBackgroundText() {
@@ -3478,6 +3679,9 @@ window.addEventListener("load", async () => {
     newsReloadButton.disabled = playbackState.isLoadingAudio || isLoadingNews;
     newsListModeButton.disabled = playbackState.isLoadingAudio || isLoadingNews;
     newsTagModeButton.disabled = playbackState.isLoadingAudio || isLoadingNews;
+    voiceFileButton.disabled = playbackState.isLoadingAudio;
+    characterImageButton.disabled = playbackState.isLoadingAudio;
+    resetSettingsButton.disabled = playbackState.isLoadingAudio;
     updateTextRandomizerButtonState();
     renderNewsPanelContent();
   }
@@ -3721,7 +3925,12 @@ window.addEventListener("load", async () => {
       }
 
       const post = await fetchRandomAudioPost();
-      const selection = createApiTextSelection(post.input, post.id, post.conversationMessages ?? []);
+      const selection = createApiTextSelection(
+        post.input,
+        post.id,
+        post.conversationMessages ?? [],
+        post.backgroundImageUrl ?? null,
+      );
       if (selection.text) {
         applyTextSelection(selection);
       } else {
@@ -3744,29 +3953,51 @@ window.addEventListener("load", async () => {
   }
 
   async function fadeOutBackgroundImage() {
-    if (backgroundImageOpacity <= 0.001) {
-      backgroundImageOpacity = 0;
-      return;
-    }
-
-    await animateScalar(backgroundImageOpacity, 0, BACKGROUND_IMAGE_FADE_DURATION_MS, value => {
-      backgroundImageOpacity = value;
-    });
-  }
-
-  async function loadAndFadeInBackgroundImage() {
-    if (BACKGROUND_IMAGE_URLS.length === 0) {
-      backgroundImageOpacity = 0;
+    const visibleLayers = backgroundImageLayers.filter(layer => layer.opacity > 0.001);
+    if (visibleLayers.length === 0) {
+      backgroundImageLayers = [];
       return;
     }
 
     const token = ++backgroundImageToken;
-    const nextBackgroundImageUrl = pickRandom(BACKGROUND_IMAGE_URLS);
+    const layerStarts = visibleLayers.map(layer => layer.opacity);
+
+    await animateScalar(0, 1, BACKGROUND_IMAGE_FADE_DURATION_MS, value => {
+      for (let index = 0; index < visibleLayers.length; index += 1) {
+        visibleLayers[index].opacity = layerStarts[index] * (1 - value);
+      }
+    });
+
+    if (token === backgroundImageToken) {
+      backgroundImageLayers = [];
+    }
+  }
+
+  async function loadAndFadeInBackgroundImage(imageUrl = null) {
+    const nextBackgroundImageUrl = imageUrl ?? (
+      BACKGROUND_IMAGE_URLS.length > 0 ? pickRandom(BACKGROUND_IMAGE_URLS) : null
+    );
+
+    if (!nextBackgroundImageUrl) {
+      await fadeOutBackgroundImage();
+      return;
+    }
+
+    const token = ++backgroundImageToken;
+    let imageSource = nextBackgroundImageUrl;
+    const nextBackgroundImage = new Image();
+
+    try {
+      imageSource = await downloadImageDataUrl(nextBackgroundImageUrl);
+    } catch (error) {
+      console.error(error);
+    }
 
     await new Promise((resolve, reject) => {
-      backgroundImage.onload = () => resolve();
-      backgroundImage.onerror = error => reject(error);
-      backgroundImage.src = nextBackgroundImageUrl;
+      nextBackgroundImage.onload = () => resolve();
+      nextBackgroundImage.onerror = error => reject(error);
+      nextBackgroundImage.crossOrigin = "anonymous";
+      nextBackgroundImage.src = imageSource;
     }).catch(error => {
       console.error(error);
     });
@@ -3775,9 +4006,27 @@ window.addEventListener("load", async () => {
       return;
     }
 
+    const outgoingLayers = backgroundImageLayers.filter(layer => layer.opacity > 0.001);
+    const outgoingStarts = outgoingLayers.map(layer => layer.opacity);
+    const incomingLayer = {
+      image: nextBackgroundImage,
+      opacity: 0,
+    };
+
+    backgroundImageLayers = [...outgoingLayers, incomingLayer];
+
     await animateScalar(0, 1, BACKGROUND_IMAGE_FADE_DURATION_MS, value => {
-      backgroundImageOpacity = value;
+      for (let index = 0; index < outgoingLayers.length; index += 1) {
+        outgoingLayers[index].opacity = outgoingStarts[index] * (1 - value);
+      }
+
+      incomingLayer.opacity = value;
     });
+
+    if (token === backgroundImageToken) {
+      incomingLayer.opacity = 1;
+      backgroundImageLayers = [incomingLayer];
+    }
   }
 
   async function playGeneratedAudioAt(index) {
@@ -3832,7 +4081,6 @@ window.addEventListener("load", async () => {
 
     audioLoadPromise = (async () => {
       let didLoadSucceed = false;
-      await fadeOutBackgroundImage();
 
       const stripeDataUrl = await (progressStripePromise ??= loadProgressStripe());
       const progress = createProgressBar(stripeDataUrl);
@@ -3860,7 +4108,6 @@ window.addEventListener("load", async () => {
               ? lastGeneratedConversationMessages
               : selectionConversationMessages)
           : selectionConversationMessages;
-        const backgroundImagePromise = loadAndFadeInBackgroundImage();
         const selectionAudioId = selection.source === "api" ? selection.audioId : null;
         const shouldUseSelectionAudio = Boolean(selectionAudioId)
           && (!hasTextSelection || !shouldContinueConversation);
@@ -3889,12 +4136,16 @@ window.addEventListener("load", async () => {
                 progress.update(rate);
               })],
               messages: externalConversationMessages,
+              backgroundImageUrl: shouldUseSelectionAudio
+                ? (selection.backgroundImageUrl ?? null)
+                : (queriedAudioPost?.backgroundImageUrl ?? null),
               postAudioPromise: Promise.resolve(),
             }
           : await (async () => {
-            const [promptText, activeVoicePromptAudio] = await Promise.all([
+            const [promptText, activeVoicePromptAudio, activeCharacterImage] = await Promise.all([
               getActivePromptText(),
               getActiveVoicePromptAudio(),
+              getActiveCharacterImage(),
             ]);
 
             startLoadingMeteorShower(loadingMeteorState, canvas.width, canvas.height);
@@ -3904,10 +4155,13 @@ window.addEventListener("load", async () => {
                 promptText,
                 activeVoicePromptAudio.blob,
                 activeVoicePromptAudio.fileName,
+                activeCharacterImage.blob,
+                activeCharacterImage.fileName,
                 rate => {
                   progress.update(rate);
                 },
                 conversationHistory,
+                !shouldContinueConversation,
               );
             } finally {
               stopLoadingMeteorShower(loadingMeteorState);
@@ -3924,10 +4178,10 @@ window.addEventListener("load", async () => {
         lastGeneratedTopic = topic;
         lastGeneratedAudioId = selection.source === "api" ? (selection.audioId ?? null) : null;
         lastGeneratedConversationMessages = generated.messages ?? [];
-        await Promise.all([
-          backgroundImagePromise,
-          generated.postAudioPromise ?? Promise.resolve(),
-        ]);
+        const postedAudio = await (generated.postAudioPromise ?? Promise.resolve(null));
+        await loadAndFadeInBackgroundImage(
+          generated.backgroundImageUrl ?? postedAudio?.backgroundImageUrl ?? null,
+        );
         progress.finish();
         didLoadSucceed = true;
       } catch (error) {
@@ -4142,11 +4396,12 @@ window.addEventListener("load", async () => {
       || visualizerScales.some(scale => Math.abs(scale - 1) > VISUALIZER_REST_THRESHOLD)
       || hasActiveLoadingMeteors(loadingMeteorState);
 
-    const backgroundImageCanvas = backgroundImageOpacity > 0.001 && BACKGROUND_IMAGE_OPACITY > 0
+    const activeBackgroundImageLayers = backgroundImageLayers.filter(layer => layer.opacity > 0.001);
+    const backgroundImageCanvas = activeBackgroundImageLayers.length > 0 && BACKGROUND_IMAGE_OPACITY > 0
       ? backgroundRenderBuffer.canvas
       : null;
     if (backgroundImageCanvas) {
-      drawBackgroundImageBuffer(backgroundRenderBuffer, backgroundImage, width, height);
+      drawBackgroundImageLayersBuffer(backgroundRenderBuffer, activeBackgroundImageLayers, width, height);
     }
 
     drawVisualizer(
@@ -4160,7 +4415,7 @@ window.addEventListener("load", async () => {
       backgroundTextState,
       deltaTime,
       backgroundImageCanvas,
-      backgroundImageOpacity,
+      backgroundImageCanvas ? 1 : 0,
       CONTROL_BUTTON_SIZE,
       loadingMeteorState,
     );
