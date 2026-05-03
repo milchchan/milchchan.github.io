@@ -1,5 +1,6 @@
 import random
 import io
+import hashlib
 import time
 import re
 import os
@@ -54,148 +55,102 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 audio_data = (filename, 'audio/wav', content)
                         elif name == 'data':
                             json_data = json.loads(content)
-
-                if image_data is not None:
-                    def resize_image(image, maximum, resample=Image.Resampling.LANCZOS):
-                        width, height = image.size
-
-                        if width < height:
-                            if maximum < height:
-                                scale = maximum / height
-                            else:
-                                return image
-                        elif maximum < width:
-                            scale = maximum / width
-                        else:
-                            return image
-
-                        return image.resize((round(width * scale), round(height * scale)), resample=resample)
-                    
-                    identifier = str(uuid4())
-                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
-
-                    with io.BytesIO(image_data[2]) as input_buffer, Image.open(input_buffer) as image, io.BytesIO() as output_buffer:
-                        resized_image = resize_image(image, maximum=1280)
-                        resized_image.save(output_buffer, format='WEBP', lossless=True, method=6)
-                        output_buffer.seek(0)
-                        image_data = (image_data[0], image_data[1], output_buffer.read())
-                        input_buffer.seek(0)
-                        file_is_exists = True
-                        
-                        try:
-                            s3.head_object(Bucket='uploads', Key=identifier)
-                        except botocore.exceptions.ClientError as e:
-                            if e.response['Error']['Code'] == '404':
-                                file_is_exists = False
-                            else:
-                                raise
-
-                        if file_is_exists:
-                            return func.HttpResponse(status_code=409, mimetype='', charset='')
-                        
-                        s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
-
-                    n_layers = 5
-                    api_url = 'https://milchchan-prism.hf.space/gradio_api'
-                    session = uuid4().hex[:10]
-                    boundary = '----gradioBoundary'
-                    data = f'--{boundary}\r\n'.encode()
-                    data += f'Content-Disposition: form-data; name="files"; filename="{os.path.basename(image_data[0])}"\r\n'.encode()
-                    data += 'Content-Type: image/webp\r\n\r\n'.encode()
-                    data += image_data[2]
-                    data += f'\r\n--{boundary}--\r\n'.encode()
-
-                    with urlopen(Request(api_url + '/upload', data=data, headers={'Content-Type': f'multipart/form-data; boundary={boundary}'}, method='POST')) as response:
-                        path = json.loads(response.read().decode('utf-8'))[0]
-                    
-                    with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                        'data': [{'path': path, 'meta': {'_type': 'gradio.FileData'}}, n_layers],
-                        'event_data': None,
-                        'fn_index': 0,
-                        'session_hash': session
-                    }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
-                        event_id = json.loads(response.read().decode('utf-8'))['event_id']
-                    
-                    with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'})) as response:
-                        for raw in iter(lambda: response.readline() or None, None):
-                            if not raw: # EOF
-                                break
-
-                            line = raw.decode('utf-8').strip()
-
-                            if line.startswith('data:'):
-                                msg = json.loads(line[5:].lstrip())
-                                msg_type = msg.get('msg')
-
-                                if msg_type == 'heartbeat':
-                                    continue
-                                elif msg_type == 'queue_full' or msg_type == 'unexpected_error':
-                                    break
-                                elif msg_type == 'process_completed':
-                                    if msg['event_id'] == event_id and 'data' in msg['output']:
-                                        urls = []
-
-                                        for item in msg['output']['data'][0]:
-                                            if 'image' in item:
-                                                urls.append(f"{api_url}/file={item['image']['path']}")
-
-                                        indexes = msg['output']['data'][1]
-                                        nsfw = msg['output']['data'][2]
-
-                                        if len(urls) > 0:
-                                            animations = []
-                                            index = 0
-
-                                            for i in range(n_layers):
-                                                animation = []
-
-                                                if i in indexes:
-                                                    with urlopen(Request(urls[index])) as r:
-                                                        content_type = r.headers.get_content_type()
-                                                        layer_identifier = str(uuid4())
-                                                        file_is_exists = True
-                                                        
-                                                        try:
-                                                            s3.head_object(Bucket='uploads', Key=layer_identifier)
-                                                        except botocore.exceptions.ClientError as e:
-                                                            if e.response['Error']['Code'] == '404':
-                                                                file_is_exists = False
-                                                            else:
-                                                                raise
-
-                                                        if file_is_exists:
-                                                            return func.HttpResponse(status_code=409, mimetype='', charset='')
-                                                        
-                                                        with io.BytesIO(r.read()) as buffer:
-                                                            s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
-
-                                                        animation.append({'id': layer_identifier, 'type': content_type})
-                                                        animations.append(animation)
-                                                                
-                                                    index += 1
-                                                else:
-                                                    animations.append(animation)
-
-                                            timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
-                                            client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
-                                            database = client.get_database_client('Milch')
-                                            container = database.get_container_client('Posts')
-                                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
-
-                                            for animation in animations:
-                                                for frame in animation:
-                                                    frame['url'] = f"https://static.milchchan.com/{frame['id']}"
-
-                                            return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
-                                    
-                                    break
-                    
-                    return func.HttpResponse(status_code=503, mimetype='', charset='')
                 
-                elif audio_data is not None and json_data is not None:
-                    identifier = str(uuid4())
-                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+                if json_data is None:
+                    file_data = None
 
+                    if image_data is not None:
+                        file_data = image_data
+                    elif audio_data is not None:
+                        file_data = audio_data
+
+                    if file_data is not None:
+                        digest = hashlib.sha256()
+                        digest.update(file_data[2])
+                        hexdigest = digest.hexdigest()
+                        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                        database = client.get_database_client('Milch')
+                        container = database.get_container_client('Posts')
+                        items = list(container.query_items(
+                            query=f'SELECT p.id, p.type FROM Posts AS p WHERE p.digest = @digest LIMIT 1',
+                            parameters=[
+                                {'name': '@digest', 'value': hexdigest}
+                            ],
+                            enable_cross_partition_query=True))
+                        
+                        if len(items) > 0:
+                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+
+                        else:
+                            identifier = str(uuid4())
+                            s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+
+                            with io.BytesIO(file_data[2]) as buffer:
+                                file_is_exists = True
+                                
+                                try:
+                                    s3.head_object(Bucket='uploads', Key=identifier)
+                                except botocore.exceptions.ClientError as e:
+                                    if e.response['Error']['Code'] == '404':
+                                        file_is_exists = False
+                                    else:
+                                        raise
+
+                                if file_is_exists:
+                                    return func.HttpResponse(status_code=409, mimetype='', charset='')
+                                
+                                s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': file_data[1]})
+
+                            timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
+                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': file_data[1], 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                        
+                            return func.HttpResponse(json.dumps({'id': identifier, 'type': file_data[1], 'digest': hexdigest, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                    
+                elif audio_data is not None:
+                    client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                    database = client.get_database_client('Milch')
+                    container = database.get_container_client('Posts')
+                    s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+                    image_metadata = None
+
+                    if image_data is not None:
+                        digest = hashlib.sha256()
+                        digest.update(image_data[2])
+                        hexdigest = digest.hexdigest()
+                        items = list(container.query_items(
+                            query=f'SELECT p.id, p.type FROM Posts AS p WHERE p.digest = @digest LIMIT 1',
+                            parameters=[
+                                {'name': '@digest', 'value': hexdigest}
+                            ],
+                            enable_cross_partition_query=True))
+                        
+                        if len(items) > 0:
+                            image_metadata = {'id': items[0]['id'], 'type': items[0]['type']}
+
+                        else:
+                            identifier = str(uuid4())
+                            
+                            with io.BytesIO(image_data[2]) as buffer:
+                                file_is_exists = True
+                                
+                                try:
+                                    s3.head_object(Bucket='uploads', Key=identifier)
+                                except botocore.exceptions.ClientError as e:
+                                    if e.response['Error']['Code'] == '404':
+                                        file_is_exists = False
+                                    else:
+                                        raise
+
+                                if file_is_exists:
+                                    return func.HttpResponse(status_code=409, mimetype='', charset='')
+                                
+                                s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
+                            
+                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
+                            image_metadata = {'id': identifier, 'type': image_data[1]}
+
+                    identifier = str(uuid4())
+                    
                     with io.BytesIO(audio_data[2]) as buffer:
                         file_is_exists = True
                         
@@ -214,26 +169,209 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                     nsfw = json_data['nsfw'] if 'nsfw' in json_data else False
                     timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
-                    client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
-                    database = client.get_database_client('Milch')
-                    container = database.get_container_client('Posts')
-                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+
+                    if image_metadata is None:
+                        container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
                     
-                    return func.HttpResponse(json.dumps({'id': identifier, 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
-        
+                        return func.HttpResponse(json.dumps({'id': identifier, 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                    
+                    container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'image': image_metadata, 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                    
+                    return func.HttpResponse(json.dumps({'id': identifier, 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'image': image_metadata, 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                    
+                elif image_data is not None:
+                    if json_data is None:
+                        digest = hashlib.sha256()
+                        digest.update(image_data[2])
+                        hexdigest = digest.hexdigest()
+                        client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                        database = client.get_database_client('Milch')
+                        container = database.get_container_client('Posts')
+                        items = list(container.query_items(
+                            query=f'SELECT p.id, p.type FROM Posts AS p WHERE p.digest = @digest LIMIT 1',
+                            parameters=[
+                                {'name': '@digest', 'value': hexdigest}
+                            ],
+                            enable_cross_partition_query=True))
+                        
+                        if len(items) > 0:
+                            return func.HttpResponse(status_code=409, mimetype='', charset='')
+
+                        else:
+                            identifier = str(uuid4())
+                            s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+
+                            with io.BytesIO(image_data[2]) as buffer:
+                                file_is_exists = True
+                                
+                                try:
+                                    s3.head_object(Bucket='uploads', Key=identifier)
+                                except botocore.exceptions.ClientError as e:
+                                    if e.response['Error']['Code'] == '404':
+                                        file_is_exists = False
+                                    else:
+                                        raise
+
+                                if file_is_exists:
+                                    return func.HttpResponse(status_code=409, mimetype='', charset='')
+                                
+                                s3.upload_fileobj(buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
+
+                            timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
+                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'digest': hexdigest, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                        
+                            return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'digest': hexdigest, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+
+                    else:
+                        def resize_image(image, maximum, resample=Image.Resampling.LANCZOS):
+                            width, height = image.size
+
+                            if width < height:
+                                if maximum < height:
+                                    scale = maximum / height
+                                else:
+                                    return image
+                            elif maximum < width:
+                                scale = maximum / width
+                            else:
+                                return image
+
+                            return image.resize((round(width * scale), round(height * scale)), resample=resample)
+                        
+                        identifier = str(uuid4())
+                        s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
+
+                        with io.BytesIO(image_data[2]) as input_buffer, Image.open(input_buffer) as image, io.BytesIO() as output_buffer:
+                            resized_image = resize_image(image, maximum=1280)
+                            resized_image.save(output_buffer, format='WEBP', lossless=True, method=6)
+                            output_buffer.seek(0)
+                            image_data = (image_data[0], image_data[1], output_buffer.read())
+                            input_buffer.seek(0)
+                            file_is_exists = True
+                            
+                            try:
+                                s3.head_object(Bucket='uploads', Key=identifier)
+                            except botocore.exceptions.ClientError as e:
+                                if e.response['Error']['Code'] == '404':
+                                    file_is_exists = False
+                                else:
+                                    raise
+
+                            if file_is_exists:
+                                return func.HttpResponse(status_code=409, mimetype='', charset='')
+                            
+                            s3.upload_fileobj(input_buffer, 'uploads', identifier, ExtraArgs={'ContentType': image_data[1]})
+
+                        n_layers = 5
+                        api_url = 'https://milchchan-prism.hf.space/gradio_api'
+                        session = uuid4().hex[:10]
+                        boundary = '----gradioBoundary'
+                        data = f'--{boundary}\r\n'.encode()
+                        data += f'Content-Disposition: form-data; name="files"; filename="{os.path.basename(image_data[0])}"\r\n'.encode()
+                        data += 'Content-Type: image/webp\r\n\r\n'.encode()
+                        data += image_data[2]
+                        data += f'\r\n--{boundary}--\r\n'.encode()
+
+                        with urlopen(Request(api_url + '/upload', data=data, headers={'Content-Type': f'multipart/form-data; boundary={boundary}'}, method='POST')) as response:
+                            path = json.loads(response.read().decode('utf-8'))[0]
+                        
+                        with urlopen(Request(api_url + '/queue/join', data=json.dumps({
+                            'data': [{'path': path, 'meta': {'_type': 'gradio.FileData'}}, n_layers],
+                            'event_data': None,
+                            'fn_index': 0,
+                            'session_hash': session
+                        }).encode(), headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
+                            event_id = json.loads(response.read().decode('utf-8'))['event_id']
+                        
+                        with urlopen(Request(f'{api_url}/queue/data?session_hash={session}', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Accept': 'text/event-stream'})) as response:
+                            for raw in iter(lambda: response.readline() or None, None):
+                                if not raw: # EOF
+                                    break
+
+                                line = raw.decode('utf-8').strip()
+
+                                if line.startswith('data:'):
+                                    msg = json.loads(line[5:].lstrip())
+                                    msg_type = msg.get('msg')
+
+                                    if msg_type == 'heartbeat':
+                                        continue
+                                    elif msg_type == 'queue_full' or msg_type == 'unexpected_error':
+                                        break
+                                    elif msg_type == 'process_completed':
+                                        if msg['event_id'] == event_id and 'data' in msg['output']:
+                                            urls = []
+
+                                            for item in msg['output']['data'][0]:
+                                                if 'image' in item:
+                                                    urls.append(f"{api_url}/file={item['image']['path']}")
+
+                                            indexes = msg['output']['data'][1]
+                                            nsfw = msg['output']['data'][2]
+
+                                            if len(urls) > 0:
+                                                animations = []
+                                                index = 0
+
+                                                for i in range(n_layers):
+                                                    animation = []
+
+                                                    if i in indexes:
+                                                        with urlopen(Request(urls[index])) as r:
+                                                            content_type = r.headers.get_content_type()
+                                                            layer_identifier = str(uuid4())
+                                                            file_is_exists = True
+                                                            
+                                                            try:
+                                                                s3.head_object(Bucket='uploads', Key=layer_identifier)
+                                                            except botocore.exceptions.ClientError as e:
+                                                                if e.response['Error']['Code'] == '404':
+                                                                    file_is_exists = False
+                                                                else:
+                                                                    raise
+
+                                                            if file_is_exists:
+                                                                return func.HttpResponse(status_code=409, mimetype='', charset='')
+                                                            
+                                                            with io.BytesIO(r.read()) as buffer:
+                                                                s3.upload_fileobj(buffer, 'uploads', layer_identifier, ExtraArgs={'ContentType': content_type})
+
+                                                            animation.append({'id': layer_identifier, 'type': content_type})
+                                                            animations.append(animation)
+                                                                    
+                                                        index += 1
+                                                    else:
+                                                        animations.append(animation)
+
+                                                timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
+                                                client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
+                                                database = client.get_database_client('Milch')
+                                                container = database.get_container_client('Posts')
+                                                container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+
+                                                for animation in animations:
+                                                    for frame in animation:
+                                                        frame['url'] = f"https://static.milchchan.com/{frame['id']}"
+
+                                                return func.HttpResponse(json.dumps({'id': identifier, 'type': image_data[1], 'animations': animations, 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                                        
+                                        break
+                        
+                        return func.HttpResponse(status_code=503, mimetype='', charset='')
+
         else:
             nsfw = json.loads(req.params['nsfw'].lower()) if 'nsfw' in req.params else False
             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = random.choice(list(container.query_items(
-                query='SELECT p.id, p.slug, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.slug, p.type, p.input, p.message, p.digest, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@mime_type', 'value': req.params['type'].lower()},
                     {'name': '@random', 'value': random.random()}
                 ],
                 enable_cross_partition_query=True) if 'type' in req.params else container.query_items(
-                query='SELECT p.id, p.slug, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.slug, p.type, p.input, p.message, p.digest, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.input, p.message, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@random', 'value': random.random()}
                 ],
