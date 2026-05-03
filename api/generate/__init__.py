@@ -365,7 +365,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if path is None:
                             return func.HttpResponse(status_code=503, mimetype='', charset='')
                         else:
-                            if reference_text is not None:
+                            if reference_text is None:
                                 identifier = str(uuid4())
                                 s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
                                 
