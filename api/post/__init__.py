@@ -171,13 +171,23 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     timestamp = datetime.fromtimestamp(time.time(), timezone.utc)
 
                     if image_metadata is None:
+                        if 'next' in json_data:
+                            container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'next': json_data['next'], 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                        
+                            return func.HttpResponse(json.dumps({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'next': json_data['next'], 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                    
                         container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
                     
-                        return func.HttpResponse(json.dumps({'id': identifier, 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                        return func.HttpResponse(json.dumps({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                    
+                    if 'next' in json_data:
+                        container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'next': json_data['next'], 'image': image_metadata, 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
+                    
+                        return func.HttpResponse(json.dumps({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'next': json_data['next'], 'image': image_metadata, 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
                     
                     container.upsert_item({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'image': image_metadata, 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'random': random.random(), 'accesses': 0, 'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})
                     
-                    return func.HttpResponse(json.dumps({'id': identifier, 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'image': image_metadata, 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
+                    return func.HttpResponse(json.dumps({'id': identifier, 'slug': identifier[:7], 'type': audio_data[1], 'input': json_data['input'], 'message': json_data['message'], 'image': image_metadata, 'name': json_data['name'], 'language': json_data['language'], 'nsfw': nsfw, 'accesses': 0, 'timestamp': timestamp.timestamp()}), status_code=200, mimetype='application/json', charset='utf-8')
                     
                 elif image_data is not None:
                     def resize_image(image, maximum, resample=Image.Resampling.LANCZOS):
@@ -322,13 +332,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             database = client.get_database_client('Milch')
             container = database.get_container_client('Posts')
             item = random.choice(list(container.query_items(
-                query='SELECT p.id, p.slug, p.type, p.digest, p.input, p.message, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.digest, p.input, p.message, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.slug, p.type, p.digest, p.input, p.output, p.message, p.next, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.digest, p.input, p.output, p.message, p.next, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.type LIKE @mime_type AND NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@mime_type', 'value': req.params['type'].lower()},
                     {'name': '@random', 'value': random.random()}
                 ],
                 enable_cross_partition_query=True) if 'type' in req.params else container.query_items(
-                query='SELECT p.id, p.slug, p.type, p.digest, p.input, p.message, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.digest, p.input, p.message, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
+                query='SELECT p.id, p.slug, p.type, p.digest, p.input, p.output, p.message, p.next, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10' if nsfw else 'SELECT p.id, p.slug, p.type, p.digest, p.input, p.output, p.message, p.next, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE NOT p.nsfw AND p.random <= @random ORDER BY p.random DESC OFFSET 0 LIMIT 10',
                 parameters=[
                     {'name': '@random', 'value': random.random()}
                 ],
