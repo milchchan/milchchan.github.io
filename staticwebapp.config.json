@@ -18,12 +18,8 @@
             "rewrite": "/preview/index.html"
         },
         {
-            "route": "/player",
-            "rewrite": "/player/index.html"
-        },
-        {
-            "route": "/loop",
-            "rewrite": "/player/index.html"
+            "route": "/music",
+            "rewrite": "/music/index.html"
         },
         {
             "route": "/radio",
