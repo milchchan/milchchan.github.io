@@ -1101,12 +1101,14 @@ function extractAudioPostData(payload) {
   const audioId = typeof payload.id === "string" ? payload.id.trim() : "";
   const output = typeof payload.output === "string" ? payload.output.trim() : "";
   const next = extractNullableString(payload.next);
+  const name = typeof payload.name === "string" ? payload.name.trim() : null;
   const backgroundImageUrl = extractPostImageUrl(payload);
   if (audioId) {
     return {
       input,
       id: audioId,
       output,
+      name,
       next,
       backgroundImageUrl,
     };
@@ -1586,6 +1588,7 @@ async function generateAudioSequence(
     script,
     lines: [normalizedScript],
     audioBlobs: [audioBlob],
+    name: generatedScript.name,
     next: generatedScript.next,
     postAudioPromise,
   };
@@ -1868,23 +1871,27 @@ function createRandomTextSelection({ allowBaseWordOnly = false } = {}) {
   };
 }
 
-function createApiTextSelection(text, audioId, backgroundImageUrl = null, next = null) {
+function createApiTextSelection(text, audioId, backgroundImageUrl = null, next = null, name = null) {
   return {
     text,
     source: "api",
     audioId,
     backgroundImageUrl,
     next,
+    name,
+    fromNext: false,
   };
 }
 
-function createManualTextSelection(text) {
+function createManualTextSelection(text, { fromNext = false, name = null } = {}) {
   return {
     text,
     source: "manual",
     audioId: null,
     backgroundImageUrl: null,
     next: null,
+    name,
+    fromNext,
   };
 }
 
@@ -3435,6 +3442,7 @@ window.addEventListener("load", async () => {
   let newsBaseWords = [];
   let newsPanelMode = "news";
   let currentPlaybackNextText = null;
+  let currentPlaybackName = null;
   let promptHeaderTextPromise = null;
   let defaultCharacterPromptTextPromise = null;
   let promptFooterTextPromise = null;
@@ -4338,6 +4346,7 @@ window.addEventListener("load", async () => {
     generatedAudioBlobs = [];
     currentAudioBlobIndex = -1;
     currentPlaybackNextText = null;
+    currentPlaybackName = null;
     if (!keepPlaybackPrime || !isPrimingAudioPlayback) {
       audio.removeAttribute("src");
       audio.load();
@@ -4404,6 +4413,7 @@ window.addEventListener("load", async () => {
         post.id,
         post.backgroundImageUrl ?? null,
         post.next ?? null,
+        post.name ?? null,
       );
       if (selection.text) {
         applyTextSelection(selection);
@@ -4579,6 +4589,14 @@ window.addEventListener("load", async () => {
           } catch (error) {
             console.warn(error);
           }
+
+          if (selection.fromNext) {
+            const selectionName = typeof selection.name === "string" ? selection.name.trim() : "";
+            const queriedName = typeof queriedAudioPost?.name === "string" ? queriedAudioPost.name.trim() : "";
+            if (!selectionName || !queriedName || selectionName !== queriedName) {
+              queriedAudioPost = null;
+            }
+          }
         }
         const externalAudioId = shouldUseSelectionAudio
           ? selectionAudioId
@@ -4595,6 +4613,9 @@ window.addEventListener("load", async () => {
               backgroundImageUrl: shouldUseSelectionAudio
                 ? (selection.backgroundImageUrl ?? null)
                 : (queriedAudioPost?.backgroundImageUrl ?? null),
+              name: shouldUseSelectionAudio
+                ? (selection.name ?? null)
+                : (queriedAudioPost?.name ?? null),
               next: shouldUseSelectionAudio
                 ? (selection.next ?? null)
                 : (queriedAudioPost?.next ?? null),
@@ -4634,6 +4655,7 @@ window.addEventListener("load", async () => {
         currentAudioBlobIndex = -1;
         const postedAudio = await (generated.postAudioPromise ?? Promise.resolve(null));
         currentPlaybackNextText = generated.next ?? postedAudio?.next ?? null;
+        currentPlaybackName = generated.name ?? postedAudio?.name ?? null;
         await loadAndFadeInBackgroundImage(
           generated.backgroundImageUrl ?? postedAudio?.backgroundImageUrl ?? null,
         );
@@ -4723,7 +4745,10 @@ window.addEventListener("load", async () => {
 
     if (nextText) {
       shouldFinishBackgroundImageAnimation = true;
-      applyTextSelection(createManualTextSelection(nextText));
+      applyTextSelection(createManualTextSelection(nextText, {
+        fromNext: true,
+        name: currentPlaybackName,
+      }));
 
       if (AUTOPLAY) {
         void togglePlayback().catch(error => {
