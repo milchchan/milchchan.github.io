@@ -1038,6 +1038,7 @@ function getBooleanQueryParam(name, fallback) {
   return fallback;
 }
 
+const AUTOPLAY = getBooleanQueryParam("autoplay", false);
 const THRESHOLD = getNumberQueryParam("threshold", 0.75);
 const TEMPERATURE = getNumberQueryParam("temperature", 1.0);
 const SORT = getStringQueryParam("sort", "timestamp");
@@ -1051,7 +1052,9 @@ const AUDIO_POSTS_API_URL = "https://milchchan.com/api/posts";
 const STATIC_BASE_URL = "https://static.milchchan.com";
 const GENERATE_API_URL = "https://milchchan.com/api/generate";
 
-const PROMPT_TEXT_URL = "/radio.txt";
+const PROMPT_HEADER_TEXT_URL = "/radio-header.txt";
+const PROMPT_CHARACTER_TEXT_URL = "/radio-merku.txt";
+const PROMPT_FOOTER_TEXT_URL = "/radio-footer.txt";
 const VOICE_PROMPT_AUDIO_URL = "/sounds/merku.ja.wav";
 const DEFAULT_VOICE_PROMPT_FILE_NAME = "merku.ja.wav";
 const DEFAULT_CHARACTER_IMAGE_URL = "https://static.milchchan.com/3a6b8c73-7ff2-4058-87ed-f30082556e8a";
@@ -1063,6 +1066,19 @@ let sharedApiFetchPayloadPromise = null;
 
 function resetSharedApiFetchPayloadCache() {
   sharedApiFetchPayloadPromise = null;
+}
+
+function extractNullableString(value) {
+  if (value === null || typeof value === "undefined") {
+    return null;
+  }
+
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : null;
 }
 
 function extractAudioPostData(payload) {
@@ -1083,18 +1099,16 @@ function extractAudioPostData(payload) {
 
   const input = typeof payload.input === "string" ? payload.input.trim() : "";
   const audioId = typeof payload.id === "string" ? payload.id.trim() : "";
-  const message = typeof payload.message === "string" ? payload.message.trim() : "";
+  const output = typeof payload.output === "string" ? payload.output.trim() : "";
+  const next = extractNullableString(payload.next);
   const backgroundImageUrl = extractPostImageUrl(payload);
   if (audioId) {
     return {
       input,
       id: audioId,
-      message,
+      output,
+      next,
       backgroundImageUrl,
-      conversationMessages: [
-        ...(input ? [{ role: "user", content: input }] : []),
-        ...(message ? [{ role: "assistant", content: message }] : []),
-      ],
     };
   }
 
@@ -1350,7 +1364,7 @@ function extractContentValue(payload) {
     return payload.content.trim();
   }
 
-  for (const key of ["response", "data", "output", "message", "result"]) {
+  for (const key of ["response", "data", "output", "result"]) {
     if (key in payload) {
       const content = extractContentValue(payload[key]);
       if (typeof content === "string" && content.trim().length > 0) {
@@ -1362,19 +1376,18 @@ function extractContentValue(payload) {
   return null;
 }
 
-async function loadPromptText() {
-  const response = await fetch(PROMPT_TEXT_URL, { cache: "no-cache" });
+async function loadTextFile(url, label) {
+  const response = await fetch(url, { cache: "no-cache" });
   if (!response.ok) {
-    throw new Error(`Failed to load prompt text: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to load ${label}: ${response.status} ${response.statusText}`);
   }
 
   return await response.text();
 }
 
-async function generateScriptContent(topic, promptText, conversationHistory = []) {
+async function generateScriptContent(topic, systemPromptText) {
   const messages = [
-    { role: "system", content: promptText },
-    ...conversationHistory,
+    { role: "system", content: systemPromptText },
     { role: "user", content: topic },
   ];
   const response = await fetch(GENERATE_API_URL, {
@@ -1403,6 +1416,7 @@ async function generateScriptContent(topic, promptText, conversationHistory = []
   const content = extractContentValue(payload);
   const name = typeof payload.name === "string" ? payload.name.trim() : null;
   const language = typeof payload.language === "string" ? payload.language.trim() : null;
+  const next = extractNullableString(payload.next);
 
   if (!content) {
     throw new Error("The generate API response did not include a content value.");
@@ -1412,11 +1426,7 @@ async function generateScriptContent(topic, promptText, conversationHistory = []
     content,
     name,
     language,
-    messages: [
-      ...conversationHistory,
-      { role: "user", content: topic },
-      { role: "assistant", content },
-    ],
+    next,
   };
 }
 
@@ -1481,9 +1491,10 @@ async function synthesizeLine(text, promptAudioBlob, promptAudioFileName, langua
 async function postGeneratedAudio(
   audioBlob,
   input,
-  message,
+  output,
   name,
   language,
+  next,
   characterImageBlob = null,
   characterImageFileName = DEFAULT_CHARACTER_IMAGE_FILE_NAME,
 ) {
@@ -1494,9 +1505,10 @@ async function postGeneratedAudio(
   }
   formData.append("data", JSON.stringify({
     input,
-    message,
+    output,
     name,
     language,
+    next,
     nsfw: NSFW,
   }));
 
@@ -1516,7 +1528,10 @@ async function postGeneratedAudio(
   }
 
   const payload = maybeParseJsonString(responseText);
-  return extractAudioPostData(payload) ?? { backgroundImageUrl: extractPostImageUrl(payload) };
+  return extractAudioPostData(payload) ?? {
+    backgroundImageUrl: extractPostImageUrl(payload),
+    next: extractNullableString(payload?.next),
+  };
 }
 
 async function downloadExternalAudioBlob(id, onProgress = null) {
@@ -1530,16 +1545,14 @@ async function downloadExternalAudioBlob(id, onProgress = null) {
 
 async function generateAudioSequence(
   topic,
-  promptText,
+  systemPromptText,
   promptAudioBlob,
   promptAudioFileName,
   characterImageBlob,
   characterImageFileName,
   onProgress,
-  conversationHistory = [],
-  shouldPostAudio = true,
 ) {
-  const generatedScript = await generateScriptContent(topic, promptText, conversationHistory);
+  const generatedScript = await generateScriptContent(topic, systemPromptText);
   const script = generatedScript.content;
   const normalizedScript = typeof script === "string" ? script.trim() : "";
 
@@ -1555,26 +1568,25 @@ async function generateAudioSequence(
     onProgress,
   );
 
-  const postAudioPromise = shouldPostAudio
-    ? postGeneratedAudio(
-        audioBlob,
-        topic,
-        script,
-        generatedScript.name,
-        generatedScript.language,
-        characterImageBlob,
-        characterImageFileName,
-      ).catch(error => {
-        console.error(error);
-      })
-    : Promise.resolve(null);
+  const postAudioPromise = postGeneratedAudio(
+    audioBlob,
+    topic,
+    script,
+    generatedScript.name,
+    generatedScript.language,
+    generatedScript.next,
+    characterImageBlob,
+    characterImageFileName,
+  ).catch(error => {
+    console.error(error);
+  });
 
   return {
     topic,
     script,
     lines: [normalizedScript],
     audioBlobs: [audioBlob],
-    messages: generatedScript.messages,
+    next: generatedScript.next,
     postAudioPromise,
   };
 }
@@ -1852,17 +1864,17 @@ function createRandomTextSelection({ allowBaseWordOnly = false } = {}) {
     source: "random",
     audioId: null,
     backgroundImageUrl: null,
-    conversationMessages: [],
+    next: null,
   };
 }
 
-function createApiTextSelection(text, audioId, conversationMessages = [], backgroundImageUrl = null) {
+function createApiTextSelection(text, audioId, backgroundImageUrl = null, next = null) {
   return {
     text,
     source: "api",
     audioId,
     backgroundImageUrl,
-    conversationMessages,
+    next,
   };
 }
 
@@ -1872,7 +1884,7 @@ function createManualTextSelection(text) {
     source: "manual",
     audioId: null,
     backgroundImageUrl: null,
-    conversationMessages: [],
+    next: null,
   };
 }
 
@@ -3422,12 +3434,10 @@ window.addEventListener("load", async () => {
   let newsItems = [];
   let newsBaseWords = [];
   let newsPanelMode = "news";
-  let lastGeneratedTopic = "";
-  let lastGeneratedAudioId = null;
-  let lastGeneratedConversationMessages = [];
-  let selectionGeneration = 0;
-  let lastGeneratedSelectionGeneration = -1;
-  let defaultPromptTextPromise = null;
+  let currentPlaybackNextText = null;
+  let promptHeaderTextPromise = null;
+  let defaultCharacterPromptTextPromise = null;
+  let promptFooterTextPromise = null;
   let defaultVoicePromptAudioPromise = null;
   let defaultCharacterImagePromise = null;
   let customVoicePromptFile = null;
@@ -3726,7 +3736,7 @@ window.addEventListener("load", async () => {
   promptTextarea.className = "floating-panel-textarea";
   promptTextarea.id = "settings-prompt-textarea";
   promptTextarea.spellcheck = false;
-  promptTextarea.setAttribute("aria-label", "Prompt");
+  promptTextarea.setAttribute("aria-label", "Character prompt");
 
   manualTextField.className = "floating-panel-field has-separator";
   manualTextRow.className = "floating-panel-row";
@@ -3973,19 +3983,37 @@ window.addEventListener("load", async () => {
     await resetGenerationSettingsToDefault();
   });
 
-  async function loadDefaultPromptText() {
-    defaultPromptTextPromise ??= loadPromptText();
-    return await defaultPromptTextPromise;
+  async function loadPromptHeaderText() {
+    promptHeaderTextPromise ??= loadTextFile(PROMPT_HEADER_TEXT_URL, "prompt header text");
+    return await promptHeaderTextPromise;
   }
 
-  async function getActivePromptText() {
+  async function loadDefaultCharacterPromptText() {
+    defaultCharacterPromptTextPromise ??= loadTextFile(PROMPT_CHARACTER_TEXT_URL, "character prompt text");
+    return await defaultCharacterPromptTextPromise;
+  }
+
+  async function loadPromptFooterText() {
+    promptFooterTextPromise ??= loadTextFile(PROMPT_FOOTER_TEXT_URL, "prompt footer text");
+    return await promptFooterTextPromise;
+  }
+
+  async function getActiveSystemPromptText() {
     if (promptTextarea.value.length > 0) {
-      return promptTextarea.value;
+      const [headerText, footerText] = await Promise.all([
+        loadPromptHeaderText(),
+        loadPromptFooterText(),
+      ]);
+      return `${headerText}${promptTextarea.value}${footerText}`;
     }
 
-    const defaultPromptText = await loadDefaultPromptText();
-    promptTextarea.value = defaultPromptText;
-    return defaultPromptText;
+    const [headerText, characterPromptText, footerText] = await Promise.all([
+      loadPromptHeaderText(),
+      loadDefaultCharacterPromptText(),
+      loadPromptFooterText(),
+    ]);
+    promptTextarea.value = characterPromptText;
+    return `${headerText}${characterPromptText}${footerText}`;
   }
 
   async function loadDefaultVoicePromptAudio() {
@@ -4059,7 +4087,7 @@ window.addEventListener("load", async () => {
   }
 
   async function resetGenerationSettingsToDefault() {
-    promptTextarea.value = await loadDefaultPromptText();
+    promptTextarea.value = await loadDefaultCharacterPromptText();
     const defaultCharacterImage = await loadDefaultCharacterImage();
     customVoicePromptFile = null;
     customCharacterImageFile = null;
@@ -4309,6 +4337,7 @@ window.addEventListener("load", async () => {
     }
     generatedAudioBlobs = [];
     currentAudioBlobIndex = -1;
+    currentPlaybackNextText = null;
     if (!keepPlaybackPrime || !isPrimingAudioPlayback) {
       audio.removeAttribute("src");
       audio.load();
@@ -4317,7 +4346,6 @@ window.addEventListener("load", async () => {
   }
 
   function applyTextSelection(selection) {
-    selectionGeneration += 1;
     currentTextSelection = selection;
     hasSelectedInitialTopic = Boolean(selection?.text || selection?.audioId);
     clearCurrentAudio();
@@ -4329,7 +4357,6 @@ window.addEventListener("load", async () => {
   }
 
   function clearDisplayedTextSelection(selection) {
-    selectionGeneration += 1;
     currentTextSelection = selection;
     hasSelectedInitialTopic = Boolean(selection?.audioId);
     clearCurrentAudio();
@@ -4375,8 +4402,8 @@ window.addEventListener("load", async () => {
       const selection = createApiTextSelection(
         post.input,
         post.id,
-        post.conversationMessages ?? [],
         post.backgroundImageUrl ?? null,
+        post.next ?? null,
       );
       if (selection.text) {
         applyTextSelection(selection);
@@ -4543,30 +4570,10 @@ window.addEventListener("load", async () => {
         const topic = selection.source === "api"
           ? (selection.text || "")
           : (selection.text || backgroundTextState.text || createBackgroundText());
-        const hasTextSelection = typeof selection.text === "string" && selection.text.length > 0;
-        const selectionConversationMessages = Array.isArray(selection.conversationMessages)
-          ? selection.conversationMessages
-          : [];
-        const isMatchingApiSelection = selection.source === "api"
-          && hasTextSelection
-          && topic === lastGeneratedTopic
-          && selection.audioId === lastGeneratedAudioId;
-        const isMatchingRandomSelection = selection.source !== "api"
-          && hasTextSelection
-          && topic === lastGeneratedTopic;
-        const shouldContinueConversation = isMatchingApiSelection || isMatchingRandomSelection;
-        const isSameSelectionGeneration = selectionGeneration === lastGeneratedSelectionGeneration;
-        const shouldContinueCurrentSelection = shouldContinueConversation && isSameSelectionGeneration;
-        const conversationHistory = shouldContinueCurrentSelection
-          ? (lastGeneratedConversationMessages.length > 0
-              ? lastGeneratedConversationMessages
-              : selectionConversationMessages)
-          : selectionConversationMessages;
         const selectionAudioId = selection.source === "api" ? selection.audioId : null;
-        const shouldUseSelectionAudio = Boolean(selectionAudioId)
-          && (!hasTextSelection || !shouldContinueCurrentSelection);
+        const shouldUseSelectionAudio = Boolean(selectionAudioId);
         let queriedAudioPost = null;
-        if (!shouldUseSelectionAudio && !shouldContinueCurrentSelection) {
+        if (!shouldUseSelectionAudio) {
           try {
             queriedAudioPost = await fetchLatestAudioPostByQuery(topic);
           } catch (error) {
@@ -4577,10 +4584,6 @@ window.addEventListener("load", async () => {
           ? selectionAudioId
           : (queriedAudioPost?.id ?? null);
         const shouldDownloadExternalAudio = Boolean(externalAudioId);
-        const externalConversationMessages = Array.isArray(queriedAudioPost?.conversationMessages)
-          && queriedAudioPost.conversationMessages.length > 0
-          ? queriedAudioPost.conversationMessages
-          : conversationHistory;
         const generated = shouldDownloadExternalAudio
           ? {
               topic,
@@ -4589,15 +4592,17 @@ window.addEventListener("load", async () => {
               audioBlobs: [await downloadExternalAudioBlob(externalAudioId, rate => {
                 progress.update(rate);
               })],
-              messages: externalConversationMessages,
               backgroundImageUrl: shouldUseSelectionAudio
                 ? (selection.backgroundImageUrl ?? null)
                 : (queriedAudioPost?.backgroundImageUrl ?? null),
+              next: shouldUseSelectionAudio
+                ? (selection.next ?? null)
+                : (queriedAudioPost?.next ?? null),
               postAudioPromise: Promise.resolve(),
             }
           : await (async () => {
-            const [promptText, activeVoicePromptAudio, activeCharacterImage] = await Promise.all([
-              getActivePromptText(),
+            const [systemPromptText, activeVoicePromptAudio, activeCharacterImage] = await Promise.all([
+              getActiveSystemPromptText(),
               getActiveVoicePromptAudio(),
               getActiveCharacterImage(),
             ]);
@@ -4606,7 +4611,7 @@ window.addEventListener("load", async () => {
             try {
               return await generateAudioSequence(
                 topic,
-                promptText,
+                systemPromptText,
                 activeVoicePromptAudio.blob,
                 activeVoicePromptAudio.fileName,
                 activeCharacterImage.blob,
@@ -4614,8 +4619,6 @@ window.addEventListener("load", async () => {
                 rate => {
                   progress.update(rate);
                 },
-                conversationHistory,
-                !shouldContinueCurrentSelection,
               );
             } finally {
               stopLoadingMeteorShower(loadingMeteorState);
@@ -4629,11 +4632,8 @@ window.addEventListener("load", async () => {
         clearCurrentAudio({ keepPlaybackPrime: autoplay });
         generatedAudioBlobs = generated.audioBlobs;
         currentAudioBlobIndex = -1;
-        lastGeneratedTopic = topic;
-        lastGeneratedAudioId = selection.source === "api" ? (selection.audioId ?? null) : null;
-        lastGeneratedConversationMessages = generated.messages ?? [];
-        lastGeneratedSelectionGeneration = selectionGeneration;
         const postedAudio = await (generated.postAudioPromise ?? Promise.resolve(null));
+        currentPlaybackNextText = generated.next ?? postedAudio?.next ?? null;
         await loadAndFadeInBackgroundImage(
           generated.backgroundImageUrl ?? postedAudio?.backgroundImageUrl ?? null,
         );
@@ -4709,9 +4709,6 @@ window.addEventListener("load", async () => {
 
   audio.addEventListener("ended", () => {
     const nextIndex = currentAudioBlobIndex + 1;
-    const shouldReplayCurrentAudio = currentTextSelection?.source === "api"
-      && typeof currentTextSelection?.audioId === "string"
-      && (!currentTextSelection?.text || currentTextSelection.text.length === 0);
 
     if (nextIndex < generatedAudioBlobs.length) {
       void playGeneratedAudioAt(nextIndex).catch(error => {
@@ -4722,8 +4719,25 @@ window.addEventListener("load", async () => {
     }
 
     setPlaybackState(false);
+    const nextText = currentPlaybackNextText;
+
+    if (nextText) {
+      shouldFinishBackgroundImageAnimation = true;
+      applyTextSelection(createManualTextSelection(nextText));
+
+      if (AUTOPLAY) {
+        void togglePlayback().catch(error => {
+          setPlaybackState(false);
+          shake(playbackButton);
+          console.error(error);
+        });
+      }
+
+      return;
+    }
+
     shouldFinishBackgroundImageAnimation = true;
-    currentAudioBlobIndex = shouldReplayCurrentAudio ? 0 : -1;
+    currentAudioBlobIndex = generatedAudioBlobs.length > 0 ? 0 : -1;
   });
 
   audio.addEventListener("pause", () => {
