@@ -14,7 +14,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
         database = client.get_database_client('Milch')
         container = database.get_container_client('Posts')
-        query = 'SELECT p.id, p.type, p.digest, p.input, p.output, p.message, p.next, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE '
+        query = 'SELECT p.id, p.type, p.digest, p.input, p.output, p.next, p.transcript, p.image, p.animations, p.name, p.language, p.nsfw, p.random, p.accesses, p.timestamp FROM Posts AS p WHERE '
         parameters = [{'name': '@offset', 'value': int(req.params['offset']) if 'offset' in req.params else 0}, {'name': '@limit', 'value': int(req.params['limit']) if 'limit' in req.params else 100}]
 
         if 'query' in req.params:
