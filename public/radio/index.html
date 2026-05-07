@@ -1407,6 +1407,7 @@ async function generateScriptContent(topic, systemPromptText) {
       messages,
       reasoning: { effort: "low" },
       temperature: TEMPERATURE,
+      tools: []
     }),
   });
 
