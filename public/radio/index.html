@@ -4414,7 +4414,7 @@ window.addEventListener("load", async () => {
 
   async function loadDefaultCharacterImage() {
     defaultCharacterImagePromise ??= (async () => {
-      const characterImageResponse = await fetch(DEFAULT_CHARACTER_IMAGE_URL);
+      const characterImageResponse = await fetch(DEFAULT_CHARACTER_IMAGE_URL, { mode: "cors", cache: "no-cache" });
 
       if (!characterImageResponse.ok) {
         throw new Error(`Failed to load character image: ${characterImageResponse.status} ${characterImageResponse.statusText}`);
