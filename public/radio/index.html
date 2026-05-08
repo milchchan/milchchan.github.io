@@ -639,6 +639,83 @@
         gap: 8px;
       }
 
+      .floating-panel-switch {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        align-self: flex-start;
+        width: 60px;
+        height: 32px;
+        border: 0;
+        border-radius: 999px;
+        padding: 0;
+        box-sizing: border-box;
+        background: transparent;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: color 500ms ease, background-color 500ms ease, opacity 500ms ease;
+      }
+
+      .floating-panel-switch:disabled {
+        cursor: default;
+        opacity: 0.5;
+      }
+
+      .floating-panel-switch-track {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 999px;
+        background: rgb(var(--text-rgb) / 0.16);
+        transition: background-color 500ms ease;
+      }
+
+      .floating-panel-switch-icon {
+        position: absolute;
+        top: 50%;
+        z-index: 1;
+        color: #ffffff;
+        font-size: 0.75rem;
+        line-height: 1;
+        transform: translate3d(0, -50%, 0);
+        transition: color 500ms ease;
+      }
+
+      .floating-panel-switch-icon.is-left {
+        left: 11px;
+      }
+
+      .floating-panel-switch-icon.is-right {
+        right: 11px;
+      }
+
+      .floating-panel-switch-thumb {
+        position: absolute;
+        left: 4px;
+        top: 4px;
+        z-index: 2;
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        background: #ffffff;
+        transform: translate3d(0, 0, 0);
+        transition: transform 500ms ease, background-color 500ms ease;
+      }
+
+      .floating-panel-switch.is-on {
+        color: var(--accent-color);
+      }
+
+      .floating-panel-switch.is-on .floating-panel-switch-track {
+        background: var(--accent-color);
+      }
+
+      .floating-panel-switch.is-on .floating-panel-switch-thumb {
+        background: #ffffff;
+        transform: translate3d(28px, 0, 0);
+      }
+
       .floating-panel-text-input {
         flex: 1 1 auto;
         min-width: 0;
@@ -956,6 +1033,7 @@
 
         .floating-panel-list-item-main:hover:not(:disabled) .floating-panel-list-item-content,
         .floating-panel-tag:hover:not(:disabled),
+        .floating-panel-switch:hover:not(:disabled),
         .floating-panel-button:hover:not(:disabled) {
           color: var(--accent-color);
         }
@@ -1038,7 +1116,7 @@ function getBooleanQueryParam(name, fallback) {
   return fallback;
 }
 
-const AUTOPLAY = getBooleanQueryParam("autoplay", false);
+const DEFAULT_AUTOPLAY = getBooleanQueryParam("autoplay", true);
 const THRESHOLD = getNumberQueryParam("threshold", 0.75);
 const TEMPERATURE = getNumberQueryParam("temperature", 1.0);
 const SORT = getStringQueryParam("sort", "timestamp");
@@ -1060,12 +1138,207 @@ const DEFAULT_VOICE_PROMPT_FILE_NAME = "merku.ja.wav";
 const DEFAULT_CHARACTER_IMAGE_URL = "https://static.milchchan.com/3a6b8c73-7ff2-4058-87ed-f30082556e8a";
 const DEFAULT_CHARACTER_IMAGE_FILE_NAME = "Merku.png";
 const MIN_VOICE_PROMPT_DURATION_SECONDS = 1;
+const SETTINGS_STORAGE_PREFIX = "milchchan.radio.settings";
+const SETTINGS_LOCAL_STORAGE_KEYS = {
+  autoplay: `${SETTINGS_STORAGE_PREFIX}.autoplay`,
+  prompt: `${SETTINGS_STORAGE_PREFIX}.prompt`,
+};
+const SETTINGS_DB_NAME = "milchchan-radio-settings";
+const SETTINGS_DB_VERSION = 1;
+const SETTINGS_FILE_STORE_NAME = "files";
+const SETTINGS_FILE_KEYS = {
+  voice: "voice",
+  image: "image",
+};
 const SILENT_AUDIO_DATA_URL = "data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 let sharedApiFetchPayloadPromise = null;
 
 function resetSharedApiFetchPayloadCache() {
   sharedApiFetchPayloadPromise = null;
+}
+
+function readStoredLocalSetting(key) {
+  try {
+    return window.localStorage.getItem(key);
+  } catch (error) {
+    console.warn(error);
+    return null;
+  }
+}
+
+function writeStoredLocalSetting(key, value) {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn(error);
+  }
+}
+
+function removeStoredLocalSetting(key) {
+  try {
+    window.localStorage.removeItem(key);
+  } catch (error) {
+    console.warn(error);
+  }
+}
+
+function openSettingsDatabase() {
+  if (!("indexedDB" in window)) {
+    return Promise.reject(new Error("IndexedDB is not available"));
+  }
+
+  return new Promise((resolve, reject) => {
+    const request = window.indexedDB.open(SETTINGS_DB_NAME, SETTINGS_DB_VERSION);
+
+    request.onupgradeneeded = () => {
+      const db = request.result;
+
+      if (!db.objectStoreNames.contains(SETTINGS_FILE_STORE_NAME)) {
+        db.createObjectStore(SETTINGS_FILE_STORE_NAME);
+      }
+    };
+    request.onsuccess = () => {
+      resolve(request.result);
+    };
+    request.onerror = () => {
+      reject(request.error);
+    };
+  });
+}
+
+async function readStoredFileRecord(key) {
+  let db = null;
+
+  try {
+    db = await openSettingsDatabase();
+
+    return await new Promise((resolve, reject) => {
+      const transaction = db.transaction(SETTINGS_FILE_STORE_NAME, "readonly");
+      const store = transaction.objectStore(SETTINGS_FILE_STORE_NAME);
+      const request = store.get(key);
+
+      request.onsuccess = () => {
+        resolve(request.result ?? null);
+      };
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  } catch (error) {
+    console.warn(error);
+    return null;
+  } finally {
+    db?.close();
+  }
+}
+
+async function writeStoredFileRecord(key, blob, fileName) {
+  let db = null;
+
+  try {
+    db = await openSettingsDatabase();
+
+    await new Promise((resolve, reject) => {
+      const transaction = db.transaction(SETTINGS_FILE_STORE_NAME, "readwrite");
+      const store = transaction.objectStore(SETTINGS_FILE_STORE_NAME);
+      const record = {
+        blob,
+        fileName,
+        type: blob.type || "",
+        lastModified: blob.lastModified || Date.now(),
+        updatedAt: Date.now(),
+      };
+
+      store.put(record, key);
+      transaction.oncomplete = () => {
+        resolve();
+      };
+      transaction.onerror = () => {
+        reject(transaction.error);
+      };
+      transaction.onabort = () => {
+        reject(transaction.error);
+      };
+    });
+  } catch (error) {
+    console.warn(error);
+  } finally {
+    db?.close();
+  }
+}
+
+async function deleteStoredFileRecord(key) {
+  let db = null;
+
+  try {
+    db = await openSettingsDatabase();
+
+    await new Promise((resolve, reject) => {
+      const transaction = db.transaction(SETTINGS_FILE_STORE_NAME, "readwrite");
+      const store = transaction.objectStore(SETTINGS_FILE_STORE_NAME);
+
+      store.delete(key);
+      transaction.oncomplete = () => {
+        resolve();
+      };
+      transaction.onerror = () => {
+        reject(transaction.error);
+      };
+      transaction.onabort = () => {
+        reject(transaction.error);
+      };
+    });
+  } catch (error) {
+    console.warn(error);
+  } finally {
+    db?.close();
+  }
+}
+
+function createFileFromStoredRecord(record, fallbackFileName) {
+  if (!record?.blob) {
+    return null;
+  }
+
+  const fileName = record.fileName || fallbackFileName;
+  const options = {
+    type: record.type || record.blob.type || "",
+    lastModified: record.lastModified || Date.now(),
+  };
+
+  try {
+    return new File([record.blob], fileName, options);
+  } catch {
+    record.blob.name = fileName;
+    record.blob.lastModified = options.lastModified;
+    return record.blob;
+  }
+}
+
+async function clearStoredGenerationSettings() {
+  removeStoredLocalSetting(SETTINGS_LOCAL_STORAGE_KEYS.autoplay);
+  removeStoredLocalSetting(SETTINGS_LOCAL_STORAGE_KEYS.prompt);
+
+  if (!("indexedDB" in window)) {
+    return;
+  }
+
+  await new Promise(resolve => {
+    const request = window.indexedDB.deleteDatabase(SETTINGS_DB_NAME);
+
+    request.onsuccess = () => {
+      resolve();
+    };
+    request.onerror = () => {
+      console.warn(request.error);
+      resolve();
+    };
+    request.onblocked = () => {
+      console.warn("Settings database deletion is blocked");
+      resolve();
+    };
+  });
 }
 
 function extractNullableString(value) {
@@ -3402,6 +3675,12 @@ window.addEventListener("load", async () => {
   const manualTextRow = document.createElement("div");
   const manualTextInput = document.createElement("input");
   const manualTextButton = document.createElement("button");
+  const autoplayField = document.createElement("div");
+  const autoplayToggleButton = document.createElement("button");
+  const autoplayToggleIconLeft = document.createElement("i");
+  const autoplayToggleIconRight = document.createElement("i");
+  const autoplayToggleTrack = document.createElement("span");
+  const autoplayToggleThumb = document.createElement("span");
   const voiceField = document.createElement("div");
   const voiceActions = document.createElement("div");
   const voiceFileButton = document.createElement("button");
@@ -3449,10 +3728,12 @@ window.addEventListener("load", async () => {
   let promptFooterTextPromise = null;
   let defaultVoicePromptAudioPromise = null;
   let defaultCharacterImagePromise = null;
+  let generationSettingsReadyPromise = null;
   let customVoicePromptFile = null;
   let voicePromptFileValidationToken = 0;
   let customCharacterImageFile = null;
   let characterImageObjectUrl = null;
+  let autoplayEnabled = DEFAULT_AUTOPLAY;
   let backgroundImageToken = 0;
   let backgroundImageLayers = [];
   let shouldFinishBackgroundImageAnimation = false;
@@ -3593,6 +3874,25 @@ window.addEventListener("load", async () => {
     newsTagModeButton.classList.toggle("is-selected", isTagCloudMode);
     newsListModeButton.setAttribute("aria-pressed", `${!isTagCloudMode}`);
     newsTagModeButton.setAttribute("aria-pressed", `${isTagCloudMode}`);
+  }
+
+  function updateAutoplayToggle() {
+    autoplayToggleButton.classList.toggle("is-on", autoplayEnabled);
+    autoplayToggleButton.setAttribute("aria-checked", `${autoplayEnabled}`);
+  }
+
+  function saveAutoplaySetting() {
+    writeStoredLocalSetting(SETTINGS_LOCAL_STORAGE_KEYS.autoplay, autoplayEnabled ? "1" : "0");
+  }
+
+  function loadStoredAutoplaySetting() {
+    const storedValue = readStoredLocalSetting(SETTINGS_LOCAL_STORAGE_KEYS.autoplay);
+
+    if (storedValue === null) {
+      return;
+    }
+
+    autoplayEnabled = ["1", "true", "yes", "on"].includes(storedValue.trim().toLowerCase());
   }
 
   function renderTagCloud() {
@@ -3759,6 +4059,24 @@ window.addEventListener("load", async () => {
   manualTextButton.setAttribute("aria-label", "Send text to screen");
   manualTextButton.innerHTML = '<i class="fa-solid fa-arrow-up" aria-hidden="true"></i>';
 
+  autoplayField.className = "floating-panel-field";
+  autoplayToggleButton.type = "button";
+  autoplayToggleButton.className = "floating-panel-switch";
+  autoplayToggleButton.setAttribute("role", "switch");
+  autoplayToggleButton.setAttribute("aria-label", "Autoplay");
+  autoplayToggleIconLeft.className = "fa-solid fa-rotate-right floating-panel-switch-icon is-left";
+  autoplayToggleIconLeft.setAttribute("aria-hidden", "true");
+  autoplayToggleIconRight.className = "fa-solid fa-rotate-right floating-panel-switch-icon is-right";
+  autoplayToggleIconRight.setAttribute("aria-hidden", "true");
+  autoplayToggleTrack.className = "floating-panel-switch-track";
+  autoplayToggleThumb.className = "floating-panel-switch-thumb";
+  autoplayToggleTrack.appendChild(autoplayToggleIconLeft);
+  autoplayToggleTrack.appendChild(autoplayToggleIconRight);
+  autoplayToggleTrack.appendChild(autoplayToggleThumb);
+  autoplayToggleButton.appendChild(autoplayToggleTrack);
+  autoplayField.appendChild(autoplayToggleButton);
+  updateAutoplayToggle();
+
   voiceField.className = "floating-panel-field";
   voiceActions.className = "floating-panel-row";
   voiceFileButton.type = "button";
@@ -3807,6 +4125,7 @@ window.addEventListener("load", async () => {
   settingsScrollInner.appendChild(promptField);
   settingsScrollInner.appendChild(characterField);
   settingsScrollInner.appendChild(voiceField);
+  settingsScrollInner.appendChild(autoplayField);
   settingsScrollInner.appendChild(manualTextField);
   settingsScrollArea.appendChild(settingsScrollInner);
   settingsPanel.appendChild(settingsScrollArea);
@@ -3899,6 +4218,17 @@ window.addEventListener("load", async () => {
     characterImageInput.click();
   });
 
+  autoplayToggleButton.addEventListener("click", event => {
+    event.stopPropagation();
+    autoplayEnabled = !autoplayEnabled;
+    updateAutoplayToggle();
+    saveAutoplaySetting();
+  });
+
+  promptTextarea.addEventListener("input", () => {
+    writeStoredLocalSetting(SETTINGS_LOCAL_STORAGE_KEYS.prompt, promptTextarea.value);
+  });
+
   let isManualTextInputComposing = false;
 
   async function submitManualScreenText() {
@@ -3950,6 +4280,7 @@ window.addEventListener("load", async () => {
     if (!nextFile) {
       customVoicePromptFile = null;
       voiceFileName.textContent = DEFAULT_VOICE_PROMPT_FILE_NAME;
+      void deleteStoredFileRecord(SETTINGS_FILE_KEYS.voice);
       return;
     }
 
@@ -3978,6 +4309,11 @@ window.addEventListener("load", async () => {
 
     customVoicePromptFile = nextFile;
     voiceFileName.textContent = nextFile.name || DEFAULT_VOICE_PROMPT_FILE_NAME;
+    void writeStoredFileRecord(
+      SETTINGS_FILE_KEYS.voice,
+      nextFile,
+      nextFile.name || DEFAULT_VOICE_PROMPT_FILE_NAME,
+    );
   });
 
   characterImageInput.addEventListener("change", () => {
@@ -3985,11 +4321,20 @@ window.addEventListener("load", async () => {
     customCharacterImageFile = nextFile;
     characterImageName.textContent = nextFile ? nextFile.name : DEFAULT_CHARACTER_IMAGE_FILE_NAME;
     setCharacterImagePreview(nextFile);
+    if (nextFile) {
+      void writeStoredFileRecord(
+        SETTINGS_FILE_KEYS.image,
+        nextFile,
+        nextFile.name || DEFAULT_CHARACTER_IMAGE_FILE_NAME,
+      );
+    } else {
+      void deleteStoredFileRecord(SETTINGS_FILE_KEYS.image);
+    }
   });
 
   resetSettingsButton.addEventListener("click", async event => {
     event.stopPropagation();
-    await resetGenerationSettingsToDefault();
+    await resetGenerationSettingsToDefault({ clearStorage: true });
   });
 
   async function loadPromptHeaderText() {
@@ -4095,16 +4440,59 @@ window.addEventListener("load", async () => {
     return await loadDefaultCharacterImage();
   }
 
-  async function resetGenerationSettingsToDefault() {
+  async function loadStoredGenerationSettings() {
+    loadStoredAutoplaySetting();
+    updateAutoplayToggle();
+
+    const storedPromptText = readStoredLocalSetting(SETTINGS_LOCAL_STORAGE_KEYS.prompt);
+    if (storedPromptText !== null) {
+      promptTextarea.value = storedPromptText;
+    } else {
+      promptTextarea.value = await loadDefaultCharacterPromptText();
+    }
+
+    const [voicePromptRecord, characterImageRecord] = await Promise.all([
+      readStoredFileRecord(SETTINGS_FILE_KEYS.voice),
+      readStoredFileRecord(SETTINGS_FILE_KEYS.image),
+    ]);
+    const storedVoicePromptFile = createFileFromStoredRecord(
+      voicePromptRecord,
+      DEFAULT_VOICE_PROMPT_FILE_NAME,
+    );
+    const storedCharacterImageFile = createFileFromStoredRecord(
+      characterImageRecord,
+      DEFAULT_CHARACTER_IMAGE_FILE_NAME,
+    );
+
+    customVoicePromptFile = storedVoicePromptFile;
+    customCharacterImageFile = storedCharacterImageFile;
+    voiceFileInput.value = "";
+    characterImageInput.value = "";
+    voiceFileName.textContent = storedVoicePromptFile?.name || DEFAULT_VOICE_PROMPT_FILE_NAME;
+    characterImageName.textContent = storedCharacterImageFile?.name || DEFAULT_CHARACTER_IMAGE_FILE_NAME;
+
+    if (storedCharacterImageFile) {
+      setCharacterImagePreview(storedCharacterImageFile);
+    } else {
+      setCharacterImagePreview();
+    }
+  }
+
+  async function resetGenerationSettingsToDefault({ clearStorage = false } = {}) {
+    if (clearStorage) {
+      await clearStoredGenerationSettings();
+    }
+
     promptTextarea.value = await loadDefaultCharacterPromptText();
-    const defaultCharacterImage = await loadDefaultCharacterImage();
+    autoplayEnabled = DEFAULT_AUTOPLAY;
     customVoicePromptFile = null;
     customCharacterImageFile = null;
     voiceFileInput.value = "";
     characterImageInput.value = "";
     voiceFileName.textContent = DEFAULT_VOICE_PROMPT_FILE_NAME;
     characterImageName.textContent = DEFAULT_CHARACTER_IMAGE_FILE_NAME;
-    setCharacterImagePreview(defaultCharacterImage.blob);
+    setCharacterImagePreview();
+    updateAutoplayToggle();
   }
 
   async function prepareBackgroundText() {
@@ -4160,6 +4548,7 @@ window.addEventListener("load", async () => {
     newsTagModeButton.disabled = playbackState.isLoadingAudio || isLoadingNews;
     voiceFileButton.disabled = playbackState.isLoadingAudio;
     characterImageButton.disabled = playbackState.isLoadingAudio;
+    autoplayToggleButton.disabled = playbackState.isLoadingAudio;
     resetSettingsButton.disabled = playbackState.isLoadingAudio;
     updateTextRandomizerButtonState();
     renderNewsPanelContent();
@@ -4576,6 +4965,7 @@ window.addEventListener("load", async () => {
       const progress = createProgressBar(stripeDataUrl);
 
       try {
+        await (generationSettingsReadyPromise ?? Promise.resolve());
         await prepareBackgroundText();
         const selection = currentTextSelection ?? createRandomTextSelection();
         const topic = selection.source === "api"
@@ -4751,7 +5141,7 @@ window.addEventListener("load", async () => {
         name: currentPlaybackName,
       }));
 
-      if (AUTOPLAY) {
+      if (autoplayEnabled) {
         void togglePlayback().catch(error => {
           setPlaybackState(false);
           shake(playbackButton);
@@ -4778,9 +5168,11 @@ window.addEventListener("load", async () => {
 
   updatePlaybackIndicator();
   updateTextRandomizerButton();
-  void resetGenerationSettingsToDefault().catch(error => {
+  generationSettingsReadyPromise = loadStoredGenerationSettings().catch(error => {
     console.error(error);
+    return resetGenerationSettingsToDefault();
   });
+  void generationSettingsReadyPromise;
 
   void prepareBackgroundText();
 
