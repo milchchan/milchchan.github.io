@@ -1546,6 +1546,32 @@ async function fetchLatestAudioPostByQuery(query) {
   return extractAudioPostData(Array.isArray(payload) ? payload[0] : payload);
 }
 
+async function fetchInitialBackgroundImagePost() {
+  const requestUrl = new URL(AUDIO_POSTS_API_URL);
+  requestUrl.searchParams.set("type", "audio/%");
+  requestUrl.searchParams.set("order", "desc");
+  requestUrl.searchParams.set("nsfw", `${NSFW}`);
+  requestUrl.searchParams.set("nonce", `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+
+  const response = await fetch(requestUrl, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Failed to load initial background post: ${response.status} ${response.statusText}`);
+  }
+
+  const payload = await response.json();
+  const posts = Array.isArray(payload) ? payload : [payload];
+
+  for (const post of posts) {
+    const extracted = extractAudioPostData(post);
+
+    if (extracted?.backgroundImageUrl) {
+      return extracted;
+    }
+  }
+
+  return null;
+}
+
 function formatUnixTimestamp(timestamp) {
   if (!Number.isFinite(timestamp)) {
     return "";
@@ -2032,9 +2058,10 @@ const LEVEL_LOG_CURVE_STRENGTH = 9;
 const VISUALIZER_REST_THRESHOLD = 0.002;
 const VISUALIZER_NEXT_TRACK_REST_THRESHOLD = 0.035;
 const VISUALIZER_FILL_STYLE = "#00d6ff";
-const BACKGROUND_IMAGE_URLS = [];
 const BACKGROUND_IMAGE_OPACITY = 1;
 const BACKGROUND_IMAGE_FADE_DURATION_MS = 500;
+const BACKGROUND_IMAGE_POSITION_X = 0.5;
+const BACKGROUND_IMAGE_POSITION_Y = 0.0;
 const VISUALIZER_LEVEL_GAIN = 0.82;
 const VISUALIZER_LEVEL_HEADROOM = 0.9;
 const LOADING_MIN_SCALE = 0.5;
@@ -3095,11 +3122,11 @@ function drawImageCover(ctx, image, width, height) {
   if (imageAspect > canvasAspect) {
     drawHeight = height;
     drawWidth = drawHeight * imageAspect;
-    offsetX = (width - drawWidth) * 0.5;
+    offsetX = (width - drawWidth) * BACKGROUND_IMAGE_POSITION_X;
   } else {
     drawWidth = width;
     drawHeight = drawWidth / imageAspect;
-    offsetY = 0;
+    offsetY = (height - drawHeight) * BACKGROUND_IMAGE_POSITION_Y;
   }
 
   ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
@@ -5053,9 +5080,7 @@ window.addEventListener("load", async () => {
   }
 
   async function loadAndFadeInBackgroundImage(imageUrl = null) {
-    const nextBackgroundImageUrl = normalizeBackgroundImageUrl(imageUrl ?? (
-      BACKGROUND_IMAGE_URLS.length > 0 ? pickRandom(BACKGROUND_IMAGE_URLS) : null
-    ));
+    const nextBackgroundImageUrl = normalizeBackgroundImageUrl(imageUrl);
 
     if (!nextBackgroundImageUrl) {
       await fadeOutBackgroundImage();
@@ -5110,6 +5135,18 @@ window.addEventListener("load", async () => {
     if (token === backgroundImageToken) {
       incomingLayer.opacity = 1;
       backgroundImageLayers = [incomingLayer];
+    }
+  }
+
+  async function loadInitialPostBackgroundImage() {
+    try {
+      const post = await fetchInitialBackgroundImagePost();
+
+      if (post?.backgroundImageUrl) {
+        await loadAndFadeInBackgroundImage(post.backgroundImageUrl);
+      }
+    } catch (error) {
+      console.warn(error);
     }
   }
 
@@ -5399,6 +5436,7 @@ window.addEventListener("load", async () => {
   });
   void generationSettingsReadyPromise;
 
+  void loadInitialPostBackgroundImage();
   void prepareBackgroundText();
 
   function render(timestamp) {
