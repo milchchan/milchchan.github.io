@@ -1150,6 +1150,8 @@ const SETTINGS_FILE_KEYS = {
   voice: "voice",
   image: "image",
 };
+const PLAYBACK_AUDIO_WARMUP_SECONDS = 0.15;
+const PLAYBACK_LEAD_IN_SILENCE_SECONDS = PLAYBACK_AUDIO_WARMUP_SECONDS;
 const SILENT_AUDIO_DATA_URL = "data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 let sharedApiFetchPayloadPromise = null;
@@ -1742,6 +1744,151 @@ async function readBlobWithProgress(response, onProgress) {
   return new Blob(chunks, { type: contentType });
 }
 
+function readAsciiString(view, offset, length) {
+  let value = "";
+
+  for (let index = 0; index < length; index += 1) {
+    value += String.fromCharCode(view.getUint8(offset + index));
+  }
+
+  return value;
+}
+
+function writeAsciiString(view, offset, value) {
+  for (let index = 0; index < value.length; index += 1) {
+    view.setUint8(offset + index, value.charCodeAt(index));
+  }
+}
+
+function bytesToBase64(bytes) {
+  let binary = "";
+
+  for (let index = 0; index < bytes.length; index += 1) {
+    binary += String.fromCharCode(bytes[index]);
+  }
+
+  return window.btoa(binary);
+}
+
+function createSilentWavDataUrl(seconds = PLAYBACK_AUDIO_WARMUP_SECONDS) {
+  try {
+    const sampleRate = 8000;
+    const channelCount = 1;
+    const bitsPerSample = 16;
+    const bytesPerSample = bitsPerSample / 8;
+    const blockAlign = channelCount * bytesPerSample;
+    const byteRate = sampleRate * blockAlign;
+    const silentFrameCount = Math.max(1, Math.round(sampleRate * seconds));
+    const dataByteLength = silentFrameCount * blockAlign;
+    const bytes = new Uint8Array(44 + dataByteLength);
+    const view = new DataView(bytes.buffer);
+
+    writeAsciiString(view, 0, "RIFF");
+    view.setUint32(4, bytes.length - 8, true);
+    writeAsciiString(view, 8, "WAVE");
+    writeAsciiString(view, 12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, channelCount, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, bitsPerSample, true);
+    writeAsciiString(view, 36, "data");
+    view.setUint32(40, dataByteLength, true);
+
+    return `data:audio/wav;base64,${bytesToBase64(bytes)}`;
+  } catch (error) {
+    console.warn(error);
+    return SILENT_AUDIO_DATA_URL;
+  }
+}
+
+async function prependWavSilence(blob, seconds = PLAYBACK_LEAD_IN_SILENCE_SECONDS) {
+  if (!(seconds > 0)) {
+    return blob;
+  }
+
+  const sourceBuffer = await blob.arrayBuffer();
+  const sourceBytes = new Uint8Array(sourceBuffer);
+  const sourceView = new DataView(sourceBuffer);
+
+  if (
+    sourceBytes.length < 44
+    || readAsciiString(sourceView, 0, 4) !== "RIFF"
+    || readAsciiString(sourceView, 8, 4) !== "WAVE"
+  ) {
+    return blob;
+  }
+
+  let offset = 12;
+  let sampleRate = null;
+  let blockAlign = null;
+  let dataChunkOffset = null;
+  let dataChunkSize = null;
+
+  while (offset + 8 <= sourceBytes.length) {
+    const chunkId = readAsciiString(sourceView, offset, 4);
+    const chunkSize = sourceView.getUint32(offset + 4, true);
+    const chunkDataOffset = offset + 8;
+
+    if (chunkDataOffset + chunkSize > sourceBytes.length) {
+      return blob;
+    }
+
+    if (chunkId === "fmt ") {
+      if (chunkSize < 16) {
+        return blob;
+      }
+
+      sampleRate = sourceView.getUint32(chunkDataOffset + 4, true);
+      blockAlign = sourceView.getUint16(chunkDataOffset + 12, true);
+    } else if (chunkId === "data") {
+      dataChunkOffset = offset;
+      dataChunkSize = chunkSize;
+      break;
+    }
+
+    offset = chunkDataOffset + chunkSize + (chunkSize % 2);
+  }
+
+  if (
+    sampleRate === null
+    || blockAlign === null
+    || dataChunkOffset === null
+    || dataChunkSize === null
+    || sampleRate <= 0
+    || blockAlign <= 0
+  ) {
+    return blob;
+  }
+
+  const silentFrameCount = Math.max(1, Math.round(sampleRate * seconds));
+  const silentByteLength = silentFrameCount * blockAlign;
+  const dataStart = dataChunkOffset + 8;
+  const nextBytes = new Uint8Array(sourceBytes.length + silentByteLength);
+
+  nextBytes.set(sourceBytes.subarray(0, dataStart), 0);
+  nextBytes.set(sourceBytes.subarray(dataStart), dataStart + silentByteLength);
+
+  const nextView = new DataView(nextBytes.buffer);
+  writeAsciiString(nextView, 0, "RIFF");
+  writeAsciiString(nextView, 8, "WAVE");
+  nextView.setUint32(4, nextBytes.length - 8, true);
+  nextView.setUint32(dataChunkOffset + 4, dataChunkSize + silentByteLength, true);
+
+  return new Blob([nextBytes], { type: blob.type || "audio/wav" });
+}
+
+async function createPlaybackAudioBlob(blob) {
+  try {
+    return await prependWavSilence(blob);
+  } catch (error) {
+    console.warn(error);
+    return blob;
+  }
+}
+
 async function synthesizeLine(text, promptAudioBlob, promptAudioFileName, language = "ja", onProgress = null) {
   const formData = new FormData();
   formData.append("file", promptAudioBlob, promptAudioFileName);
@@ -1861,7 +2008,7 @@ async function generateAudioSequence(
     topic,
     script,
     lines: [normalizedScript],
-    audioBlobs: [audioBlob],
+    audioBlobs: [await createPlaybackAudioBlob(audioBlob)],
     name: generatedScript.name,
     next: generatedScript.next,
     postAudioPromise,
@@ -4576,6 +4723,7 @@ window.addEventListener("load", async () => {
     isPrimingAudioPlayback = false;
     audio.loop = previousState.loop ?? false;
     audio.muted = previousState.muted ?? false;
+    audio.volume = previousState.volume ?? 1;
     audio.preload = previousState.preload ?? "auto";
     audioPlaybackPrimePreviousState = null;
   }
@@ -4588,8 +4736,68 @@ window.addEventListener("load", async () => {
     return audio.currentSrc || audio.src || "";
   }
 
+  function seekAudioToStart() {
+    try {
+      audio.currentTime = 0;
+    } catch (error) {
+      console.warn(error);
+    }
+  }
+
+  async function seekAudioToStartAndWait(expectedSrc) {
+    await new Promise(resolve => {
+      let isSettled = false;
+      let timeoutId = null;
+      let frameId = null;
+
+      function cleanup() {
+        audio.removeEventListener("seeked", finish);
+        audio.removeEventListener("timeupdate", finishIfAtStart);
+        audio.removeEventListener("error", finish);
+        if (timeoutId !== null) {
+          window.clearTimeout(timeoutId);
+        }
+        if (frameId !== null) {
+          window.cancelAnimationFrame(frameId);
+        }
+      }
+
+      function finish() {
+        if (isSettled) {
+          return;
+        }
+
+        isSettled = true;
+        cleanup();
+        resolve();
+      }
+
+      function finishIfAtStart() {
+        if (Math.abs(audio.currentTime) <= 0.01 && !audio.seeking) {
+          finish();
+        }
+      }
+
+      if (expectedSrc && getCurrentAudioSource() !== expectedSrc) {
+        finish();
+        return;
+      }
+
+      audio.addEventListener("seeked", finish);
+      audio.addEventListener("timeupdate", finishIfAtStart);
+      audio.addEventListener("error", finish);
+      timeoutId = window.setTimeout(finish, 500);
+      seekAudioToStart();
+
+      frameId = window.requestAnimationFrame(finishIfAtStart);
+    });
+  }
+
   async function waitForCurrentAudioReady(expectedSrc) {
-    if (audio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+    if (
+      getCurrentAudioSource() === expectedSrc
+      && audio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+    ) {
       return;
     }
 
@@ -4616,12 +4824,7 @@ window.addEventListener("load", async () => {
         resolve();
       }
 
-      if (getCurrentAudioSource() !== expectedSrc) {
-        finish();
-        return;
-      }
-
-      timeoutId = window.setTimeout(finish, 200);
+      timeoutId = window.setTimeout(finish, 1000);
       audio.addEventListener("loadeddata", finish);
       audio.addEventListener("canplay", finish);
       audio.addEventListener("error", finish);
@@ -4680,14 +4883,16 @@ window.addEventListener("load", async () => {
     audioPlaybackPrimePreviousState = {
       loop: audio.loop,
       muted: audio.muted,
+      volume: audio.volume,
       preload: audio.preload,
     };
     isPrimingAudioPlayback = true;
     playbackState.ignorePauseEvent = true;
     audio.loop = true;
-    audio.muted = audioPlaybackPrimePreviousState.muted;
+    audio.muted = true;
+    audio.volume = 0;
     audio.preload = "auto";
-    audio.src = SILENT_AUDIO_DATA_URL;
+    audio.src = createSilentWavDataUrl();
     audio.load();
 
     void audio.play().catch(() => {});
@@ -4725,7 +4930,7 @@ window.addEventListener("load", async () => {
     playbackState.ignorePauseEvent = true;
     if (!keepPlaybackPrime || !isPrimingAudioPlayback) {
       audio.pause();
-      audio.currentTime = 0;
+      seekAudioToStart();
       restoreAudioPlaybackPrimeState();
     }
 
@@ -4915,11 +5120,21 @@ window.addEventListener("load", async () => {
 
     currentAudioBlobIndex = index;
     playbackState.ignorePauseEvent = true;
+    const wasPrimingAudioPlayback = isPrimingAudioPlayback;
+    const targetMuted = wasPrimingAudioPlayback
+      ? (audioPlaybackPrimePreviousState?.muted ?? false)
+      : audio.muted;
+    const targetVolume = wasPrimingAudioPlayback
+      ? (audioPlaybackPrimePreviousState?.volume ?? 1)
+      : audio.volume;
     if (!isPrimingAudioPlayback) {
       audio.pause();
     }
     restoreAudioPlaybackPrimeState();
-    audio.currentTime = 0;
+    if (wasPrimingAudioPlayback) {
+      audio.muted = true;
+      audio.volume = 0;
+    }
 
     if (audioObjectUrl) {
       URL.revokeObjectURL(audioObjectUrl);
@@ -4929,11 +5144,17 @@ window.addEventListener("load", async () => {
     audioObjectUrl = URL.createObjectURL(generatedAudioBlobs[index]);
     audio.src = audioObjectUrl;
     audio.load();
+    seekAudioToStart();
 
     try {
       if (audioContext?.state === "suspended") {
         await audioContext.resume();
       }
+
+      await waitForCurrentAudioReady(audioObjectUrl);
+      await seekAudioToStartAndWait(audioObjectUrl);
+      audio.muted = targetMuted;
+      audio.volume = targetVolume;
 
       const didPlay = await playCurrentAudioWithAbortRetry();
       if (!didPlay) {
@@ -4944,6 +5165,8 @@ window.addEventListener("load", async () => {
       setPlaybackState(true);
       return true;
     } finally {
+      audio.muted = targetMuted;
+      audio.volume = targetVolume;
       playbackState.ignorePauseEvent = false;
     }
   }
@@ -4998,9 +5221,11 @@ window.addEventListener("load", async () => {
               topic,
               script: topic,
               lines: [topic],
-              audioBlobs: [await downloadExternalAudioBlob(externalAudioId, rate => {
-                progress.update(rate);
-              })],
+              audioBlobs: [await createPlaybackAudioBlob(
+                await downloadExternalAudioBlob(externalAudioId, rate => {
+                  progress.update(rate);
+                }),
+              )],
               backgroundImageUrl: shouldUseSelectionAudio
                 ? (selection.backgroundImageUrl ?? null)
                 : (queriedAudioPost?.backgroundImageUrl ?? null),
@@ -5095,7 +5320,7 @@ window.addEventListener("load", async () => {
     }
 
     if (audio.ended) {
-      audio.currentTime = 0;
+      seekAudioToStart();
     }
 
     if (audioContext?.state === "suspended") {
