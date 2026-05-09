@@ -302,16 +302,30 @@
         opacity: 1;
       }
 
-      .playback-control-button>i.icon-pause {
+      .playback-control-button>i.icon-pause,
+      .playback-control-button>i.icon-stop {
         opacity: 0;
       }
 
-      .playback-control-button.is-playing>i.icon-play {
+      .playback-control-button.is-playing>i.icon-play,
+      .playback-control-button.is-cancelable>i.icon-play,
+      .playback-control-button.is-cancelable>i.icon-pause {
         opacity: 0;
+      }
+
+      .playback-control-button>i.icon-pause {
+        color: #ffc7e5;
       }
 
       .playback-control-button.is-playing>i.icon-pause {
+        opacity: 1;
+      }
+
+      .playback-control-button>i.icon-stop {
         color: #ffc7e5;
+      }
+
+      .playback-control-button.is-cancelable>i.icon-stop {
         opacity: 1;
       }
 
@@ -1027,7 +1041,8 @@
           color: var(--accent-color) !important;
         }
 
-        .control-button:hover:not(:disabled).is-playing>i.icon-pause {
+        .control-button:hover:not(:disabled).is-playing>i.icon-pause,
+        .control-button:hover:not(:disabled).is-cancelable>i.icon-stop {
           color: var(--accent-color) !important;
         }
 
@@ -1522,7 +1537,7 @@ async function fetchRandomAudioPost() {
   return post;
 }
 
-async function fetchLatestAudioPostByQuery(query) {
+async function fetchLatestAudioPostByQuery(query, { signal = null } = {}) {
   const normalizedQuery = typeof query === "string" ? query.trim() : "";
   if (!normalizedQuery) {
     return null;
@@ -1533,7 +1548,7 @@ async function fetchLatestAudioPostByQuery(query) {
   requestUrl.searchParams.set("type", "audio/%");
   requestUrl.searchParams.set("order", "desc");
 
-  const response = await fetch(requestUrl, { cache: "no-cache" });
+  const response = await fetch(requestUrl, { cache: "no-cache", signal });
   if (!response.ok) {
     throw new Error(`Failed to search audio posts: ${response.status} ${response.statusText}`);
   }
@@ -1688,7 +1703,7 @@ async function loadTextFile(url, label) {
   return await response.text();
 }
 
-async function generateScriptContent(topic, systemPromptText) {
+async function generateScriptContent(topic, systemPromptText, signal = null) {
   const messages = [
     { role: "system", content: systemPromptText },
     { role: "user", content: topic },
@@ -1699,6 +1714,7 @@ async function generateScriptContent(topic, systemPromptText) {
     headers: {
       "Content-Type": "application/json",
     },
+    signal,
     body: JSON.stringify(NSFW ? {
       model: "google/gemma-4-31B-it",
       messages,
@@ -1734,7 +1750,9 @@ async function generateScriptContent(topic, systemPromptText) {
   };
 }
 
-async function readBlobWithProgress(response, onProgress) {
+async function readBlobWithProgress(response, onProgress, signal = null) {
+  throwIfAborted(signal);
+
   if (!response.body) {
     if (onProgress) {
       onProgress(1);
@@ -1750,6 +1768,11 @@ async function readBlobWithProgress(response, onProgress) {
   let receivedLength = 0;
 
   while (true) {
+    if (signal?.aborted) {
+      await reader.cancel();
+      throw new DOMException("The operation was aborted.", "AbortError");
+    }
+
     const { done, value } = await reader.read();
     if (done) {
       break;
@@ -1768,6 +1791,12 @@ async function readBlobWithProgress(response, onProgress) {
   }
 
   return new Blob(chunks, { type: contentType });
+}
+
+function throwIfAborted(signal) {
+  if (signal?.aborted) {
+    throw new DOMException("The operation was aborted.", "AbortError");
+  }
 }
 
 function readAsciiString(view, offset, length) {
@@ -1915,7 +1944,7 @@ async function createPlaybackAudioBlob(blob) {
   }
 }
 
-async function synthesizeLine(text, promptAudioBlob, promptAudioFileName, language = "ja", onProgress = null) {
+async function synthesizeLine(text, promptAudioBlob, promptAudioFileName, language = "ja", onProgress = null, signal = null) {
   const formData = new FormData();
   formData.append("file", promptAudioBlob, promptAudioFileName);
   formData.append("data", JSON.stringify({
@@ -1928,13 +1957,14 @@ async function synthesizeLine(text, promptAudioBlob, promptAudioFileName, langua
     mode: "cors",
     method: "POST",
     body: formData,
+    signal,
   });
 
   if (!response.ok) {
     throw new Error(`Failed to synthesize audio: ${response.status} ${response.statusText}`);
   }
 
-  return await readBlobWithProgress(response, onProgress);
+  return await readBlobWithProgress(response, onProgress, signal);
 }
 
 async function postGeneratedAudio(
@@ -1946,6 +1976,7 @@ async function postGeneratedAudio(
   next,
   characterImageBlob = null,
   characterImageFileName = DEFAULT_CHARACTER_IMAGE_FILE_NAME,
+  signal = null,
 ) {
   const formData = new FormData();
   formData.append("file", audioBlob, "generated.wav");
@@ -1965,6 +1996,7 @@ async function postGeneratedAudio(
     mode: "cors",
     method: "POST",
     body: formData,
+    signal,
   });
 
   if (!response.ok) {
@@ -1983,13 +2015,13 @@ async function postGeneratedAudio(
   };
 }
 
-async function downloadExternalAudioBlob(id, onProgress = null) {
-  const response = await fetch(createStaticAudioUrl(id), { cache: "no-cache" });
+async function downloadExternalAudioBlob(id, onProgress = null, signal = null) {
+  const response = await fetch(createStaticAudioUrl(id), { cache: "no-cache", signal });
   if (!response.ok) {
     throw new Error(`Failed to download external audio: ${response.status} ${response.statusText}`);
   }
 
-  return await readBlobWithProgress(response, onProgress);
+  return await readBlobWithProgress(response, onProgress, signal);
 }
 
 async function generateAudioSequence(
@@ -2000,8 +2032,10 @@ async function generateAudioSequence(
   characterImageBlob,
   characterImageFileName,
   onProgress,
+  onAudioBlobLoaded = null,
+  signal = null,
 ) {
-  const generatedScript = await generateScriptContent(topic, systemPromptText);
+  const generatedScript = await generateScriptContent(topic, systemPromptText, signal);
   const script = generatedScript.content;
   const normalizedScript = typeof script === "string" ? script.trim() : "";
 
@@ -2015,29 +2049,34 @@ async function generateAudioSequence(
     promptAudioFileName,
     "ja",
     onProgress,
+    signal,
   );
 
-  const postAudioPromise = postGeneratedAudio(
-    audioBlob,
-    topic,
-    script,
-    generatedScript.name,
-    generatedScript.language,
-    generatedScript.next,
-    characterImageBlob,
-    characterImageFileName,
-  ).catch(error => {
-    console.error(error);
-  });
+  onAudioBlobLoaded?.();
+  throwIfAborted(signal);
+
+  const playbackAudioBlob = await createPlaybackAudioBlob(audioBlob);
 
   return {
     topic,
     script,
     lines: [normalizedScript],
-    audioBlobs: [await createPlaybackAudioBlob(audioBlob)],
+    audioBlobs: [playbackAudioBlob],
     name: generatedScript.name,
     next: generatedScript.next,
-    postAudioPromise,
+    localBackgroundImageBlob: characterImageBlob,
+    postAudioTask: () => postGeneratedAudio(
+      audioBlob,
+      topic,
+      script,
+      generatedScript.name,
+      generatedScript.language,
+      generatedScript.next,
+      characterImageBlob,
+      characterImageFileName,
+    ).catch(error => {
+      console.error(error);
+    }),
   };
 }
 
@@ -2895,8 +2934,8 @@ class APNG {
   }
 }
 
-async function downloadImageBlob(url) {
-  const response = await fetch(url, { cache: "no-cache" });
+async function downloadImageBlob(url, signal = null) {
+  const response = await fetch(url, { cache: "no-cache", signal });
   if (!response.ok) {
     throw new Error(`Failed to download background image: ${response.status} ${response.statusText}`);
   }
@@ -3830,6 +3869,7 @@ window.addEventListener("load", async () => {
   const newsButton = document.createElement("button");
   const playbackButtonPlayIcon = document.createElement("i");
   const playbackButtonPauseIcon = document.createElement("i");
+  const playbackButtonStopIcon = document.createElement("i");
   const settingsPanel = document.createElement("div");
   const newsPanel = document.createElement("div");
   const settingsScrollArea = document.createElement("div");
@@ -3883,6 +3923,7 @@ window.addEventListener("load", async () => {
   let visualizerScales = new Array(VISUALIZER_BAR_COUNT).fill(1);
   let audioObjectUrl = null;
   let audioLoadPromise = null;
+  let audioLoadAbortController = null;
   let audioPlaybackPrimePreviousState = null;
   let progressStripePromise = null;
   let generatedAudioBlobs = [];
@@ -3909,6 +3950,8 @@ window.addEventListener("load", async () => {
   let characterImageObjectUrl = null;
   let autoplayEnabled = DEFAULT_AUTOPLAY;
   let backgroundImageToken = 0;
+  let currentBackgroundImageUrl = null;
+  let pendingBackgroundImageUrl = null;
   let backgroundImageLayers = [];
   let shouldFinishBackgroundImageAnimation = false;
   const backgroundTextState = createFlapTextState("");
@@ -3916,6 +3959,7 @@ window.addEventListener("load", async () => {
   let hasSelectedInitialTopic = false;
   const playbackState = {
     isLoadingAudio: false,
+    canCancelAudioLoad: false,
     isPlaying: false,
     shouldStartPlaybackAfterRelease: false,
     ignorePauseEvent: false,
@@ -3953,8 +3997,11 @@ window.addEventListener("load", async () => {
   playbackButtonPlayIcon.setAttribute("aria-hidden", "true");
   playbackButtonPauseIcon.className = "fa-solid fa-pause icon-pause";
   playbackButtonPauseIcon.setAttribute("aria-hidden", "true");
+  playbackButtonStopIcon.className = "fa-solid fa-stop icon-stop";
+  playbackButtonStopIcon.setAttribute("aria-hidden", "true");
   playbackButton.appendChild(playbackButtonPlayIcon);
   playbackButton.appendChild(playbackButtonPauseIcon);
+  playbackButton.appendChild(playbackButtonStopIcon);
 
   settingsButton.type = "button";
   settingsButton.className = "control-button settings-control-button";
@@ -4689,6 +4736,11 @@ window.addEventListener("load", async () => {
 
   function updatePlaybackIndicator() {
     playbackButton.classList.toggle("is-playing", playbackState.isPlaying);
+    playbackButton.classList.toggle("is-cancelable", playbackState.canCancelAudioLoad);
+    playbackButton.setAttribute(
+      "aria-label",
+      playbackState.canCancelAudioLoad ? "Cancel generation" : "Toggle playback",
+    );
   }
 
   function updateTextRandomizerButtonState() {
@@ -4709,7 +4761,9 @@ window.addEventListener("load", async () => {
 
   function updateTextRandomizerButton() {
     textRandomizerButton.disabled = playbackState.isLoadingAudio || !hasStartedBackgroundText;
-    playbackButton.disabled = playbackState.isLoadingAudio || !hasSelectedInitialTopic;
+    playbackButton.disabled = playbackState.isLoadingAudio
+      ? !playbackState.canCancelAudioLoad
+      : !hasSelectedInitialTopic;
     settingsButton.disabled = playbackState.isLoadingAudio || !hasStartedBackgroundText;
     newsButton.disabled = playbackState.isLoadingAudio
       || isLoadingNews
@@ -4724,6 +4778,7 @@ window.addEventListener("load", async () => {
     characterImageButton.disabled = playbackState.isLoadingAudio;
     autoplayToggleButton.disabled = playbackState.isLoadingAudio;
     resetSettingsButton.disabled = playbackState.isLoadingAudio;
+    updatePlaybackIndicator();
     updateTextRandomizerButtonState();
     renderNewsPanelContent();
   }
@@ -5062,10 +5117,13 @@ window.addEventListener("load", async () => {
     const visibleLayers = backgroundImageLayers.filter(layer => layer.opacity > 0.001);
     if (visibleLayers.length === 0) {
       backgroundImageLayers = [];
+      currentBackgroundImageUrl = null;
+      pendingBackgroundImageUrl = null;
       return;
     }
 
     const token = ++backgroundImageToken;
+    pendingBackgroundImageUrl = null;
     const layerStarts = visibleLayers.map(layer => layer.opacity);
 
     await animateScalar(0, 1, BACKGROUND_IMAGE_FADE_DURATION_MS, value => {
@@ -5076,41 +5134,36 @@ window.addEventListener("load", async () => {
 
     if (token === backgroundImageToken) {
       backgroundImageLayers = [];
+      currentBackgroundImageUrl = null;
     }
   }
 
-  async function loadAndFadeInBackgroundImage(imageUrl = null) {
+  async function fadeInBackgroundImageAsset(nextBackgroundImageAsset, imageUrl, signal = null) {
     const nextBackgroundImageUrl = normalizeBackgroundImageUrl(imageUrl);
+    throwIfAborted(signal);
 
     if (!nextBackgroundImageUrl) {
       await fadeOutBackgroundImage();
+      throwIfAborted(signal);
       return;
     }
 
-    const currentBackgroundImageLayer = backgroundImageLayers.length === 1
-      ? backgroundImageLayers[0]
-      : null;
     if (
-      currentBackgroundImageLayer
-      && currentBackgroundImageLayer.opacity >= 0.999
-      && currentBackgroundImageLayer.url === nextBackgroundImageUrl
+      currentBackgroundImageUrl === nextBackgroundImageUrl
+      || pendingBackgroundImageUrl === nextBackgroundImageUrl
     ) {
       return;
     }
 
     const token = ++backgroundImageToken;
-    let nextBackgroundImageAsset = null;
+    pendingBackgroundImageUrl = nextBackgroundImageUrl;
 
-    try {
-      nextBackgroundImageAsset = await createBackgroundImageAsset(
-        await downloadImageBlob(nextBackgroundImageUrl),
-        nextBackgroundImageUrl,
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    throwIfAborted(signal);
 
     if (token !== backgroundImageToken || !nextBackgroundImageAsset) {
+      if (token === backgroundImageToken) {
+        pendingBackgroundImageUrl = null;
+      }
       return;
     }
 
@@ -5135,7 +5188,53 @@ window.addEventListener("load", async () => {
     if (token === backgroundImageToken) {
       incomingLayer.opacity = 1;
       backgroundImageLayers = [incomingLayer];
+      currentBackgroundImageUrl = nextBackgroundImageUrl;
+      pendingBackgroundImageUrl = null;
     }
+  }
+
+  function isCurrentOrPendingBackgroundImageUrl(imageUrl) {
+    const nextBackgroundImageUrl = normalizeBackgroundImageUrl(imageUrl);
+    return Boolean(nextBackgroundImageUrl)
+      && (
+        currentBackgroundImageUrl === nextBackgroundImageUrl
+        || pendingBackgroundImageUrl === nextBackgroundImageUrl
+      );
+  }
+
+  async function loadAndFadeInBackgroundImage(imageUrl = null, signal = null) {
+    const nextBackgroundImageUrl = normalizeBackgroundImageUrl(imageUrl);
+    throwIfAborted(signal);
+
+    if (!nextBackgroundImageUrl) {
+      await fadeOutBackgroundImage();
+      throwIfAborted(signal);
+      return;
+    }
+
+    if (
+      currentBackgroundImageUrl === nextBackgroundImageUrl
+      || pendingBackgroundImageUrl === nextBackgroundImageUrl
+    ) {
+      return;
+    }
+
+    let nextBackgroundImageAsset = null;
+
+    try {
+      nextBackgroundImageAsset = await createBackgroundImageAsset(
+        await downloadImageBlob(nextBackgroundImageUrl, signal),
+        nextBackgroundImageUrl,
+      );
+    } catch (error) {
+      if (isAbortError(error)) {
+        throw error;
+      }
+
+      console.error(error);
+    }
+
+    await fadeInBackgroundImageAsset(nextBackgroundImageAsset, nextBackgroundImageUrl, signal);
   }
 
   async function loadInitialPostBackgroundImage() {
@@ -5208,6 +5307,21 @@ window.addEventListener("load", async () => {
     }
   }
 
+  function cancelAudioLoad() {
+    if (!playbackState.isLoadingAudio || !playbackState.canCancelAudioLoad) {
+      return false;
+    }
+
+    audioLoadAbortController?.abort();
+    audioLoadAbortController = null;
+    stopLoadingMeteorShower(loadingMeteorState);
+    playbackState.canCancelAudioLoad = false;
+    playbackState.shouldStartPlaybackAfterRelease = false;
+    setPlaybackState(false);
+    updateTextRandomizerButton();
+    return true;
+  }
+
   async function loadNextAudio({ autoplay = false } = {}) {
     if (audioLoadPromise) {
       await audioLoadPromise;
@@ -5216,17 +5330,23 @@ window.addEventListener("load", async () => {
 
     loadingStartedAt = performance.now();
     playbackState.isLoadingAudio = true;
+    playbackState.canCancelAudioLoad = true;
+    audioLoadAbortController = new AbortController();
+    const signal = audioLoadAbortController.signal;
     updateTextRandomizerButton();
 
     audioLoadPromise = (async () => {
       let didLoadSucceed = false;
-
-      const stripeDataUrl = await (progressStripePromise ??= loadProgressStripe());
-      const progress = createProgressBar(stripeDataUrl);
+      let progress = null;
 
       try {
+        const stripeDataUrl = await (progressStripePromise ??= loadProgressStripe());
+        throwIfAborted(signal);
+        progress = createProgressBar(stripeDataUrl);
         await (generationSettingsReadyPromise ?? Promise.resolve());
+        throwIfAborted(signal);
         await prepareBackgroundText();
+        throwIfAborted(signal);
         const selection = currentTextSelection ?? createRandomTextSelection();
         const topic = selection.source === "api"
           ? (selection.text || "")
@@ -5236,8 +5356,12 @@ window.addEventListener("load", async () => {
         let queriedAudioPost = null;
         if (!shouldUseSelectionAudio) {
           try {
-            queriedAudioPost = await fetchLatestAudioPostByQuery(topic);
+            queriedAudioPost = await fetchLatestAudioPostByQuery(topic, { signal });
           } catch (error) {
+            if (isAbortError(error)) {
+              throw error;
+            }
+
             console.warn(error);
           }
 
@@ -5253,6 +5377,7 @@ window.addEventListener("load", async () => {
           ? selectionAudioId
           : (queriedAudioPost?.id ?? null);
         const shouldDownloadExternalAudio = Boolean(externalAudioId);
+
         const generated = shouldDownloadExternalAudio
           ? {
               topic,
@@ -5260,8 +5385,8 @@ window.addEventListener("load", async () => {
               lines: [topic],
               audioBlobs: [await createPlaybackAudioBlob(
                 await downloadExternalAudioBlob(externalAudioId, rate => {
-                  progress.update(rate);
-                }),
+                  progress?.update(rate);
+                }, signal),
               )],
               backgroundImageUrl: shouldUseSelectionAudio
                 ? (selection.backgroundImageUrl ?? null)
@@ -5272,7 +5397,8 @@ window.addEventListener("load", async () => {
               next: shouldUseSelectionAudio
                 ? (selection.next ?? null)
                 : (queriedAudioPost?.next ?? null),
-              postAudioPromise: Promise.resolve(),
+              localBackgroundImageBlob: null,
+              postAudioTask: null,
             }
           : await (async () => {
             const [systemPromptText, activeVoicePromptAudio, activeCharacterImage] = await Promise.all([
@@ -5280,6 +5406,7 @@ window.addEventListener("load", async () => {
               getActiveVoicePromptAudio(),
               getActiveCharacterImage(),
             ]);
+            throwIfAborted(signal);
 
             startLoadingMeteorShower(loadingMeteorState, canvas.width, canvas.height);
             try {
@@ -5291,34 +5418,74 @@ window.addEventListener("load", async () => {
                 activeCharacterImage.blob,
                 activeCharacterImage.fileName,
                 rate => {
-                  progress.update(rate);
+                  progress?.update(rate);
                 },
+                () => {
+                  playbackState.canCancelAudioLoad = false;
+                  updateTextRandomizerButton();
+                },
+                signal,
               );
             } finally {
+              playbackState.canCancelAudioLoad = false;
+              updateTextRandomizerButton();
               stopLoadingMeteorShower(loadingMeteorState);
             }
           })();
 
+        throwIfAborted(signal);
+
         if (LOADING_DEBUG_HOLD_MS > 0) {
           await wait(LOADING_DEBUG_HOLD_MS);
+          throwIfAborted(signal);
         }
 
         clearCurrentAudio({ keepPlaybackPrime: autoplay });
         generatedAudioBlobs = generated.audioBlobs;
         currentAudioBlobIndex = -1;
-        const postedAudio = await (generated.postAudioPromise ?? Promise.resolve(null));
+        throwIfAborted(signal);
+        const hasPostAudioTask = typeof generated.postAudioTask === "function";
+        if (hasPostAudioTask) {
+          playbackState.canCancelAudioLoad = false;
+          updateTextRandomizerButton();
+        }
+        const postedAudio = await (hasPostAudioTask ? generated.postAudioTask() : Promise.resolve(null));
+        throwIfAborted(signal);
         currentPlaybackNextText = generated.next ?? postedAudio?.next ?? null;
         currentPlaybackName = generated.name ?? postedAudio?.name ?? null;
-        await loadAndFadeInBackgroundImage(
-          generated.backgroundImageUrl ?? postedAudio?.backgroundImageUrl ?? null,
-        );
-        progress.finish();
+        const nextBackgroundImageUrl = generated.backgroundImageUrl ?? postedAudio?.backgroundImageUrl ?? null;
+        const shouldDownloadBackgroundImage = Boolean(normalizeBackgroundImageUrl(nextBackgroundImageUrl));
+        if (hasPostAudioTask) {
+          if (shouldDownloadBackgroundImage && !isCurrentOrPendingBackgroundImageUrl(nextBackgroundImageUrl)) {
+            const localBackgroundImageAsset = await createBackgroundImageAsset(
+              generated.localBackgroundImageBlob,
+              nextBackgroundImageUrl,
+            );
+            await fadeInBackgroundImageAsset(localBackgroundImageAsset, nextBackgroundImageUrl, signal);
+          } else if (!shouldDownloadBackgroundImage) {
+            await loadAndFadeInBackgroundImage(null, signal);
+          }
+        } else {
+          playbackState.canCancelAudioLoad = shouldDownloadExternalAudio && shouldDownloadBackgroundImage;
+          updateTextRandomizerButton();
+          await loadAndFadeInBackgroundImage(nextBackgroundImageUrl, signal);
+        }
+        if (playbackState.canCancelAudioLoad) {
+          playbackState.canCancelAudioLoad = false;
+          updateTextRandomizerButton();
+        }
+        progress?.finish();
         didLoadSucceed = true;
       } catch (error) {
-        progress.fail();
+        progress?.fail();
         clearCurrentAudio();
         setPlaybackState(false);
+        playbackState.canCancelAudioLoad = false;
         playbackState.shouldStartPlaybackAfterRelease = false;
+        if (isAbortError(error)) {
+          return;
+        }
+
         shake(playbackButton);
         throw error;
       } finally {
@@ -5326,8 +5493,15 @@ window.addEventListener("load", async () => {
         releaseStartedAt = performance.now();
         copyArrayValues(visualizerScales, releaseFromScales);
         playbackState.isLoadingAudio = false;
-        playbackState.shouldStartPlaybackAfterRelease = didLoadSucceed && autoplay && generatedAudioBlobs.length > 0;
+        playbackState.canCancelAudioLoad = false;
+        playbackState.shouldStartPlaybackAfterRelease = didLoadSucceed
+          && autoplay
+          && generatedAudioBlobs.length > 0
+          && !signal.aborted;
         updateTextRandomizerButton();
+        if (audioLoadAbortController?.signal === signal) {
+          audioLoadAbortController = null;
+        }
         audioLoadPromise = null;
       }
     })();
@@ -5337,6 +5511,14 @@ window.addEventListener("load", async () => {
 
   async function togglePlayback() {
     ensureAudioGraph();
+
+    if (playbackState.isLoadingAudio) {
+      if (cancelAudioLoad()) {
+        return;
+      }
+
+      return;
+    }
 
     if (playbackState.isPlaying) {
       audio.pause();
