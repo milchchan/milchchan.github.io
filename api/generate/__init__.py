@@ -326,7 +326,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             path = json.loads(response.read().decode('utf-8'))[0]
                         
                         with urlopen(Request(api_url + '/queue/join', data=json.dumps({
-                            'data': [json_data['input'], json_data['language'], {'path': path, 'meta': {'_type': 'gradio.FileData'}}, reference_text, json_data['temperature'] if 'temperature' in json_data else 1.0],
+                            'data': [json_data['model'] if 'model' in json_data else None, json_data['input'], json_data['language'], {'path': path, 'meta': {'_type': 'gradio.FileData'}}, reference_text, json_data['temperature'] if 'temperature' in json_data else 1.0],
                             'event_data': None,
                             'fn_index': 0,
                             'session_hash': session
