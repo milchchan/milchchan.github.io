@@ -46,9 +46,10 @@
         --text-color: #000000;
         --text-rgb: 0 0 0;
         --inverse-text-color: #ffffff;
-        --control-bg: rgb(255 255 255 / 0.9);
-        --primary-control-bg: rgb(255 255 255 / 0.9);
-        --panel-bg: rgb(255 255 255 / 0.9);
+        --glass-border-color: rgb(255 255 255 / 0.5);
+        --control-bg: linear-gradient(135deg, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0.25));
+        --primary-control-bg: linear-gradient(135deg, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0.25));
+        --panel-bg: linear-gradient(135deg, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0.25));
         --panel-footer-bg: transparent;
         --panel-soft-bg: rgb(244 244 242 / 0.75);
         --panel-button-bg: rgb(255 255 255 / 0.9);
@@ -76,9 +77,10 @@
           --text-color: #ffffff;
           --text-rgb: 244 244 242;
           --inverse-text-color: #000000;
-          --control-bg: rgb(0 0 0 / 0.9);
-          --primary-control-bg: rgb(0 0 0 / 0.9);
-          --panel-bg: rgb(0 0 0 / 0.92);
+          --glass-border-color: rgb(255 255 255 / 0.1);
+          --control-bg: linear-gradient(135deg, rgb(0 0 0 / 0.75), rgb(0 0 0 / 0.5));
+          --primary-control-bg: linear-gradient(135deg, rgb(0 0 0 / 0.75), rgb(0 0 0 / 0.5));
+          --panel-bg: linear-gradient(135deg, rgb(0 0 0 / 0.75), rgb(0 0 0 / 0.5));
           --panel-footer-bg: transparent;
           --panel-soft-bg: rgb(43 43 43 / 0.75);
           --panel-button-bg: rgb(255 255 255 / 1);
@@ -86,7 +88,7 @@
           --panel-primary-bg: rgb(255 255 255 / 1);
           --muted-text-color: rgb(255 255 255 / 0.5);
           --subtle-text-color: rgb(255 255 255 / 0.25);
-          --divider-color: hsl(0, 0%, 21%);
+          --divider-color: hsl(0, 0%, 35%);
           --shadow-color: 0 .5em 1em -.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
         }
       }
@@ -209,12 +211,14 @@
         justify-content: center;
         width: 48px;
         height: 48px;
-        border: 0;
+        border: 1px solid var(--glass-border-color);
         border-radius: 999px;
         background: var(--control-bg);
+        box-sizing: border-box;
         color: var(--text-color);
         cursor: pointer;
-        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(22px) saturate(180%);
+        backdrop-filter: blur(22px) saturate(180%);
         box-shadow: var(--shadow-color);
         transition:
           opacity 500ms ease,
@@ -340,8 +344,10 @@
         max-height: var(--panel-max-height);
         padding: 0;
         border-radius: 24px;
+        border: 1px solid var(--glass-border-color);
         background: var(--panel-bg);
-        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
         box-shadow: var(--shadow-color);
         box-sizing: border-box;
         opacity: 0;
