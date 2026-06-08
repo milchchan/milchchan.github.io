@@ -303,7 +303,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             enable_cross_partition_query=True))
                         reference_text = None
                         
-                        if len(items) > 0:
+                        if len(items) > 0 and 'transcript' in items[0]:
                             reference_text = items[0]['transcript']
                         
                         if re.match(r'https?://', tts_source) is None:
