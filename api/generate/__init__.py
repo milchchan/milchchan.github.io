@@ -302,9 +302,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             ],
                             enable_cross_partition_query=True))
                         reference_text = None
+                        cache_exists = False
                         
-                        if len(items) > 0 and 'transcript' in items[0]:
-                            reference_text = items[0]['transcript']
+                        if len(items) > 0:
+                            if 'transcript' in items[0]:
+                                reference_text = items[0]['transcript']
+
+                            cache_exists = True
                         
                         if re.match(r'https?://', tts_source) is None:
                             api_url = f"https://{tts_source.replace('/', '-').lower()}.hf.space/gradio_api"
@@ -365,7 +369,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         if path is None:
                             return func.HttpResponse(status_code=503, mimetype='', charset='')
                         else:
-                            if reference_text is None:
+                            if reference_text is None and not cache_exists:
                                 identifier = str(uuid4())
                                 s3 = boto3.client(service_name='s3', endpoint_url=os.environ['S3_ENDPOINT_URL'], aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'], region_name='auto')
                                 
