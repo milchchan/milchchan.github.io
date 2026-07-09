@@ -381,9 +381,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     query = session.query(Upload)
                     
                     if mime_type is None:
-                        upload = query.filter(Upload.random <= sample).order_by(desc(Upload.random)).limit(1).one()
+                        upload = query.filter(Upload.random <= sample).order_by(desc(Upload.random)).limit(1).all()[0]
                     else:
-                        upload = query.filter(Upload.type.like(mime_type), Upload.random <= sample).order_by(desc(Upload.random)).limit(1).one()
+                        upload = query.filter(Upload.type.like(mime_type), Upload.random <= sample).order_by(desc(Upload.random)).limit(1).all()[0]
                     
                     return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', os.path.basename(urlparse(upload.url).path))})
                 
