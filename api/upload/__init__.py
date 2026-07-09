@@ -321,9 +321,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     else:
                         upload = query.filter(Upload.type.like(mime_type), Upload.random <= random.random()).order_by(desc(Upload.random)).limit(1).one()
                     
-                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', os.path.basename(urlparse(upload.url).path))})
-                    
-                    '''
                     identifier = os.path.basename(urlparse(upload.url).path)
                     file_is_exists = True
                     s3 = boto3.client(
@@ -350,7 +347,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             return func.HttpResponse(f.read(), status_code=200, mimetype=upload.type)
                         
                         #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
-                    '''
                     
                     '''
                     credentials = service_account.Credentials.from_service_account_info({
@@ -430,7 +426,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             #    return func.HttpResponse(f.read(), status_code=200, mimetype=upload.type)
                             return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
                         '''
-                        
+
                     finally:
                         session.close()
 
