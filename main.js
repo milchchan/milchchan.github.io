@@ -1159,7 +1159,7 @@ window.addEventListener("load", async event => {
           background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1).toLowerCase())}` }] });
         } else if (background.offset === null) {
           try {
-            const response = await fetch(encodeURI(`https://milchchan.com/api/upload?type=image/%&nonce=${~~random(0, 100)}`), {
+            const response = await fetch(encodeURI(`https://milchchan.com/api/upload?type=image/%&random=${Math.random()}`), {
               mode: "cors",
               method: "GET",
               headers: {
