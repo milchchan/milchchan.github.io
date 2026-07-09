@@ -373,9 +373,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     session.close()
 
             else:
-                parsed_url = urlparse(req.url)
-                cache_name = f'{parsed_url.path}?{parsed_url.query}' if len(parsed_url.query) > 0 else f'{parsed_url.path}'
-                cached_data = get_cache(cache_name)
+                #parsed_url = urlparse(req.url)
+                #cache_name = f'{parsed_url.path}?{parsed_url.query}' if len(parsed_url.query) > 0 else f'{parsed_url.path}'
+                cached_data = None #get_cache(cache_name)
 
                 if cached_data is None:
                     mime_type = req.params['type'] if 'type' in req.params else None
