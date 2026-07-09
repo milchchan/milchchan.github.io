@@ -6,7 +6,7 @@
     --foreground-color: #000000;
     --accent-color: #00e7ff;
     --accent-color-display-p3: color(display-p3 0.0 0.906 1.0);
-    --background-font-family: "Fredoka One", "Dela Gothic One", cursive;
+    --background-font-family: "Barlow", "Dela Gothic One", cursive;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -848,7 +848,7 @@ div.center {
         margin: 0;
         padding: 1px;
         background-color: #000000;
-        font-family: "Barlow", "M PLUS Rounded 1c", sans-serif;
+        font-family: "Barlow", sans-serif;
         font-size: 0.75rem;
         line-height: 0.75rem;
         height: 0.75rem;
