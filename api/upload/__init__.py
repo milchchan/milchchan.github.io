@@ -300,9 +300,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             session.close()
 
         else:
-            nonce = req.params['nonce'] if 'nonce' in req.params else None
+            sample = float(req.params['random']) if 'random' in req.params else None
             
-            if nonce is None:
+            if sample is None:
                 mime_type = req.params['type'] if 'type' in req.params else None
                 Session = sessionmaker(bind=engine)
                 session = Session()
@@ -373,64 +373,46 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     session.close()
 
             else:
+                mime_type = req.params['type'] if 'type' in req.params else None
+                Session = sessionmaker(bind=engine)
+                session = Session()
+
+                try:
+                    query = session.query(Upload)
+                    
+                    if mime_type is None:
+                        upload = query.filter(Upload.random <= sample).order_by(desc(Upload.random)).limit(1).one()
+                    else:
+                        upload = query.filter(Upload.type.like(mime_type), Upload.random <= sample).order_by(desc(Upload.random)).limit(1).one()
+                    
+                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', os.path.basename(urlparse(upload.url).path))})
+                
+                finally:
+                    session.close()
+                
                 #parsed_url = urlparse(req.url)
                 #cache_name = f'{parsed_url.path}?{parsed_url.query}' if len(parsed_url.query) > 0 else f'{parsed_url.path}'
-                cached_data = None #get_cache(cache_name)
+                #cached_data = None #get_cache(cache_name)
 
-                if cached_data is None:
-                    mime_type = req.params['type'] if 'type' in req.params else None
-                    Session = sessionmaker(bind=engine)
-                    session = Session()
+                #if cached_data is None:
+                #    mime_type = req.params['type'] if 'type' in req.params else None
+                #    Session = sessionmaker(bind=engine)
+                #    session = Session()
 
-                    try:
-                        query = session.query(Upload)
+                #    try:
+                #        query = session.query(Upload)
                         
-                        if mime_type is None:
-                            upload = query.filter(Upload.random <= random.random()).order_by(desc(Upload.random)).limit(1).one()
-                        else:
-                            upload = query.filter(Upload.type.like(mime_type), Upload.random <= random.random()).order_by(desc(Upload.random)).limit(1).one()
+                #        if mime_type is None:
+                #            upload = query.filter(Upload.random <= sample).order_by(desc(Upload.random)).limit(1).one()
+                #        else:
+                #            upload = query.filter(Upload.type.like(mime_type), Upload.random <= sample).order_by(desc(Upload.random)).limit(1).one()
                         
-                        return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', os.path.basename(urlparse(upload.url).path))})
-                    
-                        '''
-                        identifier = os.path.basename(urlparse(upload.url).path)
-                        file_is_exists = True
-                        s3 = boto3.client(
-                            service_name='s3',
-                            endpoint_url=os.environ['S3_ENDPOINT_URL'],
-                            aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-                            aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
-                            region_name='auto'
-                        )
+                #        return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', os.path.basename(urlparse(upload.url).path))})
 
-                        try:
-                            s3.head_object(Bucket='uploads', Key=identifier)
-                        except botocore.exceptions.ClientError as e:
-                            if e.response['Error']['Code'] == '404':
-                                file_is_exists = False
-                            else:
-                                raise
+                #    finally:
+                #        session.close()
 
-                        if file_is_exists:
-                            set_cache(cache_name, json.dumps({
-                                'id': identifier,
-                                'url': upload.url,
-                                'type': upload.type,
-                                'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                            }))
-
-                            #with io.BytesIO() as f:
-                            #    s3.download_fileobj('uploads', identifier, f)
-                            #    f.seek(0)
-
-                            #    return func.HttpResponse(f.read(), status_code=200, mimetype=upload.type)
-                            return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', identifier)})
-                        '''
-
-                    finally:
-                        session.close()
-
-                else:
+                #else:
                     '''
                     identifier = cached_data['id']
                     file_is_exists = True
@@ -457,7 +439,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             return func.HttpResponse(f.read(), status_code=200, mimetype=cached_data['type'])
                     '''
-                    return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', json.loads(cached_data)['id'])})
+                    #return func.HttpResponse(status_code=302, headers={'Location': urljoin('https://static.milchchan.com', json.loads(cached_data)['id'])})
 
         return func.HttpResponse(status_code=400, mimetype='', charset='')
 
