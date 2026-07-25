@@ -22,6 +22,15 @@ class Attribute(Base):
     end = Column('end', Integer(), nullable=False)
 
 
+class Word(Base):
+    __tablename__ = 'words'
+    id = Column('id', Integer(), primary_key=True, nullable=False)
+    name = Column('name', String(256), nullable=False)
+    language = Column('language', String(3), nullable=True)
+    random = Column('random', Float(), nullable=False)
+    timestamp = Column('timestamp', DateTime(), nullable=False)
+
+
 class Upload(Base):
     __tablename__ = 'uploads'
     id = Column('id', Integer(), primary_key=True, nullable=False)
