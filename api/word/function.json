@@ -6,7 +6,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "like",
+      "route": "word",
       "methods": [
         "get",
         "post"
