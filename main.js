@@ -467,7 +467,7 @@ class KMeans {
   }
 }
 
-function calculateBackgroundColor(image, KMeansClass) {
+function pickColor(image, KMeansClass) {
   const imageWidth = image.width;
   const imageHeight = image.height;
 
@@ -631,7 +631,7 @@ function calculateBackgroundColor(image, KMeansClass) {
   return `#${rgb.map(component => Math.round(component * 255).toString(16).padStart(2, "0")).join("")}`;
 }
 
-async function selectBackgroundColor(image) {
+async function getBackgroundColor(image) {
   if (typeof Worker !== "function" || typeof createImageBitmap !== "function") {
     throw new Error("Background color selection is not supported by this browser.");
   }
@@ -661,7 +661,7 @@ async function selectBackgroundColor(image) {
 
     try {
       const source = `const KMeansClass = ${KMeans.toString()};
-const calculate = ${calculateBackgroundColor.toString()};
+const calculate = ${pickColor.toString()};
 self.addEventListener("message", event => {
   const image = event.data;
 
@@ -1807,7 +1807,7 @@ window.addEventListener("load", async event => {
           background.color = "#ffffff";
 
           try {
-            background.color = await selectBackgroundColor(animations[0].image);
+            background.color = await getBackgroundColor(animations[0].image);
           } catch (error) {
             console.error(error);
           }
