@@ -1374,16 +1374,6 @@ window.addEventListener("load", async event => {
           progress.appendChild(bar);
           document.body.querySelector("#app").appendChild(progress);
 
-          if ("color" in data) {
-            if (data.color === null) {
-              background.color = "#ffffff";
-            } else {
-              background.color = data.color;
-            }
-          } else {
-            background.color = null;
-          }
-
           for (const frame of data.frames) {
             const timestamp = Math.floor(new Date() / 1000);
 
@@ -1588,6 +1578,16 @@ window.addEventListener("load", async event => {
 
           for (let i = animations.length - 2; i >= 0; i--) {
             animations.push(animations[i]);
+          }
+
+          if ("color" in data) {
+            if (data.color === null) {
+              background.color = "#ffffff";
+            } else {
+              background.color = data.color;
+            }
+          } else {
+            background.color = null;
           }
         } else {
           background.color = null;
