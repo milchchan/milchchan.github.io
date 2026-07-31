@@ -17,7 +17,7 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         if req.method == 'GET':
-            limit = req.params['limit'] if 'limit' in req.params else 100
+            limit = int(req.params['limit']) if 'limit' in req.params else 100
             sort = req.params['sort'].lower() if 'sort' in req.params else 'timestamp'
             merged_data = []
 
@@ -92,7 +92,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     if 'comment' not in cached_item:
                         items1.append({'id': cached_item['id'], 'content': cached_item['content']})
 
-                if len(items) > 0:
+                if len(items1) > 0:
                     api_key = None
 
                     if 'X-Authorization' in req.headers:
@@ -122,8 +122,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                     set_cache(cache_name, json.dumps({'data': cached_data['data'], 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
 
-                    for name in scan_cache(f'fetch\?*'):
-                        delete_cache(name)
+                    cache_names = scan_cache(r'fetch\?*')
+
+                    if len(cache_names) > 0:
+                        delete_cache(cache_names)
 
                 if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=6)).timestamp()):
                     return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
@@ -232,8 +234,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         
                                                     set_cache(cache_name, json.dumps({'data': items1, 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
 
-                                                    for name in scan_cache(f'fetch\?*'):
-                                                        delete_cache(name)
+                                                    cache_names = scan_cache(r'fetch\?*')
+
+                                                    if len(cache_names) > 0:
+                                                        delete_cache(cache_names)
 
                                                     return func.HttpResponse(json.dumps(items1, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
             

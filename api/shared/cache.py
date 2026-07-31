@@ -27,7 +27,7 @@ def scan_cache(match):
     names = []
 
     try:
-        for name in r.scan(match=match)[1]:
+        for name in r.scan_iter(match=match):
             names.append(name.decode('utf-8'))
 
         return names
@@ -44,4 +44,3 @@ def delete_cache(names):
 
     except:
         return -1
-
