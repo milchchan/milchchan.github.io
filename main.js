@@ -963,48 +963,8 @@ window.addEventListener("load", async event => {
           if (response.ok) {
             for (const item of await response.json()) {
               if ("comment" in item) {
-                if ("attributes" in item) {
-                  let index = 0;
-                  let text = "";
-                  let content = [];
-    
-                  while (index < like.content.length) {
-                    let maxEnd = index + 1;
-                    let attributes = {};
-    
-                    for (const attribute of like.attributes) {
-                      if (attribute.start === index) {
-                        if (attribute.end > maxEnd) {
-                          maxEnd = attribute.end;
-                        }
-    
-                        if (attribute.end in attributes) {
-                          attributes[attribute.end].push(attribute.name);
-                        } else {
-                          attributes[attribute.end] = [attribute.name];
-                        }
-                      }
-                    }
-    
-                    if (maxEnd in attributes) {
-                      if (text.length > 0) {
-                        content.push(text);
-                      }
-    
-                      content.push({ name:like.content.slice(index, maxEnd), attributes: attributes[maxEnd] });
-                      index = maxEnd
-                      text = "";
-                    } else {
-                      text += like.content[index];
-                      index++;
-                    }
-                  }
-    
-                  if (text.length > 0) {
-                    content.push(text);
-                  }
-                  
-                  background.texts.push([content, like.name]);
+                if ("terms" in item) {
+
                 } else {
                   background.texts.push([item.comment, item.content]);
                 }
