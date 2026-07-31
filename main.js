@@ -314,6 +314,169 @@ class APNG {
   }
 }
 
+class KMeans {
+  constructor(numberOfClusters) {
+    this.numberOfClusters = numberOfClusters;
+    this.centers = new Map();
+  }
+
+  get clusters() {
+    return this.centers;
+  }
+
+  fit(
+    data,
+    iterations = 1000,
+    distance = (x, y) => {
+      // Euclidean distance
+      let result = 0;
+
+      for (let i = 0; i < x.length; i++) {
+        result += (x[i] - y[i]) ** 2;
+      }
+
+      return Math.sqrt(result);
+    }
+  ) {
+    // k-means++
+    const clusters = new Array(data.length).fill(0);
+    let centerVector = data[Math.floor(Math.random() * data.length)];
+    const epsilon = 10 ** -8;
+
+    this.centers.clear();
+    this.centers.set(0, centerVector);
+
+    for (let i = 1; i < this.numberOfClusters; i++) {
+      const probabilities = [];
+      let sum = epsilon;
+
+      for (const vector of data) {
+        const currentDistance =
+          distance(centerVector, vector) + epsilon;
+
+        probabilities.push(currentDistance);
+        sum += currentDistance;
+      }
+
+      for (let j = 0; j < probabilities.length; j++) {
+        probabilities[j] /= sum;
+      }
+
+      const selectedIndex = Math.min(
+        this.choice(probabilities),
+        probabilities.length - 1
+      );
+
+      centerVector = data[selectedIndex];
+      this.centers.set(i, centerVector);
+    }
+
+    for (let t = 0; t < iterations; t++) {
+      // Assignment step
+      for (let i = 0; i < data.length; i++) {
+        let minDistance = Number.POSITIVE_INFINITY;
+        let assignedClusterId = -1;
+
+        for (const [clusterId, center] of this.centers) {
+          const currentDistance = distance(center, data[i]);
+
+          if (currentDistance < minDistance) {
+            minDistance = currentDistance;
+            assignedClusterId = clusterId;
+          }
+        }
+
+        clusters[i] = assignedClusterId;
+      }
+
+      // Update step
+      for (let i = 0; i < this.centers.size; i++) {
+        const vectors = [];
+
+        for (let j = 0; j < clusters.length; j++) {
+          if (clusters[j] === i) {
+            vectors.push(data[j]);
+          }
+        }
+
+        if (vectors.length > 0) {
+          this.centers.set(i, this.mean(vectors));
+        }
+      }
+    }
+  }
+
+  predict(vector) {
+    let maxSimilarity = 0;
+    let predictedClusterId = 0;
+
+    for (const [clusterId, center] of this.centers) {
+      const similarity = this.cosineSimilarity(center, vector);
+
+      if (similarity > maxSimilarity) {
+        maxSimilarity = similarity;
+        predictedClusterId = clusterId;
+      }
+    }
+
+    return [
+      predictedClusterId,
+      this.centers.get(predictedClusterId)
+    ];
+  }
+
+  cosineSimilarity(x, y) {
+    const epsilon = 10 ** -8;
+    let sum = 0;
+    let normX = 0;
+    let normY = 0;
+
+    for (let i = 0; i < x.length; i++) {
+      sum += x[i] * y[i];
+      normX += x[i] ** 2;
+      normY += y[i] ** 2;
+    }
+
+    return (
+      (sum + epsilon) /
+      (Math.sqrt(normX) * Math.sqrt(normY) + epsilon)
+    );
+  }
+
+  choice(probabilities) {
+    const random = Math.random();
+    let sum = 0;
+    let index = 0;
+
+    for (const probability of probabilities) {
+      if (sum <= random && random < sum + probability) {
+        break;
+      }
+
+      sum += probability;
+      index++;
+    }
+
+    return index;
+  }
+
+  mean(vectors) {
+    const result = [...vectors[0]];
+
+    for (let i = 1; i < vectors.length; i++) {
+      for (let j = 0; j < result.length; j++) {
+        result[j] += vectors[i][j];
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      result[i] /= vectors.length;
+    }
+
+    return result;
+  }
+}
+
 function random(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
