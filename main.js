@@ -1480,7 +1480,7 @@ window.addEventListener("load", async event => {
             index: null,
             caches: [
               { text: sample.text, attributes: sample.attributes, source: sample.inlines },
-              { text: name, attributes: [], source: [{ text: name, inlines: [{ text: name, highlight: false }], attributes: []] },
+              { text: name, attributes: [], source: [{ text: name, highlight: false }] },
             ]
           });
         }
