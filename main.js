@@ -964,7 +964,153 @@ window.addEventListener("load", async event => {
             for (const item of await response.json()) {
               if ("comment" in item) {
                 if ("terms" in item) {
+                  const candidates = item.terms.reduce((output, value) => {
+                    const term = (Array.isArray(value) ? value : [value]).filter(x => typeof (x) === "string" && x.length > 0);
+                    const word = term.at(-1);
 
+                    if (typeof (word) === "undefined") {
+                      return output;
+                    }
+
+                    if (term.length === 1) {
+                      output.push({ target: word, inline: word });
+                    } else {
+                      for (let index = 0; index < term.length - 1; index++) {
+                        const parts = term.slice(index);
+                        const separator = parts.every(x => /^[\x00-\x7F]+$/.test(x)) ? " " : "";
+
+                        output.push({ target: parts.join(separator), inline: parts.slice(0, -1).join(separator) + separator + "\n" + word });
+                      }
+                    }
+
+                    return output;
+                  }, []);
+
+                  candidates.sort((x, y) => y.target.length - x.target.length);
+
+                  let inlines = item.comment.length === 0 ? [] : [{ text: item.comment, attributes: null }];
+
+                  for (const candidate of candidates) {
+                    const pattern = new RegExp(candidate.target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "iu");
+
+                    inlines = inlines.reduce((output, inline) => {
+                      if (inline.attributes !== null) {
+                        output.push(inline);
+
+                        return output;
+                      }
+
+                      let text = inline.text;
+                      let match;
+
+                      while ((match = pattern.exec(text)) !== null) {
+                        if (match.index !== 0) {
+                          output.push({ text: text.slice(0, match.index), attributes: null });
+                        }
+
+                        output.push({ text: candidate.inline, attributes: [] });
+                        text = text.slice(match.index + match[0].length);
+                      }
+
+                      if (text.length > 0) {
+                        output.push({ text: text, attributes: null });
+                      }
+
+                      return output;
+                    }, []);
+                  }
+
+                  const date = new Date(item.timestamp * 1000);
+                  const isNewline = character => /^[\n\v\f\r\u0085\u2028\u2029]$/u.test(character);
+                  const lines = [{ text: "", attributes: [], timestamp: date }];
+
+                  for (const inline of inlines) {
+                    if (inline.attributes !== null) {
+                      const names = inline.attributes;
+                      let term = "";
+                      let modifier = "";
+
+                      for (const character of inline.text) {
+                        if (isNewline(character)) {
+                          modifier += term;
+                          term = "";
+                        } else {
+                          term += character;
+                        }
+                      }
+
+                      const text = modifier + term;
+
+                      if (text.length === 0) {
+                        continue;
+                      }
+
+                      const lineIndex = lines.length - 1;
+                      const start = lines[lineIndex].text.length;
+                      const modifierEnd = start + modifier.length;
+                      const end = start + text.length;
+
+                      lines[lineIndex].text += text;
+
+                      if (modifier.length > 0) {
+                        lines[lineIndex].attributes.push({ name: null, start: start, end: modifierEnd });
+                      }
+
+                      if (names.length === 0) {
+                        lines[lineIndex].attributes.push({ name: null, start: start, end: end });
+                      } else {
+                        for (const name of names) {
+                          lines[lineIndex].attributes.push({ name: name, start: start, end: end });
+                        }
+                      }
+                    } else {
+                      for (const character of inline.text) {
+                        if (isNewline(character)) {
+                          if (lines.at(-1).text.length > 0) {
+                            lines.push({ text: "", attributes: [], timestamp: date });
+                          }
+                        } else {
+                          lines[lines.length - 1].text += character;
+                        }
+                      }
+                    }
+                  }
+
+                  if (lines.at(-1).text.length === 0) {
+                    lines.pop();
+                  }
+
+                  for (const line of lines) {
+                    const ranges = line.attributes.map(attribute => ({ start: attribute.start, end: attribute.end })).sort((x, y) => x.start - y.start || y.end - x.end).reduce((output, range) => {
+                      const last = output.at(-1);
+
+                      if (typeof (last) === "undefined" || range.start > last.end) {
+                        output.push(range);
+                      } else {
+                        last.end = Math.max(last.end, range.end);
+                      }
+
+                      return output;
+                    }, []);
+
+                    const content = { text: line.text, inlines: [], attributes: ranges };
+                    let index = 0;
+
+                    for (const range of ranges) {
+                      if (index < range.start) {
+                        content.inlines.push(line.text.slice(index, range.start));
+                      }
+
+                      content.inlines.push(line.text.slice(range.start, range.end));
+                      index = range.end;
+                    }
+
+                    if (index < line.text.length) {
+                      content.inlines.push(line.text.slice(index));
+                    }
+
+                    background.texts.push([content, item.content]);
+                  }
                 } else {
                   background.texts.push([item.comment, item.content]);
                 }
@@ -1315,43 +1461,10 @@ window.addEventListener("load", async event => {
 
         for (let i = 0; i < samples.length; i++) {
           const [sample, name] = samples[i];
-          let text;
-          const attributes = [];
-          const source = [];
+          let text = sample.text;
+          const attributes = sample.attributes;
+          const source = sample.inlines;
           const letters = [];
-
-          if (typeof (sample) === "string") {
-            text = sample.replace(/\r?\n/g, "");
-            source.push(text);
-          } else {
-            text = Object.keys(sample).sort((x, y) => x - y).reduce((x, y) => {
-              if (typeof (sample[y]) === "string") {
-                const s = sample[y].replace(/\r?\n/g, "");
-
-                x.text += s;
-
-                if (x.source.length > 0 && typeof (x.source[x.source.length - 1]) === "string") {
-                  x.source[x.source.length - 1] += s;
-                } else {
-                  x.source.push(s);
-                }
-              } else if (Array.isArray(sample[y])) {
-                const s = sample[y].reduce((a, b) => a + (typeof (b) === "string" ? b : b.name).replace(/\r?\n/g, ""), "");
-
-                x.attributes.push({ start: x.text.length, end: x.text.length + s.length });
-                x.text += s;
-                x.source.push({ name: s });
-              } else {
-                const text = sample[y].name.replace(/\r?\n/g, "");
-
-                x.attributes.push({ start: x.text.length, end: x.text.length + text.length });
-                x.text += text;
-                x.source.push({ name: text });
-              }
-
-              return x;
-            }, { text: "", attributes: attributes, source: source }).text;
-          }
 
           for (let j = 0; j < text.length; j++) {
             if (text.charAt(j) !== "\n" && text.charAt(j).match(/\s/) === null) {
