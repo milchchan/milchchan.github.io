@@ -1147,9 +1147,7 @@
       let audioContext = null;
       let sampleRate = 24000;
       const agent = new Agent(0.5);
-      let modifiers = [];
-      let words = [];
-
+      
       window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
       function random(min, max) {
@@ -1593,22 +1591,6 @@
       agent.onclick = (e) => {
         agent.choices.splice(0);
         agent.choices.push(...agent._choices);
-
-        if (words.length > 0) {
-          const word = words[random(0, words.length)];
-
-          if (modifiers.length > 0 && Math.random() < 0.5) {
-            const modifier = modifiers[random(0, modifiers.length)];
-
-            if ([...modifier].every(x => /^[\x00-\x7F]*$/.test(x)) && [...word].every(x => /^[\x00-\x7F]*$/.test(x))) {
-              agent.choices.unshift(`${modifiers} ${word}`);
-            } else {
-              agent.choices.unshift(modifiers + word);
-            }
-          } else {
-            agent.choices.unshift(word);
-          }
-        }
       }
       agent.ongenerated = () => {
         for (const element of document.body.querySelectorAll("[data-apricot-prompt]")) {
@@ -2879,65 +2861,6 @@
             element.style.display = "none";
             element.style.opacity = 0;
           }
-        }
-      
-        try {
-          const response = await fetch(encodeURI("https://milchchan.com/api/likes?language=ja"), {
-            mode: "cors",
-            method: "GET",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            }
-          });
-      
-          if (response.ok) {
-            for (const like of await response.json()) {
-              if ("attributes" in like) {
-                let index = 0;
-  
-                while (index < like.content.length) {
-                  let maxEnd = index;
-                  let boundaryIndex = index;
-                  
-                  for (const attribute of like.attributes) {
-                    if (attribute.start === index && attribute.end > maxEnd) {
-                      boundaryIndex = maxEnd;
-                      maxEnd = attribute.end;
-                    }
-                  }
-
-                  if (index !== maxEnd) {
-                    if (boundaryIndex === index) {
-                      const word = like.content.substring(index, maxEnd);
-
-                      if (!words.includes(word)) {
-                        words.push(word);
-                      }
-                    } else {
-                      const modifier = like.content.substring(index, boundaryIndex).trim();
-                      const word = like.content.substring(boundaryIndex, maxEnd);
-
-                      if (!modifiers.includes(modifier)) {
-                        modifiers.push(modifier);
-                      }
-
-                      if (!words.includes(word)) {
-                        words.push(word);
-                      }
-                    }
-                  
-                    index = maxEnd;
-
-                    continue;
-                  }
-
-                  index++;
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.error(error);
         }
       });
       window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
