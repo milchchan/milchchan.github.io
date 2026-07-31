@@ -823,7 +823,7 @@ window.upload = async (event) => {
         const [path, contentType] = stack.pop();
 
         if (contentType.startsWith("image/")) {
-          background.queue.unshift({ color: null, frames: [{ delay: 0, source: path }] });
+          background.queue.unshift([{ delay: 0, source: path }]);
         }
       } while (stack.length > 0);
 
@@ -912,7 +912,7 @@ window.addEventListener("load", async event => {
         const [path, contentType] = stack.pop();
 
         if (contentType.startsWith("image/")) {
-          background.queue.unshift({ color: null, frames: [{ delay: 0, source: path }] });
+          background.queue.unshift([{ delay: 0, source: path }]);
         }
       } while (stack.length > 0);
 
@@ -1285,7 +1285,7 @@ window.addEventListener("load", async event => {
         }
         
         if (/^(?:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|[0-9a-f]{7})$/.test(decodeURIComponent(window.location.hash.substring(1).toLowerCase()))) {
-          background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1).toLowerCase())}` }] });
+          background.queue.push([{ delay: 0, source: `https://milchchan.com/api/upload/${decodeURIComponent(window.location.hash.substring(1).toLowerCase())}` }]);
         } else if (background.offset === null) {
           try {
             const response = await fetch(encodeURI(`https://milchchan.com/api/upload?type=image/%&random=${Math.random()}`), {
@@ -1297,7 +1297,7 @@ window.addEventListener("load", async event => {
             });
         
             if (response.ok) {
-              background.queue.push({ color: null, frames: [{ delay: 0, source: response.url }] });
+              background.queue.push([{ delay: 0, source: response.url }]);
             } else {
               throw new Error(response.statusText);
             }
@@ -1319,7 +1319,7 @@ window.addEventListener("load", async event => {
               const json = await response.json();
               
               for (const item of json) {
-                background.queue.push({ color: null, frames: [{ delay: 0, source: `https://milchchan.com/api/upload/${item.id}` }] });
+                background.queue.push([{ delay: 0, source: `https://milchchan.com/api/upload/${item.id}` }]);
               }
 
               if (background.queue.length === limit) {
@@ -1374,15 +1374,15 @@ window.addEventListener("load", async event => {
           progress.appendChild(bar);
           document.body.querySelector("#app").appendChild(progress);
 
-          for (const frame of data.frames) {
+          for (const frame of data) {
             const timestamp = Math.floor(new Date() / 1000);
 
             if (frame.source in cache === false || timestamp - cache[frame.source].timestamp >= timeout) {
               const blob = await download(frame.source, (rate) => {
-                if (index < data.frames.length - 1 || rate < 1) {
+                if (index < data.length - 1 || rate < 1) {
                   bar.animate([
                     {
-                      width: `${Math.floor((rate / data.frames.length + index / data.frames.length) * 100)}%`
+                      width: `${Math.floor((rate / data.length + index / data.length) * 100)}%`
                     }
                   ], {
                     delay: 0,
@@ -1392,12 +1392,12 @@ window.addEventListener("load", async event => {
                     easing: "linear",
                     composite: "replace"
                   }).onfinish = () => {
-                    bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                    bar.style.width = `${Math.floor((index + 1) / data.length * 100)}%`;
                   };
                 } else {
                   bar.animate([
                     {
-                      width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                      width: `${Math.floor((index + 1) / data.length * 100)}%`
                     }
                   ], {
                     delay: 0,
@@ -1407,7 +1407,7 @@ window.addEventListener("load", async event => {
                     easing: "ease-in",
                     composite: "replace"
                   }).onfinish = () => {
-                    bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                    bar.style.width = `${Math.floor((index + 1) / data.length * 100)}%`;
                     bar.animate([
                       {
                         opacity: 0
@@ -1426,7 +1426,7 @@ window.addEventListener("load", async event => {
               });
 
               if (blob === null) {
-                if (index === data.frames.length - 1) {
+                if (index === data.length - 1) {
                   bar.animate([
                     {
                       opacity: 0
@@ -1519,10 +1519,10 @@ window.addEventListener("load", async event => {
                 }
               }
             } else {
-              if (index < data.frames.length - 1) {
+              if (index < data.length - 1) {
                 bar.animate([
                   {
-                    width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                    width: `${Math.floor((index + 1) / data.length * 100)}%`
                   }
                 ], {
                   delay: 0,
@@ -1532,12 +1532,12 @@ window.addEventListener("load", async event => {
                   easing: "ease-in",
                   composite: "replace"
                 }).onfinish = () => {
-                  bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                  bar.style.width = `${Math.floor((index + 1) / data.length * 100)}%`;
                 };
               } else {
                 bar.animate([
                   {
-                    width: `${Math.floor((index + 1) / data.frames.length * 100)}%`
+                    width: `${Math.floor((index + 1) / data.length * 100)}%`
                   }
                 ], {
                   delay: 0,
@@ -1547,7 +1547,7 @@ window.addEventListener("load", async event => {
                   easing: "ease-in",
                   composite: "replace"
                 }).onfinish = () => {
-                  bar.style.width = `${Math.floor((index + 1) / data.frames.length * 100)}%`;
+                  bar.style.width = `${Math.floor((index + 1) / data.length * 100)}%`;
                   bar.animate([
                     {
                       opacity: 0
@@ -1580,17 +1580,11 @@ window.addEventListener("load", async event => {
             animations.push(animations[i]);
           }
 
-          if ("color" in data) {
-            if (data.color === null) {
-              background.color = "#ffffff";
-            } else {
-              background.color = data.color;
-            }
-          } else {
-            background.color = null;
-          }
+          const kMeans = KMeans()
+          
+          background.color = "#ffffff";
         } else {
-          background.color = null;
+          background.color = "#ffffff";
         }
 
         blind.animate([
