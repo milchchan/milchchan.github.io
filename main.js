@@ -1097,21 +1097,21 @@ window.addEventListener("load", async event => {
 
                     for (const range of ranges) {
                       if (index < range.start) {
-                        content.inlines.push(line.text.slice(index, range.start));
+                        content.inlines.push({ text: line.text.slice(index, range.start), highlight: false });
                       }
 
-                      content.inlines.push(line.text.slice(range.start, range.end));
+                      content.inlines.push({ text: line.text.slice(range.start, range.end), highlight: true });
                       index = range.end;
                     }
 
                     if (index < line.text.length) {
-                      content.inlines.push(line.text.slice(index));
+                      content.inlines.push({ text: line.text.slice(index), highlight: false });
                     }
 
                     background.texts.push([content, item.content]);
                   }
                 } else {
-                  background.texts.push([{ text: item.comment, inlines: [item.comment], attributes: [] }, item.content]);
+                  background.texts.push([{ text: item.comment, inlines: [{ text: item.comment, highlight: false }], attributes: [] }, item.content]);
                 }
               }
             }
@@ -1783,17 +1783,13 @@ window.addEventListener("load", async event => {
               backContext.save();
 
               for (const s of inline.source) {
-                let text;
-
-                if (typeof (s) === "string") {
-                  backContext.font = normalFont;
-                  text = s;
-                } else {
+                if (s.highlight) {
                   backContext.font = boldFont;
-                  text = s.name;
+                } else {
+                  backContext.font = normalFont;
                 }
 
-                const textMetrics = backContext.measureText(text);
+                const textMetrics = backContext.measureText(s.text);
 
                 width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
               }
@@ -1825,17 +1821,13 @@ window.addEventListener("load", async event => {
                   }
 
                   for (const s of inline.source) {
-                    let text;
-
-                    if (typeof (s) === "string") {
-                      backContext.font = normalFont;
-                      text = s;
-                    } else {
+                    if (s.highlight) {
                       backContext.font = boldFont;
-                      text = s.name;
+                    } else {
+                      backContext.font = normalFont;
                     }
 
-                    const textMetrics = backContext.measureText(text);
+                    const textMetrics = backContext.measureText(s.text);
 
                     offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
                   }
@@ -1897,17 +1889,13 @@ window.addEventListener("load", async event => {
               backContext.save();
 
               for (const s of inline.source) {
-                let text;
-
-                if (typeof (s) === "string") {
-                  backContext.font = normalFont;
-                  text = s;
-                } else {
+                if (s.highlight) {
                   backContext.font = boldFont;
-                  text = s.name;
+                } else {
+                  backContext.font = normalFont;
                 }
 
-                const textMetrics = backContext.measureText(text);
+                const textMetrics = backContext.measureText(s.text);
 
                 width += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
               }
@@ -1939,17 +1927,13 @@ window.addEventListener("load", async event => {
                   }
 
                   for (const s of inline.source) {
-                    let text;
-
-                    if (typeof (s) === "string") {
-                      backContext.font = normalFont;
-                      text = s;
-                    } else {
+                    if (s.highlight) {
                       backContext.font = boldFont;
-                      text = s.name;
+                    } else {
+                      backContext.font = normalFont;
                     }
 
-                    const textMetrics = backContext.measureText(text);
+                    const textMetrics = backContext.measureText(s.text);
 
                     offset += Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
                   }
