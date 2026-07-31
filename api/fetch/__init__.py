@@ -9,7 +9,7 @@ from datetime import datetime, time, timedelta, timezone
 from urllib.parse import unquote
 from urllib.request import urlopen, Request
 from shared import FETCH_URLS, FETCH_PROMPT, TRANSFORM_SYSTEM_PROMPT, TRANSFORM_USER_PROMPT
-from shared.cache import get_cache, set_cache, scan_cache
+from shared.cache import get_cache, set_cache, scan_cache, delete_cache
 
 import azure.functions as func
 
@@ -29,31 +29,39 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             else:
                 order = 'desc'
-            
-            for cache_name in scan_cache(f'fetch/*'):
-                cached_data = json.loads(get_cache(cache_name))
-                
-                if isinstance(cached_data, dict) and 'data' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['data'], list):
-                    for item in cached_data['data']:
-                        if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item and 'score' in item and 'reason' in item:
-                            timestamp = int((datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))).timestamp())
-                            data_item = {'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']}
-                            
-                            if 'terms' in item:
-                                data_item['terms'] = item['terms']
 
-                            if 'comment' in item:
-                                data_item['comment'] = item['comment']
+            merged_cache_name = f'fetch?limit={str(limit)}&sort={sort}&order={order}'
+            merged_cache_data = get_cache(merged_cache_name)
 
-                                if 'states' in item:
-                                    data_item['states'] = item['states']
+            if merged_cache_data is None:
+                for cache_name in scan_cache('fetch/*'):
+                    cached_data = json.loads(get_cache(cache_name))
+                    
+                    if isinstance(cached_data, dict) and 'data' in cached_data and 'timestamp' in cached_data and isinstance(cached_data['data'], list):
+                        for item in cached_data['data']:
+                            if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item and 'score' in item and 'reason' in item:
+                                timestamp = int((datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))).timestamp())
+                                data_item = {'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']}
+                                
+                                if 'terms' in item:
+                                    data_item['terms'] = item['terms']
 
-                            merged_data.append(data_item)
+                                if 'comment' in item:
+                                    data_item['comment'] = item['comment']
 
-            result_data = sorted(merged_data, key=lambda x: x[sort], reverse=order == 'desc')
-            result_data = result_data[:limit]
+                                    if 'states' in item:
+                                        data_item['states'] = item['states']
 
-            return func.HttpResponse(json.dumps(result_data, ensure_ascii=False), status_code=200, mimetype='application/json', charset='utf-8')
+                                merged_data.append(data_item)
+
+                result_data = sorted(merged_data, key=lambda x: x[sort], reverse=order == 'desc')
+                result_data = json.dumps(result_data[:limit], ensure_ascii=False)
+                set_cache(merged_cache_name, result_data)
+
+            else:
+                result_data = get_cache(merged_cache_name)
+
+            return func.HttpResponse(result_data, status_code=200, mimetype='application/json', charset='utf-8')
     
         else:
             if req.headers.get('Content-Type') == 'application/json':
@@ -113,6 +121,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                     break
 
                     set_cache(cache_name, json.dumps({'data': cached_data['data'], 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
+
+                    for name in scan_cache(f'fetch\?*'):
+                        delete_cache(name)
 
                 if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=12)).timestamp()):
                     return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
@@ -220,7 +231,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                                                 break
                                         
                                                     set_cache(cache_name, json.dumps({'data': items1, 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
-                                        
+
+                                                    for name in scan_cache(f'fetch\?*'):
+                                                        delete_cache(name)
+
                                                     return func.HttpResponse(json.dumps(items1, ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
             
             return func.HttpResponse(status_code=500, mimetype='', charset='')
