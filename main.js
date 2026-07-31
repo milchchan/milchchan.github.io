@@ -1020,9 +1020,8 @@ window.addEventListener("load", async event => {
                     }, []);
                   }
 
-                  const date = new Date(item.timestamp * 1000);
                   const isNewline = character => /^[\n\v\f\r\u0085\u2028\u2029]$/u.test(character);
-                  const lines = [{ text: "", attributes: [], timestamp: date }];
+                  const lines = [{ text: "", attributes: [] }];
 
                   for (const inline of inlines) {
                     if (inline.attributes !== null) {
@@ -1067,7 +1066,7 @@ window.addEventListener("load", async event => {
                       for (const character of inline.text) {
                         if (isNewline(character)) {
                           if (lines.at(-1).text.length > 0) {
-                            lines.push({ text: "", attributes: [], timestamp: date });
+                            lines.push({ text: "", attributes: [] });
                           }
                         } else {
                           lines[lines.length - 1].text += character;
@@ -1112,7 +1111,7 @@ window.addEventListener("load", async event => {
                     background.texts.push([content, item.content]);
                   }
                 } else {
-                  background.texts.push([item.comment, item.content]);
+                  background.texts.push([{ text: item.comment, inlines: [item.comment], attributes: [] }, item.content]);
                 }
               }
             }
@@ -1473,14 +1472,14 @@ window.addEventListener("load", async event => {
             height: 100 / samples.length,
             colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
             inlines: [
-              { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: sample.text, attributes: sample.attributes, current: "", source: sample.source, letters: letters }
+              { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: sample.text, attributes: sample.attributes, current: "", source: sample.inlines, letters: letters }
             ],
             scroll: { requested: false, step: 0.0 },
             elapsed: Math.random() * 60.0,
             rtl: i % 2 === 1,
             index: null,
             caches: [
-              { text: sample.text, attributes: sample.attributes, source: sample.source },
+              { text: sample.text, attributes: sample.attributes, source: sample.inlines },
               { text: name, attributes: [], source: [name] },
             ]
           });
