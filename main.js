@@ -472,14 +472,14 @@ function pickColor(image, KMeansClass) {
   const imageHeight = image.height;
 
   if (imageWidth <= 0 || imageHeight <= 0) {
-    throw new Error("The background image has invalid dimensions.");
+    return "#ffffff";
   }
 
   const sourceCanvas = new OffscreenCanvas(imageWidth, imageHeight);
   const sourceContext = sourceCanvas.getContext("2d", { willReadFrequently: true });
 
   if (sourceContext === null) {
-    throw new Error("Could not create a canvas context for the background image.");
+    return "#ffffff";
   }
 
   sourceContext.drawImage(image, 0, 0, imageWidth, imageHeight);
@@ -502,7 +502,7 @@ function pickColor(image, KMeansClass) {
   }
 
   if (maxX < minX || maxY < minY) {
-    throw new Error("The background image contains no visible pixels.");
+    return "#ffffff";
   }
 
   const cropWidth = maxX - minX + 1;
@@ -514,7 +514,7 @@ function pickColor(image, KMeansClass) {
   const context = canvas.getContext("2d", { willReadFrequently: true });
 
   if (context === null) {
-    throw new Error("Could not create a canvas context for color selection.");
+    return "#ffffff";
   }
 
   context.imageSmoothingEnabled = true;
@@ -561,7 +561,7 @@ function pickColor(image, KMeansClass) {
   }
 
   if (pixels.length === 0) {
-    throw new Error("The resized background image contains no visible pixels.");
+    return "#ffffff";
   }
 
   const kMeans = new KMeansClass(8);
@@ -603,7 +603,7 @@ function pickColor(image, KMeansClass) {
   scored.sort((x, y) => y.score - x.score);
 
   if (scored.length === 0) {
-    throw new Error("K-means did not produce a background color.");
+    return "#ffffff";
   }
 
   const color = scored[0].color;
@@ -625,80 +625,55 @@ function pickColor(image, KMeansClass) {
   ][sector];
 
   if (rgb === undefined || !rgb.every(Number.isFinite)) {
-    throw new Error("The selected background color is invalid.");
+    return "#ffffff";
   }
 
   return `#${rgb.map(component => Math.round(component * 255).toString(16).padStart(2, "0")).join("")}`;
 }
 
 async function getBackgroundColor(image) {
-  if (typeof Worker !== "function" || typeof createImageBitmap !== "function") {
-    throw new Error("Background color selection is not supported by this browser.");
-  }
+  try {
+    const imageBitmap = await createImageBitmap(image);
 
-  const imageBitmap = await createImageBitmap(image);
+    return await new Promise(resolve => {
+      let worker = null;
+      let timeout = null;
 
-  return await new Promise((resolve, reject) => {
-    let worker;
-    let workerURL = null;
-    let timeout = null;
-
-    const finish = (callback, value) => {
-      if (timeout !== null) {
+      const finish = color => {
         clearTimeout(timeout);
-      }
+        worker?.terminate();
+        resolve(/^#[0-9a-f]{6}$/i.test(color) ? color : "#ffffff");
+      };
 
-      if (worker !== undefined) {
-        worker.terminate();
-      }
-
-      if (workerURL !== null) {
-        URL.revokeObjectURL(workerURL);
-      }
-
-      callback(value);
-    };
-
-    try {
-      const source = `const KMeansClass = ${KMeans.toString()};
-const calculate = ${pickColor.toString()};
-self.addEventListener("message", event => {
+      try {
+        const source = `const KMeansClass = ${KMeans.toString()};
+const pick = ${pickColor.toString()};
+self.onmessage = event => {
   const image = event.data;
+  let color = "#ffffff";
 
   try {
-    self.postMessage({ color: calculate(image, KMeansClass) });
-  } catch (error) {
-    self.postMessage({ error: error instanceof Error ? error.message : String(error) });
-  } finally {
-    image?.close();
-  }
-});`;
+    color = pick(image, KMeansClass);
+  } catch {}
 
-      workerURL = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
-      worker = new Worker(workerURL);
-      worker.addEventListener("message", event => {
-        if (typeof event.data?.color === "string" && /^#[0-9a-f]{6}$/i.test(event.data.color)) {
-          finish(resolve, event.data.color);
-        } else {
-          finish(reject, new Error(event.data?.error ?? "The background color worker returned an invalid result."));
-        }
-      });
-      worker.addEventListener("error", event => {
-        event.preventDefault();
-        finish(reject, new Error(event.message || "The background color worker failed."));
-      });
-      worker.addEventListener("messageerror", () => {
-        finish(reject, new Error("The background color worker returned an unreadable result."));
-      });
-      timeout = setTimeout(() => {
-        finish(reject, new Error("Background color selection timed out."));
-      }, 10 * 1000);
-      worker.postMessage(imageBitmap, [imageBitmap]);
-    } catch (error) {
-      imageBitmap.close();
-      finish(reject, error);
-    }
-  });
+  image?.close();
+  self.postMessage(color);
+};`;
+
+        worker = new Worker(`data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`);
+        worker.onmessage = event => finish(event.data);
+        worker.onerror = () => finish("#ffffff");
+        worker.onmessageerror = () => finish("#ffffff");
+        timeout = setTimeout(() => finish("#ffffff"), 10 * 1000);
+        worker.postMessage(imageBitmap, [imageBitmap]);
+      } catch {
+        imageBitmap.close();
+        finish("#ffffff");
+      }
+    });
+  } catch {
+    return "#ffffff";
+  }
 }
 
 function random(min, max) {
