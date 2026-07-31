@@ -1580,11 +1580,151 @@ window.addEventListener("load", async event => {
             animations.push(animations[i]);
           }
 
-          const kMeans = KMeans()
-          
-          background.color = "#ffffff";
+          try {
+            const image = animations[0].image;
+            const imageWidth = image.naturalWidth || image.width;
+            const imageHeight = image.naturalHeight || image.height;
+            const sourceCanvas = document.createElement("canvas");
+
+            sourceCanvas.width = imageWidth;
+            sourceCanvas.height = imageHeight;
+
+            const sourceContext = sourceCanvas.getContext("2d", { willReadFrequently: true });
+
+            sourceContext.drawImage(image, 0, 0, imageWidth, imageHeight);
+
+            const sourceData = sourceContext.getImageData(0, 0, imageWidth, imageHeight).data;
+            let minX = imageWidth;
+            let minY = imageHeight;
+            let maxX = -1;
+            let maxY = -1;
+
+            for (let y = 0; y < imageHeight; y++) {
+              for (let x = 0; x < imageWidth; x++) {
+                if (sourceData[(y * imageWidth + x) * 4 + 3] > 0) {
+                  minX = Math.min(minX, x);
+                  minY = Math.min(minY, y);
+                  maxX = Math.max(maxX, x);
+                  maxY = Math.max(maxY, y);
+                }
+              }
+            }
+
+            const cropWidth = maxX - minX + 1;
+            const cropHeight = maxY - minY + 1;
+            const scale = Math.min(1, 64 / Math.max(cropWidth, cropHeight));
+            const width = Math.max(1, Math.floor(cropWidth * scale));
+            const height = Math.max(1, Math.floor(cropHeight * scale));
+            const canvas = document.createElement("canvas");
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const context = canvas.getContext("2d", { willReadFrequently: true });
+
+            context.imageSmoothingEnabled = true;
+            context.imageSmoothingQuality = "high";
+            context.clearRect(0, 0, width, height);
+            context.drawImage(image, minX, minY, cropWidth, cropHeight, 0, 0, width, height);
+
+            const pixels = [];
+            const data = context.getImageData(0, 0, width, height).data;
+
+            for (let i = 0; i < data.length; i += 4) {
+              if (data[i + 3] > 0) {
+                const red = data[i] / 255;
+                const green = data[i + 1] / 255;
+                const blue = data[i + 2] / 255;
+                const maximum = Math.max(red, green, blue);
+                const minimum = Math.min(red, green, blue);
+                const difference = maximum - minimum;
+                let hue = 0;
+
+                if (difference > 0) {
+                  if (maximum === red) {
+                    hue = 60 * (green - blue) / difference;
+                  } else if (maximum === green) {
+                    hue = 60 * (blue - red) / difference + 120;
+                  } else {
+                    hue = 60 * (red - green) / difference + 240;
+                  }
+
+                  if (hue < 0) {
+                    hue += 360;
+                  }
+                }
+
+                const saturation = maximum > 0 ? difference / maximum : 0;
+                const angle = hue / 360 * 2 * Math.PI;
+
+                pixels.push([
+                  saturation * Math.cos(angle),
+                  saturation * Math.sin(angle),
+                  maximum
+                ]);
+              }
+            }
+
+            const kMeans = new KMeans(8);
+            const stats = new Map();
+            const scored = [];
+            let maximum = 0;
+
+            kMeans.fit(pixels, 50);
+
+            for (const pixel of pixels) {
+              const [id, vector] = kMeans.predict(pixel);
+              let hue = Math.atan2(vector[1], vector[0]) / (2 * Math.PI);
+
+              if (hue < 0) {
+                hue += 1;
+              }
+
+              const color = { hue: hue * 360, saturation: Math.min(Math.max(Math.hypot(vector[0], vector[1]), 0), 1), value: Math.min(Math.max(vector[2], 0), 1)};
+              const stat = stats.get(id);
+
+              stats.set(id, { count: (stat?.count ?? 0) + 1, color: stat?.color ?? color });
+            }
+
+            for (const stat of stats.values()) {
+              maximum = Math.max(maximum, stat.count);
+            }
+
+            for (const stat of stats.values()) {
+              scored.push({
+                score: 1 / (1 + Math.exp(-10 * (stat.color.value - 0.25))) * (Math.min(stat.count / maximum, 0.25) + stat.color.saturation),
+                color: stat.color
+              });
+            }
+
+            scored.sort((x, y) => y.score - x.score);
+
+            const color = scored[0].color;
+            const hue = color.hue % 360;
+            const saturation = Math.min(Math.max(color.saturation * 1.5, 0), 1);
+            const value = Math.min(Math.max(color.value * 1.5, 0), 1);
+            const sector = Math.floor(hue / 60);
+            const fraction = hue / 60 - sector;
+            const p = value * (1 - saturation);
+            const q = value * (1 - fraction * saturation);
+            const t = value * (1 - (1 - fraction) * saturation);
+            const rgb = [
+              [value, t, p],
+              [q, value, p],
+              [p, value, t],
+              [p, q, value],
+              [t, p, value],
+              [value, p, q]
+            ][sector];
+
+            background.color = `#${rgb.map(component => Math.round(component * 255).toString(16).padStart(2, "0")).join("")}`;
+          } catch (error) {
+            console.error(error);
+
+            background.color = "#ffffff";
+          }
         } else {
-          background.color = "#ffffff";
+          background.color = null;
         }
 
         blind.animate([
