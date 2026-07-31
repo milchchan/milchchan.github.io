@@ -1461,14 +1461,11 @@ window.addEventListener("load", async event => {
 
         for (let i = 0; i < samples.length; i++) {
           const [sample, name] = samples[i];
-          let text = sample.text;
-          const attributes = sample.attributes;
-          const source = sample.inlines;
           const letters = [];
 
-          for (let j = 0; j < text.length; j++) {
-            if (text.charAt(j) !== "\n" && text.charAt(j).match(/\s/) === null) {
-              letters.push(text.charAt(j));
+          for (let j = 0; j < sample.text.length; j++) {
+            if (sample.text.charAt(j) !== "\n" && sample.text.charAt(j).match(/\s/) === null) {
+              letters.push(sample.text.charAt(j));
             }
           }
 
@@ -1476,14 +1473,14 @@ window.addEventListener("load", async event => {
             height: 100 / samples.length,
             colors: { main: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color"), accent: window.getComputedStyle(document.documentElement).getPropertyValue("--background-color") },
             inlines: [
-              { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: text, attributes: attributes, current: "", source: source, letters: letters }
+              { running: true, time: 0, duration: null, type: { elapsed: -1, speed: 50, reverse: false, buffer: "", count: 0 }, text: sample.text, attributes: sample.attributes, current: "", source: sample.source, letters: letters }
             ],
             scroll: { requested: false, step: 0.0 },
             elapsed: Math.random() * 60.0,
             rtl: i % 2 === 1,
             index: null,
             caches: [
-              { text: text, attributes: attributes, source: source },
+              { text: sample.text, attributes: sample.attributes, source: sample.source },
               { text: name, attributes: [], source: [name] },
             ]
           });
