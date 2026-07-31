@@ -127,7 +127,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     if len(cache_names) > 0:
                         delete_cache(cache_names)
 
-                if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=6)).timestamp()):
+                if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=12)).timestamp()):
                     return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
 
             with urlopen(Request(unquote(url), method='GET', headers={'User-Agent': os.environ['USER_AGENT'] if 'USER_AGENT' in os.environ else 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
