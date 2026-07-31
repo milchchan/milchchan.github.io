@@ -1,3 +1,4 @@
+const threshold = new URL(window.location.href).searchParams.get("threshold") ?? 0.75;
 const background = { running: true, updated: 0, timeout: 60 * 1000, preloading: false, force: false, color: null, blocks: [], texts: [], offset: null, images: [], queue: [], particles: [], cache: null };
 const tracker = { active: false, identifier: null, edge: true, mouse: { x: 0, y: 0 }, position: { x: 0, y: 0 }, movement: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, timestamp: 0 };
 const pinches = [];
@@ -962,7 +963,7 @@ window.addEventListener("load", async event => {
       
           if (response.ok) {
             for (const item of await response.json()) {
-              if ("comment" in item) {
+              if ("comment" in item && "score" in item && item.score >= threshold) {
                 if ("terms" in item) {
                   const candidates = item.terms.reduce((output, value) => {
                     const term = (Array.isArray(value) ? value : [value]).filter(x => typeof (x) === "string" && x.length > 0);
