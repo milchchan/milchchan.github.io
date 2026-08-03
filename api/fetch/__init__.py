@@ -120,7 +120,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                                                     break
 
-                    set_cache(cache_name, json.dumps({'data': cached_data['data'], 'timestamp': int(datetime.now(timezone.utc).timestamp())}, ensure_ascii=False), expire=86400)
+                    cached_data['timestamp'] = int(datetime.now(timezone.utc).timestamp())
+                    
+                    set_cache(cache_name, json.dumps(cached_data, ensure_ascii=False), expire=86400)
 
                     cache_names = scan_cache(r'fetch\?*')
 
