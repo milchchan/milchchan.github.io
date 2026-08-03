@@ -115,7 +115,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         for item1 in cached_data['data']:
                                             for item2 in items2:
                                                 if item1['id'] == item2['id']:
-                                                    item1['comment'] = item2['comment']
+                                                    item1['comment'] = item2['content']
                                                     item1['states'] = item2['states']
 
                                                     break
