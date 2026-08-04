@@ -127,17 +127,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             cached_data['repairs'] = repairs + 1
                             cached_data['timestamp'] = int(datetime.now(timezone.utc).timestamp())
-                            cached_data = json.dumps(cached_data, ensure_ascii=False)
                             
-                            set_cache(cache_name, cached_data, expire=86400)
+                            set_cache(cache_name, json.dumps(cached_data, ensure_ascii=False), expire=86400)
 
                             cache_names = scan_cache(r'fetch\?*')
 
                             if len(cache_names) > 0:
                                 delete_cache(cache_names)
 
-                            return func.HttpResponse(cached_data, status_code=201, mimetype='application/json', charset='utf-8')
-                            
                     return func.HttpResponse(json.dumps(cached_data['data'], ensure_ascii=False), status_code=201, mimetype='application/json', charset='utf-8')
 
             with urlopen(Request(unquote(url), method='GET', headers={'User-Agent': os.environ['USER_AGENT'] if 'USER_AGENT' in os.environ else 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'})) as response:
