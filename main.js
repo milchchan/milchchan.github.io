@@ -1336,13 +1336,13 @@ window.addEventListener("load", async event => {
                     }
 
                     if (term.length === 1) {
-                      output.push({ target: word, inline: word });
+                      output.push({ target: word, lastWord: null });
                     } else {
                       for (let index = 0; index < term.length - 1; index++) {
                         const parts = term.slice(index);
                         const separator = parts.every(x => /^[\x00-\x7F]+$/.test(x)) ? " " : "";
 
-                        output.push({ target: parts.join(separator), inline: parts.slice(0, -1).join(separator) + separator + "\n" + word });
+                        output.push({ target: parts.join(separator), lastWord: word });
                       }
                     }
 
@@ -1371,7 +1371,15 @@ window.addEventListener("load", async event => {
                           output.push({ text: text.slice(0, match.index), attributes: null });
                         }
 
-                        output.push({ text: candidate.inline, attributes: [] });
+                        let inline = match[0];
+
+                        if (candidate.lastWord !== null) {
+                          const lastWordPattern = new RegExp(`${candidate.lastWord.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "iu");
+
+                          inline = inline.replace(lastWordPattern, "\n$&");
+                        }
+
+                        output.push({text: inline, attributes: []});
                         text = text.slice(match.index + match[0].length);
                       }
 
