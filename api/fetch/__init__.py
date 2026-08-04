@@ -88,7 +88,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 cached_data = json.loads(cached_data)
                 repairs = cached_data['repairs'] if 'repairs' in cached_data else 0
 
-                if repairs < 1:
+                if repairs < 3:
                     items1 = []
                     
                     for cached_item in cached_data['data']:
