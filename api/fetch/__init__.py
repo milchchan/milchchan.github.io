@@ -87,7 +87,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if cached_data is not None:
                 cached_data = json.loads(cached_data)
 
-                if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=6)).timestamp()):
+                if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=12)).timestamp()):
                     repairs = cached_data['repairs'] if 'repairs' in cached_data else 0
 
                     if repairs < 3:
