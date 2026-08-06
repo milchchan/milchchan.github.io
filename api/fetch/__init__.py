@@ -90,7 +90,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=12)).timestamp()):
                     repairs = cached_data['repairs'] if 'repairs' in cached_data else 0
 
-                    if repairs < 3:
+                    if repairs < 1:
                         items1 = []
                         
                         for cached_item in cached_data['data']:
