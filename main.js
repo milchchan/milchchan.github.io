@@ -315,8 +315,8 @@ class APNG {
 }
 
 class KMeans {
-  constructor(numberOfClusters) {
-    this.numberOfClusters = numberOfClusters;
+  constructor(maxClusters) {
+    this.maxClusters = maxClusters;
     this.centers = new Map();
   }
 
@@ -346,7 +346,7 @@ class KMeans {
     this.centers.clear();
     this.centers.set(0, centerVector);
 
-    for (let i = 1; i < this.numberOfClusters; i++) {
+    for (let i = 1; i < this.maxClusters; i++) {
       const probabilities = [];
       let sum = epsilon;
 
