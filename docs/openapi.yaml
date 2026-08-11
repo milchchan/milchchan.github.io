@@ -6,9 +6,9 @@ info:
 servers:
   - url: https://milchchan.com/api
 paths:
-  /like:
+  /word:
     post:
-      summary: Create like
+      summary: Create word
       tags:
       - Social
       requestBody:
@@ -17,24 +17,24 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/Like'
-                - type: object
-                  properties:
-                    image:
-                      type: string
-                      readOnly: false
-                      writeOnly: true
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                language:
+                  type: string
       responses:
         201:
           description: Successful insert operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Like'
-  /like/{id}:
+                $ref: '#/components/schemas/Word'
+  /word/{id}:
     get:
-      summary: Read like by identifier
+      summary: Read word by identifier
       tags:
       - Social
       parameters:
@@ -43,17 +43,16 @@ paths:
         description: Identifier
         required: true
         schema:
-          type: string
-          format: uuid
+          type: integer
       responses:
         200:
           description: Successful update operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Like'
+                $ref: '#/components/schemas/Word'
     put:
-      summary: Update like by identifier
+      summary: Update word by identifier
       tags:
       - Social
       parameters:
@@ -62,31 +61,23 @@ paths:
         description: Identifier
         required: true
         schema:
-          type: string
-          format: uuid
+          type: integer
       requestBody:
         description: Data
         required: true
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/Like'
-                - type: object
-                  properties:
-                    image:
-                      type: string
-                      readOnly: false
-                      writeOnly: true
+              - $ref: '#/components/schemas/Word'
       responses:
         200:
           description: Successful update operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Like'
+                $ref: '#/components/schemas/Word'
     delete:
-      summary: Delete like by identifier
+      summary: Delete word by identifier
       tags:
       - Social
       parameters:
@@ -111,9 +102,9 @@ paths:
                   timestamp:
                     type: integer
                     format: int64
-  /likes:
+  /words:
     get:
-      summary: Returns a list of likes
+      summary: Returns a list of words
       tags:
       - Social
       parameters:
@@ -131,6 +122,13 @@ paths:
         schema:
           type: integer
           examples: [10]
+      - name: language
+        in: query
+        description: Language
+        required: false
+        schema:
+          type: string
+          examples: ["en", "ja"]
       responses:
         200:
           description: Successful read operation
@@ -139,7 +137,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Like'
+                  $ref: '#/components/schemas/Word'
   /upload:
     post:
       tags:
@@ -386,36 +384,16 @@ paths:
                 format: binary
 components:
   schemas:
-    Like:
+    Word:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
           readOnly: true
         name:
           type: string
-        content:
-          type: string
         language:
           type: ["string", "null"]
-        attributes:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: ["string", "null"]
-              start:
-                type: integer
-                format: int32
-                minimum: 0
-                examples: [0]
-              end:
-                type: integer
-                format: int32
-                minimum: 0
-                examples: [6]
         timestamp:
           type: integer
           format: int64
@@ -424,9 +402,7 @@ components:
       required:
         - id
         - name
-        - content
         - language
-        - attributes
         - timestamp
 tags:
   - name: Social
