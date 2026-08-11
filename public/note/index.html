@@ -23,7 +23,7 @@
   --line: #e7e4db;
   --accent: #00e7ff;
   --accent-soft: #e5fcff;
-  --warm: #a8794f;
+  --warm: #ffee00;
   --notebook-sheen: rgba(0, 231, 255, 0.018);
   --control-ink: #666960;
   --control-hover: rgba(70, 78, 70, 0.07);
@@ -34,14 +34,14 @@
   --tooltip-bg: #383b36;
   --editor-ink: #34372f;
   --placeholder: #b8b7ae;
-  --error: #a65c50;
+  --error: #ffee00;
   --preview-ink: #393c35;
   --heading-ink: #262a24;
   --strong-ink: #262823;
   --em-ink: #565950;
   --link-line: rgba(0, 231, 255, 0.52);
   --quote-ink: #60635a;
-  --quote-border: #83cbd2;
+  --quote-border: #ffc7e5;
   --code-border: #e4e0d7;
   --code-bg: #f2f0e9;
   --pre-border: #dfddd4;
@@ -59,7 +59,7 @@
     --line: #343831;
     --accent: #00e7ff;
     --accent-soft: #123e43;
-    --warm: #c29a73;
+    --warm: #ffee00;
     --notebook-sheen: rgba(0, 231, 255, 0.025);
     --control-ink: #a8aca2;
     --control-hover: rgba(226, 235, 227, 0.08);
@@ -70,14 +70,14 @@
     --tooltip-bg: #eff0e9;
     --editor-ink: #e3e5dc;
     --placeholder: #666b62;
-    --error: #d98a7c;
+    --error: #ffee00;
     --preview-ink: #d8dad2;
     --heading-ink: #f0f1ea;
     --strong-ink: #f1f2eb;
     --em-ink: #bdc0b6;
     --link-line: rgba(0, 231, 255, 0.52);
     --quote-ink: #b6bbb0;
-    --quote-border: #168e99;
+    --quote-border: #ffc7e5;
     --code-border: #3a3e37;
     --code-bg: #20231f;
     --pre-border: #3b3f38;
@@ -720,6 +720,7 @@ textarea::placeholder {
   height: 15px;
   margin: 7px 0 0;
   accent-color: var(--accent);
+  pointer-events: none;
 }
 
 .markdown-body blockquote {
@@ -1143,7 +1144,7 @@ function renderMarkdown(markdown) {
           hasTasks = true;
           const checked = task[1].toLowerCase() === "x" ? " checked" : "";
           items.push(
-            `<li class="task-item"><input type="checkbox" disabled${checked}><span>${renderInline(task[2])}</span></li>`,
+            `<li class="task-item"><input type="checkbox" tabindex="-1" aria-disabled="true"${checked}><span>${renderInline(task[2])}</span></li>`,
           );
         } else {
           items.push(`<li>${renderInline(item)}</li>`);
