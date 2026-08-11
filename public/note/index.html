@@ -683,9 +683,14 @@ textarea::placeholder {
 
 .markdown-body a {
   color: var(--accent);
+  opacity: 1;
   text-decoration-color: var(--link-line);
   text-underline-offset: 3px;
-  transition: color 500ms ease, text-decoration-color 500ms ease;
+  transition: color 500ms ease, opacity 500ms ease, text-decoration-color 500ms ease;
+}
+
+.markdown-body a:hover {
+  opacity: 0.5;
 }
 
 .markdown-body ul,
