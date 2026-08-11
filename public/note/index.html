@@ -1,0 +1,1620 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fbfaf6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171916" media="(prefers-color-scheme: dark)" />
+    <title>MILCHCHAN.COM NOTE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
+    <style media="screen">
+:root {
+  color-scheme: light;
+  --background-color: var(--paper);
+  --paper: #fbfaf6;
+  --paper-glass: rgba(251, 250, 246, 0.84);
+  --ink: #2c2f2a;
+  --muted: #85867e;
+  --faint: #aaa99f;
+  --line: #e7e4db;
+  --accent: #00e7ff;
+  --accent-soft: #e5fcff;
+  --warm: #a8794f;
+  --notebook-sheen: rgba(0, 231, 255, 0.018);
+  --control-ink: #666960;
+  --control-hover: rgba(70, 78, 70, 0.07);
+  --focus-ring: rgba(0, 231, 255, 0.3);
+  --control-border: rgba(220, 218, 208, 0.86);
+  --control-shadow: rgba(53, 56, 49, 0.08);
+  --tooltip-ink: #f7f6f1;
+  --tooltip-bg: #383b36;
+  --editor-ink: #34372f;
+  --placeholder: #b8b7ae;
+  --error: #a65c50;
+  --preview-ink: #393c35;
+  --heading-ink: #262a24;
+  --strong-ink: #262823;
+  --em-ink: #565950;
+  --link-line: rgba(0, 231, 255, 0.52);
+  --quote-ink: #60635a;
+  --quote-border: #83cbd2;
+  --code-border: #e4e0d7;
+  --code-bg: #f2f0e9;
+  --pre-border: #dfddd4;
+  --pre-bg: #f1f0e9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #171916;
+    --paper-glass: rgba(31, 34, 30, 0.78);
+    --ink: #e5e5dc;
+    --muted: #999c92;
+    --faint: #75786f;
+    --line: #343831;
+    --accent: #00e7ff;
+    --accent-soft: #123e43;
+    --warm: #c29a73;
+    --notebook-sheen: rgba(0, 231, 255, 0.025);
+    --control-ink: #a8aca2;
+    --control-hover: rgba(226, 235, 227, 0.08);
+    --focus-ring: rgba(0, 231, 255, 0.3);
+    --control-border: rgba(91, 98, 89, 0.78);
+    --control-shadow: rgba(0, 0, 0, 0.28);
+    --tooltip-ink: #191b18;
+    --tooltip-bg: #eff0e9;
+    --editor-ink: #e3e5dc;
+    --placeholder: #666b62;
+    --error: #d98a7c;
+    --preview-ink: #d8dad2;
+    --heading-ink: #f0f1ea;
+    --strong-ink: #f1f2eb;
+    --em-ink: #bdc0b6;
+    --link-line: rgba(0, 231, 255, 0.52);
+    --quote-ink: #b6bbb0;
+    --quote-border: #168e99;
+    --code-border: #3a3e37;
+    --code-bg: #20231f;
+    --pre-border: #3b3f38;
+    --pre-bg: #1d201c;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "DM Sans", "Noto Sans JP", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+html,
+body,
+.notebook {
+  transition: color 500ms ease, background-color 500ms ease;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.notebook {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0,
+    var(--notebook-sheen) 50%,
+    transparent 100%
+  );
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  animation: overlay-fade 500ms ease-out both;
+  backface-visibility: hidden;
+  box-sizing: border-box;
+  transition: opacity 500ms ease, padding 500ms ease;
+}
+
+.overlay > .wrap {
+  position: absolute;
+  inset: 0 0 0 48px;
+  width: auto;
+  height: auto;
+  box-sizing: border-box;
+  transition: inset 500ms ease, padding 500ms ease;
+}
+
+.sidebar {
+  position: fixed;
+  z-index: 11;
+  top: 16px;
+  left: 0;
+  width: 48px;
+  height: calc(100% - 32px);
+  background: transparent;
+  transition:
+    top 500ms ease,
+    left 500ms ease,
+    height 500ms ease,
+    opacity 500ms ease;
+  user-select: none;
+}
+
+.sidebar > .level {
+  display: flex;
+  width: 48px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sidebar > .level > .level-item > .level {
+  display: flex;
+  margin: -16px;
+  padding: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sidebar > .level > .level-item > .level > .level-item {
+  display: flex;
+  margin: 0;
+  padding: 16px;
+}
+
+.sidebar .level > .level-item {
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar .rotation-outer {
+  display: inline-flex;
+}
+
+.sidebar .rotation-inner {
+  height: 0;
+  padding: 50% 0;
+}
+
+.sidebar .rotate {
+  display: block;
+  margin-top: -50%;
+  white-space: nowrap;
+  transform: rotate(-90deg) translate(0, 100%) rotate(180deg);
+  transform-origin: top left;
+}
+
+.sidebar .button {
+  display: flex;
+  width: fit-content;
+  height: 48px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  line-height: 18px;
+  text-decoration: none;
+  transition: color 500ms ease, opacity 500ms ease;
+}
+
+.milchchan-mark {
+  outline: 0;
+}
+
+.milchchan-mark:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.milchchan-mark-clip {
+  position: relative;
+  display: flex;
+  height: 18px;
+  overflow: hidden;
+}
+
+.milchchan-mark-scroll {
+  position: relative;
+  display: flex;
+  margin: 0 -4px;
+  align-items: center;
+  transform: translate3d(0, 0, 0);
+  transition: transform 500ms ease-in;
+}
+
+.milchchan-mark-scroll > span {
+  display: flex;
+  height: 18px;
+  margin: 0 4px;
+  align-items: center;
+  font-family: "Barlow", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.milchchan-mark-scroll > span:last-child {
+  position: absolute;
+  left: 100%;
+}
+
+.milchchan-mark:hover .milchchan-mark-scroll,
+.milchchan-mark:focus-visible .milchchan-mark-scroll {
+  transform: translate3d(-100%, 0, 0);
+  transition-timing-function: ease-out;
+}
+
+@keyframes overlay-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.icon-controls {
+  position: absolute;
+  z-index: 10;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: top 500ms ease, right 500ms ease;
+}
+
+.icon-button {
+  position: relative;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  place-items: center;
+  color: var(--control-ink);
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  cursor: pointer;
+  transition: color 500ms ease, background 500ms ease, transform 500ms ease, opacity 500ms ease;
+}
+
+.icon-button:not(:disabled):hover {
+  color: var(--ink);
+  background: var(--control-hover);
+}
+
+.icon-button:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+.icon-button:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+textarea:focus-visible,
+.preview-pane:focus-visible {
+  outline: 0;
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.icon-button.is-busy {
+  opacity: 1;
+}
+
+.tts-control,
+.mode-control {
+  border: 1px solid var(--control-border);
+  background: var(--paper-glass);
+  box-shadow: 0 8px 28px var(--control-shadow);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  transition: background-color 500ms ease, border-color 500ms ease, box-shadow 500ms ease;
+}
+
+.tts-control {
+  display: grid;
+  padding: 4px;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.tts-control .icon-button {
+  border-radius: 50%;
+}
+
+.mode-control {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+}
+
+.mode-button {
+  border-radius: 50%;
+}
+
+.mode-button[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+.mode-button[aria-pressed="true"]:not(:disabled):hover {
+  color: var(--accent);
+}
+
+.mode-button::before {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  content: "";
+  opacity: 0;
+  transform: translateX(-50%) scale(0.5);
+  transition: opacity 500ms ease, transform 500ms ease, background-color 500ms ease;
+}
+
+.mode-button[aria-pressed="true"]::before {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.icon-button::after {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: max-content;
+  max-width: 180px;
+  padding: 7px 9px;
+  color: var(--tooltip-ink);
+  border-radius: 7px;
+  background: var(--tooltip-bg);
+  content: attr(data-tooltip);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-3px);
+  transition:
+    color 500ms ease,
+    background-color 500ms ease,
+    opacity 500ms ease,
+    transform 500ms ease;
+}
+
+.icon-button:hover::after,
+.icon-button:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.icon-swap {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+}
+
+.icon-layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.76);
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+
+#tts-button:not(.is-generating):not(.is-playing) .tts-play-layer,
+#tts-button.is-generating .tts-reload-layer,
+#tts-button.is-playing .tts-pause-layer,
+.document-state:not(.is-saving):not(.has-error) .status-check-layer,
+.document-state.is-saving:not(.has-error) .status-reload-layer,
+.document-state.has-error .status-error-layer {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.icon-layer .fa-solid {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tts-play-layer .fa-play {
+  margin-left: 1px;
+}
+
+.mode-button .fa-solid {
+  font-size: 16px;
+}
+
+.tts-reload-layer .fa-spin,
+.status-reload-layer .fa-spin {
+  --fa-animation-duration: 1000ms;
+  animation-play-state: paused;
+}
+
+#tts-button.is-generating .tts-reload-layer .fa-spin,
+.document-state.is-saving .status-reload-layer .fa-spin {
+  animation-play-state: running;
+}
+
+.editor-pane,
+.preview-pane {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms ease;
+  will-change: opacity;
+}
+
+.editor-pane {
+  z-index: 1;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.preview-pane {
+  z-index: 2;
+}
+
+.is-previewing .editor-pane {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.is-previewing .preview-pane {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  resize: none;
+  padding: 0;
+  color: var(--editor-ink);
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(15px, 1.15vw, 17px);
+  font-weight: 400;
+  letter-spacing: 0.018em;
+  line-height: 1.7;
+  caret-color: var(--accent);
+  transition: color 500ms ease, padding 500ms ease;
+}
+
+textarea::placeholder {
+  color: var(--placeholder);
+  transition: color 500ms ease;
+}
+
+.preview-pane {
+  min-height: 100%;
+  padding: 0;
+  overflow-y: auto;
+  transition: opacity 500ms ease, padding 500ms ease;
+}
+
+.status-bar {
+  position: absolute;
+  z-index: 8;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  transition:
+    right 500ms ease,
+    bottom 500ms ease,
+    left 500ms ease,
+    padding 500ms ease,
+    color 500ms ease,
+    opacity 500ms ease;
+}
+
+.document-state {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  transition: color 500ms ease;
+}
+
+.document-state.has-error {
+  color: var(--error);
+}
+
+.status-icon {
+  width: 17px;
+  height: 17px;
+}
+
+#word-count {
+  font-family: "Barlow", sans-serif;
+}
+
+.markdown-body {
+  color: var(--preview-ink);
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.95;
+  overflow-wrap: anywhere;
+  transition: color 500ms ease;
+}
+
+.markdown-body > :first-child {
+  margin-top: 0;
+}
+
+.markdown-body > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  color: var(--heading-ink);
+  font-family: "Noto Serif JP", serif;
+  font-weight: 600;
+  line-height: 1.48;
+  transition: color 500ms ease, border-color 500ms ease;
+}
+
+.markdown-body h1 {
+  margin: 0 0 1.2em;
+  padding-bottom: 0.55em;
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(26px, 3.3vw, 40px);
+  letter-spacing: 0.015em;
+}
+
+.markdown-body h2 {
+  margin: 2.15em 0 0.7em;
+  font-size: clamp(21px, 2.2vw, 27px);
+}
+
+.markdown-body h3 {
+  margin: 1.8em 0 0.55em;
+  font-size: 19px;
+}
+
+.markdown-body h4 {
+  margin: 1.6em 0 0.5em;
+  font-size: 16px;
+}
+
+.markdown-body p {
+  margin: 0 0 1.25em;
+}
+
+.markdown-body strong {
+  color: var(--strong-ink);
+  font-weight: 700;
+  transition: color 500ms ease;
+}
+
+.markdown-body em {
+  color: var(--em-ink);
+  transition: color 500ms ease;
+}
+
+.markdown-body a {
+  color: var(--accent);
+  text-decoration-color: var(--link-line);
+  text-underline-offset: 3px;
+  transition: color 500ms ease, text-decoration-color 500ms ease;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  margin: 0 0 1.35em;
+  padding-left: 1.55em;
+}
+
+.markdown-body li {
+  margin: 0.38em 0;
+  padding-left: 0.22em;
+}
+
+.markdown-body li::marker {
+  color: var(--accent);
+}
+
+.markdown-body .task-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.markdown-body .task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding-left: 0;
+}
+
+.markdown-body input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  margin: 7px 0 0;
+  accent-color: var(--accent);
+}
+
+.markdown-body blockquote {
+  margin: 1.7em 0;
+  padding: 0.2em 0 0.2em 1.25em;
+  color: var(--quote-ink);
+  border-left: 3px solid var(--quote-border);
+  font-family: "Noto Serif JP", serif;
+  transition: color 500ms ease, border-color 500ms ease;
+}
+
+.markdown-body blockquote p {
+  margin: 0.5em 0;
+}
+
+.markdown-body code {
+  padding: 0.15em 0.42em;
+  color: inherit;
+  border: 1px solid var(--code-border);
+  border-radius: 5px;
+  background-color: var(--code-bg);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.88em;
+  transition: background-color 500ms ease, border-color 500ms ease;
+}
+
+.markdown-body pre {
+  overflow-x: auto;
+  margin: 1.6em 0;
+  padding: 20px 22px;
+  border: 1px solid var(--pre-border);
+  border-radius: 10px;
+  background: var(--pre-bg);
+  line-height: 1.65;
+  transition: background-color 500ms ease, border-color 500ms ease;
+}
+
+.markdown-body pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+}
+
+.markdown-body hr {
+  height: 1px;
+  margin: 2.5em 0;
+  border: 0;
+  background: var(--line);
+  transition: background-color 500ms ease;
+}
+
+.empty-preview {
+  display: grid;
+  min-height: calc(100vh - 160px);
+  min-height: calc(100dvh - 160px);
+  place-items: center;
+  color: var(--faint);
+  font-size: 14px;
+  text-align: center;
+  transition: color 500ms ease;
+}
+
+@media screen and (max-width: 768px), screen and (max-height: 768px) {
+  textarea,
+  .preview-pane {
+    padding: 16px 16px 16px 0;
+  }
+
+  .status-bar {
+    padding: 0 16px 16px 0;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .editor-pane,
+  .preview-pane {
+    max-width: 769px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+@media screen and (min-width: 769px) and (min-height: 769px) {
+  html {
+    background: var(--background-color);
+  }
+
+  .notebook {
+    border-radius: 4px;
+    transition:
+      color 500ms ease,
+      background-color 500ms ease,
+      border-radius 500ms ease;
+  }
+
+  .overlay {
+    padding: 32px;
+    -webkit-mask-image:
+      linear-gradient(
+        to bottom,
+        transparent,
+        transparent 16px,
+        black 32px,
+        black calc(100% - 32px),
+        transparent calc(100% - 16px),
+        transparent
+      ),
+      linear-gradient(black, black);
+    mask-image:
+      linear-gradient(
+        to bottom,
+        transparent,
+        transparent 16px,
+        black 32px,
+        black calc(100% - 32px),
+        transparent calc(100% - 16px),
+        transparent
+      ),
+      linear-gradient(black, black);
+    -webkit-mask-position: 0 0, 100% 0;
+    mask-position: 0 0, 100% 0;
+    -webkit-mask-repeat: no-repeat, no-repeat;
+    mask-repeat: no-repeat, no-repeat;
+    -webkit-mask-size: calc(100% - 32px) 100%, 32px 100%;
+    mask-size: calc(100% - 32px) 100%, 32px 100%;
+  }
+
+  .overlay > .wrap {
+    inset: 32px 32px 32px 64px;
+    padding: 0 0 32px;
+  }
+
+  .icon-controls {
+    top: 0;
+    right: 0;
+  }
+
+  .sidebar {
+    top: 32px;
+    left: 16px;
+    height: calc(100% - 64px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+    </style>
+  </head>
+  <body>
+    <main class="notebook" aria-label="マークダウンノート">
+      <div class="overlay">
+        <aside class="sidebar" aria-label="サイトリンク">
+          <div class="level">
+            <div class="level-item">
+              <div class="level">
+                <div class="level-item">
+                  <div class="rotation-outer">
+                    <div class="rotation-inner">
+                      <div class="rotate">
+                        <a
+                          class="button milchchan-mark"
+                          href="https://milchchan.com/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="milchchan.comを開く"
+                        >
+                          <span class="milchchan-mark-clip" aria-hidden="true">
+                            <span class="milchchan-mark-scroll">
+                              <span>milchchan.com</span>
+                              <span>milchchan.com</span>
+                            </span>
+                          </span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <div class="wrap">
+
+      <nav class="icon-controls" aria-label="ノートの操作">
+        <div class="tts-control">
+          <button
+            class="icon-button"
+            id="tts-button"
+            type="button"
+            disabled
+            aria-label="読み上げ（TTS API接続後に利用できます）"
+            data-tooltip="読み上げ"
+          >
+            <span class="icon-swap tts-icon" aria-hidden="true">
+              <span class="icon-layer tts-play-layer"><i class="fa-solid fa-play"></i></span>
+              <span class="icon-layer tts-reload-layer"><i class="fa-solid fa-rotate fa-spin"></i></span>
+              <span class="icon-layer tts-pause-layer"><i class="fa-solid fa-pause"></i></span>
+            </span>
+          </button>
+        </div>
+        <div class="mode-control" role="group" aria-label="表示モード">
+          <button
+            class="icon-button mode-button"
+            id="edit-button"
+            type="button"
+            aria-label="編集"
+            aria-pressed="true"
+            data-tooltip="編集"
+          >
+            <i class="fa-solid fa-pen" aria-hidden="true"></i>
+          </button>
+          <button
+            class="icon-button mode-button"
+            id="preview-button"
+            type="button"
+            aria-label="プレビュー"
+            aria-pressed="false"
+            data-tooltip="プレビュー"
+          >
+            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+      </nav>
+
+      <div class="editor-pane" id="editor-pane" aria-hidden="false">
+        <label class="sr-only" for="markdown-input">マークダウンを入力</label>
+        <textarea
+          id="markdown-input"
+          name="markdown"
+          spellcheck="true"
+          autocomplete="off"
+          placeholder="# タイトル&#10;&#10;ここから書き始めます…"
+        ></textarea>
+      </div>
+
+      <article
+        class="preview-pane markdown-body"
+        id="preview-pane"
+        tabindex="-1"
+        aria-hidden="true"
+        inert
+      ></article>
+
+      <footer class="status-bar">
+        <span class="document-state" aria-live="polite">
+          <span class="icon-swap status-icon" aria-hidden="true">
+            <span class="icon-layer status-check-layer"><i class="fa-solid fa-check"></i></span>
+            <span class="icon-layer status-reload-layer"><i class="fa-solid fa-rotate fa-spin"></i></span>
+            <span class="icon-layer status-error-layer"><i class="fa-solid fa-exclamation"></i></span>
+          </span>
+          <span class="sr-only" id="save-status">この端末に保存済み</span>
+        </span>
+        <span id="word-count">0</span>
+      </footer>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+const STORAGE_KEY = "note";
+const TTS_ENDPOINT = "https://milchchan.com/api/generate";
+const TTS_LANGUAGE = "ja";
+const TTS_TEMPERATURE = 1.0;
+const REFERENCE_VOICE_URLS = {
+  merku: new URL("./sounds/merku.ja.wav", import.meta.url),
+  milch: new URL("./sounds/milch.ja.wav", import.meta.url),
+};
+
+const sampleNote = `# 今日のノート
+
+ここは、考えたことを気軽に残すための場所です。
+**マークダウン**で書いて、プレビューで読みやすく整えられます。
+
+## 今日やること
+
+- [x] アイデアを書き出す
+- [ ] 優先順位を決める
+- [ ] 明日の自分にメモを残す
+
+> 完璧な文章より、まず言葉にしてみる。
+
+ショートカットは \`⌘ + Enter\`。もう一度押すと編集に戻ります。`;
+
+const input = document.querySelector("#markdown-input");
+const editorPane = document.querySelector("#editor-pane");
+const previewPane = document.querySelector("#preview-pane");
+const editButton = document.querySelector("#edit-button");
+const previewButton = document.querySelector("#preview-button");
+const saveStatus = document.querySelector("#save-status");
+const documentState = document.querySelector(".document-state");
+const wordCount = document.querySelector("#word-count");
+const ttsButton = document.querySelector("#tts-button");
+
+let previewing = false;
+let saveTimer;
+let ttsHandler = null;
+let ttsState = "idle";
+let ttsProgress = "";
+let ttsRunId = 0;
+let ttsAbortController = null;
+let ttsStatusResetTimer;
+let activeAudioContext = null;
+let activeAudioSource = null;
+const referenceVoiceCache = new Map();
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function renderInline(source) {
+  const codeTokens = [];
+  let text = source.replace(/`([^`]+)`/g, (_, code) => {
+    const token = `\uE000${codeTokens.length}\uE001`;
+    codeTokens.push(`<code>${escapeHtml(code)}</code>`);
+    return token;
+  });
+
+  text = escapeHtml(text);
+  text = text.replace(/\[([^\]]+)]\(([^)\s]+)\)/g, (_, label, url) => {
+    const normalizedUrl = url.toLowerCase();
+    const isSafe =
+      normalizedUrl.startsWith("https://") ||
+      normalizedUrl.startsWith("http://") ||
+      normalizedUrl.startsWith("mailto:");
+    return isSafe
+      ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`
+      : label;
+  });
+  text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  text = text.replace(/__([^_]+)__/g, "<strong>$1</strong>");
+  text = text.replace(/~~([^~]+)~~/g, "<del>$1</del>");
+  text = text.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+  text = text.replace(/(^|[^_])_([^_\n]+)_/g, "$1<em>$2</em>");
+  text = text.replace(/\uE000(\d+)\uE001/g, (_, index) => codeTokens[Number(index)]);
+
+  return text;
+}
+
+function isBlockStart(line) {
+  return (
+    /^#{1,4}\s/.test(line) ||
+    /^>\s?/.test(line) ||
+    /^[-*+]\s+/.test(line) ||
+    /^\d+\.\s+/.test(line) ||
+    /^```/.test(line) ||
+    /^\s*(---+|___+|\*\*\*+)\s*$/.test(line)
+  );
+}
+
+function renderMarkdown(markdown) {
+  const lines = markdown.replace(/\r\n?/g, "\n").split("\n");
+  const html = [];
+
+  for (let index = 0; index < lines.length; ) {
+    const line = lines[index];
+
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+
+    const fence = line.match(/^```\s*([\w-]*)\s*$/);
+    if (fence) {
+      const codeLines = [];
+      index += 1;
+      while (index < lines.length && !/^```\s*$/.test(lines[index])) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) index += 1;
+      const language = fence[1] ? ` class="language-${escapeHtml(fence[1])}"` : "";
+      html.push(`<pre><code${language}>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,4})\s+(.+)$/);
+    if (heading) {
+      const level = heading[1].length;
+      html.push(`<h${level}>${renderInline(heading[2])}</h${level}>`);
+      index += 1;
+      continue;
+    }
+
+    if (/^\s*(---+|___+|\*\*\*+)\s*$/.test(line)) {
+      html.push("<hr>");
+      index += 1;
+      continue;
+    }
+
+    if (/^>\s?/.test(line)) {
+      const quoteLines = [];
+      while (index < lines.length && /^>\s?/.test(lines[index])) {
+        quoteLines.push(lines[index].replace(/^>\s?/, ""));
+        index += 1;
+      }
+      html.push(`<blockquote><p>${quoteLines.map(renderInline).join("<br>")}</p></blockquote>`);
+      continue;
+    }
+
+    if (/^[-*+]\s+/.test(line)) {
+      const items = [];
+      let hasTasks = false;
+      while (index < lines.length && /^[-*+]\s+/.test(lines[index])) {
+        const item = lines[index].replace(/^[-*+]\s+/, "");
+        const task = item.match(/^\[([ xX])]\s*(.*)$/);
+        if (task) {
+          hasTasks = true;
+          const checked = task[1].toLowerCase() === "x" ? " checked" : "";
+          items.push(
+            `<li class="task-item"><input type="checkbox" disabled${checked}><span>${renderInline(task[2])}</span></li>`,
+          );
+        } else {
+          items.push(`<li>${renderInline(item)}</li>`);
+        }
+        index += 1;
+      }
+      html.push(`<ul${hasTasks ? ' class="task-list"' : ""}>${items.join("")}</ul>`);
+      continue;
+    }
+
+    if (/^\d+\.\s+/.test(line)) {
+      const items = [];
+      while (index < lines.length && /^\d+\.\s+/.test(lines[index])) {
+        items.push(`<li>${renderInline(lines[index].replace(/^\d+\.\s+/, ""))}</li>`);
+        index += 1;
+      }
+      html.push(`<ol>${items.join("")}</ol>`);
+      continue;
+    }
+
+    const paragraph = [line];
+    index += 1;
+    while (index < lines.length && lines[index].trim() && !isBlockStart(lines[index])) {
+      paragraph.push(lines[index]);
+      index += 1;
+    }
+    html.push(`<p>${paragraph.map(renderInline).join("<br>")}</p>`);
+  }
+
+  return html.join("\n");
+}
+
+function elementToSpeechText(element) {
+  if (element.matches("ul, ol")) {
+    return Array.from(element.querySelectorAll(":scope > li"))
+      .map((item) => elementToSpeechText(item))
+      .filter(Boolean)
+      .join("。");
+  }
+
+  const clone = element.cloneNode(true);
+  clone.querySelectorAll("br").forEach((lineBreak) => lineBreak.replaceWith("\n"));
+
+  return clone.textContent
+    .replace(/\s*\n+\s*/g, "。")
+    .replace(/。{2,}/g, "。")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+}
+
+function markdownToSpeechSegments(markdown) {
+  const container = document.createElement("div");
+  container.innerHTML = renderMarkdown(markdown);
+
+  return Array.from(container.children)
+    .map((element) => ({
+      text: elementToSpeechText(element),
+      voice: element.matches("blockquote") ? "milch" : "merku",
+    }))
+    .filter((segment) => segment.text);
+}
+
+async function getReferenceVoice(voice) {
+  if (!referenceVoiceCache.has(voice)) {
+    const request = fetch(REFERENCE_VOICE_URLS[voice]).then(async (response) => {
+      if (!response.ok) {
+        throw new Error("参照音声を読み込めませんでした");
+      }
+
+      return response.blob();
+    });
+
+    referenceVoiceCache.set(voice, request);
+  }
+
+  try {
+    return await referenceVoiceCache.get(voice);
+  } catch (error) {
+    referenceVoiceCache.delete(voice);
+    throw error;
+  }
+}
+
+function abortError() {
+  return new DOMException("Aborted", "AbortError");
+}
+
+function throwIfAborted(signal) {
+  if (signal.aborted) throw abortError();
+}
+
+async function synthesizeSegment(segment, signal) {
+  const formData = new FormData();
+  formData.append("file", await getReferenceVoice(segment.voice), "prompt.wav");
+  throwIfAborted(signal);
+  formData.append(
+    "data",
+    JSON.stringify({
+      input: segment.text,
+      language: TTS_LANGUAGE,
+      temperature: TTS_TEMPERATURE,
+    }),
+  );
+
+  const response = await fetch(TTS_ENDPOINT, {
+    mode: "cors",
+    method: "POST",
+    body: formData,
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`音声生成に失敗しました (${response.status})`);
+  }
+
+  return activeAudioContext.decodeAudioData(await response.arrayBuffer());
+}
+
+function beginSegmentSynthesis(segment, signal) {
+  const request = { settled: false, promise: null };
+  request.promise = synthesizeSegment(segment, signal)
+    .then((buffer) => ({ buffer, error: null }))
+    .catch((error) => ({ buffer: null, error }))
+    .finally(() => {
+      request.settled = true;
+    });
+  return request;
+}
+
+async function resolveSegmentSynthesis(request) {
+  const result = await request.promise;
+  if (result.error) throw result.error;
+  return result.buffer;
+}
+
+async function playAudioBuffer(audioBuffer, signal) {
+  const source = activeAudioContext.createBufferSource();
+  activeAudioSource = source;
+  source.buffer = audioBuffer;
+  source.connect(activeAudioContext.destination);
+
+  try {
+    await new Promise((resolve, reject) => {
+      const handleEnded = () => {
+        signal.removeEventListener("abort", handleAbort);
+        resolve();
+      };
+      const handleAbort = () => {
+        source.removeEventListener("ended", handleEnded);
+        try {
+          source.stop();
+        } catch {
+          // すでに停止済みの場合は何もしません。
+        }
+        reject(abortError());
+      };
+
+      source.addEventListener("ended", handleEnded, { once: true });
+      signal.addEventListener("abort", handleAbort, { once: true });
+      source.start(0);
+    });
+  } finally {
+    source.disconnect();
+    if (activeAudioSource === source) activeAudioSource = null;
+  }
+}
+
+function setTtsState(nextState, progress = ttsProgress) {
+  ttsState = nextState;
+  ttsProgress = progress;
+  ttsButton.classList.toggle("is-generating", nextState === "generating");
+  ttsButton.classList.toggle("is-playing", nextState === "playing");
+  ttsButton.classList.toggle("is-busy", nextState === "generating");
+  ttsButton.disabled = !ttsHandler || nextState === "generating";
+
+  if (nextState === "playing") {
+    ttsButton.setAttribute("aria-label", "一時停止");
+    ttsButton.dataset.tooltip = progress ? `一時停止 ${progress}` : "一時停止";
+  } else if (nextState === "paused") {
+    ttsButton.setAttribute("aria-label", "再開");
+    ttsButton.dataset.tooltip = progress ? `再開 ${progress}` : "再開";
+  } else if (nextState === "generating") {
+    ttsButton.setAttribute("aria-label", "音声を生成中");
+    ttsButton.dataset.tooltip = progress ? `音声を生成中 ${progress}` : "音声を生成中…";
+  } else {
+    ttsButton.setAttribute("aria-label", "読み上げ");
+    ttsButton.dataset.tooltip = "読み上げ";
+  }
+}
+
+async function synthesize(segments, signal) {
+  if (segments.length === 0) {
+    throw new Error("読み上げるテキストがありません");
+  }
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContextClass) {
+    throw new Error("このブラウザは音声再生に対応していません");
+  }
+
+  if (activeAudioSource) {
+    activeAudioSource.stop();
+    activeAudioSource.disconnect();
+    activeAudioSource = null;
+  }
+
+  if (activeAudioContext && activeAudioContext.state !== "closed") {
+    await activeAudioContext.close();
+  }
+
+  activeAudioContext = new AudioContextClass();
+  await activeAudioContext.resume();
+
+  try {
+    const firstProgress = `1/${segments.length}`;
+    setTtsState("generating", firstProgress);
+    saveStatus.textContent = `音声を生成中… ${firstProgress}`;
+    let audioBuffer = await resolveSegmentSynthesis(beginSegmentSynthesis(segments[0], signal));
+
+    for (let index = 0; index < segments.length; index += 1) {
+      throwIfAborted(signal);
+      const progress = `${index + 1}/${segments.length}`;
+      const nextIndex = index + 1;
+      const nextRequest =
+        nextIndex < segments.length
+          ? beginSegmentSynthesis(segments[nextIndex], signal)
+          : null;
+
+      setTtsState("playing", progress);
+      saveStatus.textContent = `読み上げ中… ${progress}`;
+      await playAudioBuffer(audioBuffer, signal);
+
+      if (nextRequest) {
+        const nextProgress = `${nextIndex + 1}/${segments.length}`;
+
+        if (!nextRequest.settled) {
+          setTtsState("generating", nextProgress);
+          saveStatus.textContent = `音声を生成中… ${nextProgress}`;
+        }
+
+        audioBuffer = await resolveSegmentSynthesis(nextRequest);
+      }
+    }
+  } finally {
+    if (activeAudioSource) {
+      activeAudioSource.disconnect();
+      activeAudioSource = null;
+    }
+
+    if (activeAudioContext && activeAudioContext.state !== "closed") {
+      await activeAudioContext.close();
+    }
+
+    activeAudioContext = null;
+  }
+}
+
+function cancelTtsForEdit() {
+  if (ttsState === "idle") return;
+
+  ttsRunId += 1;
+  ttsAbortController?.abort();
+  ttsAbortController = null;
+  window.clearTimeout(ttsStatusResetTimer);
+
+  if (activeAudioSource) {
+    try {
+      activeAudioSource.stop();
+    } catch {
+      // すでに停止済みの場合は何もしません。
+    }
+  }
+
+  if (activeAudioContext && activeAudioContext.state !== "closed") {
+    activeAudioContext.close();
+  }
+
+  activeAudioContext = null;
+  documentState.classList.remove("is-speaking", "has-error");
+  setTtsState("idle", "");
+}
+
+function updateCount() {
+  const count = Array.from(input.value).length;
+  wordCount.textContent = String(count);
+}
+
+function saveNote() {
+  try {
+    localStorage.setItem(STORAGE_KEY, input.value);
+    saveStatus.textContent = "この端末に保存済み";
+    documentState.classList.remove("is-saving");
+    documentState.classList.remove("has-error");
+  } catch {
+    saveStatus.textContent = "保存できませんでした";
+    documentState.classList.remove("is-saving");
+    documentState.classList.add("has-error");
+  }
+}
+
+function saveNoteSilently() {
+  try {
+    localStorage.setItem(STORAGE_KEY, input.value);
+  } catch {
+    // 保存不可の表示は通常の自動保存処理に任せます。
+  }
+}
+
+function queueSave() {
+  window.clearTimeout(saveTimer);
+  saveStatus.textContent = "保存中…";
+  documentState.classList.remove("has-error");
+  documentState.classList.add("is-saving");
+  saveTimer = window.setTimeout(saveNote, 500);
+}
+
+function setPreview(nextState) {
+  previewing = nextState;
+
+  if (previewing) {
+    const markdown = input.value.trim();
+    previewPane.innerHTML = markdown
+      ? renderMarkdown(markdown)
+      : '<div class="empty-preview"><p>まだ何も書かれていません。<br>編集に戻って、最初の一行を書いてみましょう。</p></div>';
+  }
+
+  document.body.classList.toggle("is-previewing", previewing);
+  editorPane.setAttribute("aria-hidden", String(previewing));
+  previewPane.setAttribute("aria-hidden", String(!previewing));
+  editorPane.inert = previewing;
+  previewPane.inert = !previewing;
+  editButton.setAttribute("aria-pressed", String(!previewing));
+  previewButton.setAttribute("aria-pressed", String(previewing));
+
+  window.requestAnimationFrame(() => {
+    (previewing ? previewPane : input).focus({ preventScroll: true });
+  });
+}
+
+input.addEventListener("input", () => {
+  cancelTtsForEdit();
+  updateCount();
+  queueSave();
+});
+
+input.addEventListener("keydown", (event) => {
+  if (event.key === "Tab") {
+    event.preventDefault();
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    input.setRangeText("  ", start, end, "end");
+    input.dispatchEvent(new Event("input"));
+  }
+});
+
+editButton.addEventListener("click", () => setPreview(false));
+previewButton.addEventListener("click", () => setPreview(true));
+
+document.addEventListener("keydown", (event) => {
+  if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+    event.preventDefault();
+    setPreview(!previewing);
+  }
+  if (event.key === "Escape" && previewing) {
+    setPreview(false);
+  }
+});
+
+window.addEventListener("beforeunload", saveNoteSilently);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") saveNoteSilently();
+});
+
+async function runTtsFromStart() {
+  if (!ttsHandler) return;
+  const runId = ++ttsRunId;
+  const abortController = new AbortController();
+  let didFail = false;
+
+  ttsAbortController = abortController;
+  window.clearTimeout(ttsStatusResetTimer);
+  setTtsState("generating", "");
+  documentState.classList.add("is-speaking");
+  saveStatus.textContent = "音声を生成中…";
+
+  try {
+    const segments = markdownToSpeechSegments(input.value);
+    await ttsHandler({
+      markdown: input.value,
+      text: segments.map((segment) => segment.text).join("\n"),
+      segments,
+      signal: abortController.signal,
+    });
+  } catch (error) {
+    if (error.name === "AbortError" || runId !== ttsRunId) return;
+    didFail = true;
+    console.error(error);
+    documentState.classList.add("has-error");
+    saveStatus.textContent = error.message || "読み上げに失敗しました";
+    ttsButton.dataset.tooltip = "読み上げに失敗しました";
+  } finally {
+    if (runId !== ttsRunId) return;
+
+    ttsAbortController = null;
+    setTtsState("idle", "");
+    documentState.classList.remove("is-speaking");
+
+    if (!didFail) {
+      saveStatus.textContent = "読み上げました";
+      ttsButton.dataset.tooltip = "読み上げ";
+    }
+
+    ttsStatusResetTimer = window.setTimeout(() => {
+      documentState.classList.remove("has-error");
+      saveStatus.textContent = "この端末に保存済み";
+    }, 2600);
+  }
+}
+
+ttsButton.addEventListener("click", async () => {
+  if (!ttsHandler || ttsState === "generating") return;
+
+  if (ttsState === "playing") {
+    await activeAudioContext?.suspend();
+    if (ttsState === "playing") {
+      setTtsState("paused");
+      saveStatus.textContent = `一時停止中… ${ttsProgress}`;
+    }
+    return;
+  }
+
+  if (ttsState === "paused") {
+    await activeAudioContext?.resume();
+    if (ttsState === "paused") {
+      setTtsState("playing");
+      saveStatus.textContent = `読み上げ中… ${ttsProgress}`;
+    }
+    return;
+  }
+
+  await runTtsFromStart();
+});
+
+// 将来のTTS APIは window.notebook.connectTTS(handler) で接続できます。
+window.notebook = {
+  getMarkdown: () => input.value,
+  connectTTS(handler) {
+    if (typeof handler !== "function") return;
+    ttsHandler = handler;
+    setTtsState("idle", "");
+  },
+};
+
+window.notebook.connectTTS(({ segments, signal }) => synthesize(segments, signal));
+
+window.addEventListener("pagehide", () => {
+  ttsAbortController?.abort();
+  if (activeAudioSource) activeAudioSource.stop();
+  if (activeAudioContext && activeAudioContext.state !== "closed") activeAudioContext.close();
+});
+
+let savedNote = null;
+try {
+  savedNote = localStorage.getItem(STORAGE_KEY);
+} catch {
+  saveStatus.textContent = "ローカル保存は利用できません";
+}
+
+input.value = savedNote === null ? sampleNote : savedNote;
+updateCount();
+    </script>
+  </body>
+</html>

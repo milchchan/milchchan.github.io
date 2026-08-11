@@ -22,6 +22,10 @@
             "rewrite": "/music/index.html"
         },
         {
+            "route": "/note",
+            "rewrite": "/note/index.html"
+        },
+        {
             "route": "/radio",
             "rewrite": "/radio/index.html"
         },
