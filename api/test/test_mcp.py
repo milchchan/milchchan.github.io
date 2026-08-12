@@ -255,6 +255,23 @@ class TestMcp(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.get_body())['error']['code'], -32602)
 
+    def test_request_accepts_null_optional_metadata(self):
+        meta = self._meta()
+        meta['progressToken'] = None
+        meta['io.modelcontextprotocol/logLevel'] = None
+
+        response = self._call('tools/call', {
+            'name': 'news',
+            'arguments': {'limit': 1},
+            'requestState': None,
+            '_meta': meta,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.get_body())['result']
+        self.assertEqual(result['resultType'], 'complete')
+        self.assertFalse(result['isError'])
+
     def test_request_requires_protocol_version_header(self):
         headers = self._headers('tools/list')
         del headers['MCP-Protocol-Version']

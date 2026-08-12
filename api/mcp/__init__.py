@@ -88,7 +88,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     progress_token = meta.get('progressToken')
     log_level = meta.get('io.modelcontextprotocol/logLevel')
 
-    if ('progressToken' in meta and (isinstance(progress_token, bool) or not isinstance(progress_token, (str, int, float)))) or ('io.modelcontextprotocol/logLevel' in meta and log_level not in ('debug', 'info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency')):
+    if (progress_token is not None and (isinstance(progress_token, bool) or not isinstance(progress_token, (str, int, float)))) or (log_level is not None and log_level not in ('debug', 'info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency')):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
     client_info = meta.get('io.modelcontextprotocol/clientInfo')
@@ -96,7 +96,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if client_info is not None and (not isinstance(client_info, dict) or not isinstance(client_info.get('name'), str) or not isinstance(client_info.get('version'), str)):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
-    if 'requestState' in params and not isinstance(params['requestState'], str):
+    if params.get('requestState') is not None and not isinstance(params['requestState'], str):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
     request_protocol_version = headers.get('mcp-protocol-version')
