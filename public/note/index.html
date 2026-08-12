@@ -18,23 +18,19 @@
   --paper: #fbfaf6;
   --paper-glass: rgba(251, 250, 246, 0.84);
   --ink: #2c2f2a;
-  --muted: #85867e;
-  --faint: #aaa99f;
+  --muted: #666960;
   --line: #e7e4db;
   --accent: #00e7ff;
   --active: #00e7ff;
-  --accent-soft: #e5fcff;
-  --warm: #ffee00;
   --notebook-sheen: rgba(0, 231, 255, 0.018);
   --control-ink: #666960;
   --control-hover: rgba(70, 78, 70, 0.07);
   --focus-ring: rgba(0, 231, 255, 0.3);
-  --control-border: rgba(220, 218, 208, 0.86);
   --control-shadow: rgba(53, 56, 49, 0.08);
-  --tooltip-ink: #f7f6f1;
-  --tooltip-bg: #383b36;
+  --tooltip-ink: #ffffff;
+  --tooltip-bg: rgb(0 0 0 / 75%);
   --editor-ink: #34372f;
-  --placeholder: #b8b7ae;
+  --placeholder: rgb(52 55 47 / 50%);
   --error: #ffee00;
   --preview-ink: #393c35;
   --heading-ink: #262a24;
@@ -42,7 +38,7 @@
   --em-ink: #565950;
   --link-line: rgba(0, 231, 255, 0.52);
   --quote-ink: #60635a;
-  --quote-border: #00e7ff;
+  --quote-border: #ffc7e5;
   --code-border: #e4e0d7;
   --code-bg: #f2f0e9;
   --pre-border: #dfddd4;
@@ -55,23 +51,19 @@
     --paper: #171916;
     --paper-glass: rgba(31, 34, 30, 0.78);
     --ink: #e5e5dc;
-    --muted: #999c92;
-    --faint: #75786f;
+    --muted: #a8aca2;
     --line: #343831;
     --accent: #00e7ff;
     --active: #00e7ff;
-    --accent-soft: #123e43;
-    --warm: #ffee00;
     --notebook-sheen: rgba(0, 231, 255, 0.025);
     --control-ink: #a8aca2;
     --control-hover: rgba(226, 235, 227, 0.08);
     --focus-ring: rgba(0, 231, 255, 0.3);
-    --control-border: rgba(91, 98, 89, 0.78);
     --control-shadow: rgba(0, 0, 0, 0.28);
-    --tooltip-ink: #191b18;
-    --tooltip-bg: #eff0e9;
+    --tooltip-ink: #000000;
+    --tooltip-bg: rgb(255 255 255 / 75%);
     --editor-ink: #e3e5dc;
-    --placeholder: #666b62;
+    --placeholder: rgb(52 55 47 / 50%);
     --error: #ffee00;
     --preview-ink: #d8dad2;
     --heading-ink: #f0f1ea;
@@ -157,6 +149,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
+  padding: 16px;
   overflow: hidden;
   animation: overlay-fade 500ms ease-out both;
   backface-visibility: hidden;
@@ -164,9 +157,24 @@ button {
   transition: opacity 500ms ease, padding 500ms ease;
 }
 
-.overlay > .wrap {
+.frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--paper);
+  opacity: 1;
+  transition: background-color 500ms ease, opacity 500ms ease;
+}
+
+.frame.is-file-dragging {
+  opacity: 0.5;
+}
+
+.frame > .wrap {
   position: absolute;
-  inset: 0 0 0 48px;
+  inset: 0 0 0 32px;
   width: auto;
   height: auto;
   box-sizing: border-box;
@@ -369,7 +377,7 @@ textarea:focus-visible,
 
 .tts-control,
 .mode-control {
-  border: 1px solid var(--control-border);
+  border: 0;
   background: var(--paper-glass);
   box-shadow: 0 8px 28px var(--control-shadow);
   -webkit-backdrop-filter: blur(16px);
@@ -393,6 +401,25 @@ textarea:focus-visible,
   gap: 2px;
   padding: 4px;
   border-radius: 999px;
+}
+
+.spectral-analyzer {
+  --spectral-dot-radius: 2px;
+  --spectral-bar-count: 8;
+  --spectral-height: 16px;
+  --spectral-gap: 4px;
+  position: absolute;
+  z-index: 9;
+  bottom: 0;
+  left: 50%;
+  display: block;
+  width: calc(
+    var(--spectral-dot-radius) * 2 * var(--spectral-bar-count) +
+      var(--spectral-gap) * (var(--spectral-bar-count) - 1)
+  );
+  height: var(--spectral-height);
+  pointer-events: none;
+  transform: translateX(-50%);
 }
 
 .mode-button {
@@ -428,19 +455,18 @@ textarea:focus-visible,
 
 .icon-button::after {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   right: 0;
   width: max-content;
-  max-width: 180px;
-  padding: 7px 9px;
+  max-width: 160px;
+  padding: 8px 12px;
   color: var(--tooltip-ink);
-  border-radius: 7px;
+  border-radius: 290486px;
   background: var(--tooltip-bg);
   content: attr(data-tooltip);
-  font-size: 10px;
+  font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.025em;
-  line-height: 1.35;
+  line-height: 0.75rem;
   opacity: 0;
   pointer-events: none;
   transform: translateY(-3px);
@@ -475,7 +501,7 @@ textarea:focus-visible,
 }
 
 #tts-button:not(.is-generating):not(.is-playing) .tts-play-layer,
-#tts-button.is-generating .tts-reload-layer,
+#tts-button.is-generating .tts-pause-layer,
 #tts-button.is-playing .tts-pause-layer,
 .document-state:not(.is-saving):not(.has-error) .status-check-layer,
 .document-state.is-saving:not(.has-error) .status-reload-layer,
@@ -503,7 +529,6 @@ textarea:focus-visible,
   animation-play-state: paused;
 }
 
-#tts-button.is-generating .tts-reload-layer .fa-spin,
 .document-state.is-saving .status-reload-layer .fa-spin {
   animation-play-state: running;
 }
@@ -576,17 +601,17 @@ textarea::placeholder {
 .status-bar {
   position: absolute;
   z-index: 8;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  right: 16px;
+  bottom: 16px;
+  left: 48px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   min-height: 48px;
   padding: 0;
   color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 0.03em;
+  font-size: 0.75rem;
+  line-height: 0.75rem;
   pointer-events: none;
   transition:
     right 500ms ease,
@@ -787,40 +812,27 @@ textarea::placeholder {
   color: var(--active);
 }
 
-.empty-preview {
-  display: grid;
-  min-height: calc(100vh - 160px);
-  min-height: calc(100dvh - 160px);
-  place-items: center;
-  color: var(--faint);
-  font-size: 14px;
-  text-align: center;
-  transition: color 500ms ease;
-}
-
-@media screen and (max-width: 768px), screen and (max-height: 768px) {
-  textarea,
-  .preview-pane {
-    padding: 16px 16px 16px 0;
+@media screen and (min-width: 769px) and (min-height: 769px) {
+  html {
+    background: var(--background-color);
   }
 
-  .status-bar {
-    padding: 0 16px 16px 0;
-  }
-}
-
-@media screen and (min-width: 769px) {
   .editor-pane,
   .preview-pane {
     max-width: 769px;
     margin-right: auto;
     margin-left: auto;
   }
-}
 
-@media screen and (min-width: 769px) and (min-height: 769px) {
-  html {
-    background: var(--background-color);
+  .icon-controls {
+    top: 32px;
+    right: 32px;
+  }
+
+  .status-bar {
+    right: 32px;
+    bottom: 32px;
+    left: 64px;
   }
 
   .notebook {
@@ -832,7 +844,7 @@ textarea::placeholder {
   }
 
   .overlay {
-    padding: 32px;
+    padding: 16px;
     -webkit-mask-image:
       linear-gradient(
         to bottom,
@@ -863,14 +875,9 @@ textarea::placeholder {
     mask-size: calc(100% - 32px) 100%, 32px 100%;
   }
 
-  .overlay > .wrap {
-    inset: 32px 32px 32px 64px;
-    padding: 0 0 32px;
-  }
-
-  .icon-controls {
-    top: 0;
-    right: 0;
+  .frame > .wrap {
+    inset: 16px 16px 16px 48px;
+    padding: 0 0 16px;
   }
 
   .sidebar {
@@ -925,8 +932,6 @@ textarea::placeholder {
           </div>
         </aside>
 
-        <div class="wrap">
-
       <nav class="icon-controls" aria-label="ノートの操作">
         <div class="tts-control">
           <button
@@ -968,6 +973,17 @@ textarea::placeholder {
         </div>
       </nav>
 
+        <div class="frame" id="drop-frame">
+          <div class="wrap">
+
+      <canvas
+        class="spectral-analyzer"
+        id="spectral-analyzer"
+        width="60"
+        height="8"
+        aria-hidden="true"
+      ></canvas>
+
       <div class="editor-pane" id="editor-pane" aria-hidden="false">
         <label class="sr-only" for="markdown-input">マークダウンを入力</label>
         <textarea
@@ -975,7 +991,7 @@ textarea::placeholder {
           name="markdown"
           spellcheck="true"
           autocomplete="off"
-          placeholder="# タイトル&#10;&#10;ここから書き始めます…"
+          placeholder="# README&#10;&#10;The quick brown fox jumps over the lazy dog."
         ></textarea>
       </div>
 
@@ -986,6 +1002,9 @@ textarea::placeholder {
         aria-hidden="true"
         inert
       ></article>
+
+          </div>
+        </div>
 
       <footer class="status-bar">
         <span class="document-state" aria-live="polite">
@@ -998,7 +1017,6 @@ textarea::placeholder {
         </span>
         <span id="word-count">0</span>
       </footer>
-        </div>
       </div>
     </main>
 
@@ -1007,6 +1025,45 @@ const STORAGE_KEY = "note";
 const TTS_ENDPOINT = "https://milchchan.com/api/generate";
 const TTS_LANGUAGE = "ja";
 const TTS_TEMPERATURE = 1.0;
+const SPECTRAL_BAR_COUNT = Math.max(
+  1,
+  Number.parseInt(
+    getComputedStyle(document.querySelector("#spectral-analyzer"))
+      .getPropertyValue("--spectral-bar-count"),
+    10,
+  ) || 8,
+);
+const SPECTRAL_ATTACK_SMOOTHING = 0.15;
+const SPECTRAL_DECAY_SMOOTHING = 0.05;
+const SPECTRAL_DISPLAY_RISE_SPEED = 5;
+const SPECTRAL_DISPLAY_FALL_SPEED = 5;
+const SPECTRAL_MIN_FREQUENCY = 80;
+const SPECTRAL_MAX_FREQUENCY = 8000;
+const SPECTRAL_MIN_LOG_FREQUENCY = 20;
+const SPECTRAL_MIN_DECIBELS = -100;
+const SPECTRAL_MAX_DECIBELS = -20;
+const SPECTRAL_LOG_CURVE_STRENGTH = 9;
+const SPECTRAL_LEVEL_GAIN = 0.82;
+const SPECTRAL_LEVEL_HEADROOM = 0.9;
+const SPECTRAL_REST_THRESHOLD = 0.002;
+const SPECTRAL_LOADING_MIN_SCALE = 0.5;
+const SPECTRAL_LOADING_MAX_SCALE = 1;
+const SPECTRAL_LOADING_FADE_OUT_MS = 250;
+const SPECTRAL_LOADING_FADE_IN_MS = 500;
+const SPECTRAL_LOADING_STEP_MS =
+  SPECTRAL_LOADING_FADE_OUT_MS + SPECTRAL_LOADING_FADE_IN_MS;
+const SPECTRAL_LOADING_PULSE_MS =
+  SPECTRAL_LOADING_FADE_OUT_MS + SPECTRAL_LOADING_FADE_IN_MS;
+const SPECTRAL_LOADING_ORDER = [
+  ...Array.from({ length: SPECTRAL_BAR_COUNT }, (_, index) => index),
+  ...Array.from({ length: SPECTRAL_BAR_COUNT - 2 }, (_, index) =>
+    SPECTRAL_BAR_COUNT - 2 - index,
+  ),
+];
+const SPECTRAL_LOADING_CYCLE_MS =
+  SPECTRAL_LOADING_PULSE_MS +
+  SPECTRAL_LOADING_STEP_MS * (SPECTRAL_LOADING_ORDER.length - 1);
+const SPECTRAL_RELEASE_MS = 500;
 const REFERENCE_VOICE_URLS = {
   merku: new URL("./sounds/merku.ja.wav", import.meta.url),
   milch: new URL("./sounds/milch.ja.wav", import.meta.url),
@@ -1036,19 +1093,330 @@ const saveStatus = document.querySelector("#save-status");
 const documentState = document.querySelector(".document-state");
 const wordCount = document.querySelector("#word-count");
 const ttsButton = document.querySelector("#tts-button");
+const dropFrame = document.querySelector("#drop-frame");
+const spectralAnalyzer = document.querySelector("#spectral-analyzer");
+const spectralContext = spectralAnalyzer.getContext("2d");
 
 let previewing = false;
 let saveTimer;
+let fileDragDepth = 0;
 let ttsHandler = null;
 let ttsState = "idle";
 let ttsProgress = "";
 let ttsRunId = 0;
 let ttsAbortController = null;
 let ttsStatusResetTimer;
+let ttsPlaybackRequested = true;
+let ttsPlaybackResume = null;
+let ttsIsGeneratingAudio = false;
 let activeAudioContext = null;
 let activeAudioSource = null;
+let activeAudioAnalyser = null;
+let spectralFrequencyData = null;
+let spectralBarDescriptors = [];
+let spectralEnergy = 0;
+let spectralSmoothedLevels = new Array(SPECTRAL_BAR_COUNT).fill(0);
+let spectralDisplayedLevels = new Array(SPECTRAL_BAR_COUNT).fill(0);
+let spectralVisualizerScales = new Array(SPECTRAL_BAR_COUNT).fill(1);
+let spectralReleaseFromScales = new Array(SPECTRAL_BAR_COUNT).fill(1);
+let spectralLoadingStartedAt = 0;
+let spectralReleaseStartedAt = 0;
+let spectralAnimationFrame = null;
+let spectralLastTimestamp = null;
 let activeTtsSegmentIndex = null;
 const referenceVoiceCache = new Map();
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function smoothTowards(current, target, smoothing, deltaTime) {
+  const frameScale = Math.max(0, deltaTime * 60);
+  const adjusted = 1 - ((1 - smoothing) ** frameScale);
+  return current + (target - current) * adjusted;
+}
+
+function centerWeightedValue(index, count) {
+  if (count <= 1) return 1;
+  return 1 - Math.abs(index - (count - 1) * 0.5) / (count * 0.5);
+}
+
+function decibelsToLevel(decibels) {
+  const normalized = (decibels - SPECTRAL_MIN_DECIBELS) /
+    (SPECTRAL_MAX_DECIBELS - SPECTRAL_MIN_DECIBELS);
+  const clamped = clamp(normalized, 0, 1);
+  return Math.log1p(clamped * SPECTRAL_LOG_CURVE_STRENGTH) /
+    Math.log1p(SPECTRAL_LOG_CURVE_STRENGTH);
+}
+
+function buildLogBarDescriptors(audioContext, analyser) {
+  const frequencyBinCount = analyser.frequencyBinCount;
+  const nyquist = audioContext.sampleRate / 2;
+  const maxBin = frequencyBinCount - 1;
+  const minDisplayFrequency = Math.max(0, Math.min(SPECTRAL_MIN_FREQUENCY, nyquist));
+  const maxDisplayFrequency = Math.min(SPECTRAL_MAX_FREQUENCY, nyquist);
+  const safeMaxDisplayFrequency = Math.max(minDisplayFrequency, maxDisplayFrequency);
+  const minFrequency = Math.max(
+    audioContext.sampleRate / analyser.fftSize,
+    SPECTRAL_MIN_LOG_FREQUENCY,
+    minDisplayFrequency,
+  );
+  const minLog = Math.log10(minFrequency);
+  const maxLog = Math.log10(Math.max(minFrequency, safeMaxDisplayFrequency));
+  const minDisplayBin = Math.max(
+    0,
+    Math.min(maxBin, Math.floor((minDisplayFrequency / nyquist) * frequencyBinCount)),
+  );
+  const maxDisplayBin = Math.max(
+    minDisplayBin,
+    Math.min(maxBin, Math.ceil((safeMaxDisplayFrequency / nyquist) * frequencyBinCount) - 1),
+  );
+  const binEdges = new Array(SPECTRAL_BAR_COUNT + 1);
+
+  binEdges[0] = minDisplayBin;
+  binEdges[SPECTRAL_BAR_COUNT] = maxDisplayBin + 1;
+
+  for (let index = 1; index < SPECTRAL_BAR_COUNT; index += 1) {
+    const ratio = index / SPECTRAL_BAR_COUNT;
+    const frequency = 10 ** (minLog + (maxLog - minLog) * ratio);
+    const proposedEdge = Math.floor((frequency / nyquist) * frequencyBinCount);
+    const minAllowedEdge = binEdges[index - 1] + 1;
+    const remainingEdges = SPECTRAL_BAR_COUNT - index;
+    const maxAllowedEdge = maxDisplayBin + 1 - remainingEdges;
+    binEdges[index] = Math.max(minAllowedEdge, Math.min(maxAllowedEdge, proposedEdge));
+  }
+
+  return Array.from({ length: SPECTRAL_BAR_COUNT }, (_, index) => ({
+    startBin: binEdges[index],
+    endBin: Math.max(binEdges[index], binEdges[index + 1] - 1),
+  }));
+}
+
+function requestSpectralAnimation() {
+  if (spectralAnimationFrame === null) {
+    spectralAnimationFrame = window.requestAnimationFrame(renderSpectralAnalyzer);
+  }
+}
+
+function sineEaseInOut(value) {
+  const clamped = clamp(value, 0, 1);
+  return 0.5 - 0.5 * Math.cos(Math.PI * clamped);
+}
+
+function loadingScaleForPhase(phaseTime) {
+  if (phaseTime <= 0) return SPECTRAL_LOADING_MAX_SCALE;
+
+  if (phaseTime < SPECTRAL_LOADING_FADE_OUT_MS) {
+    const progress = sineEaseInOut(phaseTime / SPECTRAL_LOADING_FADE_OUT_MS);
+    return SPECTRAL_LOADING_MAX_SCALE +
+      (SPECTRAL_LOADING_MIN_SCALE - SPECTRAL_LOADING_MAX_SCALE) * progress;
+  }
+
+  if (phaseTime < SPECTRAL_LOADING_PULSE_MS) {
+    const progress = sineEaseInOut(
+      (phaseTime - SPECTRAL_LOADING_FADE_OUT_MS) / SPECTRAL_LOADING_FADE_IN_MS,
+    );
+    return SPECTRAL_LOADING_MIN_SCALE +
+      (SPECTRAL_LOADING_MAX_SCALE - SPECTRAL_LOADING_MIN_SCALE) * progress;
+  }
+
+  return SPECTRAL_LOADING_MAX_SCALE;
+}
+
+function writeLoadingScales(target, timestamp) {
+  const elapsed = Math.max(0, timestamp - spectralLoadingStartedAt);
+  const cycleTime = elapsed % SPECTRAL_LOADING_CYCLE_MS;
+  target.fill(SPECTRAL_LOADING_MAX_SCALE);
+
+  for (let step = 0; step < SPECTRAL_LOADING_ORDER.length; step += 1) {
+    const index = SPECTRAL_LOADING_ORDER[step];
+    const phaseTime = cycleTime - step * SPECTRAL_LOADING_STEP_MS;
+    target[index] = Math.min(target[index], loadingScaleForPhase(phaseTime));
+  }
+}
+
+function writeReleaseScales(target, timestamp) {
+  const progress = sineEaseInOut((timestamp - spectralReleaseStartedAt) / SPECTRAL_RELEASE_MS);
+  for (let index = 0; index < target.length; index += 1) {
+    const scale = spectralReleaseFromScales[index] ?? 1;
+    target[index] = scale + (1 - scale) * progress;
+  }
+}
+
+function resizeSpectralCanvas() {
+  const rect = spectralAnalyzer.getBoundingClientRect();
+  const pixelRatio = window.devicePixelRatio || 1;
+  const width = Math.max(1, Math.round(rect.width * pixelRatio));
+  const height = Math.max(1, Math.round(rect.height * pixelRatio));
+
+  if (spectralAnalyzer.width !== width || spectralAnalyzer.height !== height) {
+    spectralAnalyzer.width = width;
+    spectralAnalyzer.height = height;
+  }
+
+  requestSpectralAnimation();
+}
+
+function drawSpectralAnalyzer(timestamp, isAudioPlaying, isLoading, isReleasing) {
+  const rect = spectralAnalyzer.getBoundingClientRect();
+  const width = rect.width;
+  const height = rect.height;
+  const pixelRatio = window.devicePixelRatio || 1;
+  const styles = getComputedStyle(spectralAnalyzer);
+  const dotRadius = Number.parseFloat(styles.getPropertyValue("--spectral-dot-radius")) || 2;
+  const barWidth = dotRadius * 2;
+  const gap = Number.parseFloat(styles.getPropertyValue("--spectral-gap")) || 4;
+  const actualWidth = barWidth * SPECTRAL_BAR_COUNT + gap * (SPECTRAL_BAR_COUNT - 1);
+  const startX = (width - actualWidth) * 0.5;
+  const color = getComputedStyle(document.documentElement).getPropertyValue("--active").trim();
+
+  spectralContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  spectralContext.clearRect(0, 0, width, height);
+  spectralContext.fillStyle = color;
+
+  if (isLoading) {
+    writeLoadingScales(spectralVisualizerScales, timestamp);
+  } else if (isReleasing) {
+    writeReleaseScales(spectralVisualizerScales, timestamp);
+  } else {
+    spectralVisualizerScales.fill(1);
+  }
+
+  for (let index = 0; index < SPECTRAL_BAR_COUNT; index += 1) {
+    const centerBoost = centerWeightedValue(index, SPECTRAL_BAR_COUNT);
+    const normalized = isAudioPlaying || isReleasing
+      ? clamp(
+          spectralDisplayedLevels[index] * 0.9 + centerBoost * 0.02 + spectralEnergy * 0.01,
+          0.03,
+          SPECTRAL_LEVEL_HEADROOM,
+        )
+      : 0;
+    const baseHeight = Math.max(
+      barWidth,
+      (normalized / SPECTRAL_LEVEL_HEADROOM) * height,
+    );
+    const scale = clamp(
+      spectralVisualizerScales[index],
+      SPECTRAL_LOADING_MIN_SCALE,
+      SPECTRAL_LOADING_MAX_SCALE,
+    );
+    const drawWidth = barWidth * scale;
+    const isScaledDown = scale < SPECTRAL_LOADING_MAX_SCALE - 0.001;
+    const barHeight = isScaledDown ? drawWidth : Math.max(drawWidth, baseHeight);
+    const x = startX + index * (barWidth + gap) + (barWidth - drawWidth) * 0.5;
+    const y = (height - barHeight) * 0.5;
+    const radius = Math.min(drawWidth, barHeight) * 0.5;
+
+    spectralContext.beginPath();
+    spectralContext.roundRect(x, y, drawWidth, barHeight, radius);
+    spectralContext.fill();
+  }
+}
+
+function renderSpectralAnalyzer(timestamp) {
+  spectralAnimationFrame = null;
+  const deltaTime = spectralLastTimestamp === null
+    ? 0
+    : Math.max(0, (timestamp - spectralLastTimestamp) / 1000);
+  spectralLastTimestamp = timestamp;
+
+  const isAudioPlaying = Boolean(
+    ttsState === "playing" &&
+    activeAudioContext?.state === "running" &&
+    activeAudioAnalyser &&
+    spectralFrequencyData
+  );
+  const isLoading = ttsState === "generating" || ttsIsGeneratingAudio;
+  const isReleasing =
+    !isLoading && timestamp - spectralReleaseStartedAt < SPECTRAL_RELEASE_MS;
+  const shouldAnalyzeAudio = isAudioPlaying && !isReleasing;
+
+  if (shouldAnalyzeAudio) {
+    activeAudioAnalyser.getFloatFrequencyData(spectralFrequencyData);
+    let energyTotal = 0;
+    let energyCount = 0;
+
+    for (const value of spectralFrequencyData) {
+      if (!Number.isFinite(value)) continue;
+      energyTotal += decibelsToLevel(value);
+      energyCount += 1;
+    }
+
+    const nextEnergy = energyCount ? energyTotal / energyCount : 0;
+    const energySmoothing = nextEnergy > spectralEnergy
+      ? SPECTRAL_ATTACK_SMOOTHING
+      : SPECTRAL_DECAY_SMOOTHING;
+    spectralEnergy = smoothTowards(spectralEnergy, nextEnergy, energySmoothing, deltaTime);
+
+    for (let index = 0; index < SPECTRAL_BAR_COUNT; index += 1) {
+      const descriptor = spectralBarDescriptors[index];
+      let bucketTotal = 0;
+      let bucketSquareTotal = 0;
+      let bucketCount = 0;
+
+      if (descriptor) {
+        for (let bin = descriptor.startBin; bin <= descriptor.endBin; bin += 1) {
+          const level = decibelsToLevel(spectralFrequencyData[bin] ?? SPECTRAL_MIN_DECIBELS);
+          bucketTotal += level;
+          bucketSquareTotal += level * level;
+          bucketCount += 1;
+        }
+      }
+
+      const average = bucketCount ? bucketTotal / bucketCount : 0;
+      const rms = bucketCount ? Math.sqrt(bucketSquareTotal / bucketCount) : 0;
+      const bucketLevel = average * 0.55 + rms * 0.45;
+      const centerBias = centerWeightedValue(index, SPECTRAL_BAR_COUNT) * 0.006;
+      const nextLevel = clamp(
+        bucketLevel * SPECTRAL_LEVEL_GAIN + centerBias,
+        0,
+        SPECTRAL_LEVEL_HEADROOM,
+      );
+      const levelSmoothing = nextLevel > spectralSmoothedLevels[index]
+        ? SPECTRAL_ATTACK_SMOOTHING
+        : SPECTRAL_DECAY_SMOOTHING;
+      spectralSmoothedLevels[index] = smoothTowards(
+        spectralSmoothedLevels[index],
+        nextLevel,
+        levelSmoothing,
+        deltaTime,
+      );
+    }
+  } else {
+    spectralEnergy = smoothTowards(spectralEnergy, 0, SPECTRAL_DECAY_SMOOTHING, deltaTime);
+    spectralSmoothedLevels = spectralSmoothedLevels.map((level) =>
+      smoothTowards(level, 0, SPECTRAL_DECAY_SMOOTHING, deltaTime),
+    );
+  }
+
+  for (let index = 0; index < SPECTRAL_BAR_COUNT; index += 1) {
+    const displaySpeed = spectralSmoothedLevels[index] > spectralDisplayedLevels[index]
+      ? SPECTRAL_DISPLAY_RISE_SPEED
+      : SPECTRAL_DISPLAY_FALL_SPEED;
+    spectralDisplayedLevels[index] = clamp(
+      spectralDisplayedLevels[index] +
+        (spectralSmoothedLevels[index] - spectralDisplayedLevels[index]) *
+        clamp(deltaTime * displaySpeed, 0, 1),
+      0,
+      SPECTRAL_LEVEL_HEADROOM,
+    );
+  }
+
+  drawSpectralAnalyzer(timestamp, shouldAnalyzeAudio, isLoading, isReleasing);
+
+  const shouldContinue = isLoading || isAudioPlaying || isReleasing ||
+    spectralDisplayedLevels.some((level) => level > SPECTRAL_REST_THRESHOLD);
+
+  if (shouldContinue) {
+    requestSpectralAnimation();
+  } else {
+    spectralEnergy = 0;
+    spectralSmoothedLevels.fill(0);
+    spectralDisplayedLevels.fill(0);
+    spectralVisualizerScales.fill(1);
+    spectralLastTimestamp = null;
+  }
+}
 
 function escapeHtml(value) {
   return value
@@ -1304,11 +1672,51 @@ async function resolveSegmentSynthesis(request) {
   return result.buffer;
 }
 
+async function resolveTtsGeneration(request) {
+  ttsIsGeneratingAudio = true;
+  requestSpectralAnimation();
+
+  try {
+    return await resolveSegmentSynthesis(request);
+  } finally {
+    ttsIsGeneratingAudio = false;
+    requestSpectralAnimation();
+  }
+}
+
+function waitForTtsPlayback(signal) {
+  throwIfAborted(signal);
+  if (ttsPlaybackRequested) return Promise.resolve();
+
+  return new Promise((resolve, reject) => {
+    const handleResume = () => {
+      cleanup();
+      resolve();
+    };
+    const handleAbort = () => {
+      cleanup();
+      reject(abortError());
+    };
+    const cleanup = () => {
+      signal.removeEventListener("abort", handleAbort);
+      if (ttsPlaybackResume === handleResume) ttsPlaybackResume = null;
+    };
+
+    ttsPlaybackResume = handleResume;
+    signal.addEventListener("abort", handleAbort, { once: true });
+  });
+}
+
+function allowTtsPlayback() {
+  ttsPlaybackRequested = true;
+  ttsPlaybackResume?.();
+}
+
 async function playAudioBuffer(audioBuffer, signal) {
   const source = activeAudioContext.createBufferSource();
   activeAudioSource = source;
   source.buffer = audioBuffer;
-  source.connect(activeAudioContext.destination);
+  source.connect(activeAudioAnalyser || activeAudioContext.destination);
 
   try {
     await new Promise((resolve, reject) => {
@@ -1337,22 +1745,35 @@ async function playAudioBuffer(audioBuffer, signal) {
 }
 
 function setTtsState(nextState, progress = ttsProgress) {
+  const wasGenerating = ttsState === "generating";
+  const wasPlaying = ttsState === "playing";
+
+  if (nextState === "generating" && !wasGenerating) {
+    spectralLoadingStartedAt = performance.now();
+  } else if (
+    (wasGenerating && nextState !== "generating") ||
+    (wasPlaying && nextState !== "playing")
+  ) {
+    spectralReleaseStartedAt = performance.now();
+    spectralReleaseFromScales = spectralVisualizerScales.slice();
+  }
+
   ttsState = nextState;
   ttsProgress = progress;
   ttsButton.classList.toggle("is-generating", nextState === "generating");
   ttsButton.classList.toggle("is-playing", nextState === "playing");
   ttsButton.classList.toggle("is-busy", nextState === "generating");
-  ttsButton.disabled = !ttsHandler || nextState === "generating";
+  ttsButton.disabled = !ttsHandler;
+  requestSpectralAnimation();
 
-  if (nextState === "playing") {
+  if (nextState === "playing" || nextState === "generating") {
     ttsButton.setAttribute("aria-label", "一時停止");
-    ttsButton.dataset.tooltip = progress ? `一時停止 ${progress}` : "一時停止";
+    ttsButton.dataset.tooltip = progress
+      ? `一時停止 ${progress}`
+      : "一時停止";
   } else if (nextState === "paused") {
     ttsButton.setAttribute("aria-label", "再開");
     ttsButton.dataset.tooltip = progress ? `再開 ${progress}` : "再開";
-  } else if (nextState === "generating") {
-    ttsButton.setAttribute("aria-label", "音声を生成中");
-    ttsButton.dataset.tooltip = progress ? `音声を生成中 ${progress}` : "音声を生成中…";
   } else {
     ttsButton.setAttribute("aria-label", "読み上げ");
     ttsButton.dataset.tooltip = "読み上げ";
@@ -1381,13 +1802,24 @@ async function synthesize(segments, signal) {
   }
 
   activeAudioContext = new AudioContextClass();
+  activeAudioAnalyser = activeAudioContext.createAnalyser();
+  activeAudioAnalyser.fftSize = 512;
+  activeAudioAnalyser.smoothingTimeConstant = 0.88;
+  activeAudioAnalyser.minDecibels = SPECTRAL_MIN_DECIBELS;
+  activeAudioAnalyser.maxDecibels = SPECTRAL_MAX_DECIBELS;
+  activeAudioAnalyser.connect(activeAudioContext.destination);
+  spectralFrequencyData = new Float32Array(activeAudioAnalyser.frequencyBinCount);
+  spectralBarDescriptors = buildLogBarDescriptors(activeAudioContext, activeAudioAnalyser);
+  spectralEnergy = 0;
+  spectralSmoothedLevels.fill(0);
+  spectralDisplayedLevels.fill(0);
   await activeAudioContext.resume();
 
   try {
     const firstProgress = `1/${segments.length}`;
     setTtsState("generating", firstProgress);
     saveStatus.textContent = `音声を生成中… ${firstProgress}`;
-    let audioBuffer = await resolveSegmentSynthesis(beginSegmentSynthesis(segments[0], signal));
+    let audioBuffer = await resolveTtsGeneration(beginSegmentSynthesis(segments[0], signal));
 
     for (let index = 0; index < segments.length; index += 1) {
       throwIfAborted(signal);
@@ -1398,6 +1830,12 @@ async function synthesize(segments, signal) {
           ? beginSegmentSynthesis(segments[nextIndex], signal)
           : null;
 
+      if (!ttsPlaybackRequested) {
+        saveStatus.textContent = `再生待機中… ${progress}`;
+      }
+
+      await waitForTtsPlayback(signal);
+      throwIfAborted(signal);
       setTtsState("playing", progress);
       saveStatus.textContent = `読み上げ中… ${progress}`;
       setActiveTtsSegment(segments[index].previewIndex);
@@ -1412,7 +1850,7 @@ async function synthesize(segments, signal) {
           saveStatus.textContent = `音声を生成中… ${nextProgress}`;
         }
 
-        audioBuffer = await resolveSegmentSynthesis(nextRequest);
+        audioBuffer = await resolveTtsGeneration(nextRequest);
       }
     }
   } finally {
@@ -1428,6 +1866,10 @@ async function synthesize(segments, signal) {
     }
 
     activeAudioContext = null;
+    activeAudioAnalyser = null;
+    spectralFrequencyData = null;
+    spectralBarDescriptors = [];
+    requestSpectralAnimation();
   }
 }
 
@@ -1437,6 +1879,7 @@ function cancelTtsForEdit() {
   ttsRunId += 1;
   ttsAbortController?.abort();
   ttsAbortController = null;
+  ttsPlaybackRequested = true;
   window.clearTimeout(ttsStatusResetTimer);
 
   if (activeAudioSource) {
@@ -1452,6 +1895,10 @@ function cancelTtsForEdit() {
   }
 
   activeAudioContext = null;
+  activeAudioAnalyser = null;
+  spectralFrequencyData = null;
+  spectralBarDescriptors = [];
+  requestSpectralAnimation();
   documentState.classList.remove("is-speaking", "has-error");
   setTtsState("idle", "");
 }
@@ -1497,7 +1944,7 @@ function setPreview(nextState) {
     const markdown = input.value.trim();
     previewPane.innerHTML = markdown
       ? renderMarkdown(markdown)
-      : '<div class="empty-preview"><p>まだ何も書かれていません。<br>編集に戻って、最初の一行を書いてみましょう。</p></div>';
+      : "";
     setActiveTtsSegment(activeTtsSegmentIndex);
   }
 
@@ -1513,6 +1960,98 @@ function setPreview(nextState) {
     (previewing ? previewPane : input).focus({ preventScroll: true });
   });
 }
+
+function dataTransferHasType(dataTransfer, type) {
+  return Array.from(dataTransfer?.types || []).includes(type);
+}
+
+function isTextFile(file) {
+  return file.type.startsWith("text/") ||
+    /\.(?:md|markdown|mdown|mkd|txt)$/i.test(file.name);
+}
+
+function resetFileDragState() {
+  fileDragDepth = 0;
+  dropFrame.classList.remove("is-file-dragging");
+}
+
+function appendDroppedText(text) {
+  const normalizedText = text.replace(/\r\n?/g, "\n");
+  if (!normalizedText) return;
+
+  const needsSeparator = input.value &&
+    !input.value.endsWith("\n") &&
+    !normalizedText.startsWith("\n");
+  input.value += `${needsSeparator ? "\n" : ""}${normalizedText}`;
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+
+  if (previewing) {
+    setPreview(true);
+  } else {
+    input.setSelectionRange(input.value.length, input.value.length);
+    input.focus({ preventScroll: true });
+    input.scrollTop = input.scrollHeight;
+  }
+}
+
+dropFrame.addEventListener("dragenter", (event) => {
+  if (!dataTransferHasType(event.dataTransfer, "Files")) return;
+  event.preventDefault();
+  fileDragDepth += 1;
+  dropFrame.classList.add("is-file-dragging");
+});
+
+dropFrame.addEventListener("dragover", (event) => {
+  const acceptsDrop = dataTransferHasType(event.dataTransfer, "Files") ||
+    dataTransferHasType(event.dataTransfer, "text/plain");
+  if (!acceptsDrop) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "copy";
+});
+
+dropFrame.addEventListener("dragleave", () => {
+  if (fileDragDepth === 0) return;
+  fileDragDepth -= 1;
+  if (fileDragDepth === 0) resetFileDragState();
+});
+
+dropFrame.addEventListener("drop", async (event) => {
+  const files = Array.from(event.dataTransfer?.files || []);
+  const droppedText = event.dataTransfer?.getData("text/plain") || "";
+  const acceptsDrop = files.length > 0 || droppedText;
+  if (!acceptsDrop) return;
+
+  event.preventDefault();
+  resetFileDragState();
+
+  if (files.length > 0) {
+    const textFiles = files.filter(isTextFile);
+
+    if (textFiles.length === 0) {
+      saveStatus.textContent = "テキストファイルのみ追加できます";
+      documentState.classList.add("has-error");
+      window.setTimeout(() => {
+        documentState.classList.remove("has-error");
+        saveStatus.textContent = "この端末に保存済み";
+      }, 2600);
+      return;
+    }
+
+    try {
+      const fileContents = await Promise.all(textFiles.map((file) => file.text()));
+      appendDroppedText(fileContents.filter(Boolean).join("\n\n"));
+    } catch {
+      saveStatus.textContent = "ファイルを読み込めませんでした";
+      documentState.classList.add("has-error");
+    }
+    return;
+  }
+
+  appendDroppedText(droppedText);
+});
+
+document.addEventListener("dragend", resetFileDragState);
+window.addEventListener("blur", resetFileDragState);
 
 input.addEventListener("input", () => {
   cancelTtsForEdit();
@@ -1555,6 +2094,8 @@ async function runTtsFromStart() {
   let didFail = false;
 
   ttsAbortController = abortController;
+  ttsPlaybackRequested = true;
+  ttsPlaybackResume = null;
   window.clearTimeout(ttsStatusResetTimer);
   setTtsState("generating", "");
   documentState.classList.add("is-speaking");
@@ -1579,6 +2120,8 @@ async function runTtsFromStart() {
     if (runId !== ttsRunId) return;
 
     ttsAbortController = null;
+    ttsPlaybackRequested = true;
+    ttsPlaybackResume = null;
     setTtsState("idle", "");
     documentState.classList.remove("is-speaking");
 
@@ -1595,9 +2138,17 @@ async function runTtsFromStart() {
 }
 
 ttsButton.addEventListener("click", async () => {
-  if (!ttsHandler || ttsState === "generating") return;
+  if (!ttsHandler) return;
+
+  if (ttsState === "generating") {
+    ttsPlaybackRequested = false;
+    setTtsState("paused");
+    saveStatus.textContent = `音声を生成中（一時停止）… ${ttsProgress}`;
+    return;
+  }
 
   if (ttsState === "playing") {
+    ttsPlaybackRequested = false;
     await activeAudioContext?.suspend();
     if (ttsState === "playing") {
       setTtsState("paused");
@@ -1607,10 +2158,17 @@ ttsButton.addEventListener("click", async () => {
   }
 
   if (ttsState === "paused") {
-    await activeAudioContext?.resume();
-    if (ttsState === "paused") {
+    allowTtsPlayback();
+
+    if (activeAudioSource) {
+      await activeAudioContext?.resume();
       setTtsState("playing");
       saveStatus.textContent = `読み上げ中… ${ttsProgress}`;
+    } else if (ttsIsGeneratingAudio) {
+      setTtsState("generating");
+      saveStatus.textContent = `音声を生成中… ${ttsProgress}`;
+    } else {
+      saveStatus.textContent = `再生を準備中… ${ttsProgress}`;
     }
     return;
   }
@@ -1630,10 +2188,18 @@ window.notebook = {
 
 window.notebook.connectTTS(({ segments, signal }) => synthesize(segments, signal));
 
+resizeSpectralCanvas();
+window.addEventListener("resize", resizeSpectralCanvas);
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.(
+  "change",
+  requestSpectralAnimation,
+);
+
 window.addEventListener("pagehide", () => {
   ttsAbortController?.abort();
   if (activeAudioSource) activeAudioSource.stop();
   if (activeAudioContext && activeAudioContext.state !== "closed") activeAudioContext.close();
+  if (spectralAnimationFrame !== null) window.cancelAnimationFrame(spectralAnimationFrame);
 });
 
 let savedNote = null;
