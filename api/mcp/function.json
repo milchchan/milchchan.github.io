@@ -6,7 +6,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "mcp/{*segments}",
+      "route": "mcp",
       "methods": [
         "get",
         "post"
