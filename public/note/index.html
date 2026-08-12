@@ -668,6 +668,7 @@ textarea::placeholder {
 
 .markdown-body p {
   margin: 0 0 1.25em;
+  transition: color 500ms ease;
 }
 
 .markdown-body strong {
@@ -697,6 +698,7 @@ textarea::placeholder {
 .markdown-body ol {
   margin: 0 0 1.35em;
   padding-left: 1.55em;
+  transition: color 500ms ease;
 }
 
 .markdown-body li {
@@ -760,7 +762,7 @@ textarea::placeholder {
   border-radius: 10px;
   background: var(--pre-bg);
   line-height: 1.65;
-  transition: background-color 500ms ease, border-color 500ms ease;
+  transition: background-color 500ms ease, border-color 500ms ease, color 500ms ease;
 }
 
 .markdown-body pre code {
@@ -776,6 +778,11 @@ textarea::placeholder {
   border: 0;
   background: var(--line);
   transition: background-color 500ms ease;
+}
+
+.markdown-body > .is-tts-active,
+.markdown-body > .is-tts-active :is(strong, em) {
+  color: var(--accent);
 }
 
 .empty-preview {
@@ -1038,6 +1045,7 @@ let ttsAbortController = null;
 let ttsStatusResetTimer;
 let activeAudioContext = null;
 let activeAudioSource = null;
+let activeTtsSegmentIndex = null;
 const referenceVoiceCache = new Map();
 
 function escapeHtml(value) {
@@ -1205,11 +1213,20 @@ function markdownToSpeechSegments(markdown) {
   container.innerHTML = renderMarkdown(markdown);
 
   return Array.from(container.children)
-    .map((element) => ({
+    .map((element, previewIndex) => ({
       text: elementToSpeechText(element),
       voice: element.matches("blockquote") ? "milch" : "merku",
+      previewIndex,
     }))
     .filter((segment) => segment.text);
+}
+
+function setActiveTtsSegment(previewIndex) {
+  activeTtsSegmentIndex = previewIndex;
+  previewPane.querySelector(".is-tts-active")?.classList.remove("is-tts-active");
+
+  if (previewIndex === null) return;
+  previewPane.children[previewIndex]?.classList.add("is-tts-active");
 }
 
 async function getReferenceVoice(voice) {
@@ -1381,7 +1398,9 @@ async function synthesize(segments, signal) {
 
       setTtsState("playing", progress);
       saveStatus.textContent = `読み上げ中… ${progress}`;
+      setActiveTtsSegment(segments[index].previewIndex);
       await playAudioBuffer(audioBuffer, signal);
+      setActiveTtsSegment(null);
 
       if (nextRequest) {
         const nextProgress = `${nextIndex + 1}/${segments.length}`;
@@ -1395,6 +1414,8 @@ async function synthesize(segments, signal) {
       }
     }
   } finally {
+    setActiveTtsSegment(null);
+
     if (activeAudioSource) {
       activeAudioSource.disconnect();
       activeAudioSource = null;
@@ -1475,6 +1496,7 @@ function setPreview(nextState) {
     previewPane.innerHTML = markdown
       ? renderMarkdown(markdown)
       : '<div class="empty-preview"><p>まだ何も書かれていません。<br>編集に戻って、最初の一行を書いてみましょう。</p></div>';
+    setActiveTtsSegment(activeTtsSegmentIndex);
   }
 
   document.body.classList.toggle("is-previewing", previewing);
