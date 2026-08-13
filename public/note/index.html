@@ -1136,6 +1136,10 @@ let spectralReleaseStartedAt = 0;
 let spectralAnimationFrame = null;
 let spectralLastTimestamp = null;
 let activeTtsSegmentIndex = null;
+const referenceVoiceOverrides = {
+  merku: null,
+  milch: null,
+};
 const referenceVoiceCache = new Map();
 
 function clamp(value, min, max) {
@@ -1654,13 +1658,16 @@ function setActiveTtsSegment(previewIndex) {
 
 async function getReferenceVoice(voice) {
   if (!referenceVoiceCache.has(voice)) {
-    const request = fetch(REFERENCE_VOICE_URLS[voice]).then(async (response) => {
-      if (!response.ok) {
-        throw new Error("参照音声を読み込めませんでした");
-      }
+    const override = referenceVoiceOverrides[voice];
+    const request = override
+      ? Promise.resolve(override)
+      : fetch(REFERENCE_VOICE_URLS[voice]).then(async (response) => {
+          if (!response.ok) {
+            throw new Error("参照音声を読み込めませんでした");
+          }
 
-      return response.blob();
-    });
+          return response.blob();
+        });
 
     referenceVoiceCache.set(voice, request);
   }
@@ -2025,6 +2032,35 @@ function isTextFile(file) {
     /\.(?:md|markdown|mdown|mkd|txt)$/i.test(file.name);
 }
 
+function isReferenceVoiceFile(file) {
+  return file.type === "audio/wav" ||
+    file.type === "audio/x-wav" ||
+    file.type === "audio/wave" ||
+    /\.wav$/i.test(file.name);
+}
+
+function setDroppedReferenceVoices(files) {
+  if (files.length === 1) {
+    referenceVoiceOverrides.merku = files[0];
+    referenceVoiceOverrides.milch = files[0];
+    referenceVoiceCache.delete("merku");
+    referenceVoiceCache.delete("milch");
+  } else {
+    files.forEach((file, index) => {
+      const voice = index % 2 === 0 ? "merku" : "milch";
+      referenceVoiceOverrides[voice] = file;
+      referenceVoiceCache.delete(voice);
+    });
+  }
+
+  saveStatus.textContent = "通常文と引用文の参照音声を更新しました";
+  window.setTimeout(() => {
+    if (!documentState.classList.contains("has-error")) {
+      saveStatus.textContent = "この端末に保存済み";
+    }
+  }, 2600);
+}
+
 function resetFileDragState() {
   fileDragDepth = 0;
   dropFrame.classList.remove("is-file-dragging");
@@ -2080,10 +2116,11 @@ dropFrame.addEventListener("drop", async (event) => {
   resetFileDragState();
 
   if (files.length > 0) {
+    const referenceVoiceFiles = files.filter(isReferenceVoiceFile);
     const textFiles = files.filter(isTextFile);
 
-    if (textFiles.length === 0) {
-      saveStatus.textContent = "テキストファイルのみ追加できます";
+    if (referenceVoiceFiles.length === 0 && textFiles.length === 0) {
+      saveStatus.textContent = "テキストまたはWAVファイルのみ追加できます";
       documentState.classList.add("has-error");
       window.setTimeout(() => {
         documentState.classList.remove("has-error");
@@ -2091,6 +2128,12 @@ dropFrame.addEventListener("drop", async (event) => {
       }, 2600);
       return;
     }
+
+    if (referenceVoiceFiles.length > 0) {
+      setDroppedReferenceVoices(referenceVoiceFiles);
+    }
+
+    if (textFiles.length === 0) return;
 
     try {
       const fileContents = await Promise.all(textFiles.map((file) => file.text()));
