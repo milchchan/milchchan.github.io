@@ -1055,7 +1055,7 @@ const SPECTRAL_LOG_CURVE_STRENGTH = 9;
 const SPECTRAL_LEVEL_GAIN = 0.82;
 const SPECTRAL_LEVEL_HEADROOM = 0.9;
 const SPECTRAL_REST_THRESHOLD = 0.002;
-const SPECTRAL_LOADING_MIN_SCALE = 0.5;
+const SPECTRAL_LOADING_MIN_SCALE = 0.75;
 const SPECTRAL_LOADING_MAX_SCALE = 1;
 const SPECTRAL_LOADING_FADE_OUT_MS = 250;
 const SPECTRAL_LOADING_FADE_IN_MS = 500;
@@ -1072,6 +1072,7 @@ const SPECTRAL_LOADING_ORDER = [
 const SPECTRAL_LOADING_CYCLE_MS =
   SPECTRAL_LOADING_PULSE_MS +
   SPECTRAL_LOADING_STEP_MS * (SPECTRAL_LOADING_ORDER.length - 1);
+const SPECTRAL_LOADING_RESET_MS = 500;
 const SPECTRAL_RELEASE_MS = 500;
 const REFERENCE_VOICE_URLS = {
   merku: new URL("./sounds/merku.ja.wav", import.meta.url),
@@ -1129,6 +1130,8 @@ let spectralDisplayedLevels = new Array(SPECTRAL_BAR_COUNT).fill(0);
 let spectralVisualizerScales = new Array(SPECTRAL_BAR_COUNT).fill(1);
 let spectralReleaseFromScales = new Array(SPECTRAL_BAR_COUNT).fill(1);
 let spectralLoadingStartedAt = 0;
+let spectralLoadingResetStartedAt = 0;
+let spectralLoadingResetFromScales = new Array(SPECTRAL_BAR_COUNT).fill(1);
 let spectralReleaseStartedAt = 0;
 let spectralAnimationFrame = null;
 let spectralLastTimestamp = null;
@@ -1244,6 +1247,16 @@ function writeLoadingScales(target, timestamp) {
   }
 }
 
+function writeLoadingResetScales(target, timestamp) {
+  const progress = sineEaseInOut(
+    (timestamp - spectralLoadingResetStartedAt) / SPECTRAL_LOADING_RESET_MS,
+  );
+  for (let index = 0; index < target.length; index += 1) {
+    const scale = spectralLoadingResetFromScales[index] ?? 1;
+    target[index] = scale + (1 - scale) * progress;
+  }
+}
+
 function writeReleaseScales(target, timestamp) {
   const progress = sineEaseInOut((timestamp - spectralReleaseStartedAt) / SPECTRAL_RELEASE_MS);
   for (let index = 0; index < target.length; index += 1) {
@@ -1266,7 +1279,13 @@ function resizeSpectralCanvas() {
   requestSpectralAnimation();
 }
 
-function drawSpectralAnalyzer(timestamp, isAudioPlaying, isLoading, isReleasing) {
+function drawSpectralAnalyzer(
+  timestamp,
+  isAudioPlaying,
+  isLoading,
+  isLoadingResetting,
+  isReleasing,
+) {
   const rect = spectralAnalyzer.getBoundingClientRect();
   const width = rect.width;
   const height = rect.height;
@@ -1283,7 +1302,9 @@ function drawSpectralAnalyzer(timestamp, isAudioPlaying, isLoading, isReleasing)
   spectralContext.clearRect(0, 0, width, height);
   spectralContext.fillStyle = color;
 
-  if (isLoading) {
+  if (isLoadingResetting) {
+    writeLoadingResetScales(spectralVisualizerScales, timestamp);
+  } else if (isLoading) {
     writeLoadingScales(spectralVisualizerScales, timestamp);
   } else if (isReleasing) {
     writeReleaseScales(spectralVisualizerScales, timestamp);
@@ -1293,9 +1314,15 @@ function drawSpectralAnalyzer(timestamp, isAudioPlaying, isLoading, isReleasing)
 
   for (let index = 0; index < SPECTRAL_BAR_COUNT; index += 1) {
     const centerBoost = centerWeightedValue(index, SPECTRAL_BAR_COUNT);
+    const loadingResetProgress = isLoadingResetting
+      ? sineEaseInOut(
+          (timestamp - spectralLoadingResetStartedAt) / SPECTRAL_LOADING_RESET_MS,
+        )
+      : 0;
     const normalized = isAudioPlaying || isReleasing
       ? clamp(
-          spectralDisplayedLevels[index] * 0.9 + centerBoost * 0.02 + spectralEnergy * 0.01,
+          (spectralDisplayedLevels[index] * 0.9 + centerBoost * 0.02 + spectralEnergy * 0.01) *
+            (1 - loadingResetProgress),
           0.03,
           SPECTRAL_LEVEL_HEADROOM,
         )
@@ -1336,8 +1363,19 @@ function renderSpectralAnalyzer(timestamp) {
     spectralFrequencyData
   );
   const isLoading = ttsState === "generating" || ttsIsGeneratingAudio;
+  let isLoadingResetting = isLoading && spectralLoadingStartedAt === 0;
+
+  if (
+    isLoadingResetting &&
+    timestamp - spectralLoadingResetStartedAt >= SPECTRAL_LOADING_RESET_MS
+  ) {
+    spectralLoadingStartedAt = timestamp;
+    isLoadingResetting = false;
+  }
+
   const isReleasing =
-    !isLoading && timestamp - spectralReleaseStartedAt < SPECTRAL_RELEASE_MS;
+    isLoadingResetting ||
+    (!isLoading && timestamp - spectralReleaseStartedAt < SPECTRAL_RELEASE_MS);
   const shouldAnalyzeAudio = isAudioPlaying && !isReleasing;
 
   if (shouldAnalyzeAudio) {
@@ -1411,7 +1449,13 @@ function renderSpectralAnalyzer(timestamp) {
     );
   }
 
-  drawSpectralAnalyzer(timestamp, shouldAnalyzeAudio, isLoading, isReleasing);
+  drawSpectralAnalyzer(
+    timestamp,
+    shouldAnalyzeAudio,
+    isLoading && !isLoadingResetting,
+    isLoadingResetting,
+    isReleasing,
+  );
 
   const shouldContinue = isLoading || isAudioPlaying || isReleasing ||
     spectralDisplayedLevels.some((level) => level > SPECTRAL_REST_THRESHOLD);
@@ -1758,7 +1802,9 @@ function setTtsState(nextState, progress = ttsProgress) {
   const wasPlaying = ttsState === "playing";
 
   if (nextState === "generating" && !wasGenerating) {
-    spectralLoadingStartedAt = performance.now();
+    spectralLoadingStartedAt = 0;
+    spectralLoadingResetStartedAt = performance.now();
+    spectralLoadingResetFromScales = spectralVisualizerScales.slice();
   } else if (
     (wasGenerating && nextState !== "generating") ||
     (wasPlaying && nextState !== "playing")
