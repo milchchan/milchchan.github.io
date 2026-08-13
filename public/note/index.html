@@ -391,13 +391,27 @@ textarea:focus-visible,
 }
 
 .tts-control {
-  display: grid;
+  display: flex;
+  width: 48px;
+  height: 48px;
+  gap: 2px;
   padding: 4px;
-  place-items: center;
-  border-radius: 50%;
+  border-radius: 999px;
+  transition:
+    width 500ms ease,
+    background-color 500ms ease,
+    border-color 500ms ease,
+    box-shadow 500ms ease;
+}
+
+.tts-control.has-reset {
+  width: 90px;
 }
 
 .tts-control .icon-button {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
 }
 
@@ -406,6 +420,37 @@ textarea:focus-visible,
   gap: 2px;
   padding: 4px;
   border-radius: 999px;
+}
+
+.voice-reset-button {
+  min-width: 0;
+  overflow: hidden;
+  transition:
+    color 500ms ease,
+    width 500ms ease,
+    flex-basis 500ms ease,
+    margin 500ms ease,
+    padding 500ms ease,
+    opacity 500ms ease,
+    transform 500ms ease,
+    background-color 500ms ease,
+    box-shadow 500ms ease;
+}
+
+.voice-reset-button.is-hidden {
+  flex-basis: 0;
+  width: 0;
+  margin-left: -2px;
+  margin-right: 0;
+  padding-right: 0;
+  padding-left: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.76);
+}
+
+.voice-reset-button .fa-solid {
+  font-size: 16px;
 }
 
 .spectral-analyzer {
@@ -908,7 +953,7 @@ textarea::placeholder {
         </aside>
 
       <nav class="icon-controls" aria-label="ノートの操作">
-        <div class="tts-control">
+        <div class="tts-control" id="tts-control">
           <button
             class="icon-button"
             id="tts-button"
@@ -921,6 +966,16 @@ textarea::placeholder {
               <span class="icon-layer tts-reload-layer"><i class="fa-solid fa-rotate fa-spin"></i></span>
               <span class="icon-layer tts-pause-layer"><i class="fa-solid fa-pause"></i></span>
             </span>
+          </button>
+          <button
+            class="icon-button voice-reset-button is-hidden"
+            id="voice-reset-button"
+            type="button"
+            aria-label="参照音声をデフォルトに戻す"
+            aria-hidden="true"
+            disabled
+          >
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
           </button>
         </div>
         <div class="mode-control" role="group" aria-label="表示モード">
@@ -993,6 +1048,10 @@ textarea::placeholder {
 
     <script type="module">
 const STORAGE_KEY = "note";
+const VOICE_DATABASE_NAME = "note";
+const VOICE_DATABASE_VERSION = 1;
+const VOICE_OBJECT_STORE = "files";
+const VOICE_RECORD_KEY = "voices";
 const TTS_ENDPOINT = "https://milchchan.com/api/generate";
 const TTS_LANGUAGE = "ja";
 const TTS_TEMPERATURE = 1.0;
@@ -1036,10 +1095,12 @@ const SPECTRAL_LOADING_CYCLE_MS =
   SPECTRAL_LOADING_STEP_MS * (SPECTRAL_LOADING_ORDER.length - 1);
 const SPECTRAL_LOADING_RESET_MS = 500;
 const SPECTRAL_RELEASE_MS = 500;
-const REFERENCE_VOICE_URLS = {
-  merku: new URL("./sounds/merku.ja.wav", import.meta.url),
-  milch: new URL("./sounds/milch.ja.wav", import.meta.url),
-};
+const NORMAL_VOICE_INDEX = 0;
+const QUOTE_VOICE_INDEX = 1;
+const REFERENCE_VOICE_URLS = [
+  new URL("./sounds/merku.ja.wav", import.meta.url),
+  new URL("./sounds/milch.ja.wav", import.meta.url),
+];
 
 const sampleNote = `# こんにちは！
 
@@ -1068,13 +1129,18 @@ const editButton = document.querySelector("#edit-button");
 const previewButton = document.querySelector("#preview-button");
 const documentState = document.querySelector(".document-state");
 const wordCount = document.querySelector("#word-count");
+const ttsControl = document.querySelector("#tts-control");
 const ttsButton = document.querySelector("#tts-button");
+const voiceResetButton = document.querySelector("#voice-reset-button");
 const dropFrame = document.querySelector("#drop-frame");
 const spectralAnalyzer = document.querySelector("#spectral-analyzer");
 const spectralContext = spectralAnalyzer.getContext("2d");
 
 let previewing = false;
 let saveTimer;
+let isLocalStorageSaving = false;
+let isVoiceSaving = false;
+let voiceResetButtonRevision = 0;
 let fileDragDepth = 0;
 let ttsHandler = null;
 let ttsState = "idle";
@@ -1102,10 +1168,6 @@ let spectralReleaseStartedAt = 0;
 let spectralAnimationFrame = null;
 let spectralLastTimestamp = null;
 let activeTtsSegmentIndex = null;
-const referenceVoiceOverrides = {
-  merku: null,
-  milch: null,
-};
 const referenceVoiceCache = new Map();
 
 function clamp(value, min, max) {
@@ -1608,7 +1670,9 @@ function markdownToSpeechSegments(markdown) {
   return Array.from(container.children)
     .map((element, previewIndex) => ({
       text: elementToSpeechText(element),
-      voice: element.matches("blockquote") ? "milch" : "merku",
+      voiceIndex: element.matches("blockquote")
+        ? QUOTE_VOICE_INDEX
+        : NORMAL_VOICE_INDEX,
       previewIndex,
     }))
     .filter((segment) => segment.text);
@@ -1622,26 +1686,127 @@ function setActiveTtsSegment(previewIndex) {
   previewPane.children[previewIndex]?.classList.add("is-tts-active");
 }
 
-async function getReferenceVoice(voice) {
-  if (!referenceVoiceCache.has(voice)) {
-    const override = referenceVoiceOverrides[voice];
-    const request = override
-      ? Promise.resolve(override)
-      : fetch(REFERENCE_VOICE_URLS[voice]).then(async (response) => {
-          if (!response.ok) {
-            throw new Error("参照音声を読み込めませんでした");
-          }
+function openVoiceDatabase() {
+  if (!window.indexedDB) {
+    return Promise.reject(new Error("IndexedDBを利用できません"));
+  }
 
-          return response.blob();
-        });
+  return new Promise((resolve, reject) => {
+    const request = window.indexedDB.open(
+      VOICE_DATABASE_NAME,
+      VOICE_DATABASE_VERSION,
+    );
 
-    referenceVoiceCache.set(voice, request);
+    request.onupgradeneeded = () => {
+      const database = request.result;
+      if (!database.objectStoreNames.contains(VOICE_OBJECT_STORE)) {
+        database.createObjectStore(VOICE_OBJECT_STORE);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error || new Error("IndexedDBを開けませんでした"));
+  });
+}
+
+async function saveVoiceBlobs(blobs) {
+  const database = await openVoiceDatabase();
+
+  try {
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction(VOICE_OBJECT_STORE, "readwrite");
+      const rejectTransaction = () => reject(
+        transaction.error || new Error("参照音声を保存できませんでした"),
+      );
+
+      transaction.oncomplete = resolve;
+      transaction.onerror = rejectTransaction;
+      transaction.onabort = rejectTransaction;
+      transaction.objectStore(VOICE_OBJECT_STORE).put(blobs, VOICE_RECORD_KEY);
+    });
+  } finally {
+    database.close();
+  }
+}
+
+async function deleteStoredVoiceBlobs() {
+  const database = await openVoiceDatabase();
+
+  try {
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction(VOICE_OBJECT_STORE, "readwrite");
+      const rejectTransaction = () => reject(
+        transaction.error || new Error("参照音声を削除できませんでした"),
+      );
+
+      transaction.oncomplete = resolve;
+      transaction.onerror = rejectTransaction;
+      transaction.onabort = rejectTransaction;
+      transaction.objectStore(VOICE_OBJECT_STORE).delete(VOICE_RECORD_KEY);
+    });
+  } finally {
+    database.close();
+  }
+
+  referenceVoiceCache.clear();
+}
+
+async function loadVoiceBlobs() {
+  if (!window.indexedDB) return null;
+
+  let database = null;
+
+  try {
+    database = await openVoiceDatabase();
+    const value = await new Promise((resolve, reject) => {
+      const transaction = database.transaction(VOICE_OBJECT_STORE, "readonly");
+      const request = transaction.objectStore(VOICE_OBJECT_STORE).get(VOICE_RECORD_KEY);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error("参照音声を読み込めませんでした"));
+    });
+
+    if (!Array.isArray(value)) return null;
+    const blobs = value.filter((value) => value instanceof Blob);
+    return blobs.length > 0 ? blobs : null;
+  } catch (error) {
+    console.warn("IndexedDBの参照音声を読み込めませんでした", error);
+    return null;
+  } finally {
+    database?.close();
+  }
+}
+
+function selectStoredReferenceVoice(voiceIndex, blobs) {
+  if (!Array.isArray(blobs) || blobs.length === 0) return null;
+  if (blobs.length === 1) return blobs[0];
+
+  const expectedParity = voiceIndex % 2;
+  for (let index = blobs.length - 1; index >= 0; index -= 1) {
+    if (index % 2 === expectedParity) return blobs[index];
+  }
+
+  return blobs[0];
+}
+
+async function getReferenceVoice(voiceIndex, storedVoices) {
+  const storedVoice = selectStoredReferenceVoice(voiceIndex, storedVoices);
+  if (storedVoice) return storedVoice;
+
+  if (!referenceVoiceCache.has(voiceIndex)) {
+    const request = fetch(REFERENCE_VOICE_URLS[voiceIndex]).then(async (response) => {
+      if (!response.ok) {
+        throw new Error("参照音声を読み込めませんでした");
+      }
+
+      return response.blob();
+    });
+
+    referenceVoiceCache.set(voiceIndex, request);
   }
 
   try {
-    return await referenceVoiceCache.get(voice);
+    return await referenceVoiceCache.get(voiceIndex);
   } catch (error) {
-    referenceVoiceCache.delete(voice);
+    referenceVoiceCache.delete(voiceIndex);
     throw error;
   }
 }
@@ -1654,9 +1819,13 @@ function throwIfAborted(signal) {
   if (signal.aborted) throw abortError();
 }
 
-async function synthesizeSegment(segment, signal) {
+async function synthesizeSegment(segment, signal, storedVoices) {
   const formData = new FormData();
-  formData.append("file", await getReferenceVoice(segment.voice), "prompt.wav");
+  formData.append(
+    "file",
+    await getReferenceVoice(segment.voiceIndex, storedVoices),
+    "prompt.wav",
+  );
   throwIfAborted(signal);
   formData.append(
     "data",
@@ -1681,9 +1850,9 @@ async function synthesizeSegment(segment, signal) {
   return activeAudioContext.decodeAudioData(await response.arrayBuffer());
 }
 
-function beginSegmentSynthesis(segment, signal) {
+function beginSegmentSynthesis(segment, signal, storedVoices) {
   const request = { settled: false, promise: null };
-  request.promise = synthesizeSegment(segment, signal)
+  request.promise = synthesizeSegment(segment, signal, storedVoices)
     .then((buffer) => ({ buffer, error: null }))
     .catch((error) => ({ buffer: null, error }))
     .finally(() => {
@@ -1814,6 +1983,9 @@ async function synthesize(segments, signal) {
     throw new Error("このブラウザは音声再生に対応していません");
   }
 
+  const storedVoices = await loadVoiceBlobs();
+  throwIfAborted(signal);
+
   if (activeAudioSource) {
     activeAudioSource.stop();
     activeAudioSource.disconnect();
@@ -1841,7 +2013,9 @@ async function synthesize(segments, signal) {
   try {
     const firstProgress = `1/${segments.length}`;
     setTtsState("generating", firstProgress);
-    let audioBuffer = await resolveTtsGeneration(beginSegmentSynthesis(segments[0], signal));
+    let audioBuffer = await resolveTtsGeneration(
+      beginSegmentSynthesis(segments[0], signal, storedVoices),
+    );
 
     for (let index = 0; index < segments.length; index += 1) {
       throwIfAborted(signal);
@@ -1849,7 +2023,7 @@ async function synthesize(segments, signal) {
       const nextIndex = index + 1;
       const nextRequest =
         nextIndex < segments.length
-          ? beginSegmentSynthesis(segments[nextIndex], signal)
+          ? beginSegmentSynthesis(segments[nextIndex], signal, storedVoices)
           : null;
 
       await waitForTtsPlayback(signal);
@@ -1924,14 +2098,43 @@ function updateCount() {
   wordCount.textContent = String(count);
 }
 
+function updateVoiceResetButtonState() {
+  const isHidden = voiceResetButton.classList.contains("is-hidden");
+  voiceResetButton.disabled = isHidden || isVoiceSaving;
+}
+
+function setVoiceResetButtonVisible(visible) {
+  voiceResetButtonRevision += 1;
+  ttsControl.classList.toggle("has-reset", visible);
+  voiceResetButton.classList.toggle("is-hidden", !visible);
+  voiceResetButton.setAttribute("aria-hidden", String(!visible));
+  updateVoiceResetButtonState();
+}
+
+async function initializeVoiceResetButton() {
+  const revision = voiceResetButtonRevision;
+  const blobs = await loadVoiceBlobs();
+  if (revision !== voiceResetButtonRevision) return;
+  setVoiceResetButtonVisible(Boolean(blobs?.length));
+}
+
+function updateSavingState() {
+  documentState.classList.toggle(
+    "is-saving",
+    isLocalStorageSaving || isVoiceSaving,
+  );
+  updateVoiceResetButtonState();
+}
+
 function saveNote() {
   try {
     localStorage.setItem(STORAGE_KEY, input.value);
-    documentState.classList.remove("is-saving");
     documentState.classList.remove("has-error");
   } catch {
-    documentState.classList.remove("is-saving");
     documentState.classList.add("has-error");
+  } finally {
+    isLocalStorageSaving = false;
+    updateSavingState();
   }
 }
 
@@ -1946,7 +2149,8 @@ function saveNoteSilently() {
 function queueSave() {
   window.clearTimeout(saveTimer);
   documentState.classList.remove("has-error");
-  documentState.classList.add("is-saving");
+  isLocalStorageSaving = true;
+  updateSavingState();
   saveTimer = window.setTimeout(saveNote, 500);
 }
 
@@ -1990,20 +2194,45 @@ function isReferenceVoiceFile(file) {
     /\.wav$/i.test(file.name);
 }
 
-function setDroppedReferenceVoices(files) {
-  if (files.length === 1) {
-    referenceVoiceOverrides.merku = files[0];
-    referenceVoiceOverrides.milch = files[0];
-    referenceVoiceCache.delete("merku");
-    referenceVoiceCache.delete("milch");
-  } else {
-    files.forEach((file, index) => {
-      const voice = index % 2 === 0 ? "merku" : "milch";
-      referenceVoiceOverrides[voice] = file;
-      referenceVoiceCache.delete(voice);
-    });
-  }
+async function setDroppedReferenceVoices(files) {
+  const blobs = files.map((file) => new Blob([file], {
+    type: file.type || "audio/wav",
+  }));
+  documentState.classList.remove("has-error");
+  isVoiceSaving = true;
+  updateSavingState();
 
+  try {
+    await saveVoiceBlobs(blobs);
+    referenceVoiceCache.clear();
+    setVoiceResetButtonVisible(true);
+  } catch (error) {
+    documentState.classList.add("has-error");
+    throw error;
+  } finally {
+    isVoiceSaving = false;
+    updateSavingState();
+  }
+}
+
+async function resetReferenceVoices() {
+  if (isVoiceSaving) return;
+
+  cancelTtsForEdit();
+  documentState.classList.remove("has-error");
+  isVoiceSaving = true;
+  updateSavingState();
+
+  try {
+    await deleteStoredVoiceBlobs();
+    setVoiceResetButtonVisible(false);
+  } catch (error) {
+    documentState.classList.add("has-error");
+    console.error(error);
+  } finally {
+    isVoiceSaving = false;
+    updateSavingState();
+  }
 }
 
 function resetFileDragState() {
@@ -2074,7 +2303,11 @@ dropFrame.addEventListener("drop", async (event) => {
 
     if (referenceVoiceFiles.length > 0) {
       cancelTtsForEdit();
-      setDroppedReferenceVoices(referenceVoiceFiles);
+      try {
+        await setDroppedReferenceVoices(referenceVoiceFiles);
+      } catch {
+        if (textFiles.length === 0) return;
+      }
     }
 
     if (textFiles.length === 0) return;
@@ -2112,6 +2345,7 @@ input.addEventListener("keydown", (event) => {
 
 editButton.addEventListener("click", () => setPreview(false));
 previewButton.addEventListener("click", () => setPreview(true));
+voiceResetButton.addEventListener("click", resetReferenceVoices);
 
 document.addEventListener("keydown", (event) => {
   if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
@@ -2235,6 +2469,7 @@ try {
 
 input.value = savedNote === null ? sampleNote : savedNote;
 updateCount();
+initializeVoiceResetButton();
     </script>
   </body>
 </html>
