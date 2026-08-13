@@ -36,8 +36,6 @@
   --control-hover: rgba(70, 78, 70, 0.07);
   --focus-ring: rgba(0, 231, 255, 0.3);
   --control-shadow: rgba(53, 56, 49, 0.08);
-  --tooltip-ink: #ffffff;
-  --tooltip-bg: rgb(0 0 0 / 75%);
   --editor-ink: #34372f;
   --placeholder: rgb(52 55 47 / 50%);
   --error: #ffee00;
@@ -69,8 +67,6 @@
     --control-hover: rgba(226, 235, 227, 0.08);
     --focus-ring: rgba(0, 231, 255, 0.3);
     --control-shadow: rgba(0, 0, 0, 0.28);
-    --tooltip-ink: #000000;
-    --tooltip-bg: rgb(255 255 255 / 75%);
     --editor-ink: #e3e5dc;
     --placeholder: rgb(52 55 47 / 50%);
     --error: #ffee00;
@@ -460,36 +456,6 @@ textarea:focus-visible,
 .mode-button[aria-pressed="true"]::before {
   opacity: 1;
   transform: translateX(-50%) scale(1);
-}
-
-.icon-button::after {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: max-content;
-  max-width: 160px;
-  padding: 8px 12px;
-  color: var(--tooltip-ink);
-  border-radius: 290486px;
-  background: var(--tooltip-bg);
-  content: attr(data-tooltip);
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 0.75rem;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-3px);
-  transition:
-    color 500ms ease,
-    background-color 500ms ease,
-    opacity 500ms ease,
-    transform 500ms ease;
-}
-
-.icon-button:hover::after,
-.icon-button:focus-visible::after {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .icon-swap {
@@ -949,7 +915,6 @@ textarea::placeholder {
             type="button"
             disabled
             aria-label="読み上げ（TTS API接続後に利用できます）"
-            data-tooltip="読み上げ"
           >
             <span class="icon-swap tts-icon" aria-hidden="true">
               <span class="icon-layer tts-play-layer"><i class="fa-solid fa-play"></i></span>
@@ -965,7 +930,6 @@ textarea::placeholder {
             type="button"
             aria-label="編集"
             aria-pressed="true"
-            data-tooltip="編集"
           >
             <i class="fa-solid fa-pen" aria-hidden="true"></i>
           </button>
@@ -975,7 +939,6 @@ textarea::placeholder {
             type="button"
             aria-label="プレビュー"
             aria-pressed="false"
-            data-tooltip="プレビュー"
           >
             <i class="fa-solid fa-eye" aria-hidden="true"></i>
           </button>
@@ -1016,13 +979,12 @@ textarea::placeholder {
         </div>
 
       <footer class="status-bar">
-        <span class="document-state" aria-live="polite">
+        <span class="document-state">
           <span class="icon-swap status-icon" aria-hidden="true">
             <span class="icon-layer status-check-layer"><i class="fa-solid fa-check"></i></span>
             <span class="icon-layer status-reload-layer"><i class="fa-solid fa-rotate fa-spin"></i></span>
             <span class="icon-layer status-error-layer"><i class="fa-solid fa-exclamation"></i></span>
           </span>
-          <span class="sr-only" id="save-status">この端末に保存済み</span>
         </span>
         <span id="word-count">0</span>
       </footer>
@@ -1079,27 +1041,30 @@ const REFERENCE_VOICE_URLS = {
   milch: new URL("./sounds/milch.ja.wav", import.meta.url),
 };
 
-const sampleNote = `# 今日のノート
+const sampleNote = `# こんにちは！
 
-ここは、考えたことを気軽に残すための場所です。
-**マークダウン**で書いて、プレビューで読みやすく整えられます。
+ここは、**書いたことをかわいく読み上げてくれるノート**だよ。
 
-## 今日やること
+今日の気分や、忘れたくないこと。
+ふと思いついたアイデアも、なんでも書いてみてね。
 
-- [x] アイデアを書き出す
-- [ ] 優先順位を決める
-- [ ] 明日の自分にメモを残す
+## 今日やりたいこと
 
-> 完璧な文章より、まず言葉にしてみる。
+* おいしいものを食べる
+* ちょっとだけお散歩する
+* 好きなことをたっぷり楽しむ
 
-ショートカットは \`⌘ + Enter\`。もう一度押すと編集に戻ります。`;
+> いい一日になりますように。
+
+好きなように書きかえて、読み上げてみてね！
+
+そうそう、\`⌘ + Enter\`でプレビューできるよ。もう一度押すと編集に戻るよ。`;
 
 const input = document.querySelector("#markdown-input");
 const editorPane = document.querySelector("#editor-pane");
 const previewPane = document.querySelector("#preview-pane");
 const editButton = document.querySelector("#edit-button");
 const previewButton = document.querySelector("#preview-button");
-const saveStatus = document.querySelector("#save-status");
 const documentState = document.querySelector(".document-state");
 const wordCount = document.querySelector("#word-count");
 const ttsButton = document.querySelector("#tts-button");
@@ -1830,15 +1795,10 @@ function setTtsState(nextState, progress = ttsProgress) {
 
   if (nextState === "playing" || nextState === "generating") {
     ttsButton.setAttribute("aria-label", "一時停止");
-    ttsButton.dataset.tooltip = progress
-      ? `一時停止 ${progress}`
-      : "一時停止";
   } else if (nextState === "paused") {
     ttsButton.setAttribute("aria-label", "再開");
-    ttsButton.dataset.tooltip = progress ? `再開 ${progress}` : "再開";
   } else {
     ttsButton.setAttribute("aria-label", "読み上げ");
-    ttsButton.dataset.tooltip = "読み上げ";
   }
 }
 
@@ -1880,7 +1840,6 @@ async function synthesize(segments, signal) {
   try {
     const firstProgress = `1/${segments.length}`;
     setTtsState("generating", firstProgress);
-    saveStatus.textContent = `音声を生成中… ${firstProgress}`;
     let audioBuffer = await resolveTtsGeneration(beginSegmentSynthesis(segments[0], signal));
 
     for (let index = 0; index < segments.length; index += 1) {
@@ -1892,14 +1851,9 @@ async function synthesize(segments, signal) {
           ? beginSegmentSynthesis(segments[nextIndex], signal)
           : null;
 
-      if (!ttsPlaybackRequested) {
-        saveStatus.textContent = `再生待機中… ${progress}`;
-      }
-
       await waitForTtsPlayback(signal);
       throwIfAborted(signal);
       setTtsState("playing", progress);
-      saveStatus.textContent = `読み上げ中… ${progress}`;
       setActiveTtsSegment(segments[index].previewIndex);
       await playAudioBuffer(audioBuffer, signal);
       setActiveTtsSegment(null);
@@ -1909,7 +1863,6 @@ async function synthesize(segments, signal) {
 
         if (!nextRequest.settled) {
           setTtsState("generating", nextProgress);
-          saveStatus.textContent = `音声を生成中… ${nextProgress}`;
         }
 
         audioBuffer = await resolveTtsGeneration(nextRequest);
@@ -1973,11 +1926,9 @@ function updateCount() {
 function saveNote() {
   try {
     localStorage.setItem(STORAGE_KEY, input.value);
-    saveStatus.textContent = "この端末に保存済み";
     documentState.classList.remove("is-saving");
     documentState.classList.remove("has-error");
   } catch {
-    saveStatus.textContent = "保存できませんでした";
     documentState.classList.remove("is-saving");
     documentState.classList.add("has-error");
   }
@@ -1993,7 +1944,6 @@ function saveNoteSilently() {
 
 function queueSave() {
   window.clearTimeout(saveTimer);
-  saveStatus.textContent = "保存中…";
   documentState.classList.remove("has-error");
   documentState.classList.add("is-saving");
   saveTimer = window.setTimeout(saveNote, 500);
@@ -2053,12 +2003,6 @@ function setDroppedReferenceVoices(files) {
     });
   }
 
-  saveStatus.textContent = "通常文と引用文の参照音声を更新しました";
-  window.setTimeout(() => {
-    if (!documentState.classList.contains("has-error")) {
-      saveStatus.textContent = "この端末に保存済み";
-    }
-  }, 2600);
 }
 
 function resetFileDragState() {
@@ -2120,16 +2064,15 @@ dropFrame.addEventListener("drop", async (event) => {
     const textFiles = files.filter(isTextFile);
 
     if (referenceVoiceFiles.length === 0 && textFiles.length === 0) {
-      saveStatus.textContent = "テキストまたはWAVファイルのみ追加できます";
       documentState.classList.add("has-error");
       window.setTimeout(() => {
         documentState.classList.remove("has-error");
-        saveStatus.textContent = "この端末に保存済み";
       }, 2600);
       return;
     }
 
     if (referenceVoiceFiles.length > 0) {
+      cancelTtsForEdit();
       setDroppedReferenceVoices(referenceVoiceFiles);
     }
 
@@ -2139,7 +2082,6 @@ dropFrame.addEventListener("drop", async (event) => {
       const fileContents = await Promise.all(textFiles.map((file) => file.text()));
       appendDroppedText(fileContents.filter(Boolean).join("\n\n"));
     } catch {
-      saveStatus.textContent = "ファイルを読み込めませんでした";
       documentState.classList.add("has-error");
     }
     return;
@@ -2189,7 +2131,6 @@ async function runTtsFromStart() {
   if (!ttsHandler) return;
   const runId = ++ttsRunId;
   const abortController = new AbortController();
-  let didFail = false;
 
   ttsAbortController = abortController;
   ttsPlaybackRequested = true;
@@ -2197,7 +2138,6 @@ async function runTtsFromStart() {
   window.clearTimeout(ttsStatusResetTimer);
   setTtsState("generating", "");
   documentState.classList.add("is-speaking");
-  saveStatus.textContent = "音声を生成中…";
 
   try {
     const segments = markdownToSpeechSegments(input.value);
@@ -2209,11 +2149,8 @@ async function runTtsFromStart() {
     });
   } catch (error) {
     if (error.name === "AbortError" || runId !== ttsRunId) return;
-    didFail = true;
     console.error(error);
     documentState.classList.add("has-error");
-    saveStatus.textContent = error.message || "読み上げに失敗しました";
-    ttsButton.dataset.tooltip = "読み上げに失敗しました";
   } finally {
     if (runId !== ttsRunId) return;
 
@@ -2223,14 +2160,8 @@ async function runTtsFromStart() {
     setTtsState("idle", "");
     documentState.classList.remove("is-speaking");
 
-    if (!didFail) {
-      saveStatus.textContent = "読み上げました";
-      ttsButton.dataset.tooltip = "読み上げ";
-    }
-
     ttsStatusResetTimer = window.setTimeout(() => {
       documentState.classList.remove("has-error");
-      saveStatus.textContent = "この端末に保存済み";
     }, 2600);
   }
 }
@@ -2241,7 +2172,6 @@ ttsButton.addEventListener("click", async () => {
   if (ttsState === "generating") {
     ttsPlaybackRequested = false;
     setTtsState("paused");
-    saveStatus.textContent = `音声を生成中（一時停止）… ${ttsProgress}`;
     return;
   }
 
@@ -2250,7 +2180,6 @@ ttsButton.addEventListener("click", async () => {
     await activeAudioContext?.suspend();
     if (ttsState === "playing") {
       setTtsState("paused");
-      saveStatus.textContent = `一時停止中… ${ttsProgress}`;
     }
     return;
   }
@@ -2261,12 +2190,8 @@ ttsButton.addEventListener("click", async () => {
     if (activeAudioSource) {
       await activeAudioContext?.resume();
       setTtsState("playing");
-      saveStatus.textContent = `読み上げ中… ${ttsProgress}`;
     } else if (ttsIsGeneratingAudio) {
       setTtsState("generating");
-      saveStatus.textContent = `音声を生成中… ${ttsProgress}`;
-    } else {
-      saveStatus.textContent = `再生を準備中… ${ttsProgress}`;
     }
     return;
   }
@@ -2304,7 +2229,7 @@ let savedNote = null;
 try {
   savedNote = localStorage.getItem(STORAGE_KEY);
 } catch {
-  saveStatus.textContent = "ローカル保存は利用できません";
+  documentState.classList.add("has-error");
 }
 
 input.value = savedNote === null ? sampleNote : savedNote;
