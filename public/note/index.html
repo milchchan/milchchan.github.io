@@ -25,16 +25,16 @@
   color-scheme: light;
   --background-color: var(--paper);
   --paper: #fbfaf6;
-  --paper-glass: rgba(251, 250, 246, 0.84);
+  --paper-glass: rgba(251, 250, 246, 0.75);
   --ink: #2c2f2a;
   --muted: #666960;
   --line: rgb(102 105 96 / 25%);
   --accent: #00e7ff;
   --active: #00e7ff;
-  --notebook-sheen: rgba(0, 231, 255, 0.018);
+  --notebook-sheen: rgba(0, 231, 255, 0.025);
   --control-ink: #666960;
-  --control-hover: rgba(70, 78, 70, 0.07);
-  --focus-ring: rgba(0, 231, 255, 0.3);
+  --control-hover: rgba(70, 78, 70, 0.075);
+  --focus-ring: rgba(0, 231, 255, 0.25);
   --control-shadow: #0a0a0a1a;
   --editor-ink: #34372f;
   --placeholder: rgb(52 55 47 / 50%);
@@ -50,13 +50,15 @@
   --code-bg: #f2f0e9;
   --pre-border: #dfddd4;
   --pre-bg: #f1f0e9;
+  --tooltip-ink: #fbfaf6;
+  --tooltip-background: rgb(44 47 42 / 75%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
     --paper: #171916;
-    --paper-glass: rgba(31, 34, 30, 0.78);
+    --paper-glass: rgba(31, 34, 30, 0.75);
     --ink: #e5e5dc;
     --muted: #a8aca2;
     --line: rgb(168 172 162 / 25%);
@@ -64,8 +66,8 @@
     --active: #00e7ff;
     --notebook-sheen: rgba(0, 231, 255, 0.025);
     --control-ink: #a8aca2;
-    --control-hover: rgba(226, 235, 227, 0.08);
-    --focus-ring: rgba(0, 231, 255, 0.3);
+    --control-hover: rgba(226, 235, 227, 0.075);
+    --focus-ring: rgba(0, 231, 255, 0.25);
     --control-shadow: #0a0a0a1a;
     --editor-ink: #e3e5dc;
     --placeholder: rgb(52 55 47 / 50%);
@@ -81,6 +83,8 @@
     --code-bg: #20231f;
     --pre-border: #3b3f38;
     --pre-bg: #1d201c;
+    --tooltip-ink: #171916;
+    --tooltip-background: rgb(229 229 220 / 75%);
   }
 }
 
@@ -440,10 +444,10 @@ textarea:focus-visible,
   max-width: min(240px, calc(100vw - 32px));
   padding: 8px 12px;
   overflow: hidden;
-  color: var(--paper);
-  border: 1px solid var(--line);
+  color: var(--tooltip-ink);
+  border: 0px none transparent;
   border-radius: 290486px;
-  background: var(--ink);
+  background: var(--tooltip-background);
   box-shadow: 0 .5em 1em -.125em var(--control-shadow);
   font-family: "Barlow", sans-serif;
   font-size: 0.75rem;
