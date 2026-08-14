@@ -35,7 +35,7 @@
   --control-ink: #666960;
   --control-hover: rgba(70, 78, 70, 0.07);
   --focus-ring: rgba(0, 231, 255, 0.3);
-  --control-shadow: rgba(53, 56, 49, 0.08);
+  --control-shadow: #0a0a0a1a;
   --editor-ink: #34372f;
   --placeholder: rgb(52 55 47 / 50%);
   --error: #ffee00;
@@ -66,7 +66,7 @@
     --control-ink: #a8aca2;
     --control-hover: rgba(226, 235, 227, 0.08);
     --focus-ring: rgba(0, 231, 255, 0.3);
-    --control-shadow: rgba(0, 0, 0, 0.28);
+    --control-shadow: #0a0a0a1a;
     --editor-ink: #e3e5dc;
     --placeholder: rgb(52 55 47 / 50%);
     --error: #ffee00;
@@ -326,6 +326,16 @@ button {
   }
 }
 
+@keyframes tooltip-ticker {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(var(--tooltip-distance, 0));
+  }
+}
+
 .icon-controls {
   position: absolute;
   z-index: 10;
@@ -384,7 +394,7 @@ textarea:focus-visible,
 .mode-control {
   border: 0;
   background: var(--paper-glass);
-  box-shadow: 0 8px 28px var(--control-shadow);
+  box-shadow: 0 .5em 1em -.125em var(--control-shadow);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   transition: background-color 500ms ease, border-color 500ms ease, box-shadow 500ms ease;
@@ -413,6 +423,99 @@ textarea:focus-visible,
   width: 40px;
   height: 40px;
   border-radius: 50%;
+}
+
+#tts-button {
+  z-index: 1;
+}
+
+.tooltip {
+  --tooltip-gap: 0.75rem;
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 12px);
+  right: auto;
+  left: 50%;
+  width: max-content;
+  max-width: min(240px, calc(100vw - 32px));
+  padding: 8px 12px;
+  overflow: hidden;
+  color: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 290486px;
+  background: var(--ink);
+  box-shadow: 0 .5em 1em -.125em var(--control-shadow);
+  font-family: "Barlow", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 0.75rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -4px);
+  transition:
+    opacity 500ms ease,
+    transform 500ms ease,
+    visibility 0s linear 500ms,
+    background-color 500ms ease,
+    border-color 500ms ease,
+    color 500ms ease;
+  visibility: hidden;
+}
+
+.tooltip-viewport {
+  display: block;
+  width: 100%;
+  height: 1.3em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tooltip-track {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--tooltip-gap);
+  transform: translateX(0);
+}
+
+.tooltip.is-ticker .tooltip-track {
+  width: 100%;
+  min-width: 0;
+}
+
+.tooltip-line {
+  display: block;
+  width: max-content;
+  min-width: 0;
+  min-height: 1.3em;
+  flex: 0 0 auto;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.tooltip.is-ticker .tooltip-line {
+  width: 100%;
+  flex: 0 0 100%;
+}
+
+.tooltip.is-ticker .tooltip-track {
+  animation: tooltip-ticker var(--tooltip-duration, 4s) linear infinite;
+  animation-play-state: paused;
+}
+
+#tts-button.has-tooltip:hover .tooltip,
+#tts-button.has-tooltip:focus-visible .tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
+  visibility: visible;
+}
+
+#tts-button.has-tooltip:hover .tooltip.is-ticker .tooltip-track,
+#tts-button.has-tooltip:focus-visible .tooltip.is-ticker .tooltip-track {
+  animation-play-state: running;
 }
 
 .mode-control {
@@ -966,6 +1069,16 @@ textarea::placeholder {
               <span class="icon-layer tts-reload-layer"><i class="fa-solid fa-rotate fa-spin"></i></span>
               <span class="icon-layer tts-pause-layer"><i class="fa-solid fa-pause"></i></span>
             </span>
+            <span
+              class="tooltip"
+              id="tts-tooltip"
+              role="tooltip"
+              aria-hidden="true"
+            >
+              <span class="tooltip-viewport">
+                <span class="tooltip-track" aria-hidden="true"></span>
+              </span>
+            </span>
           </button>
           <button
             class="icon-button voice-reset-button is-hidden"
@@ -1052,6 +1165,7 @@ const VOICE_DATABASE_NAME = "note";
 const VOICE_DATABASE_VERSION = 1;
 const VOICE_OBJECT_STORE = "files";
 const VOICE_RECORD_KEY = "voices";
+const VOICE_NAME_RECORD_KEY = "voice-names";
 const TTS_ENDPOINT = "https://milchchan.com/api/generate";
 const TTS_LANGUAGE = "ja";
 const TTS_TEMPERATURE = 1.0;
@@ -1131,6 +1245,8 @@ const documentState = document.querySelector(".document-state");
 const wordCount = document.querySelector("#word-count");
 const ttsControl = document.querySelector("#tts-control");
 const ttsButton = document.querySelector("#tts-button");
+const ttsTooltip = document.querySelector("#tts-tooltip");
+const ttsTooltipTrack = document.querySelector(".tooltip-track");
 const voiceResetButton = document.querySelector("#voice-reset-button");
 const dropFrame = document.querySelector("#drop-frame");
 const spectralAnalyzer = document.querySelector("#spectral-analyzer");
@@ -1154,6 +1270,7 @@ let ttsIsGeneratingAudio = false;
 let activeAudioContext = null;
 let activeAudioSource = null;
 let activeAudioAnalyser = null;
+let tooltipMeasureFrame = null;
 let spectralFrequencyData = null;
 let spectralBarDescriptors = [];
 let spectralEnergy = 0;
@@ -1708,7 +1825,7 @@ function openVoiceDatabase() {
   });
 }
 
-async function saveVoiceBlobs(blobs) {
+async function saveVoiceBlobs(blobs, names) {
   const database = await openVoiceDatabase();
 
   try {
@@ -1721,7 +1838,9 @@ async function saveVoiceBlobs(blobs) {
       transaction.oncomplete = resolve;
       transaction.onerror = rejectTransaction;
       transaction.onabort = rejectTransaction;
-      transaction.objectStore(VOICE_OBJECT_STORE).put(blobs, VOICE_RECORD_KEY);
+      const objectStore = transaction.objectStore(VOICE_OBJECT_STORE);
+      objectStore.put(blobs, VOICE_RECORD_KEY);
+      objectStore.put(names, VOICE_NAME_RECORD_KEY);
     });
   } finally {
     database.close();
@@ -1741,7 +1860,9 @@ async function deleteStoredVoiceBlobs() {
       transaction.oncomplete = resolve;
       transaction.onerror = rejectTransaction;
       transaction.onabort = rejectTransaction;
-      transaction.objectStore(VOICE_OBJECT_STORE).delete(VOICE_RECORD_KEY);
+      const objectStore = transaction.objectStore(VOICE_OBJECT_STORE);
+      objectStore.delete(VOICE_RECORD_KEY);
+      objectStore.delete(VOICE_NAME_RECORD_KEY);
     });
   } finally {
     database.close();
@@ -1775,6 +1896,31 @@ async function loadVoiceBlobs() {
   }
 }
 
+async function loadVoiceNames() {
+  if (!window.indexedDB) return null;
+
+  let database = null;
+
+  try {
+    database = await openVoiceDatabase();
+    const value = await new Promise((resolve, reject) => {
+      const transaction = database.transaction(VOICE_OBJECT_STORE, "readonly");
+      const request = transaction.objectStore(VOICE_OBJECT_STORE).get(VOICE_NAME_RECORD_KEY);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error("参照音声名を読み込めませんでした"));
+    });
+
+    if (!Array.isArray(value)) return null;
+    const names = value.filter((value) => typeof value === "string" && value.length > 0);
+    return names.length > 0 ? names : null;
+  } catch (error) {
+    console.warn("IndexedDBの参照音声名を読み込めませんでした", error);
+    return null;
+  } finally {
+    database?.close();
+  }
+}
+
 function selectStoredReferenceVoice(voiceIndex, blobs) {
   if (!Array.isArray(blobs) || blobs.length === 0) return null;
   if (blobs.length === 1) return blobs[0];
@@ -1785,6 +1931,27 @@ function selectStoredReferenceVoice(voiceIndex, blobs) {
   }
 
   return blobs[0];
+}
+
+function selectStoredReferenceVoiceName(voiceIndex, names) {
+  if (!Array.isArray(names) || names.length === 0) return null;
+  if (names.length === 1) return names[0];
+
+  const expectedParity = voiceIndex % 2;
+  for (let index = names.length - 1; index >= 0; index -= 1) {
+    if (index % 2 === expectedParity) return names[index];
+  }
+
+  return names[0];
+}
+
+function getEffectiveVoiceNames(names) {
+  if (!Array.isArray(names) || names.length <= 2) return names || [];
+
+  return [
+    selectStoredReferenceVoiceName(NORMAL_VOICE_INDEX, names),
+    selectStoredReferenceVoiceName(QUOTE_VOICE_INDEX, names),
+  ].filter(Boolean);
 }
 
 async function getReferenceVoice(voiceIndex, storedVoices) {
@@ -2098,6 +2265,77 @@ function updateCount() {
   wordCount.textContent = String(count);
 }
 
+function updateTtsTooltip(names) {
+  const normalizedNames = getEffectiveVoiceNames(Array.isArray(names)
+    ? names.filter((name) => typeof name === "string" && name.length > 0)
+    : []);
+
+  if (tooltipMeasureFrame !== null) {
+    window.cancelAnimationFrame(tooltipMeasureFrame);
+    tooltipMeasureFrame = null;
+  }
+
+  ttsTooltipTrack.replaceChildren();
+  ttsTooltip.classList.remove("is-ticker");
+  ttsTooltip.style.removeProperty("width");
+  ttsButton.classList.toggle("has-tooltip", normalizedNames.length > 0);
+  ttsTooltip.setAttribute("aria-hidden", String(normalizedNames.length === 0));
+
+  if (normalizedNames.length === 0) {
+    ttsTooltip.removeAttribute("aria-label");
+    ttsButton.removeAttribute("aria-describedby");
+    ttsTooltip.style.removeProperty("--tooltip-distance");
+    ttsTooltip.style.removeProperty("--tooltip-duration");
+    ttsTooltip.style.removeProperty("width");
+    return;
+  }
+
+  const createLine = (name) => {
+    const line = document.createElement("span");
+    line.className = "tooltip-line";
+    line.textContent = name;
+    return line;
+  };
+
+  normalizedNames.forEach((name) => ttsTooltipTrack.append(createLine(name)));
+
+  if (normalizedNames.length > 1) {
+    ttsTooltipTrack.append(createLine(normalizedNames[0]));
+    const firstLine = ttsTooltipTrack.firstElementChild;
+    const tooltipStyle = getComputedStyle(ttsTooltip);
+    const horizontalPadding =
+      Number.parseFloat(tooltipStyle.paddingLeft) +
+      Number.parseFloat(tooltipStyle.paddingRight);
+    const horizontalBorder =
+      Number.parseFloat(tooltipStyle.borderLeftWidth) +
+      Number.parseFloat(tooltipStyle.borderRightWidth);
+    const firstNameWidth = firstLine.getBoundingClientRect().width +
+      horizontalPadding + horizontalBorder;
+
+    ttsTooltip.style.width = `${firstNameWidth}px`;
+    ttsTooltip.classList.add("is-ticker");
+    ttsTooltip.style.setProperty(
+      "--tooltip-duration",
+      `${Math.max(1, Math.floor(normalizedNames.reduce((x, y) => x + y.length, 0) / 2))}s`,
+    );
+
+    tooltipMeasureFrame = window.requestAnimationFrame(() => {
+      const viewportWidth = ttsTooltipTrack.parentElement.getBoundingClientRect().width;
+      const trackStyle = getComputedStyle(ttsTooltipTrack);
+      const gap = Number.parseFloat(trackStyle.columnGap) || 0;
+      const cycleDistance = (viewportWidth + gap) * normalizedNames.length;
+      ttsTooltip.style.setProperty("--tooltip-distance", `-${cycleDistance}px`);
+      tooltipMeasureFrame = null;
+    });
+  } else {
+    ttsTooltip.style.removeProperty("--tooltip-distance");
+    ttsTooltip.style.removeProperty("--tooltip-duration");
+  }
+
+  ttsTooltip.setAttribute("aria-label", normalizedNames.join(", "));
+  ttsButton.setAttribute("aria-describedby", "tts-tooltip");
+}
+
 function updateVoiceResetButtonState() {
   const isHidden = voiceResetButton.classList.contains("is-hidden");
   voiceResetButton.disabled = isHidden || isVoiceSaving;
@@ -2113,9 +2351,10 @@ function setVoiceResetButtonVisible(visible) {
 
 async function initializeVoiceResetButton() {
   const revision = voiceResetButtonRevision;
-  const blobs = await loadVoiceBlobs();
+  const [blobs, names] = await Promise.all([loadVoiceBlobs(), loadVoiceNames()]);
   if (revision !== voiceResetButtonRevision) return;
   setVoiceResetButtonVisible(Boolean(blobs?.length));
+  updateTtsTooltip(names);
 }
 
 function updateSavingState() {
@@ -2198,14 +2437,16 @@ async function setDroppedReferenceVoices(files) {
   const blobs = files.map((file) => new Blob([file], {
     type: file.type || "audio/wav",
   }));
+  const names = files.map((file) => file.name);
   documentState.classList.remove("has-error");
   isVoiceSaving = true;
   updateSavingState();
 
   try {
-    await saveVoiceBlobs(blobs);
+    await saveVoiceBlobs(blobs, names);
     referenceVoiceCache.clear();
     setVoiceResetButtonVisible(true);
+    updateTtsTooltip(names);
   } catch (error) {
     documentState.classList.add("has-error");
     throw error;
@@ -2226,6 +2467,7 @@ async function resetReferenceVoices() {
   try {
     await deleteStoredVoiceBlobs();
     setVoiceResetButtonVisible(false);
+    updateTtsTooltip([]);
   } catch (error) {
     documentState.classList.add("has-error");
     console.error(error);
