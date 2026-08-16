@@ -1061,6 +1061,31 @@
         return Math.floor(Math.random() * (max - min)) + min;
       }
 
+      function aggregateNewsBySubject(items) {
+        const latestItems = new Map();
+
+        for (const item of items) {
+          const subject = typeof item["subject"] === "string" ? item["subject"].trim() : "";
+
+          if (!subject) {
+            continue;
+          }
+
+          const key = subject.toLowerCase();
+          const latestItem = latestItems.get(key);
+
+          if (latestItem === undefined || item["timestamp"].getTime() > latestItem["timestamp"].getTime()) {
+            latestItems.set(key, item);
+          }
+        }
+
+        return items.filter((item) => {
+          const subject = typeof item["subject"] === "string" ? item["subject"].trim() : "";
+
+          return !subject || latestItems.get(subject.toLowerCase()) === item;
+        });
+      }
+
       async function resize(blob, length) {
         return await new Promise(async (resolve, reject) => {
           const reader = new FileReader();
@@ -1349,7 +1374,9 @@
                         }
                       }
 
-                      resolve([items, JSON.stringify(items)]);
+                      const aggregatedItems = aggregateNewsBySubject(items);
+
+                      resolve([aggregatedItems, JSON.stringify(aggregatedItems)]);
                     } else {
                       throw new Error(response.statusText);
                     }
@@ -1751,7 +1778,9 @@
                     }
                   }
 
-                  resolve([items, JSON.stringify(items)]);
+                  const aggregatedItems = aggregateNewsBySubject(items);
+
+                  resolve([aggregatedItems, JSON.stringify(aggregatedItems)]);
                 } else {
                   throw new Error(response.statusText);
                 }
