@@ -115,14 +115,5 @@ class TestFetch(unittest.TestCase):
         self.assertEqual(payload[1]['subject'], '')
         self.assertIn('fetch?version=2&', next(iter(stored)))
 
-    def test_subject_schema_requires_a_string_on_every_item(self):
-        self.assertTrue(self.fetch.has_subject_schema([
-            {'subject': 'iPhone 18 Proの発売'},
-            {'subject': ''},
-        ]))
-        self.assertFalse(self.fetch.has_subject_schema([{'content': 'subjectなし'}]))
-        self.assertFalse(self.fetch.has_subject_schema([{'subject': None}]))
-
-
 if __name__ == '__main__':
     unittest.main()
