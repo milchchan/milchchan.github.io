@@ -30,7 +30,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             else:
                 order = 'desc'
 
-            merged_cache_name = f'fetch?version=2&limit={str(limit)}&sort={sort}&order={order}'
+            merged_cache_name = f'fetch?limit={str(limit)}&sort={sort}&order={order}'
             merged_cache_data = get_cache(merged_cache_name)
 
             if merged_cache_data is None:
