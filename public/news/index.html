@@ -1061,31 +1061,6 @@
         return Math.floor(Math.random() * (max - min)) + min;
       }
 
-      function aggregateNewsBySubject(items) {
-        const latestItems = new Map();
-
-        for (const item of items) {
-          const subject = typeof item["subject"] === "string" ? item["subject"].trim() : "";
-
-          if (!subject) {
-            continue;
-          }
-
-          const key = subject.toLowerCase();
-          const latestItem = latestItems.get(key);
-
-          if (latestItem === undefined || item["timestamp"].getTime() > latestItem["timestamp"].getTime()) {
-            latestItems.set(key, item);
-          }
-        }
-
-        return items.filter((item) => {
-          const subject = typeof item["subject"] === "string" ? item["subject"].trim() : "";
-
-          return !subject || latestItems.get(subject.toLowerCase()) === item;
-        });
-      }
-
       async function resize(blob, length) {
         return await new Promise(async (resolve, reject) => {
           const reader = new FileReader();
@@ -1355,28 +1330,38 @@
                     if (response.ok) {
                       const json = await response.json();
                       const past = Date.now() - 24 * 60 * 60 * 1000;
-                      const items = [];
-
-                      for (const item of json) {
-                        if (item["score"] >= threshold) {
-                          try {
-                            new URL(item["url"]);
-                          } catch {
-                            continue;
-                          }
-                          
-                          const timestamp = Math.floor(item["timestamp"] * 1000);
-
-                          if (timestamp > past) {
-                            item["timestamp"] = new Date(timestamp);
-                            items.push(item);
-                          }
+                      const items = json.reduce((items, item) => {
+                        if (!("score" in item) || item["score"] < threshold) {
+                          return items;
                         }
-                      }
 
-                      const aggregatedItems = aggregateNewsBySubject(items);
+                        try {
+                          new URL(item["url"]);
+                        } catch {
+                          return items;
+                        }
 
-                      resolve([aggregatedItems, JSON.stringify(aggregatedItems)]);
+                        const timestamp = Math.floor(item["timestamp"] * 1000);
+
+                        if (!(timestamp > past)) {
+                          return items;
+                        }
+
+                        item["timestamp"] = new Date(timestamp);
+                        const subject = typeof item["subject"] === "string" ? item["subject"].trim() : "";
+                        const index = subject ? items.findIndex((currentItem) => typeof currentItem["subject"] === "string" && currentItem["subject"].trim().toLowerCase() === subject.toLowerCase()) : -1;
+
+                        if (index < 0) {
+                          items.push(item);
+                        } else if (item["timestamp"].getTime() > items[index]["timestamp"].getTime()) {
+                          items.splice(index, 1);
+                          items.push(item);
+                        }
+
+                        return items;
+                      }, []);
+
+                      resolve([items, JSON.stringify(items)]);
                     } else {
                       throw new Error(response.statusText);
                     }
@@ -1759,28 +1744,38 @@
                 if (response.ok) {
                   const json = await response.json();
                   const past = Date.now() - 24 * 60 * 60 * 1000;
-                  const items = [];
-
-                  for (const item of json) {
-                    if ("score" in item && item["score"] >= threshold) {
-                      try {
-                        new URL(item["url"]);
-                      } catch {
-                        continue;
-                      }
-
-                      const timestamp = Math.floor(item["timestamp"] * 1000);
-
-                      if (timestamp > past) {
-                        item["timestamp"] = new Date(timestamp);
-                        items.push(item);
-                      }
+                  const items = json.reduce((items, item) => {
+                    if (!("score" in item) || item["score"] < threshold) {
+                      return items;
                     }
-                  }
 
-                  const aggregatedItems = aggregateNewsBySubject(items);
+                    try {
+                      new URL(item["url"]);
+                    } catch {
+                      return items;
+                    }
 
-                  resolve([aggregatedItems, JSON.stringify(aggregatedItems)]);
+                    const timestamp = Math.floor(item["timestamp"] * 1000);
+
+                    if (!(timestamp > past)) {
+                      return items;
+                    }
+
+                    item["timestamp"] = new Date(timestamp);
+                    const subject = typeof item["subject"] === "string" ? item["subject"].trim() : "";
+                    const index = subject ? items.findIndex((currentItem) => typeof currentItem["subject"] === "string" && currentItem["subject"].trim().toLowerCase() === subject.toLowerCase()) : -1;
+
+                    if (index < 0) {
+                      items.push(item);
+                    } else if (item["timestamp"].getTime() > items[index]["timestamp"].getTime()) {
+                      items.splice(index, 1);
+                      items.push(item);
+                    }
+
+                    return items;
+                  }, []);
+
+                  resolve([items, JSON.stringify(items)]);
                 } else {
                   throw new Error(response.statusText);
                 }
