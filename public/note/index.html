@@ -31,10 +31,8 @@
   --line: rgb(102 105 96 / 25%);
   --accent: #00e7ff;
   --active: #00e7ff;
-  --notebook-sheen: rgba(0, 231, 255, 0.025);
   --control-ink: #666960;
-  --control-hover: rgba(70, 78, 70, 0.075);
-  --focus-ring: rgba(0, 231, 255, 0.25);
+  --control-hover: rgb(70 78 70 / 5%);
   --control-shadow: #0a0a0a1a;
   --editor-ink: #34372f;
   --placeholder: rgb(52 55 47 / 50%);
@@ -64,10 +62,8 @@
     --line: rgb(168 172 162 / 25%);
     --accent: #00e7ff;
     --active: #00e7ff;
-    --notebook-sheen: rgba(0, 231, 255, 0.025);
     --control-ink: #a8aca2;
-    --control-hover: rgba(226, 235, 227, 0.075);
-    --focus-ring: rgba(0, 231, 255, 0.25);
+    --control-hover: rgb(226 235 227 / 5%);
     --control-shadow: #0a0a0a1a;
     --editor-ink: #e3e5dc;
     --placeholder: rgb(52 55 47 / 50%);
@@ -145,12 +141,6 @@ button {
   min-height: 100dvh;
   overflow: hidden;
   background-color: var(--paper);
-  background-image: linear-gradient(
-    90deg,
-    transparent 0,
-    var(--notebook-sheen) 50%,
-    transparent 100%
-  );
 }
 
 .overlay {
@@ -276,8 +266,8 @@ button {
 }
 
 .milchchan-mark:focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: 0px none transparent;
+  outline-offset: 0px;
 }
 
 .milchchan-mark-clip {
@@ -376,8 +366,8 @@ button {
 }
 
 .icon-button:focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: 0px none transparent;
+  outline-offset: 0px;
 }
 
 textarea:focus-visible,
