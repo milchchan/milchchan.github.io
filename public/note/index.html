@@ -1247,6 +1247,7 @@ const spectralAnalyzer = document.querySelector("#spectral-analyzer");
 const spectralContext = spectralAnalyzer.getContext("2d");
 
 let previewing = false;
+let renderedPreviewSource = null;
 let saveTimer;
 let isLocalStorageSaving = false;
 let isVoiceSaving = false;
@@ -2387,28 +2388,28 @@ function queueSave() {
   saveTimer = window.setTimeout(saveNote, 500);
 }
 
+function renderPreview() {
+  const markdown = input.value.trim();
+  if (markdown === renderedPreviewSource) return false;
+
+  previewPane.innerHTML = markdown
+    ? renderMarkdown(markdown)
+    : "";
+  renderedPreviewSource = markdown;
+  setActiveTtsSegment(activeTtsSegmentIndex);
+  return true;
+}
+
 function setPreview(nextState) {
   previewing = nextState;
-
-  if (previewing) {
-    const markdown = input.value.trim();
-    previewPane.innerHTML = markdown
-      ? renderMarkdown(markdown)
-      : "";
-    setActiveTtsSegment(activeTtsSegmentIndex);
-  }
-
-  document.body.classList.toggle("is-previewing", previewing);
-  editorPane.setAttribute("aria-hidden", String(previewing));
-  previewPane.setAttribute("aria-hidden", String(!previewing));
-  editorPane.inert = previewing;
-  previewPane.inert = !previewing;
-  editButton.setAttribute("aria-pressed", String(!previewing));
-  previewButton.setAttribute("aria-pressed", String(previewing));
-
-  window.requestAnimationFrame(() => {
-    (previewing ? previewPane : input).focus({ preventScroll: true });
-  });
+  document.body.classList.toggle("is-previewing", nextState);
+  editorPane.setAttribute("aria-hidden", String(nextState));
+  previewPane.setAttribute("aria-hidden", String(!nextState));
+  editorPane.inert = nextState;
+  previewPane.inert = !nextState;
+  editButton.setAttribute("aria-pressed", String(!nextState));
+  previewButton.setAttribute("aria-pressed", String(nextState));
+  (nextState ? previewPane : input).focus({ preventScroll: true });
 }
 
 function dataTransferHasType(dataTransfer, type) {
@@ -2567,6 +2568,7 @@ input.addEventListener("input", () => {
   cancelTtsForEdit();
   updateCount();
   queueSave();
+  renderPreview();
 });
 
 input.addEventListener("keydown", (event) => {
@@ -2704,6 +2706,7 @@ try {
 }
 
 input.value = savedNote === null ? sampleNote : savedNote;
+renderPreview();
 updateCount();
 initializeVoiceResetButton();
     </script>
