@@ -334,7 +334,7 @@ class KMeans {
 
     for (let i = 1; i < this.maxClusters; i++) {
       const probabilities = [];
-      let sum = 0.0;
+      let sum = 0;
 
       for (const vector of data) {
         let minDistance = Number.POSITIVE_INFINITY;
@@ -349,7 +349,7 @@ class KMeans {
         sum += squaredDistance;
       }
 
-      if (sum == 0.0) {
+      if (sum == 0) {
         break;
       }
 
@@ -575,7 +575,7 @@ function pickColor(image, KMeansClass) {
 
     const color = {
       hue: hue * 360,
-      saturation: brightness > 0.0 ? Math.max(Math.min(chroma / brightness, 1.0), 0.0) : 0.0,
+      saturation: brightness > 0 ? Math.max(Math.min(chroma / brightness, 1), 0) : 0,
       value: brightness
     };
     const stat = stats.get(id);
