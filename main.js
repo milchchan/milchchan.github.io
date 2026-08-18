@@ -328,8 +328,7 @@ class KMeans {
     // k-means++
     const clusters = new Array(data.length).fill(0);
     let centerVector = data[Math.floor(Math.random() * data.length)];
-    const epsilon = 10 ** -8;
-
+    
     this.centers.clear();
     this.centers.set(0, centerVector);
 
@@ -350,18 +349,16 @@ class KMeans {
         sum += squaredDistance;
       }
 
-      if (sum <= epsilon) {
-        break;
+      if (sum > 0.0) {
+        for (let j = 0; j < probabilities.length; j++) {
+          probabilities[j] /= sum;
+        }
+
+        const selectedIndex = Math.min(this.choice(probabilities), probabilities.length - 1);
+
+        centerVector = data[selectedIndex];
+        this.centers.set(i, centerVector);
       }
-
-      for (let j = 0; j < probabilities.length; j++) {
-        probabilities[j] /= sum;
-      }
-
-      const selectedIndex = Math.min(this.choice(probabilities), probabilities.length - 1);
-
-      centerVector = data[selectedIndex];
-      this.centers.set(i, centerVector);
     }
 
     for (let t = 0; t < iterations; t++) {
