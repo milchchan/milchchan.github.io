@@ -349,16 +349,18 @@ class KMeans {
         sum += squaredDistance;
       }
 
-      if (sum > 0.0) {
-        for (let j = 0; j < probabilities.length; j++) {
-          probabilities[j] /= sum;
-        }
-
-        const selectedIndex = Math.min(this.choice(probabilities), probabilities.length - 1);
-
-        centerVector = data[selectedIndex];
-        this.centers.set(i, centerVector);
+      if (sum == 0.0) {
+        break;
       }
+
+      for (let j = 0; j < probabilities.length; j++) {
+        probabilities[j] /= sum;
+      }
+
+      const selectedIndex = Math.min(this.choice(probabilities), probabilities.length - 1);
+
+      centerVector = data[selectedIndex];
+      this.centers.set(i, centerVector);
     }
 
     for (let t = 0; t < iterations; t++) {
