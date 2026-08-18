@@ -542,10 +542,11 @@ function pickColor(image, KMeansClass) {
 
       const saturation = maximum > 0 ? difference / maximum : 0;
       const angle = hue / 360 * 2 * Math.PI;
+      const chroma = saturation * maximum;
 
       pixels.push([
-        saturation * Math.cos(angle),
-        saturation * Math.sin(angle),
+        chroma * Math.cos(angle),
+        chroma * Math.sin(angle),
         maximum
       ]);
     }
@@ -565,15 +566,17 @@ function pickColor(image, KMeansClass) {
   for (const pixel of pixels) {
     const [id, vector] = kMeans.predict(pixel);
     let hue = Math.atan2(vector[1], vector[0]) / (2 * Math.PI);
-
+    const chroma = Math.hypot(vector[0], vector[1]);
+    const brightness = Math.min(Math.max(vector[2], 0), 1);
+    
     if (hue < 0) {
       hue += 1;
     }
 
     const color = {
       hue: hue * 360,
-      saturation: Math.min(Math.max(Math.hypot(vector[0], vector[1]), 0), 1),
-      value: Math.min(Math.max(vector[2], 0), 1)
+      saturation: brightness > 0.0 ? Math.max(Math.min(chroma / brightness, 1.0), 0.0) : 0.0,
+      value: brightness
     };
     const stat = stats.get(id);
 
