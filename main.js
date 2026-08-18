@@ -324,20 +324,7 @@ class KMeans {
     return this.centers;
   }
 
-  fit(
-    data,
-    iterations = 1000,
-    distance = (x, y) => {
-      // Euclidean distance
-      let result = 0;
-
-      for (let i = 0; i < x.length; i++) {
-        result += (x[i] - y[i]) ** 2;
-      }
-
-      return Math.sqrt(result);
-    }
-  ) {
+  fit(data, iterations = 1000) {
     // k-means++
     const clusters = new Array(data.length).fill(0);
     let centerVector = data[Math.floor(Math.random() * data.length)];
@@ -348,13 +335,23 @@ class KMeans {
 
     for (let i = 1; i < this.maxClusters; i++) {
       const probabilities = [];
-      let sum = epsilon;
+      let sum = 0.0;
 
       for (const vector of data) {
-        const currentDistance = distance(centerVector, vector) + epsilon;
+        let minDistance = Number.POSITIVE_INFINITY;
 
-        probabilities.push(currentDistance);
-        sum += currentDistance;
+        for (const center of this.centers.values()) {
+          minDistance = Math.min(minDistance, this.euclideanDistance(center, vector));
+        }
+
+        const squaredDistance = minDistance ** 2;
+
+        probabilities.push(squaredDistance);
+        sum += squaredDistance;
+      }
+
+      if (sum <= epsilon) {
+        break;
       }
 
       for (let j = 0; j < probabilities.length; j++) {
@@ -374,10 +371,10 @@ class KMeans {
         let assignedClusterId = -1;
 
         for (const [clusterId, center] of this.centers) {
-          const currentDistance = distance(center, data[i]);
+          const distance = this.euclideanDistance(center, data[i]);
 
-          if (currentDistance < minDistance) {
-            minDistance = currentDistance;
+          if (distance < minDistance) {
+            minDistance = distance;
             assignedClusterId = clusterId;
           }
         }
@@ -403,14 +400,14 @@ class KMeans {
   }
 
   predict(vector) {
-    let maxSimilarity = 0;
+    let minDistance = Number.POSITIVE_INFINITY;
     let predictedClusterId = 0;
 
     for (const [clusterId, center] of this.centers) {
-      const similarity = this.cosineSimilarity(center, vector);
+      const distance = this.euclideanDistance(center, vector);
 
-      if (similarity > maxSimilarity) {
-        maxSimilarity = similarity;
+      if (distance < minDistance) {
+        minDistance = distance;
         predictedClusterId = clusterId;
       }
     }
@@ -418,19 +415,14 @@ class KMeans {
     return [predictedClusterId, this.centers.get(predictedClusterId)];
   }
 
-  cosineSimilarity(x, y) {
-    const epsilon = 10 ** -8;
+  euclideanDistance(x, y) {
     let sum = 0;
-    let normX = 0;
-    let normY = 0;
 
     for (let i = 0; i < x.length; i++) {
-      sum += x[i] * y[i];
-      normX += x[i] ** 2;
-      normY += y[i] ** 2;
+      sum += (x[i] - y[i]) ** 2;
     }
 
-    return (sum + epsilon) / (Math.sqrt(normX) * Math.sqrt(normY) + epsilon);
+    return Math.sqrt(sum);
   }
 
   choice(probabilities) {
