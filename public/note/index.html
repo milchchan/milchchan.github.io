@@ -29,6 +29,7 @@
     <style media="screen">
 :root {
   color-scheme: light;
+  --pane-bottom-space: 32px;
   --background-color: var(--paper);
   --paper: #f7f7f4;
   --paper-glass: rgb(247 247 244 / 75%);
@@ -705,7 +706,7 @@ textarea {
   height: 100%;
   min-height: 100%;
   resize: none;
-  padding: 0;
+  padding: 0 0 var(--pane-bottom-space);
   color: var(--editor-ink);
   border: 0;
   outline: 0;
@@ -726,7 +727,7 @@ textarea::placeholder {
 
 .preview-pane {
   min-height: 100%;
-  padding: 0;
+  padding: 0 0 var(--pane-bottom-space);
   overflow-y: auto;
   transition: opacity 500ms ease, padding 500ms ease;
 }
@@ -776,6 +777,9 @@ textarea::placeholder {
 }
 
 .markdown-body {
+  --preview-block-gap: 16px;
+  --preview-inner-gap: 8px;
+  --preview-inset: 16px;
   color: var(--preview-ink);
   font-family: "Noto Sans JP", sans-serif;
   font-size: clamp(15px, 1.15vw, 17px);
@@ -784,12 +788,12 @@ textarea::placeholder {
   transition: color 500ms ease, opacity 500ms ease, padding 500ms ease;
 }
 
-.markdown-body > :first-child {
-  margin-top: 0;
+.markdown-body > * {
+  margin-block: 0;
 }
 
-.markdown-body > :last-child {
-  margin-bottom: 0;
+.markdown-body > :not(:first-child) {
+  margin-block-start: var(--preview-block-gap);
 }
 
 .markdown-body h1,
@@ -804,30 +808,30 @@ textarea::placeholder {
 }
 
 .markdown-body h1 {
-  margin: 0 0 1.2em;
-  padding-bottom: 0.55em;
+  margin: 0;
+  padding-bottom: var(--preview-inner-gap);
   border-bottom: 1px solid var(--line);
   font-size: clamp(26px, 3.3vw, 40px);
   letter-spacing: 0.015em;
 }
 
 .markdown-body h2 {
-  margin: 2.15em 0 0.7em;
+  margin: 0;
   font-size: clamp(21px, 2.2vw, 27px);
 }
 
 .markdown-body h3 {
-  margin: 1.8em 0 0.55em;
+  margin: 0;
   font-size: 19px;
 }
 
 .markdown-body h4 {
-  margin: 1.6em 0 0.5em;
+  margin: 0;
   font-size: 16px;
 }
 
 .markdown-body p {
-  margin: 0 0 1.25em;
+  margin: 0;
   transition: color 500ms ease;
 }
 
@@ -858,7 +862,7 @@ textarea::placeholder {
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 1.5em auto;
+  margin: 0 auto;
   border-radius: 8px;
   opacity: 0;
 }
@@ -877,7 +881,7 @@ textarea::placeholder {
 }
 
 .math-display {
-  margin: 1.5em 0;
+  margin: 0;
   overflow-x: auto;
   overflow-y: hidden;
   text-align: center;
@@ -897,14 +901,18 @@ textarea::placeholder {
 
 .markdown-body ul,
 .markdown-body ol {
-  margin: 0 0 1.35em;
-  padding-left: 1.55em;
+  margin: 0;
+  padding-left: var(--preview-inset);
   transition: color 500ms ease;
 }
 
 .markdown-body li {
-  margin: 0.38em 0;
-  padding-left: 0.22em;
+  margin: 0;
+  padding-left: 0;
+}
+
+.markdown-body li + li {
+  margin-top: var(--preview-inner-gap);
 }
 
 .markdown-body li::marker {
@@ -919,21 +927,21 @@ textarea::placeholder {
 .markdown-body .task-item {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
+  gap: var(--preview-inner-gap);
   padding-left: 0;
 }
 
 .markdown-body input[type="checkbox"] {
   width: 15px;
   height: 15px;
-  margin: 7px 0 0;
+  margin: var(--preview-inner-gap) 0 0;
   accent-color: var(--accent);
   pointer-events: none;
 }
 
 .markdown-body blockquote {
-  margin: 1.7em 0;
-  padding: 0.2em 0 0.2em 1.25em;
+  margin: 0;
+  padding: 0 0 0 var(--preview-inset);
   color: var(--quote-ink);
   border-left: 3px solid var(--quote-border);
   font-family: "Noto Serif JP", serif;
@@ -941,11 +949,15 @@ textarea::placeholder {
 }
 
 .markdown-body blockquote p {
-  margin: 0.5em 0;
+  margin: 0;
+}
+
+.markdown-body blockquote p + p {
+  margin-top: var(--preview-inner-gap);
 }
 
 .markdown-body code {
-  padding: 0.15em 0.42em;
+  padding: calc(var(--preview-inner-gap) / 2) var(--preview-inner-gap);
   color: inherit;
   border: 1px solid var(--code-border);
   border-radius: 5px;
@@ -957,8 +969,8 @@ textarea::placeholder {
 
 .markdown-body pre {
   overflow-x: auto;
-  margin: 1.6em 0;
-  padding: 20px 22px;
+  margin: 0;
+  padding: var(--preview-inset);
   border: 1px solid var(--pre-border);
   border-radius: 10px;
   background: var(--pre-bg);
@@ -975,7 +987,7 @@ textarea::placeholder {
 
 .markdown-body hr {
   height: 1px;
-  margin: 2.5em 0;
+  margin: 0;
   border: 0;
   background: var(--line);
   transition: background-color 500ms ease;
