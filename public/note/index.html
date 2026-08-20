@@ -901,18 +901,16 @@ textarea::placeholder {
 
 .markdown-body ul,
 .markdown-body ol {
-  margin: 0;
-  padding-left: var(--preview-inset);
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-left: 0;
+  padding-left: 32px;
   transition: color 500ms ease;
 }
 
 .markdown-body li {
   margin: 0;
-  padding-left: var(--preview-inset);
-}
-
-.markdown-body li + li {
-  margin-top: var(--preview-inner-gap);
+  padding-left: 8px;
 }
 
 .markdown-body li::marker {
@@ -920,7 +918,7 @@ textarea::placeholder {
 }
 
 .markdown-body .task-list {
-  padding-left: var(--preview-inset);
+  padding-left: 8px;
   list-style: none;
 }
 
@@ -928,13 +926,13 @@ textarea::placeholder {
   display: flex;
   align-items: flex-start;
   gap: var(--preview-inner-gap);
-  padding-left: var(--preview-inset);
+  padding-left: 0;
 }
 
 .markdown-body input[type="checkbox"] {
-  width: 15px;
-  height: 15px;
-  margin: var(--preview-inner-gap) 0 0;
+  width: 16px;
+  height: 16px;
+  margin: var(--preview-inner-gap) 8px 0 0;
   accent-color: var(--accent);
   pointer-events: none;
 }
