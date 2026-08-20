@@ -4,24 +4,6 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 
-class Like(Base):
-    __tablename__ = 'likes'
-    id = Column('id', Integer(), primary_key=True, nullable=False)
-    name = Column('name', String(256), nullable=False)
-    content = Column('content', Text(), nullable=False)
-    language = Column('language', String(3), nullable=True)
-    timestamp = Column('timestamp', DateTime(), nullable=False)
-
-
-class Attribute(Base):
-    __tablename__ = 'attributes'
-    id = Column('id', Integer(), primary_key=True, nullable=False)
-    like_id = Column('like_id', Integer(), nullable=False)
-    name = Column('name', String(256), nullable=True)
-    start = Column('start', Integer(), nullable=False)
-    end = Column('end', Integer(), nullable=False)
-
-
 class Word(Base):
     __tablename__ = 'words'
     id = Column('id', Integer(), primary_key=True, nullable=False)
