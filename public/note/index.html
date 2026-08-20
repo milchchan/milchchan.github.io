@@ -330,6 +330,16 @@ button {
   }
 }
 
+@keyframes image-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .icon-controls {
   position: absolute;
   z-index: 10;
@@ -765,7 +775,7 @@ textarea::placeholder {
   font-size: clamp(15px, 1.15vw, 17px);
   line-height: 1.95;
   overflow-wrap: anywhere;
-  transition: color 500ms ease;
+  transition: color 500ms ease, opacity 500ms ease, padding 500ms ease;
 }
 
 .markdown-body > :first-child {
@@ -844,6 +854,15 @@ textarea::placeholder {
   height: auto;
   margin: 1.5em auto;
   border-radius: 8px;
+  opacity: 0;
+}
+
+.markdown-body img.is-loaded {
+  animation: image-fade-in 500ms ease both;
+}
+
+.markdown-body img.is-load-error {
+  opacity: 1;
 }
 
 .markdown-body ul,
@@ -2420,6 +2439,22 @@ function queueSave() {
   saveTimer = window.setTimeout(saveNote, 500);
 }
 
+function initializePreviewImages() {
+  previewPane.querySelectorAll("img").forEach((image) => {
+    const revealImage = () => image.classList.add("is-loaded");
+    const showImageError = () => image.classList.add("is-load-error");
+
+    if (image.complete) {
+      if (image.naturalWidth > 0) revealImage();
+      else showImageError();
+      return;
+    }
+
+    image.addEventListener("load", revealImage, { once: true });
+    image.addEventListener("error", showImageError, { once: true });
+  });
+}
+
 function renderPreview() {
   const markdown = input.value.trim();
   if (markdown === renderedPreviewSource) return false;
@@ -2427,6 +2462,7 @@ function renderPreview() {
   previewPane.innerHTML = markdown
     ? renderMarkdown(markdown)
     : "";
+  initializePreviewImages();
   renderedPreviewSource = markdown;
   setActiveTtsSegment(activeTtsSegmentIndex);
   return true;
