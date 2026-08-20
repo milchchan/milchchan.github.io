@@ -838,6 +838,14 @@ textarea::placeholder {
   opacity: 0.5;
 }
 
+.markdown-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.5em auto;
+  border-radius: 8px;
+}
+
 .markdown-body ul,
 .markdown-body ol {
   margin: 0 0 1.35em;
@@ -1624,11 +1632,31 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function isSafeImageUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && value.toLowerCase().startsWith("https://");
+  } catch {
+    return false;
+  }
+}
+
 function renderInline(source) {
   const codeTokens = [];
+  const imageTokens = [];
   let text = source.replace(/`([^`]+)`/g, (_, code) => {
     const token = `\uE000${codeTokens.length}\uE001`;
     codeTokens.push(`<code>${escapeHtml(code)}</code>`);
+    return token;
+  });
+
+  text = text.replace(/!\[([^\]]*)]\(([^)\s]+)\)/g, (_, alt, url) => {
+    if (!isSafeImageUrl(url)) return alt;
+
+    const token = `\uE002${imageTokens.length}\uE003`;
+    imageTokens.push(
+      `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`,
+    );
     return token;
   });
 
@@ -1649,6 +1677,7 @@ function renderInline(source) {
   text = text.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
   text = text.replace(/(^|[^_])_([^_\n]+)_/g, "$1<em>$2</em>");
   text = text.replace(/\uE000(\d+)\uE001/g, (_, index) => codeTokens[Number(index)]);
+  text = text.replace(/\uE002(\d+)\uE003/g, (_, index) => imageTokens[Number(index)]);
 
   return text;
 }
@@ -1766,6 +1795,9 @@ function elementToSpeechText(element) {
   }
 
   const clone = element.cloneNode(true);
+  clone.querySelectorAll("img").forEach((image) => {
+    image.replaceWith(image.getAttribute("alt")?.trim() || "");
+  });
   clone.querySelectorAll("br").forEach((lineBreak) => lineBreak.replaceWith("\n"));
 
   return clone.textContent
