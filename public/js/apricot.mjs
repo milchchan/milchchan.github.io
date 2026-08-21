@@ -108,7 +108,6 @@ export class Agent {
     this.blinkStep = 0.0;
     this.isPopup = false;
     this.revealStep = null;
-    this.likabilityStep = 0.0;
     this.choices = [];
     this.likability = {a: 0.0, b: null};
     this.logs = [];
