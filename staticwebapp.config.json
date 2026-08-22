@@ -32,18 +32,6 @@
         {
             "route": "/milk",
             "rewrite": "/milk/index.html"
-        },
-        {
-            "route": "/parallax",
-            "rewrite": "/parallax/index.html"
-        },
-        {
-            "route": "/lax",
-            "rewrite": "/parallax/index.html"
-        },
-        {
-            "route": "/chewnew",
-            "rewrite": "/parallax/index.html"
         }
     ],
     "navigationFallback": {
