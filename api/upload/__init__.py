@@ -15,13 +15,9 @@ from urllib.parse import urlparse, urljoin
 from sqlalchemy import create_engine, or_, desc
 from sqlalchemy.orm import sessionmaker
 from shared.models import Upload
-from shared.cache import get_cache, set_cache, scan_cache, delete_cache
+from shared.cache import scan_cache, delete_cache
 
 import azure.functions as func
-
-from google.oauth2 import service_account
-from google.cloud import storage
-#from google.cloud.storage.blob import Blob
 
 
 engine = create_engine(os.environ['MYSQL_CONNECTION_URL'], connect_args={'ssl_ca': certifi.where(), 'ssl_verify_cert': True, 'ssl_verify_identity': True}, pool_recycle=300)
@@ -32,76 +28,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if req.method == 'POST':
             content_type = req.headers.get('Content-Type')
 
-            if content_type == 'application/json':
-                pattern = 'data:([\\w/\\-\\.]+);(\\w+),(.+)'
-                uploads = []
-
-                for item in req.get_json():
-                    match = re.match(pattern, item)
-
-                    if match:
-                        mime_type, encoding, data = match.groups()
-
-                        if mime_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
-                            bucket_name = 'milchchan.appspot.com'
-                            identifier = str(uuid4())
-                            path = os.path.join('uploads', identifier)
-                            credentials = service_account.Credentials.from_service_account_info({
-                                'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
-                                'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
-                                'private_key_id': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY_ID'],
-                                'private_key': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
-                                'client_email': os.environ['FIREBASE_CREDENTIALS_CLIENT_EMAIL'],
-                                'client_id': os.environ['FIREBASE_CREDENTIALS_CLIENT_ID'],
-                                'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
-                                'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
-                                'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
-                                'client_x509_cert_url': os.environ['FIREBASE_CREDENTIALS_CLIENT_X509_CERT_URL']
-                            })
-                            scoped_credentials = credentials.with_scopes(
-                                ['https://www.googleapis.com/auth/cloud-platform'])
-                            storage_client = storage.Client(
-                                credentials=scoped_credentials, project=scoped_credentials.project_id)
-                            bucket = storage_client.bucket(bucket_name)
-                            blob = bucket.blob(path)
-
-                            if blob.exists():
-                                return func.HttpResponse(status_code=409, mimetype='', charset='')
-                            
-                            blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
-                            
-                            url = f'gs://{bucket_name}{urljoin("/", path)}'
-                            Session = sessionmaker(bind=engine)
-                            session = Session()
-
-                            try:
-                                upload = Upload()
-                                upload.url = url
-                                upload.type = mime_type
-                                upload.random = random.random()
-                                upload.timestamp = blob.time_created
-
-                                session.add(upload)
-                                session.commit()
-
-                                uploads.append({
-                                    'id': identifier,
-                                    'url': url,
-                                    'type': mime_type,
-                                    'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                                })
-                            
-                            except Exception as e:
-                                session.rollback()
-
-                                raise e
-
-                            finally:
-                                session.close()
-
-                return func.HttpResponse(json.dumps(uploads), status_code=201, mimetype='application/json', charset='utf-8')
-            
-            elif content_type.startswith('multipart/form-data;'):
+            if content_type.startswith('multipart/form-data;'):
                 uploads = []
                 
                 for file in req.files.values():
@@ -129,41 +56,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         
                         s3.upload_fileobj(file.stream, 'uploads', identifier, ExtraArgs={'ContentType': file.content_type})
                         response = s3.head_object(Bucket='uploads', Key=identifier)
-                        '''
-                        bucket_name = 'milchchan.appspot.com'
-                        path = os.path.join('uploads', identifier)
-                        credentials = service_account.Credentials.from_service_account_info({
-                            'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
-                            'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
-                            'private_key_id': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY_ID'],
-                            'private_key': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
-                            'client_email': os.environ['FIREBASE_CREDENTIALS_CLIENT_EMAIL'],
-                            'client_id': os.environ['FIREBASE_CREDENTIALS_CLIENT_ID'],
-                            'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
-                            'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
-                            'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
-                            'client_x509_cert_url': os.environ['FIREBASE_CREDENTIALS_CLIENT_X509_CERT_URL']
-                        })
-                        scoped_credentials = credentials.with_scopes(
-                            ['https://www.googleapis.com/auth/cloud-platform'])
-                        storage_client = storage.Client(
-                            credentials=scoped_credentials, project=scoped_credentials.project_id)
-                        bucket = storage_client.bucket(bucket_name)
-                        blob = bucket.blob(path)
-
-                        if not blob.exists():
-                            blob.upload_from_file(file.stream, content_type=file.content_type)
-                            
-                            if file.content_type == 'application/zip':
-                                file.stream.seek(0)
-                                temp_blob = bucket.blob(os.path.join(path, file.filename))
-                                temp_blob.upload_from_file(file.stream, content_type=file.content_type)
-                        
-                        url = f'gs://{bucket_name}{urljoin("/", path)}'
-                        '''
-
                         url = urljoin('https://static.milchchan.com', identifier)
-
                         Session = sessionmaker(bind=engine)
                         session = Session()
 
@@ -235,69 +128,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         'type': uploads[0]['type'],
                         'timestamp': uploads[0]['timestamp']
                     } if len(uploads) == 1 else uploads), status_code=201, mimetype='application/json', charset='utf-8')
-
-            else:
-                match = re.match('data:([\\w/\\-\\.]+);(\\w+),(.+)', req.get_body().decode('utf-8'))
-
-                if match:
-                    mime_type, encoding, data = match.groups()
-
-                    if mime_type in ['application/zip', 'audio/mp4', 'audio/wav', 'image/apng', 'image/gif', 'image/png', 'image/jpeg', 'image/webp'] and encoding == 'base64':
-                        bucket_name = 'milchchan.appspot.com'
-                        identifier = str(uuid4())
-                        path = os.path.join('uploads', identifier)
-                        credentials = service_account.Credentials.from_service_account_info({
-                            'type': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TYPE'],
-                            'project_id': os.environ['FIREBASE_CREDENTIALS_PROJECT_ID'],
-                            'private_key_id': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY_ID'],
-                            'private_key': os.environ['FIREBASE_CREDENTIALS_PRIVATE_KEY'].replace('\\n', '\n'),
-                            'client_email': os.environ['FIREBASE_CREDENTIALS_CLIENT_EMAIL'],
-                            'client_id': os.environ['FIREBASE_CREDENTIALS_CLIENT_ID'],
-                            'auth_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_URI'],
-                            'token_uri': os.environ['GOOGLE_APPLICATION_CREDENTIALS_TOKEN_URI'],
-                            'auth_provider_x509_cert_url': os.environ['GOOGLE_APPLICATION_CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'],
-                            'client_x509_cert_url': os.environ['FIREBASE_CREDENTIALS_CLIENT_X509_CERT_URL']
-                        })
-                        scoped_credentials = credentials.with_scopes(
-                            ['https://www.googleapis.com/auth/cloud-platform'])
-                        storage_client = storage.Client(
-                            credentials=scoped_credentials, project=scoped_credentials.project_id)
-                        bucket = storage_client.bucket(bucket_name)
-                        blob = bucket.blob(path)
-
-                        if blob.exists():
-                            return func.HttpResponse(status_code=409, mimetype='', charset='')
-                        
-                        blob.upload_from_file(BytesIO(b64decode(data)), content_type=mime_type)
-                        
-                        url = f'gs://{bucket_name}{urljoin("/", path)}'
-                        Session = sessionmaker(bind=engine)
-                        session = Session()
-
-                        try:
-                            upload = Upload()
-                            upload.url = url
-                            upload.type = mime_type
-                            upload.random = random.random()
-                            upload.timestamp = blob.time_created
-
-                            session.add(upload)
-                            session.commit()
-
-                            return func.HttpResponse(json.dumps({
-                                'id': identifier,
-                                'url': url,
-                                'type': mime_type,
-                                'timestamp': int(upload.timestamp.replace(tzinfo=timezone.utc).timestamp())
-                            }), status_code=201, mimetype='application/json', charset='utf-8')
-                        
-                        except Exception as e:
-                            session.rollback()
-
-                            raise e
-
-                        finally:
-                            session.close()
 
         else:
             sample = float(req.params['random']) if 'random' in req.params else None
