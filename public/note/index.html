@@ -492,7 +492,7 @@ textarea:focus-visible,
 }
 
 .tooltip.is-ticker .tooltip-track {
-  width: 100%;
+  width: max-content;
   min-width: 0;
 }
 
@@ -507,8 +507,8 @@ textarea:focus-visible,
 }
 
 .tooltip.is-ticker .tooltip-line {
-  width: 100%;
-  flex: 0 0 100%;
+  width: max-content;
+  flex: 0 0 auto;
 }
 
 .tooltip.is-ticker .tooltip-track {
@@ -1130,16 +1130,6 @@ textarea::placeholder {
               <span class="icon-layer tts-reload-layer"><i class="fa-solid fa-rotate fa-spin"></i></span>
               <span class="icon-layer tts-pause-layer"><i class="fa-solid fa-pause"></i></span>
             </span>
-            <span
-              class="tooltip"
-              id="tts-tooltip"
-              role="tooltip"
-              aria-hidden="true"
-            >
-              <span class="tooltip-viewport">
-                <span class="tooltip-track" aria-hidden="true"></span>
-              </span>
-            </span>
           </button>
           <button
             class="icon-button voice-reset-button is-hidden"
@@ -1311,8 +1301,7 @@ const documentState = document.querySelector(".document-state");
 const wordCount = document.querySelector("#word-count");
 const ttsControl = document.querySelector("#tts-control");
 const ttsButton = document.querySelector("#tts-button");
-const ttsTooltip = document.querySelector("#tts-tooltip");
-const ttsTooltipTrack = document.querySelector(".tooltip-track");
+let ttsTooltip = null;
 const voiceResetButton = document.querySelector("#voice-reset-button");
 const dropFrame = document.querySelector("#drop-frame");
 const spectralAnalyzer = document.querySelector("#spectral-analyzer");
@@ -2432,30 +2421,41 @@ function updateCount() {
   wordCount.textContent = String(count);
 }
 
-function updateTtsTooltip(names) {
-  const normalizedNames = getEffectiveVoiceNames(Array.isArray(names)
-    ? names.filter((name) => typeof name === "string" && name.length > 0)
-    : []);
-
+function removeTtsTooltip() {
   if (tooltipMeasureFrame !== null) {
     window.cancelAnimationFrame(tooltipMeasureFrame);
     tooltipMeasureFrame = null;
   }
 
-  ttsTooltipTrack.replaceChildren();
-  ttsTooltip.classList.remove("is-ticker");
-  ttsTooltip.style.removeProperty("width");
-  ttsButton.classList.toggle("has-tooltip", normalizedNames.length > 0);
-  ttsTooltip.setAttribute("aria-hidden", String(normalizedNames.length === 0));
+  ttsTooltip?.remove();
+  ttsTooltip = null;
+  ttsButton.classList.remove("has-tooltip");
+  ttsButton.removeAttribute("aria-describedby");
+}
 
-  if (normalizedNames.length === 0) {
-    ttsTooltip.removeAttribute("aria-label");
-    ttsButton.removeAttribute("aria-describedby");
-    ttsTooltip.style.removeProperty("--tooltip-distance");
-    ttsTooltip.style.removeProperty("--tooltip-duration");
-    ttsTooltip.style.removeProperty("width");
-    return;
-  }
+function updateTtsTooltip(names) {
+  const normalizedNames = getEffectiveVoiceNames(Array.isArray(names)
+    ? names.filter((name) => typeof name === "string" && name.length > 0)
+    : []);
+
+  removeTtsTooltip();
+  if (normalizedNames.length === 0) return;
+
+  const tooltip = document.createElement("span");
+  tooltip.className = "tooltip";
+  tooltip.id = "tts-tooltip";
+  tooltip.setAttribute("role", "tooltip");
+  tooltip.setAttribute("aria-hidden", "true");
+
+  const viewport = document.createElement("span");
+  viewport.className = "tooltip-viewport";
+  const track = document.createElement("span");
+  track.className = "tooltip-track";
+  track.setAttribute("aria-hidden", "true");
+  viewport.append(track);
+  tooltip.append(viewport);
+  ttsButton.append(tooltip);
+  ttsTooltip = tooltip;
 
   const createLine = (name) => {
     const line = document.createElement("span");
@@ -2463,44 +2463,77 @@ function updateTtsTooltip(names) {
     line.textContent = name;
     return line;
   };
+  const revealTooltip = () => {
+    if (ttsTooltip !== tooltip) return;
+    tooltip.setAttribute("aria-hidden", "false");
+    ttsButton.setAttribute("aria-describedby", "tts-tooltip");
+    ttsButton.classList.add("has-tooltip");
+  };
 
-  normalizedNames.forEach((name) => ttsTooltipTrack.append(createLine(name)));
+  normalizedNames.forEach((name) => track.append(createLine(name)));
+  const firstLine = track.firstElementChild;
+  const firstLineWidth = firstLine.getBoundingClientRect().width;
+  const viewportWidth = viewport.getBoundingClientRect().width;
+  const tickerDuration = `${Math.max(
+    1,
+    Math.floor(normalizedNames.reduce((x, y) => x + y.length, 0) / 2),
+  )}s`;
+
+  tooltip.setAttribute("aria-label", normalizedNames.join(", "));
 
   if (normalizedNames.length > 1) {
-    ttsTooltipTrack.append(createLine(normalizedNames[0]));
-    const firstLine = ttsTooltipTrack.firstElementChild;
-    const tooltipStyle = getComputedStyle(ttsTooltip);
+    track.append(createLine(normalizedNames[0]));
+    const tooltipStyle = getComputedStyle(tooltip);
     const horizontalPadding =
       Number.parseFloat(tooltipStyle.paddingLeft) +
       Number.parseFloat(tooltipStyle.paddingRight);
     const horizontalBorder =
       Number.parseFloat(tooltipStyle.borderLeftWidth) +
       Number.parseFloat(tooltipStyle.borderRightWidth);
-    const firstNameWidth = firstLine.getBoundingClientRect().width +
+    const firstNameWidth = firstLineWidth +
       horizontalPadding + horizontalBorder;
 
-    ttsTooltip.style.width = `${firstNameWidth}px`;
-    ttsTooltip.classList.add("is-ticker");
-    ttsTooltip.style.setProperty(
-      "--tooltip-duration",
-      `${Math.max(1, Math.floor(normalizedNames.reduce((x, y) => x + y.length, 0) / 2))}s`,
-    );
+    tooltip.style.width = `${firstNameWidth}px`;
+    tooltip.classList.add("is-ticker");
+    tooltip.style.setProperty("--tooltip-duration", tickerDuration);
 
     tooltipMeasureFrame = window.requestAnimationFrame(() => {
-      const viewportWidth = ttsTooltipTrack.parentElement.getBoundingClientRect().width;
-      const trackStyle = getComputedStyle(ttsTooltipTrack);
+      if (ttsTooltip !== tooltip) {
+        tooltipMeasureFrame = null;
+        return;
+      }
+
+      const trackStyle = getComputedStyle(track);
       const gap = Number.parseFloat(trackStyle.columnGap) || 0;
-      const cycleDistance = (viewportWidth + gap) * normalizedNames.length;
-      ttsTooltip.style.setProperty("--tooltip-distance", `-${cycleDistance}px`);
+      const cycleDistance = Array.from(track.children)
+        .slice(0, -1)
+        .reduce((distance, line) => distance + line.getBoundingClientRect().width, 0) +
+        gap * normalizedNames.length;
+      tooltip.style.setProperty("--tooltip-distance", `-${cycleDistance}px`);
       tooltipMeasureFrame = null;
+      revealTooltip();
+    });
+  } else if (firstLineWidth > viewportWidth) {
+    track.append(createLine(normalizedNames[0]));
+    tooltip.classList.add("is-ticker");
+    tooltip.style.setProperty("--tooltip-duration", tickerDuration);
+
+    tooltipMeasureFrame = window.requestAnimationFrame(() => {
+      if (ttsTooltip !== tooltip) {
+        tooltipMeasureFrame = null;
+        return;
+      }
+
+      const trackStyle = getComputedStyle(track);
+      const gap = Number.parseFloat(trackStyle.columnGap) || 0;
+      const cycleDistance = firstLine.getBoundingClientRect().width + gap;
+      tooltip.style.setProperty("--tooltip-distance", `-${cycleDistance}px`);
+      tooltipMeasureFrame = null;
+      revealTooltip();
     });
   } else {
-    ttsTooltip.style.removeProperty("--tooltip-distance");
-    ttsTooltip.style.removeProperty("--tooltip-duration");
+    revealTooltip();
   }
-
-  ttsTooltip.setAttribute("aria-label", normalizedNames.join(", "));
-  ttsButton.setAttribute("aria-describedby", "tts-tooltip");
 }
 
 function updateVoiceResetButtonState() {
