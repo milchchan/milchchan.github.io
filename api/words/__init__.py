@@ -66,7 +66,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'timestamp': int(word.timestamp.replace(tzinfo=timezone.utc).timestamp())
                         })
 
-                    json_data = json.dumps(words)
+                    json_data = json.dumps([])#words)
                     set_cache(cache_name, json_data)
 
                     return func.HttpResponse(json_data, status_code=200, mimetype='application/json', charset='utf-8')
