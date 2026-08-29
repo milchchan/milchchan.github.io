@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Apricot JSON Character File",
+  "description": "Apricot のユーザー作成キャラクターファイル",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "width", "height", "prompt", "animations"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "エディタ用の JSON Schema パス。Apricot はこの値を無視します。"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "表示するキャラクター名"
+    },
+    "width": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "キャラクターキャンバスの幅"
+    },
+    "height": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "キャラクターキャンバスの高さ"
+    },
+    "x": {
+      "type": "number",
+      "default": 0,
+      "description": "ステージ内の X オフセット"
+    },
+    "y": {
+      "type": "number",
+      "default": 0,
+      "description": "ステージ内の Y オフセット"
+    },
+    "scale": {
+      "type": "number",
+      "minimum": 0,
+      "default": 1,
+      "description": "キャラクター固有の表示倍率"
+    },
+    "language": {
+      "type": "string",
+      "minLength": 1,
+      "description": "会話と音声生成に使用する言語コード"
+    },
+    "preview": {
+      "$ref": "#/$defs/relativePath"
+    },
+    "prompt": {
+      "description": "プロンプトファイル、またはプロンプト／WAV ファイルの配列",
+      "oneOf": [
+        { "$ref": "#/$defs/relativePath" },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/relativePath" }
+        }
+      ]
+    },
+    "animations": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/animation" },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "const": "Start" }
+            }
+          },
+          "minContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "const": "Emote" }
+            }
+          },
+          "minContains": 1
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "anyOf": [
+          { "pattern": "^(?:[A-Za-z][A-Za-z0-9+.-]*:|/)" },
+          { "pattern": "(?:^|/)\\.\\.(?:/|$)" }
+        ]
+      },
+      "description": "JSON ファイルのフォルダを基準とする相対パス"
+    },
+    "animation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "イベント名、または再利用するアニメーションの名前"
+        },
+        "state": {
+          "type": "string",
+          "description": "呼び出し時の状態に照合する正規表現"
+        },
+        "repeats": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1,
+          "description": "反復回数。0 は無限ループ"
+        },
+        "frames": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/frame" },
+          "description": "このアニメーションで同時に再生を始める画像レイヤー群"
+        },
+        "animations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/animation" },
+          "default": [],
+          "description": "このアニメーションから順に呼び出す別のアニメーション"
+        }
+      }
+    },
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delay"],
+      "properties": {
+        "url": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "x": {
+          "type": "number",
+          "default": 0
+        },
+        "y": {
+          "type": "number",
+          "default": 0
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 1
+        },
+        "delay": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "フレーム表示秒数"
+        },
+        "z": {
+          "type": "integer",
+          "default": 0,
+          "description": "小さい値ほど背面"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "切り替え可能な外観グループ名"
+        }
+      }
+    }
+  }
+}
