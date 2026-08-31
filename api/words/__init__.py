@@ -34,7 +34,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             parsed_url = urlparse(req.url)
             cache_name = f'{parsed_url.path}?{parsed_url.query}' if len(parsed_url.query) > 0 else parsed_url.path
             cached_data = get_cache(cache_name)
-            cached_data = None
 
             if cached_data is None:
                 Session = sessionmaker(bind=engine)
@@ -67,7 +66,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             'timestamp': int(word.timestamp.replace(tzinfo=timezone.utc).timestamp())
                         })
 
-                    json_data = json.dumps([])#words)
+                    json_data = json.dumps(words)
                     set_cache(cache_name, json_data)
 
                     return func.HttpResponse(json_data, status_code=200, mimetype='application/json', charset='utf-8')
