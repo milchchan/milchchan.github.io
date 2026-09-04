@@ -1265,6 +1265,7 @@ const SPECTRAL_LOADING_CYCLE_MS =
   SPECTRAL_LOADING_STEP_MS * (SPECTRAL_LOADING_ORDER.length - 1);
 const SPECTRAL_LOADING_RESET_MS = 500;
 const SPECTRAL_RELEASE_MS = 500;
+const TTS_EDGE_FADE_SECONDS = 0.008;
 const NORMAL_VOICE_INDEX = 0;
 const QUOTE_VOICE_INDEX = 1;
 const REFERENCE_VOICE_URLS = [
@@ -1325,7 +1326,9 @@ let ttsPlaybackResume = null;
 let ttsIsGeneratingAudio = false;
 let activeAudioContext = null;
 let activeAudioSource = null;
+let activeAudioGain = null;
 let activeAudioAnalyser = null;
+let activeAudioEndTime = null;
 let tooltipMeasureFrame = null;
 let spectralFrequencyData = null;
 let spectralBarDescriptors = [];
@@ -2230,11 +2233,132 @@ function allowTtsPlayback() {
   ttsPlaybackResume?.();
 }
 
+function scheduleAudioGainEnvelope(gainNode, startTime, endTime) {
+  if (!gainNode || !(endTime > startTime)) return;
+
+  const gain = gainNode.gain;
+  const fadeDuration = Math.min(
+    TTS_EDGE_FADE_SECONDS,
+    (endTime - startTime) * 0.5,
+  );
+  const fadeInEndTime = startTime + fadeDuration;
+  const fadeOutStartTime = endTime - fadeDuration;
+
+  gain.cancelScheduledValues(startTime);
+  gain.setValueAtTime(0, startTime);
+  gain.linearRampToValueAtTime(1, fadeInEndTime);
+
+  if (fadeOutStartTime > fadeInEndTime) {
+    gain.setValueAtTime(1, fadeOutStartTime);
+  }
+
+  gain.linearRampToValueAtTime(0, endTime);
+}
+
+function holdAudioGainAtTime(gainNode, time) {
+  if (!gainNode) return;
+
+  const gain = gainNode.gain;
+
+  if (typeof gain.cancelAndHoldAtTime === "function") {
+    gain.cancelAndHoldAtTime(time);
+    return;
+  }
+
+  gain.cancelScheduledValues(time);
+  gain.setValueAtTime(gain.value, time);
+}
+
+async function fadeAudioToSilence(
+  audioContext,
+  gainNode,
+  endTime = null,
+) {
+  if (!audioContext || audioContext.state !== "running" || !gainNode) return;
+
+  const startTime = audioContext.currentTime;
+  const remainingTime = Number.isFinite(endTime)
+    ? Math.max(0, endTime - startTime)
+    : TTS_EDGE_FADE_SECONDS;
+  const fadeDuration = Math.min(TTS_EDGE_FADE_SECONDS, remainingTime);
+
+  if (!(fadeDuration > 0)) return;
+
+  holdAudioGainAtTime(gainNode, startTime);
+  gainNode.gain.linearRampToValueAtTime(0, startTime + fadeDuration);
+
+  await new Promise((resolve) => {
+    window.setTimeout(resolve, fadeDuration * 1000 + 1);
+  });
+}
+
+async function stopAudioSourceWithFade(
+  source,
+  audioContext,
+  gainNode,
+  endTime,
+) {
+  await fadeAudioToSilence(audioContext, gainNode, endTime);
+
+  try {
+    source.stop();
+  } catch {
+    // すでに停止済みの場合は何もしません。
+  }
+}
+
+async function suspendActiveAudioWithFade() {
+  const audioContext = activeAudioContext;
+  const gainNode = activeAudioGain;
+  const endTime = activeAudioEndTime;
+
+  await fadeAudioToSilence(audioContext, gainNode, endTime);
+
+  if (
+    activeAudioContext === audioContext &&
+    audioContext?.state === "running"
+  ) {
+    await audioContext.suspend();
+  }
+}
+
+async function resumeActiveAudioWithFade() {
+  const audioContext = activeAudioContext;
+  const source = activeAudioSource;
+  const gainNode = activeAudioGain;
+  const endTime = activeAudioEndTime;
+
+  if (!audioContext || audioContext.state === "closed") return;
+
+  if (audioContext.state === "suspended") {
+    await audioContext.resume();
+  }
+
+  if (
+    activeAudioContext === audioContext &&
+    activeAudioSource === source &&
+    source &&
+    gainNode &&
+    Number.isFinite(endTime)
+  ) {
+    scheduleAudioGainEnvelope(gainNode, audioContext.currentTime, endTime);
+  }
+}
+
 async function playAudioBuffer(audioBuffer, signal) {
-  const source = activeAudioContext.createBufferSource();
+  const audioContext = activeAudioContext;
+  const gainNode = activeAudioGain;
+  const source = audioContext.createBufferSource();
+  const startTime = audioContext.currentTime;
+  const endTime = startTime + audioBuffer.duration;
+
   activeAudioSource = source;
+  activeAudioEndTime = endTime;
   source.buffer = audioBuffer;
-  source.connect(activeAudioAnalyser || activeAudioContext.destination);
+  source.connect(
+    gainNode || activeAudioAnalyser || audioContext.destination,
+  );
+  scheduleAudioGainEnvelope(gainNode, startTime, endTime);
 
   try {
     await new Promise((resolve, reject) => {
@@ -2244,21 +2368,24 @@ async function playAudioBuffer(audioBuffer, signal) {
       };
       const handleAbort = () => {
         source.removeEventListener("ended", handleEnded);
-        try {
-          source.stop();
-        } catch {
-          // すでに停止済みの場合は何もしません。
-        }
-        reject(abortError());
+        void stopAudioSourceWithFade(
+          source,
+          audioContext,
+          gainNode,
+          endTime,
+        ).finally(() => reject(abortError()));
       };
 
       source.addEventListener("ended", handleEnded, { once: true });
       signal.addEventListener("abort", handleAbort, { once: true });
-      source.start(0);
+      source.start(startTime);
     });
   } finally {
     source.disconnect();
-    if (activeAudioSource === source) activeAudioSource = null;
+    if (activeAudioSource === source) {
+      activeAudioSource = null;
+      activeAudioEndTime = null;
+    }
   }
 }
 
@@ -2309,29 +2436,49 @@ async function synthesize(segments, signal) {
   const storedVoices = await loadVoiceBlobs();
   throwIfAborted(signal);
 
-  if (activeAudioSource) {
-    activeAudioSource.stop();
-    activeAudioSource.disconnect();
-    activeAudioSource = null;
+  const previousAudioContext = activeAudioContext;
+  const previousAudioSource = activeAudioSource;
+  const previousAudioGain = activeAudioGain;
+  const previousAudioAnalyser = activeAudioAnalyser;
+
+  if (previousAudioSource) {
+    await stopAudioSourceWithFade(
+      previousAudioSource,
+      previousAudioContext,
+      previousAudioGain,
+      activeAudioEndTime,
+    );
+    previousAudioSource.disconnect();
   }
 
-  if (activeAudioContext && activeAudioContext.state !== "closed") {
-    await activeAudioContext.close();
+  previousAudioGain?.disconnect();
+  previousAudioAnalyser?.disconnect();
+
+  if (previousAudioContext && previousAudioContext.state !== "closed") {
+    await previousAudioContext.close();
   }
 
-  activeAudioContext = new AudioContextClass();
-  activeAudioAnalyser = activeAudioContext.createAnalyser();
-  activeAudioAnalyser.fftSize = 512;
-  activeAudioAnalyser.smoothingTimeConstant = 0.88;
-  activeAudioAnalyser.minDecibels = SPECTRAL_MIN_DECIBELS;
-  activeAudioAnalyser.maxDecibels = SPECTRAL_MAX_DECIBELS;
-  activeAudioAnalyser.connect(activeAudioContext.destination);
-  spectralFrequencyData = new Float32Array(activeAudioAnalyser.frequencyBinCount);
-  spectralBarDescriptors = buildLogBarDescriptors(activeAudioContext, activeAudioAnalyser);
+  const audioContext = new AudioContextClass();
+  const gainNode = audioContext.createGain();
+  const analyser = audioContext.createAnalyser();
+
+  activeAudioContext = audioContext;
+  activeAudioSource = null;
+  activeAudioGain = gainNode;
+  activeAudioAnalyser = analyser;
+  activeAudioEndTime = null;
+  analyser.fftSize = 512;
+  analyser.smoothingTimeConstant = 0.88;
+  analyser.minDecibels = SPECTRAL_MIN_DECIBELS;
+  analyser.maxDecibels = SPECTRAL_MAX_DECIBELS;
+  gainNode.connect(analyser);
+  analyser.connect(audioContext.destination);
+  spectralFrequencyData = new Float32Array(analyser.frequencyBinCount);
+  spectralBarDescriptors = buildLogBarDescriptors(audioContext, analyser);
   spectralEnergy = 0;
   spectralSmoothedLevels.fill(0);
   spectralDisplayedLevels.fill(0);
-  await activeAudioContext.resume();
+  await audioContext.resume();
 
   try {
     const firstProgress = `1/${segments.length}`;
@@ -2369,19 +2516,26 @@ async function synthesize(segments, signal) {
   } finally {
     setActiveTtsSegment(null);
 
-    if (activeAudioSource) {
+    if (activeAudioContext === audioContext && activeAudioSource) {
       activeAudioSource.disconnect();
       activeAudioSource = null;
     }
 
-    if (activeAudioContext && activeAudioContext.state !== "closed") {
-      await activeAudioContext.close();
+    gainNode.disconnect();
+    analyser.disconnect();
+
+    if (audioContext.state !== "closed") {
+      await audioContext.close();
     }
 
-    activeAudioContext = null;
-    activeAudioAnalyser = null;
-    spectralFrequencyData = null;
-    spectralBarDescriptors = [];
+    if (activeAudioContext === audioContext) {
+      activeAudioContext = null;
+      activeAudioGain = null;
+      activeAudioAnalyser = null;
+      activeAudioEndTime = null;
+      spectralFrequencyData = null;
+      spectralBarDescriptors = [];
+    }
     requestSpectralAnimation();
   }
 }
@@ -2394,23 +2548,6 @@ function cancelTtsForEdit() {
   ttsAbortController = null;
   ttsPlaybackRequested = true;
   window.clearTimeout(ttsStatusResetTimer);
-
-  if (activeAudioSource) {
-    try {
-      activeAudioSource.stop();
-    } catch {
-      // すでに停止済みの場合は何もしません。
-    }
-  }
-
-  if (activeAudioContext && activeAudioContext.state !== "closed") {
-    activeAudioContext.close();
-  }
-
-  activeAudioContext = null;
-  activeAudioAnalyser = null;
-  spectralFrequencyData = null;
-  spectralBarDescriptors = [];
   requestSpectralAnimation();
   documentState.classList.remove("is-speaking", "has-error");
   setTtsState("idle", "");
@@ -2872,7 +3009,7 @@ ttsButton.addEventListener("click", async () => {
 
   if (ttsState === "playing") {
     ttsPlaybackRequested = false;
-    await activeAudioContext?.suspend();
+    await suspendActiveAudioWithFade();
     if (ttsState === "playing") {
       setTtsState("paused");
     }
@@ -2883,7 +3020,7 @@ ttsButton.addEventListener("click", async () => {
     allowTtsPlayback();
 
     if (activeAudioSource) {
-      await activeAudioContext?.resume();
+      await resumeActiveAudioWithFade();
       setTtsState("playing");
     } else if (ttsIsGeneratingAudio) {
       setTtsState("generating");
@@ -2916,6 +3053,7 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.(
 window.addEventListener("pagehide", () => {
   ttsAbortController?.abort();
   if (activeAudioSource) activeAudioSource.stop();
+  activeAudioGain?.disconnect();
   if (activeAudioContext && activeAudioContext.state !== "closed") activeAudioContext.close();
   if (spectralAnimationFrame !== null) window.cancelAnimationFrame(spectralAnimationFrame);
 });
