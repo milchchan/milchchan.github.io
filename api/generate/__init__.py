@@ -70,7 +70,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             with urlopen(Request('https://router.huggingface.co/v1/chat/completions', data=json.dumps(payload).encode('utf-8'), method='POST', headers={'Authorization': f"Bearer {os.environ['HF_TOKEN']}", 'Content-Type': 'application/json'})) as response:
                                 for choice in json.loads(response.read().decode('utf-8'))['choices']:
                                     content = choice['message']['content']
-                                    match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', content, flags=(re.MULTILINE|re.DOTALL))
+                                    match = re.match(r'(?:```json)?(?:[^\[{]+)?((?:\{.*\})|(?:\[.*\])).*(?:```)?', content, flags=(re.MULTILINE|re.DOTALL))
                                     identifier = str(uuid4())
                                     client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                     database = client.get_database_client('Milch')
@@ -120,7 +120,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                         if output['type'] == 'message':
                                             for content in output['content']:
                                                 if content['type'] == 'output_text':
-                                                    match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', content['text'], flags=(re.MULTILINE|re.DOTALL))
+                                                    match = re.match(r'(?:```json)?(?:[^\[{]+)?((?:\{.*\})|(?:\[.*\])).*(?:```)?', content['text'], flags=(re.MULTILINE|re.DOTALL))
                                                     identifier = str(uuid4())
                                                     client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                                     database = client.get_database_client('Milch')
@@ -153,7 +153,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             for candidate in json.loads(response.read().decode('utf-8'))['candidates']:
                                 for part in candidate['content']['parts']:
                                     if 'text' in part:
-                                        match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', part['text'], flags=(re.MULTILINE|re.DOTALL))
+                                        match = re.match(r'(?:```json)?(?:[^\[{]+)?((?:\{.*\})|(?:\[.*\])).*(?:```)?', part['text'], flags=(re.MULTILINE|re.DOTALL))
                                         identifier = str(uuid4())
                                         client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                         database = client.get_database_client('Milch')
@@ -219,7 +219,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                             if len(matches) > 0:
                                 result = matches[len(matches) - 1]
-                                match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
+                                match = re.match(r'(?:```json)?(?:[^\[{]+)?((?:\{.*\})|(?:\[.*\])).*(?:```)?', result, flags=(re.MULTILINE|re.DOTALL))
                                 identifier = str(uuid4())
                                 client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                                 database = client.get_database_client('Milch')
@@ -239,7 +239,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     
                     with urlopen(Request(llm_source, headers={'Content-Type': content_type}, data=data, method='POST'), timeout=60.0) as response:
                         for choice in json.loads(response.read().decode('utf-8'))['choices']:
-                            match = re.match('(?:```json)?(?:[^{]+)?({.+}).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
+                            match = re.match(r'(?:```json)?(?:[^\[{]+)?((?:\{.*\})|(?:\[.*\])).*(?:```)?', choice['content'], flags=(re.MULTILINE|re.DOTALL))
                             identifier = str(uuid4())
                             client = CosmosClient.from_connection_string(os.environ['AZURE_COSMOS_DB_CONNECTION_STRING'])
                             database = client.get_database_client('Milch')

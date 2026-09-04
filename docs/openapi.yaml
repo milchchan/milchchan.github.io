@@ -376,8 +376,11 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: true
+                oneOf:
+                  - type: object
+                    additionalProperties: true
+                  - type: array
+                    items: {}
             audio/wav:
               schema:
                 type: string
