@@ -41,7 +41,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         for item in cached_data['data']:
                             if isinstance(item, dict) and 'content' in item and 'url' in item and 'timestamp' in item and 'score' in item and 'reason' in item:
                                 timestamp = int((datetime.combine(datetime.now(timezone.utc).date(), time(0, 0), tzinfo=timezone.utc) if item['timestamp'] is None else datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))).timestamp())
-                                data_item = {'subject': item['subject'].strip() if isinstance(item.get('subject'), str) else '', 'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']}
+                                data_item = {'content': item['content'], 'url': item['url'], 'timestamp': timestamp, 'score': item['score'], 'reason': item['reason']}
                                 
                                 if 'terms' in item:
                                     data_item['terms'] = item['terms']
@@ -87,7 +87,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if cached_data is not None:
                 cached_data = json.loads(cached_data)
 
-                if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=12)).timestamp()) and isinstance(cached_data.get('data'), list) and all(isinstance(item, dict) and isinstance(item.get('subject'), str) for item in cached_data['data']):
+                if 'timestamp' in cached_data and cached_data['timestamp'] >= int((datetime.now(timezone.utc) - timedelta(hours=12)).timestamp()) and isinstance(cached_data.get('data'), list):
                     repairs = cached_data['repairs'] if 'repairs' in cached_data else 0
 
                     if repairs < 1:
@@ -221,7 +221,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 for item in items1:
                                     identifier = str(uuid.uuid4())
                                     item['id'] = identifier
-                                    item['subject'] = item['subject'].strip() if isinstance(item.get('subject'), str) else ''
                                     items2.append({'id': identifier, 'content': item['content']})
 
                                 with urlopen(Request('https://api.openai.com/v1/responses', data=json.dumps({'model': model, 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}]}], 'temperature': 1.0, 'text': {'verbosity': ['low', 'medium', 'high'][max(min(int(temperature / (2.0 / 3.0)), 2), 0)]}, 'reasoning': {'effort': 'low'}} if model.startswith('gpt-5') else {'model': model, 'input': [{'role': 'developer', 'content': TRANSFORM_SYSTEM_PROMPT}, {'role': 'user', 'content': [{'type': 'input_text', 'text': f'{TRANSFORM_USER_PROMPT}\n```json\n{json.dumps(items2, ensure_ascii=False)}\n```'}]}], 'temperature': temperature, 'reasoning': {'effort': 'low'}}).encode('utf-8'), method='POST', headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'})) as response:
