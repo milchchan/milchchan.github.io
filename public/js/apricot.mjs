@@ -374,6 +374,22 @@ export class Agent {
       throw new TypeError("A character requires a name, width, and height.");
     }
 
+    if (json.camera != null) {
+      const { x, y, z, target, fov } = json.camera;
+
+      if (![x, y, z].every(Number.isFinite)) {
+        throw new TypeError("A camera requires finite x, y, and z coordinates.");
+      }
+
+      if (target != null && ![target.x, target.y, target.z].every(Number.isFinite)) {
+        throw new TypeError("A camera target requires finite x, y, and z coordinates.");
+      }
+
+      if (fov != null && (!Number.isFinite(fov) || fov <= 0 || fov >= 180)) {
+        throw new TypeError("A camera fov must be greater than 0 and less than 180 degrees.");
+      }
+    }
+
     return {
       ...json,
       x: json.x ?? 0,
@@ -686,12 +702,33 @@ export class Agent {
   }
 
   fitVRMCamera() {
+    this.vrm.scene.updateWorldMatrix(true, true);
+
     const box = new THREE.Box3().setFromObject(this.vrm.scene);
     const size = new THREE.Vector3();
     const center = new THREE.Vector3();
 
     box.getSize(size);
     box.getCenter(center);
+
+    const camera = this.character.camera;
+
+    if (camera != null) {
+      const target = center.clone();
+
+      if (camera.target != null) {
+        target.set(camera.target.x, camera.target.y, camera.target.z);
+      }
+
+      this.vrmCamera.fov = camera.fov ?? 60.0;
+      this.vrmCamera.position.set(camera.x, camera.y, camera.z);
+      this.vrmCamera.lookAt(target);
+      this.vrmCamera.near = 0.01;
+      this.vrmCamera.far = Math.max(100.0, this.vrmCamera.position.distanceTo(center) + size.length());
+      this.vrmCamera.updateProjectionMatrix();
+
+      return;
+    }
 
     if (size.lengthSq() === 0.0) {
       this.vrmCamera.position.set(0.0, 1.2, 5.0);
