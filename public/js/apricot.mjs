@@ -1,3 +1,8 @@
+//import * as THREE from "three";
+//import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+//import { VRMLoaderPlugin, VRMUtils } from "@pixiv/three-vrm";
+//import { VRMAnimationLoaderPlugin, createVRMAnimationHumanoidTracks } from "@pixiv/three-vrm-animation";
+
 function random(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -10,19 +15,88 @@ function lerp(a, b, t) {
 }
 
 export class Animation {
-  constructor(name, state = null, repeats = 1, frames = []) {
+  constructor(name = null, state = null, repeats = 1, frames = null, url = null, animations = []) {
     this.name = name;
     this.state = state;
     this.repeats = repeats;
     this.time = 0.0;
-    this.frames = frames;
+    this.hasFrames = frames !== null;
+    this.frames = frames ?? [];
+    this.url = url;
+    this.clip = null;
+    this.animations = animations;
+    this.steps = null;
+  }
+
+  static fromJSON(json, baseUrl = null) {
+    const resolveURL = value => typeof value === "string" ? (baseUrl === null ? value : new URL(value, baseUrl).href) : null;
+    const frames = Array.isArray(json.frames) ? json.frames.map(frame => ({
+      ...frame,
+      x: frame.x ?? 0,
+      y: frame.y ?? 0,
+      width: frame.width ?? 0,
+      height: frame.height ?? 0,
+      z: Math.trunc(frame.z ?? 0),
+      type: typeof frame.type === "string" ? frame.type : null,
+      opacity: frame.opacity ?? 1.0,
+      delay: Math.max(frame.delay ?? 0, 0.01),
+      url: resolveURL(frame.url)
+    })) : null;
+
+    return new Animation(
+      typeof json.name === "string" ? json.name : null,
+      typeof json.state === "string" ? json.state : null,
+      typeof json.repeats === "number" ? Math.max(0, Math.trunc(json.repeats)) : 1,
+      frames,
+      resolveURL(json.url),
+      Array.isArray(json.animations) ? json.animations.map(animation => Animation.fromJSON(animation, baseUrl)) : []
+    );
+  }
+
+  get isEmpty() {
+    return !this.hasFrames && this.frames.length === 0 && this.url === null && this.clip === null && this.animations.length === 0 && this.steps === null;
+  }
+
+  *walk() {
+    const stack = [this];
+
+    while (stack.length > 0) {
+      const animation = stack.pop();
+
+      yield animation;
+      stack.push(...animation.animations.toReversed());
+    }
   }
 
   get duration() {
-    let duration = 0.0;
-        
-    for (const frame of this.frames) {
-      duration += frame.delay;
+    if (this.steps !== null) {
+      return this.steps.reduce((duration, animation) => {
+        if (animation.clip !== null) {
+          return duration + animation.duration;
+        }
+
+        const tracks = new Map();
+
+        for (const frame of animation.frames) {
+          const key = JSON.stringify([frame.z ?? 0, frame.type ?? null]);
+
+          tracks.set(key, (tracks.get(key) ?? 0) + frame.delay);
+        }
+
+        return duration + Math.max(0, ...tracks.values()) * Math.max(animation.repeats, 1);
+      }, 0);
+    }
+
+    let duration = this.clip?.duration ?? 0.0;
+
+    if (this.clip === null) {
+      for (const frame of this.frames) {
+        duration += frame.delay;
+      }
+    }
+
+    if (this.clip !== null && this.repeats === 0) {
+      return Infinity;
     }
     
     if (this.repeats > 1) {
@@ -33,6 +107,10 @@ export class Animation {
   }
 
   get current() {
+    if (this.frames.length === 0) {
+      return null;
+    }
+
     let time = this.time;
     let frame = this.frames[0];
     
@@ -67,6 +145,154 @@ export class Animation {
   }
 }
 
+export class Runtime {
+  constructor(animations = []) {
+    this.animations = animations;
+    this.states = Object.create(null);
+  }
+
+  /**
+   * Select a named variant and return an Animation with ordered, flattened steps.
+   * Omitted state uses remembered state; an empty string clears it. No match returns null.
+   */
+  run(name, state = null) {
+    const selected = this.select(this.animations.filter(animation => animation.name === name), state);
+
+    if (selected === null) {
+      return null;
+    }
+
+    const prepared = new Animation(selected.name, selected.state);
+    const stack = [{ animation: selected, index: -1 }];
+    let calls = 0;
+
+    prepared.steps = [];
+
+    while (stack.length > 0) {
+      const current = stack[stack.length - 1];
+      const animation = current.animation;
+
+      if (current.index === -1) {
+        if (animation.hasFrames || animation.frames.length > 0 || animation.url !== null || animation.clip !== null) {
+          const step = new Animation(animation.name, animation.state, animation.repeats,
+            animation.hasFrames || animation.frames.length > 0 ? animation.frames.map(frame => ({ ...frame })) : null, animation.url);
+
+          step.clip = animation.clip;
+          prepared.steps.push(step);
+        }
+
+        current.index = 0;
+      }
+
+      if (current.index >= animation.animations.length) {
+        stack.pop();
+
+        continue;
+      }
+
+      const child = animation.animations[current.index++];
+
+      if (child.isEmpty && ++calls <= 10000) {
+        const called = this.select(this.getCallableAnimations(child).filter(candidate => candidate.name === child.name), child.state);
+
+        if (called !== null) {
+          stack.push({ animation: called, index: -1 });
+        }
+      }
+    }
+
+    return prepared.steps.length > 0 ? prepared : null;
+  }
+
+  select(animations, state) {
+    let candidates = [];
+
+    for (const animation of animations) {
+      if (animation.state === null) {
+        continue;
+      }
+
+      if (state === "") {
+        if (animation.name !== null) {
+          delete this.states[animation.name];
+        }
+
+        continue;
+      }
+
+      const input = state ?? (animation.name === null ? null : this.states[animation.name]);
+
+      if (input != null) {
+        const match = new RegExp(animation.state).exec(input);
+
+        if (match !== null && match[0].length > 0) {
+          candidates.push(animation);
+        }
+      }
+    }
+
+    if (candidates.length === 0) {
+      candidates = animations.filter(animation => animation.state === null);
+      state = null;
+    }
+
+    if (candidates.length === 0) {
+      return null;
+    }
+
+    const selected = candidates[random(0, candidates.length)];
+
+    if (selected.name !== null && state !== null) {
+      this.states[selected.name] = state;
+    }
+
+    return selected;
+  }
+
+  getCallableAnimations(reference) {
+    const callable = [];
+
+    for (const source of this.animations) {
+      const stack = [{ animation: source, path: [source] }];
+      let path = null;
+
+      while (stack.length > 0) {
+        const current = stack.pop();
+
+        if (current.animation === reference) {
+          path = current.path;
+
+          break;
+        }
+
+        for (const child of current.animation.animations.toReversed()) {
+          stack.push({ animation: child, path: [...current.path, child] });
+        }
+      }
+
+      const visible = new Set([source]);
+
+      if (path !== null) {
+        for (let i = 0; i < path.length - 1; i++) {
+          for (const child of path[i].animations) {
+            if (!child.isEmpty) {
+              visible.add(child);
+            }
+
+            if (child === path[i + 1]) {
+              break;
+            }
+          }
+        }
+      }
+
+      callable.push(...visible);
+    }
+
+    return callable;
+  }
+}
+
 export class Agent {
   constructor(scale = 1.0, temperature = 1.0) {
     const fontFamily = window.getComputedStyle(document.documentElement).getPropertyValue("--apricot-font-family");
@@ -93,8 +319,17 @@ export class Agent {
     this.messageHeight = 0;
     this.messageQueue = [];
     this.currentAnimations = [];
+    this.pendingAnimations = [];
     this.commandQueue = [];
+    this.runtime = new Runtime();
     this.cachedImages = {};
+    this.vrm = null;
+    this.vrmScene = null;
+    this.vrmCamera = null;
+    this.vrmRenderer = null;
+    this.vrmMixer = null;
+    this.vrmExpressionTime = 0.0;
+    this.vrmNextBlinkTime = 3.0;
     this.elapsedTime = 0.0;
     this.maxDuration = 0.0;
     this.textColor = "rgb(255 255 255)";
@@ -130,6 +365,25 @@ export class Agent {
     return this.domElement;
   }
 
+  get is3D() {
+    return this.character?.model != null;
+  }
+
+  parseCharacter(json, baseUrl = null) {
+    if (typeof json?.name !== "string" || typeof json.width !== "number" || typeof json.height !== "number") {
+      throw new TypeError("A character requires a name, width, and height.");
+    }
+
+    return {
+      ...json,
+      x: json.x ?? 0,
+      y: json.y ?? 0,
+      scale: json.scale ?? 1.0,
+      model: typeof json.model === "string" ? (baseUrl === null ? json.model : new URL(json.model, baseUrl).href) : null,
+      animations: Array.isArray(json.animations) ? json.animations.map(animation => Animation.fromJSON(animation, baseUrl)) : []
+    };
+  }
+
   async load(url) {
     try {
       let response = await fetch(url, {
@@ -138,10 +392,11 @@ export class Agent {
       });
 
       if (response.ok) {
-        const character = await response.json();
+        const characterUrl = response.url || url;
+        const character = this.parseCharacter(await response.json(), characterUrl);
 
-        if (/\.txt$/i.test(character.prompt)) {
-          response = await fetch(character.prompt, {
+        if (typeof character.prompt === "string" && /\.(?:txt|md)$/i.test(character.prompt)) {
+          response = await fetch(new URL(character.prompt, characterUrl).href, {
             mode: "cors",
             method: "GET"
           });
@@ -151,29 +406,24 @@ export class Agent {
           }
         }
 
-        character.animations = character.animations.reduce((x, y) => {
-          const frames = [];
+        if (Array.isArray(character.prompt)) {
+          const prompts = [];
 
-          for (const frame of y.frames) {
-            frame.delay = Math.max(frame.delay, 0.01);
+          for (const path of character.prompt) {
+            if (typeof path === "string" && /\.(?:txt|md)$/i.test(path)) {
+              response = await fetch(new URL(path, characterUrl).href, { mode: "cors", method: "GET" });
 
-            if ("z" in frame === false) {
-              frame["z"] = 0;
+              if (response.ok) {
+                prompts.push(await response.text());
+              }
             }
-
-            if ("opacity" in frame === false) {
-              frame["opacity"] = 1.0;
-            }
-
-            frames.push(frame);
           }
 
-          x.push(new Animation(y.name, y.state, "repeats" in y ? y.repeats : 1, frames));
-
-          return x;
-        }, []);
+          character.prompt = prompts.join("\n");
+        }
 
         this.character = character;
+        this.runtime = new Runtime(character.animations);
       }
     } catch (error) {
       console.error(error);
@@ -183,25 +433,27 @@ export class Agent {
       this.balloonWidth = this.character.width;
     }
 
-    for (const animation of this.character.animations) {
-      for (const frame of animation.frames) {
-        if (frame.url in this.cachedImages === false) {
-          const image = await new Promise((resolve) => {
-            const image = new Image();
-      
-            image.onload = () => {
-              resolve(image);
-            };
-            image.onerror = (error) => {
-              resolve(error);
-            };
-            image.src = frame.url;
-          });
-    
-          if (!(image instanceof Event) || image.type !== "error") {
-            this.cachedImages[frame.url] = image;
-          } else {
-            console.error(image);
+    if (!this.is3D) {
+      for (const animation of this.character.animations.flatMap(animation => [...animation.walk()])) {
+        for (const frame of animation.frames) {
+          if (frame.url !== null && frame.url in this.cachedImages === false) {
+            const image = await new Promise((resolve) => {
+              const image = new Image();
+
+              image.onload = () => {
+                resolve(image);
+              };
+              image.onerror = (error) => {
+                resolve(error);
+              };
+              image.src = frame.url;
+            });
+
+            if (!(image instanceof Event) || image.type !== "error") {
+              this.cachedImages[frame.url] = image;
+            } else {
+              console.error(image);
+            }
           }
         }
       }
@@ -300,19 +552,34 @@ export class Agent {
       likabilityCanvas.classList.add("likability");
       likabilityCanvas["backBuffer"] = document.createElement("canvas");
       likabilityCanvas.style.position = "absolute";
-      likabilityCanvas.width = 16.0 * window.devicePixelRatio;
-      likabilityCanvas.height = 16.0 * window.devicePixelRatio;
+      likabilityCanvas.width = 32.0 * window.devicePixelRatio;
+      likabilityCanvas.height = 32.0 * window.devicePixelRatio;
       likabilityCanvas.style.left = `${Math.floor(-(32.0 - this.character.width * this.scale) / 2 + this.character.x)}px`;
-      likabilityCanvas.style.bottom = "8px";
+      likabilityCanvas.style.bottom = "0px";
       likabilityCanvas.style.borderRadius = "16px";
-      likabilityCanvas.style.padding = "8px";
-      likabilityCanvas.style.width = `${Math.floor(16.0)}px`;
-      likabilityCanvas.style.height = `${Math.floor(16.0)}px`;
+      likabilityCanvas.style.width = `${Math.floor(32.0)}px`;
+      likabilityCanvas.style.height = `${Math.floor(32.0)}px`;
       likabilityCanvas.style.backgroundColor = this.balloonBackgroundColor;
       likabilityCanvas.style.visibility = "collapse";
-      likabilityCanvas.style.pointerEvents = "none";
       likabilityCanvas.style.userSelect = "none";
       likabilityCanvas.style.setProperty("-webkit-user-select", "none");
+      likabilityCanvas.style.setProperty("-webkit-app-region", "drag");
+      const preventPassThrough = () => {
+        if ("api" in window) {
+          window.api.setPassThrough(false);
+        }
+      };
+
+      likabilityCanvas.addEventListener("pointermove", (event) => {
+        preventPassThrough();
+        event.stopImmediatePropagation();
+      });
+      likabilityCanvas.addEventListener("pointerenter", preventPassThrough);
+      likabilityCanvas.addEventListener("mousemove", (event) => {
+        preventPassThrough();
+        event.stopImmediatePropagation();
+      });
+      likabilityCanvas.addEventListener("mouseenter", preventPassThrough);
 
       loadingCanvas.classList.add("loading");
       loadingCanvas["backBuffer"] = document.createElement("canvas");
@@ -355,6 +622,12 @@ export class Agent {
     this.loadingCanvas = loadingCanvas;
     this.domElement.appendChild(this.stats.target);
 
+    if (this.is3D) {
+      await this.setupVRM();
+      await this.loadVRMAnimations();
+      this.renderVRM(0.0);
+    }
+
     if (this.onresized !== null) {
       this.onresized();
     }
@@ -362,11 +635,118 @@ export class Agent {
     return this.domElement;
   }
 
+  async setupVRM() {
+    const width = Math.max(1, Math.floor(this.character.width * this.scale));
+    const height = Math.max(1, Math.floor(this.character.height * this.scale));
+    const loader = new GLTFLoader();
+
+    loader.register((parser) => {
+      return new VRMLoaderPlugin(parser);
+    });
+
+    this.vrmRenderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      premultipliedAlpha: false
+    });
+    this.vrmRenderer.setPixelRatio(window.devicePixelRatio);
+    this.vrmRenderer.setSize(width, height, false);
+    this.vrmRenderer.setClearColor(0x000000, 0.0);
+    this.vrmRenderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    this.vrmScene = new THREE.Scene();
+    this.vrmCamera = new THREE.PerspectiveCamera(20.0, width / height, 0.01, 100.0);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+
+    keyLight.position.set(1.0, 1.6, 2.0);
+    this.vrmScene.add(ambientLight);
+    this.vrmScene.add(keyLight);
+
+    const gltf = await loader.loadAsync(this.character.model);
+    const vrm = gltf.userData.vrm;
+
+    if (!vrm) {
+      throw new Error(`VRM is not found: ${this.character.model}`);
+    }
+
+    if (vrm.meta && vrm.meta.metaVersion === "0") {
+      VRMUtils.rotateVRM0(vrm);
+    }
+
+    vrm.scene.traverse((object) => {
+      object.frustumCulled = false;
+    });
+
+    this.vrm = vrm;
+    this.vrmMixer = new THREE.AnimationMixer(vrm.scene);
+    this.vrmScene.add(vrm.scene);
+    this.fitVRMCamera();
+  }
+
+  fitVRMCamera() {
+    const box = new THREE.Box3().setFromObject(this.vrm.scene);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+
+    box.getSize(size);
+    box.getCenter(center);
+
+    if (size.lengthSq() === 0.0) {
+      this.vrmCamera.position.set(0.0, 1.2, 5.0);
+      this.vrmCamera.lookAt(0.0, 1.2, 0.0);
+
+      return;
+    }
+
+    const fov = THREE.MathUtils.degToRad(this.vrmCamera.fov);
+    const distanceY = size.y / (2.0 * Math.tan(fov / 2.0));
+    const distanceX = size.x / (2.0 * Math.tan(fov / 2.0) * this.vrmCamera.aspect);
+    const distance = Math.max(distanceX, distanceY) * 1.12;
+    const targetY = center.y + size.y * 0.04;
+
+    this.vrmCamera.position.set(center.x, targetY, center.z + distance);
+    this.vrmCamera.lookAt(center.x, targetY, center.z);
+    this.vrmCamera.near = Math.max(0.01, distance - size.z * 2.0 - 1.0);
+    this.vrmCamera.far = distance + size.z * 2.0 + 10.0;
+    this.vrmCamera.updateProjectionMatrix();
+  }
+
+  async loadVRMAnimations() {
+    const loader = new GLTFLoader();
+
+    loader.register((parser) => {
+      return new VRMAnimationLoaderPlugin(parser);
+    });
+
+    for (const animation of this.character.animations.flatMap(animation => [...animation.walk()])) {
+      if (animation.url === null) {
+        continue;
+      }
+
+      try {
+        const gltf = await loader.loadAsync(animation.url);
+        const vrmAnimation = gltf.userData.vrmAnimations?.[0];
+
+        if (!vrmAnimation) {
+          continue;
+        }
+
+        const humanoidTracks = createVRMAnimationHumanoidTracks(vrmAnimation, this.vrm.humanoid, this.vrm.meta.metaVersion);
+
+        animation.clip = new THREE.AnimationClip(animation.name, vrmAnimation.duration, [
+          ...humanoidTracks.translation.values(),
+          ...humanoidTracks.rotation.values()
+        ]);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
   run(startup = () => {
-    const animations = this.character.animations.filter(x => x.name === "Start");
-    
-    this.commandQueue.push(animations[~~random(0, animations.length)]);
-    this.commandQueue.push(null);
+    this.play("Start");
     this.ask();
   }) {
     const self = this;
@@ -381,7 +761,15 @@ export class Agent {
   
         self.previousTime = timestamp;
 
-        if (self.currentAnimations.length === 0 && self.balloonCanvas.style.visibility !== "visible") {
+        if (self.currentAnimations.length === 0 && self.pendingAnimations.length > 0) {
+          const [nextAnimations, maxDuration] = self.setupAnimations(self.pendingAnimations.shift());
+
+          self.currentAnimations.push(...nextAnimations);
+          self.elapsedTime = 0.0;
+          self.maxDuration = maxDuration;
+        }
+
+        if (self.currentAnimations.length === 0 && self.pendingAnimations.length === 0 && self.balloonCanvas.style.visibility !== "visible") {
           if (self.commandQueue.length > 0) {
             do {
               const command = self.commandQueue.shift();
@@ -405,15 +793,7 @@ export class Agent {
 
             if (self.onidle === null) {
               if (self.idleTime >= 10.0) {
-                const animations = self.character.animations.filter(x => x.name === "Idle");
-
-                if (animations.length > 0) {
-                  const [nextAnimations, maxDuration] = self.setupAnimations(animations[~~random(0, animations.length)]);
-
-                  self.currentAnimations.push(...nextAnimations);
-                  self.elapsedTime = 0.0;
-                  self.maxDuration = maxDuration;
-                }
+                self.play("Idle");
 
                 self.idleTime = 0.0;
               }
@@ -569,21 +949,7 @@ export class Agent {
               choices.push(...data[3]);
             }
 
-            if (data[2] !== null) {
-              const animations = this.character.animations.filter(x => x.name === "Emote" && new RegExp(x.state).test(data[2]));
-
-              if (animations.length > 0) {
-                animation = animations[~~random(0, animations.length)];
-                
-                resolve([message, likability, animation, choices, logs]);
-
-                return;
-              }
-            }
-
-            const animations = this.character.animations.filter(x => x.name === "Emote" && x.state === null);
-
-            animation = animations[~~random(0, animations.length)];
+            animation = this.runtime.run("Emote", data[2]);
           }
         }
       } catch (error) {
@@ -594,7 +960,7 @@ export class Agent {
     }).then((value) => {
       const [message, likability, animation, choices, logs] = value;
 
-      if (message !== null && animation !== null) {
+      if (message !== null) {
         this.speak(message, animation);
 
         if (likability !== null) {
@@ -613,12 +979,7 @@ export class Agent {
           this.ongenerated();
         }
       } else {
-        const animations = this.character.animations.filter(x => x.name === "Error");
-    
-        if (animations.length > 0) {
-          this.commandQueue.push(animations[~~random(0, animations.length)]);
-          this.commandQueue.push(null);
-        }
+        this.play("Error");
 
         this.logs.splice(0);
       }
@@ -627,9 +988,23 @@ export class Agent {
     });
   }
 
-  speak(message, animation) {
+  play(name, state = null) {
+    const animation = this.runtime.run(name, state);
+
+    if (animation !== null) {
+      this.commandQueue.push(animation, null);
+    }
+
+    return animation;
+  }
+
+  speak(message, animation = null) {
     this.commandQueue.push(message);
-    this.commandQueue.push(animation);
+
+    if (animation !== null) {
+      this.commandQueue.push(animation);
+    }
+
     this.commandQueue.push(null);
   }
 
@@ -848,26 +1223,37 @@ export class Agent {
   }
 
   setupAnimations(animation) {
+    if (animation.steps !== null) {
+      this.pendingAnimations.push(...animation.steps);
+
+      return this.pendingAnimations.length > 0 ? this.setupAnimations(this.pendingAnimations.shift()) : [[], 0.0];
+    }
+
+    if (this.is3D) {
+      return this.setupVRMAnimation(animation);
+    }
+
     const animations = [];
+    const layers = new Map();
     let maxDuration = 0.0;
-    
-    for (const z of animation.frames.reduce((x, y) => {
-      const z = Math.floor(y.z);
 
-      if (!x.includes(z)) {
-        x.push(z);
+    for (const frame of animation.frames) {
+      const z = Math.trunc(frame.z ?? 0);
+      const type = frame.type ?? null;
+      const key = JSON.stringify([z, type]);
+
+      if (!layers.has(key)) {
+        const layeredAnimation = new Animation(animation.name, animation.state, animation.repeats, []);
+
+        layeredAnimation.z = z;
+        layeredAnimation.type = type;
+        layers.set(key, layeredAnimation);
       }
 
-      return x;
-    }, []).toSorted((a, b) => a - b)) {
-      const layeredAnimation = new Animation(animation.name, animation.state, animation.repeats);
+      layers.get(key).frames.push(frame);
+    }
 
-      for (const frame of animation.frames) {
-        if (Math.floor(frame.z) === z) {
-          layeredAnimation.frames.push(frame);
-        }
-      }
-
+    for (const layeredAnimation of [...layers.values()].sort((a, b) => a.z - b.z)) {
       if (layeredAnimation.duration > maxDuration) {
         maxDuration = layeredAnimation.duration;
       }
@@ -878,7 +1264,31 @@ export class Agent {
     return [animations, maxDuration];
   }
 
+  setupVRMAnimation(animation) {
+    if (this.vrmMixer === null || animation.clip === null) {
+      return [[], 0.0];
+    }
+
+    this.vrmMixer.stopAllAction();
+
+    const action = this.vrmMixer.clipAction(animation.clip);
+
+    action.reset();
+    action.enabled = true;
+    action.clampWhenFinished = true;
+    action.setLoop(animation.repeats === 1 ? THREE.LoopOnce : THREE.LoopRepeat, animation.repeats === 0 ? Infinity : Math.max(1, animation.repeats));
+    action.play();
+
+    return [[animation], animation.duration];
+  }
+
   renderCharacter(deltaTime) {
+    if (this.is3D) {
+      this.renderVRM(deltaTime);
+
+      return;
+    }
+
     if (this.elapsedTime < this.maxDuration) {
       const backCanvas = this.characterCanvas.backBuffer;
 
@@ -918,9 +1328,62 @@ export class Agent {
     }
   }
 
+  renderVRM(deltaTime) {
+    if (this.vrm === null || this.vrmRenderer === null) {
+      return;
+    }
+
+    if (this.vrmMixer !== null) {
+      this.vrmMixer.update(deltaTime);
+    }
+
+    this.updateVRMExpressions(deltaTime);
+    this.vrm.update(deltaTime);
+    this.vrmRenderer.render(this.vrmScene, this.vrmCamera);
+
+    const frontContext = this.characterCanvas.getContext("2d");
+
+    frontContext.clearRect(0, 0, this.characterCanvas.width, this.characterCanvas.height);
+    frontContext.drawImage(this.vrmRenderer.domElement, 0, 0, this.characterCanvas.width, this.characterCanvas.height);
+
+    if (this.elapsedTime < this.maxDuration) {
+      this.elapsedTime += deltaTime;
+
+      if (this.elapsedTime >= this.maxDuration) {
+        this.vrmMixer.stopAllAction();
+        this.currentAnimations.splice(0);
+      }
+    }
+  }
+
+  updateVRMExpressions(deltaTime) {
+    const expressionManager = this.vrm.expressionManager;
+
+    if (!expressionManager) {
+      return;
+    }
+
+    this.vrmExpressionTime += deltaTime;
+
+    if (this.vrmExpressionTime > this.vrmNextBlinkTime + 0.18) {
+      this.vrmNextBlinkTime = this.vrmExpressionTime + random(250, 550) / 100.0;
+    }
+
+    const blinkPhase = this.vrmExpressionTime - this.vrmNextBlinkTime;
+    const blink = blinkPhase >= 0.0 && blinkPhase <= 0.18 ? Math.sin((blinkPhase / 0.18) * Math.PI) : 0.0;
+    const mouth = this.messageQueue.length > 0 ? (Math.sin(this.vrmExpressionTime * Math.PI * 10.0) + 1.0) * 0.35 : 0.0;
+
+    expressionManager.setValue("blink", blink);
+    expressionManager.setValue("aa", mouth);
+  }
+
   renderLikability(deltaTime) {
     if (this.likability.b !== null) {
       if (this.isLoading || this.isPopup) {
+        if ("api" in window) {
+          window.api.setPassThrough(false);
+        }
+
         if (this.revealStep === null) {
           this.revealStep = deltaTime * 2.0;
           this.likabilityCanvas.style.visibility = "visible";
@@ -975,19 +1438,25 @@ export class Agent {
       const backContext = backCanvas.getContext("2d");
       const frontContext = this.likabilityCanvas.getContext("2d");
       const clipPath = new Path2D();
+      const heartX = Math.floor(8.0 * window.devicePixelRatio);
+      const heartY = Math.floor(8.0 * window.devicePixelRatio);
+      const heartWidth = Math.floor(heartSize * window.devicePixelRatio);
+      const heartHeight = Math.floor(heartSize * window.devicePixelRatio);
       
-      clipPath.rect(0.0, Math.floor((Math.ceil(heartSize * (1.0 - likability))) * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio), Math.floor(Math.floor(heartSize * likability) * window.devicePixelRatio))
+      clipPath.rect(heartX, heartY + Math.floor((Math.ceil(heartSize * (1.0 - likability))) * window.devicePixelRatio), heartWidth, Math.floor(Math.floor(heartSize * likability) * window.devicePixelRatio))
       
       backContext.imageSmoothingEnabled = true;
       backContext.imageSmoothingQuality = "high";
       backContext.clearRect(0, 0, backCanvas.width, backCanvas.height);
+      backContext.fillStyle = "rgb(0 0 0 / 0.01)";
+      backContext.fillRect(0, 0, backCanvas.width, backCanvas.height);
       backContext.save();
-      this.drawHeart(backContext, 0.0, 0.0, Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+      this.drawHeart(backContext, heartX, heartY, heartWidth, heartHeight)
       backContext.globalAlpha = 0.25;
       backContext.fillStyle = this.accentColor;
       backContext.fill();
       backContext.clip(clipPath);
-      this.drawHeart(backContext, 0.0, 0.0, Math.floor(heartSize * window.devicePixelRatio), Math.floor(heartSize * window.devicePixelRatio))
+      this.drawHeart(backContext, heartX, heartY, heartWidth, heartHeight)
       backContext.fillStyle = this.accentColor;
       backContext.fill();
       backContext.restore();
@@ -1482,12 +1951,7 @@ export class Agent {
       const element = document.body.querySelector(targetUrl.hash);
 
       if (element === null) {
-        const animations = this.character.animations.filter(x => x.name === "Error");
-  
-        if (animations.length > 0) {
-          this.commandQueue.push(animations[~~random(0, animations.length)]);
-          this.commandQueue.push(null);
-        }
+        this.play("Error");
       } else {
         element.scrollIntoView({ behavior: "smooth" });
       }
