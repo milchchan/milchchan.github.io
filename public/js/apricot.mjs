@@ -121,7 +121,7 @@ export class Animation {
         duration += frame.delay;
       }
       
-      if (this.repeats > 1 && time > duration * this.repeats) {
+      if (this.repeats > 1 && time >= duration * this.repeats) {
         time = duration;
       } else {
         time = time % duration;
