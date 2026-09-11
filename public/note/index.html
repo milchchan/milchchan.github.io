@@ -1261,6 +1261,7 @@ const SPECTRAL_LOADING_CYCLE_MS =
 const SPECTRAL_LOADING_RESET_MS = 500;
 const SPECTRAL_RELEASE_MS = 500;
 const TTS_EDGE_FADE_SECONDS = 0.008;
+const TTS_PREVIEW_SCROLL_MARGIN = 32;
 const NORMAL_VOICE_INDEX = 0;
 const QUOTE_VOICE_INDEX = 1;
 const REFERENCE_VOICE_URLS = [
@@ -1949,12 +1950,48 @@ function markdownToSpeechSegments(markdown) {
     .filter((segment) => segment.text);
 }
 
+function scrollPreviewToTtsSegment(element) {
+  if (!previewing || !element) return;
+
+  const paneRect = previewPane.getBoundingClientRect();
+  const elementRect = element.getBoundingClientRect();
+  const visibleTop = paneRect.top + TTS_PREVIEW_SCROLL_MARGIN;
+  const visibleBottom = paneRect.bottom - TTS_PREVIEW_SCROLL_MARGIN;
+
+  if (elementRect.top >= visibleTop && elementRect.bottom <= visibleBottom) {
+    return;
+  }
+
+  const elementTop =
+    previewPane.scrollTop + elementRect.top - paneRect.top;
+  const availableHeight = Math.max(
+    0,
+    previewPane.clientHeight - TTS_PREVIEW_SCROLL_MARGIN * 2,
+  );
+  const targetTop = elementRect.height > availableHeight
+    ? elementTop - TTS_PREVIEW_SCROLL_MARGIN
+    : elementTop - (previewPane.clientHeight - elementRect.height) * 0.5;
+  const maximumTop = Math.max(
+    0,
+    previewPane.scrollHeight - previewPane.clientHeight,
+  );
+
+  previewPane.scrollTo({
+    top: clamp(targetTop, 0, maximumTop),
+    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto"
+      : "smooth",
+  });
+}
+
 function setActiveTtsSegment(previewIndex) {
   activeTtsSegmentIndex = previewIndex;
   previewPane.querySelector(".is-tts-active")?.classList.remove("is-tts-active");
 
   if (previewIndex === null) return;
-  previewPane.children[previewIndex]?.classList.add("is-tts-active");
+  const activeElement = previewPane.children[previewIndex];
+  activeElement?.classList.add("is-tts-active");
+  scrollPreviewToTtsSegment(activeElement);
 }
 
 function openVoiceDatabase() {
@@ -2764,6 +2801,10 @@ function setPreview(nextState) {
   editButton.setAttribute("aria-pressed", String(!nextState));
   previewButton.setAttribute("aria-pressed", String(nextState));
   (nextState ? previewPane : input).focus({ preventScroll: true });
+
+  if (nextState && activeTtsSegmentIndex !== null) {
+    scrollPreviewToTtsSegment(previewPane.children[activeTtsSegmentIndex]);
+  }
 }
 
 function dataTransferHasType(dataTransfer, type) {
