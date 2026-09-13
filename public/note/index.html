@@ -1261,6 +1261,9 @@ const SPECTRAL_LOADING_CYCLE_MS =
 const SPECTRAL_LOADING_RESET_MS = 500;
 const SPECTRAL_RELEASE_MS = 500;
 const TTS_EDGE_FADE_SECONDS = 0.008;
+const TTS_OUTPUT_DRAIN_MIN_SECONDS = 0.05;
+const TTS_OUTPUT_DRAIN_PADDING_SECONDS = 0.02;
+const TTS_OUTPUT_DRAIN_MAX_SECONDS = 0.5;
 const TTS_PREVIEW_SCROLL_MARGIN = 32;
 const NORMAL_VOICE_INDEX = 0;
 const QUOTE_VOICE_INDEX = 1;
@@ -2339,6 +2342,45 @@ async function stopAudioSourceWithFade(
   }
 }
 
+function getTtsOutputDrainSeconds(audioContext) {
+  const baseLatency = Number.isFinite(audioContext?.baseLatency)
+    ? Math.max(0, audioContext.baseLatency)
+    : 0;
+  const outputLatency = Number.isFinite(audioContext?.outputLatency)
+    ? Math.max(0, audioContext.outputLatency)
+    : 0;
+
+  return clamp(
+    baseLatency + outputLatency + TTS_OUTPUT_DRAIN_PADDING_SECONDS,
+    TTS_OUTPUT_DRAIN_MIN_SECONDS,
+    TTS_OUTPUT_DRAIN_MAX_SECONDS,
+  );
+}
+
+async function waitForTtsOutputDrain(audioContext, signal) {
+  if (
+    !audioContext ||
+    audioContext.state !== "running" ||
+    signal?.aborted
+  ) {
+    return;
+  }
+
+  const waitMilliseconds = getTtsOutputDrainSeconds(audioContext) * 1000;
+
+  await new Promise((resolve) => {
+    let timeoutId = null;
+    const finish = () => {
+      if (timeoutId !== null) window.clearTimeout(timeoutId);
+      signal?.removeEventListener("abort", finish);
+      resolve();
+    };
+
+    timeoutId = window.setTimeout(finish, waitMilliseconds);
+    signal?.addEventListener("abort", finish, { once: true });
+  });
+}
+
 async function suspendActiveAudioWithFade() {
   const audioContext = activeAudioContext;
   const gainNode = activeAudioGain;
@@ -2511,6 +2553,7 @@ async function synthesize(segments, signal) {
   spectralSmoothedLevels.fill(0);
   spectralDisplayedLevels.fill(0);
   await audioContext.resume();
+  let didCompletePlayback = false;
 
   try {
     const firstProgress = `1/${segments.length}`;
@@ -2545,8 +2588,14 @@ async function synthesize(segments, signal) {
         audioBuffer = await resolveTtsGeneration(nextRequest);
       }
     }
+
+    didCompletePlayback = true;
   } finally {
     setActiveTtsSegment(null);
+
+    if (didCompletePlayback) {
+      await waitForTtsOutputDrain(audioContext, signal);
+    }
 
     if (activeAudioContext === audioContext && activeAudioSource) {
       activeAudioSource.disconnect();
