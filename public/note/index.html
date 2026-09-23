@@ -27,7 +27,7 @@
   --pane-bottom-space: 32px;
   --background-color: var(--paper);
   --paper: #f4f4f6;
-  --paper-glass: #f4f5f8;
+  --paper-glass: rgb(248 249 255 / 75%);
   --ink: #33374c;
   --muted: rgb(51 55 76 / 50%);
   --line: rgb(51 55 76 / 25%);
@@ -58,7 +58,7 @@
   :root {
     color-scheme: dark;
     --paper: #161821;
-    --paper-glass: #1A1D2A;
+    --paper-glass: rgb(26 29 42 / 75%);
     --ink: #c6c8d1;
     --muted: rgb(198 200 209 / 50%);
     --line: rgb(198 200 209 / 25%);
@@ -91,14 +91,24 @@
 }
 
 html {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
   background: var(--paper);
 }
 
 body {
+  width: 100%;
+  height: 100%;
   min-width: 320px;
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
   color: var(--ink);
   background: var(--paper);
   font-family: "Geist", sans-serif;
@@ -162,7 +172,7 @@ button {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 16px;
   background: var(--paper);
   opacity: 1;
@@ -174,6 +184,18 @@ button {
 }
 
 .frame > .wrap {
+  --pane-scrollbar-offset: 16px;
+  --pane-scrollbar-block-offset: 16px;
+  --pane-centered-gutter: 0px;
+  --pane-mask-image:
+    linear-gradient(
+      to bottom,
+      transparent,
+      black 16px,
+      black calc(100% - 16px),
+      transparent
+    ),
+    linear-gradient(black, black);
   position: absolute;
   inset: 0 0 0 32px;
   width: auto;
@@ -665,10 +687,13 @@ textarea:focus-visible,
 .editor-pane,
 .preview-pane {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
+  top: calc(0px - var(--pane-scrollbar-block-offset));
+  right: calc(0px - var(--pane-scrollbar-offset));
+  bottom: calc(0px - var(--pane-scrollbar-block-offset));
+  left: 0;
+  width: auto;
+  height: auto;
+  min-height: 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity 500ms ease;
@@ -695,13 +720,33 @@ textarea:focus-visible,
   pointer-events: auto;
 }
 
+textarea,
+.preview-pane {
+  -webkit-mask-image: var(--pane-mask-image);
+  mask-image: var(--pane-mask-image);
+  -webkit-mask-position: 0 0, 100% 0;
+  mask-position: 0 0, 100% 0;
+  -webkit-mask-repeat: no-repeat, no-repeat;
+  mask-repeat: no-repeat, no-repeat;
+  -webkit-mask-size:
+    calc(100% - var(--pane-scrollbar-offset)) 100%,
+    var(--pane-scrollbar-offset) 100%;
+  mask-size:
+    calc(100% - var(--pane-scrollbar-offset)) 100%,
+    var(--pane-scrollbar-offset) 100%;
+}
+
 textarea {
   display: block;
   width: 100%;
   height: 100%;
   min-height: 100%;
   resize: none;
-  padding: 0 0 var(--pane-bottom-space);
+  padding:
+    var(--pane-scrollbar-block-offset)
+    calc(var(--pane-scrollbar-offset) + var(--pane-centered-gutter))
+    calc(var(--pane-scrollbar-block-offset) + var(--pane-bottom-space))
+    var(--pane-centered-gutter);
   color: var(--editor-ink);
   border: 0;
   outline: 0;
@@ -712,6 +757,9 @@ textarea {
   letter-spacing: 0.018em;
   line-height: 1.7;
   caret-color: var(--accent);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y pinch-zoom;
   transition: color 500ms ease, padding 500ms ease;
 }
 
@@ -721,9 +769,15 @@ textarea::placeholder {
 }
 
 .preview-pane {
-  min-height: 100%;
-  padding: 0 0 var(--pane-bottom-space);
+  padding:
+    var(--pane-scrollbar-block-offset)
+    calc(var(--pane-scrollbar-offset) + var(--pane-centered-gutter))
+    calc(var(--pane-scrollbar-block-offset) + var(--pane-bottom-space))
+    var(--pane-centered-gutter);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y pinch-zoom;
   transition: opacity 500ms ease, padding 500ms ease;
 }
 
@@ -996,13 +1050,6 @@ textarea::placeholder {
     background: var(--background-color);
   }
 
-  .editor-pane,
-  .preview-pane {
-    max-width: 769px;
-    margin-right: auto;
-    margin-left: auto;
-  }
-
   .icon-controls {
     top: 32px;
     right: 32px;
@@ -1024,37 +1071,26 @@ textarea::placeholder {
 
   .overlay {
     padding: 16px;
-    -webkit-mask-image:
-      linear-gradient(
-        to bottom,
-        transparent,
-        transparent 16px,
-        black 32px,
-        black calc(100% - 32px),
-        transparent calc(100% - 16px),
-        transparent
-      ),
-      linear-gradient(black, black);
-    mask-image:
-      linear-gradient(
-        to bottom,
-        transparent,
-        transparent 16px,
-        black 32px,
-        black calc(100% - 32px),
-        transparent calc(100% - 16px),
-        transparent
-      ),
-      linear-gradient(black, black);
-    -webkit-mask-position: 0 0, 100% 0;
-    mask-position: 0 0, 100% 0;
-    -webkit-mask-repeat: no-repeat, no-repeat;
-    mask-repeat: no-repeat, no-repeat;
-    -webkit-mask-size: calc(100% - 32px) 100%, 32px 100%;
-    mask-size: calc(100% - 32px) 100%, 32px 100%;
   }
 
   .frame > .wrap {
+    --pane-scrollbar-offset: 32px;
+    --pane-scrollbar-block-offset: 32px;
+    --pane-mask-image:
+      linear-gradient(
+        to bottom,
+        transparent,
+        transparent 16px,
+        black 32px,
+        black calc(100% - 32px),
+        transparent calc(100% - 16px),
+        transparent
+      ),
+      linear-gradient(black, black);
+    --pane-centered-gutter: max(
+      0px,
+      calc((100vw - 96px - 769px) / 2)
+    );
     inset: 16px 16px 16px 48px;
     padding: 0 0 16px;
   }
