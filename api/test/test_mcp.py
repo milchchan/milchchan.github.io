@@ -5,6 +5,7 @@ import pathlib
 import sys
 import types
 import unittest
+from unittest import mock
 
 
 class FakeHttpRequest:
@@ -411,11 +412,58 @@ class TestMcp(unittest.TestCase):
         self.assertTrue(result['isError'])
         self.assertNotIn('failed', result['content'][0]['text'])
 
-    def test_initialize_is_not_supported(self):
-        response = self._call('initialize')
+    def test_legacy_initialize_lists_and_calls_weather(self):
+        request = FakeHttpRequest(
+            headers={'Content-Type': 'application/json', 'Accept': 'application/json, text/event-stream', 'MCP-Protocol-Version': '2025-11-25'},
+            body=json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {
+                'protocolVersion': '2025-11-25',
+                'capabilities': {},
+                'clientInfo': {'name': 'client', 'version': '1.0.0'},
+            }}).encode('utf-8'),
+        )
+        response = self.mcp.main(request)
 
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(json.loads(response.get_body())['error']['code'], -32601)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.get_body())['result'], {
+            'protocolVersion': '2025-11-25',
+            'capabilities': {'tools': {'listChanged': False}},
+            'serverInfo': {'name': 'milchchan-mcp', 'version': '1.0.0'},
+        })
+
+        headers = {'Content-Type': 'application/json', 'Accept': 'application/json, text/event-stream', 'MCP-Protocol-Version': '2025-11-25'}
+        request = FakeHttpRequest(headers=headers, body=b'{"jsonrpc":"2.0","method":"notifications/initialized"}')
+        self.assertEqual(self.mcp.main(request).status_code, 202)
+
+        request = FakeHttpRequest(headers={**headers, 'MCP-Protocol-Version': '2025-06-18'}, body=b'{"jsonrpc":"2.0","method":"notifications/initialized"}')
+        self.assertEqual(self.mcp.main(request).status_code, 400)
+
+        request = FakeHttpRequest(headers=headers, body=b'{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
+        response = self.mcp.main(request)
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.get_body())['result']
+        self.assertEqual([tool['name'] for tool in result['tools']], ['now', 'news', 'weather'])
+        self.assertNotIn('resultType', result)
+
+        weather_response = mock.MagicMock()
+        weather_response.__enter__.return_value.read.return_value = b'{"currentWeather":{"temperature":20}}'
+        request = FakeHttpRequest(headers=headers, body=json.dumps({
+            'jsonrpc': '2.0', 'id': 3, 'method': 'tools/call',
+            'params': {'name': 'weather', 'arguments': {'latitude': 35.0, 'longitude': 139.0}},
+        }).encode('utf-8'))
+
+        with mock.patch.dict(os.environ, {
+            'WEATHERKIT_TEAM_ID': 'test',
+            'WEATHERKIT_SERVICES_ID': 'test',
+            'WEATHERKIT_PRIVATE_KEY': 'test',
+            'WEATHERKIT_KEY_ID': 'test',
+        }), mock.patch.object(self.mcp, 'urlopen', return_value=weather_response):
+            response = self.mcp.main(request)
+
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.get_body())['result']
+        self.assertFalse(result['isError'])
+        self.assertIn('"temperature": 20', result['content'][0]['text'])
+        self.assertNotIn('resultType', result)
 
     def test_unknown_method_returns_not_found(self):
         response = self._call('unknown/method')

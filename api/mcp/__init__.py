@@ -17,6 +17,7 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     SUPPORTED_VERSION = '2026-07-28'
+    LEGACY_VERSION = '2025-11-25'
     SERVER_INFO = {'name': 'milchchan-mcp', 'version': '1.0.0'}
     RESPONSE_HEADERS = {'MCP-Protocol-Version': SUPPORTED_VERSION}
     allowed_origins = [origin.strip() for origin in os.environ.get('MCP_ALLOWED_ORIGINS', 'https://milchchan.com,https://merkuchan.com').split(',') if origin.strip()]
@@ -73,49 +74,85 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     identifier = body.get('id')
     method = body.get('method')
     params = body.get('params')
+    request_protocol_version = headers.get('mcp-protocol-version')
+    new_meta = isinstance(params, dict) and isinstance(params.get('_meta'), dict) and 'io.modelcontextprotocol/protocolVersion' in params['_meta']
+    legacy = method in ('initialize', 'notifications/initialized') or (not new_meta and request_protocol_version == LEGACY_VERSION)
 
-    if jsonrpc != '2.0' or isinstance(identifier, bool) or not isinstance(identifier, (str, int)) or not isinstance(method, str) or not isinstance(params, dict):
+    if legacy:
+        RESPONSE_HEADERS = {'MCP-Protocol-Version': LEGACY_VERSION}
+
+        if jsonrpc != '2.0' or not isinstance(method, str) or (params is not None and not isinstance(params, dict)):
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+
+        params = params or {}
+
+        if method == 'notifications/initialized':
+            if 'id' in body or request_protocol_version != LEGACY_VERSION:
+                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+
+            return func.HttpResponse(status_code=202, headers=RESPONSE_HEADERS, mimetype='', charset='')
+
+        if isinstance(identifier, bool) or not isinstance(identifier, (str, int)):
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': None, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+
+        if method == 'initialize':
+            if not isinstance(params.get('protocolVersion'), str) or not isinstance(params.get('capabilities'), dict) or not isinstance(params.get('clientInfo'), dict) or not isinstance(params['clientInfo'].get('name'), str) or not isinstance(params['clientInfo'].get('version'), str):
+                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'protocolVersion': LEGACY_VERSION, 'capabilities': {'tools': {'listChanged': False}}, 'serverInfo': SERVER_INFO}}), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+
+        if request_protocol_version != LEGACY_VERSION:
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Unsupported protocol version'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+
+        if method == 'ping':
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {}}), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+
+    if not legacy and (jsonrpc != '2.0' or isinstance(identifier, bool) or not isinstance(identifier, (str, int)) or not isinstance(method, str) or not isinstance(params, dict)):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier if isinstance(identifier, (str, int)) and not isinstance(identifier, bool) else None, 'error': {'code': -32600, 'message': 'Invalid Request'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
     def tool_error(message):
-        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'resultType': 'complete', 'content': [{'type': 'text', 'text': sanitize_text(message, 1000)}], 'isError': True, '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}}}, ensure_ascii=False), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+        result = {'content': [{'type': 'text', 'text': sanitize_text(message, 1000)}], 'isError': True}
+
+        if not legacy:
+            result.update({'resultType': 'complete', '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}})
+
+        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': result}, ensure_ascii=False), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
     meta = params.get('_meta')
 
-    if not isinstance(meta, dict) or not isinstance(meta.get('io.modelcontextprotocol/protocolVersion'), str) or not isinstance(meta.get('io.modelcontextprotocol/clientCapabilities'), dict):
+    if not legacy and (not isinstance(meta, dict) or not isinstance(meta.get('io.modelcontextprotocol/protocolVersion'), str) or not isinstance(meta.get('io.modelcontextprotocol/clientCapabilities'), dict)):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
-    progress_token = meta.get('progressToken')
-    log_level = meta.get('io.modelcontextprotocol/logLevel')
+    progress_token = meta.get('progressToken') if not legacy else None
+    log_level = meta.get('io.modelcontextprotocol/logLevel') if not legacy else None
 
-    if (progress_token is not None and (isinstance(progress_token, bool) or not isinstance(progress_token, (str, int, float)))) or (log_level is not None and log_level not in ('debug', 'info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency')):
+    if not legacy and ((progress_token is not None and (isinstance(progress_token, bool) or not isinstance(progress_token, (str, int, float)))) or (log_level is not None and log_level not in ('debug', 'info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'))):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
-    client_info = meta.get('io.modelcontextprotocol/clientInfo')
+    client_info = meta.get('io.modelcontextprotocol/clientInfo') if not legacy else None
 
-    if client_info is not None and (not isinstance(client_info, dict) or not isinstance(client_info.get('name'), str) or not isinstance(client_info.get('version'), str)):
+    if not legacy and client_info is not None and (not isinstance(client_info, dict) or not isinstance(client_info.get('name'), str) or not isinstance(client_info.get('version'), str)):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
-    if params.get('requestState') is not None and not isinstance(params['requestState'], str):
+    if not legacy and params.get('requestState') is not None and not isinstance(params['requestState'], str):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
-    request_protocol_version = headers.get('mcp-protocol-version')
     request_method = headers.get('mcp-method')
-    body_protocol_version = meta['io.modelcontextprotocol/protocolVersion']
+    body_protocol_version = meta['io.modelcontextprotocol/protocolVersion'] if not legacy else None
 
-    if not is_plain_header(request_protocol_version) or not is_plain_header(request_method) or request_protocol_version != body_protocol_version or request_method != method:
+    if not legacy and (not is_plain_header(request_protocol_version) or not is_plain_header(request_method) or request_protocol_version != body_protocol_version or request_method != method):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32020, 'message': 'Header mismatch'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
-    if request_protocol_version != SUPPORTED_VERSION:
+    if not legacy and request_protocol_version != SUPPORTED_VERSION:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32022, 'message': 'Unsupported protocol version', 'data': {'supported': [SUPPORTED_VERSION], 'requested': request_protocol_version}}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
     request_name = params.get('uri') if method == 'resources/read' else params.get('name')
     header_name = decode_header(headers.get('mcp-name'))
 
-    if method in ('tools/call', 'resources/read', 'prompts/get') and (not isinstance(request_name, str) or header_name != request_name):
+    if not legacy and method in ('tools/call', 'resources/read', 'prompts/get') and (not isinstance(request_name, str) or header_name != request_name):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32020, 'message': 'Header mismatch'}}), status_code=400, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
-    if method == 'server/discover':
+    if method == 'server/discover' and not legacy:
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
             'resultType': 'complete',
             'supportedVersions': [SUPPORTED_VERSION],
@@ -128,9 +165,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if 'cursor' in params and not isinstance(params['cursor'], str):
             return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
-        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {
-                    'resultType': 'complete',
-                    'tools': [
+        result = {'tools': [
                         {
                             'name': 'now',
                             'description': 'Returns the current UTC time',
@@ -177,11 +212,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                                 },
                                 'required': ['latitude', 'longitude']
                             }
-                        }],
-                    '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO},
-                    'ttlMs': 300000,
-                    'cacheScope': 'public'
-                }}), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+                        }]}
+
+        if not legacy:
+            result.update({'resultType': 'complete', '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}, 'ttlMs': 300000, 'cacheScope': 'public'})
+
+        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': result}), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
     elif method != 'tools/call':
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32601, 'message': 'Method not found'}}), status_code=404, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
@@ -190,11 +226,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         
     arguments = params.get('arguments', {})
 
-    if params['name'] not in ('now', 'news', 'weather'):
+    if params.get('name') not in ('now', 'news', 'weather'):
         return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'error': {'code': -32602, 'message': 'Invalid params'}}), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
     if params['name'] == 'now':
-        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'resultType': 'complete', 'content': [{'type': 'text', 'text': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}], 'isError': False, '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}}}, ensure_ascii=False), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+        result = {'content': [{'type': 'text', 'text': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}], 'isError': False}
+
+        if not legacy:
+            result.update({'resultType': 'complete', '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}})
+
+        return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': result}, ensure_ascii=False), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
     elif params['name'] == 'news':
         limit = arguments['limit'] if 'limit' in arguments else 10
@@ -237,7 +278,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             for item in recent_data:
                 item['timestamp'] = item['timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ')
 
-            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'resultType': 'complete', 'content': [{'type': 'text', 'text': f'```json\n{json.dumps(recent_data, ensure_ascii=False)}\n```'}], 'isError': False, '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}}}, ensure_ascii=False), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+            result = {'content': [{'type': 'text', 'text': f'```json\n{json.dumps(recent_data, ensure_ascii=False)}\n```'}], 'isError': False}
+
+            if not legacy:
+                result.update({'resultType': 'complete', '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}})
+
+            return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': result}, ensure_ascii=False), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
         except Exception as e:
             logging.error(f'{e}')
@@ -274,7 +320,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 weather = json.loads(data.decode('utf-8'))
 
-                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': {'resultType': 'complete', 'content': [{'type': 'text', 'text': f'```json\n{json.dumps(weather, ensure_ascii=False)}\n```'}], 'isError': False, '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}}}, ensure_ascii=False), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
+                result = {'content': [{'type': 'text', 'text': f'```json\n{json.dumps(weather, ensure_ascii=False)}\n```'}], 'isError': False}
+
+                if not legacy:
+                    result.update({'resultType': 'complete', '_meta': {'io.modelcontextprotocol/serverInfo': SERVER_INFO}})
+
+                return func.HttpResponse(json.dumps({'jsonrpc': '2.0', 'id': identifier, 'result': result}, ensure_ascii=False), status_code=200, headers=RESPONSE_HEADERS, mimetype='application/json', charset='utf-8')
 
         except Exception as e:
             logging.error(f'{e}')
