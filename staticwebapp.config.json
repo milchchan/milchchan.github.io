@@ -32,6 +32,10 @@
         {
             "route": "/milk",
             "rewrite": "/milk/index.html"
+        },
+        {
+            "route": "/tv",
+            "rewrite": "/tv/index.html"
         }
     ],
     "navigationFallback": {
