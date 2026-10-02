@@ -33,6 +33,7 @@
   --line: rgb(51 55 76 / 25%);
   --accent: #00e7ff;
   --active: #00e7ff;
+  --active-selection-ink: #161821;
   --control-ink: rgb(51 55 76 / 100%);
   --control-hover: rgb(131 137 163 / 25%);
   --control-shadow: #0a0a0a1a;
@@ -754,8 +755,8 @@ textarea {
   font-family: "Geist", sans-serif;
   font-size: clamp(15px, 1.15vw, 17px);
   font-weight: 400;
-  letter-spacing: 0.018em;
-  line-height: 1.7;
+  letter-spacing: normal;
+  line-height: 1.5;
   caret-color: var(--accent);
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
@@ -832,7 +833,8 @@ textarea::placeholder {
   color: var(--preview-ink);
   font-family: "Geist", sans-serif;
   font-size: clamp(15px, 1.15vw, 17px);
-  line-height: 1.95;
+  letter-spacing: normal;
+  line-height: 1.5;
   overflow-wrap: anywhere;
   transition: color 500ms ease, opacity 500ms ease, padding 500ms ease;
 }
@@ -1040,9 +1042,14 @@ textarea::placeholder {
   transition: background-color 500ms ease;
 }
 
-.markdown-body > .is-tts-active,
-.markdown-body > .is-tts-active :is(strong, em) {
+.markdown-body > .is-tts-active:not(.is-tts-selection-segment),
+.markdown-body > .is-tts-active:not(.is-tts-selection-segment) :is(strong, em) {
   color: var(--active);
+}
+
+textarea.is-tts-selection-active::selection {
+  color: var(--active-selection-ink);
+  background: var(--active);
 }
 
 @media screen and (min-width: 769px) and (min-height: 769px) {
@@ -1989,6 +1996,84 @@ function markdownToSpeechSegments(markdown) {
     .filter((segment) => segment.text);
 }
 
+function getPreviewSelectionSpeechSegments() {
+  const selection = window.getSelection();
+
+  if (
+    !previewing ||
+    !selection ||
+    selection.isCollapsed ||
+    !previewPane.contains(selection.anchorNode) ||
+    !previewPane.contains(selection.focusNode)
+  ) {
+    return null;
+  }
+
+  const selectionRange = selection.getRangeAt(0).cloneRange();
+  const segments = [];
+
+  Array.from(previewPane.children).forEach((element, previewIndex) => {
+    if (!selectionRange.intersectsNode(element)) return;
+
+    const elementRange = document.createRange();
+    elementRange.selectNodeContents(element);
+    const segmentRange = selectionRange.cloneRange();
+
+    if (
+      segmentRange.compareBoundaryPoints(Range.START_TO_START, elementRange) < 0
+    ) {
+      segmentRange.setStart(elementRange.startContainer, elementRange.startOffset);
+    }
+
+    if (
+      segmentRange.compareBoundaryPoints(Range.END_TO_END, elementRange) > 0
+    ) {
+      segmentRange.setEnd(elementRange.endContainer, elementRange.endOffset);
+    }
+
+    if (segmentRange.collapsed) return;
+
+    const selectedElement = element.cloneNode(false);
+    selectedElement.append(segmentRange.cloneContents());
+    const text = elementToSpeechText(selectedElement);
+
+    if (!text) return;
+
+    segments.push({
+      text,
+      voiceIndex: element.matches("blockquote")
+        ? QUOTE_VOICE_INDEX
+        : NORMAL_VOICE_INDEX,
+      previewIndex,
+      isSelection: true,
+    });
+  });
+
+  return { segments, source: "preview", range: selectionRange };
+}
+
+function getEditorSelectionSpeechSegments() {
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+
+  if (previewing || start === end) return null;
+
+  const selectedMarkdown = input.value.slice(start, end);
+  const segments = markdownToSpeechSegments(selectedMarkdown).map((segment) => ({
+    ...segment,
+    previewIndex: null,
+    isSelection: true,
+  }));
+
+  return { segments, source: "editor", range: null, start, end };
+}
+
+function getCurrentTtsSelection() {
+  return previewing
+    ? getPreviewSelectionSpeechSegments()
+    : getEditorSelectionSpeechSegments();
+}
+
 function scrollPreviewToTtsSegment(element) {
   if (!previewing || !element) return;
 
@@ -2023,13 +2108,18 @@ function scrollPreviewToTtsSegment(element) {
   });
 }
 
-function setActiveTtsSegment(previewIndex) {
+function setActiveTtsSegment(previewIndex, isSelection = false) {
   activeTtsSegmentIndex = previewIndex;
-  previewPane.querySelector(".is-tts-active")?.classList.remove("is-tts-active");
+  previewPane
+    .querySelector(".is-tts-active")
+    ?.classList.remove("is-tts-active", "is-tts-selection-segment");
 
   if (previewIndex === null) return;
   const activeElement = previewPane.children[previewIndex];
   activeElement?.classList.add("is-tts-active");
+  if (isSelection) {
+    activeElement?.classList.add("is-tts-selection-segment");
+  }
   scrollPreviewToTtsSegment(activeElement);
 }
 
@@ -2610,7 +2700,10 @@ async function synthesize(segments, signal) {
       await waitForTtsPlayback(signal);
       throwIfAborted(signal);
       setTtsState("playing", progress);
-      setActiveTtsSegment(segments[index].previewIndex);
+      setActiveTtsSegment(
+        segments[index].previewIndex,
+        segments[index].isSelection === true,
+      );
       await playAudioBuffer(audioBuffer, signal);
       setActiveTtsSegment(null);
 
@@ -2667,6 +2760,7 @@ function cancelTtsForEdit() {
   window.clearTimeout(ttsStatusResetTimer);
   requestSpectralAnimation();
   documentState.classList.remove("is-speaking", "has-error");
+  input.classList.remove("is-tts-selection-active");
   setTtsState("idle", "");
 }
 
@@ -3066,6 +3160,16 @@ previewButton.addEventListener("click", () => setPreview(true));
 voiceResetButton.addEventListener("click", resetReferenceVoices);
 
 document.addEventListener("keydown", (event) => {
+  if (
+    event.code === "Space" &&
+    event.target === input &&
+    ttsState !== "idle"
+  ) {
+    event.preventDefault();
+    ttsButton.click();
+    return;
+  }
+
   if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
     event.preventDefault();
     setPreview(!previewing);
@@ -3080,10 +3184,22 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") saveNoteSilently();
 });
 
-async function runTtsFromStart() {
+async function runTtsFromStart(selectedTtsSelection = null) {
   if (!ttsHandler) return;
+  const segments = selectedTtsSelection?.segments ?? markdownToSpeechSegments(input.value);
+  if (selectedTtsSelection && segments.length === 0) return;
   const runId = ++ttsRunId;
   const abortController = new AbortController();
+
+  if (selectedTtsSelection?.source === "preview") {
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(selectedTtsSelection.range.cloneRange());
+  } else if (selectedTtsSelection?.source === "editor") {
+    input.classList.add("is-tts-selection-active");
+    input.focus({ preventScroll: true });
+    input.setSelectionRange(selectedTtsSelection.start, selectedTtsSelection.end);
+  }
 
   ttsAbortController = abortController;
   ttsPlaybackRequested = true;
@@ -3093,7 +3209,6 @@ async function runTtsFromStart() {
   documentState.classList.add("is-speaking");
 
   try {
-    const segments = markdownToSpeechSegments(input.value);
     await ttsHandler({
       markdown: input.value,
       text: segments.map((segment) => segment.text).join("\n"),
@@ -3112,6 +3227,7 @@ async function runTtsFromStart() {
     ttsPlaybackResume = null;
     setTtsState("idle", "");
     documentState.classList.remove("is-speaking");
+    input.classList.remove("is-tts-selection-active");
 
     ttsStatusResetTimer = window.setTimeout(() => {
       documentState.classList.remove("has-error");
@@ -3119,8 +3235,40 @@ async function runTtsFromStart() {
   }
 }
 
+let pointerTtsSelection = null;
+let pointerSelectionCapturedAt = 0;
+
+document.addEventListener("pointerdown", (event) => {
+  if (ttsButton.contains(event.target)) return;
+
+  pointerTtsSelection = null;
+  pointerSelectionCapturedAt = 0;
+}, true);
+
+ttsButton.addEventListener("pointerdown", (event) => {
+  pointerTtsSelection = getCurrentTtsSelection();
+  if (pointerTtsSelection?.source === "editor") {
+    event.preventDefault();
+  }
+  pointerSelectionCapturedAt = performance.now();
+});
+
+ttsButton.addEventListener("pointercancel", () => {
+  pointerTtsSelection = null;
+  pointerSelectionCapturedAt = 0;
+});
+
 ttsButton.addEventListener("click", async () => {
   if (!ttsHandler) return;
+
+  const hasRecentPointerSelection =
+    pointerSelectionCapturedAt > 0 &&
+    performance.now() - pointerSelectionCapturedAt < 1500;
+  const selectedTtsSelection = hasRecentPointerSelection
+    ? pointerTtsSelection
+    : getCurrentTtsSelection();
+  pointerTtsSelection = null;
+  pointerSelectionCapturedAt = 0;
 
   if (ttsState === "generating") {
     ttsPlaybackRequested = false;
@@ -3149,7 +3297,7 @@ ttsButton.addEventListener("click", async () => {
     return;
   }
 
-  await runTtsFromStart();
+  await runTtsFromStart(selectedTtsSelection);
 });
 
 // 将来のTTS APIは window.notebook.connectTTS(handler) で接続できます。
