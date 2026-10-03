@@ -756,7 +756,7 @@ textarea {
   font-size: clamp(15px, 1.15vw, 17px);
   font-weight: 400;
   letter-spacing: normal;
-  line-height: 1.5;
+  line-height: 2;
   caret-color: var(--accent);
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
@@ -827,14 +827,14 @@ textarea::placeholder {
 }
 
 .markdown-body {
-  --preview-block-gap: 16px;
+  --preview-block-gap: clamp(30px, 2.3vw, 34px);
   --preview-inner-gap: 8px;
   --preview-inset: 16px;
   color: var(--preview-ink);
   font-family: "Geist", sans-serif;
   font-size: clamp(15px, 1.15vw, 17px);
   letter-spacing: normal;
-  line-height: 1.5;
+  line-height: 2;
   overflow-wrap: anywhere;
   transition: color 500ms ease, opacity 500ms ease, padding 500ms ease;
 }
@@ -883,6 +883,7 @@ textarea::placeholder {
 
 .markdown-body p {
   margin: 0;
+  padding: 0;
   transition: color 500ms ease;
 }
 
@@ -1362,6 +1363,8 @@ let ttsState = "idle";
 let ttsProgress = "";
 let ttsRunId = 0;
 let ttsAbortController = null;
+let ttsRunPromise = null;
+let currentTtsSelection = null;
 let ttsStatusResetTimer;
 let ttsPlaybackRequested = true;
 let ttsPlaybackResume = null;
@@ -2052,26 +2055,69 @@ function getPreviewSelectionSpeechSegments() {
   return { segments, source: "preview", range: selectionRange };
 }
 
-function getEditorSelectionSpeechSegments() {
+function getEditorTtsSelection() {
   const start = input.selectionStart;
   const end = input.selectionEnd;
+  const isSelection = start !== end;
 
-  if (previewing || start === end) return null;
+  if (previewing) return null;
 
-  const selectedMarkdown = input.value.slice(start, end);
-  const segments = markdownToSpeechSegments(selectedMarkdown).map((segment) => ({
+  let markdown = isSelection
+    ? input.value.slice(start, end)
+    : input.value.slice(start);
+  const lineStart = input.value.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
+  const linePrefix = input.value.slice(lineStart, start);
+  const startsInsideQuote = /^\s*>/.test(linePrefix);
+
+  if (startsInsideQuote && !/^\s*>/.test(markdown)) {
+    markdown = `> ${markdown}`;
+  }
+
+  const segments = markdownToSpeechSegments(markdown).map((segment) => ({
     ...segment,
     previewIndex: null,
-    isSelection: true,
+    isSelection,
   }));
 
-  return { segments, source: "editor", range: null, start, end };
+  return {
+    segments,
+    source: "editor",
+    range: null,
+    start,
+    end,
+    isSelection,
+  };
 }
 
 function getCurrentTtsSelection() {
   return previewing
     ? getPreviewSelectionSpeechSegments()
-    : getEditorSelectionSpeechSegments();
+    : getEditorTtsSelection();
+}
+
+function sameTtsSelection(first, second) {
+  if (first === second) return true;
+  if (!first || !second || first.source !== second.source) return false;
+
+  if (first.source === "editor") {
+    return first.start === second.start && first.end === second.end;
+  }
+
+  if (first.source === "preview") {
+    const firstRange = first.range;
+    const secondRange = second.range;
+
+    return Boolean(
+      firstRange &&
+        secondRange &&
+        firstRange.startContainer === secondRange.startContainer &&
+        firstRange.startOffset === secondRange.startOffset &&
+        firstRange.endContainer === secondRange.endContainer &&
+        firstRange.endOffset === secondRange.endOffset,
+    );
+  }
+
+  return false;
 }
 
 function scrollPreviewToTtsSegment(element) {
@@ -3196,7 +3242,10 @@ async function runTtsFromStart(selectedTtsSelection = null) {
     selection?.removeAllRanges();
     selection?.addRange(selectedTtsSelection.range.cloneRange());
   } else if (selectedTtsSelection?.source === "editor") {
-    input.classList.add("is-tts-selection-active");
+    input.classList.toggle(
+      "is-tts-selection-active",
+      selectedTtsSelection.isSelection,
+    );
     input.focus({ preventScroll: true });
     input.setSelectionRange(selectedTtsSelection.start, selectedTtsSelection.end);
   }
@@ -3233,6 +3282,21 @@ async function runTtsFromStart(selectedTtsSelection = null) {
       documentState.classList.remove("has-error");
     }, 2600);
   }
+}
+
+function startTtsRun(selectedTtsSelection) {
+  currentTtsSelection = selectedTtsSelection;
+  const runPromise = runTtsFromStart(selectedTtsSelection);
+  ttsRunPromise = runPromise;
+
+  const clearRun = () => {
+    if (ttsRunPromise !== runPromise) return;
+    ttsRunPromise = null;
+    currentTtsSelection = null;
+  };
+
+  runPromise.then(clearRun, clearRun);
+  return runPromise;
 }
 
 let pointerTtsSelection = null;
@@ -3286,6 +3350,17 @@ ttsButton.addEventListener("click", async () => {
   }
 
   if (ttsState === "paused") {
+    if (
+      selectedTtsSelection &&
+      !sameTtsSelection(currentTtsSelection, selectedTtsSelection)
+    ) {
+      const previousRun = ttsRunPromise;
+      cancelTtsForEdit();
+      if (previousRun) await previousRun;
+      await startTtsRun(selectedTtsSelection);
+      return;
+    }
+
     allowTtsPlayback();
 
     if (activeAudioSource) {
@@ -3297,7 +3372,7 @@ ttsButton.addEventListener("click", async () => {
     return;
   }
 
-  await runTtsFromStart(selectedTtsSelection);
+  await startTtsRun(selectedTtsSelection);
 });
 
 // 将来のTTS APIは window.notebook.connectTTS(handler) で接続できます。
