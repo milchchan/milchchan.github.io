@@ -23,12 +23,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if content_type == 'application/json':
                 data = req.get_json()
 
-                if 'type' in data:
-                    payload = {key: value for key, value in data.items() if key != 'type'}
+                if 'questions' in data:
+                    payload = data.copy()
                     payload.setdefault('model', 'gpt-6-luna')
 
                     with urlopen(Request('https://api.openai.com/v1/decisions', data=json.dumps(payload).encode('utf-8'), method='POST', headers={'Authorization': f"Bearer {os.environ['OPENAI_API_KEY']}", 'Content-Type': 'application/json'})) as response:
-                        return func.HttpResponse(json.dumps(json.loads(response.read().decode('utf-8'))['answers']), status_code=200, mimetype='application/json', charset='utf-8')
+                        return func.HttpResponse(response.read(), status_code=200, mimetype='application/json', charset='utf-8')
 
                 llm_source = os.environ.get('LLM_SOURCE')
 
