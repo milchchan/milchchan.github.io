@@ -2059,6 +2059,7 @@ function getEditorTtsSelection() {
   const start = input.selectionStart;
   const end = input.selectionEnd;
   const isSelection = start !== end;
+  const inputWasFocused = document.activeElement === input;
 
   if (previewing) return null;
 
@@ -2086,6 +2087,7 @@ function getEditorTtsSelection() {
     start,
     end,
     isSelection,
+    inputWasFocused,
   };
 }
 
@@ -3246,8 +3248,10 @@ async function runTtsFromStart(selectedTtsSelection = null) {
       "is-tts-selection-active",
       selectedTtsSelection.isSelection,
     );
-    input.focus({ preventScroll: true });
-    input.setSelectionRange(selectedTtsSelection.start, selectedTtsSelection.end);
+    if (selectedTtsSelection.isSelection) {
+      input.focus({ preventScroll: true });
+      input.setSelectionRange(selectedTtsSelection.start, selectedTtsSelection.end);
+    }
   }
 
   ttsAbortController = abortController;
@@ -3311,7 +3315,11 @@ document.addEventListener("pointerdown", (event) => {
 
 ttsButton.addEventListener("pointerdown", (event) => {
   pointerTtsSelection = getCurrentTtsSelection();
-  if (pointerTtsSelection?.source === "editor") {
+  if (
+    pointerTtsSelection?.source === "editor" &&
+    pointerTtsSelection.isSelection &&
+    pointerTtsSelection.inputWasFocused
+  ) {
     event.preventDefault();
   }
   pointerSelectionCapturedAt = performance.now();
