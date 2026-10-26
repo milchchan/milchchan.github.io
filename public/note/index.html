@@ -585,15 +585,42 @@ textarea:focus-visible,
   font-size: 16px;
 }
 
+.spectral-control {
+  position: absolute;
+  z-index: 9;
+  bottom: 0;
+  left: 50%;
+  display: flex;
+  width: 88px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  align-items: flex-end;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  transform: translateX(-50%);
+}
+
+.spectral-control:focus-visible {
+  outline: 2px solid var(--active);
+  outline-offset: 2px;
+}
+
+.spectral-control:disabled {
+  cursor: wait;
+}
+
 .spectral-analyzer {
   --spectral-dot-radius: 2px;
   --spectral-bar-count: 8;
   --spectral-height: 16px;
   --spectral-gap: 4px;
-  position: absolute;
-  z-index: 9;
-  bottom: 0;
-  left: 50%;
+  position: relative;
+  z-index: auto;
   display: block;
   width: calc(
     var(--spectral-dot-radius) * 2 * var(--spectral-bar-count) +
@@ -601,7 +628,6 @@ textarea:focus-visible,
   );
   height: var(--spectral-height);
   pointer-events: none;
-  transform: translateX(-50%);
 }
 
 .mode-button {
@@ -1206,13 +1232,20 @@ textarea.is-tts-selection-active::selection {
         <div class="frame" id="drop-frame">
           <div class="wrap">
 
-      <canvas
-        class="spectral-analyzer"
-        id="spectral-analyzer"
-        width="60"
-        height="8"
-        aria-hidden="true"
-      ></canvas>
+      <button
+        class="spectral-control"
+        id="spectral-control"
+        type="button"
+        aria-label="読み上げを開始"
+      >
+        <canvas
+          class="spectral-analyzer"
+          id="spectral-analyzer"
+          width="60"
+          height="8"
+          aria-hidden="true"
+        ></canvas>
+      </button>
 
       <div class="editor-pane" id="editor-pane" aria-hidden="false">
         <label class="sr-only" for="markdown-input">マークダウンを入力</label>
@@ -1345,6 +1378,7 @@ const documentState = document.querySelector(".document-state");
 const wordCount = document.querySelector("#word-count");
 const ttsControl = document.querySelector("#tts-control");
 const ttsButton = document.querySelector("#tts-button");
+const spectralControl = document.querySelector("#spectral-control");
 let ttsTooltip = null;
 const voiceResetButton = document.querySelector("#voice-reset-button");
 const dropFrame = document.querySelector("#drop-frame");
@@ -1374,6 +1408,7 @@ let activeAudioSource = null;
 let activeAudioGain = null;
 let activeAudioAnalyser = null;
 let activeAudioEndTime = null;
+let activeAudioStopPromise = null;
 let tooltipMeasureFrame = null;
 let spectralFrequencyData = null;
 let spectralBarDescriptors = [];
@@ -2516,6 +2551,26 @@ async function stopAudioSourceWithFade(
   }
 }
 
+function stopActiveAudioSourceWithFade(source) {
+  if (!source || activeAudioSource !== source) return Promise.resolve();
+
+  if (!activeAudioStopPromise) {
+    activeAudioStopPromise = stopAudioSourceWithFade(
+      source,
+      activeAudioContext,
+      activeAudioGain,
+      activeAudioEndTime,
+    );
+  }
+
+  return activeAudioStopPromise;
+}
+
+async function skipCurrentTtsSegment() {
+  if (ttsState !== "playing" || !activeAudioSource) return;
+  await stopActiveAudioSourceWithFade(activeAudioSource);
+}
+
 function getTtsOutputDrainSeconds(audioContext) {
   const baseLatency = Number.isFinite(audioContext?.baseLatency)
     ? Math.max(0, audioContext.baseLatency)
@@ -2600,6 +2655,7 @@ async function playAudioBuffer(audioBuffer, signal) {
   const startTime = audioContext.currentTime;
   const endTime = startTime + audioBuffer.duration;
 
+  activeAudioStopPromise = null;
   activeAudioSource = source;
   activeAudioEndTime = endTime;
   source.buffer = audioBuffer;
@@ -2616,12 +2672,8 @@ async function playAudioBuffer(audioBuffer, signal) {
       };
       const handleAbort = () => {
         source.removeEventListener("ended", handleEnded);
-        void stopAudioSourceWithFade(
-          source,
-          audioContext,
-          gainNode,
-          endTime,
-        ).finally(() => reject(abortError()));
+        void stopActiveAudioSourceWithFade(source)
+          .finally(() => reject(abortError()));
       };
 
       source.addEventListener("ended", handleEnded, { once: true });
@@ -2633,6 +2685,7 @@ async function playAudioBuffer(audioBuffer, signal) {
     if (activeAudioSource === source) {
       activeAudioSource = null;
       activeAudioEndTime = null;
+      activeAudioStopPromise = null;
     }
   }
 }
@@ -2659,6 +2712,7 @@ function setTtsState(nextState, progress = ttsProgress) {
   ttsButton.classList.toggle("is-playing", nextState === "playing");
   ttsButton.classList.toggle("is-busy", nextState === "generating");
   ttsButton.disabled = !ttsHandler;
+  spectralControl.disabled = !ttsHandler;
   requestSpectralAnimation();
 
   if (nextState === "playing" || nextState === "generating") {
@@ -2667,6 +2721,16 @@ function setTtsState(nextState, progress = ttsProgress) {
     ttsButton.setAttribute("aria-label", "再開");
   } else {
     ttsButton.setAttribute("aria-label", "読み上げ");
+  }
+
+  if (nextState === "playing") {
+    spectralControl.setAttribute("aria-label", "次の段落へスキップ");
+  } else if (nextState === "generating") {
+    spectralControl.setAttribute("aria-label", "一時停止");
+  } else if (nextState === "paused") {
+    spectralControl.setAttribute("aria-label", "読み上げを再開");
+  } else {
+    spectralControl.setAttribute("aria-label", "読み上げを開始");
   }
 }
 
@@ -3381,6 +3445,17 @@ ttsButton.addEventListener("click", async () => {
   }
 
   await startTtsRun(selectedTtsSelection);
+});
+
+spectralControl.addEventListener("click", () => {
+  if (!ttsHandler) return;
+
+  if (ttsState === "playing") {
+    void skipCurrentTtsSegment();
+    return;
+  }
+
+  ttsButton.click();
 });
 
 // 将来のTTS APIは window.notebook.connectTTS(handler) で接続できます。
