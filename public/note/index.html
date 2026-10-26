@@ -2109,7 +2109,13 @@ function getEditorTtsSelection() {
     markdown = `> ${markdown}`;
   }
 
-  const segments = markdownToSpeechSegments(markdown).map((segment) => ({
+  let segments = markdownToSpeechSegments(markdown);
+
+  if (!isSelection && segments.length === 0) {
+    segments = markdownToSpeechSegments(input.value);
+  }
+
+  segments = segments.map((segment) => ({
     ...segment,
     previewIndex: null,
     isSelection,
