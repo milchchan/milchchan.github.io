@@ -4,17 +4,21 @@
 :root {
     --background-color: rgb(255 255 255 / 0.9);
     --foreground-color: #000000;
-    --accent-color: #00e7ff;
-    --accent-color-display-p3: color(display-p3 0.0 0.906 1.0);
+    --accent-color: #8030FF;
+    --accent-color-display-p3: var(--accent-color);
     --background-font-family: "Dela Gothic One", cursive;
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+    :root {
+        --accent-color-display-p3: color(display-p3 0.464669 0.208272 0.962289);
+    }
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         --background-color: rgb(0 0 0 / 0.9);
         --foreground-color: #ffffff;
-        --accent-color: #ffc7e5;
-        --accent-color-display-p3: color(display-p3 1.0 0.780 0.898);
     }
 }
 
@@ -159,7 +163,8 @@ figure {
         transform: translate3d(0, 0%, 0);
         overflow: hidden;
         background: url('public/images/Stripes.png') 0 0 repeat;
-        background-color: #ffee00;
+        background-color: var(--accent-color);
+        background-color: var(--accent-color-display-p3);
         background-size: 24px 24px;
         animation: progress 1s linear forwards infinite;
         animation-play-state: paused;
@@ -562,18 +567,18 @@ div.sidebar {
 
                     .wrap svg {
                         g:nth-child(odd)>path {
-                            fill: #ffc7e5;
-                            fill: color(display-p3 1.0 0.780 0.898);
-                            stroke: #ffc7e5;
-                            stroke: color(display-p3 1.0 0.780 0.898);
+                            fill: #FF8DC9;
+                            fill: color(display-p3 0.940406 0.575512 0.778595);
+                            stroke: #FF8DC9;
+                            stroke: color(display-p3 0.940406 0.575512 0.778595);
                             transition: .5s;
                         }
 
                         g:nth-child(even)>path {
-                            fill: #00e7ff;
-                            fill: color(display-p3 0.0 0.906 1.0);
-                            stroke: #00e7ff;
-                            stroke: color(display-p3 0.0 0.906 1.0);
+                            fill: #8030FF;
+                            fill: color(display-p3 0.464669 0.208272 0.962289);
+                            stroke: #8030FF;
+                            stroke: color(display-p3 0.464669 0.208272 0.962289);
                             transition: .5s;
                         }
                     }
@@ -924,8 +929,7 @@ div.center {
 @media screen and (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 2dppx) {
     .progress>.bar {
-        background: url('public/images/Stripes@2x.png') 0 0 repeat;
-        background-color: #ffee00;
+        background-image: url('public/images/Stripes@2x.png');
         background-size: 24px 24px;
     }
 
@@ -939,8 +943,7 @@ div.center {
 @media screen and (-webkit-min-device-pixel-ratio: 3),
 (min-resolution: 3dppx) {
     .progress>.bar {
-        background: url('public/images/Stripes@3x.png') 0 0 repeat;
-        background-color: #ffee00;
+        background-image: url('public/images/Stripes@3x.png');
         background-size: 24px 24px;
     }
 

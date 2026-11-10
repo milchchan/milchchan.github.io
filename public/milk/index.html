@@ -37,6 +37,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/922939073a.js" crossorigin="anonymous"></script>
     <style media="screen">
+      :root {
+        --accent-color: #8030FF;
+      }
+
+      @supports (color: color(display-p3 1 1 1)) {
+        :root {
+          --accent-color: color(display-p3 0.464669 0.208272 0.962289);
+        }
+      }
+
       html {
         touch-action: none;
         margin: 0;
@@ -253,7 +263,7 @@
         transform: translate3d(0, 0%, 0);
         overflow: hidden;
         background: url('/images/Stripes.png') 0 0 repeat;
-        background-color: #ffee00;
+        background-color: var(--accent-color);
         background-size: 24px 24px;
         animation: progress 1s linear forwards infinite;
         animation-play-state: paused;
@@ -401,8 +411,7 @@
       @media screen and (-webkit-min-device-pixel-ratio: 2),
       (min-resolution: 2dppx) {
         .progress>.bar {
-          background: url('/images/Stripes@2x.png') 0 0 repeat;
-          background-color: #ffee00;
+          background-image: url('/images/Stripes@2x.png');
           background-size: 24px 24px;
         }
       }
@@ -410,8 +419,7 @@
       @media screen and (-webkit-min-device-pixel-ratio: 3),
       (min-resolution: 3dppx) {
         .progress>.bar {
-          background: url('/images/Stripes@3x.png') 0 0 repeat;
-          background-color: #ffee00;
+          background-image: url('/images/Stripes@3x.png');
           background-size: 24px 24px;
         }
       }
@@ -444,7 +452,7 @@
 
       @media (hover: hover) {
         .control-button:hover:not(:disabled) {
-          color: #00d6ff;
+          color: var(--accent-color);
         }
       }
     </style>

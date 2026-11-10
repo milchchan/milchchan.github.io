@@ -25,6 +25,16 @@
         -moz-osx-font-smoothing: grayscale;
       }
 
+      :root {
+        --accent-color: #8030FF;
+      }
+
+      @supports (color: color(display-p3 1 1 1)) {
+        :root {
+          --accent-color: color(display-p3 0.464669 0.208272 0.962289);
+        }
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -181,7 +191,7 @@
         overflow: hidden;
         background:
           linear-gradient(135deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
-        background-color: #ffee00;
+        background-color: var(--accent-color);
         background-size: 24px 24px;
         animation: progress-stripes 1s linear forwards infinite;
         animation-play-state: paused;

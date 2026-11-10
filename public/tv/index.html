@@ -24,7 +24,7 @@
         color-scheme: light;
         --paper: #f4f4f6;
         --ink: #33374c;
-        --active: #00e7ff;
+        --active: #8030FF;
       }
 
       @media (prefers-color-scheme: dark) {
@@ -32,6 +32,12 @@
           color-scheme: dark;
           --paper: #161821;
           --ink: #c6c8d1;
+        }
+      }
+
+      @supports (color: color(display-p3 1 1 1)) {
+        :root {
+          --active: color(display-p3 0.464669 0.208272 0.962289);
         }
       }
 
@@ -222,7 +228,8 @@
         left: 16px;
         height: 4px;
         overflow: hidden;
-        background: rgb(0 231 255 / 25%);
+        background: rgb(128 48 255 / 25%);
+        background: color(display-p3 0.464669 0.208272 0.962289 / 25%);
         box-shadow: 0 0 8px rgb(0 0 0 / 35%);
       }
 
@@ -233,7 +240,7 @@
       .download-progress-bar {
         width: 0;
         height: 100%;
-        background-color: #00e7ff;
+        background-color: var(--active);
         background-image: repeating-linear-gradient(-45deg, rgb(255 255 255 / 35%) 0 6px, transparent 6px 12px);
         background-size: 24px 24px;
         transition: width 120ms linear;
@@ -309,7 +316,7 @@
       }
 
       .narration-button:hover,
-      .narration-button:focus-visible { color: #00e7ff; }
+      .narration-button:focus-visible { color: var(--active); }
       .narration-button:focus-visible { outline: none; }
       .narration-button svg {
         grid-area: 1 / 1;
