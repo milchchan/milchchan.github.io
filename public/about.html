@@ -301,7 +301,7 @@
         position: relative;
         box-sizing: border-box;
         margin: 0px 0px 0px calc(48px - 16px);
-        padding: max(env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px)) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+        padding: env(safe-area-inset-top, 0px) max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px)) env(safe-area-inset-bottom, 0px);
       }
 
       .overlay>.wrap>.content {
@@ -374,9 +374,10 @@
         user-select: none;
         z-index: 0;
         position: fixed;
+        top: 16px;
+        bottom: 16px;
         left: 0px;
         padding: env(safe-area-inset-top, 0px) 0px env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
-        height: calc(100% - 32px);
         background: transparent;
         transition: 0.5s;
       }
@@ -429,8 +430,18 @@
         width: 48px;
         height: 100%;
         flex-direction: column;
+        gap: 8px;
         align-items: flex-start;
         justify-content: space-between;
+      }
+
+      div.sidebar>.level>.level-item:first-child {
+        width: 100%;
+        overflow: hidden auto;
+      }
+
+      div.sidebar>.level>.level-item:last-child {
+        flex-shrink: 0;
       }
 
       div.sidebar>.level>.level-item>.level {
@@ -803,8 +814,9 @@
         }
 
         div.sidebar {
+          top: 32px;
+          bottom: 32px;
           left: 16px;
-          height: calc(100% - 64px);
           transition: 0.5s;
         }
       }
